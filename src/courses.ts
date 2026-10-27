@@ -36,4 +36,14 @@ export const courses: Course[] = [
     origin: "https://clean-code-khaki.vercel.app",
     assetPrefix: "/clean-code-static",
   },
+  {
+    slug: "cs50",
+    title: "CS50",
+    description:
+      "Harvard CS50x ketma-ketligi asosida: C, xotira, algoritmlar, ma'lumotlar tuzilmalari, Python, SQL, web, xavfsizlik va AI.",
+    lessons: 60,
+    modules: 6,
+    origin: "https://cs50-uz.vercel.app",
+    assetPrefix: "/cs50",
+  },
 ];
