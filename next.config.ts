@@ -1,19 +1,21 @@
 import type { NextConfig } from "next";
-import { courses } from "./src/courses";
+import { listCourses, syllabus } from "./src/lib/content";
 
-// Multi-zones: each course is its own Vercel project; the hub proxies its paths.
-// https://nextjs.org/docs/app/guides/multi-zones
-const zoneRewrites = courses.flatMap(({ slug, origin, assetPrefix }) => {
-  const prefixes = [...new Set([`/${slug}`, assetPrefix])];
-  return prefixes.flatMap((p) => [
-    { source: p, destination: `${origin}${p}` },
-    { source: `${p}/:path+`, destination: `${origin}${p}/:path+` },
-  ]);
-});
+// Eski manzillar (alohida saytlar davri) yangi tuzilmaga yo'naltiriladi:
+// - Clean Code: /clean-code/<slug> -> /clean-code/dars/<n>
+// - System Design eski ildizi: /dars/<n> -> /system-design/dars/<n>
+function legacyRedirects() {
+  const slugRoutes = listCourses().flatMap((c) =>
+    syllabus(c)
+      .filter((l) => l.slug)
+      .map((l) => ({ source: `/${c.slug}/${l.slug}`, destination: `/${c.slug}/dars/${l.n}`, permanent: true })),
+  );
+  return [...slugRoutes, { source: "/dars/:n(\\d+)", destination: "/system-design/dars/:n", permanent: true }];
+}
 
 const nextConfig: NextConfig = {
-  async rewrites() {
-    return zoneRewrites;
+  async redirects() {
+    return legacyRedirects();
   },
   turbopack: {
     rules: {
