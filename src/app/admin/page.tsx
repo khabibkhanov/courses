@@ -1,11 +1,9 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { getCourse, listCourses, syllabus } from "@/lib/content";
 import { CopyButton } from "@/components/copy-button";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Admin", robots: { index: false } };
 
 type Row = {
   course: string;
@@ -103,9 +101,9 @@ export default async function AdminPage() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12">
+    <>
       <h1 className="mb-2 text-3xl font-semibold tracking-tight">Baholar</h1>
       {children}
-    </div>
+    </>
   );
 }

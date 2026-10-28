@@ -4,21 +4,9 @@ import { useState } from "react";
 import { Star } from "lucide-react";
 import { COMMENT_MAX, RATING_TAGS } from "@/lib/rating";
 import { saveProgress, useProgress } from "@/lib/progress";
+import { deviceId, postJson } from "@/lib/device";
 
 type Status = { kind: "idle" } | { kind: "sending" } | { kind: "saved" } | { kind: "error"; message: string };
-
-function deviceId(): string {
-  try {
-    let id = localStorage.getItem("device-id");
-    if (!id) {
-      id = crypto.randomUUID();
-      localStorage.setItem("device-id", id);
-    }
-    return id;
-  } catch {
-    return crypto.randomUUID();
-  }
-}
 
 const LABELS = ["Foydasiz", "Kam foydali", "O'rtacha", "Foydali", "Juda foydali"];
 
@@ -41,25 +29,16 @@ export function LessonRating({ course, n }: { course: string; n: number }) {
 
   async function submit() {
     setStatus({ kind: "sending" });
-    try {
-      const res = await fetch("/api/rating", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ course, lesson: n, deviceId: deviceId(), stars: s, tags: t, comment: c.trim() || undefined }),
-      });
-      if (!res.ok) {
-        const data = (await res.json().catch(() => null)) as { error?: string } | null;
-        setStatus({ kind: "error", message: data?.error ?? "Yuborib bo'lmadi. Keyinroq urinib ko'ring." });
-        return;
-      }
-      saveProgress(course, n, { rating: { stars: s, tags: t, comment: c.trim() } });
-      setStars(null);
-      setTags(null);
-      setComment(null);
-      setStatus({ kind: "saved" });
-    } catch {
-      setStatus({ kind: "error", message: "Internet aloqasini tekshirib, qayta urinib ko'ring." });
+    const res = await postJson("/api/rating", { course, lesson: n, deviceId: deviceId(), stars: s, tags: t, comment: c.trim() || undefined });
+    if (!res.ok) {
+      setStatus({ kind: "error", message: res.error });
+      return;
     }
+    saveProgress(course, n, { rating: { stars: s, tags: t, comment: c.trim() } });
+    setStars(null);
+    setTags(null);
+    setComment(null);
+    setStatus({ kind: "saved" });
   }
 
   const dirty = stars !== null || tags !== null || comment !== null;

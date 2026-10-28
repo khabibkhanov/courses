@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -9,6 +10,7 @@ import { AnswerBox } from "@/components/answer-box";
 import { TaskBlock } from "@/components/task-block";
 import { ReadingProgress } from "@/components/reading-progress";
 import { LessonRating } from "@/components/lesson-rating";
+import { TextFeedback } from "@/components/text-feedback";
 
 export const dynamicParams = false;
 
@@ -51,13 +53,15 @@ export default async function LessonPage({ params }: PageProps<"/[course]/dars/[
     solutionNotesHtml: await markdownToHtml(lesson.task.solutionNotes),
   };
 
-  // Baza ulanmagan bo'lsa baho bloki ko'rsatilmaydi (env build vaqtida o'qiladi, sahifa statik).
-  const ratingEnabled = Boolean(process.env.DATABASE_URL);
+  // Baza ulanmagan bo'lsa baho va izoh bloklari ko'rsatilmaydi (env build vaqtida o'qiladi, sahifa statik).
+  const dbEnabled = Boolean(process.env.DATABASE_URL);
+  // Izoh qaysi dars versiyasiga qoldirilganini bilish uchun.
+  const lessonHash = createHash("sha256").update(lesson.body).digest("hex").slice(0, 16);
   const extraToc = [
     ...(lesson.sources.length ? [{ id: "manbalar", text: "Manbalar" }] : []),
     ...(lesson.quiz ? [{ id: "test", text: "Test" }] : []),
     task ? { id: "topshiriq", text: "Amaliy topshiriq" } : { id: "javob", text: "Topshiriq javobi" },
-    ...(ratingEnabled ? [{ id: "baho", text: "Darsga baho" }] : []),
+    ...(dbEnabled ? [{ id: "baho", text: "Darsga baho" }] : []),
   ];
 
   return (
@@ -118,6 +122,11 @@ export default async function LessonPage({ params }: PageProps<"/[course]/dars/[
             </p>
             <h1 className="text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">{lesson.title}</h1>
             {lesson.summary && <p className="mt-4 text-lg leading-relaxed text-muted">{lesson.summary}</p>}
+            {dbEnabled && (
+              <p className="mt-4 text-sm text-muted">
+                Matnda xato yoki tushunarsiz joy ko&apos;rsangiz, uni belgilang va izoh qoldiring.
+              </p>
+            )}
             <details className="mt-6 rounded-lg border border-rule bg-sheet px-4 py-3 text-sm lg:hidden">
               <summary className="cursor-pointer font-medium">Shu darsda</summary>
               <ul className="mt-3 space-y-1.5 text-muted">
@@ -132,7 +141,13 @@ export default async function LessonPage({ params }: PageProps<"/[course]/dars/[
             </details>
           </header>
 
-          <LessonBody html={html} />
+          {dbEnabled ? (
+            <TextFeedback course={course.slug} n={n} lessonHash={lessonHash}>
+              <LessonBody html={html} />
+            </TextFeedback>
+          ) : (
+            <LessonBody html={html} />
+          )}
 
           {lesson.sources.length > 0 && (
             <section className="lesson mt-12">
@@ -152,7 +167,7 @@ export default async function LessonPage({ params }: PageProps<"/[course]/dars/[
 
           {lesson.quiz && <Quiz course={course.slug} n={n} quiz={lesson.quiz} hasNext={next !== undefined} />}
           {task ? <TaskBlock course={course.slug} n={n} task={task} /> : <AnswerBox course={course.slug} n={n} title={lesson.title} />}
-          {ratingEnabled && <LessonRating course={course.slug} n={n} />}
+          {dbEnabled && <LessonRating course={course.slug} n={n} />}
 
           <nav aria-label="Darslar" className="mt-16 grid gap-4 border-t border-rule pt-6 sm:grid-cols-2">
             {prev ? (

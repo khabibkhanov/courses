@@ -67,3 +67,15 @@ export function extractToc(html: string): TocItem[] {
     text: m[2].replace(/<[^>]+>/g, "").replace(/&#x26;/g, "&").replace(/&#x27;/g, "'").replace(/&quot;/g, '"'),
   }));
 }
+
+/** Dars matnining sof ko'rinishi (teglarsiz): izohdagi belgilangan matn hali bormi, tekshirish uchun. */
+export async function markdownToText(markdown: string): Promise<string> {
+  const html = await markdownToHtml(markdown);
+  return html
+    .replace(/<[^>]+>/g, "")
+    .replace(/&#x27;|&#39;/g, "'")
+    .replace(/&quot;|&#x22;/g, '"')
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#x26;|&amp;/g, "&");
+}
