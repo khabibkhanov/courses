@@ -1,0 +1,451 @@
+# System Design 51-100 atamalari.
+- term: modular monolit
+  uz: "Bitta deploy birligi bo'lgan, lekin ichida modullar chegarasi qat'iy majburlangan monolit: har modul faqat ochiq interfeys beradi, o'z jadvallariga ega va boshqa modul bilan faqat interfeys yoki ichki event orqali gaplashadi."
+  course: system-design
+  lesson: 51
+- term: distributed monolith
+  uz: "Microservices deb nomlangan, lekin aslida qattiq bog'langan servislar: birga deploy qilinadi, umumiy bazaga yozadi va bitta so'rov o'nlab sinxron chaqiruvga aylanadi. Monolit va microservices'ning yomon tomonlari birlashadi."
+  course: system-design
+  lesson: 51
+- term: strangler fig
+  uz: "Eski tizimni bir martada qayta yozish o'rniga, oldiga proxy/routing qatlami qo'yib, yangi funksiyani yonida qurish va xatti-harakatni bo'lakma-bo'lak yangi servisga ko'chirish usuli."
+  course: system-design
+  lesson: 51
+- term: DDD
+  aliases: [Domain-Driven Design]
+  uz: "Eric Evans shakllantirgan yondashuv: tizimni domen bo'yicha kontekstlarga bo'lish (strategic design) va kontekst ichida kodni entity, value object, aggregate, domain event bilan modellash (tactical design)."
+  course: system-design
+  lesson: 52
+- term: bounded context
+  uz: "Bitta model va bitta umumiy til amal qiladigan aniq chegara. Bir xil so'z (masalan, 'mashina') turli kontekstlarda turli model bo'ladi; bounded context'lar biznesda topilmaydi, arxitektura qarori sifatida loyihalanadi."
+  course: system-design
+  lesson: 52
+- term: service discovery
+  uz: "Servis boshqa servis instance'larining joriy manzillarini qanday topishi mexanizmi. Client-side (klient registry'dan ro'yxat olib o'zi balans qiladi) va server-side (router/load balancer yo'naltiradi) turlari bor."
+  course: system-design
+  lesson: 53
+- term: readiness probe
+  uz: "Kubernetes tekshiruvi: pod trafik qabul qilishga tayyormi. Muvaffaqiyatsiz bo'lsa, pod EndpointSlice'dan chiqariladi va trafik olmaydi, lekin restart qilinmaydi."
+  course: system-design
+  lesson: 53
+- term: API Gateway
+  uz: "Tashqi klientlar uchun yagona kirish nuqtasi: routing, javoblarni birlashtirish (composition), autentifikatsiya, rate limiting kabi umumiy vazifalar va protokol tarjimasini bajaradi."
+  course: system-design
+  lesson: 54
+- term: BFF
+  aliases: [Backend for Frontend]
+  uz: "Har bir klient turi (veb, mobil) uchun alohida yupqa backend: o'sha klientga kerakli shaklda ma'lumotni yig'ib beradi va odatda o'sha frontend jamoasiga tegishli bo'ladi."
+  course: system-design
+  lesson: 54
+- term: service mesh
+  uz: "Servislararo tarmoq vazifalarini (mTLS, L7 balancing, retry, traffic splitting, telemetriya) ilova kodidan platforma qatlamiga ko'chiruvchi infratuzilma: har servis yonidagi proxy'lar (data plane) va ularni boshqaruvchi control plane."
+  course: system-design
+  lesson: 55
+- term: sidecar
+  uz: "Asosiy ilova yonida alohida konteynerda ishlaydigan yordamchi komponent (log yig'uvchi, proxy va h.k.). U podning tarmoq namespace'i va volume'larini bo'lishadi hamda ilova bilan birga yaratiladi va o'chiriladi."
+  course: system-design
+  lesson: 55
+- term: control plane
+  uz: "Tizimni boshqaruvchi qatlam: konfiguratsiya, service discovery ma'lumotlari va sertifikatlarni tarqatadi, lekin foydalanuvchi trafigini o'zi o'tkazmaydi. Odatda data plane'dan murakkabroq va ko'p bog'liqlikka ega."
+  course: system-design
+  lesson: 55
+- term: token bucket
+  aliases: [token bucket algoritmi]
+  uz: "Rate limiting algoritmi: chelakka r tezlikda token qo'shiladi (sig'imi B dan oshmaydi), har so'rov token oladi, token yo'q bo'lsa rad. r uzoq muddatli o'rtacha tezlikni, B esa ruxsat etilgan burst hajmini belgilaydi."
+  course: system-design
+  lesson: 56
+- term: leaky bucket
+  uz: "Rate limiting algoritmi: navbat sifatida so'rovlar chelakka tushib doimiy tezlikda chiqadi (oqim silliqlanadi, chelak to'lsa rad); hisoblagich sifatida esa matematik jihatdan token bucket'ga ekvivalent."
+  course: system-design
+  lesson: 56
+- term: fixed window
+  aliases: [fixed window counter]
+  uz: "Vaqtni qat'iy oynalarga bo'lib, har oyna uchun hisoblagich yurituvchi rate limiting algoritmi. Juda arzon, lekin oyna chegarasida limitning ikki baravarigacha burst o'tib ketadi."
+  course: system-design
+  lesson: 56
+- term: sliding window log
+  uz: "Har so'rovning vaqt belgisini saqlaydigan rate limiting algoritmi: oxirgi oynadan eski belgilar o'chiriladi va qolganlari sanaladi. To'liq aniq, lekin har klientga limit hajmicha xotira kerak."
+  course: system-design
+  lesson: 56
+- term: sliding window counter
+  uz: "Fixed window arzonligi va sliding log aniqligi orasidagi murosa: joriy va oldingi oyna hisoblagichlari saqlanadi, oldingi oyna esa chiziqli interpolatsiya bilan vaznlanadi. Natija taxminiy, lekin amalda yetarlicha aniq."
+  course: system-design
+  lesson: 56
+- term: Snowflake ID
+  uz: "Twitter taklif qilgan 64 bitli, koordinatsiyasiz va taxminan vaqt bo'yicha tartiblanadigan ID: maxsus epoch'dan beri millisekundlar (41 bit), worker ID (10 bit) va ketma-ketlik hisoblagichi (12 bit)."
+  course: system-design
+  lesson: 57
+- term: UUIDv7
+  uz: "RFC 9562 dagi 128 bitli UUID varianti: eng katta 48 bitda Unix millisekund vaqti, qolganida asosan tasodif (74 bit). Vaqt bo'yicha tartiblangani uchun B-tree indeksga UUIDv4'dan ancha yaxshi yoziladi."
+  course: system-design
+  lesson: 57
+- term: MapReduce
+  uz: "Katta hajmdagi batch ishlov berish modeli: map bosqichi har yozuvdan kalit-qiymat juftlari chiqaradi, shuffle ularni kalit bo'yicha guruhlaydi, reduce esa har kalit guruhini birlashtiradi."
+  course: system-design
+  lesson: 58
+- term: RDD
+  aliases: [Resilient Distributed Dataset]
+  uz: "Spark'ning asosiy abstraksiyasi: partition'larga bo'lingan, o'zgarmas yozuvlar to'plami. U faqat coarse-grained transformatsiyalar bilan hosil qilinadi va yo'qolgan partition lineage orqali qayta hisoblanadi."
+  course: system-design
+  lesson: 58
+- term: inverted index
+  uz: "Qidiruv indeksi: har bir term (so'z) uchun shu term uchraydigan hujjatlar ro'yxati (posting list) saqlanadi. Oddiy indeksning teskarisi: hujjat -> so'zlar emas, so'z -> hujjatlar."
+  course: system-design
+  lesson: 59
+- term: BM25
+  uz: "Matn qidiruvidagi relevantlik formulasi: term chastotasini to'yinish bilan (TF), kam uchraydigan so'zlarni yuqoriroq (IDF) baholaydi va hujjat uzunligi bo'yicha normallashtiradi."
+  course: system-design
+  lesson: 59
+- term: pre-signed URL
+  aliases: [presigned URL]
+  uz: "API server o'z ruxsatlari bilan imzolagan, muddati cheklangan URL. Uni olgan klient faylni object storage'ga to'g'ridan-to'g'ri yuklaydi yoki o'qiydi, baytlar API server orqali o'tmaydi."
+  course: system-design
+  lesson: 60
+- term: multipart upload
+  uz: "Katta obyektni bo'laklarga bo'lib, ularni parallel va mustaqil yuklash usuli. Uzilgan bo'lakni qayta yuklash yetarli; barcha bo'laklar kelgach, obyekt bitta yakuniy so'rov bilan yig'iladi."
+  course: system-design
+  lesson: 60
+- term: SPOF
+  aliases: [single point of failure]
+  uz: "Yagona nosozlik nuqtasi: o'chganda butun tizim yoki muhim funksiya ishlamay qoladigan komponent. Eng xavflilari - nusxalar bir xil AZ, konfiguratsiya, sertifikat yoki DNS zonasiga bog'langan yashirin umumiy bog'liqliklar."
+  course: system-design
+  lesson: 61
+- term: MTTR
+  uz: "Mean time to repair - nosozlikdan keyin tiklanishgacha o'rtacha vaqt. Ko'pincha availability'ni yiqilishlarni kamaytirishdan ko'ra MTTR'ni qisqartirish arzonroq va kuchliroq oshiradi."
+  course: system-design
+  lesson: 61
+- term: blast radius
+  uz: "Bitta nosozlik yoki yomon deploy qancha foydalanuvchi yoki tizim qismiga ta'sir qilishi. Cell-based arxitektura, shuffle sharding va canary deploy uni kichraytirish usullari."
+  course: system-design
+  lesson: 61
+- term: shuffle sharding
+  uz: "Har mijozga workerlarning tasodifiy kichik kombinatsiyasini ajratish. Bitta 'zaharli' mijoz o'z workerlarini yiqitsa, aynan shu kombinatsiyaga ega boshqa mijozlar ulushi juda kichik bo'ladi."
+  course: system-design
+  lesson: 61
+- term: retry storm
+  uz: "Ko'p klientlarning bir vaqtda qayta urinishlari natijasida qiynalayotgan servisga yuklamaning ko'payib ketishi. Kichik nosozlikni butun tizim uzilishiga aylantiradigan klassik mexanizm."
+  course: system-design
+  lesson: 62
+- term: retry budget
+  uz: "Retry'lar ulushini cheklash qoidasi: klient faqat retry'lar so'rovlarning ma'lum foizidan (Google SRE misolida 10 foiz) kam bo'lganda qayta urinadi, shunda nosozlikda yuklama keskin oshmaydi."
+  course: system-design
+  lesson: 62
+- term: circuit breaker
+  uz: "Downstream xato ulushi chegaradan oshganda chaqiruvlarni vaqtincha to'xtatuvchi pattern: closed (o'tadi), open (darhol xato yoki fallback), half-open (sinov chaqiruvlari bilan tiklanganini tekshirish)."
+  course: system-design
+  lesson: 63
+- term: bulkhead
+  uz: "Resurslarni (connection pool, thread, navbat) bog'liqlik yoki funksiya bo'yicha alohida pool'larga ajratish. Bitta sekin downstream faqat o'z pool'ini band qiladi, qolganlari ishlashda davom etadi."
+  course: system-design
+  lesson: 63
+- term: load shedding
+  uz: "Server o'z capacity'siga yetganda ortiqcha so'rovlarni ishga olmasdan darhol rad etishi (odatda 503 yoki 429). Qabul qilingan so'rovlar tez xizmat oladi, tizim to'liq yiqilmaydi."
+  course: system-design
+  lesson: 63
+- term: cascading failure
+  uz: "Musbat teskari aloqa natijasida o'sib boradigan nosozlik: bir qismning ishdan chiqishi yuklamani boshqalarga ko'chiradi va ularning ham ishdan chiqish ehtimolini oshiradi."
+  course: system-design
+  lesson: 64
+- term: graceful degradation
+  uz: "Tizim to'liq capacity yoki barcha bog'liqliklarsiz qolganda kamroq, lekin foydali xizmat ko'rsatishi: soft dependency o'chsa javob yomonroq bo'ladi, lekin so'rov baribir bajariladi."
+  course: system-design
+  lesson: 64
+- term: metastable failure
+  uz: "Tizim yomon holatga tushib, uni boshlagan trigger yo'qolgandan keyin ham o'sha holatda qoladigan nosozlik. Uni sustaining effect (odatda retry kabi ish amplifikatsiyasi) ushlab turadi."
+  course: system-design
+  lesson: 64
+- term: SLI
+  uz: "Service Level Indicator - xizmat sifatining o'lchanadigan ko'rsatkichi, odatda 'yaxshi hodisalar / yaroqli hodisalar' foizi shaklida (masalan, 300 ms dan tez muvaffaqiyatli so'rovlar ulushi)."
+  course: system-design
+  lesson: 65
+- term: SLO
+  aliases: [Service Level Objective]
+  uz: "Service Level Objective - SLI uchun belgilangan maqsad va vaqt oynasi (masalan, 30 kunda 99.9%). 100% noto'g'ri maqsad; SLO jamoaning ichki ishonchlilik maqsadi."
+  course: system-design
+  lesson: 65
+- term: SLA
+  uz: "Service Level Agreement - mijoz bilan shartnomadagi ishonchlilik va'dasi; bajarilmasa, odatda pul krediti beriladi. Ichki SLO undan qattiqroq qo'yiladi, toki muammo SLA buzilishidan oldin tuzatilsin."
+  course: system-design
+  lesson: 65
+- term: error budget
+  uz: "SLO ruxsat bergan xatolar miqdori: 1 - SLO (masalan, 99.9% da 0.1%). Budget qolsa jamoa tez release qiladi, tugasa ishonchlilikka e'tibor qaratadi."
+  course: system-design
+  lesson: 65
+- term: burn rate
+  uz: "Error budget SLO'ga nisbatan qanchalik tez sarflanayotgani. Burn rate 1 bo'lsa budget aynan oyna oxirida tugaydi; SLO asosidagi alertlar burn rate chegaralariga quriladi."
+  course: system-design
+  lesson: 65
+- term: OpenTelemetry
+  uz: "Telemetriyani (trace, metrika, log) yaratish, yig'ish va eksport qilish uchun vendor-neytral CNCF standarti: API, SDK'lar, OTLP protokoli va Collector. Kod bir marta instrumentatsiya qilinadi, backend almashtiriladi."
+  course: system-design
+  lesson: 66
+- term: span
+  uz: "Trace ichidagi bitta ish birligi: nomi, ota span ID, boshlanish va tugash vaqti, atributlar, eventlar va status bilan."
+  course: system-design
+  lesson: 66
+- term: cardinality
+  uz: "Metrikadagi unikal label kombinatsiyalari soni; har kombinatsiya alohida time series. Foydalanuvchi ID kabi yuqori cardinality'li label metrikalar narxini keskin oshiradi."
+  course: system-design
+  lesson: 66
+- term: RED
+  uz: "Servislar uchun monitoring metodi: Rate (so'rov/s), Errors (ulardan qanchasi xato) va Duration (davomiylik taqsimoti). Barcha servislar bir xil metrikalar va dashboard'ga ega bo'ladi."
+  course: system-design
+  lesson: 67
+- term: blue-green
+  uz: "Deploy strategiyasi: ikkita bir xil muhit, biri jonli, ikkinchisiga yangi versiya o'rnatilib tekshiriladi, keyin router trafikni unga o'tkazadi. Rollback - routerni qaytarish, lekin ikki baravar resurs kerak."
+  course: system-design
+  lesson: 68
+- term: canary
+  uz: "O'zgarishni avval trafikning kichik qismiga deploy qilib, uni control guruh bilan solishtirib baholash; natijaga qarab rollout davom etadi yoki to'xtaydi. Blast radius'ni cheklaydi."
+  course: system-design
+  lesson: 68
+- term: feature flag
+  uz: "Kodni qayta deploy qilmasdan funksiyani yoqish yoki o'chirish imkonini beruvchi bayroq. Turlari: release, experiment (A/B test), ops (kill switch) va permissioning."
+  course: system-design
+  lesson: 68
+- term: RPO
+  aliases: [Recovery Point Objective]
+  uz: "Recovery Point Objective - oxirgi tiklash nuqtasidan beri ruxsat etilgan maksimal vaqt, ya'ni nosozlikda qancha ma'lumot (vaqt birligida) yo'qolishi mumkin."
+  course: system-design
+  lesson: 69
+- term: RTO
+  aliases: [Recovery Time Objective]
+  uz: "Recovery Time Objective - xizmat uzilishidan tiklanishigacha ruxsat etilgan maksimal vaqt, ya'ni tizim qancha vaqt ishlamasligi mumkin."
+  course: system-design
+  lesson: 69
+- term: pilot light
+  uz: "Disaster recovery strategiyasi: boshqa regionda ma'lumot replikatsiyasi va asosiy infratuzilma (baza, storage) doim tayyor, ilova serverlari esa o'chiq va nosozlikda yoqiladi."
+  course: system-design
+  lesson: 69
+- term: warm standby
+  uz: "Disaster recovery strategiyasi: boshqa regionda kichraytirilgan, lekin to'liq ishlaydigan nusxa doim turadi; nosozlikda darhol trafik oladi va kerakli hajmgacha kengaytiriladi."
+  course: system-design
+  lesson: 69
+- term: chaos engineering
+  uz: "Tizim production'dagi og'ir, real sharoitlarga bardosh bera olishiga ishonch hosil qilish uchun unda nazorat ostida eksperiment o'tkazish intizomi: steady state, gipoteza, real hodisalarni simulyatsiya qilish."
+  course: system-design
+  lesson: 70
+- term: postmortem
+  uz: "Incident'dan keyin yoziladigan hujjat: nima bo'ldi, ta'siri, sabablari va takrorlanmasligi uchun harakatlar. Trigger'lari incident'dan oldin kelishiladi."
+  course: system-design
+  lesson: 70
+- term: JWT
+  uz: "Self-contained token (RFC 7519): header.payload.signature shaklidagi uchta base64url qism. Claim'larni ichida saqlaydi va imzo bilan tekshiriladi, shuning uchun lookup kerak emas, lekin revocation qiyinlashadi."
+  course: system-design
+  lesson: 71
+- term: OAuth
+  aliases: [OAuth2]
+  uz: "Delegatsiya protokoli: foydalanuvchi parolini bermasdan, client'ga resource server'ga cheklangan (scope) kirish huquqini access token orqali beradi. Identifikatsiya uchun emas, ruxsat berish uchun."
+  course: system-design
+  lesson: 71
+- term: OIDC
+  aliases: [OpenID Connect]
+  uz: "OpenID Connect - OAuth ustidagi identifikatsiya qatlami: 'foydalanuvchi kim' degan savolga javob beruvchi ID token va standart 'Login with X' oqimini belgilaydi."
+  course: system-design
+  lesson: 71
+- term: PKCE
+  uz: "Authorization code oqimini himoyalovchi kengaytma (RFC 7636): client tasodifiy code_verifier yaratib, AS'ga faqat uning xeshini yuboradi; code'ni token'ga almashtirishda verifier talab qilinadi, shuning uchun o'g'irlangan code yaramaydi."
+  course: system-design
+  lesson: 71
+- term: RBAC
+  uz: "Role-Based Access Control - ruxsatlar rollarga, rollar foydalanuvchilarga beriladi (user -> role -> permission). Tushunish va audit qilish oson, lekin nozik shartlarda rollar soni portlaydi."
+  course: system-design
+  lesson: 72
+- term: ABAC
+  uz: "Attribute-Based Access Control - qaror subject, obyekt, amal va muhit atributlarini qoidalar bilan baholash orqali qabul qilinadi. Juda ifodali, lekin audit qilish qiyin."
+  course: system-design
+  lesson: 72
+- term: ReBAC
+  uz: "Relationship-Based Access Control - ruxsat subject va obyekt orasidagi munosabatlar grafidan kelib chiqadi (a'zo, egasi, ota papka). Google Zanzibar shu modelning namunasi."
+  course: system-design
+  lesson: 72
+- term: multi-tenancy
+  uz: "Bitta tizim nusxasi bir nechta mijozga (tenant) xizmat qiladigan SaaS arxitekturasi. Asosiy savollar - ma'lumot izolyatsiyasi, ishlash izolyatsiyasi va har tenant narxi."
+  course: system-design
+  lesson: 73
+- term: noisy neighbor
+  uz: "Umumiy resurslardan ko'p foydalangan bitta tenant boshqalarni sekinlashtirishi. Choralar: per-tenant o'lchash, rate limit va kvota, alohida navbatlar va og'ir tenant'larni ajratish."
+  course: system-design
+  lesson: 73
+- term: row-level security
+  aliases: [RLS]
+  uz: "PostgreSQL mexanizmi: siyosatlar asosida baza har so'rovda faqat ruxsat etilgan qatorlarni qaytaradi. Multi-tenant tizimda ilova xato qilsa ham boshqa tenant qatorlari chiqmasligi uchun ikkinchi himoya qatlami."
+  course: system-design
+  lesson: 73
+- term: envelope encryption
+  uz: "Ma'lumot data key (DEK) bilan shifrlanadi, DEK esa key encryption key (KEK) bilan shifrlanib ma'lumot yonida saqlanadi. KMS'ga faqat kichik kalit boradi, kalit almashtirish arzon bo'ladi."
+  course: system-design
+  lesson: 74
+- term: mTLS
+  uz: "Mutual TLS - ikkala tomon ham sertifikat bilan o'zini isbotlaydigan TLS. Servislararo aloqada klientni ham kriptografik autentifikatsiya qiladi; zero trust yondashuvining asosi."
+  course: system-design
+  lesson: 74
+- term: pod
+  uz: "Kubernetes'dagi eng kichik joylashtirish birligi: umumiy tarmoq namespace'i (bitta IP, localhost) va volume'larni bo'lishadigan bir yoki bir nechta konteyner."
+  course: system-design
+  lesson: 75
+- term: liveness probe
+  uz: "Kubernetes tekshiruvi: konteynerni restart qilish kerakmi (masalan, deadlock). U faqat process'ning o'z holatini tekshirishi kerak; tashqi bog'liqlikni qo'shish barcha podlarni bir vaqtda restart qildirishi mumkin."
+  course: system-design
+  lesson: 75
+- term: autoscaling
+  uz: "Yuklamaga qarab resurslarni avtomatik o'zgartirish: horizontal (instance yoki podlar soni) yoki vertical (bitta instance'ning CPU va xotirasi). Reaktiv autoscaling doim biroz kech qoladi."
+  course: system-design
+  lesson: 76
+- term: HPA
+  aliases: [Horizontal Pod Autoscaler]
+  uz: "Horizontal Pod Autoscaler - Kubernetes nazorat sikli: joriy metrikani maqsad bilan solishtirib, podlar sonini ceil(joriy podlar x joriy qiymat / maqsad) formulasi bo'yicha o'zgartiradi."
+  course: system-design
+  lesson: 76
+- term: capacity planning
+  uz: "Kelajakdagi yuklamani oldindan rejalashtirish: organik va noorganik o'sish prognozi, biznes driverlarini yuklamaga aylantirish va load test bilan resurs qancha xizmat sig'imi berishini o'lchash."
+  course: system-design
+  lesson: 76
+- term: active-passive
+  uz: "Multi-region modeli: bitta region trafikni qabul qiladi, ikkinchisi asinxron replika bilan tayyor turadi. Failover - standby'ni primary'ga ko'tarish; mashq qilinmagan failover ko'pincha ishlamaydi."
+  course: system-design
+  lesson: 77
+- term: active-active
+  uz: "Multi-region modeli: har bir region ham o'qish, ham yozishni qabul qiladi. Eng qiyin qismi - bir xil yozuv ikki regionda bir vaqtda o'zgarganda yuzaga keladigan konfliktlar."
+  course: system-design
+  lesson: 77
+- term: data residency
+  uz: "Ma'lumot jismonan qaysi mamlakat yoki regionda saqlanishi. Undan farqli, data localization ma'lum ma'lumotni mamlakat ichida saqlashni qonun bilan majburlaydi."
+  course: system-design
+  lesson: 78
+- term: crypto-shredding
+  uz: "Ma'lumotni o'z kaliti bilan shifrlab, o'chirish kerak bo'lganda faqat kalitni yo'q qilish. Shunda backup, arxiv va replikalardagi barcha nusxalar bir vaqtda o'qib bo'lmaydigan bo'ladi."
+  course: system-design
+  lesson: 78
+- term: DDoS
+  uz: "Ko'p manbadan yuborilgan trafik bilan xizmatni ishdan chiqarish hujumi. Sinflari: volumetrik (kanalni to'ldirish), protokol (masalan, SYN flood) va ilova darajasidagi (L7) hujumlar."
+  course: system-design
+  lesson: 80
+- term: WAF
+  aliases: [Web Application Firewall]
+  uz: "Web Application Firewall - HTTP so'rovlar ichidagi zararli mazmunni (SQL injection, XSS, path traversal) va avtomatlashtirilgan suiiste'molni to'xtatuvchi L7 filtr."
+  course: system-design
+  lesson: 80
+- term: downsampling
+  uz: "Time-series ma'lumotdan past rezolyutsiyali agregatlarni (1 daqiqa, 1 soat, 1 kun) oldindan hisoblash. O'rtacha uchun avg emas, sum va count saqlanadi, chunki o'rtachalarning o'rtachasi noto'g'ri."
+  course: system-design
+  lesson: 81
+- term: geohash
+  uz: "Kenglik va uzunlik bitlarini navbatma-navbat qo'shib (Z-order curve), base32 satrga aylantiruvchi geospatial kodlash. Umumiy prefiksli kodlar yaqin joylashadi, lekin to'r hamma joyda bir xil."
+  course: system-design
+  lesson: 82
+- term: quadtree
+  uz: "Fazoni rekursiv to'rtga bo'luvchi daraxt: tugundagi nuqtalar chegaradan oshsa, u 4 bolaga bo'linadi. Bo'linish ma'lumot zichligiga moslashadi."
+  course: system-design
+  lesson: 82
+- term: S2
+  uz: "Google'ning sferik geometriya kutubxonasi: Yer sferasi kub yuzalariga proyeksiya qilinadi, hujayralar rekursiv 4 ga bo'linadi va Hilbert curve bo'yicha 64 bitli ID bilan raqamlanadi."
+  course: system-design
+  lesson: 82
+- term: H3
+  uz: "Uber'ning ierarxik olti burchakli geospatial indeksi: sfera ikosaedrga proyeksiya qilinadi, 16 ta resolution bor va har hujayraning 7 ta bolasi bor. Barcha 6 qo'shni bir xil masofada joylashadi."
+  course: system-design
+  lesson: 82
+- term: R-tree
+  uz: "Shakllar (poligon, chiziq) uchun indeks: har obyekt o'zining minimal o'rab turuvchi to'rtburchagi (MBR) bilan ifodalanadi, ichki tugunlar bolalarining MBR'larini o'raydi. B-tree'ning 2D varianti."
+  course: system-design
+  lesson: 82
+- term: point-in-polygon
+  uz: "Nuqta poligon ichidami degan test. Klassik usul - ray casting: nuqtadan nur chiqarib, u poligon tomonlarini necha marta kesishini sanash; toq son - ichida, juft - tashqarida."
+  course: system-design
+  lesson: 83
+- term: geofencing
+  uz: "Obyektning geozonaga kirish va chiqishini kuzatish. Oddiy so'rov emas, oqim ustidagi holatli hisob: oldingi holatni bilish va chegaradagi GPS shovqinidan soxta hodisalarni filtrlash kerak."
+  course: system-design
+  lesson: 83
+- term: RTSP
+  uz: "Real Time Streaming Protocol - video oqimini boshqarish protokoli ('tarmoq pulti'). O'zi videoni tashimaydi; media odatda RTP orqali keladi. IP kameralarning ko'pchiligi uni qo'llab-quvvatlaydi."
+  course: system-design
+  lesson: 84
+- term: HLS
+  uz: "HTTP Live Streaming - videoni kichik segment fayllarga bo'lib, playlist orqali oddiy HTTP bilan yetkazish protokoli. CDN va HTTP cache bilan yaxshi ishlaydi, lekin kechikishi segment hajmiga bog'liq."
+  course: system-design
+  lesson: 84
+- term: transcoding
+  uz: "Videoni dekodlab boshqa kodek, resolution yoki bitrate bilan qayta encode qilish. CPU/GPU jihatdan qimmat; kodekni o'zgartirmay faqat konteynerni almashtirish esa transmuxing deyiladi."
+  course: system-design
+  lesson: 84
+- term: adaptive bitrate
+  aliases: [ABR]
+  uz: "Pleyer tarmoq tezligi va bufer holatiga qarab har segment uchun sifat variantini tanlashi. Buning uchun barcha variantlarda segment chegaralari bir xil joyda bo'lishi kerak."
+  course: system-design
+  lesson: 84
+- term: presence
+  uz: "Foydalanuvchi onlayn, oflayn yoki band ekanini kuzatish. Odatda mijoz heartbeat yuboradi, server yozuvni TTL bilan yangilaydi; heartbeat to'xtasa, TTL tugab foydalanuvchi oflayn bo'ladi."
+  course: system-design
+  lesson: 86
+- term: fan-out on write
+  uz: "News feed yondashuvi (push): post yozilganda u har bir obunachining tayyor lentasiga qo'shiladi. O'qish juda arzon, yozish obunachilar soniga proporsional qimmat."
+  course: system-design
+  lesson: 87
+- term: fan-out on read
+  uz: "News feed yondashuvi (pull): lenta ochilganda obunalarning oxirgi postlari olinib, birlashtiriladi va saralanadi. Yozish arzon, o'qish qimmat, lekin yangilik darhol ko'rinadi."
+  course: system-design
+  lesson: 87
+- term: double-entry
+  uz: "Buxgalteriya usuli: har bir pul harakati kamida ikkita yozuvdan iborat (bir hisobdan chiqim, boshqasiga kirim) va ularning yig'indisi nolga teng. Pul yo'qdan paydo bo'lmaydi va izsiz yo'qolmaydi."
+  course: system-design
+  lesson: 88
+- term: embedding
+  uz: "Obyektning (foydalanuvchi, element, matn, rasm) zich vektor ko'rinishi; o'xshash obyektlarning vektorlari bir-biriga yaqin bo'ladi."
+  course: system-design
+  lesson: 89
+- term: ANN
+  aliases: [approximate nearest neighbor]
+  uz: "Approximate nearest neighbor - aniqlikning ozgina qismini tezlikka almashtirib, eng yaqin vektorlarni taxminan topish. Sifati recall@k bilan o'lchanadi."
+  course: system-design
+  lesson: 89
+- term: HNSW
+  uz: "Hierarchical Navigable Small World - ko'p qatlamli graf asosidagi ANN indeksi: yuqori qatlamlarda siyrak uzoq bog'lanishlar, pastda zich; qidiruv yuqoridan ochko'z tushadi. Tez va aniq, lekin xotira ko'p talab qiladi."
+  course: system-design
+  lesson: 89
+- term: feature store
+  uz: "Feature'larni bir marta aniqlab, ham training uchun (offline), ham serving uchun (online, past latency) bir xil qiymat beruvchi tizim. Training-serving skew'ning oldini oladi."
+  course: system-design
+  lesson: 89
+- term: training-serving skew
+  uz: "Feature training va serving paytida turli kod yoki ma'lumot bilan hisoblanganda paydo bo'ladigan farq. Natijada offline'da yaxshi model production'da yomon ishlaydi."
+  course: system-design
+  lesson: 89
+- term: RAG
+  uz: "Retrieval-Augmented Generation - savolga javob berishdan oldin tegishli hujjat bo'laklarini qidirib topib, ularni promptga qo'yish; model javobni shu kontekstdan tuzadi."
+  course: system-design
+  lesson: 90
+- term: prefill
+  uz: "LLM inference'ning birinchi fazasi: butun prompt bitta parallel o'tishda qayta ishlanadi. Hisoblashga bog'liq (compute-bound) va TTFT'ni belgilaydi; undan keyin token-token decode fazasi keladi."
+  course: system-design
+  lesson: 90
+- term: KV cache
+  uz: "Decode paytida oldingi tokenlarning attention key va value vektorlarini qayta hisoblamaslik uchun GPU xotirasida saqlash. Hajmi kontekst uzunligiga proporsional o'sadi."
+  course: system-design
+  lesson: 90
+- term: PagedAttention
+  uz: "KV cache'ni OS'dagi paging kabi kichik bloklarga bo'lib, fizik xotirada uzluksiz bo'lishini talab qilmaydigan usul (vLLM). Fragmentatsiyani kamaytirib, bir vaqtda ko'proq so'rovga joy beradi."
+  course: system-design
+  lesson: 90
+- term: base62
+  uz: "a-z, A-Z va 0-9 dan iborat 62 belgili alfavit bilan kodlash. URL shortener'da qisqa kodlar uchun ishlatiladi: 7 belgi 62^7, ya'ni taxminan 3.52 trillion kombinatsiya beradi."
+  course: system-design
+  lesson: 92
+- term: URL frontier
+  uz: "Web crawler'ning yuklanadigan URL'lar navbati. Klassik dizayn ikki qatlamli: front queue'lar prioritet beradi, back queue'lar har biri bitta host uchun bo'lib, politeness'ni ta'minlaydi."
+  course: system-design
+  lesson: 94
+- term: simhash
+  uz: "Deyarli takror sahifalarni aniqlash usuli: sahifa xususiyatlari vazn bilan bitta 64 bitli fingerprint'ga aylantiriladi; o'xshash sahifalarning fingerprint'lari faqat bir necha bitda farq qiladi."
+  course: system-design
+  lesson: 94
+- term: operational transformation
+  uz: "Collaborative editing usuli (OT): parallel tahrir operatsiyasi boshqa operatsiya qo'llangan holatga moslab o'zgartiriladi (transform), shunda barcha nusxalar bir xil natijaga keladi va foydalanuvchi niyati saqlanadi."
+  course: system-design
+  lesson: 97
+- term: virtual waiting room
+  aliases: [waiting room]
+  uz: "Tizim oldiga qo'yilgan, yuklamani shakllantiruvchi navbat: flash sale kabi keskin yuklamada so'rovlarni rad etish o'rniga foydalanuvchilarni kuttirib, tizimga nazorat qilinadigan tezlikda kiritadi."
+  course: system-design
+  lesson: 99

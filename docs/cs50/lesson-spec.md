@@ -87,7 +87,7 @@ Dars yangi texnik atamani tushuntirsa, uni `content/glossary/` dagi YAML faylga 
   lesson: 23
 ```
 
-- `term` va `aliases` - darslar matnida aynan shu ko'rinishda uchraydigan shakllar. Matnda atama birinchi uchragan joy avtomatik lug'atga bog'lanadi (kod, havola va sarlavhalardan tashqari; atama tushuntirilgan darsning o'zida bog'lanmaydi). Katta harfli qisqartmalar (SRP, DRY) faqat katta harf bilan topiladi.
+- `term` va `aliases` - darslar matnida aynan shu ko'rinishda uchraydigan shakllar. Matnda atama birinchi uchragan joy avtomatik lug'atga bog'lanadi (kod, havola va sarlavhalardan tashqari; atama tushuntirilgan darsning o'zida bog'lanmaydi). Atama faqat o'z kursi darslarida bog'lanadi. Katta harfli qisqartmalar (SRP, DRY) faqat katta harf bilan topiladi.
 - `uz` - 1-2 gap, oddiy matn. `lesson` - atama batafsil tushuntirilgan dars.
 - Umumiy so'zlarni (data, server, test, class) qo'shmang: ular har darsda ortiqcha havolaga aylanadi.
 - Validator tekshiradi: takror yo'q, atama o'z darsida va darslar matnida uchraydi, dars yozilgan.

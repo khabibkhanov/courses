@@ -137,22 +137,22 @@ function checkGlossary() {
   const forms = new Map<string, string>();
   const slugs = new Set<string>();
   for (const g of entries) {
-    if (slugs.has(g.slug)) e.push(`takroriy atama: ${g.term}`);
+    if (slugs.has(g.slug)) e.push(`takroriy atama: ${g.term} (${g.course})`);
     slugs.add(g.slug);
     for (const f of [g.term, ...g.aliases]) {
-      const k = f.toLowerCase();
+      const k = `${g.course}:${f.toLowerCase()}`;
       if (forms.has(k) && forms.get(k) !== g.slug) e.push(`"${f}" ikki atamada: ${forms.get(k)}, ${g.slug}`);
       forms.set(k, g.slug);
     }
     if (FORBIDDEN_DASHES.test(g.term + g.uz + g.aliases.join(""))) e.push(`${g.term}: em/en-dash bor`);
   }
-  const { find } = termMatcher();
   const found = new Set<string>();
   const inOwn = new Set<string>();
   for (const course of listCourses())
     for (const n of publishedNumbers(course)) {
-      const body = getLesson(course, n)?.body ?? "";
-      for (const m of find(prose(body))) {
+      const lesson = getLesson(course, n);
+      // Sarlavha ham hisobga olinadi: atama ba'zan matnda emas, dars nomida turadi.
+      for (const m of termMatcher(course.slug).find(`${lesson?.title ?? ""}\n${prose(lesson?.body ?? "")}`)) {
         found.add(m.entry.slug);
         if (m.entry.course === course.slug && m.entry.lesson === n) inOwn.add(m.entry.slug);
       }
@@ -160,7 +160,7 @@ function checkGlossary() {
   for (const g of entries) {
     const course = getCourse(g.course)!;
     if (!publishedNumbers(course).includes(g.lesson)) e.push(`${g.term}: ${g.course} #${g.lesson} hali yozilmagan`);
-    else if (!found.has(g.slug)) e.push(`${g.term}: darslar matnida uchramaydi`);
+    else if (!found.has(g.slug)) e.push(`${g.term}: kurs darslari matnida uchramaydi`);
     else if (!inOwn.has(g.slug)) e.push(`${g.term}: o'z darsida (${g.course} #${g.lesson}) uchramaydi`);
   }
   return e.map((x) => `lug'at: ${x}`);

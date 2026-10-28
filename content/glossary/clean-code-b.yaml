@@ -1,0 +1,417 @@
+# Clean Code 51-100 atamalari.
+- term: cohesion
+  uz: "Modul ichidagi elementlar qanchalik bitta maqsadga xizmat qilishi. Amaliy qoida: birga o'zgaradigan narsalar birga yashashi kerak."
+  course: clean-code
+  lesson: 51
+- term: coupling
+  uz: "Bir modulni tushunish yoki o'zgartirish uchun boshqa modul haqida qancha bilish kerakligi. Maqsad - modullar orasida kam va oddiy bog'lanish (loose coupling)."
+  course: clean-code
+  lesson: 51
+- term: chuqur modul
+  uz: "Interfeysi kichik va oddiy, lekin orqasida ko'p funksionallik yashiringan modul (Ousterhout). Foydalanuvchi oz narsa biladi va ko'p narsa oladi."
+  course: clean-code
+  lesson: 52
+- term: classitis
+  uz: "Ousterhout atamasi: \"klasslar kichik bo'lsin\" maslahatini ko'r-ko'rona qo'llash natijasida paydo bo'ladigan ko'plab sayoz klasslar. Har biri oddiy, lekin tizimni tushunish uchun hammasini birlashtirish kerak."
+  course: clean-code
+  lesson: 52
+- term: SRP
+  aliases: [Single Responsibility]
+  uz: "Single Responsibility Principle: modul faqat bitta aktor, ya'ni bitta o'zgarish sababi oldida javobgar bo'lishi kerak. Bu \"bitta ish qilsin\" degani emas, balki kodni kim o'zgartirishi bo'yicha guruhlash."
+  course: clean-code
+  lesson: 53
+- term: tasodifiy takrorlanish
+  aliases: [accidental duplication]
+  uz: "Bugun bir xil ko'rinadigan, lekin turli aktorlarning bilimi bo'lgan kod. Uni bitta funksiyaga birlashtirish bir aktor uchun o'zgarish kiritilganda boshqasining hisobini jim buzadi."
+  course: clean-code
+  lesson: 53
+- term: OCP
+  aliases: [Open-Closed]
+  uz: "Open-Closed Principle: modul kengaytirish uchun ochiq, o'zgartirish uchun yopiq bo'lsin. Yangi xatti-harakat mavjud kodni o'zgartirmasdan, abstraksiyaning yangi implementatsiyasi sifatida qo'shiladi."
+  course: clean-code
+  lesson: 54
+- term: LSP
+  uz: "Liskov almashtirish tamoyili: subtip bazaviy tip o'rnida ishlatilganda chaqiruvchi farqni sezmasligi kerak. Bu signatura emas, xatti-harakat shartnomasi haqidagi talab."
+  course: clean-code
+  lesson: 55
+- term: precondition
+  uz: "Metodni chaqirishdan oldin rost bo'lishi kerak bo'lgan shart. LSP bo'yicha subtipning precondition'i bazaviy tipnikidan kuchsizroq yoki teng bo'lishi kerak."
+  course: clean-code
+  lesson: 55
+- term: postcondition
+  uz: "Metod bajarilgandan keyin kafolatlanadigan natija. LSP bo'yicha subtipning postcondition'i bazaviy tipnikidan kuchliroq yoki teng bo'lishi kerak."
+  course: clean-code
+  lesson: 55
+- term: ISP
+  uz: "Interface Segregation Principle: mijozlar o'zlari ishlatmaydigan metodlarga bog'liq bo'lishga majbur qilinmasin. Semiz interfeys o'rniga har bir mijoz guruhi uchun kichik interfeys beriladi."
+  course: clean-code
+  lesson: 56
+- term: DIP
+  aliases: [Dependency Inversion]
+  uz: "Dependency Inversion Principle: yuqori darajali modullar past darajali modullarga emas, ikkalasi ham abstraksiyalarga bog'liq bo'lsin. Asosiy maqsad o'zgaruvchan konkret narsalarga bog'lanishdan qochish."
+  course: clean-code
+  lesson: 57
+- term: dependency injection
+  uz: "Obyekt o'z bog'liqliklarini o'zi yaratmasdan, ularni tashqaridan, odatda konstruktor orqali oladigan texnika. DIP tamoyil, DI esa uni amalga oshirish usullaridan biri."
+  course: clean-code
+  lesson: 57
+- term: kompozitsiya
+  uz: "Obyekt boshqa obyektni o'z ichida saqlab, unga faqat interfeys orqali murojaat qilishi (black-box reuse). GoF tamoyili: yangi funksionallikni meros emas, kompozitsiya orqali olishga harakat qiling."
+  course: clean-code
+  lesson: 58
+- term: fragile base class
+  aliases: [mo'rt ota klass]
+  uz: "Ota klass ommaviy interfeysni o'zgartirmasdan ichki implementatsiyasini o'zgartirganda vorislarning buzilishi. Merosning eng og'riqli muammosi."
+  course: clean-code
+  lesson: 58
+- term: god object
+  aliases: [God service]
+  uz: "Juda ko'p mas'uliyatni o'z ichiga olgan klass yoki servis: ko'p maydon, o'nlab bog'liqlik, bir nechta aktor tomonidan o'zgartiriladi. Odatda Extract Class bilan aktorlar bo'yicha bo'linadi."
+  course: clean-code
+  lesson: 59
+- term: strategy
+  uz: "GoF patterni: algoritmlar oilasini aniqlash, har birini inkapsulyatsiya qilish va ularni almashtiriladigan qilish. TypeScript'da holatsiz strategiya oddiy funksiya bo'lishi mumkin."
+  course: clean-code
+  lesson: 60
+- term: decorator
+  uz: "GoF patterni: obyektni xuddi shu interfeysli o'ram bilan o'rab, unga dinamik qo'shimcha mas'uliyat berish. TypeScript'ning @Decorator sintaksisi bilan adashtirmang."
+  course: clean-code
+  lesson: 60
+- term: test piramidasi
+  aliases: [test pyramid]
+  uz: "Mike Cohn modeli: pastda ko'p unit testlar, o'rtada service testlar, tepada kam UI testlar. Qoida: daraja qancha yuqori bo'lsa, testlar shuncha kam bo'lsin."
+  course: clean-code
+  lesson: 61
+- term: testing trophy
+  uz: "Kent C. Dodds modeli: static, unit, integration va end-to-end qatlamlari, eng keng qismi integration. Testlar dasturdan qanday foydalanilishiga qanchalik o'xshasa, shuncha ko'p ishonch beradi."
+  course: clean-code
+  lesson: 61
+- term: unit test
+  uz: "Kichik birlikni (funksiya, klass yoki modul) tez va izolyatsiyada tekshiradigan test. \"Birlik\" va izolyatsiya darajasi mualliflarga qarab farq qiladi (solitary va sociable)."
+  course: clean-code
+  lesson: 61
+- term: integratsion test
+  aliases: [integration test]
+  uz: "Bir nechta qismning yoki kodning real tashqi tizim (masalan, ma'lumotlar bazasi) bilan birga to'g'ri ishlashini tekshiradigan test."
+  course: clean-code
+  lesson: 68
+- term: e2e
+  aliases: [end-to-end]
+  uz: "End-to-end test: tizimni foydalanuvchi kabi boshidan oxirigacha, barcha qatlamlar bilan tekshiradi. Eng ko'p ishonch beradi, lekin sekin va beqaror, shuning uchun soni kam bo'ladi."
+  course: clean-code
+  lesson: 61
+- term: F.I.R.S.T.
+  uz: "Toza testlarning besh xususiyati: Fast (tez), Independent (mustaqil), Repeatable (takrorlanuvchi), Self-validating (o'zi tekshiradi), Timely (o'z vaqtida)."
+  course: clean-code
+  lesson: 62
+- term: AAA
+  aliases: [Arrange-Act-Assert]
+  uz: "Testning ichki tuzilishi: avval holat tayyorlanadi (Arrange), keyin amal bajariladi (Act), so'ng natija tekshiriladi (Assert). BDD'dagi ekvivalenti Given-When-Then."
+  course: clean-code
+  lesson: 62
+- term: fixture
+  uz: "Test ishlashi uchun oldindan tayyorlanadigan holat va ma'lumotlar, shu jumladan kerakli test double'lar."
+  course: clean-code
+  lesson: 62
+- term: test smell
+  uz: "Testning sifati past ekanini ko'rsatadigan belgi (Meszaros katalogi): Obscure Test, Assertion Roulette, Erratic Test, Fragile Test, Slow Tests kabi."
+  course: clean-code
+  lesson: 62
+- term: Mystery Guest
+  uz: "Test smell: testga muhim ma'lumot testdan tashqarida (JSON faylda yoki umumiy fixture'da) turadi, shuning uchun test nimani tekshirayotgani ko'rinmaydi."
+  course: clean-code
+  lesson: 62
+- term: Assertion Roulette
+  uz: "Test smell: testda ko'p tasdiq bor va yiqilganda qaysi biri nima uchun yiqilgani tushunarsiz."
+  course: clean-code
+  lesson: 63
+- term: TDD
+  uz: "Test-driven development: avval yiqiladigan kichik test yoziladi, keyin uni o'tkazadigan kod, so'ng tuzilma tozalanadi. Ish qisqa red-green-refactor sikllari bilan oldinga siljiydi."
+  course: clean-code
+  lesson: 64
+- term: red-green-refactor
+  uz: "TDD ritmi: red - yiqiladigan kichik test, green - testni tez o'tkazish, refactor - takror va nuqsonlarni olib tashlash. \"Ishlaydimi\" va \"tozami\" savollari alohida bosqichlarda hal qilinadi."
+  course: clean-code
+  lesson: 64
+- term: Fake It
+  uz: "TDD'dagi green bar usuli: test kutgan konstantani qaytarib, testni darhol o'tkazish, keyin refactor bosqichida konstantani asta-sekin haqiqiy hisob bilan almashtirish."
+  course: clean-code
+  lesson: 64
+- term: Triangulate
+  uz: "TDD usuli: ikkinchi, boshqa qiymatli misol qo'shib umumlashtirishni majburiy qilish. Qanday umumlashtirishni bilmaganingizda ishlatiladi."
+  course: clean-code
+  lesson: 64
+- term: bundling
+  uz: "Ousterhout yondashuvi: avval dizayn birligini (metod yoki klass) yozib, o'sha sessiyada darhol unga unit testlar qo'shish. TDD'ga muqobil sifatida munozarada shunday nomlangan."
+  course: clean-code
+  lesson: 65
+- term: test double
+  uz: "Test paytida haqiqiy obyekt o'rnini bosuvchi har qanday obyekt uchun umumiy atama (Meszaros). Turlari: dummy, fake, stub, spy va mock."
+  course: clean-code
+  lesson: 66
+- term: stub
+  uz: "Test davomida chaqiruvlarga oldindan tayyorlangan javob qaytaradigan test double. Odatda state verification bilan birga ishlatiladi."
+  course: clean-code
+  lesson: 66
+- term: mock
+  uz: "Qanday chaqiruvlarni qabul qilishi kerakligi haqida oldindan kutishlar bilan dasturlangan test double. Mock har doim behavior verification ishlatadi; kundalik tilda barcha double'lar ham mock deyiladi."
+  course: clean-code
+  lesson: 66
+- term: state verification
+  uz: "SUT bilan harakat qilingandan keyin uning va hamkorlarining holatini tekshirish uslubi. Implementatsiyaga kamroq bog'lanadi va refaktoringga chidamli."
+  course: clean-code
+  lesson: 66
+- term: behavior verification
+  uz: "SUT hamkorlarini to'g'ri chaqirganini tekshirish uslubi. Faqat state verification yetarli bo'lmaganda, masalan command'lar uchun ishlatish tavsiya qilinadi."
+  course: clean-code
+  lesson: 66
+- term: mockist
+  uz: "London maktabi TDD uslubi: qiziqarli xatti-harakatga ega har qanday hamkor uchun mock ishlatiladi va ish tashqaridan ichkariga boriladi. Testlar implementatsiyaga ko'proq bog'lanadi."
+  course: clean-code
+  lesson: 66
+- term: classicist
+  uz: "Detroit maktabi TDD uslubi: imkoni bo'lsa real obyektlar ishlatiladi, test double faqat real narsa noqulay (sekin, tashqi, deterministik emas) bo'lganda olinadi."
+  course: clean-code
+  lesson: 66
+- term: Fragile Test
+  uz: "Ishga aloqasi bo'lmagan o'zgarishdan, masalan refaktoringdan yiqiladigan test. Ko'pincha implementatsiya detallariga bog'lanish natijasi."
+  course: clean-code
+  lesson: 62
+- term: Testcontainers
+  uz: "Test kodidan Docker konteynerlarini boshqaradigan kutubxona. Integratsion testlar real ma'lumotlar bazasi (masalan, PostgreSQL) bilan ishlashi uchun ishlatiladi."
+  course: clean-code
+  lesson: 68
+- term: Testing Library
+  uz: "Komponentlarni foydalanuvchi ko'rgani kabi, DOM node'lar, role va matn orqali test qilishga yo'naltirilgan kutubxona. Implementatsiya detallarini tekshirishdan qochishga undaydi."
+  course: clean-code
+  lesson: 69
+- term: implementatsiya detallari
+  uz: "Kod foydalanuvchilari odatda ishlatmaydigan, ko'rmaydigan va bilmaydigan narsalar: state nomi, ichki handler, qaysi hook ishlatilgani, CSS klasslar. Testlar ularga bog'lanmasligi kerak."
+  course: clean-code
+  lesson: 69
+- term: coverage
+  uz: "Testlar paytida kodning qancha qismi (qator, ifoda, tarmoq, funksiya) ishga tushganini ko'rsatadigan o'lchov. Past coverage ishonchli signal, yuqori coverage esa to'g'rilik kafolati emas."
+  course: clean-code
+  lesson: 70
+- term: mutation testing
+  uz: "Kodga ataylab kichik xatolar (mutant) kiritib, testlar ularni topishini tekshirish usuli. U \"kodda xato bo'lsa, testlar buni ushlaydimi?\" degan savolga javob beradi."
+  course: clean-code
+  lesson: 70
+- term: mutant
+  uz: "Mutation testing'da kodga kiritilgan kichik mexanik o'zgarish, masalan >= o'rniga >. Test yiqilsa mutant killed, hamma testlar o'tsa survived bo'ladi."
+  course: clean-code
+  lesson: 70
+- term: refaktoring
+  aliases: [refactoring]
+  uz: "Kuzatiladigan xatti-harakatni o'zgartirmasdan, kodning ichki tuzilishini kichik xavfsiz qadamlar bilan yaxshilash. Maqsad iqtisodiy: keyingi o'zgarishlarni arzonlashtirish."
+  course: clean-code
+  lesson: 71
+- term: ikki shlyapa
+  uz: "Kent Beck metaforasi: dasturchi yo funksionallik qo'shadi, yo refaktoring qiladi, bir vaqtda faqat bittasini. Refaktoring paytida test qizarsa, xatti-harakat o'zgargan."
+  course: clean-code
+  lesson: 71
+- term: preparatory refactoring
+  uz: "Yangi talabni qo'shishdan oldin kodni bu talab oson tushadigan shaklga keltirish. Avval o'zgarishni oson qiling, keyin oson o'zgarishni qiling."
+  course: clean-code
+  lesson: 71
+- term: Rule of Three
+  uz: "Don Roberts qoidasi: birinchi marta shunchaki qiling, ikkinchi marta takrorlang, uchinchi marta refaktoring qiling. Noto'g'ri abstraksiyadan himoya qiladi."
+  course: clean-code
+  lesson: 71
+- term: code smell
+  aliases: [smell]
+  uz: "Odatda tizimdagi chuqurroq muammoga ishora qiluvchi sirtqi belgi (Fowler va Beck). Smell muammoning o'zi emas: u qayerga diqqat bilan qarash kerakligini aytadi."
+  course: clean-code
+  lesson: 72
+- term: Long Function
+  uz: "Code smell: funksiya nima qilishi va qanday qilishi o'rtasidagi semantik masofa katta. Komment talab qiladigan har bir blok funksiyaga chiqarish nomzodi."
+  course: clean-code
+  lesson: 72
+- term: Long Parameter List
+  uz: "Code smell: funksiya parametrlari ko'p, pozitsion argumentlar aralashadi va boolean'lar chaqiruv joyida hech narsa demaydi. Davo: Introduce Parameter Object, Preserve Whole Object."
+  course: clean-code
+  lesson: 72
+- term: Global Data
+  uz: "Code smell: kod bazasining istalgan joyidan o'zgartirish mumkin bo'lgan ma'lumot (global o'zgaruvchi, static field, singleton). Asosiy himoya - Encapsulate Variable."
+  course: clean-code
+  lesson: 73
+- term: Divergent Change
+  uz: "Code smell: bitta modul turli sabablarga ko'ra turli yo'llar bilan o'zgaradi. Modulning bir nechta aktori bor, SRP buzilishiga yaqin."
+  course: clean-code
+  lesson: 73
+- term: Shotgun Surgery
+  uz: "Code smell: bitta o'zgarish uchun ko'p turli klasslarda mayda tuzatishlar kerak bo'ladi. Divergent Change'ning teskarisi."
+  course: clean-code
+  lesson: 73
+- term: Large Class
+  uz: "Code smell: klass juda ko'p ish qilishga urinadi, unda ko'p maydon va takror paydo bo'ladi. Maydon guruhlari alohida klassga chiqarish nomzodi."
+  course: clean-code
+  lesson: 73
+- term: Extract Class
+  uz: "Refaktoring: birga ishlatiladigan maydonlar va ularga tegishli metodlarni katta klassdan yangi klassga ajratish."
+  course: clean-code
+  lesson: 73
+- term: Feature Envy
+  uz: "Code smell: funksiya o'z modulidan ko'ra boshqa modulning ma'lumotlari bilan ko'proq ishlaydi. Davo - Move Function bilan uni ma'lumot yoniga ko'chirish."
+  course: clean-code
+  lesson: 74
+- term: Data Clumps
+  uz: "Code smell: bir xil maydonlar yoki parametrlar guruhi ko'p joyda birga yuradi. Birini o'chirsangiz qolganlari ma'nosini yo'qotsa, ular o'z obyektiga muhtoj."
+  course: clean-code
+  lesson: 74
+- term: Repeated Switches
+  uz: "Code smell: bir xil shartli mantiq (switch yoki if/else zanjiri) bir necha joyda takrorlanadi va yangi holat qo'shilganda hammasini topish kerak bo'ladi."
+  course: clean-code
+  lesson: 74
+- term: Move Function
+  uz: "Refaktoring: funksiyani u ko'proq ishlatadigan ma'lumot yoki kontekst joylashgan modulga ko'chirish. Feature Envy'ning asosiy davosi."
+  course: clean-code
+  lesson: 74
+- term: Message Chains
+  uz: "Code smell: mijoz bir obyektdan boshqasini, undan yana boshqasini so'raydi. Bu mijozni navigatsiya tuzilmasiga bog'laydi."
+  course: clean-code
+  lesson: 75
+- term: Middle Man
+  uz: "Code smell: klass interfeysining katta qismi boshqa klassga shunchaki uzatishdan iborat. Davo - Remove Middle Man yoki Inline Function."
+  course: clean-code
+  lesson: 75
+- term: Refused Bequest
+  uz: "Code smell: subklass ota klassdan meros qilib olinganlarning faqat bir qismini ishlatadi. Ko'pincha zaif smell, lekin ba'zan ierarxiya noto'g'riligini bildiradi."
+  course: clean-code
+  lesson: 75
+- term: Change Function Declaration
+  uz: "Refaktoring: funksiya nomini o'zgartirish, parametr qo'shish yoki olib tashlash. Oddiy mexanika yoki eski va yangi imzo yonma-yon yashaydigan migratsiya mexanikasi bilan bajariladi."
+  course: clean-code
+  lesson: 76
+- term: Split Phase
+  uz: "Refaktoring: ikki xil ishni ketma-ket qiladigan kodni oraliq ma'lumot strukturasi bilan bog'langan ikki alohida bosqichga bo'lish, masalan parse qilish va qayta ishlash."
+  course: clean-code
+  lesson: 76
+- term: Decompose Conditional
+  uz: "Refaktoring: murakkab shartni, then va else tarmoqlarini niyatni aytuvchi nomli funksiyalarga chiqarish. O'quvchi shartni tahlil qilmaydi, uni o'qiydi."
+  course: clean-code
+  lesson: 77
+- term: legacy kod
+  aliases: [legacy code]
+  uz: "Feathers ta'rifi bo'yicha testlarsiz kod: yoshi yoki tili emas, uni xavfsiz o'zgartirib bo'lmasligi muhim. Kecha yozilgan testsiz kod ham legacy."
+  course: clean-code
+  lesson: 79
+- term: seam
+  uz: "Dasturdagi shunday joyki, u yerda xatti-harakatni o'sha joyni tahrirlamasdan o'zgartirish mumkin (Feathers). Masalan, konstruktor orqali berilgan bog'liqlikni testda almashtirish."
+  course: clean-code
+  lesson: 79
+- term: characterization test
+  uz: "Kod nima qilishi kerakligini emas, hozir aslida nima qilishini qayd etadigan test. Legacy kodni o'zgartirishdan oldin mavjud xatti-harakatni himoya qiladi."
+  course: clean-code
+  lesson: 79
+- term: Sprout Method
+  uz: "Legacy kod usuli: yangi funksionallikni alohida testlangan yangi metodda yozib, eski metoddan faqat bitta qator bilan chaqirish."
+  course: clean-code
+  lesson: 79
+- term: Strangler Fig
+  aliases: [Strangler Fig Application]
+  uz: "Eski tizimni qayta yozish o'rniga, yangi tizimni uning atrofida o'stirib, qism-qism almashtirish naqshi. Oxirida eski tizim olib tashlanadi."
+  course: clean-code
+  lesson: 80
+- term: Branch by Abstraction
+  uz: "Kod bazasi ichida katta almashtirish usuli: almashtiriladigan komponent oldiga abstraksiya qo'yilib, implementatsiya uning ortida asta-sekin almashtiriladi. Tizim har qadamdan keyin release qilinadi."
+  course: clean-code
+  lesson: 80
+- term: Clean Architecture
+  uz: "Robert Martin arxitekturasi: entities, use cases, interface adapters va frameworks doiralari. Manba kod bog'liqliklari faqat ichkariga, biznes qoidalari tomon yo'naladi."
+  course: clean-code
+  lesson: 81
+- term: dependency rule
+  uz: "Clean Architecture qoidasi: manba kod bog'liqliklari faqat ichkariga, yuqori darajali policy tomon yo'nalishi kerak. Ichki doira tashqi doira haqida hech narsa bilmaydi."
+  course: clean-code
+  lesson: 81
+- term: use case
+  uz: "Ilovaga xos biznes qoidasi: entity'lar bilan ma'lumot oqimini boshqaradi va ilova nima qilishini ifodalaydi. Framework va bazadan mustaqil bo'ladi."
+  course: clean-code
+  lesson: 81
+- term: hexagonal arxitektura
+  aliases: [hexagonal, Ports and Adapters]
+  uz: "Cockburn arxitekturasi: ilova yadrosi tashqi dunyo bilan portlar orqali gaplashadi, muayyan texnologiyalar esa adapterlar orqali ulanadi. Asosiy farq - ichki va tashqi."
+  course: clean-code
+  lesson: 82
+- term: modulli monolit
+  uz: "Bitta deploy qilinadigan ilova, lekin ichida aniq va majburiy chegarali modullar bor. Har bir modul o'z domeni va ma'lumotiga egalik qiladi va faqat ommaviy API orqali gaplashadi."
+  course: clean-code
+  lesson: 83
+- term: DDD
+  uz: "Domain-Driven Design (Eric Evans): domen modelini markazga qo'yadigan yondashuv. Taktik qismi entity, value object, aggregate, repository va factory bloklaridan iborat."
+  course: clean-code
+  lesson: 84
+- term: entity
+  uz: "DDD'da vaqt davomida saqlanadigan identifikatorga ega obyekt. Ikki entity tengligi atributlari bilan emas, id bilan aniqlanadi."
+  course: clean-code
+  lesson: 84
+- term: aggregate
+  uz: "Bitta birlik sifatida qaraladigan domen obyektlari to'plami. Tashqi kod faqat ildiz (root) bilan gaplashadi, aggregate butunligicha yuklanadi va saqlanadi."
+  course: clean-code
+  lesson: 84
+- term: CCP
+  uz: "Common Closure Principle: bir xil sabab bilan va bir vaqtda o'zgaradigan klasslarni bitta komponentga yig'ing. SRP'ning komponent darajasidagi ko'rinishi."
+  course: clean-code
+  lesson: 85
+- term: ADP
+  uz: "Acyclic Dependencies Principle: komponentlarning bog'liqlik grafigida sikl bo'lmasligi kerak."
+  course: clean-code
+  lesson: 85
+- term: SDP
+  uz: "Stable Dependencies Principle: barqarorlik yo'nalishida bog'laning, ya'ni komponent o'zidan barqarorroq komponentlarga bog'liq bo'lsin."
+  course: clean-code
+  lesson: 85
+- term: SAP
+  uz: "Stable Abstractions Principle: komponent qanchalik barqaror bo'lsa, shunchalik abstrakt bo'lsin, shunda u o'zgartirilmasdan kengaytiriladi."
+  course: clean-code
+  lesson: 85
+- term: instability
+  uz: "Komponent beqarorligi metrikasi: I = Fan-out / (Fan-in + Fan-out). 0 - maksimal barqaror, 1 - maksimal beqaror."
+  course: clean-code
+  lesson: 85
+- term: main sequence
+  uz: "Abstraktlik va beqarorlik tekisligidagi A + I = 1 chizig'i. Komponentning undan masofasi D = |A + I - 1| ko'rib chiqish uchun nomzodlarni topadi."
+  course: clean-code
+  lesson: 85
+- term: zone of pain
+  uz: "Barqaror va konkret komponentlar zonasi: ko'p narsa ularga bog'liq, lekin ularni kengaytirib bo'lmaydi, faqat o'zgartirish mumkin. Klassik misol - baza sxemasi."
+  course: clean-code
+  lesson: 85
+- term: interleaving
+  uz: "Bir nechta mantiqiy oqim bitta resursga navbat bilan murojaat qilib, ularning qadamlari aralashib ketishi. JS'da har bir await interleaving nuqtasi."
+  course: clean-code
+  lesson: 87
+- term: check-then-act
+  uz: "Avval holatni tekshirib, keyin unga qarab o'zgartirish naqshi. Ikki qadam orasida holat eskirishi mumkin, shuning uchun ular atomik operatsiyaga birlashtirilishi kerak."
+  course: clean-code
+  lesson: 87
+- term: idempotency key
+  uz: "Klient har bir mantiqiy amal uchun yaratadigan noyob kalit. Server u bilan takroriy so'rovni aniqlab, amalni ikkinchi marta bajarmaydi."
+  course: clean-code
+  lesson: 87
+- term: narrowing
+  uz: "TypeScript kompilyatori typeof, in, instanceof yoki discriminated union tekshiruvlaridan keyin qiymat tipini aniqroq variantga toraytirishi. as assertion'ga xavfsiz muqobil."
+  course: clean-code
+  lesson: 91
+- term: Server Component
+  uz: "Next.js App Router'da standart komponent turi: faqat serverda ishlaydi, ma'lumotni manbaga yaqin yuklaydi va sirlarni client'ga ochmaydi."
+  course: clean-code
+  lesson: 93
+- term: Server Action
+  uz: "\"use server\" bilan belgilangan va client'dan chaqiriladigan server funksiyasi. Aslida ommaviy endpoint, shuning uchun HTTP controller kabi tekshiruv bilan yoziladi."
+  course: clean-code
+  lesson: 93
+- term: DAL
+  aliases: [Data Access Layer]
+  uz: "Data Access Layer: ma'lumot yuklash, authorization tekshiruvi va client'ga qaytariladigan minimal DTO'ni bitta joyda nazorat qiladigan server-only ichki qatlam."
+  course: clean-code
+  lesson: 93
+- term: N+1
+  uz: "Ro'yxat olingandan keyin har bir element uchun alohida qo'shimcha so'rov yuborish muammosi. So'rovlar soni ma'lumot hajmi bilan birga o'sadi."
+  course: clean-code
+  lesson: 95
+- term: premature optimization
+  uz: "Knuth iborasi: muhim bo'lmagan qismlarning tezligi haqida erta qayg'urish debugging va texnik xizmatga zarar keltiradi. Lekin muhim 3% joyni o'lchab optimallashtirish kerak."
+  course: clean-code
+  lesson: 99

@@ -84,12 +84,14 @@ const NO_TERMS = new Set(["a", "code", "pre", "h1", "h2", "h3", "h4", "kbd", "bu
 /**
  * Lug'atdagi har atamaning darsdagi birinchi uchrashi lug'atga havola bo'ladi
  * (atama tushuntirilgan darsning o'zida emas). Faqat file.data.lesson berilganda ishlaydi.
+ * Atama faqat o'z kursi darslarida bog'lanadi: "aggregate", "partition" kabi so'zlar
+ * boshqa kursda boshqa ma'noda ishlatiladi.
  */
 function rehypeGlossary() {
   return (tree: Root, file: VFile) => {
     const lesson = file.data.lesson as { course: string; n: number } | undefined;
     if (!lesson) return;
-    const { find } = termMatcher();
+    const { find } = termMatcher(lesson.course);
     const seen = new Set<string>();
     visitParents(tree, "text", (node: Text, ancestors) => {
       if (ancestors.some((a) => a.type === "element" && (NO_TERMS.has(a.tagName) || a.properties.dataPlayground !== undefined))) return;
@@ -99,7 +101,7 @@ function rehypeGlossary() {
       for (const { start, end, entry } of find(node.value)) {
         if (seen.has(entry.slug)) continue;
         seen.add(entry.slug);
-        if (entry.course === lesson.course && entry.lesson === lesson.n) continue;
+        if (entry.lesson === lesson.n) continue;
         if (start > last) parts.push({ type: "text", value: node.value.slice(last, start) });
         parts.push({
           type: "element",

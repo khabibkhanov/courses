@@ -1,0 +1,424 @@
+# Clean Code 1-50 atamalari.
+- term: kognitiv yuk
+  aliases: [cognitive load]
+  uz: "Vazifani bajarish uchun dasturchi bilishi va boshida ushlab turishi kerak bo'lgan narsalar miqdori. Kam qatorli yechim har doim ham kam yukli emas; nomlar, tiplar va lokallik yukni kamaytiradi."
+  course: clean-code
+  lesson: 2
+- term: lokallik
+  uz: "Savolga javob savol tug'ilgan joyda bo'lishi tamoyili: tip, qoida nomi va bog'liq kod shu yerda ko'rinsa, o'quvchi fayllar o'rtasida sakramaydi. Kognitiv yukni kamaytirishning eng samarali usuli."
+  course: clean-code
+  lesson: 2
+- term: change amplification
+  uz: "Murakkablik belgisi: oddiy ko'ringan o'zgarish kodning ko'p joyini o'zgartirishni talab qiladi. Masalan, valyuta formati har bir sahifada alohida yozilgan bo'lsa."
+  course: clean-code
+  lesson: 3
+- term: unknown unknowns
+  uz: "Murakkablikning eng yomon belgisi (Ousterhout): o'zgarish uchun qaysi kodga tegish yoki qaysi ma'lumot kerakligi umuman ko'rinmaydi. Uni boshqa belgilardan farqli ravishda oldindan sezib bo'lmaydi."
+  course: clean-code
+  lesson: 3
+- term: obscurity
+  uz: "Murakkablik sababi: muhim ma'lumot kodda ko'rinmaydi. Umumiy nomlar, hujjatlashtirilmagan birliklar va bir tushuncha uchun ikki xil nom obscurity hosil qiladi."
+  course: clean-code
+  lesson: 3
+- term: essential murakkablik
+  uz: "Muammoning o'zidan kelib chiqadigan murakkablik, masalan soliq qoidalari yoki yuridik holatlar. Uni yo'q qilib bo'lmaydi, faqat modullarga bo'lib tartiblash va yashirish mumkin."
+  course: clean-code
+  lesson: 3
+- term: accidental murakkablik
+  uz: "Yechim sifatida o'zimiz qo'shgan murakkablik: noqulay abstraksiyalar, yashirin bog'liqliklar, mos kelmagan vositalar, tarixiy qatlamlar. U bizning qarorlarimiz natijasi va uning o'sishini to'xtatish mumkin."
+  course: clean-code
+  lesson: 3
+- term: texnik qarz
+  uz: "Ward Cunningham metaforasi: hali to'liq tushunilmagan yechimni tez yetkazish qarz olishga o'xshaydi, uni qayta yozish esa qarzni qaytarish. Qaytarilmagan qarz har bir keyingi o'zgarishda foiz sifatida to'lanadi."
+  course: clean-code
+  lesson: 4
+- term: cruft
+  uz: "Past ichki sifat yig'adigan keraksiz chigallik: kodning hozirgi holati va ideal holati orasidagi farq (Fowler). U har bir yangi funksiyani sekinlashtiradi va texnik qarzdagi foizga mos keladi."
+  course: clean-code
+  lesson: 4
+- term: taktik dasturlash
+  uz: "Har bir vazifani imkon qadar tez ishlaydigan qilib yopish uslubi (Ousterhout). Qisqa muddatda tez, lekin kichik murakkabliklarni tizimli to'playdi va uzoq muddatda ishni sekinlashtiradi."
+  course: clean-code
+  lesson: 5
+- term: strategik dasturlash
+  uz: "Ishlaydigan kod yetarli emas, asosiy maqsad yaxshi dizayn degan yondashuv (Ousterhout). Dizaynga doimiy kichik investitsiya kiritiladi, taxminan vaqtning 10-20% i."
+  course: clean-code
+  lesson: 5
+- term: tactical tornado
+  uz: "Boshqalardan ancha tez kod chiqaradigan, lekin butunlay taktik ishlaydigan dasturchi obrazi. Uning tezligi ko'rinadi, narxini esa keyin uning kodiga tegadigan boshqalar to'laydi."
+  course: clean-code
+  lesson: 5
+- term: ETC
+  aliases: [Easier to Change]
+  uz: "Pragmatic Programmer tamoyili: yaxshi dizayn yomon dizayndan o'zgartirishga osonroq. Har bir qarorda bu tizimni o'zgartirishni osonlashtiradimi degan savol beriladi."
+  course: clean-code
+  lesson: 5
+- term: singan derazalar
+  aliases: [singan deraza]
+  uz: "Pragmatic Programmer g'oyasi: tuzatilmagan yomon kod yoki qaror boshqalarga sifat hech kimni qiziqtirmasligini bildiradi va keyingi beparvolikni osonlashtiradi. Tuzatish yoki hech bo'lmaganda belgilab qo'yish kerak."
+  course: clean-code
+  lesson: 5
+- term: Boy Scout qoidasi
+  uz: "Martin qoidasi: kodga har safar tegganingizda uni topganingizdan sal tozaroq qoldiring. Kichik doimiy yaxshilanishlar katta refaktoring sprintlaridan samaraliroq."
+  course: clean-code
+  lesson: 6
+- term: tidying
+  uz: "Kent Beck atamasi: kichik, xavfsiz, xatti-harakatni o'zgartirmaydigan tuzilma o'zgarishi, refaktoringning eng kichik birligi. Masalan, guard clause qo'shish yoki o'lik kodni o'chirish."
+  course: clean-code
+  lesson: 6
+- term: simple design
+  aliases: [oddiy dizayn]
+  uz: "Kent Beck'ning oddiy dizayn to'rt qoidasi, ustuvorlik tartibida: testlardan o'tadi, niyatni ochadi, takror yo'q, elementlar eng kam. Ularga doimiy amal qilinsa, yaxshi dizayn asta-sekin paydo bo'ladi."
+  course: clean-code
+  lesson: 7
+- term: DRY
+  uz: "Don't Repeat Yourself: har bir bilim tizimda bitta aniq va ishonchli ifodaga ega bo'lishi kerak. Tamoyil kod matni takrori haqida emas, bilim va niyat takrori haqida."
+  course: clean-code
+  lesson: 8
+- term: wrong abstraction
+  aliases: [noto'g'ri abstraksiya]
+  uz: "Sandi Metz ogohlantirishi: takror noto'g'ri abstraksiyadan ancha arzon. Yangi holatlar flag va shartlar bilan umumiy funksiyaga majburlanganda abstraksiya chirib, o'zgartirish qiyinlashadi."
+  course: clean-code
+  lesson: 8
+- term: AHA
+  uz: "Avoid Hasty Abstractions (Kent C. Dodds): foydalanish holatlarini yaxshi tushunmaguncha takrordan qo'rqmang. Bir nechta haqiqiy holat paydo bo'lganda umumiylik o'zi ko'rinadi."
+  course: clean-code
+  lesson: 8
+- term: YAGNI
+  uz: "You Aren't Gonna Need It: hozir kerak bo'lmagan imkoniyatni kelajak uchun oldindan qurmang. YAGNI nima qurilishini cheklaydi, lekin kodni o'zgartirishga oson qiladigan dizayn ishiga taalluqli emas."
+  course: clean-code
+  lesson: 9
+- term: KISS
+  uz: "Keep It Simple, Stupid: muammoni hal qiladigan eng oddiy yechimni tanlang. YAGNI nima qurishni, KISS esa kerakli narsani qanday qurishni aytadi; oddiy degani kam murakkablik, kam qator emas."
+  course: clean-code
+  lesson: 9
+- term: speculative generality
+  uz: "Fowler code smell'i: bir kun kerak bo'ladi deb qo'shilgan umumiylik. Belgilari: hech narsa qilmaydigan abstrakt klasslar, keraksiz delegatsiya, ishlatilmaydigan parametrlar va hook'lar."
+  course: clean-code
+  lesson: 9
+- term: mental mapping
+  uz: "O'quvchi noaniq nomni miyasida haqiqiy tushunchaga xaritalashi kerak bo'lgan holat (Martin), masalan d degan o'zgaruvchi kunlarni bildirsa. Bu ish qancha ko'p bo'lsa, kod shuncha qimmat."
+  course: clean-code
+  lesson: 11
+- term: disinformatsiya
+  uz: "O'quvchini adashtiradigan, yolg'on gapiradigan nom: tuzilma, xatti-harakat, domen yoki eskirgan ma'no haqida noto'g'ri signal beradi. Yolg'on nom noaniq nomdan xavfliroq, chunki unga ishonishadi."
+  course: clean-code
+  lesson: 12
+- term: magic number
+  uz: "Ma'nosi o'zidan ko'rinmaydigan va kodga to'g'ridan-to'g'ri yozilgan raqam. Uni nomlangan konstanta bilan almashtirish ma'noni ochadi va qidirishni osonlashtiradi (Replace Magic Literal)."
+  course: clean-code
+  lesson: 13
+- term: magic string
+  uz: "Ma'nosi yoki ruxsat etilgan qiymatlari koddan ko'rinmaydigan satr literal. TypeScript'da ular uchun literal union tip ko'pincha alohida konstantadan yaxshiroq."
+  course: clean-code
+  lesson: 13
+- term: Hungarian notation
+  aliases: [Hungarian]
+  uz: "Nom boshiga tipni bildiruvchi prefiks qo'yish odati, masalan strName yoki iCount. Zaif tipli tillar davridan qolgan; zamonaviy tip tizimida foydasiz va tip o'zgarganda nom yolg'on bo'lib qoladi."
+  course: clean-code
+  lesson: 14
+- term: ubiquitous language
+  uz: "Eric Evans g'oyasi: dasturchilar va domen ekspertlari domen modeliga asoslangan umumiy, qat'iy tilni birga quradi va u kodda ham ishlatiladi. Talab va xatoni tarjima qilish narxini pasaytiradi."
+  course: clean-code
+  lesson: 17
+- term: problem domain
+  uz: "Biznes sohasining atamalari: Trip, Refuel, assignDriver kabi. Domen qatlamidagi kod nomlarini shu tildan oladi va ularning ma'nosini domen ekspertidan so'rash mumkin."
+  course: clean-code
+  lesson: 17
+- term: solution domain
+  uz: "Informatika atamalari, algoritm va pattern nomlari: JobQueue, LruCache kabi. Kodni dasturchilar o'qigani uchun bunday nomlar ayniqsa infratuzilma qatlamida o'rinli."
+  course: clean-code
+  lesson: 17
+- term: Don't Pun
+  uz: "Izchillik qoidasi: bitta so'zni ikki xil ma'noda ishlatmang. Agar add odatda ikki qiymatni birlashtirsa, kolleksiyaga element qo'shuvchi metodni insert yoki append deb atash kerak."
+  course: clean-code
+  lesson: 18
+- term: parallel change
+  aliases: [expand and contract, expand/contract]
+  uz: "Nomni yoki interfeysni bosqichma-bosqich o'zgartirish naqshi: avval yangi shakl eskisi yonida qo'shiladi (expand), chaqiruvchilar ko'chiriladi (migrate), keyin eski shakl olib tashlanadi (contract)."
+  course: clean-code
+  lesson: 20
+- term: stepdown qoidasi
+  aliases: [stepdown]
+  uz: "Kod yuqoridan pastga hikoya kabi o'qilishi kerak: har bir funksiyadan keyin u chaqiradigan keyingi darajadagi funksiyalar keladi. O'quvchi detallarga qancha chuqur tushishni o'zi tanlaydi."
+  course: clean-code
+  lesson: 22
+- term: abstraksiya darajasi
+  uz: "Kod qatorini tushunish uchun kerak bo'lgan bilim darajasi: biznes, domen modeli yoki texnologiya. Bir funksiyadagi qatorlar bir darajada bo'lishi kerak, uch daraja aralashsa, bo'lish vaqti kelgan."
+  course: clean-code
+  lesson: 22
+- term: pass-through method
+  aliases: [pass-through]
+  uz: "Argumentlarini deyarli o'zgartirmasdan boshqa metodga uzatadigan metod (Ousterhout). U yangi interfeys qo'shadi, lekin hech narsani yashirmaydi, ya'ni sayoz qatlam belgisi."
+  course: clean-code
+  lesson: 22
+- term: flag argument
+  aliases: [boolean flag]
+  uz: "Funksiya xatti-harakatini tanlash uchun uzatiladigan boolean argument. Literal true yoki false chaqiruv joyida ma'nosiz ko'rinadi va funksiya ikki ish qilayotganini bildiradi; nomli funksiyalar yoki literal union yaxshiroq."
+  course: clean-code
+  lesson: 23
+- term: output argument
+  aliases: [output argumentlar]
+  uz: "Natija berish uchun o'zgartiriladigan argument, masalan appendFooter(report). O'quvchi argumentni kirish deb kutgani uchun chalkashtiradi; egasining metodi yoki yangi qiymat qaytarish aniqroq."
+  course: clean-code
+  lesson: 23
+- term: Introduce Parameter Object
+  uz: "Fowler refaktoringi: doim birga yuradigan parametrlarni bitta obyektga yig'ish. Asosiy qiymat imzo qisqarishida emas, yangi tushuncha nomlanishida, masalan startDate va endDate DateRange bo'ladi."
+  course: clean-code
+  lesson: 23
+- term: side effect
+  aliases: [yon ta'sir]
+  uz: "Funksiya qiymat qaytarishdan tashqari qiladigan kuzatiladigan o'zgarish: argument, global holat yoki tashqi tizimni o'zgartirish, I/O. Nomda ko'rinmaydigan yashirin side effect funksiya va'dasini buzadi."
+  course: clean-code
+  lesson: 24
+- term: CQS
+  aliases: [Command-Query Separation]
+  uz: "Bertrand Meyer tamoyili: so'roq natija qaytaradi va holatni o'zgartirmaydi, buyruq holatni o'zgartiradi va qiymat qaytarmaydi. Fowler uni foydali, lekin mutlaq bo'lmagan qoida deb biladi."
+  course: clean-code
+  lesson: 24
+- term: temporal coupling
+  uz: "Funksiyalarni faqat ma'lum tartibda yoki vaqtda chaqirish xavfsiz bo'lgan, lekin bu shart hech qayerda ko'rinmaydigan bog'liqlik. Ko'pincha yashirin side effect natijasida paydo bo'ladi."
+  course: clean-code
+  lesson: 24
+- term: Separate Query from Modifier
+  uz: "Fowler refaktoringi: qiymat qaytaradigan va side effect'ga ega funksiyani sof so'roq va buyruqqa bo'lish. Masalan, getTotalOutstandingAndSendBill totalOutstanding va sendBill'ga ajraladi."
+  course: clean-code
+  lesson: 24
+- term: sof funksiya
+  uz: "Natijasi faqat argumentlariga bog'liq va kuzatiladigan side effect'i yo'q funksiya: bir xil kirish har doim bir xil chiqish beradi. Uni testlash, qayta ishlatish va tushunish oson."
+  course: clean-code
+  lesson: 25
+- term: immutability
+  uz: "Qiymat yaratilgandan keyin o'zgarmasligi: o'zgarish kerak bo'lsa yangi qiymat yaratiladi. Bu chegaradagi qoida (argumentlar, qaytarilgan qiymat, umumiy holat); funksiya ichidagi lokal mutatsiya soflikni buzmaydi."
+  course: clean-code
+  lesson: 25
+- term: functional core, imperative shell
+  uz: "Gary Bernhardt naqshi: barcha qarorlar va biznes mantiq sof funksional yadroda, I/O esa uni chaqiradigan yupqa imperativ qobiqda. Yadro oson test qilinadi, qobiqda qaror deyarli yo'q."
+  course: clean-code
+  lesson: 25
+- term: guard clause
+  aliases: [guard clauses]
+  uz: "G'ayrioddiy holatni funksiya boshida alohida tekshirib, darhol chiqish (early return). Ichma-ich if'larni tekis qiladi va asosiy mantiqni ajratib ko'rsatadi."
+  course: clean-code
+  lesson: 26
+- term: cyclomatic complexity
+  uz: "McCabe metrikasi: funksiyadagi chiziqli mustaqil yo'llar soni, amalda qaror nuqtalari soni plus bir. Kerakli testlar soniga yaqin, lekin ichma-ichlikni sezmaydi."
+  course: clean-code
+  lesson: 26
+- term: cognitive complexity
+  uz: "SonarSource metrikasi: kodni tushunish qiyinligini o'lchaydi. Chiziqli oqimning har bir uzilishi uchun ball beradi va ichma-ich strukturalar uchun qo'shimcha ball qo'shadi."
+  course: clean-code
+  lesson: 26
+- term: Replace Conditional with Polymorphism
+  uz: "Fowler refaktoringi: tip bo'yicha takrorlanadigan switch yoki if zanjiri o'rniga har bir tip uchun klass va umumiy metod. Muammo bitta switch emas, uning bir necha joyda takrorlanishi."
+  course: clean-code
+  lesson: 27
+- term: lookup jadval
+  uz: "Holatlar faqat ma'lumot bilan farq qilganda (tarif, label, rang) switch o'rniga ishlatiladigan kalit-qiymat jadvali. TypeScript'da Record tipi har bir kalit mavjudligini tekshiradi."
+  course: clean-code
+  lesson: 27
+- term: discriminated union
+  aliases: [tagged union]
+  uz: "Har bir variantida bir xil nomli, lekin turli literal qiymatli teg maydoni bor union tip. TypeScript tegni tekshirgandan keyin tipni toraytiradi va never orqali exhaustive tekshiruv beradi."
+  course: clean-code
+  lesson: 27
+- term: expression problem
+  uz: "Tiplar va operatsiyalar jadvalini kengaytirish muammosi: polimorfizm yangi tip qo'shishni, switch va union esa yangi operatsiya qo'shishni osonlashtiradi. Ikkalasini birdan oson qilish qiyin."
+  course: clean-code
+  lesson: 27
+- term: Result tipi
+  uz: "Muvaffaqiyat yoki xatoni ifodalovchi discriminated union, masalan ok true bilan value yoki ok false bilan error. Kutilgan biznes xatolarni tipda ko'rinadigan qiladi, exception'lar esa tipda ko'rinmaydi."
+  course: clean-code
+  lesson: 28
+- term: floating promise
+  uz: "await, catch yoki return qilinmagan Promise. Uning xatosi hech qayerda ushlanmaydi; ongli qaror bo'lsa void va catch bilan belgilanadi, typescript-eslint qoidasi esa bunday joylarni topadi."
+  course: clean-code
+  lesson: 29
+- term: unhandled rejection
+  uz: "Hech kim ushlamagan rad etilgan Promise. Zamonaviy Node.js versiyalarida u sukut bo'yicha jarayonni to'xtatadi; odatda unutilgan await sabab bo'ladi."
+  course: clean-code
+  lesson: 29
+- term: AbortSignal
+  aliases: [AbortController]
+  uz: "Asinxron operatsiyani bekor qilish mexanizmi: AbortController'ning signal xususiyati operatsiyaga uzatiladi va abort() chaqirilganda u bekor holatiga o'tadi. Promise o'zi operatsiyani bekor qilmaydi."
+  course: clean-code
+  lesson: 29
+- term: Extract Function
+  uz: "Fowler refaktoringi: kod bo'lagini alohida nomli funksiyaga chiqarish (ilgari Extract Method). Ko'pincha bo'lak ustidagi kommentning o'zi yangi funksiya nomiga aylanadi."
+  course: clean-code
+  lesson: 30
+- term: Inline Function
+  uz: "Extract Function'ning teskarisi: funksiya chaqiruvini uning tanasi bilan almashtirib, funksiyani o'chirish. Noto'g'ri bo'lingan kodni avval inline qilib, keyin qayta to'g'ri ajratishda ishlatiladi."
+  course: clean-code
+  lesson: 30
+- term: TODO
+  uz: "Bajarilishi kerak, lekin hozir bajarilmayotgan ish haqidagi komment. Egasiz va muddatsiz qolmasligi uchun tiketga bog'lanadi, nima va nega yoziladi, lint bilan nazorat qilinadi."
+  course: clean-code
+  lesson: 32
+- term: kommentga olingan kod
+  uz: "O'chirilmay, komment ichiga olib qo'yilgan kod. Uni hech kim o'chirishga jur'at etmaydi, u to'planadi va tez eskiradi; tarix git'da saqlangani uchun uni o'chirish kerak."
+  course: clean-code
+  lesson: 33
+- term: interfeys kommenti
+  uz: "Modul, klass yoki funksiya e'loni oldidagi, foydalanuvchi uchun yozilgan komment: nima qiladi, argumentlar, qaytish qiymati, yon ta'sirlar, xatolar va shartlar. Qanday qilinishini aytmaydi."
+  course: clean-code
+  lesson: 34
+- term: implementatsiya kommenti
+  uz: "Funksiya ichidagi, kodni o'zgartiradigan odam uchun yozilgan komment. Bu blok nima uchun borligini va nega shunday yondashuv tanlanganini tushuntiradi."
+  course: clean-code
+  lesson: 34
+- term: comments-first
+  uz: "Ousterhout usuli: interfeys kommentini implementatsiyadan oldin yozish. Shunda komment albatta yoziladi, sifatliroq bo'ladi va dizayn muammolarini erta ko'rsatadi."
+  course: clean-code
+  lesson: 34
+- term: TSDoc
+  uz: "TypeScript uchun doc comment standarti taklifi. Tip imzoda bo'lgani uchun takrorlanmaydi; @param, @returns, @throws, @remarks, @deprecated kabi teglar ishlatiladi."
+  course: clean-code
+  lesson: 34
+- term: gazeta metaforasi
+  uz: "Martin tavsiyasi: fayl gazeta maqolasi kabi o'qilishi kerak, yuqorida asosiy g'oya va yuqori darajadagi funksiyalar, pastga tushgan sari detallar ko'payadi."
+  course: clean-code
+  lesson: 35
+- term: vertikal zichlik
+  uz: "Bir-biriga yaqin bog'liq qatorlar orasida keraksiz bo'sh qator yoki shovqin komment bo'lmasligi. Zich turgan qatorlar ularning bir guruhga tegishli ekanini ko'rsatadi."
+  course: clean-code
+  lesson: 35
+- term: Prettier
+  uz: "Opinionated kod formatter: kodni AST'ga parse qilib, o'z qoidalari bo'yicha qaytadan chop etadi. Opsiyalari ataylab cheklangan, shuning uchun formatlash haqidagi bahslar yo'qoladi."
+  course: clean-code
+  lesson: 36
+- term: linter
+  uz: "Kodni statik tahlil qilib, jamoa kelishuvlari buzilishini va kompilyator o'tkazib yuboradigan bug'larni topadigan vosita. Jamoa qoidalarining bajariladigan shakli, masalan ESLint."
+  course: clean-code
+  lesson: 37
+- term: ESLint
+  uz: "JavaScript va TypeScript uchun asosiy linter. Formatlashni Prettier'ga qoldirib, kod sifati va bug'larga e'tibor beradi; typescript-eslint bilan TypeScript qoidalari qo'shiladi."
+  course: clean-code
+  lesson: 37
+- term: flat config
+  uz: "ESLint'ning eslint.config.js faylidagi konfiguratsiya formati: konfiguratsiya obyektlari massivi. Eski .eslintrc formati olib tashlangan, yangi loyihalarda faqat flat config ishlatiladi."
+  course: clean-code
+  lesson: 37
+- term: typed linting
+  uz: "typescript-eslint qoidalarining TypeScript tip ma'lumotidan foydalanadigan rejimi. no-floating-promises yoki no-unsafe-* kabi eng qimmatli qoidalar faqat shu rejimda ishlaydi."
+  course: clean-code
+  lesson: 37
+- term: barrel
+  uz: "Papka ichidagi modullarni index.ts orqali qayta eksport qiluvchi fayl. Public API'ni bir joyda belgilaydi, lekin ortiqcha yuklash va aylanma bog'liqlik xavfi bor; faqat haqiqiy modul chegarasida ishlatiladi."
+  course: clean-code
+  lesson: 38
+- term: screaming architecture
+  uz: "Martin g'oyasi: kodning yuqori darajadagi tuzilishi framework'ni emas, tizim nima qilishini baqirib ko'rsatishi kerak. Feature bo'yicha papka tuzilishi bunga xizmat qiladi."
+  course: clean-code
+  lesson: 38
+- term: ADR
+  aliases: [Architecture Decision Record]
+  uz: "Bitta arxitektura qarori haqida qisqa matn fayli (Nygard formati): sarlavha, holat, kontekst, qaror va oqibatlar. Qabul qilingan ADR o'zgartirilmaydi, qaror o'zgarsa yangi ADR yoziladi."
+  course: clean-code
+  lesson: 39
+- term: Conventional Commits
+  uz: "Commit xabarlari uchun yengil spetsifikatsiya: type, ixtiyoriy scope va qisqa tavsif. feat MINOR, fix PATCH, BREAKING CHANGE esa MAJOR versiyaga mos keladi."
+  course: clean-code
+  lesson: 39
+- term: DTO
+  uz: "Data Transfer Object: metodlarsiz, faqat maydonlardan iborat klass yoki tip. Qatlamlar, tarmoq yoki baza o'rtasida ma'lumot tashish uchun ishlatiladi va unda biznes mantiq bo'lmaydi."
+  course: clean-code
+  lesson: 41
+- term: Demeter qonuni
+  uz: "Faqat yaqin do'stlaring bilan gaplash qoidasi: metod faqat o'z klassi, o'zi yaratgan obyekt, argumentlari va maydonlaridagi obyektlarning metodlarini chaqirishi kerak, ular qaytargan obyektlarnikini emas."
+  course: clean-code
+  lesson: 42
+- term: train wreck
+  uz: "Bir-biriga ulangan uzun chaqiruv zanjiri, masalan a.getB().getC().doX(). Muammo uzunlikda emas, chaqiruvchining boshqa obyektlar ichki tuzilishiga bog'lanib qolishida."
+  course: clean-code
+  lesson: 42
+- term: Tell, Don't Ask
+  uz: "Obyektdan ma'lumot so'rab tashqarida qaror qabul qilish o'rniga, obyektga nima qilishni ayting va qarorni o'zi qabul qilsin. Ma'lumot va uning ustidagi xatti-harakat birga turadi."
+  course: clean-code
+  lesson: 42
+- term: information hiding
+  uz: "Parnas tamoyili: modullarga bo'lish mezoni o'zgarishi ehtimoli bor dizayn qarorlarini yashirish. Gap private kalit so'zi haqida emas, qaysi modul qaysi bilimga ega ekani haqida."
+  course: clean-code
+  lesson: 43
+- term: inkapsulyatsiya
+  uz: "Ichki tafsilotlarni tashqaridan yopadigan til mexanizmi: private, #field, eksport qilinmagan funksiya, closure. Information hiding esa qaysi qaror qayerda yashirilishini belgilaydigan dizayn tamoyili."
+  course: clean-code
+  lesson: 43
+- term: information leakage
+  uz: "Bitta dizayn qarori bir nechta modulda aks etishi (Ousterhout). Belgisi: bitta qaror o'zgarganda bir nechta modulni birga o'zgartirish kerak bo'ladi."
+  course: clean-code
+  lesson: 43
+- term: temporal decomposition
+  uz: "Tizimni operatsiyalar bajariladigan vaqt tartibi bo'yicha modullarga bo'lish, masalan o'qish, o'zgartirish va yozish uchun alohida klass. Ousterhout fikricha information leakage'ning eng ko'p uchraydigan sababi."
+  course: clean-code
+  lesson: 43
+- term: Primitive Obsession
+  uz: "Fowler smell'i: pul, telefon raqami, ID kabi domen tushunchalarini o'z tipi o'rniga oddiy string yoki number bilan ifodalash. Natijada xatolar tip tizimidan yashiriladi."
+  course: clean-code
+  lesson: 44
+- term: value object
+  uz: "Tengligi identifikatoriga emas, xossalarining qiymatiga asoslangan kichik obyekt, masalan pul (son va valyuta) yoki sana oralig'i. U immutable bo'lishi kerak, aks holda aliasing bug'lar paydo bo'ladi."
+  course: clean-code
+  lesson: 44
+- term: branded tip
+  aliases: [branded type, branded tiplar]
+  uz: "TypeScript'da primitiv tipga faqat kompilyatsiya vaqtida mavjud teg qo'shib, arzon nominal tip yasash usuli. Masalan, VehicleId va DriverId ikkalasi string bo'lsa ham bir-birining o'rniga o'tmaydi."
+  course: clean-code
+  lesson: 44
+- term: structural typing
+  uz: "Tiplar mosligi nomiga emas, shakliga qarab aniqlanadigan tizim. TypeScript'da type VehicleId = string yangi tip yaratmaydi, faqat taxallus beradi, shuning uchun branded tip kerak bo'ladi."
+  course: clean-code
+  lesson: 44
+- term: smart constructor
+  uz: "Qiymatni tekshirib, faqat to'g'ri bo'lsa branded yoki maxsus tipdagi qiymat qaytaradigan funksiya. U shu tipga kirishning yagona eshigi bo'lishi kerak."
+  course: clean-code
+  lesson: 44
+- term: Parse, don't validate
+  uz: "Alexis King shiori: kirishni shunchaki tekshirib qo'ymasdan, tizim chegarasida aniqroq tipga parse qiling. Tekshiruv natijasi tipda saqlanadi va keyingi kod uni qayta tekshirmaydi."
+  course: clean-code
+  lesson: 45
+- term: Special Case
+  aliases: [Null Object]
+  uz: "Fowler refaktoringi (Introduce Special Case, taxallusi Introduce Null Object): yo'q holati uchun null o'rniga standart xatti-harakatga ega obyekt qaytarish. Chaqiruvchilar maxsus qiymatni tekshirmaydi."
+  course: clean-code
+  lesson: 46
+- term: strictNullChecks
+  uz: "TypeScript sozlamasi: null va undefined boshqa tiplarga avtomatik kirmaydi, ularni tipda ochiq ko'rsatish va ishlatishdan oldin tekshirish majburiy bo'ladi."
+  course: clean-code
+  lesson: 46
+- term: noUncheckedIndexedAccess
+  uz: "TypeScript sozlamasi: indeks orqali olingan qiymat tipiga undefined qo'shadi, masalan rows[0] Row | undefined bo'ladi. Bo'sh massiv yoki yo'q kalit bilan bog'liq runtime xatolarni oldini oladi."
+  course: clean-code
+  lesson: 46
+- term: operational xatolar
+  aliases: [operational xato]
+  uz: "To'g'ri yozilgan dasturda ham tashqi sharoit tufayli yuz beradigan, kutiladigan xatolar: tarmoq uzilishi, provayder 503, noto'g'ri kirish, yozuv topilmadi. Ularni rejalashtirib qayta ishlash mumkin."
+  course: clean-code
+  lesson: 48
+- term: programmer xatolari
+  uz: "Kodning o'zidagi bug'lar: undefined maydoniga murojaat, noto'g'ri argument, buzilgan invariant. Ularni runtime'da qayta ishlab bo'lmaydi, faqat loglab tuzatish kerak."
+  course: clean-code
+  lesson: 48
+- term: exception filter
+  uz: "NestJS mexanizmi: transport chegarasida ichki xatolarni bitta joyda HTTP status, javob formati va logga aylantiradi. Domen xatolari HTTP haqida bilmasligi uchun tarjima shu yerda bo'ladi."
+  course: clean-code
+  lesson: 48
+- term: Problem Details
+  aliases: [RFC 9457]
+  uz: "RFC 9457 standarti: HTTP API xato javoblari uchun type, title, status, detail kabi maydonlarga ega yagona JSON format. Stack trace kabi ichki tafsilotlarni ochmasligi kerak."
+  course: clean-code
+  lesson: 48
+- term: exception masking
+  aliases: [masking]
+  uz: "Xatoni tizimning pastki darajasida aniqlab, shu yerda hal qilish, shunda yuqori qatlamlar undan bexabar qoladi (Ousterhout). Masalan, TCP yo'qolgan paketlarni qayta yuboradi; bu xatoni yutish emas."
+  course: clean-code
+  lesson: 49
+- term: exception aggregation
+  aliases: [aggregation]
+  uz: "Ko'plab exception'larni bitta joyda qayta ishlash (Ousterhout). Masalan, har bir handler o'zi xato javobini yasash o'rniga, server darajasidagi bitta handler ularni standart javobga aylantiradi."
+  course: clean-code
+  lesson: 49
+- term: learning test
+  uz: "Tashqi kutubxonani o'rganish uchun yozilgan kichik test: uni biz ishlatmoqchi bo'lgan tarzda chaqirib, natijani tekshiradi. Kutubxonaning yangi versiyasi xatti-harakatni o'zgartirsa, ular darhol ko'rsatadi."
+  course: clean-code
+  lesson: 50

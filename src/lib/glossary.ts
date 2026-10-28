@@ -30,22 +30,25 @@ export const termSlug = (term: string) =>
 
 let cache: GlossaryEntry[] | null = null;
 
+/** Bir atama ikki kursda alohida tushuntirilishi mumkin (DDD): unda slug'ga kurs qo'shiladi. */
 export function glossary(): GlossaryEntry[] {
   if (cache) return cache;
   const files = fs.existsSync(DIR) ? fs.readdirSync(DIR).filter((f) => f.endsWith(".yaml")) : [];
-  cache = files
-    .flatMap((f) => {
-      const parsed = z.array(entrySchema).safeParse(YAML.parse(fs.readFileSync(path.join(DIR, f), "utf8")) ?? []);
-      if (!parsed.success) throw new Error(`content/glossary/${f}: ${parsed.error.message}`);
-      return parsed.data;
-    })
+  const raw = files.flatMap((f) => {
+    const parsed = z.array(entrySchema).safeParse(YAML.parse(fs.readFileSync(path.join(DIR, f), "utf8")) ?? []);
+    if (!parsed.success) throw new Error(`content/glossary/${f}: ${parsed.error.message}`);
+    return parsed.data;
+  });
+  const courses = new Map<string, Set<string>>();
+  for (const e of raw) courses.set(termSlug(e.term), (courses.get(termSlug(e.term)) ?? new Set()).add(e.course));
+  cache = raw
     .map((e) => {
       const course = getCourse(e.course);
       const lesson = course && syllabus(course).find((l) => l.n === e.lesson);
       if (!course || !lesson) throw new Error(`lug'at: "${e.term}" uchun dars topilmadi (${e.course} #${e.lesson})`);
       return {
         ...e,
-        slug: termSlug(e.term),
+        slug: courses.get(termSlug(e.term))!.size > 1 ? `${termSlug(e.term)}-${e.course}` : termSlug(e.term),
         href: `/${course.slug}/dars/${e.lesson}`,
         where: `${course.title}, ${e.lesson}-dars: ${lesson.title}`,
       };
@@ -70,16 +73,18 @@ export type TermMatcher = {
   find(text: string): { start: number; end: number; entry: GlossaryEntry }[];
 };
 
-let matcher: TermMatcher | null = null;
+const matchers = new Map<string, TermMatcher>();
 
-export function termMatcher(): TermMatcher {
-  if (matcher) return matcher;
+/** Bitta kurs atamalari bo'yicha qidiruvchi: atama faqat o'z kursi darslarida bog'lanadi. */
+export function termMatcher(course: string): TermMatcher {
+  const cached = matchers.get(course);
+  if (cached) return cached;
   const byForm = new Map<string, { form: string; entry: GlossaryEntry }>();
-  for (const entry of glossary())
+  for (const entry of glossary().filter((e) => e.course === course))
     for (const form of [entry.term, ...entry.aliases]) byForm.set(form.toLowerCase(), { form, entry });
   const forms = [...byForm.values()].map((f) => f.form).sort((a, b) => b.length - a.length);
   const re = forms.length ? new RegExp(`(?<![${WORD}])(?<t>${forms.map(escape).join("|")})${SUFFIX}(?![${WORD}])`, "gi") : null;
-  matcher = {
+  const matcher: TermMatcher = {
     find(text) {
       if (!re) return [];
       const out: { start: number; end: number; entry: GlossaryEntry }[] = [];
@@ -92,5 +97,6 @@ export function termMatcher(): TermMatcher {
       return out;
     },
   };
+  matchers.set(course, matcher);
   return matcher;
 }
