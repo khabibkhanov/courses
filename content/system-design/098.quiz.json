@@ -81,7 +81,7 @@
       "why": "Stream agregatsiya hot row ga yozishni sekundiga bir necha marta kamaytiradi; hisoblagich eventual."
     },
     {
-      "q": "iQuariX dashkamera kliplari o'rtacha 0-1 marta ko'riladi. YouTube uslubidagi qaysi komponent bu yerda deyarli keraksiz?",
+      "q": "Avtopark platformasidagi dashkamera kliplari o'rtacha 0-1 marta ko'riladi. YouTube uslubidagi qaysi komponent bu yerda deyarli keraksiz?",
       "options": [
         "Resumable yuklash",
         "Object storage",

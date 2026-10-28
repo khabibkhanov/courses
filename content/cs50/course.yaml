@@ -6,7 +6,7 @@ subtitle: Computer science asoslari, Harvard CS50x dasturi asosida - 60 dars
 description: "CS50x ketma-ketligi: C, xotira, algoritmlar, ma'lumotlar tuzilmalari, Python, SQL, web, xavfsizlik va AI. Har darsda ichki mexanika, ishlaydigan kod, test va dasturlash topshirig'i."
 audience: "Dasturlashni noldan yoki tizimli ravishda boshlamoqchi bo'lganlar uchun. Oldindan tajriba shart emas; kod yozganlar uchun esa kompyuter ichida nima bo'layotganini to'liq ochib beradi."
 order: 1
-color: "#c2410c"
+color: "#d4283a"
 format: lessons-md
 passScore: 0.8
 library:

@@ -101,7 +101,7 @@
       "why": "Hamma mijoz bir soniyada qaytsa, TLS handshake va sinxronlash so'rovlari bo'roni boshlanadi (thundering herd)."
     },
     {
-      "q": "iQuariX dispetcher-haydovchi chatida 600 000 xabar/kun, kanallar 2-10 a'zoli. Saqlash va routing uchun qaysi tanlov eng sodda va yetarli?",
+      "q": "Avtopark platformasining dispetcher-haydovchi chatida 600 000 xabar/kun, kanallar 2-10 a'zoli. Saqlash va routing uchun qaysi tanlov eng sodda va yetarli?",
       "options": [
         "Cassandra klasteri va consistent hash kanal serverlari",
         "PostgreSQL (channel_id, id) indeksi bilan keyset pagination va Redis pub/sub routing",

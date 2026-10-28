@@ -8,7 +8,7 @@ description: >-
   TypeScript, Node.js (NestJS), React va Next.js'da.
 audience: "TypeScript yoki JavaScript'da ishlaydigan dasturchilar uchun: kamida bitta real loyiha yozgan bo'lsangiz, darslar eng ko'p foyda beradi. Misollar Node.js (NestJS), React va Next.js'da."
 order: 2
-color: "#15803d"
+color: "#0f8a55"
 format: clean-code
 passScore: 1
 modules:

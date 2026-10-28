@@ -90,7 +90,7 @@
       "why": "27¹-modda 2-qismi (O'RQ-1125, 2026-yil 27-martdan). Qolgan shaxsiy ma'lumotlar ro'yxatdagi davlat (VM 415-son qarori), SCC/BCR yoki tasdiqlangan standartlar sharti bilan xorijda saqlanishi mumkin."
     },
     {
-      "q": "iQuariX error tracking SaaS ga stack trace yuboradi va unda haydovchi telefon raqamlari bor. Residency nuqtai nazaridan bu nima?",
+      "q": "Avtopark platformasi error tracking SaaS ga stack trace yuboradi va unda haydovchi telefon raqamlari bor. Residency nuqtai nazaridan bu nima?",
       "options": [
         "Muammo emas - bu faqat log",
         "Agar HTTPS bo'lsa muammo yo'q",

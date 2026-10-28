@@ -90,7 +90,7 @@
       "why": "Har bir shaxs uchun alohida kalit bilan shifrlab, kalitni o'chirish yoki PII ni tashqarida saqlash o'zgarmaslikni buzmasdan o'chirish imkonini beradi."
     },
     {
-      "q": "iQuariX GPS nuqtalarini (kuniga yuz millionlab) event sourcing aggregate stream'lari sifatida saqlash taklif qilindi. Eng yaxshi baho?",
+      "q": "Avtopark platformasining GPS nuqtalarini (kuniga yuz millionlab) event sourcing aggregate stream'lari sifatida saqlash taklif qilindi. Eng yaxshi baho?",
       "options": [
         "To'g'ri, chunki har bir nuqta hodisa",
         "To'g'ri, agar snapshot har 10 nuqtada olinsa",

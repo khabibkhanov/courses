@@ -91,7 +91,7 @@
       "why": "DynamoDB leaderless emas: partition bo'yicha single-leader + consensus, bu bashorat qilinadigan consistency beradi."
     },
     {
-      "q": "iQuariX dagi qurilma 'oxirgi holati' uchun LWW ishlatilmoqda. Qaysi timestamp to'g'ri?",
+      "q": "Avtopark platformasidagi qurilma 'oxirgi holati' uchun LWW ishlatilmoqda. Qaysi timestamp to'g'ri?",
       "options": [
         "Server qabul qilgan vaqt",
         "Qurilmaning GPS vaqti, shartli yozish bilan: faqat yangi bo'lsa almashtirish",

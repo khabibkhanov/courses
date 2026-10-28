@@ -90,7 +90,7 @@
       "why": "20 M x 200 x 0.2 = 800 M. Hammaga push qilinsa 4 milliard bo'lardi, ularning ko'pi o'qilmaydi."
     },
     {
-      "q": "iQuariX hodisalar lentasida 'obuna' - bu ruxsat (filial, mashinalar), o'qishlar kam, mashina boshqa menejerga tez-tez o'tkaziladi. Qaysi model mos?",
+      "q": "Avtopark platformasining hodisalar lentasida 'obuna' - bu ruxsat (filial, mashinalar), o'qishlar kam, mashina boshqa menejerga tez-tez o'tkaziladi. Qaysi model mos?",
       "options": [
         "Sof fan-out on write",
         "Tarix uchun fan-out on read (ruxsat o'qishda tekshiriladi), jonli yangilanishlar faqat ochiq sessiyalarga push",

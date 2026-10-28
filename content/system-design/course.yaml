@@ -7,7 +7,7 @@ description: "Talablar va trade-offlardan storage internals, masshtablash, distr
   \ bilan hisob-kitob, diagrammalar, test va loyihalash topshirig'i."
 audience: "Backend yoki full-stack tajribasi bor dasturchilar uchun: HTTP, SQL va bitta backend tilini bilasiz deb hisoblanadi. Asoslar o'tkazib yuborilmaydi, lekin boshlang'ich darajada tushuntirilmaydi."
 order: 3
-color: "#2f5bea"
+color: "#2a5bd7"
 format: lessons-md
 passScore: 0.8
 library:
