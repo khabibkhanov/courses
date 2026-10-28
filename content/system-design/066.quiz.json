@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Histogram metrikasi 14 series (bucket, sum, count) ga ega, label'lar: 4 method, 30 route, 6 status, 10 pod. Taxminiy maksimal time series soni qancha?",
+      "options": ["64", "100 800", "1 008 000", "14 000"],
+      "answer": 1,
+      "why": "14 x 4 x 30 x 6 x 10 = 100 800. Label'lar ko'paytiriladi."
+    },
+    {
+      "q": "10 ta pod har biri o'z p99 latency sini summary sifatida beradi. Servis bo'yicha p99 ni qanday olish to'g'ri?",
+      "options": [
+        "10 ta p99 ning o'rtachasini olish",
+        "10 ta p99 ning maksimumini olish",
+        "Summary bilan buni to'g'ri qilib bo'lmaydi; histogram bucket'larini yig'ib, keyin quantile hisoblash kerak",
+        "Eng ko'p trafik olgan pod ning p99 ini olish"
+      ],
+      "answer": 2,
+      "why": "Prometheus hujjatiga ko'ra summary quantile'larini agregatsiya qilish statistik ma'nosiz. Histogram'lar instance'lar bo'yicha yig'iladi."
+    },
+    {
+      "q": "Dasturchi `vehicle_id` ni (30 000 mashina) request latency metrikasiga label sifatida qo'shmoqchi. Eng yaxshi alternativa qaysi?",
+      "options": [
+        "Label sifatida qo'shish, Prometheus buni ko'taradi",
+        "vehicle_id ni span atributi va strukturalangan log maydoni qilish; metrikada past cardinality label'lar qoldirish",
+        "Har bir mashina uchun alohida Prometheus",
+        "Metrikani butunlay o'chirish"
+      ],
+      "answer": 1,
+      "why": "Yuqori cardinality o'lchovlar trace va log uchun; metrika series soni label kombinatsiyalari bilan ko'payadi."
+    },
+    {
+      "q": "`traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01` da `00f067aa0ba902b7` nima?",
+      "options": [
+        "Trace ID",
+        "Chaqiruvchi span ID si (parent-id)",
+        "Sampling foizi",
+        "Vendor ma'lumoti"
+      ],
+      "answer": 1,
+      "why": "Format: version-traceid(32 hex)-parentid(16 hex)-flags. Oxirgi 01 sampled flag."
+    },
+    {
+      "q": "Barcha xatoli trace'larni saqlash kafolati kerak. Qaysi sampling buni beradi?",
+      "options": [
+        "SDK dagi 1% head sampling",
+        "Trace tugagach qaror qiladigan tail sampling",
+        "Trace ID ratio sampling",
+        "Hech qanday sampling buni bermaydi"
+      ],
+      "answer": 1,
+      "why": "Head sampling qarorni trace boshida qiladi va xato bo'lishini bilmaydi. Tail sampling butun trace ni ko'rib qaror qiladi."
+    },
+    {
+      "q": "Collector gateway ning 3 ta replikasi tail sampling qiladi, oldida oddiy round-robin load balancer. Nima muammo?",
+      "options": [
+        "Muammo yo'q",
+        "Bitta trace ning span'lari turli replikalarga tushadi va hech biri butun trace ni ko'rmaydi; traceID bo'yicha marshrutlash kerak",
+        "Round-robin juda sekin",
+        "Tail sampling faqat bitta replika bilan ishlaydi"
+      ],
+      "answer": 1,
+      "why": "OTel hujjati load-balancing exporter ni routing_key: traceID bilan ishlatib, trace span'larini bitta Collector ga yig'ishni tavsiya qiladi."
+    },
+    {
+      "q": "SLO uchun xato darajasini 1% head sampling qilingan trace'lardan hisoblash nima uchun yomon?",
+      "options": [
+        "Hech qanday muammo yo'q",
+        "Kam hodisalarda statistik shovqin katta va sampling siyosati o'zgarsa SLI buziladi; SLI barcha so'rovlar bo'yicha metrikadan hisoblanishi kerak",
+        "Trace'larda status yo'q",
+        "Trace'lar faqat latency ni o'lchaydi"
+      ],
+      "answer": 1,
+      "why": "Metrikalar arzon va barcha so'rovni qamraydi; sampling qilingan ma'lumot SLI uchun ishonchsiz manba."
+    },
+    {
+      "q": "OpenTelemetry HTTP semantic conventions bo'yicha `GET /vehicles/12345` server span ining nomi qanday bo'lishi kerak?",
+      "options": [
+        "GET /vehicles/12345",
+        "GET /vehicles/:id (http.route bo'yicha)",
+        "vehicles",
+        "HTTP 200"
+      ],
+      "answer": 1,
+      "why": "Span nomi {method} {http.route}; URI yo'lining o'zi cardinality sababli ishlatilmaydi."
+    },
+    {
+      "q": "Node.js servisida OTel eksport navbati to'lib qoldi (Collector javob bermayapti). To'g'ri xatti-harakat qaysi?",
+      "options": [
+        "So'rovlarni Collector tiklanguncha bloklash",
+        "Telemetriyani tashlash va so'rovlarni normal xizmat qilishda davom etish",
+        "Servisni restart qilish",
+        "Telemetriyani sinxron diskka yozish"
+      ],
+      "answer": 1,
+      "why": "Telemetriya pipeline ilovani hech qachon bloklamasligi kerak; aks holda observability incident sababchisiga aylanadi."
+    },
+    {
+      "q": "5 000 so'rov/s, har so'rovda 3 log yozuvi, har biri 500 bayt. Kunlik xom log hajmi taxminan qancha?",
+      "options": ["6.5 GB", "65 GB", "648 GB", "6.5 TB"],
+      "answer": 2,
+      "why": "5 000 x 3 x 500 B = 7.5 MB/s; 7.5 MB x 86 400 ≈ 648 GB/kun, indeks va replikatsiyasiz."
+    }
+  ]
+}

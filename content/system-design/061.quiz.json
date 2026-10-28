@@ -1,0 +1,90 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Diskdagi buzilgan sektor baza serverini yiqitdi, lekin replika tufayli foydalanuvchilar hech narsa sezmadi. Bu holatni qanday ta'riflash to'g'ri?",
+      "options": [
+        "Tizim failure bo'ldi, chunki server yiqildi",
+        "Komponent failure tizim uchun fault bo'ldi, lekin redundancy uni tizim failure iga aylantirmadi",
+        "Bu error emas, chunki ma'lumot yo'qolmadi",
+        "Bu gray failure, chunki foydalanuvchilar sezmadi"
+      ],
+      "answer": 1,
+      "why": "Bir darajadagi failure yuqori daraja uchun fault hisoblanadi. Fault tolerance aynan uning tizim failure iga aylanishini to'xtatadi."
+    },
+    {
+      "q": "Servis o'rtacha 30 kunda bir marta yiqiladi, tiklash 30 daqiqa oladi. Qaysi o'zgarish availability ni ko'proq oshiradi?",
+      "options": [
+        "Yiqilishlarni ikki baravar kamaytirish (MTBF 60 kun)",
+        "Tiklashni 3 daqiqaga tushirish (MTTR 10 baravar kam)",
+        "Ikkalasi bir xil ta'sir qiladi",
+        "Hech biri, availability faqat apparatga bog'liq"
+      ],
+      "answer": 1,
+      "why": "MTBF ikki baravar: 86400/86430 ≈ 99.965%. MTTR 10 baravar kam: 43200/43203 ≈ 99.993%. Uzilish vaqti MTTR ga to'g'ridan-to'g'ri proporsional."
+    },
+    {
+      "q": "So'rov 4 ta mustaqil hard dependency dan o'tadi, har biri 99.9%. Tizimning nazariy maksimal availability si taxminan qancha?",
+      "options": ["99.9%", "99.6%", "99.99%", "96%"],
+      "answer": 1,
+      "why": "Serial bog'liqliklar ko'paytiriladi: 0.999^4 ≈ 0.996, ya'ni taxminan 99.6%, oyiga 2.9 soat atrofida."
+    },
+    {
+      "q": "Ikki 99% li nusxa parallel ishlaydi, formula 99.99% beradi. Qaysi holatda bu raqam eng ko'p aldaydi?",
+      "options": [
+        "Nusxalar turli AZ da joylashgan",
+        "Ikkala nusxa bir xil konfiguratsiya va bir xil deploy pipeline orqali bir vaqtda yangilanadi",
+        "Nusxalar active-active rejimda ishlaydi",
+        "Har bir nusxa butun yuklamani ko'tara oladi"
+      ],
+      "answer": 1,
+      "why": "Formula nosozliklar mustaqil deb faraz qiladi. Umumiy konfiguratsiya va deploy nosozlikni korrelyatsiyali qiladi va ikkala nusxa birga o'chadi."
+    },
+    {
+      "q": "Bitta task 100 QPS ko'taradi, cho'qqi 3 470 QPS. Rolling deploy paytida bitta mashina buzilsa ham cho'qqini ko'tarish uchun nechta task kerak?",
+      "options": ["35", "36", "37", "70"],
+      "answer": 2,
+      "why": "N = 35. Deploy paytida bitta task o'chiq, shu paytda bitta nosozlik: N+2 = 37 (Google SRE Shakespeare misoli)."
+    },
+    {
+      "q": "Stateless servis 3 AZ da static stability bilan ishlaydi. Normal holatda har bir AZ o'z capacity sining taxminan qancha qismida ishlashi kerak?",
+      "options": ["33%", "50%", "66%", "90%"],
+      "answer": 2,
+      "why": "Bitta AZ o'chsa qolgan ikkitasi butun yuklamani ko'tarishi kerak: har biri C/2 ga mo'ljallanadi, normal holatda C/3 ishlaydi, bu C/2 ning 66 foizi."
+    },
+    {
+      "q": "Load balancer health check'i 200 qaytaradi, lekin real so'rovlarning 30 foizi sekin disk tufayli timeout bo'lmoqda. Bu qanday nosozlik turi?",
+      "options": ["Crash (fail-stop)", "Byzantine", "Gray failure", "Omission"],
+      "answer": 2,
+      "why": "Gray failure - differential observability: failure detector tugunni sog'lom deb ko'radi, foydalanuvchilar esa muammoni ko'radi."
+    },
+    {
+      "q": "Cache ishlamasa web serverlar to'g'ridan-to'g'ri bazaga murojaat qiladi. AWS Builders' Library nuqtai nazaridan asosiy xavf nima?",
+      "options": [
+        "Bazadagi ma'lumot eskirgan bo'ladi",
+        "Fallback yo'li kamdan-kam ishlaydi va cache'lar birga o'chganda bazaga to'satdan katta yuklama tushib, uni ham yiqitadi",
+        "Cache dan o'qish bazadan sekinroq",
+        "Fallback faqat bitta serverda ishlaydi"
+      ],
+      "answer": 1,
+      "why": "Fallback eng yomon paytda qo'shimcha yuklama yaratadi va sinovdan o'tmagan bo'ladi. Gabrielson maqolasidagi Amazon uzilishi (maqolaga ko'ra 2001 yil atrofida) aynan shunday bo'lgan."
+    },
+    {
+      "q": "8 ta worker, har bir mijozga tasodifiy 2 tasi beriladi (shuffle sharding). Bitta mijoz o'z ikki worker ini yiqitsa, boshqa mijozlarning qancha ulushi to'liq ishlamay qoladi?",
+      "options": ["25%", "50%", "Taxminan 3.6% (1/28)", "0%"],
+      "answer": 2,
+      "why": "C(8,2) = 28 juftlik. Faqat aynan shu juftlikka ega mijozlar ikkala worker ini yo'qotadi: 1/28."
+    },
+    {
+      "q": "Quyidagilardan qaysi biri yashirin SPOF ning eng tipik misoli?",
+      "options": [
+        "Uch AZ da joylashgan stateless servis",
+        "Status sahifa va monitoring tiklanayotgan tizimning o'zi ishlatadigan storage da joylashgan",
+        "Raft klasteridagi 5 ta tugun",
+        "Ikki regionda replikatsiya qilingan object storage"
+      ],
+      "answer": 1,
+      "why": "Nosozlikni ko'rish va xabar berish vositasi nosozlik bilan birga o'chadi. 2017 yilgi S3 hodisasida AWS Service Health Dashboard aynan shunday S3 ga bog'liq bo'lgan."
+    }
+  ]
+}

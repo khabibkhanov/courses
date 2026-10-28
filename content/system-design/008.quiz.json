@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "8 000 dispetcher sahifasi har 4 soniyada short polling qiladi. Server qancha so'rov/s oladi va o'rtacha yangilanish kechikishi qancha?",
+      "options": [
+        "500 so'rov/s, 4 s",
+        "2 000 so'rov/s, ~2 s",
+        "32 000 so'rov/s, ~2 s",
+        "2 000 so'rov/s, ~4 s"
+      ],
+      "answer": 1,
+      "why": "8 000 / 4 = 2 000 so'rov/s. Hodisa interval ichida tasodifiy vaqtda paydo bo'ladi, shuning uchun o'rtacha kechikish interval/2 = 2 s."
+    },
+    {
+      "q": "Dispetcher dashboard i serverdan joylashuv va alertlarni oladi, filtrlarni esa kamdan-kam o'zgartiradi. Qaysi tanlov eng oddiy va yetarli?",
+      "options": [
+        "WebSocket, chunki u har doim eng tez",
+        "SSE (HTTP/2 ustida) server - klient oqim uchun, filtrlar oddiy HTTP so'rovlar bilan",
+        "MQTT brauzerda to'g'ridan-to'g'ri TCP orqali",
+        "Har 100 ms da short polling"
+      ],
+      "answer": 1,
+      "why": "Oqim asosan bir tomonlama. SSE avtomatik qayta ulanish va Last-Event-ID ni tayyor beradi va oddiy HTTP infratuzilmasi bilan ishlaydi."
+    },
+    {
+      "q": "HTTP/1.1 orqali ishlaydigan dashboard da foydalanuvchi 7-tabni ochganda SSE oqimi boshlanmayapti. Sababi?",
+      "options": [
+        "Server ulanishlar limitiga yetgan",
+        "Brauzer HTTP/1.1 da bitta domenga barcha tablar bo'yicha 6 ta ulanish bilan cheklangan",
+        "SSE faqat bitta tabda ishlaydi",
+        "EventSource 6 tadan ortiq hodisa turini qo'llab-quvvatlamaydi"
+      ],
+      "answer": 1,
+      "why": "MDN ga ko'ra cheklov brauzer va domen bo'yicha 6 ta. HTTP/2 da oqimlar bitta ulanishdagi stream lar."
+    },
+    {
+      "q": "MQTT da treker QoS 1 bilan publish qiladi, ingest worker esa QoS 1 bilan obuna. Worker xabarni bazaga yozdi, lekin PUBACK yuborishdan oldin quladi. Nima bo'ladi?",
+      "options": [
+        "Xabar yo'qoladi",
+        "Broker xabarni qayta yetkazadi va bazada dublikat paydo bo'lishi mumkin; yozish idempotent bo'lishi kerak",
+        "QoS 1 dublikatlarni avtomatik yo'q qiladi",
+        "Treker xabarni qayta yuboradi va broker uni rad etadi"
+      ],
+      "answer": 1,
+      "why": "QoS 1 - at least once. Dublikatni ilova darajasida, masalan treker ID + ketma-ketlik raqami bo'yicha, aniqlash kerak."
+    },
+    {
+      "q": "MQTT klientining Keep Alive qiymati 60 s. Klient 60 s davomida hech narsa yubormasa nima qiladi va server qachon ulanishni yopadi?",
+      "options": [
+        "Klient hech narsa qilmaydi, server 60 s da yopadi",
+        "Klient PINGREQ yuboradi; server 90 s (1.5 x Keep Alive) davomida hech narsa olmasa yopadi",
+        "Server 120 s dan keyin yopadi",
+        "Klient ulanishni o'zi yopib, qayta ochadi"
+      ],
+      "answer": 1,
+      "why": "MQTT 5 spetsifikatsiyasi: klient interval ichida PINGREQ yuboradi, server 1.5 x Keep Alive davomida hech narsa olmasa ulanishni yopadi."
+    },
+    {
+      "q": "Dispetcher UI ochilganda har bir mashinaning oxirgi holatini keyingi xabarni kutmasdan darhol ko'rishi kerak. MQTT da buning uchun qaysi mexanizm mos?",
+      "options": ["Will message", "Retained message", "QoS 2", "Shared subscription"],
+      "answer": 1,
+      "why": "Broker har bir topic ning oxirgi retained xabarini saqlaydi va yangi obunachiga darhol yuboradi."
+    },
+    {
+      "q": "Treker elektr ta'minotini yo'qotib, DISCONNECT yubormasdan yo'qoldi. Dispetcher 'oflayn' holatini qanday biladi?",
+      "options": [
+        "Treker oflayn bo'lishdan oldin xabar yuboradi",
+        "Broker treker CONNECT da bergan will message ni keep alive muddati o'tgach publish qiladi",
+        "Retained message avtomatik o'chiriladi",
+        "Faqat short polling bilan"
+      ],
+      "answer": 1,
+      "why": "Will message aynan to'g'ri DISCONNECT siz yo'qolish holati uchun; keep alive uzilishni aniqlaydi."
+    },
+    {
+      "q": "Gateway ning yangi versiyasi deploy qilinganda 100 000 WebSocket klient bir vaqtda qayta ulanib, autentifikatsiya servisini yiqitdi. Eng to'g'ri chora qaysi?",
+      "options": [
+        "Autentifikatsiya servisini 10 baravar kattalashtirish",
+        "Graceful drain (ulanishlarni asta-sekin yopish) va klientda jitter li eksponensial backoff",
+        "WebSocket o'rniga short polling",
+        "Deploy ni tunda qilish"
+      ],
+      "answer": 1,
+      "why": "Muammo - sinxronlashgan qayta ulanish. Uni vaqt bo'yicha yoyish kerak: server tomonda drain, klient tomonda tasodifiy kechikish."
+    },
+    {
+      "q": "WebSocket klientdan serverga yuboriladigan frame lar nega masklanadi?",
+      "options": [
+        "Shifrlash uchun, TLS o'rniga",
+        "Siqish uchun",
+        "Zararli skript simdagi baytlarni nazorat qilib, oraliq proksilarni chalg'itishining oldini olish uchun",
+        "Server frame larni tartiblashi uchun"
+      ],
+      "answer": 2,
+      "why": "RFC 6455 (5.3 va 10.3 bo'limlar): mask kaliti har frame da yangi va oldindan aytib bo'lmaydigan, shuning uchun skript simdagi baytlarni tanlab, Upgrade ni tushunmaydigan proksida cache poisoning qila olmaydi. Bu shifrlash emas."
+    },
+    {
+      "q": "Dispetcher 2 000 mashinani kuzatadi, har biri har 10 s da yangilanadi. Har bir yangilanishni alohida yuborish o'rniga 1 s lik batch qilinsa, dispetcherga soniyasiga nechta xabar ketadi?",
+      "options": ["200 dan 1 ga", "2 000 dan 200 ga", "200 dan 20 ga", "20 dan 1 ga"],
+      "answer": 0,
+      "why": "2 000 / 10 = 200 hodisa/s. 1 s lik batch bilan ular bitta xabarga birlashadi: soniyasiga 1 xabar, overhead va brauzer yuklamasi keskin kamayadi."
+    }
+  ]
+}

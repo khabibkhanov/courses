@@ -1,0 +1,144 @@
+slug: clean-code
+title: Clean Code
+subtitle: Toza kod - 100 darslik to'liq kurs
+description: >-
+  Robert Martin, John Ousterhout, Martin Fowler, Kent Beck, Michael Feathers va boshqa
+  asosiy manbalar asosida toza kod yozishni noldan arxitekturagacha o'rgatuvchi kurs.
+  Har bir qoida "qachon ishlaydi va qachon ishlamaydi" bilan beriladi. Misollar
+  TypeScript, Node.js (NestJS), React va Next.js'da.
+audience: "TypeScript yoki JavaScript'da ishlaydigan dasturchilar uchun: kamida bitta real loyiha yozgan bo'lsangiz, darslar eng ko'p foyda beradi. Misollar Node.js (NestJS), React va Next.js'da."
+order: 2
+color: "#15803d"
+format: clean-code
+passScore: 1
+modules:
+  - n: 1
+    title: Asoslar va fikrlash tarzi
+    lessons:
+      - { n: 1, slug: clean-code-nima, title: "Clean code nima: ta'riflar va o'lchov", sources: [cc1, cc2, aposd, refactoring] }
+      - { n: 2, slug: kod-oqish-narxi, title: "Kodni o'qish narxi va kognitiv yuk", sources: [cc1, aposd, code-complete] }
+      - { n: 3, slug: murakkablik, title: "Murakkablik: belgilari va sabablari", sources: [aposd, code-complete] }
+      - { n: 4, slug: texnik-qarz, title: "Texnik qarz va sifatning iqtisodiyoti", sources: [cunningham-1992, fowler-debt-quadrant, fowler-quality-cost] }
+      - { n: 5, slug: strategik-dasturlash, title: "Strategik va taktik dasturlash", sources: [aposd, pragprog] }
+      - { n: 6, slug: boy-scout-qoidasi, title: "Boy Scout qoidasi va kichik yaxshilanishlar", sources: [cc1, tidy-first, pragprog] }
+      - { n: 7, slug: simple-design, title: "Kent Beckning oddiy dizayn qoidalari", sources: [fowler-beck-design-rules, cc1, cc2] }
+      - { n: 8, slug: dry-togri-tushunish, title: "DRY to'g'ri tushunilishi va noto'g'ri abstraksiya", sources: [pragprog, metz-wrong-abstraction, dodds-aha, abramov-goodbye-clean] }
+      - { n: 9, slug: kiss-yagni, title: "KISS va YAGNI: spekulyativ umumiylikdan qochish", sources: [fowler-yagni, pragprog, refactoring] }
+      - { n: 10, slug: tanqid-va-bahs, title: "Clean Code tanqidi: dogmadan qochish", sources: [aposd-vs-cc, qntm-clean, muratori-performance, abramov-goodbye-clean] }
+  - n: 2
+    title: Nomlash
+    lessons:
+      - { n: 11, slug: niyatni-ochuvchi-nomlar, title: "Niyatni ochuvchi nomlar", sources: [cc1, aposd, code-complete] }
+      - { n: 12, slug: disinformatsiya-va-shovqin, title: "Disinformatsiya va ma'nosiz farqlar", sources: [cc1, code-complete] }
+      - { n: 13, slug: qidiriladigan-nomlar, title: "Talaffuz qilinadigan va qidiriladigan nomlar, magic number'lar", sources: [cc1, refactoring-catalog] }
+      - { n: 14, slug: encodingdan-qochish, title: "Kodlashdan qochish: Hungarian, I-prefiks, m_", sources: [cc1, effective-ts, ts-handbook] }
+      - { n: 15, slug: nom-uzunligi-va-scope, title: "Nom uzunligi, scope va kontekst", sources: [cc1, aposd, code-complete] }
+      - { n: 16, slug: so-z-turkumlari, title: "Tur, funksiya va boolean nomlari", sources: [cc1, code-complete] }
+      - { n: 17, slug: domen-tili, title: "Domen tili: ubiquitous language", sources: [ddd-evans, fowler-ubiquitous-language, cc1] }
+      - { n: 18, slug: izchillik, title: "Izchillik: bir tushuncha - bir so'z", sources: [cc1, aposd, code-complete] }
+      - { n: 19, slug: typescriptda-nomlash, title: "TypeScript'da nomlash: tiplar, generiklar, fayllar", sources: [effective-ts, ts-handbook, typescript-eslint] }
+      - { n: 20, slug: nomlarni-refaktoring, title: "Nomlarni xavfsiz o'zgartirish", sources: [refactoring, refactoring-catalog, fowler-parallel-change] }
+  - n: 3
+    title: Funksiyalar
+    lessons:
+      - { n: 21, slug: funksiya-olchami, title: "Funksiya o'lchami: kichik va chuqur - ikki maktab", sources: [cc1, cc2, aposd, aposd-vs-cc] }
+      - { n: 22, slug: bitta-ish-abstraksiya-darajasi, title: "Bitta ish va bir abstraksiya darajasi", sources: [cc1, cc2, aposd] }
+      - { n: 23, slug: argumentlar, title: "Argumentlar: soni, flaglar, parametr obyekti", sources: [cc1, refactoring-catalog, effective-ts] }
+      - { n: 24, slug: side-effect-cqs, title: "Yon ta'sirlar va Command-Query Separation", sources: [cc1, fowler-command-query, refactoring] }
+      - { n: 25, slug: sof-funksiyalar, title: "Sof funksiyalar va immutability", sources: [effective-ts, bernhardt-boundaries, pragprog] }
+      - { n: 26, slug: guard-clause, title: "Guard clause, early return va ichma-ichlikni kamaytirish", sources: [refactoring-catalog, mccabe-1976, sonar-cognitive] }
+      - { n: 27, slug: switch-va-polimorfizm, title: "switch/if zanjirlari: polimorfizm, lookup jadval, discriminated union", sources: [cc1, refactoring-catalog, effective-ts] }
+      - { n: 28, slug: xato-qaytarish, title: "throw yoki natija qaytarish: exception va Result", sources: [cc1, aposd, effective-ts] }
+      - { n: 29, slug: toza-async, title: "Toza asinxron kod: async/await, parallellik, bekor qilish", sources: [mdn-abortcontroller, effective-ts, cc2] }
+      - { n: 30, slug: funksiya-refaktoring-amaliyoti, title: "Amaliyot: Extract/Inline Function", sources: [refactoring, refactoring-catalog] }
+  - n: 4
+    title: Kommentlar, formatlash va hujjatlash
+    lessons:
+      - { n: 31, slug: komment-falsafasi, title: "Komment falsafasi: Martin va Ousterhout", sources: [cc1, aposd, aposd-vs-cc] }
+      - { n: 32, slug: yaxshi-kommentlar, title: "Yaxshi kommentlar: nega, ogohlantirish, TODO", sources: [cc1, aposd, code-complete] }
+      - { n: 33, slug: yomon-kommentlar, title: "Yomon kommentlar va o'chirilgan kod", sources: [cc1, code-complete] }
+      - { n: 34, slug: interfeys-kommentlari, title: "Interfeys kommentlari, TSDoc va comments-first dizayn", sources: [aposd, ts-handbook] }
+      - { n: 35, slug: vertikal-formatlash, title: "Vertikal formatlash: fayl ichki tuzilishi", sources: [cc1, code-complete] }
+      - { n: 36, slug: avtomatik-formatlash, title: "Gorizontal formatlash va avtomatlashtirish: Prettier", sources: [cc1, prettier-rationale] }
+      - { n: 37, slug: linting, title: "Linting: ESLint flat config va typescript-eslint", sources: [eslint-config, typescript-eslint] }
+      - { n: 38, slug: papka-tuzilishi, title: "Fayl va papka tuzilishi: feature yoki layer", sources: [clean-arch, nextjs-docs, nestjs-docs] }
+      - { n: 39, slug: readme-adr-commit, title: "README, ADR va commit xabarlari", sources: [nygard-adr, conventional-commits, pragprog] }
+      - { n: 40, slug: tiplar-hujjat-sifatida, title: "O'zini hujjatlovchi kod va uning chegarasi", sources: [effective-ts, aposd, cc1] }
+  - n: 5
+    title: Ma'lumot, obyektlar va xatolar
+    lessons:
+      - { n: 41, slug: obyekt-vs-struktura, title: "Obyektlar va ma'lumot strukturalari", sources: [cc1, cc2] }
+      - { n: 42, slug: demeter-qonuni, title: "Demeter qonuni va Tell, Don't Ask", sources: [cc1, pragprog, fowler-tell-dont-ask] }
+      - { n: 43, slug: information-hiding, title: "Inkapsulyatsiya va information hiding (Parnas)", sources: [parnas-1972, aposd] }
+      - { n: 44, slug: primitive-obsession, title: "Primitive obsession, value object va branded tiplar", sources: [refactoring, fowler-value-object, effective-ts] }
+      - { n: 45, slug: noqonuniy-holatlar, title: "Noqonuniy holatlarni ifodalab bo'lmaydigan qilish", sources: [parse-dont-validate, effective-ts, zod-docs] }
+      - { n: 46, slug: null-bilan-ishlash, title: "null va undefined bilan ishlash", sources: [cc1, refactoring-catalog, ts-tsconfig-strict] }
+      - { n: 47, slug: exceptionlar, title: "Exception'lar: custom xatolar, cause, kontekst", sources: [cc1, mdn-error-cause, effective-ts] }
+      - { n: 48, slug: xatolar-arxitekturasi, title: "Node/NestJS'da xatolar arxitekturasi", sources: [nestjs-exception-filters, rfc-9457, cc1] }
+      - { n: 49, slug: xatolarni-yoq-qilish, title: "Xatolarni mavjud bo'lmaydigan qilish", sources: [aposd] }
+      - { n: 50, slug: chegaralar, title: "Chegaralar: tashqi kodni o'rash va learning test'lar", sources: [cc1, cockburn-hexagonal] }
+  - n: 6
+    title: Modullar, klasslar va dizayn tamoyillari
+    lessons:
+      - { n: 51, slug: cohesion-coupling, title: "Cohesion va coupling", sources: [code-complete, aposd, clean-arch] }
+      - { n: 52, slug: chuqur-modullar, title: "Chuqur va sayoz modullar", sources: [aposd] }
+      - { n: 53, slug: srp, title: "Single Responsibility: bitta aktor", sources: [clean-arch, uncle-bob-srp] }
+      - { n: 54, slug: ocp, title: "Open-Closed tamoyili", sources: [clean-arch, cc2] }
+      - { n: 55, slug: lsp, title: "Liskov almashtirish tamoyili", sources: [liskov-wing, clean-arch] }
+      - { n: 56, slug: isp, title: "Interfeyslarni ajratish tamoyili", sources: [clean-arch, effective-ts] }
+      - { n: 57, slug: dip-va-di, title: "Dependency Inversion va DI (NestJS)", sources: [clean-arch, nestjs-providers] }
+      - { n: 58, slug: kompozitsiya-merosdan-ustun, title: "Kompozitsiya merosdan ustun", sources: [gof, effective-ts] }
+      - { n: 59, slug: klass-olchami, title: "Klass o'lchami, God object, klass yoki modul", sources: [cc1, refactoring, aposd] }
+      - { n: 60, slug: patternlar-oqilona, title: "Dizayn patternlari: qachon kerak, qachon ortiqcha", sources: [gof, refactoring, fowler-yagni] }
+  - n: 7
+    title: Testlar
+    lessons:
+      - { n: 61, slug: nega-testlar, title: "Nega testlar: piramida va trophy", sources: [fowler-test-pyramid, dodds-testing-trophy, refactoring] }
+      - { n: 62, slug: toza-test, title: "Toza test: F.I.R.S.T. va AAA", sources: [cc1, cc2, xunit-patterns] }
+      - { n: 63, slug: bir-test-bir-tushuncha, title: "Bir test - bir tushuncha va test nomlari", sources: [cc1, xunit-patterns] }
+      - { n: 64, slug: tdd-sikli, title: "TDD sikli: red-green-refactor", sources: [tdd-beck, uncle-bob-tdd-cycles] }
+      - { n: 65, slug: tdd-tanqidi, title: "TDD tanqidi va muqobillar", sources: [aposd-vs-cc, aposd, tdd-beck] }
+      - { n: 66, slug: test-doubles, title: "Test doubles va ortiqcha mocking", sources: [xunit-patterns, fowler-mocks-arent-stubs] }
+      - { n: 67, slug: testlanadigan-dizayn, title: "Testlanadigan dizayn: functional core, imperative shell", sources: [bernhardt-boundaries, nestjs-providers] }
+      - { n: 68, slug: integratsion-testlar, title: "Node/NestJS integratsion testlari", sources: [testcontainers-node, nestjs-docs, fowler-test-pyramid] }
+      - { n: 69, slug: frontend-testlari, title: "React testlari: implementatsiya detallarisiz", sources: [testing-library-principles, dodds-implementation-details] }
+      - { n: 70, slug: test-sifati, title: "Test sifati: coverage chegarasi va mutation testing", sources: [stryker, fowler-test-pyramid] }
+  - n: 8
+    title: Refaktoring va code smell'lar
+    lessons:
+      - { n: 71, slug: refaktoring-nima, title: "Refaktoring nima va qachon qilinadi", sources: [refactoring, fowler-workflows-refactoring] }
+      - { n: 72, slug: smells-1, title: "Code smells 1: nom, takror, uzun funksiya, uzun parametrlar", sources: [refactoring, fowler-code-smell] }
+      - { n: 73, slug: smells-2, title: "Code smells 2: global data, divergent change, shotgun surgery", sources: [refactoring] }
+      - { n: 74, slug: smells-3, title: "Code smells 3: feature envy, data clumps, takroriy switch", sources: [refactoring] }
+      - { n: 75, slug: smells-4, title: "Code smells 4: speculative generality, message chain, middle man", sources: [refactoring] }
+      - { n: 76, slug: asosiy-refaktoringlar, title: "Asosiy refaktoringlar to'plami", sources: [refactoring, refactoring-catalog] }
+      - { n: 77, slug: shartli-mantiq, title: "Shartli mantiqni refaktoring qilish", sources: [refactoring, refactoring-catalog] }
+      - { n: 78, slug: tidy-first, title: "Tidy First: struktura va xatti-harakatni ajratish", sources: [tidy-first] }
+      - { n: 79, slug: legacy-kod, title: "Legacy kod: seam'lar va characterization test", sources: [welc] }
+      - { n: 80, slug: katta-refaktoring, title: "Katta refaktoring: strangler fig, branch by abstraction", sources: [fowler-strangler, fowler-branch-by-abstraction, fowler-parallel-change] }
+  - n: 9
+    title: Arxitektura va chegaralar
+    lessons:
+      - { n: 81, slug: clean-architecture, title: "Clean Architecture va dependency rule", sources: [clean-arch, uncle-bob-clean-arch-post, cc2] }
+      - { n: 82, slug: hexagonal, title: "Hexagonal arxitektura: port va adapterlar", sources: [cockburn-hexagonal, clean-arch] }
+      - { n: 83, slug: modular-monolit, title: "Modulli monolit va NestJS modullari", sources: [nestjs-docs, fowler-microservice-premium, clean-arch] }
+      - { n: 84, slug: ddd-taktik, title: "DDD taktik qismlari: entity, value object, aggregate", sources: [ddd-evans, fowler-ddd-aggregate, fowler-value-object] }
+      - { n: 85, slug: paket-tamoyillari, title: "Komponent tamoyillari: ADP, SDP, SAP", sources: [clean-arch, dependency-cruiser] }
+      - { n: 86, slug: konfiguratsiya, title: "Konfiguratsiya va muhit: validatsiyalangan config", sources: [twelve-factor-config, zod-docs] }
+      - { n: 87, slug: concurrency, title: "JS'da toza concurrency: race, idempotentlik", sources: [cc1, cc2, mdn-abortcontroller] }
+      - { n: 88, slug: logging, title: "Toza logging: strukturali loglar va darajalar", sources: [pino, twelve-factor-logs, twelve-factor-config] }
+      - { n: 89, slug: api-dizayn, title: "API tozaligi: DTO, nomlash, xato formati", sources: [rfc-9457, nestjs-docs] }
+      - { n: 90, slug: ortiqcha-arxitektura, title: "Ortiqcha arxitektura xavfi", sources: [fowler-yagni, fowler-microservice-premium, aposd] }
+  - n: 10
+    title: Stack amaliyoti va jamoa
+    lessons:
+      - { n: 91, slug: toza-typescript, title: "Toza TypeScript: strict, unknown, narrowing, satisfies", sources: [effective-ts, ts-handbook, ts-tsconfig-strict] }
+      - { n: 92, slug: toza-react, title: "Toza React: komponentlar, state, effektlar", sources: [react-docs-thinking, react-docs-state, react-docs-effect] }
+      - { n: 93, slug: toza-nextjs, title: "Toza Next.js: server/client chegarasi", sources: [nextjs-server-client, nextjs-docs] }
+      - { n: 94, slug: toza-nestjs, title: "Toza NestJS: controller, service, DTO", sources: [nestjs-docs, nestjs-providers, clean-arch] }
+      - { n: 95, slug: toza-db-kodi, title: "Ma'lumotlar bazasi kodi: repository, N+1, migratsiya", sources: [prisma-docs, kysely-docs, fowler-parallel-change] }
+      - { n: 96, slug: code-review, title: "Code review madaniyati", sources: [google-code-review] }
+      - { n: 97, slug: statik-tahlil, title: "Statik tahlil va metrikalar", sources: [sonar-cognitive, mccabe-1976, dependency-cruiser] }
+      - { n: 98, slug: ai-va-toza-kod, title: "AI yordamchilar bilan toza kod", sources: [cc2, google-code-review] }
+      - { n: 99, slug: performance-vs-oqilish, title: "Performance va o'qiluvchanlik muvozanati", sources: [knuth-1974, muratori-performance, aposd-vs-cc] }
+      - { n: 100, slug: yakuniy-loyiha, title: "Yakuniy loyiha: legacy modulni bosqichma-bosqich tozalash", sources: [welc, refactoring, tidy-first] }

@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Servisga 20 000 o'qish/s keladi. Hit ratio 95% dan 99% ga ko'tarildi. Bazaga o'qish yuklamasi qanday o'zgaradi?",
+      "options": [
+        "Taxminan 4% kamayadi",
+        "19 000/s dan 19 800/s ga oshadi",
+        "O'zgarmaydi, chunki baza o'z cache iga ega",
+        "1 000/s dan 200/s ga, ya'ni 5 baravar kamayadi"
+      ],
+      "answer": 3,
+      "why": "Baza yuklamasi miss ratio ga proporsional: 20 000 x 0.05 = 1 000, 20 000 x 0.01 = 200."
+    },
+    {
+      "q": "Redis cache sifatida ishga tushirildi, maxmemory 4 GB qo'yildi, siyosat o'zgartirilmadi. Xotira to'lganda nima bo'ladi?",
+      "options": [
+        "Eng eski kalitlar avtomatik chiqariladi",
+        "Tasodifiy kalitlar chiqariladi",
+        "Standart noeviction tufayli yozish buyruqlari xato qaytaradi",
+        "Redis avtomatik ravishda xotirani kengaytiradi"
+      ],
+      "answer": 2,
+      "why": "redis.conf da standart maxmemory-policy noeviction. Cache uchun allkeys-lru yoki allkeys-lfu qo'yish kerak."
+    },
+    {
+      "q": "Cache-aside: A so'rov miss oldi va bazadan eski v1 ni o'qidi. Shu payt B bazaga v2 yozib DEL qildi. Keyin A cache ga v1 ni SET qildi. Bu muammoni qaysi mexanizm to'g'ridan-to'g'ri hal qiladi?",
+      "options": [
+        "Cache hajmini oshirish",
+        "Miss da beriladigan lease token: oradagi DEL tokenni bekor qiladi va eski SET rad etiladi",
+        "LRU o'rniga LFU ishlatish",
+        "Write-back ga o'tish"
+      ],
+      "answer": 1,
+      "why": "Bu Facebook memcache maqolasidagi stale set muammosi. Lease bo'lmasa, TTL va versiya tekshiruvi eskirishni chegaralaydi."
+    },
+    {
+      "q": "Yozishda qaysi tartib to'g'ri?",
+      "options": [
+        "Avval bazaga yozish va commit, keyin cache dan DEL",
+        "Avval cache dan DEL, keyin bazaga yozish",
+        "Tranzaksiya ichida DEL, keyin commit",
+        "Faqat cache ni SET qilish, baza keyin yangilanadi"
+      ],
+      "answer": 0,
+      "why": "Avval DEL qilinsa yoki commit dan oldin qilinsa, oradagi o'qish eski qiymatni bazadan olib cache ga qaytaradi."
+    },
+    {
+      "q": "Write-back naqshining asosiy xavfi nima?",
+      "options": [
+        "O'qish latency si oshadi",
+        "Cache xotirasi tez to'ladi",
+        "U faqat Memcached da ishlaydi",
+        "Cache tuguni bazaga yozishdan oldin o'lsa, tasdiqlangan yozuvlar yo'qoladi"
+      ],
+      "answer": 3,
+      "why": "Write-back durability ni cache ga bog'laydi. Bazalar buni WAL bilan hal qiladi, ilovada durable log kerak."
+    },
+    {
+      "q": "Hisobot jarayoni har kecha barcha 1 million kalitni bir martadan o'qiydi. Ertalab issiq kalitlarning hit ratio si tushib ketgan. Qaysi siyosat bunga chidamliroq?",
+      "options": [
+        "LRU",
+        "FIFO",
+        "LFU yoki W-TinyLFU kabi chastota asosidagi admission",
+        "volatile-ttl"
+      ],
+      "answer": 2,
+      "why": "Skan LRU da bir marta o'qilgan kalitlarni yuqoriga chiqarib issiq kalitlarni siqib chiqaradi. Chastota asosidagi siyosatlar bir martalik murojaatni past baholaydi."
+    },
+    {
+      "q": "20 instance li servis har birida lokal in-process cache ishlatadi. Har deploy dan keyin bazada cho'qqi kuzatiladi. Sabab?",
+      "options": [
+        "Lokal cache baza ulanishlarini band qiladi",
+        "Lokal cache lar deploy da bo'shaydi va barcha instance lar bir vaqtda sovuq cache bilan bazaga boradi",
+        "Deploy bazani qayta ishga tushiradi",
+        "Lokal cache TTL ni e'tiborsiz qoldiradi"
+      ],
+      "answer": 1,
+      "why": "Cold start: lokal cache har bir yangi process da bo'sh. Taqsimlangan cache deploy dan keyin ham to'la qoladi, request coalescing ham yordam beradi."
+    },
+    {
+      "q": "Kam o'qiladigan, lekin juda ko'p yoziladigan audit yozuvlari uchun qaysi naqsh mos?",
+      "options": [
+        "Write-around",
+        "Write-through",
+        "Refresh-ahead",
+        "Read-through bilan write-through"
+      ],
+      "answer": 0,
+      "why": "Write-around cache ni hech qachon o'qilmaydigan yozuvlar bilan to'ldirmaydi. Write-through esa cache churn ga olib keladi."
+    },
+    {
+      "q": "Cache 99% hit bilan ishlaydi, bazaga 150 so'rov/s tushadi, baza maksimal 1 000 so'rov/s ko'taradi, umumiy trafik 15 000 so'rov/s. Redis to'liq o'chsa?",
+      "options": [
+        "Baza 150 so'rov/s da qoladi",
+        "Baza 1 000 so'rov/s gacha yuklanadi, muammo yo'q",
+        "Ilova avtomatik ravishda so'rovlarni navbatga qo'yadi",
+        "Bazaga 15 000 so'rov/s keladi, sig'imdan 15 baravar ko'p, load shedding yoki cheklov bo'lmasa baza yiqiladi"
+      ],
+      "answer": 3,
+      "why": "Bu modal xatti-harakat: cache o'chsa, butun o'qish yuklamasi bazaga tushadi. Cache siz holatni load test qilish va himoya qo'yish kerak."
+    },
+    {
+      "q": "Facebook memcache yozishda cache ni yangilash (SET) o'rniga nega o'chirishni (DEL) tanlagan?",
+      "options": [
+        "DEL tezroq bajariladi",
+        "Memcached SET ni qo'llab-quvvatlamaydi",
+        "DEL idempotent, va parallel yozuvlar tartibi buzilganda SET eski qiymatni oxirgi qilib qo'yishi mumkin",
+        "DEL xotirani tejaydi"
+      ],
+      "answer": 2,
+      "why": "Qayta yuborilgan DEL natijani o'zgartirmaydi. Keyingi o'qish bazadan yangi qiymatni oladi."
+    }
+  ]
+}

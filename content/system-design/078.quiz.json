@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "6 000 nuqta/s, har nuqta siqilgandan keyin 40 bayt. Bitta nusxada 90 kunlik xom retention taxminan qancha joy oladi?",
+      "options": [
+        "~190 GB",
+        "~19 TB",
+        "~1.9 TB",
+        "~190 TB"
+      ],
+      "answer": 2,
+      "why": "6 000 x 86 400 x 40 B ≈ 20.7 GB/kun; x 90 ≈ 1.87 TB. Replika bilan bu bir necha baravar oshadi."
+    },
+    {
+      "q": "PostgreSQL da 3 mlrd qatorli telemetriya jadvalidan 90 kundan eski ma'lumotni har kuni o'chirish kerak. Eng yaxshi usul?",
+      "options": [
+        "Jadvalni vaqt bo'yicha partition qilib, eski partitionlarni DETACH/DROP qilish",
+        "Har kecha DELETE FROM points WHERE ts < now() - interval '90 days'",
+        "VACUUM FULL ni har soatda ishlatish",
+        "Qatorlarni UPDATE bilan NULL qilish"
+      ],
+      "answer": 0,
+      "why": "PostgreSQL hujjatiga ko'ra partition drop/detach bulk DELETE dan ancha tez va VACUUM yukini butunlay yo'qotadi."
+    },
+    {
+      "q": "Har bir GPS nuqtasini alohida 200 baytlik obyekt sifatida S3 Glacier Instant Retrieval ga arxivlash rejasi bor. Asosiy muammo?",
+      "options": [
+        "Glacier kichik obyektlarni qabul qilmaydi",
+        "Obyektlar avtomatik o'chiriladi",
+        "Glacier faqat video uchun",
+        "Har obyekt kamida 128 KB deb hisoblanadi - saqlash narxi yuzlab baravar oshadi; ma'lumotni katta fayllarga (Parquet) yig'ish kerak"
+      ],
+      "answer": 3,
+      "why": "AWS hujjatida bu sinf uchun minimal hisoblanadigan obyekt hajmi 128 KB va minimal muddat 90 kun."
+    },
+    {
+      "q": "Tenant shartnomani bekor qildi va ma'lumotini o'chirishni talab qildi. Asosiy bazadan DELETE qilindi. Ma'lumot yana qayerlarda qolishi mumkin?",
+      "options": [
+        "Hech qayerda, DELETE yetarli",
+        "Cache, qidiruv indeksi, analitika fayllari, Kafka topiclar, loglar va backuplarda",
+        "Faqat replikalarda",
+        "Faqat foydalanuvchi brauzerida"
+      ],
+      "answer": 1,
+      "why": "O'chirish barcha nusxalar va derived tizimlarni qamrashi kerak. Backuplar uchun aniq siyosat yoki crypto-shredding kerak."
+    },
+    {
+      "q": "Har tenant ma'lumoti alohida KEK bilan envelope encryption orqali shifrlangan. Tenant KEK i o'chirildi. Natija?",
+      "options": [
+        "Faqat asosiy baza o'qib bo'lmaydigan bo'ladi",
+        "Asosiy baza, replikalar, backuplar va arxivdagi shu tenant ma'lumoti amalda o'qib bo'lmaydigan bo'ladi (crypto-shredding)",
+        "Hech narsa, ma'lumot ochiq qoladi",
+        "Boshqa tenantlar ham ta'sirlanadi"
+      ],
+      "answer": 1,
+      "why": "Kalit bitta joyda (KMS), ma'lumot hamma joyda. Kalitni yo'q qilish barcha nusxalardagi DEK larni ochib bo'lmaydigan qiladi."
+    },
+    {
+      "q": "Retention avtomatikasi mijoz bilan sud nizosidagi avariya hodisasi videosini o'chirib yubordi. Qaysi mexanizm yetishmadi?",
+      "options": [
+        "Replikatsiya",
+        "Crypto-shredding",
+        "Tiering",
+        "Legal hold - nizo yoki tergov paytida ma'lumotni avtomatik o'chirishdan to'xtatuvchi bayroq"
+      ],
+      "answer": 3,
+      "why": "Retention siyosati faqat o'chirish emas, kerak bo'lganda o'chirmaslikni ham boshqarishi kerak."
+    },
+    {
+      "q": "O'zbekistonda 2021-yildagi O'RQ-666 bilan qo'shilgan 27¹-modda nimani talab qilgan?",
+      "options": [
+        "O'zbekiston fuqarolari shaxsiy ma'lumotlarini IT yordamida ishlashda ularni O'zbekistonda jismonan joylashgan texnik vositalarda va Davlat reyestrida ro'yxatdan o'tgan bazalarda yig'ish, tizimlashtirish va saqlashni",
+        "Faqat bank ma'lumotlarini mamlakatda saqlashni",
+        "Barcha ma'lumotni faqat qog'ozda saqlashni",
+        "Ma'lumotni faqat Yevropada saqlashni"
+      ],
+      "answer": 0,
+      "why": "Bu umumiy lokalizatsiya talabi edi: O'RQ-666 ning 13-moddasi qonun kuchga kirganidan uch oy o'tib, 2021-yil apreldan amal qilgan. 2026-yilda u toraytirildi."
+    },
+    {
+      "q": "2026-yil martidagi O'RQ-1125 dan keyin qaysi ma'lumotlar O'zbekistonda majburiy saqlanishi kerak (qonunning yangi tahririga ko'ra)?",
+      "options": [
+        "Barcha shaxsiy ma'lumotlar, avvalgidek",
+        "Faqat soliq ma'lumotlari",
+        "Biometrik, genetik ma'lumotlar va O'zbekistondagi telekom operatorlari xizmatlaridan foydalanuvchilar ma'lumotlari",
+        "Hech qanday ma'lumot"
+      ],
+      "answer": 2,
+      "why": "27¹-modda 2-qismi (O'RQ-1125, 2026-yil 27-martdan). Qolgan shaxsiy ma'lumotlar ro'yxatdagi davlat (VM 415-son qarori), SCC/BCR yoki tasdiqlangan standartlar sharti bilan xorijda saqlanishi mumkin."
+    },
+    {
+      "q": "iQuariX error tracking SaaS ga stack trace yuboradi va unda haydovchi telefon raqamlari bor. Residency nuqtai nazaridan bu nima?",
+      "options": [
+        "Muammo emas - bu faqat log",
+        "Agar HTTPS bo'lsa muammo yo'q",
+        "Faqat asosiy baza residency ga tegishli",
+        "Shaxsiy ma'lumotning transchegaraviy uzatilishi bo'lishi mumkin; loglarda maskalash va vosita joylashuvini tekshirish kerak"
+      ],
+      "answer": 3,
+      "why": "Residency barcha nusxalar va yordamchi tizimlarga tegishli. Ko'p sizishlar aynan monitoring va support vositalari orqali bo'ladi."
+    },
+    {
+      "q": "Qonunchilik 2021 dan 2026 gacha 'barcha shaxsiy ma'lumot' dan 'uch toifa' ga o'zgardi. Arxitektura uchun eng to'g'ri xulosa?",
+      "options": [
+        "Ma'lumot sinflari va ularning saqlash joyini konfiguratsiya (katalog, home region xaritasi) sifatida boshqarish - shunda keyingi o'zgarish migratsiya emas, siyosat yangilanishi bo'ladi",
+        "Endi residency haqida o'ylash shart emas",
+        "Hamma narsani darhol chet elga ko'chirish",
+        "Qonunni kodga qattiq yozish"
+      ],
+      "answer": 0,
+      "why": "Qoidalar o'zgaradi. Ma'lumot katalogi va joylashuv konfiguratsiyasi tizimni moslashuvchan qiladi."
+    }
+  ]
+}

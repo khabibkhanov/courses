@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Service mesh control plane (masalan istiod) butunlay o'chib qoldi. Ishlab turgan servislar orasidagi trafikka nima bo'ladi?",
+      "options": [
+        "Barcha servislararo trafik darhol to'xtaydi",
+        "Proxy'lar oxirgi olingan konfiguratsiya bilan trafikni o'tkazishda davom etadi; yangi o'zgarishlar tarqalmaydi va sertifikatlar vaqt o'tib muddati tugaydi",
+        "Trafik proxy'larni chetlab o'tadi va shifrlanmagan holda ketadi",
+        "Faqat gRPC trafik to'xtaydi"
+      ],
+      "answer": 1,
+      "why": "Data plane va control plane ajratilgan. Data plane mustaqil ishlaydi, lekin yangi pod, qoida va sertifikat yangilanishlari to'xtaydi."
+    },
+    {
+      "q": "Ilova `http://billing/api` ga so'rov yuboradi va kodida proxy haqida hech narsa yo'q. Klassik sidecar rejimida so'rov qanday qilib proxy'ga tushadi?",
+      "options": [
+        "Ilova HTTP_PROXY o'zgaruvchisini o'qiydi",
+        "Pod tarmoq namespace'ida o'rnatilgan iptables qoidalari chiquvchi va kiruvchi TCP trafikni proxy portlariga yo'naltiradi",
+        "DNS billing nomini proxy IP'siga resolve qiladi",
+        "Kubernetes API so'rovni ushlab qoladi"
+      ],
+      "answer": 1,
+      "why": "Init konteyner yoki CNI plagini iptables redirect qoidalarini o'rnatadi, proxy'ning o'z trafigi esa tsikl bo'lmasligi uchun istisno qilinadi."
+    },
+    {
+      "q": "Ichki trafik 6 000 so'rov/s, sidecar rejimi. Istio raqamlari bo'yicha har proxy 1 000 so'rov/s ga ~0.2 vCPU sarflaydi. Proksilash uchun taxminan qancha vCPU kerak?",
+      "options": [
+        "~1.2 vCPU",
+        "~2.4 vCPU",
+        "~0.2 vCPU",
+        "~12 vCPU"
+      ],
+      "answer": 1,
+      "why": "Har so'rov ikki proxy'dan o'tadi: 6 000 x 2 = 12 000 proxy-so'rov/s; 12 x 0.2 = 2.4 vCPU."
+    },
+    {
+      "q": "Zanjir A -> B -> C -> D. A, B va C qatlamlarining har biri chaqiruvni muvaffaqiyatsizlikda jami 3 ta urinishgacha qaytaradi (1 asl + 2 retry). D butunlay ishlamay qolsa, bitta foydalanuvchi so'rovi D ga nechta urinish hosil qiladi?",
+      "options": [
+        "3",
+        "9",
+        "27",
+        "81"
+      ],
+      "answer": 2,
+      "why": "Har qatlam urinishlarni ko'paytiradi: 3 x 3 x 3 = 27. Agar ilova va sidecar ikkalasi ham retry qilsa, son yanada oshadi. Retry faqat bitta qatlamda va retry budget bilan bo'lishi kerak."
+    },
+    {
+      "q": "Mesh qo'yildi, lekin Jaeger'da so'rov span'lari bir-biriga bog'lanmagan holda ko'rinadi. Eng ehtimoliy sabab?",
+      "options": [
+        "Mesh tracing'ni qo'llab-quvvatlamaydi",
+        "Ilova kiruvchi so'rovdagi trace header'larini chiquvchi so'rovlarga uzatmayapti",
+        "mTLS trace header'larni o'chirib yuboradi",
+        "Sidecar'lar soni yetarli emas"
+      ],
+      "answer": 1,
+      "why": "Proxy ilova ichidagi kiruvchi va chiquvchi so'rov bog'liqligini ko'rmaydi. Header propagation ilova (yoki OpenTelemetry kutubxonasi) vazifasi."
+    },
+    {
+      "q": "Kubernetes native sidecar (initContainers ichida restartPolicy: Always) qaysi muammoni hal qiladi?",
+      "options": [
+        "Sidecar'ning CPU sarfini kamaytiradi",
+        "Sidecar asosiy konteynerdan oldin ishga tushadi va undan keyin to'xtaydi, Job tugashini to'smaydi",
+        "Sidecar'ni boshqa node'ga ko'chiradi",
+        "mTLS'ni avtomatik yoqadi"
+      ],
+      "answer": 1,
+      "why": "Avval ilova proxy tayyor bo'lmasdan ishga tushishi, o'chishda proxy ilovadan oldin o'lishi va Job'lar tugamasligi muammolari bor edi."
+    },
+    {
+      "q": "Istio ambient rejimida ztunnel nima qiladi?",
+      "options": [
+        "Har pod ichida L7 routing qiladi",
+        "Har node'da bitta proxy sifatida L3/L4 vazifalarni (mTLS, autentifikatsiya, L4 avtorizatsiya, telemetriya) bajaradi, HTTP'ni parse qilmaydi",
+        "Control plane o'rnini bosadi",
+        "Faqat ingress trafikni boshqaradi"
+      ],
+      "answer": 1,
+      "why": "L7 imkoniyatlar kerak bo'lganda alohida waypoint proxy qo'shiladi. Shu tufayli ilova pod'larida sidecar kerak emas."
+    },
+    {
+      "q": "Mesh proxy POST /charge route'ida 503 xatodan keyin avtomatik retry qilish uchun sozlangan. Xavf nima?",
+      "options": [
+        "Xavf yo'q, proxy idempotentlikni o'zi tekshiradi",
+        "Birinchi so'rov aslida bajarilgan bo'lishi mumkin, retry dublikat to'lov hosil qiladi; proxy biznes semantikani bilmaydi",
+        "503 xatoda retry hech qachon ishlamaydi",
+        "Faqat latency oshadi"
+      ],
+      "answer": 1,
+      "why": "Proxy faqat protokol darajasini ko'radi. Non-idempotent operatsiyalar uchun retry faqat idempotency key bilan va ilova darajasida xavfsiz."
+    },
+    {
+      "q": "3 ta Node.js servis, bitta jamoa, aloqaning asosiy qismi Kafka orqali, compliance talabi yo'q. Mesh bo'yicha eng asosli qaror?",
+      "options": [
+        "Darhol sidecar mesh joriy qilish",
+        "Mesh'siz: umumiy HTTP klient kutubxonasi (timeout, retry, trace) va OpenTelemetry yetarli",
+        "Har servisga ikkita sidecar qo'yish",
+        "Kafka'ni mesh bilan almashtirish"
+      ],
+      "answer": 1,
+      "why": "Mesh'ning operatsion narxi bu holatda foydasidan oshadi. Signal (mTLS talabi, ko'p til, ko'p gRPC, ko'p jamoa) paydo bo'lganda qayta ko'rish mumkin."
+    },
+    {
+      "q": "100 000 ta GPS treker uzoq yashovchi TCP ulanish bilan ingest pod'lariga ulangan. Ingest pod'lariga sidecar qo'yishning asosiy xavfi?",
+      "options": [
+        "Trekerlar mTLS'ni avtomatik qo'llab-quvvatlaydi, xavf yo'q",
+        "Har ulanish proxy orqali o'tib qo'shimcha xotira va CPU sarflaydi, proxy restart yoki yangilanishida barcha treker ulanishlari uziladi",
+        "Kafka ishlamay qoladi",
+        "DNS ishlamay qoladi"
+      ],
+      "answer": 1,
+      "why": "Mesh ichki servislararo trafik uchun. Uzoq yashovchi tashqi IoT ulanishlarini proxy orqali o'tkazish resurs va ishonchlilik xavfini oshiradi."
+    }
+  ]
+}

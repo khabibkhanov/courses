@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "x = 0. Klient A x=1 yozishni boshladi (hali javob olmagan). Klient B o'qib 1 ni oldi va tugatdi. Shundan keyin klient C o'qishni boshlab 0 ni oldi. Bu tarix linearizable mi?",
+      "options": [
+        "Ha, chunki A ning yozuvi hali tugamagan",
+        "Yo'q: B 1 ni ko'rgandan keyin boshlangan C eski qiymatni ko'rmasligi kerak",
+        "Ha, chunki eventual consistency buni ruxsat etadi",
+        "Faqat A va C bitta replikadan o'qisa linearizable"
+      ],
+      "answer": 1,
+      "why": "Yozuv B o'qishidan oldingi nuqtada bajarilgan deb tanlangan bo'lsa, undan keyin boshlangan har qanday o'qish 1 ni ko'rishi shart."
+    },
+    {
+      "q": "Serializability va linearizability farqi qaysi javobda to'g'ri?",
+      "options": [
+        "Ular sinonim",
+        "Serializability tranzaksiyalar haqida va real vaqt tartibini talab qilmaydi; linearizability bitta obyekt haqida va real vaqtni hisobga oladi",
+        "Linearizability tranzaksiyalar uchun, serializability replikatsiya uchun",
+        "Serializability har doim linearizability'dan kuchliroq"
+      ],
+      "answer": 1,
+      "why": "Ikkalasini birlashtirgan kafolat strict serializability deyiladi (masalan Spanner'ning external consistency'si)."
+    },
+    {
+      "q": "Foydalanuvchi profilini saqladi, sahifa yangilandi va eski ma'lumot ko'rindi. O'qishlar async replikadan bo'ladi. Qaysi kafolat buzilgan?",
+      "options": ["Monotonic writes", "Read-your-writes", "Linearizability'ning faqat o'zi", "Writes-follow-reads"],
+      "answer": 1,
+      "why": "Klient o'z yozuvini keyingi o'qishda ko'rishi kerak. Yechim: yozuvdan keyin primary'dan o'qish yoki LSN tokeni bilan replika yetib kelganini tekshirish."
+    },
+    {
+      "q": "Leaderless baza n=3, w=2, r=2 sozlangan, LWW bilan. Bu linearizability kafolatlaydimi?",
+      "options": [
+        "Ha, chunki w + r > n",
+        "Yo'q: concurrent yozuvlar, LWW va sloppy quorum kabi holatlar linearizability'ni buzishi mumkin",
+        "Ha, agar r = n bo'lsa ham",
+        "Faqat bitta regionda bo'lsa ha"
+      ],
+      "answer": 1,
+      "why": "Quorum shartining o'zi recency kafolatini to'liq bermaydi; Dynamo uslubidagi tizimlar odatda linearizable emas."
+    },
+    {
+      "q": "Ikki region orasida RTT 80 ms, region ichida 2 ms. Har bir yozuv linearizable bo'lishi uchun ikkala regionda tasdiqlanishi kerak. Yozish latency'si taxminan qanday bo'ladi?",
+      "options": ["Taxminan 2 ms", "Kamida taxminan 80 ms", "Taxminan 40 ms", "Taxminan 160 ms bo'lishi shart"],
+      "answer": 1,
+      "why": "Linearizable yozuv tarmoq kechikishiga bog'liq (O(d)): kamida bitta regionlararo round-trip kerak."
+    },
+    {
+      "q": "Partition paytida ham har bir replika lokal javob berib, saqlab qola oladigan eng kuchli model qaysi?",
+      "options": ["Linearizability", "Sequential consistency", "Causal consistency", "Strict serializability"],
+      "answer": 2,
+      "why": "Causal consistency tarmoqni kutmasdan (O(1)) amalga oshiriladi; undan kuchliroq modellar partition'da to'liq mavjud bo'la olmaydi."
+    },
+    {
+      "q": "Rasm storage'ga yuklandi, keyin navbatga \"resize\" xabari ketdi. Worker xabarni olib, storage'dan eski versiyani o'qidi. Bu qanday muammo?",
+      "options": [
+        "Navbatning at-least-once semantikasi",
+        "Kanallararo bog'liqlik: storage linearizable bo'lmagani uchun navbat xabari replikatsiyadan oldin yetib keldi",
+        "Network partition",
+        "Clock skew"
+      ],
+      "answer": 1,
+      "why": "Ikki kanal (storage va navbat) orasidagi tartib kafolatlanmagan. Yechim: linearizable storage yoki xabarga versiya qo'shib, eskisini o'qisa qayta urinish."
+    },
+    {
+      "q": "Sahifani yangilaganda izoh ko'rinadi, yana yangilasa yo'qoladi, keyin yana paydo bo'ladi. Qaysi kafolat yo'q va oddiy yechim nima?",
+      "options": [
+        "Monotonic reads; foydalanuvchini bitta replikaga yopishtirish (sticky routing)",
+        "Monotonic writes; yozuvlarni navbatga qo'yish",
+        "Linearizability; consensus qo'shish",
+        "Read-your-writes; cache'ni o'chirish"
+      ],
+      "answer": 0,
+      "why": "So'rovlar har xil lag'li replikalarga tushmoqda. Bitta replikaga yopishtirish monotonic reads beradi."
+    },
+    {
+      "q": "DynamoDB'da GSI orqali strongly consistent o'qish qilmoqchisiz. Nima bo'ladi?",
+      "options": [
+        "Ishlaydi, ikki barobar RCU sarflaydi",
+        "Qo'llab-quvvatlanmaydi: GSI o'qishlari faqat eventually consistent",
+        "Ishlaydi, lekin faqat global tables'da",
+        "Ishlaydi va narxi bir xil"
+      ],
+      "answer": 1,
+      "why": "DynamoDB hujjatiga ko'ra ConsistentRead GSI va Streams uchun qo'llab-quvvatlanmaydi."
+    },
+    {
+      "q": "Fleet tizimida \"bir mashinaga bir vaqtda faqat bitta faol haydovchi\" qoidasi uchun qaysi yondashuv to'g'ri?",
+      "options": [
+        "Async replikadan tekshirib, primary'ga yozish",
+        "Redis cache'da tekshirish",
+        "Linearizable compare-and-set: primary'da unique constraint yoki shartli UPDATE",
+        "Eventual consistency va kechasi tozalash skripti"
+      ],
+      "answer": 2,
+      "why": "Uniqueness - linearizable operatsiya. Tekshiruv va yozuv bitta atomik qadamda, bitta haqiqat manbasida bo'lishi kerak."
+    }
+  ]
+}

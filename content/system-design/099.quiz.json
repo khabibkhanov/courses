@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "60 000 joy, 2 million foydalanuvchi. Talab taklifdan necha baravar ko'p?",
+      "options": ["3", "33", "333", "60"],
+      "answer": 1,
+      "why": "2 000 000 / 60 000 ≈ 33; foydalanuvchilarning ~97% i chiptasiz qoladi."
+    },
+    {
+      "q": "Ichkarida 5 000 faol foydalanuvchi ushlab turilishi kerak, har biri o'rtacha 300 s qoladi. Little qonuni bo'yicha navbatdan chiqish tezligi qancha?",
+      "options": ["~1.7/s", "~17/s", "~170/s", "~1 500/s"],
+      "answer": 1,
+      "why": "λ = L / W = 5 000 / 300 ≈ 16.7 foydalanuvchi/s."
+    },
+    {
+      "q": "Ilova avval SELECT status qiladi, 'available' ko'rsa UPDATE qiladi (lock siz). Nima bo'ladi?",
+      "options": [
+        "Hammasi to'g'ri ishlaydi",
+        "Ikki parallel so'rov ikkalasi ham available ko'rib, bitta joyni ikki kishiga beradi",
+        "Deadlock",
+        "Faqat sekinlashadi"
+      ],
+      "answer": 1,
+      "why": "Klassik check-then-act race; atomik shartli UPDATE yoki lock kerak."
+    },
+    {
+      "q": "Shartli UPDATE ... WHERE status='available' OR (status='held' AND hold_until < now()) ning afzalligi nimada?",
+      "options": [
+        "Redis kerak bo'lmaydi va expiry worker kechiksa ham muddati o'tgan joylar to'g'ri qayta olinadi",
+        "Deadlock larni majburiy qiladi",
+        "Xaritani yangilaydi",
+        "To'lovni tezlashtiradi"
+      ],
+      "answer": 0,
+      "why": "Muddat sharti yozuv ichida tekshiriladi, shuning uchun to'g'rilik fon worker iga bog'liq emas."
+    },
+    {
+      "q": "Nega Redis SET NX hold ning yakuniy haqiqat manbai bo'lishi xavfli?",
+      "options": [
+        "Redis sekin",
+        "Async replication tufayli failover da oxirgi hold lar yo'qolib, joy boshqaga berilishi mumkin",
+        "Redis TTL ni qo'llab-quvvatlamaydi",
+        "SET NX atomik emas"
+      ],
+      "answer": 1,
+      "why": "Redis old filtr sifatida yaxshi, lekin yakuniy sotuv bazadagi kuchli consistency li yozuvda bo'lishi kerak."
+    },
+    {
+      "q": "Sof FIFO navbat xonasining asosiy adolat muammosi nima?",
+      "options": [
+        "Navbat juda sekin",
+        "Millisekundlarda birinchi kelgan - tez internetli foydalanuvchilar va botlar - yutadi",
+        "Navbat tokeni kerak emas",
+        "Hammaga chipta yetadi"
+      ],
+      "answer": 1,
+      "why": "Pre-queue randomizatsiya o'z vaqtida kelganlarning barchasiga teng imkoniyat beradi."
+    },
+    {
+      "q": "Botlar navbat xonasini chetlab o'tib to'g'ridan-to'g'ri POST /holds ga so'rov yubormoqda. Asosiy himoya?",
+      "options": [
+        "Navbatni uzaytirish",
+        "Hold API faqat imzolangan, muddatli, sessiyaga bog'langan navbat tokeni bilan ishlaydi va token edge da tekshiriladi",
+        "Hold muddatini qisqartirish",
+        "Xarita keshini o'chirish"
+      ],
+      "answer": 1,
+      "why": "Token navbatdan o'tganlikni isbotlaydi; usiz yadroga kirish yo'q."
+    },
+    {
+      "q": "To'lov provayderiga so'rov timeout bo'ldi. To'g'ri harakat?",
+      "options": [
+        "To'lovni darhol qayta yuborish",
+        "Bir xil idempotency kaliti bilan status so'rash va natijaga qarab davom etish",
+        "Buyurtmani bekor qilish va joyni qaytarish",
+        "Foydalanuvchidan yana to'lashni so'rash"
+      ],
+      "answer": 1,
+      "why": "Timeout - natija noma'lum degani; qayta yuborish ikki marta yechishga olib kelishi mumkin."
+    },
+    {
+      "q": "Foydalanuvchi hold tugashiga 2 soniya qolganda to'lovni boshladi va to'lov 30 soniya oldi. Overselling va 'pul olindi, joy yo'q' holatining oldini olish uchun nima qilinadi?",
+      "options": [
+        "Hech narsa, bu kam uchraydi",
+        "Buyurtma yaratilganda hold ni payment_pending holatiga o'tkazib uzaytirish va baribir kompensatsiya (refund) oqimini ushlash",
+        "Hold muddatini 1 soatga oshirish",
+        "To'lovni hold dan oldin olish"
+      ],
+      "answer": 1,
+      "why": "Hold to'lov davomida himoyalanadi; kutilmagan holat uchun saga da kompensatsiya qadami bor."
+    },
+    {
+      "q": "Region bo'linganda ikkala tomonda ham sotuvni davom ettirish nima uchun noto'g'ri?",
+      "options": [
+        "Narx farqlanadi",
+        "Ikkala tomon bir xil joyni sotishi mumkin - overselling; chipta sotishda consistency availability dan ustun",
+        "Navbat ishlamaydi",
+        "CDN ishlamaydi"
+      ],
+      "answer": 1,
+      "why": "NFR-1 qat'iy; bitta tadbir inventari bitta leader da va bo'linishda sotuv to'xtatiladi."
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Atomic commit oddiy consensus'dan nimasi bilan farq qiladi?",
+      "options": [
+        "Farqi yo'q",
+        "Atomic commit'da har bir ishtirokchi veto huquqiga ega: bitta \"yo'q\" ovozi natijani abort qiladi, majority yetmaydi",
+        "Atomic commit faqat bitta tugunda ishlaydi",
+        "Consensus'da hamma ishtirokchi rozi bo'lishi shart"
+      ],
+      "answer": 1,
+      "why": "Consensus'da istalgan taklif qilingan qiymat tanlanishi mumkin; atomic commit'da validity talabi bo'yicha har qanday NO abort'ga olib keladi."
+    },
+    {
+      "q": "2PC'da ishtirokchi PREPARE'ga YES deyishdan oldin nima qilishi shart?",
+      "options": [
+        "Tranzaksiyani commit qilishi",
+        "Barcha o'zgarishlar va prepared holatini diskka yozib, keyin qulasa ham commit qila olishini kafolatlashi",
+        "Lock'larni bo'shatishi",
+        "Boshqa ishtirokchilardan ruxsat olishi"
+      ],
+      "answer": 1,
+      "why": "YES - qaytarib olinmaydigan va'da. Ishtirokchi crash'dan keyin ham koordinator qaroriga bo'ysunishi uchun holat diskda bo'lishi kerak."
+    },
+    {
+      "q": "Koordinator COMMIT qarorini diskka yozdi, lekin ishtirokchilarga yuborishdan oldin qulab, bir soat tiklanmadi. Prepared ishtirokchilar nima qiladi?",
+      "options": [
+        "Timeout'dan keyin o'zlari abort qiladi",
+        "Timeout'dan keyin o'zlari commit qiladi",
+        "Koordinator tiklanguncha in-doubt holatda kutadi va lock'larni ushlab turadi",
+        "Yangi koordinator saylaydi va u abort qaror qiladi"
+      ],
+      "answer": 2,
+      "why": "Ishtirokchi qarorni bilmaydi: o'zi abort qilsa, boshqalar commit qilgan bo'lishi mumkin. Bu 2PC'ning blocking muammosi."
+    },
+    {
+      "q": "Koordinator prepare javoblarini oldi, lekin qarorni diskka yozishdan oldin qulab tushdi. Presumed abort bilan tiklangach nima bo'ladi?",
+      "options": [
+        "Tranzaksiya commit qilinadi, chunki hamma YES degan",
+        "Diskda qaror yo'q - tranzaksiya abort deb hisoblanadi va ishtirokchilarga ABORT yuboriladi",
+        "Administrator qo'lda hal qilishi shart",
+        "Tranzaksiya qayta boshlanadi"
+      ],
+      "answer": 1,
+      "why": "Commit point - qarorning koordinator diskiga yozilishi. U bo'lmasa, commit hech qachon bo'lmagan va abort xavfsiz."
+    },
+    {
+      "q": "Data-markaz ichida RTT 0.5 ms, har fsync 1 ms. 2PC'da klientga javob (prepare + qaror yozuvi) taxminan qancha vaqt oladi?",
+      "options": ["~1 ms", "~2.5 ms", "~10 ms", "~80 ms"],
+      "answer": 1,
+      "why": "Prepare round-trip 0.5 + ishtirokchi fsync 1 + koordinator qaror fsync 1 = 2.5 ms. Lock'lar esa 2-faza tugaguncha, 2.5 + 0.5 + 1 = 4 ms ushlanadi."
+    },
+    {
+      "q": "3 ishtirokchi va koordinator, har biri 99.9% mavjud. 2PC tranzaksiyasining muvaffaqiyatli bajarilish ehtimoli taxminan qancha?",
+      "options": ["99.9%", "99.99%", "99.6%", "97%"],
+      "answer": 2,
+      "why": "Hamma ishlashi kerak: 0.999^4 ≈ 0.996. Mavjudlik eng zaif ishtirokchidan ham past."
+    },
+    {
+      "q": "Nega three-phase commit amaliyotda 2PC'ning blocking muammosini hal qilmaydi?",
+      "options": [
+        "U juda sekin",
+        "U chegaralangan tarmoq kechikishi va javob vaqtini talab qiladi; real tarmoqda bu shart buzilganda atomicity kafolatlanmaydi",
+        "U faqat ikki ishtirokchi bilan ishlaydi",
+        "U diskka yozmaydi"
+      ],
+      "answer": 1,
+      "why": "Chegarasiz kechikish va process pause'lar sharoitida 3PC xavfsiz emas."
+    },
+    {
+      "q": "Spanner 2PC'ning blocking muammosini qanday yumshatadi?",
+      "options": [
+        "2PC o'rniga eventual consistency ishlatadi",
+        "Koordinator va ishtirokchilar Paxos guruhlari: prepare va commit yozuvlari Paxos orqali replikatsiya qilinadi, bitta tugun qulashi qarorni yo'qotmaydi",
+        "3PC ishlatadi",
+        "Faqat bitta shard'li tranzaksiyalarga ruxsat beradi"
+      ],
+      "answer": 1,
+      "why": "Spanner maqolasi: Paxos ustida 2PC mavjudlik muammolarini yumshatadi. Narxi - har qadamda majority replikatsiyasi."
+    },
+    {
+      "q": "PostgreSQL'da `pg_prepared_xacts` da 3 kunlik prepared tranzaksiya topildi. Asosiy xavf nima?",
+      "options": [
+        "Hech qanday xavf yo'q, u hech narsani band qilmaydi",
+        "U lock'larni ushlab turadi va VACUUM'ga xalaqit beradi; o'ta holatda transaction ID wraparound xavfi",
+        "U faqat disk joyini egallaydi",
+        "U replikatsiyani to'xtatadi"
+      ],
+      "answer": 1,
+      "why": "Hujjat ogohlantiradi: prepared tranzaksiyani uzoq qoldirish lock va VACUUM muammolariga, o'ta holatda baza o'chishiga olib kelishi mumkin."
+    },
+    {
+      "q": "Multi-tenant SaaS'da ko'p tranzaksiyalar bitta mijoz ma'lumotiga tegadi. Distributed tranzaksiyalarni kamaytirishning eng yaxshi usuli qaysi?",
+      "options": [
+        "Barcha joyda XA ishlatish",
+        "Shard kalitini tenant_id qilish, shunda deyarli barcha tranzaksiyalar bitta shard ichida lokal bo'ladi",
+        "Koordinatorlar sonini oshirish",
+        "Isolation darajasini pasaytirish"
+      ],
+      "answer": 1,
+      "why": "Eng arzon distributed tranzaksiya - kerak bo'lmagani. Tranzaksiya chegarasi shard chegarasiga mos kelsa, lokal ACID yetarli."
+    }
+  ]
+}

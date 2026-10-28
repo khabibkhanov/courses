@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "api.example.com ning hozirgi TTL i 86 400 s. Ertaga soat 10:00 da servisni yangi IP ga ko'chirish rejalashtirilgan. Eng to'g'ri harakat qaysi?",
+      "options": [
+        "Ertaga 10:00 da TTL ni 60 s ga tushirib, darhol IP ni almashtirish",
+        "Bugun, kamida 24 soat oldin, TTL ni 60 s ga tushirish, ertaga IP ni almashtirish va eski serverni bir muddat ishlatib turish",
+        "TTL ni o'zgartirmasdan IP ni almashtirish, resolver lar o'zi yangilanadi",
+        "TTL ni 0 qilish"
+      ],
+      "answer": 1,
+      "why": "Resolver lar eski yozuvni eski TTL davomida ushlaydi. TTL ni oldindan pasaytirish kerak, eski server esa TTL ni hurmat qilmaydigan klientlar uchun qoladi."
+    },
+    {
+      "q": "Yangi subdomen yaratishdan oldin unga so'rov yuborildi va NXDOMAIN olindi. Subdomen yaratilgach, ba'zi foydalanuvchilar hali ham uni topa olmayapti. Sababi?",
+      "options": [
+        "DNSSEC xatosi",
+        "Negative caching: NXDOMAIN javobi SOA dagi qiymatga ko'ra cache da qolgan",
+        "Anycast marshruti o'zgargan",
+        "TCP handshake muvaffaqiyatsiz"
+      ],
+      "answer": 1,
+      "why": "RFC 2308 ga ko'ra 'nom yo'q' javobi ham cache lanadi; uning TTL i SOA MINIMUM va SOA TTL ining kichigi."
+    },
+    {
+      "q": "Health check har 10 s, ketma-ket 3 ta xato nosog'lom deb hisoblanadi, DNS yozuvi TTL i 60 s. Ko'pchilik klientlar uchun taxminiy failover vaqti qancha?",
+      "options": ["Taxminan 10 s", "Taxminan 30 s", "Taxminan 90 s", "Taxminan 1 soat"],
+      "answer": 2,
+      "why": "Aniqlash ~30 s va resolver cache idagi eski javob 60 s gacha: jami ~90 s. TTL ni hurmat qilmaydigan klientlar uchun ko'proq."
+    },
+    {
+      "q": "Nega anycast DNS uchun ayniqsa mos?",
+      "options": [
+        "DNS faqat TCP orqali ishlaydi",
+        "DNS so'rovlari asosan bitta paketli UDP so'rov-javob, shuning uchun marshrut o'zgarishi ulanishni buzmaydi, va yaqin PoP latency ni kamaytiradi",
+        "Anycast DNS javoblarini shifrlaydi",
+        "Anycast TTL ni keraksiz qiladi"
+      ],
+      "answer": 1,
+      "why": "Har bir so'rov mustaqil; bundan tashqari anycast DDoS trafigini ko'p PoP ga tarqatadi va PoP o'chsa avtomatik boshqasiga o'tadi."
+    },
+    {
+      "q": "Korporativ mijozning 2 000 xodimi bitta ichki resolver orqali ishlaydi. Servisda round-robin DNS bilan 4 ta A yozuv bor. Qanday muammo bo'lishi mumkin?",
+      "options": [
+        "Hech qanday muammo yo'q, trafik teng taqsimlanadi",
+        "Resolver bitta javobni TTL davomida cache lab, 2 000 xodimning trafigi asosan bitta serverga borishi mumkin",
+        "Resolver to'rtta serverga bir vaqtda so'rov yuboradi",
+        "DNS so'rovi TCP ga o'tadi"
+      ],
+      "answer": 1,
+      "why": "DNS darajasidagi taqsimot resolver va klient xatti-harakatiga bog'liq va notekis bo'ladi; aniq taqsimot uchun load balancer kerak."
+    },
+    {
+      "q": "Facebook ning 2021 yil oktyabr uzilishida DNS serverlari ishlab tursa ham nega foydalanuvchilar ularga yetib bora olmadi?",
+      "options": [
+        "Domen ro'yxatdan o'tish muddati tugagan",
+        "DNS serverlari data-markazlarga ulana olmagach o'zini nosog'lom deb hisoblab, BGP e'lonlarini qaytarib oldi",
+        "TTL juda uzun edi",
+        "DNSSEC kalitlari muddati tugagan"
+      ],
+      "answer": 1,
+      "why": "Backbone uzilgach, health check ga bog'liq mexanizm barcha joylarda bir vaqtda e'lonlarni qaytarib oldi va DNS serverlariga marshrut qolmadi."
+    },
+    {
+      "q": "Kubernetes pod ida ndots:5 bilan tashqi 'api.partner.com' nomiga murojaat qilinadi. Nima bo'ladi?",
+      "options": [
+        "Darhol to'g'ri resolve bo'ladi",
+        "Nomda 5 tadan kam nuqta bo'lgani uchun avval cluster qidiruv domenlari qo'shilgan variantlar so'raladi, bu ortiqcha so'rovlar va latency beradi",
+        "Nom resolve bo'lmaydi",
+        "So'rov faqat TCP orqali ketadi"
+      ],
+      "answer": 1,
+      "why": "Yechim: FQDN ni oxirida nuqta bilan yozish yoki pod da ndots qiymatini kamaytirish."
+    },
+    {
+      "q": "Node.js servisi har bir tashqi so'rovda yangi ulanish ochadi va DNS sekinlashdi. Shu payt fs.readFile operatsiyalari ham sekinlashdi. Eng ehtimoliy sabab?",
+      "options": [
+        "Disk to'lgan",
+        "dns.lookup getaddrinfo ni libuv threadpool ida bajaradi va sekin DNS fayl operatsiyalari bilan umumiy pool ni band qiladi",
+        "Event loop DNS ni sinxron kutadi va hamma narsani bloklaydi",
+        "V8 garbage collector"
+      ],
+      "answer": 1,
+      "why": "Threadpool kichik va fs, zlib, crypto bilan umumiy. Connection pool, DNS cache yoki dns.resolve yordam beradi."
+    },
+    {
+      "q": "Ommaviy resolver ishlatgan Toshkentdagi foydalanuvchi geolocation siyosatli DNS dan uzoq regionga yo'naltirildi. Asosiy sabab nima bo'lishi mumkin?",
+      "options": [
+        "Foydalanuvchi IPv6 ishlatadi",
+        "Authoritative server javobni foydalanuvchi emas, resolver IP si bo'yicha tanlaydi; resolver EDNS Client Subnet yubormagan",
+        "TTL juda qisqa",
+        "Anycast ishlamayapti"
+      ],
+      "answer": 1,
+      "why": "ECS resolver ga foydalanuvchi subnet ini yuborish imkonini beradi, lekin maxfiylik sababli ba'zi resolver lar uni yubormaydi."
+    },
+    {
+      "q": "GPS treker firmware i DNS ni faqat yonganda bir marta resolve qiladi. Gateway uchun eng ishonchli yondashuv qaysi?",
+      "options": [
+        "TTL ni 5 s qilish va DNS orqali failover",
+        "Barqaror IP (statik yoki anycast) va uning ortida load balancer, backend lar o'zgarsa ham qurilma ko'radigan manzil o'zgarmaydi",
+        "Har bir qurilmaga alohida subdomen berish",
+        "Round-robin DNS bilan 10 ta A yozuv"
+      ],
+      "answer": 1,
+      "why": "TTL ni hurmat qilmaydigan qurilmalarda DNS asosidagi o'zgarishlar ishlamaydi; manzilni barqaror ushlab, o'zgarishni LB ortida qilish kerak."
+    }
+  ]
+}

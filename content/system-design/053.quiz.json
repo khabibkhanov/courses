@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Servis A Kafka orqali event chiqaradi, servis B uni o'qiydi. Qaysi coupling turi saqlanib qoladi?",
+      "options": [
+        "Temporal coupling",
+        "Location coupling",
+        "Format (schema) coupling",
+        "Hech qanday coupling qolmaydi"
+      ],
+      "answer": 2,
+      "why": "Async temporal va location coupling'ni kamaytiradi, lekin ikkala tomon event formatini tushunishi shart, ya'ni kontrakt baribir bor."
+    },
+    {
+      "q": "API so'rovi ketma-ket 4 ta servisga sinxron bog'liq, har biri 99.9% mavjud. Bittasini lokal read model bilan almashtirilsa, umumiy mavjudlik taxminan qanday o'zgaradi?",
+      "options": [
+        "99.6% dan 99.7% ga",
+        "99.9% dan 99.99% ga",
+        "O'zgarmaydi",
+        "96% dan 97% ga"
+      ],
+      "answer": 0,
+      "why": "0.999^4 ≈ 0.996, 0.999^3 ≈ 0.997. Har bir olib tashlangan sinxron bog'liqlik mavjudlikni oshiradi."
+    },
+    {
+      "q": "Servis 500 so'rov/s qabul qiladi. Downstream javob vaqti 50 ms dan 2 s ga oshdi. Little qonuni bo'yicha bir vaqtda ochiq so'rovlar soni qanday o'zgaradi?",
+      "options": [
+        "25 dan 50 ga",
+        "25 dan 1 000 ga",
+        "500 dan 1 000 ga",
+        "O'zgarmaydi, chunki Node.js asinxron"
+      ],
+      "answer": 1,
+      "why": "L = λ x W: 500 x 0.05 = 25, 500 x 2 = 1 000. Ulanish pooli va xotira tugashi mumkin, nosozlik yuqoriga tarqaladi."
+    },
+    {
+      "q": "Orders'ning 3 pod'i Billing'ning 10 pod'iga Kubernetes ClusterIP orqali gRPC bilan ulanadi. Nima kuzatiladi?",
+      "options": [
+        "Yuklama 10 pod'ga teng taqsimlanadi",
+        "Har bir orders pod'i bitta HTTP/2 ulanish ushlab turgani uchun yuklama asosan 3 ta billing pod'iga tushadi",
+        "gRPC ClusterIP orqali umuman ishlamaydi",
+        "kube-proxy har bir RPC'ni alohida balanslaydi"
+      ],
+      "answer": 1,
+      "why": "ClusterIP L4 da ulanish bo'yicha balanslaydi. HTTP/2 ko'p RPC'ni bitta uzoq ulanishda multiplex qiladi, shuning uchun L7 proxy yoki client-side balancing kerak."
+    },
+    {
+      "q": "Readiness probe bazaga ulanishni tekshiradi. Baza 10 soniya sekinlashdi. Nima bo'ladi?",
+      "options": [
+        "Faqat bitta pod trafikdan chiqadi",
+        "Barcha pod'lar bir vaqtda not ready bo'lib, servis butunlay trafikdan chiqadi",
+        "Pod'lar qayta ishga tushiriladi va muammo hal bo'ladi",
+        "Hech narsa bo'lmaydi"
+      ],
+      "answer": 1,
+      "why": "Umumiy downstream hamma pod'ga bir xil ta'sir qiladi. Readiness pod'ning o'zi tayyorligini tekshirishi kerak, tashqi bog'liqliklarni emas."
+    },
+    {
+      "q": "Servis bazaga buyurtmani yozadi, keyin alohida chaqiruv bilan Kafka'ga OrderCreated yuboradi. Asosiy xavf nima?",
+      "options": [
+        "Kafka juda sekin",
+        "Ikkinchi qadam muvaffaqiyatsiz bo'lsa yoki process o'rtada o'lsa, baza va event'lar mos kelmaydi (dual-write)",
+        "Event'lar tartibi buziladi",
+        "Baza tranzaksiyasi uzoq davom etadi"
+      ],
+      "answer": 1,
+      "why": "Ikki tizimga atomik yozish yo'q. Transactional outbox yoki CDC bu muammoni hal qiladi."
+    },
+    {
+      "q": "Command va event farqi qaysi?",
+      "options": [
+        "Command Kafka'da, event RabbitMQ'da yuboriladi",
+        "Command 'buni qil' - bitta qabul qiluvchi rad etishi mumkin; event 'bu bo'ldi' - o'tgan fakt, ko'p iste'molchi",
+        "Farqi faqat nomida",
+        "Event har doim javob talab qiladi"
+      ],
+      "answer": 1,
+      "why": "Semantik farq: command niyatni bildiradi va rad etilishi mumkin, event esa bo'lib o'tgan faktni e'lon qiladi."
+    },
+    {
+      "q": "Consul DNS interfeysida default TTL 0 bo'lishining sababi nima?",
+      "options": [
+        "DNS serverni tezlashtirish uchun",
+        "Klientlar o'chgan yoki nosoz instance manzilini cache'da ushlab qolmasligi uchun",
+        "TTL 0 DNS standartida majburiy",
+        "Bu xavfsizlik talabi"
+      ],
+      "answer": 1,
+      "why": "Discovery'da ma'lumot tez o'zgaradi. Cache'lash eski manzillarga murojaatga olib keladi, shuning uchun default holatda u o'chirilgan."
+    },
+    {
+      "q": "Treker nuqtalarini qabul qiluvchi ingest servis IMEI qaysi tenantga tegishli ekanini bilishi kerak. Eng chidamli yechim qaysi?",
+      "options": [
+        "Har nuqta uchun monolit API'ga sinxron so'rov",
+        "Monolit qurilma o'zgarishlarini event sifatida chiqaradi, ingest ularni lokal xotirada ushlab turadi (event-carried state transfer)",
+        "Ingest monolitning bazasiga to'g'ridan-to'g'ri SELECT qiladi",
+        "Tenantni trekerdan so'rash"
+      ],
+      "answer": 1,
+      "why": "Lokal nusxa temporal coupling'ni yo'qotadi: monolit deploy yoki nosozligida ham ingest ishlaydi. 100 000 qurilma ma'lumoti bir necha MB."
+    },
+    {
+      "q": "Servis 500 so'rov/s bilan downstream'ni chaqiradi, o'rtacha javob 20 ms. Keep-alive ulanish pooli uchun minimal parallel ulanishlar soni taxminan qancha?",
+      "options": ["2", "10", "500", "25 000"],
+      "answer": 1,
+      "why": "Little qonuni: 500 x 0.02 = 10 parallel so'rov. Amalda cho'qqi va dum uchun zahira bilan 20-30 qo'yiladi."
+    }
+  ]
+}

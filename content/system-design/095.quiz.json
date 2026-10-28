@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "1 million onlayn haydovchi har 4 soniyada joylashuv yuboradi. Yozish tezligi qancha?",
+      "options": ["25 000/s", "250 000/s", "4 000 000/s", "1 000 000/s"],
+      "answer": 1,
+      "why": "1 000 000 / 4 = 250 000 yangilanish/s."
+    },
+    {
+      "q": "1 million haydovchining faqat oxirgi joylashuvi (har biri ~100 B) saqlanadi. Bu geo-indeks haqida nima deydi?",
+      "options": [
+        "Hajm katta, diskda saqlash kerak",
+        "Hajm ~100 MB - xotiraga sig'adi; shardlash hajm uchun emas, yozish/o'qish chastotasi uchun",
+        "Bir necha TB, object storage kerak",
+        "Hajm muhim emas, faqat replica soni muhim"
+      ],
+      "answer": 1,
+      "why": "1M x 100 B = 100 MB. Muammo - 250k yozish/s va 600k o'qish/s."
+    },
+    {
+      "q": "Ikki parallel matching bir xil idle haydovchini tanladi. Ikki marta tayinlashdan nima himoya qiladi?",
+      "options": [
+        "Geo-indeksdagi status maydoni",
+        "driver_id birlamchi kalitli jadvalda shartli atomik yozish (lease bilan)",
+        "Haydovchi ilovasi ikkinchi taklifni ko'rsatmaydi",
+        "Kafka tartibi"
+      ],
+      "answer": 1,
+      "why": "Geo-indeks eventual; invariant kuchli consistency li bazada atomik shartli yozish bilan ushlanadi."
+    },
+    {
+      "q": "Haydovchi taklifga javob bermadi va ilovasi o'ldi. Lease pattern bo'lmasa nima bo'ladi?",
+      "options": [
+        "Taklif avtomatik qabul qilinadi",
+        "Haydovchi abadiy 'band' holatda qoladi va boshqa so'rovlarga tayinlanmaydi",
+        "Yo'lovchi to'lov qiladi",
+        "Hech narsa"
+      ],
+      "answer": 1,
+      "why": "Lease muddati tugashi bilan band qilish avtomatik bo'shaydi."
+    },
+    {
+      "q": "Haydovchining 'accept' xabari tarmoqda kechikib, taklif muddati tugagandan va u boshqa safarga taklif olgandan keyin keldi. Nima uni to'g'ri rad etadi?",
+      "options": ["Server vaqti", "offer_id va version (fencing token) tekshiruvi", "Geo-indeks", "WebSocket tartibi"],
+      "answer": 1,
+      "why": "Eski offer_id yoki version bilan kelgan javob joriy band qilishga mos kelmaydi va rad etiladi."
+    },
+    {
+      "q": "Nega matching to'g'ri chiziqli masofa bo'yicha emas, ETA bo'yicha saralanadi?",
+      "options": [
+        "ETA hisoblash arzonroq",
+        "Yo'l tarmog'i, daryolar va tirbandlik tufayli yaqin mashina kechroq yetishi mumkin",
+        "Masofa maxfiy ma'lumot",
+        "Geo-indeks masofani qaytarmaydi"
+      ],
+      "answer": 1,
+      "why": "Geo-qidiruv faqat coarse filter; yakuniy tanlov yo'l bo'yicha yetib kelish vaqtiga asoslanadi."
+    },
+    {
+      "q": "Uber 2015 da data-markaz nosozligida faol safarlarni qanday saqlagan?",
+      "options": [
+        "Har bir o'tishni ikkinchi data-markazga sinxron replikatsiya qilgan",
+        "Shifrlangan state digest ni davriy ravishda haydovchi telefoniga yuborib, failover dan keyin undan tiklagan",
+        "Safarlarni bekor qilgan",
+        "Safarlarni faqat telefon ichida hisoblagan"
+      ],
+      "answer": 1,
+      "why": "Telefon zaxira saqlash joyi bo'lgan; failover dan keyin noma'lum safar uchun digest so'ralgan."
+    },
+    {
+      "q": "Geo-indeks shardi o'ldi va replica yo'q. Indeks qanchalik tez tiklanadi?",
+      "options": [
+        "Faqat backup dan, soatlar ichida",
+        "Haydovchilar har 4 soniyada qayta yuborgani uchun bir necha soniyada o'z-o'zidan to'ladi",
+        "Hech qachon",
+        "Kafka dan to'liq qayta o'qish kerak"
+      ],
+      "answer": 1,
+      "why": "Indeks yumshoq holat: haqiqat manbai - qurilmalar, indeks ularning qisqa muddatli nusxasi."
+    },
+    {
+      "q": "H3 olti burchaklarining kvadrat cell larga nisbatan asosiy afzalligi nima?",
+      "options": [
+        "Kamroq xotira oladi",
+        "Markazdan barcha qo'shnilar markazigacha masofa bir xil - qo'shnilar bo'yicha agregatsiya va silliqlash soddaroq",
+        "Ular aniq yer yuzini qoplaydi, buzilishsiz",
+        "Ular faqat bitta rezolyutsiyaga ega"
+      ],
+      "answer": 1,
+      "why": "Kvadratda ikki xil, uchburchakda uch xil qo'shni masofasi bor; olti burchakda bitta."
+    },
+    {
+      "q": "Batch matching (1-2 s oyna) ning greedy ga nisbatan narxi nima?",
+      "options": [
+        "Umumiy ETA yomonlashadi",
+        "Har bir so'rovga oyna davomiyligicha kechikish va murakkab optimallashtirish qo'shiladi",
+        "Ikki marta band qilish xavfi oshadi",
+        "Geo-indeks kerak bo'lmaydi"
+      ],
+      "answer": 1,
+      "why": "Batch global yaxshiroq natija beradi, lekin har so'rov oyna tugashini kutadi."
+    }
+  ]
+}

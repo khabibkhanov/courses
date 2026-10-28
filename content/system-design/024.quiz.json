@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Kalit soniyasiga 4 000 marta o'qiladi, qayta hisoblash 250 ms. TTL tugaganda himoya bo'lmasa, birinchi natija cache ga yozilguncha taxminan nechta so'rov bazaga boradi?",
+      "options": [
+        "1 000",
+        "4",
+        "250",
+        "4 000"
+      ],
+      "answer": 0,
+      "why": "4 000 so'rov/s x 0.25 s = 1 000 ta miss. Baza sekinlashsa, oyna kengayadi va son yanada oshadi."
+    },
+    {
+      "q": "XFetch: delta = 1 s, beta = 1, muddatgacha 1 soniya qolgan. Bitta so'rovning qayta hisoblash ehtimoli taxminan qancha?",
+      "options": [
+        "1%",
+        "13.5%",
+        "100%",
+        "37%"
+      ],
+      "answer": 3,
+      "why": "Shart: -1 x ln(r) >= 1, ya'ni r <= e^(-1), taxminan 0.37. Muddat yaqinlashgan sari ehtimol oshadi."
+    },
+    {
+      "q": "Redis Cluster ga 3 ta yangi tugun qo'shildi, lekin bitta tugun hamon 100% CPU va tarmoqda. Eng ehtimolli sabab va yechim?",
+      "options": [
+        "Slot lar qayta taqsimlanmagan, rebalance kifoya",
+        "Replikalar yetarli emas, yana replika qo'shish kerak",
+        "Hot key: bitta kalit bitta slot da, shuning uchun lokal L1 cache yoki kalit nusxalari kerak",
+        "maxmemory juda kichik"
+      ],
+      "answer": 2,
+      "why": "Kalit doim bitta slot ga tushadi, tugun qo'shish uni bo'lmaydi. Hot key ni ilova tomonida cache lash yoki nusxalash kerak."
+    },
+    {
+      "q": "Admin panelda KEYS vehicle:* chaqirildi, Redis da 5 million kalit. Nima bo'ladi?",
+      "options": [
+        "Faqat admin so'rovi sekin bo'ladi",
+        "Buyruq bajarilguncha butun Redis bloklanadi va barcha mijozlar kutadi",
+        "Redis buyruqni avtomatik ravishda fonda bajaradi",
+        "Buyruq I/O threads da parallel bajariladi"
+      ],
+      "answer": 1,
+      "why": "Buyruqlar bitta asosiy thread da bajariladi. SCAN kursor bilan ishni bo'laklaydi va boshqa buyruqlarga navbat beradi."
+    },
+    {
+      "q": "Millionlab elementli set ni o'chirish kerak. Qaysi buyruq latency uchun yaxshiroq?",
+      "options": [
+        "UNLINK",
+        "DEL",
+        "FLUSHALL",
+        "EXPIRE key 0"
+      ],
+      "answer": 0,
+      "why": "UNLINK kalitni keyspace dan darhol olib tashlaydi, xotirani esa boshqa thread da bo'shatadi. DEL asosiy thread ni band qiladi."
+    },
+    {
+      "q": "Redis 20 GB ma'lumot bilan 32 GB RAM li serverda ishlaydi, RDB yoqilgan, yozish juda ko'p. BGSAVE paytida OOM killer Redis ni o'ldirdi. Sabab?",
+      "options": [
+        "RDB fayl RAM ga yuklanadi",
+        "AOF va RDB bir vaqtda ishlaydi",
+        "Redis RDB uchun alohida 20 GB oldindan ajratadi",
+        "Fork dan keyin copy-on-write tufayli o'zgargan sahifalar nusxalanadi va xotira sarfi deyarli ikki baravarga yaqinlashishi mumkin"
+      ],
+      "answer": 3,
+      "why": "Ota process yozgan har bir sahifa bola process uchun saqlanib, nusxalanadi. THP bu effektni kuchaytiradi, shuning uchun maxmemory ga zaxira qoldiriladi."
+    },
+    {
+      "q": "Redis Cluster da MULTI ichida vehicle:42:last va vehicle:42:trip kalitlarini birga o'zgartirish kerak. Nima qilish kerak?",
+      "options": [
+        "Hech narsa, Redis Cluster ko'p slot li tranzaksiyani qo'llaydi",
+        "Ikkala kalitni alohida tranzaksiyada yozish",
+        "Kalitlarni vehicle:{42}:last va vehicle:{42}:trip kabi hash tag bilan nomlash, shunda ular bitta slot ga tushadi",
+        "Cluster ni o'chirib, bitta tugunga o'tish"
+      ],
+      "answer": 2,
+      "why": "Ko'p kalitli buyruqlar, tranzaksiyalar va Lua faqat bitta slot dagi kalitlar bilan ishlaydi. Hash tag faqat {} ichini hash qiladi."
+    },
+    {
+      "q": "Redis Cluster da primary yozuvni tasdiqladi va darhol o'ldi, replika primary qilib ko'tarildi. Natija?",
+      "options": [
+        "Yozuv albatta saqlanadi, chunki tasdiqlangan",
+        "Replication asinxron bo'lgani uchun replika bu yozuvni olmagan bo'lishi va yozuv yo'qolishi mumkin",
+        "Cluster yozuvni AOF dan avtomatik tiklaydi",
+        "Mijoz xato oladi va yozuv qayta yuboriladi"
+      ],
+      "answer": 1,
+      "why": "Redis hujjati ochiq aytadi: Cluster kuchli consistency bermaydi va tasdiqlangan yozuvlarni yo'qotishi mumkin. WAIT xavfni kamaytiradi, lekin kafolat emas."
+    },
+    {
+      "q": "Bir million cache kaliti bitta batch job tomonidan EXPIREAT bilan bir xil vaqt belgisiga qo'yildi. O'sha soniyada qanday xavf bor?",
+      "options": [
+        "Active expire sikli ko'p muddati tugagan kalitni topib uzoq tozalaydi va Redis bloklanadi, ustiga barcha kalitlar bir vaqtda miss beradi",
+        "Hech qanday, expire faqat lazy",
+        "Redis kalitlarni o'chirmaydi",
+        "Faqat xotira sarfi oshadi"
+      ],
+      "answer": 0,
+      "why": "Namunaning 25% dan ko'pi muddati tugagan bo'lsa, sikl takrorlanadi va asosiy thread band bo'ladi. Ustiga bu ommaviy stampede. TTL ga jitter qo'shish kerak."
+    },
+    {
+      "q": "Ko'p regionli tizimda yozish primary ga ketadi, o'qish esa lokal replikadan. Yozgandan keyin cache dan DEL qilinadi, lekin cache baribir eski qiymat bilan qayta to'lmoqda. Eng ishonchli yechim?",
+      "options": [
+        "TTL ni oshirish",
+        "Cache ni butunlay o'chirish",
+        "DEL ni ikki marta yuborish",
+        "Invalidatsiyani lokal replika o'zgarishni qo'llagandan keyin, bazaning o'zgarish oqimidan (CDC) qilish"
+      ],
+      "answer": 3,
+      "why": "DEL replika yangilanmasdan oldin kelsa, keyingi miss eski qiymatni replikadan o'qiydi. Replikaning o'zi qo'llagan o'zgarishlar asosidagi invalidatsiya tartibni to'g'ri saqlaydi."
+    }
+  ]
+}

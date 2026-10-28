@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Oylik infratuzilma 10 000 dollar telemetriyaga, 60 000 faol mashina. Telemetriya unit cost i qancha?",
+      "options": [
+        "~0.017 dollar/mashina/oy",
+        "~1.7 dollar/mashina/oy",
+        "~0.17 dollar/mashina/oy",
+        "~6 dollar/mashina/oy"
+      ],
+      "answer": 2,
+      "why": "10 000 / 60 000 ≈ 0.167. Unit cost biznes narx siyosati bilan solishtiriladi."
+    },
+    {
+      "q": "Video oqimi zonalararo 500 MB/s ni tashkil qiladi, narx har yo'nalishda 0.01 dollar/GB. Oyiga (~2.6 mln s) taxminan qancha?",
+      "options": [
+        "~26 000 dollar",
+        "~2 600 dollar",
+        "~260 dollar",
+        "~260 000 dollar"
+      ],
+      "answer": 0,
+      "why": "500 MB/s x 2.6 mln s ≈ 1 300 TB = 1.3 mln GB; x 0.02 (ikki tomon) ≈ 26 000 dollar. Tarmoq trafigi yashirin katta xarajat bo'lishi mumkin."
+    },
+    {
+      "q": "Video transcoding ishlari navbatdan olinadi va idempotent. Qaysi compute sotib olish modeli eng mos?",
+      "options": [
+        "3 yillik commitment",
+        "Bitta katta dedicated server",
+        "Faqat on-demand",
+        "Spot: 90 foizgacha arzon, 2 daqiqalik ogohlantirish bilan to'xtatilsa ish boshqa workerda qayta boshlanadi"
+      ],
+      "answer": 3,
+      "why": "To'xtatilishga chidamli, qayta boshlanadigan ishlar spot uchun ideal. Holat navbat va object storage da bo'lishi kerak."
+    },
+    {
+      "q": "Ingest, Kafka va baza 24/7 deyarli bir xil yuklamada ishlaydi va yaqin yillarda o'sishi aniq. Ularning bazaviy qismi uchun eng arzon model?",
+      "options": [
+        "Spot",
+        "Commitment (Savings Plans yoki rezervatsiya) - 72 foizgacha tejash",
+        "Serverless",
+        "Faqat on-demand"
+      ],
+      "answer": 1,
+      "why": "Doimiy bazaviy yuklama commitment uchun ideal. O'zgaruvchan qism on-demand autoscaling bilan qoplanadi."
+    },
+    {
+      "q": "Servislar private subnetda va S3 ga yuzlab TB ni NAT gateway orqali yuboradi. Qaysi o'zgarish NAT qayta ishlash to'lovini yo'qotadi?",
+      "options": [
+        "Instance hajmini oshirish",
+        "S3 uchun gateway VPC endpoint orqali trafik yuborish",
+        "Ko'proq NAT gateway qo'shish",
+        "S3 bucketni boshqa regionga ko'chirish"
+      ],
+      "answer": 1,
+      "why": "NAT gateway har GB uchun qayta ishlash to'lovi oladi. Gateway VPC endpoint uchun data processing va soatlik to'lov yo'q."
+    },
+    {
+      "q": "Dev va staging muhitlari haftasiga 168 soat ishlaydi, lekin faqat ish kunlari 8 soat ishlatiladi. Ularni ishlatilmaganda o'chirish qancha tejaydi?",
+      "options": [
+        "~25%",
+        "~50%",
+        "~95%",
+        "~75%"
+      ],
+      "answer": 3,
+      "why": "40 / 168 ≈ 24% vaqt ishlaydi, ya'ni ~76% tejash. AWS Well-Architected aynan shu misolni keltiradi."
+    },
+    {
+      "q": "S3 Standard 0.023, Glacier Deep Archive 0.00099 dollar/GB-oy. 500 TB, kamdan-kam o'qiladigan video arxivni Deep Archive ga o'tkazish nimani beradi va qanday narx bilan?",
+      "options": [
+        "Saqlash ~23 baravar arzon, lekin tiklash soatlab va pullik, minimal 180 kunlik saqlash",
+        "Farq yo'q",
+        "Arxiv tezroq o'qiladi",
+        "Faqat kichik obyektlar uchun foydali"
+      ],
+      "answer": 0,
+      "why": "0.023 / 0.00099 ≈ 23. Trade-off - tiklash vaqti (RTO) va minimal muddat."
+    },
+    {
+      "q": "Darsdagi misolda video har birlikka telemetriyadan ~27 baravar qimmat va narxi saqlash muddatiga proporsional. Qaysi biznes xulosasi to'g'ri?",
+      "options": [
+        "Video ni bepul berish kerak",
+        "Telemetriya narxini oshirish",
+        "Video tier larini (masalan 7, 14, 30 kun) alohida narxlash va hodisasiz videoni qisqa saqlash yoki edge da qoldirish",
+        "Hech narsa, umumiy narx muhim"
+      ],
+      "answer": 2,
+      "why": "Unit cost arxitekturadan narx siyosatiga to'g'ridan-to'g'ri yo'l: eng qimmat haydovchi alohida narxlanadi va dizayn bilan kamaytiriladi."
+    },
+    {
+      "q": "Tizim 3 zonada, bitta zona yo'qolganda ham to'liq yuklamani ko'tarishi kerak. Normal holatda har zona taxminan qancha band bo'lishi mumkin va bu narxga qanday ta'sir qiladi?",
+      "options": [
+        "100% - zaxira kerak emas",
+        "90%",
+        "33%",
+        "~66% gacha - infratuzilmaning taxminan uchdan biri zaxira sifatida bo'sh turadi"
+      ],
+      "answer": 3,
+      "why": "Qolgan 2 zona 100% ni ko'tarishi uchun har biri normalda 2/3 dan ko'p yuklanmasligi kerak. Ishonchlilik pul turadi."
+    },
+    {
+      "q": "Absolyut bulut xarajati chorakda 30% oshdi, mashinalar soni 40% oshdi. Qaysi xulosa to'g'ri?",
+      "options": [
+        "Unit cost (dollar/mashina) kamaygan - bu sog'lom o'sish; trend shu metrika bo'yicha kuzatiladi",
+        "Xarajat nazoratdan chiqdi",
+        "Darhol commitment olish kerak",
+        "Ma'lumot yetarli emas, xarajatni kamaytirish kerak"
+      ],
+      "answer": 0,
+      "why": "1.3 / 1.4 ≈ 0.93, ya'ni unit cost ~7% kamaygan. Absolyut o'sish biznes o'sishi bilan normal, signal - unit cost o'sishi."
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "API servis 8 instance dan 20 instance ga autoscale bo'ldi. Har bir instance da DB pool 10 ta, PostgreSQL max_connections = 100. Nima bo'ladi?",
+      "options": [
+        "Throughput 2.5 baravar oshadi",
+        "200 ulanish kerak bo'ladi, limitdan oshadi, yangi instance lar bazaga ulana olmaydi yoki xato beradi",
+        "PostgreSQL avtomatik ravishda limitni oshiradi",
+        "Pool lar avtomatik ravishda 5 tagacha kichrayadi"
+      ],
+      "answer": 1,
+      "why": "20 x 10 = 200 > 100. Yechim - PgBouncer kabi pooler yoki instance soni x pool hajmini baza limitidan pastda ushlash."
+    },
+    {
+      "q": "USL da alpha = 0.05, beta = 0.0001. Taxminan nechta serverdan keyin server qo'shish throughput ni kamaytira boshlaydi?",
+      "options": [
+        "97",
+        "20",
+        "50",
+        "1000"
+      ],
+      "answer": 0,
+      "why": "N* = sqrt((1 - alpha) / beta) = sqrt(0.95 / 0.0001) = sqrt(9500), taxminan 97."
+    },
+    {
+      "q": "USL dagi beta (coherency) hadi nimani ifodalaydi?",
+      "options": [
+        "Ishning parallel qilib bo'lmaydigan ulushini",
+        "Tarmoq o'tkazuvchanligini",
+        "Disk IO tezligini",
+        "Tugunlar o'zaro kelishishi va ma'lumotni sinxronlash narxini, u N(N-1) bilan o'sadi"
+      ],
+      "answer": 3,
+      "why": "Alpha - umumiy resurs uchun navbat (contention), beta - tugunlar orasidagi koordinatsiya narxi. Beta tufayli retrograde scaling paydo bo'ladi."
+    },
+    {
+      "q": "Servis session ni xotirada saqlaydi va LB da sticky session yoqilgan. Rolling deploy paytida nima bo'ladi?",
+      "options": [
+        "Hech narsa, sticky session hamma narsani hal qiladi",
+        "LB session ni yangi instance ga ko'chiradi",
+        "Almashtirilgan instance dagi foydalanuvchilar session ni yo'qotadi va qayta login qilishi kerak bo'ladi",
+        "Deploy sticky session tufayli bloklanadi"
+      ],
+      "answer": 2,
+      "why": "Sticky session state ni instance ga bog'laydi. Instance o'chsa, state yo'qoladi. Shuning uchun session tashqi saqlashga (Redis) yoki token ga chiqariladi."
+    },
+    {
+      "q": "Let's Encrypt asosiy bazani nega sharding qilmay, bitta kuchli primary da ushlab turadi?",
+      "options": [
+        "MariaDB sharding ni qo'llab-quvvatlamaydi",
+        "Murakkablikni kamaytirish xavfsizlik, ishonchlilik va qo'llab-quvvatlash uchun muhim, apparat yangilanishi esa hozircha yetarli",
+        "Sharding qimmatroq apparat talab qiladi",
+        "Ularning yuklamasi juda kichik"
+      ],
+      "answer": 1,
+      "why": "Ular ongli ravishda bitta primary + o'qish replikalari modelini tanlagan va vertical yangilanish bilan latency ni sezilarli kamaytirgan."
+    },
+    {
+      "q": "Quyidagilardan qaysi biri yashirin state EMAS?",
+      "options": [
+        "So'rov ichida hisoblangan va javob qaytgach tashlab yuboriladigan oraliq natija",
+        "Har bir instance da ishlaydigan node-cron vazifasi",
+        "Foydalanuvchi yuklagan faylni /tmp ga saqlash",
+        "Xotiradagi rate limit hisoblagichi"
+      ],
+      "answer": 0,
+      "why": "Bitta so'rov doirasidagi vaqtinchalik ma'lumot keyingi so'rovga ta'sir qilmaydi, shuning uchun state hisoblanmaydi. Qolganlari instance lar ko'payganda xato beradi."
+    },
+    {
+      "q": "Kubernetes da pod SIGTERM olishi bilan darhol chiqib ketadi. Deploy paytida ba'zi so'rovlar connection refused oladi. Asosiy sabab nima?",
+      "options": [
+        "SIGTERM noto'g'ri signal",
+        "terminationGracePeriodSeconds juda uzun",
+        "Readiness probe yo'qligi",
+        "Pod ni Service endpoint laridan olib tashlash parallel tarqaladi, ba'zi yo'naltiruvchilar hali eski pod ga trafik yuboradi"
+      ],
+      "answer": 3,
+      "why": "Endpoint olib tashlash va SIGTERM bir-birini kutmaydi. preStop dagi qisqa sleep va yangi so'rov qabul qilishni to'xtatib, borini tugatish shu poygani yopadi."
+    },
+    {
+      "q": "Stack Overflow 2016: bir kunda 209.4 million HTTP so'rov. O'rtacha so'rov/s taxminan qancha?",
+      "options": [
+        "240",
+        "24 000",
+        "2 400",
+        "240 000"
+      ],
+      "answer": 2,
+      "why": "209 420 973 / 86 400, taxminan 2 424 so'rov/s. Cho'qqi bundan yuqori, lekin tartib - minglar."
+    },
+    {
+      "q": "Telemetriya gateway trekerlar bilan uzoq TCP ulanish ushlab turadi. Uni horizontal o'stirishda to'g'ri tamoyil qaysi?",
+      "options": [
+        "Ulanishni stateless qilish kerak, aks holda ko'paytirib bo'lmaydi",
+        "Ulanishdan boshqa hamma state ni tashqariga chiqarish: paket darhol navbatga, onlayn holat Redis ga, instance o'lsa faqat ulanish yo'qoladi",
+        "Faqat vertical o'stirish mumkin",
+        "Sticky session yoqish kifoya"
+      ],
+      "answer": 1,
+      "why": "TCP ulanish tabiatan bitta instance ga bog'liq. Maqsad - instance o'limida ma'lumot emas, faqat ulanish yo'qolishi va qurilma boshqa instance ga qayta ulanishi."
+    },
+    {
+      "q": "Qaysi holatda vertical scaling odatda to'g'ri birinchi qadam?",
+      "options": [
+        "Asosiy relational baza CPU 70% ga yetdi, sharding hali kerak emas",
+        "Stateless API ni 10 baravar yuklamaga tayyorlash",
+        "Bir necha region bo'yicha ishonchlilikni oshirish",
+        "Mijozlar sonining kunlik keskin tebranishiga moslashish"
+      ],
+      "answer": 0,
+      "why": "Stateful baza uchun kuchliroq mashina (va o'qish replikasi) sharding dan ancha arzon. Elastiklik va ko'p regionli ishonchlilik esa horizontal yondashuv bilan olinadi."
+    }
+  ]
+}

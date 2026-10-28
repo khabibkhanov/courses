@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "RTT 100 ms, DNS cache da bor. HTTP/2 + TLS 1.3 orqali yangi ulanishda birinchi javob qachon keladi (server ishlov berish vaqtisiz)?",
+      "options": ["100 ms", "200 ms", "300 ms", "400 ms"],
+      "answer": 2,
+      "why": "TCP handshake 1 RTT, TLS 1.3 1 RTT, HTTP so'rov-javob 1 RTT: jami 3 x 100 = 300 ms."
+    },
+    {
+      "q": "Xuddi shu sharoitda (RTT 100 ms) HTTP/3 orqali yangi ulanishda birinchi javob qachon keladi?",
+      "options": ["100 ms", "200 ms", "300 ms", "400 ms"],
+      "answer": 1,
+      "why": "QUIC transport va TLS 1.3 handshake ni bitta RTT da birlashtiradi, keyin HTTP so'rov 1 RTT: jami 200 ms."
+    },
+    {
+      "q": "Paket yo'qolishi 3% bo'lgan mobil tarmoqda 30 ta parallel so'rov HTTP/2 orqali bitta ulanishda ketmoqda. Bitta paket yo'qoldi. Nima bo'ladi?",
+      "options": [
+        "Faqat bitta so'rov kechikadi",
+        "Qayta yuborilguncha barcha 30 ta stream to'xtaydi, chunki ular bitta TCP oqimida",
+        "HTTP/2 yo'qolgan paketni boshqa ulanish orqali yuboradi",
+        "Ulanish darhol HTTP/3 ga o'tadi"
+      ],
+      "answer": 1,
+      "why": "HTTP/2 ilova HOL ni yo'qotgan, lekin TCP darajasidagi HOL qolgan. QUIC da stream lar mustaqil."
+    },
+    {
+      "q": "CDN da TLS 1.3 0-RTT yoqilgan. Qaysi so'rovni early data da qabul qilish xavfli?",
+      "options": [
+        "GET /vehicles/123/location",
+        "GET /static/app.js",
+        "POST /vehicles/123/immobilize (dvigatelni bloklash)",
+        "HEAD /health"
+      ],
+      "answer": 2,
+      "why": "0-RTT ma'lumot ulanishlar orasida replay dan himoyalanmagan. O'zgartiruvchi so'rov ikki marta bajarilishi mumkin; 425 Too Early va idempotency key kerak."
+    },
+    {
+      "q": "TLS 1.3 ning TLS 1.2 ga nisbatan latency jihatidan asosiy yutug'i nima?",
+      "options": [
+        "Simmetrik shifrlash tezroq",
+        "To'liq handshake 2 RTT dan 1 RTT ga qisqardi, chunki klient birinchi xabarda key share yuboradi",
+        "Sertifikat kerak emas",
+        "TCP handshake ni olib tashlaydi"
+      ],
+      "answer": 1,
+      "why": "ClientHello bilan kalit almashish ma'lumoti birga yuboriladi, server javobidan keyin shifrlangan ma'lumot boshlanadi."
+    },
+    {
+      "q": "Haydovchi telefoni Wi-Fi dan 4G ga o'tdi. TCP ulanish uziladi, QUIC ulanish esa ko'pincha davom etadi. Sababi?",
+      "options": [
+        "QUIC UDP ishlatgani uchun ulanish tushunchasi yo'q",
+        "QUIC ulanishni IP/port to'rtligi bilan emas, connection ID bilan aniqlaydi",
+        "4G operatorlari QUIC ni maxsus qo'llab-quvvatlaydi",
+        "QUIC har bir paketda yangi handshake qiladi"
+      ],
+      "answer": 1,
+      "why": "IP o'zgarsa TCP to'rtligi o'zgaradi. QUIC connection ID tufayli yangi yo'l bo'ylab davom etadi; bu esa load balancer da connection ID bo'yicha marshrutlashni talab qiladi."
+    },
+    {
+      "q": "gRPC servislari L4 load balancer ortida. Backend lardan biri boshqalardan 5 baravar ko'p yuklama olmoqda. Eng ehtimoliy sabab?",
+      "options": [
+        "gRPC UDP ishlatadi",
+        "HTTP/2 da bitta uzoq ulanishda ko'p so'rov ketadi; L4 LB ulanishlarni taqsimlaydi, so'rovlarni emas",
+        "TLS handshake notekis",
+        "HPACK siqish notekis ishlaydi"
+      ],
+      "answer": 1,
+      "why": "Ulanishlar soni teng bo'lsa ham, har biridagi so'rovlar soni turlicha. L7 yoki klient tomonida balanslash kerak."
+    },
+    {
+      "q": "Nega HTTP/3 HPACK o'rniga QPACK ishlatadi?",
+      "options": [
+        "QPACK yaxshiroq siqadi",
+        "HPACK sarlavhalar qat'iy tartib bilan kelishiga tayanadi, QUIC esa stream lar orasida tartibni kafolatlamaydi; HPACK HOL ni qaytarardi",
+        "HPACK patentlangan",
+        "QPACK shifrlashni o'z ichiga oladi"
+      ],
+      "answer": 1,
+      "why": "QPACK jadval yangilanishlarini alohida stream larda yuboradi, shuning uchun bitta stream dagi yo'qolish boshqalarni bloklamaydi."
+    },
+    {
+      "q": "HTTP/2 Rapid Reset (CVE-2023-44487) hujumi qanday ishlagan?",
+      "options": [
+        "Juda katta sarlavhalar yuborish orqali",
+        "Stream ochib, darhol RST_STREAM bilan bekor qilish; bekor qilingan stream limitdan joy bo'shatgani uchun cheksiz takrorlash mumkin edi",
+        "TLS handshake ni to'xtatib qo'yish orqali",
+        "Server push ni suiiste'mol qilish orqali"
+      ],
+      "answer": 1,
+      "why": "Klient uchun arzon, server uchun qimmat operatsiya. Cloudflare ~20 000 mashinali botnetdan ~201 mln so'rov/s qayd etgan."
+    },
+    {
+      "q": "Dispetcher veb-ilovasi HTTP/2 ga o'tkazildi, lekin statik fayllar hali 4 ta subdomen (domain sharding) bo'ylab tarqatilgan. Bu haqda nima deyish mumkin?",
+      "options": [
+        "To'g'ri, sharding HTTP/2 da ham parallellikni oshiradi",
+        "Sharding HTTP/2 da ortiqcha DNS resolve, handshake va slow start qo'shadi va bitta ulanishdagi multiplexing afzalligini yo'qotadi",
+        "Sharding faqat HTTP/3 da zararli",
+        "Ta'siri yo'q"
+      ],
+      "answer": 1,
+      "why": "Sharding HTTP/1.1 ning 6 ulanish cheklovini aylanib o'tish uchun edi; HTTP/2 da bitta ulanish va multiplexing yaxshiroq."
+    }
+  ]
+}

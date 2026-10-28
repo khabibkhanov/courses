@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Indeks (company_id, created_at). So'rov: WHERE company_id = 7 AND created_at > now() - interval '1 day' ORDER BY created_at. Nima bo'ladi?",
+      "options": [
+        "Indeks ishlatilmaydi",
+        "Indeksning tor diapazoni skanerlanadi va natija allaqachon created_at bo'yicha tartiblangan, alohida sort kerak emas",
+        "Indeks faqat company_id uchun ishlatiladi, keyin sort",
+        "Faqat bitmap scan mumkin"
+      ],
+      "answer": 1,
+      "why": "Boshlang'ich ustunda tenglik, keyingisida oraliq - diapazon tor; tenglik ichida kalitlar created_at bo'yicha saralangan."
+    },
+    {
+      "q": "Indeks (created_at, company_id). Xuddi shu so'rov (company_id = 7, oxirgi 1 kun). Asosiy muammo nima?",
+      "options": [
+        "Hech qanday muammo yo'q",
+        "PostgreSQL bunday indeks yaratishga ruxsat bermaydi",
+        "Indeks faqat ORDER BY uchun ishlaydi",
+        "Oxirgi 1 kundagi barcha kompaniyalar yozuvlari skanerlanadi; company_id faqat indeks ichida filtr bo'ladi"
+      ],
+      "answer": 3,
+      "why": "Tenglik sharti bo'lmagan birinchi ustundagi oraliq diapazonni belgilaydi; undan keyingi ustunlar skan hajmini kamaytirmaydi."
+    },
+    {
+      "q": "Jadval 10 000 sahifa, 1 mln qator; qatorlar tarqoq (correlation taxminan 0). Standart xarajatlarda index scan qaysi taxminiy chegaragacha seq scan'dan arzon?",
+      "options": [
+        "Jadvalning 50% igacha",
+        "Jadvalning 10% igacha",
+        "Jadvalning taxminan 0.5% igacha (bir necha ming qator)",
+        "Har doim arzon"
+      ],
+      "answer": 2,
+      "why": "Seq scan taxminan 10 000 + 10 000 + 2 500 = 22 500; har bir tarqoq qator taxminan 4 birlik random o'qish, 22 500 / 4 taxminan 5 600 qator."
+    },
+    {
+      "q": "Index Only Scan'da EXPLAIN ANALYZE 'Heap Fetches: 480000' ko'rsatdi (480 ming qatordan). Eng ehtimolli sabab va yechim?",
+      "options": [
+        "Visibility map'da sahifalar all-visible deb belgilanmagan; VACUUM kerak (va jadval tez-tez o'zgarsa, foyda cheklangan)",
+        "Indeks buzilgan, REINDEX kerak",
+        "work_mem kichik",
+        "INCLUDE ustunlari ko'p"
+      ],
+      "answer": 0,
+      "why": "Indeks yozuvlarida ko'rinuvchanlik ma'lumoti yo'q; bit o'rnatilmagan sahifalar uchun heap'ga borish majburiy."
+    },
+    {
+      "q": "Partial indeks: CREATE INDEX ON alerts (company_id) WHERE resolved_at IS NULL. Qaysi so'rov uni ishlata OLMAYDI?",
+      "options": [
+        "WHERE company_id = $1 AND resolved_at IS NULL",
+        "WHERE company_id = 7 AND resolved_at IS NULL",
+        "WHERE company_id = 7 AND resolved_at IS NULL AND type = 'speed'",
+        "WHERE company_id = 7"
+      ],
+      "answer": 3,
+      "why": "Planner so'rov sharti indeks predikatini o'z ichiga olishini isbotlay olishi kerak; resolved_at sharti bo'lmasa, yopilgan ogohlantirishlar ham kerak bo'lishi mumkin."
+    },
+    {
+      "q": "2 TB lik append-only telemetriya jadvali, ts bo'yicha oraliq so'rovlari. Qaysi indeks turi eng kichik va mos?",
+      "options": [
+        "GIN",
+        "Hash",
+        "BRIN (ts), chunki ts jismoniy joylashuv bilan kuchli korrelyatsiyada",
+        "GiST"
+      ],
+      "answer": 2,
+      "why": "BRIN har 128 sahifalik blok uchun faqat min/max saqlaydi - o'nlab MB; B-tree o'nlab GB bo'lardi. Shart - yuqori correlation."
+    },
+    {
+      "q": "WHERE city = 'Chirchiq' AND region = 'Toshkent viloyati' kabi bir-biriga bog'liq ustunlarda planner qatorlar sonini 100 baravar kam baholadi. To'g'ri birinchi qadam?",
+      "options": [
+        "random_page_cost ni 0.1 ga tushirish",
+        "CREATE STATISTICS (dependencies, mcv) ON city, region va ANALYZE",
+        "Indeksni o'chirish",
+        "enable_seqscan = off ni global yoqish"
+      ],
+      "answer": 1,
+      "why": "Planner ustunlarni mustaqil deb selectivity'larni ko'paytiradi; extended statistics ustunlar bog'liqligini hisobga oladi."
+    },
+    {
+      "q": "jsonb ustunida faqat bitta kalit bo'yicha tenglik qidiriladi: doc->>'vin' = '...'. Jadvalga yozish ko'p. Eng arzon yechim?",
+      "options": [
+        "Expression B-tree indeks ((doc->>'vin'))",
+        "GIN (doc) jsonb_ops",
+        "GIN (doc) jsonb_path_ops",
+        "BRIN (doc)"
+      ],
+      "answer": 0,
+      "why": "GIN butun hujjatning barcha kalit/qiymatlarini indekslaydi va insert'ni qimmatlashtiradi; bitta kalit uchun expression B-tree kichik va arzon."
+    },
+    {
+      "q": "Prisma orqali WHERE company_id = $1 so'rovi bir necha marta bajarilgach sekinlashdi, faqat eng katta mijoz uchun. Ehtimoliy sabab?",
+      "options": [
+        "Connection pool to'lgan",
+        "Prepared statement generic plan'ga o'tgan; parametr qiymatini bilmagan plan notekis taqsimotda katta mijoz uchun yomon",
+        "Indeks o'chirib yuborilgan",
+        "WAL to'lgan"
+      ],
+      "answer": 1,
+      "why": "Dastlab custom plan'lar quriladi, keyin generic plan arzon ko'rinsa, unga o'tiladi; plan_cache_mode = force_custom_plan yechimlardan biri."
+    },
+    {
+      "q": "Jadvalda (a), (b), (c), (d), (e) ustunlarining har biriga alohida indeks bor, so'rovlar esa doim a = ? AND b = ? AND c > ? shaklida. Qaysi o'zgarish to'g'ri?",
+      "options": [
+        "Yana (a, b) indeksini qo'shish, qolganlarini ham saqlash",
+        "Hech narsa, bitmap AND yetarli",
+        "(a, b, c) composite indeksini yaratish va ishlatilmayotgan yakka indekslarni pg_stat_user_indexes bo'yicha tekshirib o'chirish",
+        "Barcha indekslarni Hash'ga almashtirish"
+      ],
+      "answer": 2,
+      "why": "Bitta composite indeks so'rovni tor diapazon bilan bajaradi; har bir ortiqcha indeks yozishga soliq va HOT'ni kamaytiradi."
+    }
+  ]
+}

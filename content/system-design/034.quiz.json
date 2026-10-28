@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Gilbert va Lynch isbotida CAP'dagi \"C\" nimani anglatadi?",
+      "options": [
+        "ACID'dagi consistency - invariantlar saqlanishi",
+        "Linearizability (atomic consistency) - bitta nusxa va real vaqt tartibi",
+        "Eventual consistency",
+        "Serializability"
+      ],
+      "answer": 1,
+      "why": "CAP'dagi C har bir operatsiya bitta markaziy server bajargandek atomik ko'rinishini talab qiladi. Bu ACID'dagi C dan butunlay boshqa narsa."
+    },
+    {
+      "q": "Jamoa \"bizning tizim CA - partition'ga chidamlilikni qurbon qildik\" deydi. Tizim uch serverda ishlaydi. Eng to'g'ri baho qaysi?",
+      "options": [
+        "To'g'ri, CA tizimlar keng tarqalgan",
+        "Partition tarmoq xossasi va tanlab bo'lmaydi; bu aslida partition'dagi xatti-harakat aniqlanmagan degani",
+        "Faqat bitta data-markazda bo'lsa to'g'ri",
+        "Agar sinxron replikatsiya bo'lsa to'g'ri"
+      ],
+      "answer": 1,
+      "why": "Bir nechta tugun bo'lsa partition bo'ladi. Haqiqiy tanlov faqat partition paytida C va A orasida."
+    },
+    {
+      "q": "PostgreSQL primary va bitta async replika. Partition'da replika tomonida yozish mumkin emas, replikadan o'qish esa eskirgan bo'lishi mumkin. CAP bo'yicha bu tizim qanday?",
+      "options": [
+        "CP",
+        "AP",
+        "Na CP, na AP: minority tomonda yozish mavjud emas va o'qish linearizable emas",
+        "CA"
+      ],
+      "answer": 2,
+      "why": "Kleppmann ko'rsatganidek, ko'p real tizimlar bu ikki yorliqning hech biriga mos kelmaydi."
+    },
+    {
+      "q": "PACELC'ning \"ELC\" qismi qaysi savolga javob beradi?",
+      "options": [
+        "Partition paytida qaysi tugun lider bo'ladi",
+        "Partition bo'lmaganda ham latency va consistency orasidagi tanlov",
+        "Ma'lumot qancha vaqt saqlanadi",
+        "Klient qaysi regionga yo'naltiriladi"
+      ],
+      "answer": 1,
+      "why": "Replikatsiyali tizimda sinxron tasdiqlash latency'ni oshiradi, async esa eskirgan o'qishga yo'l ochadi. Bu har bir so'rovda, partition'siz ham bor."
+    },
+    {
+      "q": "Uch replika: lider Toshkentda, RTT Olmaota 25 ms, Frankfurt 80 ms. Majority (3 dan 2) quorum bilan yozish latency'si taxminan qancha?",
+      "options": ["~1 ms", "~25 ms", "~80 ms", "~105 ms"],
+      "answer": 1,
+      "why": "Lider + eng yaqin replika quorum hosil qiladi; uzoq replikani kutish shart emas."
+    },
+    {
+      "q": "Abadi'ning 2012 yildagi tasnifiga ko'ra standart Cassandra va Dynamo qaysi sinfda?",
+      "options": ["PC/EC", "PA/EL", "PC/EL", "PA/EC"],
+      "answer": 1,
+      "why": "Partition'da mavjudlikni, normal ishda past latency'ni tanlaydi (async replikatsiya, lokal javob)."
+    },
+    {
+      "q": "Brewer 2017 yilda Spanner'ni \"amalda CA\" deyish mumkinligini nima bilan asoslaydi?",
+      "options": [
+        "TrueTime CAP teoremasini aylanib o'tadi",
+        "Spanner partition paytida ham linearizability va to'liq mavjudlikni beradi",
+        "Google xususiy tarmog'i tufayli partition juda kam, mavjudlik 5 ta to'qqizdan yuqori, lekin texnik jihatdan u CP",
+        "Spanner eventual consistency ishlatadi"
+      ],
+      "answer": 2,
+      "why": "CAP chegarasi saqlanadi: partition bo'lsa Spanner consistency'ni tanlaydi. Faqat partition ehtimoli infratuzilma tufayli juda past."
+    },
+    {
+      "q": "Brewer fikriga ko'ra tugun javob kutib cheksiz qayta urinishi CAP nuqtai nazaridan nimani anglatadi?",
+      "options": ["A ni tanlash", "C ni tanlash", "P ni rad etish", "Hech narsani"],
+      "answer": 1,
+      "why": "Javob bermay kutish - consistency uchun availability'dan voz kechish. Partition aslida timeout qarori."
+    },
+    {
+      "q": "Partition paytida fleet tizimida qaysi operatsiyani PA (lokal bajarib, keyin birlashtirish) qilish eng xavfsiz?",
+      "options": [
+        "Dvigatelni masofadan bloklash komandasi",
+        "Bitta mashinaga haydovchi tayinlash",
+        "Trekerdan kelgan GPS nuqtalarini qabul qilish",
+        "Yoqilg'i kartasidan limitsiz pul yechish"
+      ],
+      "answer": 2,
+      "why": "GPS nuqtalari (device_id, vaqt, seq) bo'yicha idempotent va konfliktsiz birlashadi. Qolganlari uniqueness yoki xavfsizlik talab qiladi."
+    },
+    {
+      "q": "Cassandra'da RF=3, yozish va o'qish QUORUM. Bu haqida qaysi gap to'g'ri?",
+      "options": [
+        "Bu linearizability kafolatlaydi",
+        "Yozuv faqat 2 ta replikaga yuboriladi",
+        "W + R > RF bo'lgani uchun o'qish oxirgi tasdiqlangan yozuv bilan kesishadi, lekin LWW va concurrent yozuvlar tufayli bu linearizability emas",
+        "Partition'da ikkala tomon ham yozishni qabul qiladi"
+      ],
+      "answer": 2,
+      "why": "Yozuv barcha replikalarga yuboriladi, level faqat nechta javob kutilishini belgilaydi. Kesishish recency'ga yordam beradi, lekin to'liq linearizability bermaydi."
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Kompaniya shartnomalari har hafta yangilanadi va har bir foydalanuvchi faqat o'z tenant hujjatlarini ko'rishi kerak. Nega bu holatda fine-tuning emas, RAG tanlanadi?",
+      "options": [
+        "Fine-tuning ko'p tillarda ishlamaydi",
+        "RAG da bilim indeksda: yangilash indeksga yozish, manba havolasi bor, ruxsat qidiruv filtrida qo'llanadi",
+        "RAG modelni tezroq qiladi",
+        "Fine-tuning faqat GPU da mumkin"
+      ],
+      "answer": 1,
+      "why": "Fine-tuning uslub va ko'nikma uchun yaxshi, tez o'zgaradigan faktlar va ruxsatlar uchun emas."
+    },
+    {
+      "q": "RAG yordamchisida boshqa tenant hujjatlari javobga tushib qolmasligi uchun qayerda himoya qilish kerak?",
+      "options": [
+        "Tizim promptida 'boshqa mijoz ma'lumotini ko'rsatma' deb yozish",
+        "Retrieval so'rovining o'zida tenant_id va ACL filtri, ruxsatsiz chunk promptga umuman tushmaydi",
+        "Javobdan keyin regex bilan tozalash",
+        "Foydalanuvchidan tenant nomini so'rash"
+      ],
+      "answer": 1,
+      "why": "LLM ga ko'rsatma xavfsizlik chegarasi emas va prompt injection bilan aylanib o'tilishi mumkin."
+    },
+    {
+      "q": "Foydalanuvchi 'P0420 xato kodi nimani bildiradi?' deb so'radi, faqat vector qidiruv tegishli chunkni topmadi. Eng to'g'ri yaxshilash qaysi?",
+      "options": [
+        "Kattaroq LLM ishlatish",
+        "Hybrid qidiruv: BM25 (aniq atamalar) va vector natijalarini RRF bilan birlashtirish, keyin rerank",
+        "Chunk hajmini 5 000 tokenga oshirish",
+        "Temperature ni 0 qilish"
+      ],
+      "answer": 1,
+      "why": "Embedding aniq kod va raqamlarni yomon ajratadi. Keyword qidiruv ularni aniq topadi."
+    },
+    {
+      "q": "LLM inference da decode fazasi asosan nima bilan cheklanadi?",
+      "options": [
+        "Tarmoq kechikishi",
+        "GPU xotira o'tkazuvchanligi: har bir token uchun model og'irliklari va KV cache o'qiladi",
+        "CPU chastotasi",
+        "Disk IO"
+      ],
+      "answer": 1,
+      "why": "Prefill compute-bound, decode esa memory-bandwidth-bound. Shuning uchun batching decode samarasini oshiradi."
+    },
+    {
+      "q": "Llama 3.1 8B: 32 qatlam, 8 KV head, head o'lchami 128, FP16. 8 000 tokenli bitta so'rov uchun KV cache taxminan qancha?",
+      "options": [
+        "Taxminan 128 MB",
+        "Taxminan 1 GB",
+        "Taxminan 16 GB",
+        "Taxminan 8 MB"
+      ],
+      "answer": 1,
+      "why": "Token boshiga 2 x 32 x 8 x 128 x 2 bayt = 128 KB. 8 000 x 128 KB taxminan 1 GB."
+    },
+    {
+      "q": "Bitta GPU da hisoblash quvvati bo'sh, lekin parallel so'rovlar sonini oshirib bo'lmayapti. Eng ehtimolli cheklov nima?",
+      "options": [
+        "HTTP server ulanishlari",
+        "KV cache uchun GPU xotirasi tugagan",
+        "Tokenizer tezligi",
+        "Load balancer"
+      ],
+      "answer": 1,
+      "why": "Har bir faol so'rov kontekst uzunligiga proporsional KV cache egallaydi. Xotira tugasa yangi so'rov batch'ga qo'shilmaydi."
+    },
+    {
+      "q": "PagedAttention qanday muammoni hal qiladi?",
+      "options": [
+        "Model og'irliklarini siqadi",
+        "KV cache ni maksimal uzunlikka mo'ljallangan uzluksiz blok sifatida ajratishdagi fragmentatsiya va isrofni, uni kichik sahifalarga bo'lib kamaytiradi",
+        "Tokenizatsiyani tezlashtiradi",
+        "Prompt injection ni bloklaydi"
+      ],
+      "answer": 1,
+      "why": "OS virtual xotirasi kabi bloklar talab bo'yicha beriladi va umumiy prefikslar bo'lishiladi; natijada bir vaqtda ko'proq so'rov sig'adi."
+    },
+    {
+      "q": "Static batching da bitta batch'dagi so'rovlardan biri 2 000 token, qolganlari 50 token generatsiya qiladi. Continuous batching nima beradi?",
+      "options": [
+        "Hech narsa, natija bir xil",
+        "Qisqa so'rovlar tugashi bilan batch'dan chiqadi va o'rniga yangi so'rovlar kiradi; GPU uzun so'rov tugashini kutib bo'sh turmaydi",
+        "Uzun so'rov bekor qilinadi",
+        "Barcha so'rovlar bir xil uzunlikka qisqartiriladi"
+      ],
+      "answer": 1,
+      "why": "Iteratsiya darajasida rejalashtirish throughput ni oshiradi va qisqa so'rovlar latency'sini kamaytiradi."
+    },
+    {
+      "q": "So'rov: 4 000 kirish tokeni (8 chunk x 400 + ko'rsatma), 400 chiqish tokeni. Narxni kamaytirishning eng ta'sirli birinchi qadami odatda qaysi?",
+      "options": [
+        "Chiqish tokenlarini 400 dan 300 ga tushirish",
+        "Kontekstni qisqartirish (rerank bilan kamroq, lekin aniqroq chunklar) va umumiy prefiks uchun prompt caching",
+        "Streaming ni o'chirish",
+        "Har bir savolni ikki marta yuborish"
+      ],
+      "answer": 1,
+      "why": "Bu misolda kirish tokenlari chiqishdan 10 barobar ko'p, shuning uchun kontekst hajmi asosiy xarajat."
+    },
+    {
+      "q": "Dispetcher 'Kecha qaysi 5 ta mashina eng ko'p yoqilg'i sarfladi?' deb so'radi. To'g'ri arxitektura qaysi?",
+      "options": [
+        "Kunlik hisobot PDF larini RAG indeksiga qo'shib, LLM dan so'rash",
+        "LLM savolni oldindan belgilangan, tenant va ruxsat bilan cheklangan vosita chaqiruviga aylantiradi (masalan, get_top_fuel_consumers), natijani matnga o'giradi",
+        "LLM ga ishlab chiqarish bazasiga erkin SQL yozish huquqini berish",
+        "LLM ning o'z bilimidan javob olish"
+      ],
+      "answer": 1,
+      "why": "Raqamli ma'lumot bazada. Tuzilgan vositalar to'g'ri hisob, ruxsat nazorati va xavfsiz so'rovni ta'minlaydi."
+    }
+  ]
+}

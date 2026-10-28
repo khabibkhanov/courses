@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "CQRS haqida qaysi gap to'g'ri?",
+      "options": [
+        "CQRS har doim event sourcing'ni talab qiladi",
+        "CQRS har doim alohida o'qish va yozish bazalarini talab qiladi",
+        "CQRS faqat NoSQL bazalarda ishlaydi",
+        "CQRS - o'qish va yozish uchun alohida modellar; bitta baza ichida ham amalga oshirilishi mumkin"
+      ],
+      "answer": 3,
+      "why": "Fowler va Microsoft qo'llanmasi alohida bazalar ixtiyoriy ekanini ta'kidlaydi. Event sourcing esa alohida pattern."
+    },
+    {
+      "q": "Command handler bazaga yozadi, keyin Kafka'ga hodisa yuboradi. Ikkalasi orasida jarayon qulasa nima bo'ladi?",
+      "options": [
+        "Kafka hodisani avtomatik tiklaydi",
+        "Baza tranzaksiyasi orqaga qaytariladi",
+        "Write model o'zgargan, hodisa yo'q - read model abadiy sinxronlashmaydi (dual write muammosi)",
+        "Hech narsa, projection keyinroq bazani o'qiydi"
+      ],
+      "answer": 2,
+      "why": "Baza va broker o'rtasida umumiy tranzaksiya yo'q. Transactional outbox yoki CDC kerak."
+    },
+    {
+      "q": "Dispetcher haydovchini biriktirish uchun 'haydovchi bo'shmi' tekshiruvini qayerdan qilishi kerak?",
+      "options": [
+        "Read model'dan, chunki u tezroq",
+        "Write model'dan (aggregate holatidan), chunki read model eskirgan bo'lishi mumkin",
+        "Elasticsearch'dan",
+        "UI cache'idan"
+      ],
+      "answer": 1,
+      "why": "Invariantlar write tomonida tekshiriladi. Eskirgan read model asosidagi qaror ikki marta biriktirishga olib keladi."
+    },
+    {
+      "q": "Event store'da 1.2 mlrd hodisa, projection 15 000 hodisa/s yozadi, 6 ta parallel worker, Elasticsearch ularning hammasini ko'taradi, yangi hodisalar hisobga olinmaydi. Qayta qurish taxminan qancha davom etadi?",
+      "options": [
+        "Taxminan 3.7 soat",
+        "Taxminan 1.5 soat",
+        "Taxminan 22 soat",
+        "Taxminan 13 daqiqa"
+      ],
+      "answer": 0,
+      "why": "1.2 mlrd / (15 000 x 6) = 13 333 s = taxminan 3.7 soat."
+    },
+    {
+      "q": "Projection read model'ni PostgreSQL'da yangilaydi. Qayta ishga tushganda dublikatni oldini olishning eng ishonchli usuli?",
+      "options": [
+        "Kafka auto commit'ga ishonish",
+        "Hodisalarni ikki marta yubormaslikni producer'dan so'rash",
+        "Har safar read model'ni noldan qurish",
+        "Projection pozitsiyasini read model yangilanishi bilan bitta tranzaksiyada saqlash"
+      ],
+      "answer": 3,
+      "why": "Pozitsiya va natija atomik saqlansa, qayta ishga tushganda aniq qayerdan davom etish ma'lum va dublikat yo'q."
+    },
+    {
+      "q": "Read model Redis'da, tranzaksiya yo'q. Hodisalar ba'zan tartibsiz kelishi mumkin. Eski hodisa yangisini ustidan yozmasligi uchun nima qilish kerak?",
+      "options": [
+        "Hech narsa, Redis tez",
+        "Redis'ni PostgreSQL bilan almashtirish",
+        "Har bir yozuvda aggregate versiyasini saqlab, faqat kattaroq versiyani qabul qilish",
+        "TTL qo'yish"
+      ],
+      "answer": 2,
+      "why": "Versiya bilan shartli yozish tartibsizlik va dublikatlardan himoya qiladi."
+    },
+    {
+      "q": "Foydalanuvchi o'zgarishni saqlagach, ro'yxatda eski holatni ko'radi va qayta bosadi. Qaysi yechim read-your-writes'ni ta'minlaydi?",
+      "options": [
+        "Read model'ni o'chirish",
+        "Command javobida versiya qaytarib, query read model shu versiyaga yetguncha kutishi yoki optimistic UI",
+        "Projection'ni sekinlashtirish",
+        "Command'larni sinxron qilish va hech narsa qaytarmaslik"
+      ],
+      "answer": 1,
+      "why": "Versiya bilan kutish, optimistic UI yoki push yangilanish foydalanuvchiga o'z yozuvini ko'rsatadi."
+    },
+    {
+      "q": "Fowler CQRS'ni qanday qo'llashni tavsiya qiladi?",
+      "options": [
+        "Faqat foydasi aniq bo'lgan alohida bounded context'larga, ko'p tizimlar uchun CRUD yetarli",
+        "Har bir yangi loyihada butun tizimga",
+        "Faqat microservice'larda",
+        "Faqat event sourcing bilan birga"
+      ],
+      "answer": 0,
+      "why": "Fowler ko'p tizimlar uchun CQRS xavfli murakkablik qo'shishini va uni faqat ma'lum qismlarga qo'llashni aytadi."
+    },
+    {
+      "q": "PostgreSQL'da REFRESH MATERIALIZED VIEW CONCURRENTLY nima talab qiladi?",
+      "options": [
+        "Hech narsa",
+        "Inkremental yangilash rejimi",
+        "Logical replication",
+        "View'da ustunlarga asoslangan, WHERE siz UNIQUE indeks va view allaqachon to'ldirilgan bo'lishi"
+      ],
+      "answer": 3,
+      "why": "CONCURRENTLY o'qishlarni bloklamaydi, lekin UNIQUE indeks talab qiladi. PostgreSQL'da materialized view har doim to'liq qayta hisoblanadi."
+    },
+    {
+      "q": "Qaysi holatda CQRS eng kam asoslangan?",
+      "options": [
+        "Dispetcher paneli 6 ta servis ma'lumotini birlashtiradi va 400 so'rov/s",
+        "To'liq matnli qidiruv va tranzaksion yozish bir xil ma'lumotda",
+        "Tenant sozlamalari sahifasi: oddiy CRUD, kam o'qish va yozish",
+        "Event sourcing ishlatilayotgan ledger moduli"
+      ],
+      "answer": 2,
+      "why": "Oddiy CRUD domen uchun ikki model va asinxron projection'lar faqat murakkablik qo'shadi."
+    }
+  ]
+}

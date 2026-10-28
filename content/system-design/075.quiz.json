@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Konteyner va VM ning asosiy texnik farqi nima?",
+      "options": [
+        "Konteynerda o'z yadrosi bor",
+        "Konteyner faqat Windows da ishlaydi",
+        "Konteyner - namespaces va cgroups bilan cheklangan oddiy process, host yadrosini bo'lishadi; VM esa hypervisor ustida alohida yadro bilan ishlaydi",
+        "VM tezroq ishga tushadi"
+      ],
+      "answer": 2,
+      "why": "Umumiy yadro konteynerni tez va zich qiladi, lekin xavfsizlik izolyatsiyasini VM dan kuchsiz qiladi."
+    },
+    {
+      "q": "Kubernetes controllerlari level-triggered reconciliation bilan ishlaydi. Bu nima beradi?",
+      "options": [
+        "Hodisa yo'qolsa yoki controller restart bo'lsa ham, keyingi siklda joriy holat desired state ga qarab tuzatiladi",
+        "Har bir hodisa aniq bir marta qayta ishlanadi",
+        "Holat har doim darhol izchil bo'ladi",
+        "etcd kerak bo'lmaydi"
+      ],
+      "answer": 0,
+      "why": "Controller nima o'zgardi emas, hozir holat qanday degan savolga qaraydi. Shuning uchun model hodisa yo'qolishiga chidamli, lekin hamma narsa eventual."
+    },
+    {
+      "q": "Konteynerda limits.cpu = 500m (100 ms davrda 50 ms). So'rov 60 ms CPU talab qiladi va davr boshida keladi. Javob vaqti taxminan qancha bo'ladi?",
+      "options": [
+        "60 ms",
+        "30 ms",
+        "500 ms",
+        "~110 ms"
+      ],
+      "answer": 3,
+      "why": "50 ms ishlaydi, kvota tugaydi, davr oxirigacha 50 ms muzlatiladi, keyingi davrda qolgan 10 ms. Jami ~110 ms - bu CPU throttling."
+    },
+    {
+      "q": "Konteyner xotira limitidan oshdi. Nima bo'ladi?",
+      "options": [
+        "Konteyner sekinlashadi (throttling)",
+        "Yadro OOM mexanizmi process ni o'ldiradi (OOMKilled), PID 1 bo'lsa konteyner restart bo'ladi",
+        "Kubernetes avtomatik limitni oshiradi",
+        "Pod boshqa node ga ko'chiriladi, xotira saqlanadi"
+      ],
+      "answer": 1,
+      "why": "CPU ni throttle qilish mumkin, xotirani esa yo'q. Shuning uchun xotira limiti doim to'g'ri o'lchanishi kerak."
+    },
+    {
+      "q": "Liveness probe bazaga ping qiladi. Baza 40 soniya sekinlashdi. Eng ehtimolli natija?",
+      "options": [
+        "Faqat bitta pod restart bo'ladi",
+        "Barcha podlar bir vaqtda restart bo'ladi, keyin hammasi bir vaqtda bazaga ulanishga urinadi - kichik muammo to'liq uzilishga aylanadi",
+        "Hech narsa, liveness faqat startup da ishlaydi",
+        "Podlar trafikdan chiqariladi, lekin restart bo'lmaydi"
+      ],
+      "answer": 1,
+      "why": "Liveness faqat process ning o'z holatini tekshirishi kerak. Tashqi bog'liqlik barcha podlarni bir vaqtda o'ldiradi - cascading failure."
+    },
+    {
+      "q": "Har deploy da bir necha soniya 502 xatolar chiqmoqda. Ilova SIGTERM da darhol yopiladi. Asosiy sabab?",
+      "options": [
+        "Image juda katta",
+        "maxSurge juda katta",
+        "Readiness probe juda tez-tez ishlaydi",
+        "SIGTERM yuborish va podni EndpointSlice/kube-proxy qoidalaridan chiqarish parallel va asinxron; yangilanish tugaguncha so'rovlar o'layotgan podga keladi"
+      ],
+      "answer": 3,
+      "why": "Yechim: preStop da qisqa kutish, SIGTERM da yangi ulanishlarni qabul qilmasdan joriylarini tugatish."
+    },
+    {
+      "q": "Deployment da 8 replika, standart maxUnavailable 25%. Rolling update paytida eng kamida nechta pod ishlab turadi va bu nimaga ta'sir qiladi?",
+      "options": [
+        "6 - qolgan 75% sig'im butun yuklamani ko'taradi; servis odatda 85% yuklamada bo'lsa deploy paytida ortiqcha yuklanadi",
+        "8 - hech qanday ta'sir yo'q",
+        "4 - yarmi",
+        "2 - faqat surge podlar"
+      ],
+      "answer": 0,
+      "why": "25% x 8 = 2 pod mavjud bo'lmasligi mumkin. Zaxira yo'q bo'lsa maxUnavailable ni 0 ga, maxSurge ni yuqoriroq qo'yish kerak."
+    },
+    {
+      "q": "gRPC klient Service orqali 10 ta podga ulanadi, lekin yuklamaning deyarli hammasi 1-2 ta podga tushmoqda. Sabab?",
+      "options": [
+        "Readiness probe xato",
+        "Pod lar turli zonada",
+        "Service ning virtual IP yo'naltirishi L4 (ulanish darajasida); HTTP/2 bitta uzoq ulanish orqali barcha so'rovlarni bitta podga yuboradi",
+        "kube-scheduler xato ishlagan"
+      ],
+      "answer": 2,
+      "why": "L7 balanslash (service mesh) yoki klient tomonida balanslash kerak."
+    },
+    {
+      "q": "Node drain qilinmoqda. PodDisruptionBudget minAvailable: 2 bilan 3 replikali servis. PDB nimadan himoya qiladi va nimadan himoya qilmaydi?",
+      "options": [
+        "Barcha uzilishlardan himoya qiladi",
+        "Faqat deploy paytida ishlaydi",
+        "Faqat node buzilishidan himoya qiladi",
+        "Ixtiyoriy uzilishlarda (drain) bir vaqtda 1 tadan ortiq podni chiqarishga yo'l qo'ymaydi, lekin node yoki zona buzilishi kabi majburiy uzilishlardan himoya qilmaydi"
+      ],
+      "answer": 3,
+      "why": "Majburiy uzilishlarga qarshi replikalarni turli node va zonalarga taqsimlash (anti-affinity, topology spread) kerak."
+    },
+    {
+      "q": "40 pod, har biri requests.cpu = 1, haqiqiy o'rtacha foydalanish 0.2 CPU. Requests ni 0.3 ga tushirish nimaga ta'sir qiladi?",
+      "options": [
+        "Scheduler requests bo'yicha joylaydi, shuning uchun kerakli node soni bir necha baravar kamayadi - narx tushadi, lekin juda past qo'yilsa noisy neighbor xavfi oshadi",
+        "Hech narsaga, scheduler haqiqiy foydalanishga qaraydi",
+        "Podlar ko'proq CPU oladi",
+        "QoS Guaranteed ga o'zgaradi"
+      ],
+      "answer": 0,
+      "why": "Bin packing requests asosida. 40 x 1 = 40 vCPU va 40 x 0.3 = 12 vCPU orasidagi farq node soniga bevosita o'tadi."
+    }
+  ]
+}

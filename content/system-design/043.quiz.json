@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Topicda 12 partition bor. Bitta consumer group'da 20 ta consumer ishga tushirildi. Nechta consumer faol o'qiydi?",
+      "options": [
+        "20",
+        "1",
+        "10",
+        "12"
+      ],
+      "answer": 3,
+      "why": "Guruh ichida har bir partition bir vaqtda faqat bitta consumer'ga biriktiriladi. 8 ta consumer bo'sh turadi."
+    },
+    {
+      "q": "Kalit device_id bo'lgan topicda partitionlar soni 24 dan 36 ga oshirildi. Nima bo'ladi?",
+      "options": [
+        "Kafka mavjud yozuvlarni avtomatik yangi partitionlarga ko'chiradi",
+        "Hech narsa o'zgarmaydi, hash partitionlar sonidan mustaqil",
+        "Ko'p kalitlar yangi partitionga tushadi, eski yozuvlar eski joyda qoladi va o'tish paytida kalit bo'yicha tartib buzilishi mumkin",
+        "Topic qayta yaratilishi kerak"
+      ],
+      "answer": 2,
+      "why": "hash(key) mod N formulasi N o'zgarganda kalitlarni boshqa partitionlarga xaritalaydi, Kafka esa eski ma'lumotni ko'chirmaydi."
+    },
+    {
+      "q": "Cho'qqida 24 000 yozuv/s, bitta consumer instansi 1 500 yozuv/s qayta ishlaydi, 2 baravar o'sish zaxirasi kerak. Minimal partitionlar soni?",
+      "options": [
+        "16",
+        "32",
+        "24",
+        "48"
+      ],
+      "answer": 1,
+      "why": "24 000 / 1 500 = 16 consumer, 2 baravar zaxira bilan 32 partition."
+    },
+    {
+      "q": "Consumer har bir poll() da 500 yozuv oladi, har biri 1 s qayta ishlanadi, max.poll.interval.ms default (5 daqiqa). Nima bo'ladi?",
+      "options": [
+        "500 s > 300 s, consumer guruhdan chiqariladi, rebalance bo'ladi, commit qilinmagan yozuvlar boshqa consumer'da qayta ishlanadi",
+        "Hammasi normal, heartbeat alohida thread'da",
+        "Kafka yozuvlarni avtomatik ravishda kichik batch'larga bo'ladi",
+        "Consumer'ning session.timeout.ms oshiriladi"
+      ],
+      "answer": 0,
+      "why": "poll() lar orasidagi vaqt max.poll.interval.ms dan oshsa, consumer o'lgan deb hisoblanadi. max.poll.records ni kamaytirish kerak."
+    },
+    {
+      "q": "Yangi consumer group yaratildi, auto.offset.reset default qiymatida. Topicda 7 kunlik tarix bor. Guruh nimani o'qiydi?",
+      "options": [
+        "7 kunlik tarixni boshidan",
+        "Xato beradi",
+        "Oxirgi 1 000 ta yozuvni",
+        "Faqat guruh yaratilgandan keyin yozilgan yozuvlarni"
+      ],
+      "answer": 3,
+      "why": "auto.offset.reset default latest. Tarixni o'qish uchun earliest kerak."
+    },
+    {
+      "q": "Nega Kafka TLS yoqilganda CPU ni sezilarli ko'proq ishlatadi?",
+      "options": [
+        "TLS da batch ishlamaydi",
+        "TLS page cache'ni o'chiradi",
+        "Shifrlash foydalanuvchi maydonida bo'lgani uchun sendfile (zero-copy) ishlatilmaydi",
+        "TLS da replikatsiya ikki baravar ko'payadi"
+      ],
+      "answer": 2,
+      "why": "Kafka hujjatiga ko'ra TLS bilan sendfile ishlatilmaydi, ma'lumot foydalanuvchi maydoniga ko'chirilib shifrlanadi."
+    },
+    {
+      "q": "Consumer yozuvlarni boshqa thread'lar pool'iga beradi va darhol yana poll() chaqiradi, auto commit yoqilgan. Qulashda qanday xavf bor?",
+      "options": [
+        "Faqat dublikat",
+        "Qayta ishlanmagan yozuvlar commit qilingan bo'lishi va yo'qolishi mumkin",
+        "Hech qanday xavf yo'q",
+        "Rebalance bo'lmaydi"
+      ],
+      "answer": 1,
+      "why": "Auto commit poll() ichida oldingi poll qaytargan offset'larni commit qiladi, ular hali pool'da qayta ishlanayotgan bo'lishi mumkin. Bu at-most-once'ga olib keladi."
+    },
+    {
+      "q": "Har bir yozuv mustaqil vazifa (2-30 s), tartib muhim emas, consumer'larni partitionlardan ko'p qo'yish va bitta sekin yozuv boshqalarni to'smasligi kerak. Kafka 4.2+ da eng mos mexanizm?",
+      "options": [
+        "Share group (KIP-932)",
+        "Klassik consumer group, ko'p partition",
+        "Log compaction",
+        "Bitta partition va single consumer"
+      ],
+      "answer": 0,
+      "why": "Share group per-record acquisition lock, accept/release/reject va partitionlardan ko'p consumer imkonini beradi."
+    },
+    {
+      "q": "Kalit sifatida tenant_id tanlandi. Bitta mijozda 5 000 mashina, qolgan 300 mijozda o'rtacha 20 tadan. Asosiy muammo?",
+      "options": [
+        "Tartib buziladi",
+        "Retention ishlamaydi",
+        "Kafka tenant_id ni kalit sifatida qabul qilmaydi",
+        "Hot partition: katta mijozning hamma yozuvlari bitta partitionga tushib, bitta consumer'ni bo'g'adi"
+      ],
+      "answer": 3,
+      "why": "Bir xil kalit doim bitta partitionga tushadi. Kalit tartib kerak bo'lgan eng kichik birlik (vehicle_id) bo'lishi kerak."
+    },
+    {
+      "q": "KRaft rejimida 2 ta controller bir vaqtda ishdan chiqsa ham klaster metadata'si ishlashi uchun nechta controller kerak?",
+      "options": [
+        "2",
+        "3",
+        "5",
+        "4"
+      ],
+      "answer": 2,
+      "why": "N ta nosozlikka chidash uchun 2N + 1 controller kerak: 2 x 2 + 1 = 5."
+    }
+  ]
+}

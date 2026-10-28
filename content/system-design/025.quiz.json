@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Javobda Cache-Control: no-cache bor. CDN nima qila oladi?",
+      "options": [
+        "Javobni umuman saqlay olmaydi",
+        "Saqlay oladi, lekin har safar berishdan oldin origin bilan tekshirishi (revalidation) shart",
+        "Faqat brauzer saqlay oladi",
+        "1 soat saqlay oladi"
+      ],
+      "answer": 1,
+      "why": "RFC 9111: no-cache saqlashga ruxsat beradi, lekin tekshirmasdan qayta ishlatishni taqiqlaydi. Saqlashni taqiqlash - no-store."
+    },
+    {
+      "q": "Cache-Control: max-age=60, s-maxage=600. Brauzer va CDN javobni qancha vaqt fresh deb hisoblaydi?",
+      "options": [
+        "Brauzer 60, CDN (shared cache) 600 soniya",
+        "Ikkalasi ham 60 soniya",
+        "Ikkalasi ham 600 soniya",
+        "Brauzer 600, CDN 60 soniya"
+      ],
+      "answer": 0,
+      "why": "s-maxage faqat shared cache larga tegishli va ular uchun max-age dan ustun. Brauzer (private cache) max-age ni ishlatadi."
+    },
+    {
+      "q": "Cache-Control: max-age=600, stale-while-revalidate=30. So'rov 615-soniyada keldi. Nima bo'ladi?",
+      "options": [
+        "Foydalanuvchi origin javobini kutadi",
+        "Xato qaytadi",
+        "Javob yana 600 soniyaga avtomatik uzaytiriladi",
+        "Eski javob darhol beriladi va fonda yangilanadi"
+      ],
+      "answer": 3,
+      "why": "600-630 oralig'ida eskirgan javob berilib, asinxron validatsiya boshlanadi. 630 dan keyin so'rov kutadi."
+    },
+    {
+      "q": "Har deploy da 'purge everything' qilinadi va har safar origin CPU 100% ga chiqadi. Eng yaxshi yechim?",
+      "options": [
+        "Origin serverlarni ko'paytirish",
+        "TTL ni 10 soniyaga tushirish",
+        "Statik fayllarga kontent hash li nom berish va max-age=31536000, immutable qo'yish, HTML ni qisqa TTL bilan berish",
+        "CDN ni o'chirish"
+      ],
+      "answer": 2,
+      "why": "Versiyali URL purge ni keraksiz qiladi: yangi fayllar yangi URL da, eskilari cache da qoladi va origin ga stampede bo'lmaydi."
+    },
+    {
+      "q": "API javobi Vary: User-Agent bilan qaytadi va CDN da hit ratio 2%. Sabab?",
+      "options": [
+        "CDN API ni cache lay olmaydi",
+        "Har xil User-Agent qiymati alohida cache nusxasini yaratadi va minglab variant hit ni yo'q qiladi",
+        "User-Agent sarlavhasi shifrlangan",
+        "Vary faqat brauzer uchun"
+      ],
+      "answer": 1,
+      "why": "Vary cache key ga sarlavhani qo'shadi. Ko'p qiymatli sarlavhalar cache ni parchalab yuboradi."
+    },
+    {
+      "q": "Kuniga 800 GB statik trafik, CDN hit ratio 97%. Origin dan kuniga qancha trafik chiqadi?",
+      "options": [
+        "24 GB",
+        "8 GB",
+        "97 GB",
+        "776 GB"
+      ],
+      "answer": 0,
+      "why": "800 x 0.03 = 24 GB. Origin yuklamasi miss ratio ga proporsional."
+    },
+    {
+      "q": "300 PoP li CDN da kam mashhur fayllar uchun origin juda ko'p takroriy so'rov olmoqda. Qaysi xususiyat yordam beradi?",
+      "options": [
+        "Anycast",
+        "Brotli siqish",
+        "HTTP/3",
+        "Tiered cache yoki origin shield: miss lar yuqori qatlamda birlashtiriladi va faqat u origin ga boradi"
+      ],
+      "answer": 3,
+      "why": "Ierarxik cache da pastki PoP lar origin ga emas, umumiy yuqori tier ga boradi, shuning uchun origin bitta obyekt uchun kam so'rov ko'radi."
+    },
+    {
+      "q": "Video arxiv S3 da, CloudFront signed URL bilan beriladi, lekin bucket hamon public. Muammo nima?",
+      "options": [
+        "Muammo yo'q, signed URL yetarli",
+        "Signed URL S3 bilan ishlamaydi",
+        "Foydalanuvchi signed URL ni chetlab o'tib to'g'ridan-to'g'ri S3 dan yuklab olishi mumkin, bucket ni faqat CloudFront uchun (OAC) ochish kerak",
+        "CloudFront public bucket dan o'qiy olmaydi"
+      ],
+      "answer": 2,
+      "why": "Imzo faqat CDN da tekshiriladi. Origin ochiq bo'lsa, himoya chetlab o'tiladi."
+    },
+    {
+      "q": "Origin 2 soat ishlamadi. Qaysi sarlavha foydalanuvchilarga shu vaqt davomida eski sahifani ko'rsatishga imkon beradi?",
+      "options": [
+        "Cache-Control: no-store",
+        "Cache-Control: max-age=300, stale-if-error=86400",
+        "Cache-Control: private",
+        "Cache-Control: must-revalidate"
+      ],
+      "answer": 1,
+      "why": "stale-if-error origin 5xx qaytarganda belgilangan muddat davomida eskirgan javobni berishga ruxsat beradi."
+    },
+    {
+      "q": "/api/me javobi Cache-Control siz qaytadi, CDN qoidasi esa '/api/* ni 60 soniya cache la'. Eng jiddiy xavf?",
+      "options": [
+        "Bir foydalanuvchining shaxsiy ma'lumoti 60 soniya davomida boshqa foydalanuvchilarga beriladi",
+        "Javob sekinlashadi",
+        "CDN xarajati oshadi",
+        "API versiyalari aralashadi"
+      ],
+      "answer": 0,
+      "why": "Shared cache foydalanuvchiga xos javobni saqlasa, keyingi so'rovchilar uni oladi. Shaxsiy javoblar private yoki no-store bo'lishi va CDN da bypass qilinishi kerak."
+    }
+  ]
+}

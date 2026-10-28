@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "bigint kalitli B-tree indeksi, bargda 366 yozuv, ichki sahifada 400 ishora. 1 mlrd qator uchun daraxt balandligi qancha?",
+      "options": [
+        "2 daraja",
+        "4 daraja (root, 2 ichki, barg)",
+        "10 daraja",
+        "30 daraja"
+      ],
+      "answer": 1,
+      "why": "10^9 / 366 ≈ 2.73 mln barg; / 400 ≈ 6 830; / 400 ≈ 18; keyin root. Katta branching factor tufayli balandlik juda sekin o'sadi."
+    },
+    {
+      "q": "Nega 1 mlrd qatorli B-tree'da nuqtali qidiruv amalda 1-2 disk o'qishiga tushadi?",
+      "options": [
+        "Chunki B-tree butunlay RAM'da saqlanadi",
+        "Chunki Bloom filter ishlatiladi",
+        "Chunki ichki sahifalar jami o'nlab MB va ular deyarli doim cache'da turadi; diskka faqat barg va heap sahifasi uchun boriladi",
+        "Chunki B-tree qidiruvi O(1)"
+      ],
+      "answer": 2,
+      "why": "Sahifalarning 99% dan ortig'i barg; ichki darajalar kichik va issiq bo'lgani uchun shared_buffers yoki OS page cache'da qoladi."
+    },
+    {
+      "q": "PostgreSQL'da jadvalda 4 ta indeks bor. UPDATE faqat indekslanmagan `odometer` ustunini o'zgartiradi va sahifada bo'sh joy bor. Nima bo'ladi?",
+      "options": [
+        "HOT update: yangi versiya shu sahifaga yoziladi, indekslarga yangi yozuv qo'shilmaydi",
+        "4 ta indeksning hammasiga yangi yozuv qo'shiladi",
+        "Qator joyida, versiyasiz yangilanadi",
+        "UPDATE bloklanadi, chunki indeks bor"
+      ],
+      "answer": 0,
+      "why": "HOT shartlari: indekslangan ustun o'zgarmaydi va yangi versiya o'sha heap sahifasiga sig'adi."
+    },
+    {
+      "q": "Write-ahead qoidasi aynan nimani talab qiladi?",
+      "options": [
+        "Commit'da barcha o'zgargan sahifalar diskka yozilishi kerak",
+        "WAL ma'lumot fayllaridan keyin yoziladi",
+        "WAL faqat replication uchun kerak",
+        "Ma'lumot sahifasi diskka faqat uni o'zgartirgan WAL yozuvi (sahifaning pd_lsn'igacha) diskka flush qilingandan keyin yozilishi mumkin"
+      ],
+      "answer": 3,
+      "why": "Buffer manager pd_lsn ni tekshiradi; shu tufayli crash'dan keyin har bir diskdagi o'zgarishni WAL'dan qayta tiklash mumkin."
+    },
+    {
+      "q": "full_page_writes nima uchun kerak?",
+      "options": [
+        "Replication tezligini oshirish uchun",
+        "Torn page'dan himoya: checkpoint'dan keyin sahifaning birinchi o'zgarishida butun sahifa tasviri WAL'ga yoziladi, crash'da yarim yozilgan sahifa shu tasvirdan tiklanadi",
+        "Indekslarni siqish uchun",
+        "WAL hajmini kamaytirish uchun"
+      ],
+      "answer": 1,
+      "why": "8 kB sahifa atomik yozilmasligi mumkin; delta yozuvni buzilgan sahifaga qo'llab bo'lmaydi. Narxi - WAL hajmi oshadi."
+    },
+    {
+      "q": "checkpoint_timeout 5 daqiqadan 15 daqiqaga oshirildi (max_wal_size ham yetarli). Asosiy ta'sir qaysi?",
+      "options": [
+        "WAL hajmi oshadi, crash'dan tiklash tezlashadi",
+        "Hech narsa o'zgarmaydi",
+        "Full page image'lar kamroq yoziladi (WAL hajmi kamayadi), lekin crash'dan keyin qayta qo'llanadigan WAL ko'payib, tiklash uzoqroq bo'ladi",
+        "Tranzaksiyalar durability'ni yo'qotadi"
+      ],
+      "answer": 2,
+      "why": "FPI har checkpoint'dan keyingi birinchi o'zgarishda yoziladi; checkpoint kamroq bo'lsa, FPI ham kam. REDO esa oxirgi checkpoint'dan boshlanadi."
+    },
+    {
+      "q": "synchronous_commit = off va fsync = off ning farqi nima?",
+      "options": [
+        "synchronous_commit = off crash'da oxirgi bir necha tranzaksiyani yo'qotishi mumkin, lekin baza izchil qoladi; fsync = off esa bazani buzishi mumkin",
+        "Farqi yo'q",
+        "fsync = off xavfsizroq",
+        "synchronous_commit = off faqat replikalarga ta'sir qiladi"
+      ],
+      "answer": 0,
+      "why": "Birinchisida WAL tartibi saqlanadi, faqat flush kechikadi; ikkinchisida diskka yozish tartibi kafolatlanmaydi."
+    },
+    {
+      "q": "Katta jadvalda primary key UUIDv4 dan vaqt bo'yicha tartiblangan ID'ga (UUIDv7) o'tkazildi. B-tree uchun asosiy foyda?",
+      "options": [
+        "Kalit kichrayadi",
+        "Yangi yozuvlar o'ng chekka barg sahifalariga tushadi: kam split, issiq sahifalar cache'da, sahifalar to'liqroq",
+        "Indeks keraksiz bo'ladi",
+        "Range so'rovlar ishlamay qoladi"
+      ],
+      "answer": 1,
+      "why": "Tasodifiy kalitlar insert'larni barcha barglarga tarqatadi; monoton kalitlar lokallik beradi va B-tree write amplification'ini kamaytiradi."
+    },
+    {
+      "q": "Yuklama: juda ko'p yozish, nuqtali o'qishlar kam, disk hajmi va SSD resursi muhim, murakkab tranzaksiyalar yo'q. Qaysi storage oilasi tabiiyroq?",
+      "options": [
+        "B-tree, chunki o'qish bashorat qilinadigan",
+        "Hash index",
+        "Farqi yo'q",
+        "LSM, chunki yozish ketma-ket, siqish yaxshi va space amplification past"
+      ],
+      "answer": 3,
+      "why": "LSM yozish va disk hajmiga optimallashgan; MyRocks misolida (LinkBench) siqilgan InnoDB'dan 2 baravar kam joy."
+    },
+    {
+      "q": "PostgreSQL B-tree'da o'quvchi sahifaga kelib, qidirilayotgan kalit sahifaning high key'idan katta ekanini ko'rdi. Bu nimani anglatadi va nima qiladi?",
+      "options": [
+        "Indeks buzilgan, xato qaytaradi",
+        "Root'dan qaytadan boshlaydi va butun yo'lni qulflaydi",
+        "Sahifa ayni paytda bo'lingan; right-link bo'ylab o'ng qo'shni sahifaga o'tadi",
+        "Kalit yo'q deb qaytaradi"
+      ],
+      "answer": 2,
+      "why": "Lehman-Yao B-link tree'da high key va right-link concurrent split'lardan qulfsiz tiklanishga imkon beradi."
+    }
+  ]
+}

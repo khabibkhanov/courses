@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Mashina profili (datchiklar ro'yxati, kalibrovka jadvali) har doim ID bo'yicha bir butun o'qiladi va oyda bir marta o'zgaradi. Kompaniya bo'yicha filtr esa tez-tez kerak. PostgreSQL'da eng mos sxema qaysi?",
+      "options": [
+        "Butun profilni, company_id bilan birga, bitta jsonb ustunda saqlash",
+        "company_id va plate - oddiy ustun, datchiklar va kalibrovka - jsonb ustun",
+        "Har bir datchik maydoni uchun alohida jadval va 6 ta JOIN",
+        "Profilni Redis'da saqlash, PostgreSQL'da faqat ID"
+      ],
+      "answer": 1,
+      "why": "Filtr va JOIN qilinadigan maydonlar ustunda bo'lsa, planner statistikasi va constraint ishlaydi; bir butun o'qiladigan, turli shakldagi qism jsonb da qulay."
+    },
+    {
+      "q": "PostgreSQL'da 60 KB lik jsonb hujjatdagi bitta kalit (odometr) har 10 soniyada UPDATE qilinadi. Asosiy muammo nima?",
+      "options": [
+        "jsonb kalitlarini yangilab bo'lmaydi",
+        "GIN indeksi bunday yangilashni taqiqlaydi",
+        "jsonb 8 kB dan katta bo'la olmaydi",
+        "Har bir UPDATE butun qiymatning yangi versiyasini yozadi (TOAST, siqish, MVCC), ya'ni bitta raqam uchun o'nlab KB yoziladi"
+      ],
+      "answer": 3,
+      "why": "MVCC yangi qator versiyasini yaratadi va TOAST qilingan katta qiymat qayta yoziladi. Tez o'zgaradigan maydonni oddiy ustunga chiqarish kerak."
+    },
+    {
+      "q": "Schema-on-read haqidagi qaysi gap to'g'ri?",
+      "options": [
+        "Sxema bor, lekin u yozishda baza tomonidan emas, o'qiydigan kod tomonidan talqin qilinadi",
+        "Schema-on-read bazalarda sxema umuman yo'q",
+        "Schema-on-read faqat graf bazalarga xos",
+        "Schema-on-read migratsiyani butunlay keraksiz qiladi"
+      ],
+      "answer": 0,
+      "why": "Yashirin sxema kodga ko'chadi: eski va yangi shakldagi hujjatlarni ilova o'zi hisobga olishi kerak."
+    },
+    {
+      "q": "Cassandra'da PRIMARY KEY ((vehicle_id), ts) bilan har 10 soniyada nuqta yozilsa, bitta mashina partitioni bir yilda nechta qatorga yetadi va bu hujjatdagi 100 000 qiymat yo'l-yo'rig'iga nisbatan qanday?",
+      "options": [
+        "Taxminan 315 ming, chegaradan 3 baravar ko'p",
+        "Taxminan 31.5 ming, chegaradan past",
+        "Taxminan 3.15 mln, chegaradan 30 baravar ko'p - bucket kerak",
+        "Taxminan 8 640, muammo yo'q"
+      ],
+      "answer": 2,
+      "why": "86 400 / 10 = 8 640 nuqta/kun, x 365 = 3.15 mln. Shuning uchun (vehicle_id, day) kabi bucket qo'shiladi."
+    },
+    {
+      "q": "Discord xabarlar uchun nega (channel_id, bucket) partition kalitini ishlatgan?",
+      "options": [
+        "Cassandra bitta ustunli partition kalitni qo'llamaydi",
+        "Faol kanal partitioni cheksiz o'smasligi va eng katta kanallarda ham 100 MB dan oshmasligi uchun",
+        "Xabarlarni foydalanuvchi bo'yicha qidirish uchun",
+        "Xabarlarni tasodifiy tarqatib, hot partitionni yo'qotish uchun"
+      ],
+      "answer": 1,
+      "why": "10 kunlik statik bucket partition hajmini chegaralaydi va kanal tarixini vaqt bo'yicha ketma-ket o'qishni saqlab qoladi."
+    },
+    {
+      "q": "Document modelda kompaniya nomi 50 000 ta mashina hujjatiga nusxalangan. Nom o'zgardi. Bu qaysi muammoning namunasi?",
+      "options": [
+        "Impedance mismatch",
+        "Write skew",
+        "Many-to-one bog'lanishni denormalizatsiya qilish natijasidagi yangilash anomaliyasi",
+        "Hot partition"
+      ],
+      "answer": 2,
+      "why": "Normalizatsiyada fakt bir joyda saqlanadi. Denormalizatsiyada uni barcha nusxalarda sinxron yangilash mas'uliyati ilovaga o'tadi."
+    },
+    {
+      "q": "Dilerlar va subpudratchilar o'rtasidagi egalik zanjiri bo'yicha 3 qadamgacha so'rov kerak, graf 2 mln qirra. Eng oqilona birinchi qadam?",
+      "options": [
+        "Darhol Neo4j klasterini qo'shish",
+        "Barcha zanjirni har bir hujjatga denormalizatsiya qilish",
+        "Redis'da har bir tugun uchun kalit",
+        "PostgreSQL'da recursive CTE, edges(src) indeksi va CYCLE bandi bilan; yetmasligi o'lchansa, graf bazani ko'rib chiqish"
+      ],
+      "answer": 3,
+      "why": "Kichik graf va qisqa traversal uchun recursive CTE yetarli; yangi baza turi operatsion narx olib keladi va raqam bilan oqlanishi kerak."
+    },
+    {
+      "q": "DynamoDB'da bitta partition key ostida juda ko'p o'qish bo'lsa, AWS hujjatiga ko'ra qachon throttling boshlanadi?",
+      "options": [
+        "Bitta partition soniyasiga 3 000 dan ortiq o'qish yoki 1 000 dan ortiq yozish olganda",
+        "Soniyasiga 40 000 o'qishdan oshganda",
+        "Item 400 KB dan oshganda",
+        "Throttling faqat jadval darajasida bo'ladi"
+      ],
+      "answer": 0,
+      "why": "Partition darajasidagi chegara 3 000 RCU va 1 000 WCU. Adaptive capacity issiq partitionga ko'proq beradi, lekin bu chegaradan oshirmaydi."
+    },
+    {
+      "q": "Facebook TAO misolidan qaysi saboq chiqadi?",
+      "options": [
+        "Graf ma'lumot faqat graf bazada saqlanishi mumkin",
+        "Graf modeli API darajasida bo'lishi, uning ostida esa sharded relational baza (MySQL) va cache qatlami turishi mumkin",
+        "MySQL graf so'rovlarini o'zi bajaradi",
+        "Ijtimoiy tarmoqlarda yozishlar o'qishlardan ko'p"
+      ],
+      "answer": 1,
+      "why": "TAO objects va associations modelini MySQL ustidagi graf-aware cache sifatida beradi: model va storage alohida qarorlar."
+    },
+    {
+      "q": "Cassandra'da \"tezligi 120 km/soat dan oshgan barcha nuqtalar, butun park bo'yicha\" so'rovi kerak bo'lib qoldi. Query-first tamoyiliga ko'ra to'g'ri yondashuv?",
+      "options": [
+        "Mavjud jadvalga ALLOW FILTERING bilan so'rov yuborish",
+        "Secondary index qo'shib, muammo hal bo'ldi deb hisoblash",
+        "Shu so'rov uchun alohida, mos partition kalitli jadval (masalan, (company_id, day) bo'yicha qoidabuzarliklar) yaratib, yozishda unga ham yozish",
+        "Cassandra'da bunday so'rovni hech qachon bajarib bo'lmaydi"
+      ],
+      "answer": 2,
+      "why": "Wide-column modelda har bir asosiy so'rov uchun jadval denormalizatsiya qilinadi; partition kalitsiz so'rov butun klasterni skanerlaydi."
+    }
+  ]
+}

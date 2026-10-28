@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Downstream latency si: p50 = 20 ms, p99 = 120 ms, p99.9 = 300 ms. Noto'g'ri timeout ulushini taxminan 0.1% da ushlab turish uchun qaysi timeout eng mos?",
+      "options": ["50 ms", "150 ms", "Taxminan 300-350 ms", "30 s"],
+      "answer": 2,
+      "why": "0.1% noto'g'ri timeout p99.9 ga mos keladi, ustiga kichik zaxira qo'shiladi. 30 s esa downstream o'lganda resurslarni behuda ushlab turadi."
+    },
+    {
+      "q": "Stack 4 qatlamdan iborat va har qatlam xato bo'lganda jami 3 marta urinadi. Eng pastdagi baza sekinlashganda u normal yuklamaning necha baravarini oladi?",
+      "options": ["12", "27", "81", "4"],
+      "answer": 2,
+      "why": "Har qatlam k urinish, n qatlam bo'lsa k^n: 3^4 = 81."
+    },
+    {
+      "q": "To'lov API siga so'rov yuborildi va read timeout bo'ldi. To'g'ri xatti-harakat qaysi?",
+      "options": [
+        "Darhol shu so'rovni qayta yuborish",
+        "Retry faqat idempotency key bilan, server bir xil key ga birinchi natijani qaytarishi sharti bilan",
+        "Hech qachon retry qilmaslik va foydalanuvchiga to'lov o'tmadi deyish",
+        "Timeout ni 5 daqiqaga oshirish"
+      ],
+      "answer": 1,
+      "why": "Read timeout - noma'lum natija: server to'lovni bajargan bo'lishi mumkin. Idempotency key takrorlashni xavfsiz qiladi."
+    },
+    {
+      "q": "10 000 client bir vaqtda xato oldi va hammasi jitter siz exponential backoff (100, 200, 400 ms...) ishlatadi. Nima bo'ladi?",
+      "options": [
+        "Yuklama vaqt bo'ylab tekis taqsimlanadi",
+        "Client'lar sinxron to'lqinlar bilan qaytadi va har to'lqin serverni yana bosadi",
+        "Backoff to'lqinlarni butunlay yo'qotadi",
+        "Faqat birinchi retry muammo"
+      ],
+      "answer": 1,
+      "why": "Backoff to'lqinlar orasidagi masofani oshiradi, lekin hamma bir xil vaqtda qaytadi. Jitter ularni vaqt bo'ylab yoyadi."
+    },
+    {
+      "q": "Brooker ning 2015 yilgi simulyatsiyasiga ko'ra qaysi jitter varianti eng kam jami chaqiruv bergan va eng oddiy default hisoblanadi?",
+      "options": ["Equal Jitter", "Full Jitter", "Jitter siz exponential backoff", "Fixed delay"],
+      "answer": 1,
+      "why": "Full Jitter: sleep = random(0, min(cap, base*2^n)). Eng kam chaqiruv, holatsiz va oddiy. AWS SDK standard rejimi ham shuni ishlatadi."
+    },
+    {
+      "q": "1 000 QPS, o'rtacha latency 100 ms, jami 1 000 thread. So'rovlarning 5 foizi 100 s deadline gacha osilib qoladi. Nima bo'ladi?",
+      "options": [
+        "Faqat 5% so'rov xato oladi",
+        "Osilgan so'rovlar 5 000 thread talab qiladi, thread'lar tugaydi va xato darajasi 80 foiz atrofiga chiqadi",
+        "Thread'lar yetarli, hech narsa bo'lmaydi",
+        "Latency 2 baravar oshadi, xatolar yo'q"
+      ],
+      "answer": 1,
+      "why": "Little qonuni: 50 QPS x 100 s = 5 000 band thread. Google SRE misolida faqat 19.6% so'rovga xizmat ko'rsatiladi."
+    },
+    {
+      "q": "Foydalanuvchi so'rovi uchun 2 s deadline bor, gateway 300 ms sarfladi. Downstream chaqiruvga qanday deadline berish to'g'ri?",
+      "options": [
+        "Yangi 2 s",
+        "Downstream ning o'z default timeout i",
+        "Qolgan taxminan 1.7 s dan tarmoq zaxirasini ayirib",
+        "Cheksiz, chunki downstream o'zi hal qiladi"
+      ],
+      "answer": 2,
+      "why": "Deadline propagation: pastki hop faqat qolgan vaqtni oladi, tarmoq va keyingi qayta ishlash uchun biroz zaxira qoldiriladi."
+    },
+    {
+      "q": "Google SRE tavsiya qilgan client bo'yicha retry budget (retry'lar so'rovlarning 10 foizidan kam) umumiy holatda yuklama o'sishini qanchaga cheklaydi?",
+      "options": ["Taxminan 1.1x", "2x", "3x", "10x"],
+      "answer": 0,
+      "why": "Kitobga ko'ra retry ulushi 10% bilan cheklanganda umumiy holatda o'sish 1.1x. Budget siz, faqat 3 urinish chegarasi bilan, eng yomon holat 3x dan biroz past."
+    },
+    {
+      "q": "Hedged request uchun qaysi shart noto'g'ri?",
+      "options": [
+        "Faqat idempotent operatsiyalar uchun",
+        "Ikkinchi so'rov taxminan p95 kabi kech nuqtadan keyin yuboriladi",
+        "Birinchi javob kelganda qolgan so'rovlar cancel qilinadi",
+        "Server ortiqcha yuklanganda hedging ni kuchaytirish kerak"
+      ],
+      "answer": 3,
+      "why": "Ortiqcha yuklamada hedging qo'shimcha so'rov yaratadi va retry storm ga aylanadi, shuning uchun uni cheklash yoki o'chirish kerak."
+    },
+    {
+      "q": "Qaysi xato odatda retry qilinmaydi?",
+      "options": [
+        "503 Service Unavailable",
+        "Connection refused",
+        "422 Unprocessable Entity (validatsiya xatosi)",
+        "429 Too Many Requests (Retry-After bilan)"
+      ],
+      "answer": 2,
+      "why": "Validatsiya xatosi doimiy: bir xil so'rov bir xil natija beradi. Qolganlari vaqtinchalik va backoff bilan retry qilinishi mumkin."
+    }
+  ]
+}

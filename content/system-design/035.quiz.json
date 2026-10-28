@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Consensus xossalaridan qaysi biri liveness xossasi?",
+      "options": ["Agreement", "Validity", "Termination", "Integrity"],
+      "answer": 2,
+      "why": "Termination - \"oxir-oqibat qaror qilinadi\". Qolganlari \"yomon narsa bo'lmaydi\" turidagi safety xossalari."
+    },
+    {
+      "q": "5 tugunli etcd klasteri. Bir vaqtda nechta tugun qulasa ham yozish davom etadi?",
+      "options": ["1", "2", "3", "4"],
+      "answer": 1,
+      "why": "Kvorum floor(5/2) + 1 = 3. 2 tugun qulasa ham 3 ta qoladi."
+    },
+    {
+      "q": "Jamoa 3 tugunli klasterni 4 tugunga kengaytirmoqchi, \"ishonchlilik oshadi\" deb. To'g'rimi?",
+      "options": [
+        "Ha, endi 2 ta nosozlikka chidaydi",
+        "Yo'q: 4 tugunda kvorum 3, baribir faqat 1 nosozlikka chidaydi, lekin har yozuvda ko'proq tasdiq kerak",
+        "Ha, chunki kvorum 2 bo'lib qoladi",
+        "Faqat Byzantine nosozliklar uchun ha"
+      ],
+      "answer": 1,
+      "why": "f = floor((N - 1) / 2). N = 3 va N = 4 da ikkalasida ham f = 1."
+    },
+    {
+      "q": "FLP teoremasi aynan nimani isbotlaydi?",
+      "options": [
+        "Taqsimlangan tizimda consensus hech qachon erishilmaydi",
+        "Asynchronous tizimda bitta crash bo'lishi mumkin bo'lsa, deterministik algoritm har bir ijroda yakunlanishni kafolatlay olmaydi",
+        "Paxos va Raft noto'g'ri algoritmlar",
+        "Xabarlar yo'qolsa, safety'ni saqlab bo'lmaydi"
+      ],
+      "answer": 1,
+      "why": "FLP termination kafolatini taqiqlaydi, safety'ni emas. Amalda partial synchrony, timeout va randomizatsiya bilan aylanib o'tiladi."
+    },
+    {
+      "q": "Paxos 1-fazasida proposer uchta acceptor'dan Promise oldi: A1 - bo'sh, A2 - accepted (n=3, X), A3 - accepted (n=4, Y). U qaysi qiymatni taklif qilishi shart?",
+      "options": ["O'z qiymatini", "X", "Y", "X va Y dan tasodifiy birini"],
+      "answer": 2,
+      "why": "Proposer javoblar ichidagi eng katta accepted_n ga ega qiymatni olishi shart - bu n=4 dagi Y."
+    },
+    {
+      "q": "Paxos acceptor `promised_n` ni faqat xotirada saqlaydi va qulab qayta tursa nolga tushadi. Nima bo'ladi?",
+      "options": [
+        "Faqat performance pasayadi",
+        "Hech narsa, chunki boshqa acceptor'lar eslab qoladi",
+        "Acceptor avvalgi va'dasini buzib, eski raqamli taklifni qabul qilishi va ikki xil qiymat tanlanishiga olib kelishi mumkin",
+        "Klaster avtomatik ravishda Byzantine rejimga o'tadi"
+      ],
+      "answer": 2,
+      "why": "Crash-recovery modelida va'da va qabul qilingan qiymat diskda saqlanishi shart; aks holda kvorum kesishishi kafolati ishlamaydi."
+    },
+    {
+      "q": "Ikki proposer navbatma-navbat kattaroq raqam bilan Prepare yuborib, bir-birining Accept'ini rad ettirmoqda. Bu nima va qanday yechiladi?",
+      "options": [
+        "Safety buzilishi; Byzantine protokol kerak",
+        "Liveness muammosi (duelli proposer'lar); bitta lider saylash, timeout yoki tasodifiy kechikish bilan",
+        "Disk buzilishi; checksum qo'shish kerak",
+        "Network partition; klasterni kattalashtirish kerak"
+      ],
+      "answer": 1,
+      "why": "Hech narsa tanlanmaydi, lekin noto'g'ri qiymat ham tanlanmaydi. Ajratilgan proposer (lider) progressni ta'minlaydi."
+    },
+    {
+      "q": "Multi-Paxos'da barqaror lider bo'lganda har bir yangi buyruq uchun nechta majority round-trip kerak?",
+      "options": ["0", "1 (faqat Accept fazasi)", "2 (Prepare va Accept)", "N ta"],
+      "answer": 1,
+      "why": "Lider 1-fazani barcha keyingi slotlar uchun bir marta bajaradi, shundan keyin faqat 2-faza qoladi."
+    },
+    {
+      "q": "etcd tugunlari ikki data-markazga 2 + 1 joylashtirilgan. 2 tugunli data-markaz butunlay o'chdi. Natija?",
+      "options": [
+        "Qolgan tugun lider bo'lib ishlashda davom etadi",
+        "Klaster yozishni to'xtatadi: 1 tugun 3 dan iborat klasterda kvorum hosil qila olmaydi",
+        "Klaster eventual consistency rejimiga o'tadi",
+        "Klaster avtomatik ravishda 1 tugunli bo'lib qayta sozlanadi"
+      ],
+      "answer": 1,
+      "why": "Kvorum 2. Uchinchi mustaqil joy bo'lmasa, katta joyning qulashi butun klasterni to'xtatadi."
+    },
+    {
+      "q": "Nega 10 000 nuqta/s GPS telemetriyasini har bir nuqta uchun consensus orqali o'tkazish yomon g'oya?",
+      "options": [
+        "Consensus GPS koordinatalarini saqlay olmaydi",
+        "Har bir nuqta majority round-trip va fsync talab qiladi, nuqtalar esa idempotent va tartib device_time bilan beriladi - qaror kerak emas",
+        "Consensus faqat 3 tugunda ishlaydi",
+        "FLP tufayli nuqtalar yo'qoladi"
+      ],
+      "answer": 1,
+      "why": "Consensus qaror kerak bo'lgan kichik metadata uchun. Yuqori throughput, konfliktsiz ma'lumotga uning narxi oqlanmaydi."
+    }
+  ]
+}

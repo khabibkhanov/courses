@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Append-only log'da crash'dan keyin qayta tiklash nega in-place yangilashga qaraganda soddaroq?",
+      "options": [
+        "Chunki log hech qachon diskka yozilmaydi",
+        "Chunki faqat oxirgi yozuv chala qolishi mumkin va uni CRC bilan aniqlab kesish yetarli; mavjud ma'lumot ustidan yozilmaydi",
+        "Chunki append-only log fsync talab qilmaydi",
+        "Chunki log har doim RAM'da saqlanadi"
+      ],
+      "answer": 1,
+      "why": "In-place yangilashda yarim yozilgan sahifa eski va yangi ma'lumot aralashmasi bo'lib qolishi mumkin; append-only'da eski qism o'zgarmaydi."
+    },
+    {
+      "q": "Bitcask uslubidagi engine'da 200 mln kalit bor, keydir'da bir kalitga 80 bayt ketadi (masala sharti). Qiymatlar o'rtacha 2 KB. Keydir uchun qancha RAM kerak?",
+      "options": [
+        "Taxminan 400 GB",
+        "Taxminan 1.6 GB",
+        "Taxminan 16 GB",
+        "Taxminan 160 MB"
+      ],
+      "answer": 2,
+      "why": "2 x 10^8 x 80 B = 16 GB. Keydir hajmi qiymatlar hajmiga emas, kalitlar soniga bog'liq."
+    },
+    {
+      "q": "Qaysi yuklama Bitcask uslubidagi in-memory hash index uchun eng mos?",
+      "options": [
+        "Nisbatan kam kalit (masalan, 100 ming qurilma), har birining qiymati tez-tez yangilanadi va faqat kalit bo'yicha o'qiladi",
+        "Milliardlab kalit va vaqt oralig'i bo'yicha so'rovlar",
+        "Kalitning prefiksi bo'yicha qidirish",
+        "Analitik agregatsiyalar (SUM, GROUP BY)"
+      ],
+      "answer": 0,
+      "why": "Barcha kalitlar RAM'ga sig'adi, yozish - append, o'qish - bitta disk o'qishi. Range va prefiks so'rovlari hash bilan ishlamaydi."
+    },
+    {
+      "q": "Append-only logda kalit o'chirilganda nima yoziladi va u nega kerak?",
+      "options": [
+        "Hech narsa, kalit faqat RAM'dan o'chiriladi",
+        "Eski yozuv joyida nol bilan to'ldiriladi",
+        "Tombstone yozuvi qo'shiladi; merge paytida kalitning eski qiymatlarini tashlash uchun belgi bo'ladi",
+        "Butun segment qayta yoziladi"
+      ],
+      "answer": 2,
+      "why": "Log o'zgarmas, shuning uchun o'chirish ham yozuv sifatida qo'shiladi. Tombstone bo'lmasa, crash'dan keyin keydir eski segmentdan kalitni qayta tiklaydi."
+    },
+    {
+      "q": "PostgreSQL'da `CREATE INDEX ON t USING hash (device_uuid)` yaratildi. Qaysi so'rov bu indeksdan foydalana OLMAYDI?",
+      "options": [
+        "WHERE device_uuid = '...'",
+        "JOIN devices d ON d.device_uuid = t.device_uuid (nested loop ichida tenglik)",
+        "WHERE device_uuid = $1 (prepared statement parametri bilan)",
+        "WHERE device_uuid BETWEEN 'a' AND 'f' ORDER BY device_uuid"
+      ],
+      "answer": 3,
+      "why": "PostgreSQL hash index faqat = operatorini qo'llaydi; u faqat 4 baytlik xeshni saqlaydi, tartib yo'q."
+    },
+    {
+      "q": "Ingest servisi 4 000 yozuv/s qabul qiladi, bitta fsync 1 ms davom etadi va bitta yozuvchi ketma-ket ishlaydi. Har yozuvdan keyin fsync qilinsa nima bo'ladi?",
+      "options": [
+        "Muammo yo'q, SSD sekundiga gigabaytlar yozadi",
+        "Throughput taxminan 1 000 yozuv/s bilan chegaralanadi; group commit kerak",
+        "Throughput 4 000 dan oshadi, chunki fsync parallel",
+        "fsync faqat o'qishga ta'sir qiladi"
+      ],
+      "answer": 1,
+      "why": "1 ms fsync bilan ketma-ket 1 soniyada ~1 000 fsync. Muammo bayt hajmida emas, fsync sonida; group commit bir fsync bilan ko'p yozuvni qamraydi."
+    },
+    {
+      "q": "Redis'da `appendfsync everysec` ishlatiladi. Server elektr o'chishi bilan to'xtadi. Eng yomon holatda nima yo'qoladi?",
+      "options": [
+        "Oxirgi 1 soniyagacha bo'lgan yozishlar",
+        "Hech narsa",
+        "Oxirgi AOF rewrite'dan keyingi barcha yozishlar",
+        "Butun ma'lumot"
+      ],
+      "answer": 0,
+      "why": "everysec soniyada bir marta fsync qiladi; oxirgi fsync'dan keyin page cache'da qolgan yozishlar yo'qolishi mumkin."
+    },
+    {
+      "q": "Kafka offset indeksi (.index) nega siyrak (har ~4096 baytda bitta yozuv) bo'lishi mumkin?",
+      "options": [
+        "Chunki Kafka faqat oxirgi xabarni o'qiydi",
+        "Chunki offsetlar xesh qilinadi",
+        "Chunki indeks to'liq RAM'da saqlanadi",
+        "Chunki segmentdagi yozuvlar offset bo'yicha tartiblangan: eng yaqin pastki indeks yozuvidan qisqa skan bilan kerakli joy topiladi"
+      ],
+      "answer": 3,
+      "why": "Tartiblangan ma'lumotda har bir kalitni indekslash shart emas. Bu SSTable siyrak indeksining aynan o'zi (13-dars)."
+    },
+    {
+      "q": "Compaction/merge jarayoni haqidagi qaysi gap to'g'ri?",
+      "options": [
+        "Merge vaqtida barcha o'qish va yozishlar to'xtatiladi",
+        "Merge yangi faylga yozadi; eski immutable segmentlar merge tugaguncha o'qish uchun ishlayveradi, keyin o'chiriladi",
+        "Merge faqat aktiv segment ustida bajariladi",
+        "Merge write amplification'ni kamaytiradi"
+      ],
+      "answer": 1,
+      "why": "Immutable segmentlar tufayli compaction qulfsiz ishlaydi. Lekin u ma'lumotni qayta yozgani uchun write amplification'ni oshiradi."
+    },
+    {
+      "q": "PostgreSQL commit paytida nega o'zgargan barcha ma'lumot sahifalarini emas, faqat WAL'ni flush qiladi?",
+      "options": [
+        "Chunki ma'lumot sahifalari hech qachon diskka yozilmaydi",
+        "Chunki WAL siqilgan",
+        "Chunki WAL ketma-ket yoziladi va uni sinxronlash tarqoq sahifalarni flush qilishdan ancha arzon; crash'da sahifalar WAL'dan qayta tiklanadi",
+        "Chunki sahifalar har doim RAM'da qoladi va crash'da yo'qolmaydi"
+      ],
+      "answer": 2,
+      "why": "Write-ahead qoidasi: o'zgarish avval logga tushadi, sahifalar keyinroq (checkpoint) yoziladi, crash'dan keyin REDO bilan tiklanadi."
+    }
+  ]
+}

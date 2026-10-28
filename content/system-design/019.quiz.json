@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "PostgreSQL'da UPDATE jismonan nima qiladi?",
+      "options": [
+        "Qatorni joyida o'zgartiradi va eski qiymatni undo log'ga yozadi",
+        "Eski versiyada xmax ni o'rnatadi va xmin = joriy XID bilan yangi versiya yaratadi (DELETE + INSERT)",
+        "Qatorni o'chirib, keyin vacuum yangi qatorni yaratadi",
+        "Faqat WAL'ga yozadi, heap o'zgarmaydi"
+      ],
+      "answer": 1,
+      "why": "PostgreSQL MVCC versiyalarni heap'da saqlaydi; undo log yondashuvi InnoDB'ga xos."
+    },
+    {
+      "q": "Snapshot 100:105:100,103. Qator versiyasi xmin = 103 (commit qilingan), xmax = 0. Bu snapshot uchun ko'rinadimi?",
+      "options": [
+        "Ha, chunki 103 commit qilingan",
+        "Ha, chunki 103 < 105",
+        "Faqat Read Committed'da ko'rinadi",
+        "Yo'q, chunki 103 snapshot olingan paytda faol edi (xip_list'da)"
+      ],
+      "answer": 3,
+      "why": "xip_list'dagi tranzaksiyalar snapshot uchun tugamagan hisoblanadi, keyinroq commit bo'lgan bo'lsa ham."
+    },
+    {
+      "q": "Read Committed va Repeatable Read ning PostgreSQL'dagi asosiy mexanik farqi?",
+      "options": [
+        "Read Committed har bir buyruq uchun yangi snapshot oladi, Repeatable Read esa birinchi buyruqdagi snapshot'ni tranzaksiya oxirigacha ishlatadi",
+        "Repeatable Read qatorlarni o'qishda qulflaydi",
+        "Read Committed dirty read'ga ruxsat beradi",
+        "Repeatable Read 2PL ishlatadi"
+      ],
+      "answer": 0,
+      "why": "Qolgan farqlar (read skew yo'qligi, lost update'da 40001) shu snapshot qoidasidan kelib chiqadi."
+    },
+    {
+      "q": "Jadvaldagi o'lik versiyalar vacuum'dan keyin ham tozalanmayapti, n_dead_tup o'smoqda. Eng ehtimolli sabab?",
+      "options": [
+        "Jadvalda indeks ko'p",
+        "fillfactor 100",
+        "Biror uzoq tranzaksiya, idle in transaction sessiya, prepared transaction yoki replication slot xmin horizon'ni ushlab turibdi",
+        "WAL segmentlari 16 MB"
+      ],
+      "answer": 2,
+      "why": "Vacuum faqat hech bir faol snapshot ko'ra olmaydigan versiyalarni o'chiradi; eng eski snapshot chegarani belgilaydi."
+    },
+    {
+      "q": "Baza soniyasiga 2 000 yozuvchi tranzaksiya bajaradi. autovacuum_freeze_max_age (200 mln) ga taxminan qancha vaqtda yetiladi?",
+      "options": [
+        "Taxminan 28 kun",
+        "Taxminan 2.8 soat",
+        "Taxminan 1 yil",
+        "Taxminan 28 soat"
+      ],
+      "answer": 3,
+      "why": "200 000 000 / 2 000 = 100 000 s, taxminan 27.8 soat; partiyalab yozish XID iste'molini kamaytiradi."
+    },
+    {
+      "q": "PostgreSQL'da wraparound'gacha 3 mln dan kam tranzaksiya qolganda nima bo'ladi?",
+      "options": [
+        "Faqat ogohlantirish yoziladi",
+        "Ma'lumot darhol yo'qoladi",
+        "Baza yangi XID berishdan bosh tortadi - faqat read-only tranzaksiyalar ishlaydi",
+        "Autovacuum o'chiriladi"
+      ],
+      "answer": 2,
+      "why": "Bu yozishning to'liq to'xtashi; hujjatga ko'ra undan oldin 40 mln qolganda ogohlantirishlar boshlanadi."
+    },
+    {
+      "q": "Uber 2016 postidagi PostgreSQL write amplification argumenti nimaga asoslangan?",
+      "options": [
+        "Indekslar jismoniy manzilga (ctid) ishora qilgani uchun HOT bo'lmagan har bir update barcha indekslarga yangi yozuv qo'shadi",
+        "PostgreSQL WAL'ni siqmaydi",
+        "PostgreSQL B-tree o'rniga LSM ishlatadi",
+        "PostgreSQL har bir SELECT'da diskka yozadi"
+      ],
+      "answer": 0,
+      "why": "InnoDB'da secondary indekslar primary key'ga ishora qiladi va faqat o'zgargan ustunlar indekslari yangilanadi."
+    },
+    {
+      "q": "PostgreSQL SSI'dagi SIReadLock haqida qaysi gap to'g'ri?",
+      "options": [
+        "U yozuvchilarni bloklaydi, xuddi 2PL dagi shared lock kabi",
+        "U hech qanday bloklashga olib kelmaydi; faqat read-write bog'liqliklarni aniqlash uchun qayd etadi",
+        "U faqat seq scan'da olinadi",
+        "U deadlock'larning asosiy sababi"
+      ],
+      "answer": 1,
+      "why": "SSI optimistik: konflikt qayd etiladi va xavfli tuzilmada tranzaksiya 40001 bilan bekor qilinadi, kutish yo'q."
+    },
+    {
+      "q": "2PL va SSI ning eng muhim amaliy farqi qaysi?",
+      "options": [
+        "2PL write skew'ni oldini olmaydi",
+        "SSI faqat bitta thread'da ishlaydi",
+        "2PL qayta urinishni talab qiladi, SSI talab qilmaydi",
+        "2PL'da o'quvchi va yozuvchi bir-birini kutadi (pessimistik), SSI'da kutmaydi, lekin konfliktda tranzaksiya bekor qilinib, qayta urinish kerak (optimistik)"
+      ],
+      "answer": 3,
+      "why": "2PL latency dumini va deadlock'larni oshiradi; SSI yuqori konfliktda ko'p abort beradi."
+    },
+    {
+      "q": "20 000 qatorli vehicles jadvali har 10 soniyada har bir qator uchun yangilanadi, last_seen_at indekslangan. Eng samarali birinchi o'zgarish?",
+      "options": [
+        "Jadvalni har kuni VACUUM FULL qilish",
+        "last_seen_at indeksini olib tashlab (yoki tez o'zgaradigan holatni alohida ingichka jadvalga chiqarib) va fillfactor'ni pasaytirib, HOT update'larga imkon berish",
+        "Izolyatsiyani Serializable'ga oshirish",
+        "autovacuum'ni o'chirish"
+      ],
+      "answer": 1,
+      "why": "Indekslangan ustun o'zgarsa HOT ishlamaydi; HOT bilan yangi versiya shu sahifaga tushadi va indekslarga yozuv qo'shilmaydi."
+    }
+  ]
+}

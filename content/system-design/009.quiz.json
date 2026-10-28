@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Mobil ilova POST /commands yubordi va javob o'rniga timeout oldi. Qaysi yondashuv dublikat buyruqsiz xavfsiz qayta urinish imkonini beradi?",
+      "options": [
+        "Qayta yubormaslik, foydalanuvchiga xato ko'rsatish",
+        "Xuddi shu Idempotency-Key bilan qayta yuborish; server birinchi natijani saqlagan bo'lsa uni qaytaradi",
+        "Yangi Idempotency-Key bilan qayta yuborish",
+        "POST o'rniga GET bilan yuborish"
+      ],
+      "answer": 1,
+      "why": "Kalit mantiqiy operatsiyani aniqlaydi. Yangi kalit yangi operatsiya demak va dublikat yaratadi."
+    },
+    {
+      "q": "Server idempotency ni shunday qilgan: 'SELECT key; agar yo'q bo'lsa - operatsiyani bajar va key ni INSERT qil'. Klient timeout dan keyin darhol qayta yubordi. Nima bo'lishi mumkin?",
+      "options": [
+        "Hech narsa, SELECT himoya qiladi",
+        "Ikki so'rov ham SELECT da kalitni topmaydi va operatsiya ikki marta bajariladi (race condition)",
+        "Ikkinchi so'rov avtomatik 409 oladi",
+        "Baza ikkinchi INSERT ni e'tiborsiz qoldiradi va muammo yo'q"
+      ],
+      "answer": 1,
+      "why": "Check-then-act atomik emas. Kalitni avval unique constraint bilan atomik egallash (INSERT ... ON CONFLICT) kerak."
+    },
+    {
+      "q": "3 mln nuqtali jadvalda LIMIT 100 OFFSET 2 900 000 so'rovi sekin. Asosiy sababi nima?",
+      "options": [
+        "LIMIT juda kichik",
+        "Baza 2 900 100 qatorni o'qib, 2 900 000 tasini tashlab yuboradi; narx offset ga proporsional",
+        "Indeks yo'q bo'lgani uchun",
+        "JSON serializatsiya sekin"
+      ],
+      "answer": 1,
+      "why": "Indeks bo'lsa ham offset qatorlarni sanab o'tish kerak. Keyset pagination to'g'ridan-to'g'ri pozitsiyaga sakraydi."
+    },
+    {
+      "q": "Keyset pagination da WHERE ts < :last_ts ORDER BY ts DESC ishlatildi (id siz). Bir xil ts li 3 ta nuqta sahifa chegarasiga tushdi. Nima bo'ladi?",
+      "options": [
+        "Hech narsa, hammasi to'g'ri ishlaydi",
+        "Sahifa chegarasidagi bir xil ts li nuqtalarning bir qismi o'tkazib yuborilishi mumkin; tie-breaker (ts, id) kerak",
+        "Baza xato qaytaradi",
+        "Nuqtalar ikki marta qaytariladi va bu normal"
+      ],
+      "answer": 1,
+      "why": "Qat'iy kichik shart bir xil ts dagi qolgan yozuvlarni chiqarib tashlaydi. Noyob tie-breaker bilan (ts, id) juftligi bo'yicha solishtirish kerak."
+    },
+    {
+      "q": "Qaysi o'zgarish integratsiya klientlari uchun eng xavfli, chunki hech narsa 'sinmaydi', lekin natija noto'g'ri bo'ladi?",
+      "options": [
+        "Javobga yangi ixtiyoriy maydon qo'shish",
+        "Yangi endpoint qo'shish",
+        "speed maydonining birligini km/h dan m/s ga o'zgartirish",
+        "Maydon nomini o'zgartirish"
+      ],
+      "answer": 2,
+      "why": "Nom o'zgarishi xatoni darhol ko'rsatadi; ma'no yoki birlik o'zgarishi esa jimgina noto'g'ri hisob-kitoblarga olib keladi."
+    },
+    {
+      "q": "gRPC zanjiri A -> B -> C. A 500 ms deadline bilan B ni chaqirdi, B 150 ms ishlab C ni chaqirdi. Deadline propagation yoqilgan bo'lsa, C qancha vaqt oladi va qanday uzatiladi?",
+      "options": [
+        "500 ms, absolyut vaqt sifatida",
+        "Taxminan 350 ms, qolgan vaqt (timeout) sifatida, soatlar farqi ta'sir qilmasligi uchun",
+        "Deadline yo'q, gRPC standart holatda cheksiz kutadi",
+        "150 ms"
+      ],
+      "answer": 1,
+      "why": "gRPC qolgan vaqtni uzatadi; absolyut vaqt serverlar soatlari farqiga sezgir bo'lardi."
+    },
+    {
+      "q": "GraphQL so'rovi 100 ta mashina va har birining haydovchisini so'raydi. Resolver lar sodda yozilgan. Bazaga nechta so'rov ketadi va yechim nima?",
+      "options": [
+        "1 ta, GraphQL avtomatik birlashtiradi",
+        "101 ta (N+1); DataLoader bilan bitta tick dagi yuklashlarni batch ga yig'ish",
+        "2 ta, har doim",
+        "100 ta; yechim - REST ga o'tish"
+      ],
+      "answer": 1,
+      "why": "Har bir haydovchi maydoni alohida resolver chaqiradi. DataLoader ularni bitta WHERE id IN (...) so'roviga aylantiradi."
+    },
+    {
+      "q": "Stripe API v1 da birinchi so'rov 500 xato bilan tugadi. Xuddi shu Idempotency-Key bilan qayta yuborilsa nima bo'ladi?",
+      "options": [
+        "Operatsiya qaytadan bajariladi",
+        "Saqlangan javob, ya'ni o'sha 500 qaytariladi",
+        "409 Conflict",
+        "Kalit avtomatik o'chiriladi"
+      ],
+      "answer": 1,
+      "why": "Stripe hujjatiga ko'ra v1 da endpoint bajarilishi boshlangandan keyingi birinchi natija, 500 xatolar ham, saqlanadi va takrorlarga qaytariladi."
+    },
+    {
+      "q": "Qaysi HTTP metodlar idempotent, lekin safe emas?",
+      "options": ["GET va HEAD", "PUT va DELETE", "POST va PATCH", "OPTIONS va TRACE"],
+      "answer": 1,
+      "why": "PUT va DELETE holatni o'zgartiradi (safe emas), lekin ularni takrorlash bir xil natija holat beradi. POST va PATCH idempotent emas."
+    },
+    {
+      "q": "Ikki dispetcher bir vaqtda geozona sozlamasini PUT bilan o'zgartirdi va birining o'zgarishi jimgina yo'qoldi. HTTP darajasida qaysi mexanizm buning oldini oladi?",
+      "options": [
+        "Idempotency-Key",
+        "ETag va If-Match: resurs o'zgargan bo'lsa server 412 qaytaradi",
+        "Cursor pagination",
+        "gRPC deadline"
+      ],
+      "answer": 1,
+      "why": "Optimistic concurrency: klient o'qigan versiyani If-Match da yuboradi, versiya mos kelmasa yozish rad etiladi va klient qayta o'qib birlashtiradi."
+    }
+  ]
+}

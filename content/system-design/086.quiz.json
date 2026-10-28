@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Nega WebSocket ulanishlarini ushlab turadigan gateway va xabar mantiqini bajaradigan chat servis alohida qilinadi?",
+      "options": [
+        "WebSocket faqat Java da ishlagani uchun",
+        "Gateway holatli: uni qayta ishga tushirish millionlab ulanishni uzadi; mantiqni stateless servisga chiqarib, tez-tez deploy qilish mumkin",
+        "Chat servis WebSocket ni qo'llab-quvvatlamaydi",
+        "Bu faqat xavfsizlik uchun"
+      ],
+      "answer": 1,
+      "why": "Ulanish qatlami yupqa va barqaror bo'lishi kerak. Biznes mantiq o'zgarishi ulanishlarni uzmasligi kerak."
+    },
+    {
+      "q": "Mijoz xabar yubordi, javob kelmadi (tarmoq uzildi) va u xabarni qayta yubordi. Dublikatni nima oldini oladi?",
+      "options": [
+        "Server Snowflake ID",
+        "Mijoz bergan client_msg_id bo'yicha serverda dedup",
+        "TCP ning o'zi",
+        "Xabar matnini solishtirish"
+      ],
+      "answer": 1,
+      "why": "Server ID faqat saqlangandan keyin beriladi. Qayta yuborishni aniqlash uchun mijoz tomonida yaratilgan idempotency kaliti kerak."
+    },
+    {
+      "q": "Server mijozga 'xabar yuborildi' ack ni qachon berishi kerak?",
+      "options": [
+        "Xabarni qabul qilishi bilan, saqlashdan oldin",
+        "Xabar bazaga ishonchli yozilgandan keyin",
+        "Barcha qabul qiluvchilar o'qigandan keyin",
+        "Push yuborilgandan keyin"
+      ],
+      "answer": 1,
+      "why": "Saqlashdan oldingi ack server qulasa xabar yo'qolishiga olib keladi. Barcha qabul qiluvchilarni kutish esa juda sekin."
+    },
+    {
+      "q": "10 000 a'zoli guruhda har bir foydalanuvchi uchun o'qilmagan xabarlar sonini qanday arzon hisoblash mumkin?",
+      "options": [
+        "Har bir xabar va a'zo uchun read yozuvi saqlash",
+        "Har bir (user, channel) uchun last_read_seq saqlab, channel.last_seq - last_read_seq",
+        "Har safar barcha xabarlarni sanash",
+        "Mijozda hisoblash va serverga yubormaslik"
+      ],
+      "answer": 1,
+      "why": "Monoton seq bilan o'qilmaganlar soni O(1). Per-xabar read yozuvlari a'zolar x xabarlar hajmida o'sadi."
+    },
+    {
+      "q": "Discord 2017 da katta guild'larda qanday muammoga duch kelgan va qanday hal qilgan?",
+      "options": [
+        "Disk to'lgan; ScyllaDB ga o'tgan",
+        "Bitta guild jarayoni hodisani barcha sessiyalarga yuborishga 1-2 soniya sarflagan; Manifold bilan qabul qiluvchilarni tugun bo'yicha guruhlab yuborgan",
+        "WebSocket limiti; SSE ga o'tgan",
+        "Presence yo'q edi; uni qo'shgan"
+      ],
+      "answer": 1,
+      "why": "Bitta send 30-70 mikrosekund, 30 000 sessiyada 0.9-2.1 s. Tugun boshiga bitta xabar va lokal tarqatish yuklamani kamaytirgan."
+    },
+    {
+      "q": "Presence heartbeat har 30 s da, Redis TTL 90 s. Mobil ilova tunnelda 20 soniya aloqasiz qoldi. Nima bo'ladi?",
+      "options": [
+        "Foydalanuvchi darhol oflayn ko'rinadi",
+        "TTL hali tugamagan, foydalanuvchi onlayn ko'rinishda qoladi; qayta ulanganda heartbeat davom etadi",
+        "Foydalanuvchi akkaunti bloklanadi",
+        "Barcha xabarlar yo'qoladi"
+      ],
+      "answer": 1,
+      "why": "TTL va debounce qisqa uzilishlarda presence chaqnashini oldini oladi. Trade-off: haqiqiy oflayn kechroq aniqlanadi."
+    },
+    {
+      "q": "1 million onlayn foydalanuvchi har 30 soniyada heartbeat yuboradi. Taxminan necha heartbeat/s?",
+      "options": [
+        "3 300",
+        "33 000",
+        "330 000",
+        "1 000 000"
+      ],
+      "answer": 1,
+      "why": "1 000 000 / 30 taxminan 33 000 heartbeat/s."
+    },
+    {
+      "q": "Discord xabarlar jadvalida partition key ni nega faqat channel_id emas, (channel_id, bucket) qilgan?",
+      "options": [
+        "Snowflake ID tartiblanmagani uchun",
+        "Faol kanalning partition'i cheksiz o'smasligi uchun: vaqt bucket'i (Discord da 10 kunga yaqin) partition hajmini cheklaydi",
+        "Bucket qidiruvni tezlashtirish uchun indeks",
+        "Cassandra bitta ustunli partition key ni qo'llamaydi"
+      ],
+      "answer": 1,
+      "why": "Bucket partition hajmini 100 MB dan kichik ushlab turadi (Discord 2017 blogi) va hot/katta partition muammosini kamaytiradi."
+    },
+    {
+      "q": "50 000 ulanishli gateway instansiyasi qulab tushdi. Qayta ulanishda nima qilinmasa, qolgan gateway'lar ham yiqilishi mumkin?",
+      "options": [
+        "TLS sertifikatini yangilash",
+        "Mijozlarda tasodifiy kechikish (jitter) bilan qayta ulanish va gateway'da ulanish qabul qilish tezligini cheklash",
+        "Heartbeat ni o'chirish",
+        "Barcha xabarlarni qayta yuborish"
+      ],
+      "answer": 1,
+      "why": "Hamma mijoz bir soniyada qaytsa, TLS handshake va sinxronlash so'rovlari bo'roni boshlanadi (thundering herd)."
+    },
+    {
+      "q": "iQuariX dispetcher-haydovchi chatida 600 000 xabar/kun, kanallar 2-10 a'zoli. Saqlash va routing uchun qaysi tanlov eng sodda va yetarli?",
+      "options": [
+        "Cassandra klasteri va consistent hash kanal serverlari",
+        "PostgreSQL (channel_id, id) indeksi bilan keyset pagination va Redis pub/sub routing",
+        "Faqat Kafka, baza kerak emas",
+        "Har bir xabarni S3 ga alohida fayl qilib yozish"
+      ],
+      "answer": 1,
+      "why": "O'rtacha taxminan 7 xabar/s va kichik kanallar - bitta PostgreSQL va oddiy pub/sub bemalol ko'taradi."
+    }
+  ]
+}

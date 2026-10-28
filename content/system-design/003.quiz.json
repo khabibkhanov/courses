@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "API soniyasiga 1 500 so'rov qabul qiladi, har bir so'rov baza ulanishini o'rtacha 8 ms ushlaydi. Little qonuni bo'yicha o'rtacha nechta ulanish bir vaqtda band?",
+      "options": ["8", "12", "188", "1 500"],
+      "answer": 1,
+      "why": "L = λW = 1 500 x 0.008 = 12. Pool hajmi shundan biroz katta bo'lsa yetadi."
+    },
+    {
+      "q": "Kecha pool 20 ta ulanish bilan yetardi, bugun bir xil trafikda pool tugab qolmoqda. Little qonuniga ko'ra eng ehtimoliy sabab nima?",
+      "options": [
+        "Pool hajmi noto'g'ri sozlangan, uni 200 ga oshirish kerak",
+        "Har bir so'rov ulanishni uzoqroq ushlayapti (W oshgan), masalan sekin query yoki lock",
+        "Little qonuni baza ulanishlariga qo'llanmaydi",
+        "Throughput kamaygan"
+      ],
+      "answer": 1,
+      "why": "λ o'zgarmagan bo'lsa, L ning oshishi faqat W oshganini bildiradi. Pool ni kattalashtirish sababni yashiradi."
+    },
+    {
+      "q": "M/M/1 modelida service time 1 ms. Utilization 50% dan 95% ga oshsa, o'rtacha response time qanday o'zgaradi?",
+      "options": [
+        "2 ms dan 1.9 ms ga, deyarli o'zgarmaydi",
+        "2 ms dan 20 ms ga, 10 baravar",
+        "2 ms dan 3.8 ms ga, chiziqli",
+        "1 ms da qoladi, chunki service time o'zgarmagan"
+      ],
+      "answer": 1,
+      "why": "W = 1/(μ-λ): 1/(1000-500) = 2 ms, 1/(1000-950) = 20 ms. Utilization 1 ga yaqinlashganda latency giperbolik o'sadi."
+    },
+    {
+      "q": "Root servis so'rovni 100 ta backend ga parallel yuboradi va hammasini kutadi. Har bir backend so'rovlarning 1% iga 1 s da javob beradi. Necha foiz foydalanuvchi so'rovi 1 s dan sekin bo'ladi?",
+      "options": ["1%", "10%", "Taxminan 63%", "100%"],
+      "answer": 2,
+      "why": "1 - 0.99^100 ≈ 0.63. Fan-out da backend ning p99 i frontend ning tipik latency siga aylanadi."
+    },
+    {
+      "q": "10 ta server har daqiqada o'z p99 ini yuboradi. Umumiy servis p99 ini olishning to'g'ri usuli qaysi?",
+      "options": [
+        "10 ta p99 ning o'rtachasini olish",
+        "10 ta p99 ning maksimumini olish",
+        "Har bir serverdan latency histogram ini olib, bucket bo'yicha qo'shib, umumiy histogram dan p99 hisoblash",
+        "p99 larning medianasini olish"
+      ],
+      "answer": 2,
+      "why": "Percentile larni o'rtachalab bo'lmaydi, chunki serverlardagi so'rovlar soni va taqsimoti har xil. Histogram lar qo'shiladi."
+    },
+    {
+      "q": "Yuklama testi wrk bilan (har bir ulanish javobni kutib, keyin keyingi so'rovni yuboradi) o'tkazildi va p99 = 6 ms chiqdi. Test vaqtida server 1.4 s ga to'xtab qolgan. Natija haqida nima deyish mumkin?",
+      "options": [
+        "Natija to'g'ri, server tez",
+        "Coordinated omission tufayli to'xtash davridagi kechikishlar deyarli o'lchanmagan, haqiqiy p99 ancha yuqori",
+        "p99 yetarli emas, faqat p50 ga qarash kerak",
+        "To'xtash p99 ga ta'sir qilmaydi, faqat max ga ta'sir qiladi"
+      ],
+      "answer": 1,
+      "why": "Yopiq tsiklda server to'xtaganda yangi so'rovlar yuborilmaydi. wrk2 misolida tuzatilgan p99 1.27 s, tuzatilmagani 6 ms chiqqan."
+    },
+    {
+      "q": "Hedged request qaysi holatda vaziyatni YOMONLASHTIRISHI mumkin?",
+      "options": [
+        "Bitta replikada GC pauza bo'lganda",
+        "Barcha replikalar umumiy yuklama tufayli sekinlashganda",
+        "O'qish so'rovlarida",
+        "Replikalar turli rack larda bo'lganda"
+      ],
+      "answer": 1,
+      "why": "Sekinlik yuklamadan bo'lsa, ikkinchi so'rov yuklamani yanada oshiradi. Hedging tasodifiy, bitta replikaga xos sekinliklar uchun samarali."
+    },
+    {
+      "q": "Kafka consumer lag 90 000 xabar, consumer guruhi soniyasiga 1 500 xabar qayta ishlaydi, yangi xabarlar ham 1 500/s keladi. Yangi xabar qayta ishlanguncha taxminan qancha kutadi?",
+      "options": ["1.5 s", "15 s", "60 s", "Hech qachon"],
+      "answer": 2,
+      "why": "W = L/λ = 90 000 / 1 500 = 60 s. Kelish va qayta ishlash teng bo'lgani uchun lag o'zgarmaydi, lekin kechikish 60 s da qoladi."
+    },
+    {
+      "q": "Telemetriya ingest da xabarlarni 1 000 tadan batch qilib yozishga o'tildi. Kutiladigan natija qaysi?",
+      "options": [
+        "Throughput ham, latency ham yaxshilanadi",
+        "Throughput oshadi, har bir xabarning latency si batch to'lishini kutish hisobiga oshadi",
+        "Throughput kamayadi, latency kamayadi",
+        "Hech narsa o'zgarmaydi"
+      ],
+      "answer": 1,
+      "why": "Batching overhead ni ko'p xabarga taqsimlaydi, lekin har bir xabar batch to'lguncha yoki taymer tugaguncha kutadi."
+    },
+    {
+      "q": "Interaktiv API uchun nega maqsadli CPU utilization odatda 50-70%, 95% emas?",
+      "options": [
+        "CPU 95% da qizib ketadi",
+        "Yuqori utilization da navbat va tail latency keskin oshadi, bundan tashqari bitta server o'chsa qolganlar uning yukini ko'tarishi kerak",
+        "Bulut provayderlari 70% dan ortiqqa ruxsat bermaydi",
+        "Utilization latency ga ta'sir qilmaydi, bu faqat narx masalasi"
+      ],
+      "answer": 1,
+      "why": "Navbat nazariyasi bo'yicha latency 1/(1-ρ) ga proporsional o'sadi, va N+1 zaxira ham kerak."
+    }
+  ]
+}

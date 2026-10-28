@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "API GET /trips/:id faqat foydalanuvchi login qilganini tekshiradi. Hujumchi id ni o'zgartirib boshqa tashkilot reyslarini ko'radi. Bu qanday zaiflik?",
+      "options": [
+        "CSRF",
+        "SQL injection",
+        "IDOR - broken access control: obyektning foydalanuvchiga tegishliligi tekshirilmagan",
+        "Session fixation"
+      ],
+      "answer": 2,
+      "why": "Autentifikatsiya o'tgan, lekin obyekt darajasidagi avtorizatsiya yo'q. OWASP A01 ga ko'ra ruxsat yozuv egaligini server tomonda tekshirishi kerak."
+    },
+    {
+      "q": "20 ta mijoz, har birida 15 filial va 6 ta rol. Har filial uchun alohida rol yaratilsa, rollar soni qancha bo'ladi va bu qaysi muammo?",
+      "options": [
+        "1 800 - role explosion",
+        "120 - rol ierarxiyasi",
+        "41 - normal holat",
+        "90 - separation of duty"
+      ],
+      "answer": 0,
+      "why": "20 x 15 x 6 = 1 800. RBAC qaysi obyekt degan o'lchovni yaxshi ifodalamaydi, shuning uchun rol scope bilan bog'lanadi yoki ReBAC ishlatiladi."
+    },
+    {
+      "q": "Zanzibar da tuple_to_userset rewrite qoidasi nima qiladi?",
+      "options": [
+        "Shu obyektning boshqa munosabatidan userset hosil qiladi (owner -> editor)",
+        "Foydalanuvchini guruhdan o'chiradi",
+        "Tuple'larni diskka yozadi",
+        "Boshqa obyektga (masalan parent papka) bog'langan tuple orqali o'tib, o'sha obyektning munosabatini oladi"
+      ],
+      "answer": 3,
+      "why": "Masalan, hujjatning viewer lari ichiga parent papkaning viewer lari kiradi. Shu obyekt ichidagi hosil qilish (owner -> editor) esa computed_userset ga tegishli."
+    },
+    {
+      "q": "Alisa Bobni hujjat ACL idan olib tashladi, keyin hujjatga maxfiy matn qo'shdi. Eskirgan replica bo'yicha check Bobga ruxsat berdi. Bu nima deb ataladi va Zanzibar uni qanday yechadi?",
+      "options": [
+        "Split brain - quorum bilan",
+        "New enemy muammosi - kontent bilan saqlangan zookie dan eskirmagan snapshot ustida check qilish bilan",
+        "Lost update - optimistik lock bilan",
+        "Thundering herd - cache bilan"
+      ],
+      "answer": 1,
+      "why": "Zookie kontent versiyasidagi vaqt belgisini saqlaydi va check kamida shu vaqtdagi ACL holatini ko'rishini kafolatlaydi, global linearizability narxisiz."
+    },
+    {
+      "q": "Dispetcherga 40 000 mashinadan 1.5 foizi ko'rinadi. Post-filter bilan 50 talik sahifani to'ldirish uchun o'rtacha taxminan nechta check kerak?",
+      "options": [
+        "50",
+        "3 300",
+        "750",
+        "40 000"
+      ],
+      "answer": 1,
+      "why": "50 / 0.015 ≈ 3 333. Ruxsat berilgan ulush past bo'lsa post-filter juda qimmat, pre-filter yoki denormalizatsiya kerak."
+    },
+    {
+      "q": "Avtorizatsiya servisi 2 soniya javob bermayapti. Qaysi xatti-harakat to'g'ri?",
+      "options": [
+        "Fail-open: ruxsat berish, foydalanuvchilar ishlashi davom etsin",
+        "So'rovni cheksiz kutish",
+        "Tasodifiy qaror qaytarish",
+        "Fail-closed: rad etish, va servisning SLO si unga bog'liq servislardan yuqori bo'lishi kerak"
+      ],
+      "answer": 3,
+      "why": "Fail-open uzilishni xavfsizlik hodisasiga aylantiradi. Mavjudlik muammosi timeout, hedging, replika va qisqa cache bilan hal qilinadi."
+    },
+    {
+      "q": "Video yozuvni faqat MFA bilan kirgan va soat 06:00-22:00 oralig'ida ko'rish mumkin. Bu qoidani qaysi model eng tabiiy ifodalaydi?",
+      "options": [
+        "ABAC (yoki ReBAC dagi condition/caveat)",
+        "Sof RBAC",
+        "ACL ro'yxati",
+        "Faqat UI da tugmani yashirish"
+      ],
+      "answer": 0,
+      "why": "Vaqt va MFA - kontekst atributlari. RBAC va oddiy ACL ularni ifodalay olmaydi."
+    },
+    {
+      "q": "Zanzibar cho'qqi yuklamasida Check ~4.2 mln/s, Write ~25 ming/s. Bundan qaysi dizayn xulosasi chiqadi?",
+      "options": [
+        "Yozishni optimallashtirish asosiy vazifa",
+        "Cache kerak emas",
+        "Yuklama o'qishga juda og'ir - replikatsiya, cache, snapshot o'qish va hot spot himoyasi asosiy",
+        "Har bir check linearizable bo'lishi kerak"
+      ],
+      "answer": 2,
+      "why": "O'qish yozishdan yuz baravardan ko'p. Shuning uchun lokal replikadan snapshot o'qish va cache arxitekturaning markazida."
+    },
+    {
+      "q": "JWT ichiga foydalanuvchi ko'ra oladigan 300 ta mashina ID sini yozish taklif qilindi. Asosiy muammo?",
+      "options": [
+        "JWT da massiv saqlab bo'lmaydi",
+        "Faqat RBAC da ishlaydi",
+        "Imzo buziladi",
+        "Token kattalashadi va ruxsat o'zgarishi token umri tugaguncha kuchga kirmaydi"
+      ],
+      "answer": 3,
+      "why": "Tokenga faqat barqaror va qo'pol ma'lumot (tenant_id, asosiy rol) qo'yiladi. Nozik ruxsatlar so'rov vaqtida tekshiriladi."
+    },
+    {
+      "q": "PostgreSQL da jadvalga RLS yoqildi, lekin ilova jadval egasi rolida ulanadi va FORCE ROW LEVEL SECURITY yo'q. Nima bo'ladi?",
+      "options": [
+        "Jadval egasi RLS ni chetlab o'tadi - policylar ilovaga qo'llanmaydi",
+        "Default-deny: hech qanday qator ko'rinmaydi",
+        "PostgreSQL xato beradi",
+        "Faqat INSERT cheklanadi"
+      ],
+      "answer": 0,
+      "why": "PostgreSQL hujjatiga ko'ra jadval egasi, superuser va BYPASSRLS rollar RLS ni chetlab o'tadi. Ilova alohida, egasi bo'lmagan rol bilan ulanishi kerak."
+    }
+  ]
+}

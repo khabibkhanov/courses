@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Mobil ilova 2 GB video yuklaydi. Eng to'g'ri arxitektura qaysi?",
+      "options": [
+        "Video NestJS API'ga multipart/form-data bilan yuboriladi, API xotiraga o'qib S3'ga yozadi",
+        "API faqat ruxsat beradi (server tanlagan kalit bilan multipart pre-signed URL'lar), baytlar klientdan to'g'ridan-to'g'ri object storage'ga ketadi",
+        "Video base64 qilib JSON ichida yuboriladi",
+        "Video PostgreSQL bytea ustuniga yoziladi"
+      ],
+      "answer": 1,
+      "why": "To'g'ridan-to'g'ri yuklash API server tarmog'i, xotirasi va timeout'larini fayl baytlaridan ozod qiladi; multipart esa uzilishlarga chidamli."
+    },
+    {
+      "q": "1 TiB faylni S3 multipart bilan 100 MiB bo'laklarda yuklash mumkinmi?",
+      "options": [
+        "Ha, muammo yo'q",
+        "Yo'q: ~10 486 bo'lak kerak, chegara esa 10 000; bo'lakni kamida ~105 MiB qilish kerak",
+        "Yo'q: maksimal obyekt 5 GB",
+        "Ha, lekin faqat Glacier class'ida"
+      ],
+      "answer": 1,
+      "why": "1 TiB / 100 MiB = 10 485.76 bo'lak. Multipart 10 000 bo'lak bilan cheklangan, bo'lak hajmi 5 MiB - 5 GiB."
+    },
+    {
+      "q": "S3 Standard 11 ta to'qqiz chidamlilikka ega. Dasturchi xato bilan prefiks bo'yicha barcha obyektlarni o'chirdi. Nima himoya qiladi?",
+      "options": [
+        "11 ta to'qqiz chidamlilik obyektlarni avtomatik tiklaydi",
+        "Hech narsa; chidamlilik apparat nosozliklaridan himoya qiladi - inson xatosidan versioning, Object Lock va boshqa hisob/regionga replikatsiya himoya qiladi",
+        "Erasure coding o'chirilgan obyektni tiklaydi",
+        "3 ta Availability Zone'dagi nusxalar o'chmaydi"
+      ],
+      "answer": 1,
+      "why": "Chidamlilik - qurilma va zona yo'qolishiga qarshi. To'g'ri berilgan DELETE buyrug'i barcha nusxalarga tegishli."
+    },
+    {
+      "q": "Erasure coding k = 6 ma'lumot va m = 3 parity bo'lagi bilan. Joy sarfi va chidamlilik qanday?",
+      "options": [
+        "3x joy, 2 ta bo'lak yo'qolishiga chidaydi",
+        "1.5x joy, istalgan 3 ta bo'lak yo'qolishiga chidaydi",
+        "1.5x joy, faqat 1 ta bo'lak yo'qolishiga chidaydi",
+        "9x joy, 6 ta bo'lak yo'qolishiga chidaydi"
+      ],
+      "answer": 1,
+      "why": "9/6 = 1.5x saqlash; istalgan 6 ta bo'lak obyektni tiklash uchun yetarli, ya'ni 3 tasi yo'qolishi mumkin. 3 nusxali replikatsiya 3x joy oladi."
+    },
+    {
+      "q": "Mobil klientlar ko'p multipart yuklashlarni yarmida tashlab ketadi. Hisobda storage narxi o'sib bormoqda, lekin LIST'da yangi obyektlar ko'rinmaydi. Sabab va yechim?",
+      "options": [
+        "S3 xatosi; supportga yozish",
+        "Tugallanmagan multipart bo'laklari saqlanadi va pul turadi; AbortIncompleteMultipartUpload lifecycle qoidasi kerak",
+        "Versioning yoqilgan; uni o'chirish kerak",
+        "Glacier'ga ko'chirish kerak"
+      ],
+      "answer": 1,
+      "why": "Bo'laklar Complete yoki Abort bo'lguncha saqlanadi va obyekt sifatida ko'rinmaydi. Lifecycle qoidasi ularni N kundan keyin avtomatik tozalaydi."
+    },
+    {
+      "q": "Pre-signed PUT URL'ni yaratishda kalitni klient yuborgan fayl nomidan olish (masalan tenants/42/ + klient nomi). Asosiy xavf?",
+      "options": [
+        "Fayl nomi juda uzun bo'lishi mumkin",
+        "Klient '../' yoki boshqa yo'l bilan boshqa tenant prefiksiga yozishi yoki mavjud obyektni bosib yozishi mumkin",
+        "S3 Unicode nomlarni qabul qilmaydi",
+        "Xavf yo'q"
+      ],
+      "answer": 1,
+      "why": "Kalitni server yaratishi kerak (masalan UUIDv7 bilan). Pre-signed PUT mavjud obyektni almashtiradi, klient nomi faqat metadata bo'lishi kerak."
+    },
+    {
+      "q": "Brauzerdan yuklashda fayl hajmini 1 MiB dan 10 MiB gacha oralig'ida majburlash kerak. Qaysi mexanizm buni to'g'ridan-to'g'ri qo'llab-quvvatlaydi?",
+      "options": [
+        "Oddiy pre-signed PUT URL'ning ExpiresIn parametri",
+        "POST policy'dagi content-length-range sharti",
+        "Content-Type header'i",
+        "Bucket nomi"
+      ],
+      "answer": 1,
+      "why": "POST policy content-length-range bilan minimal va maksimal hajmni belgilaydi. Pre-signed PUT diapazonni emas, faqat aniq Content-Length'ni imzolashi mumkin."
+    },
+    {
+      "q": "Fayl S3'ga yuklandi, lekin klient complete endpoint'ini chaqirmasdan ilovani yopdi. Bazada yozuv pending holatida. To'g'ri yondashuv?",
+      "options": [
+        "Faylni darhol foydalanuvchiga ko'rsatish",
+        "Holat mashinasi: faqat ready holat ko'rsatiladi; eskirgan pending yozuvlarni tozalovchi job va yuklash prefiksidagi hali tasdiq olmagan obyektlar uchun lifecycle o'chirish",
+        "Baza va S3'ni bitta tranzaksiyada yozish",
+        "Klient qaytib kelguncha kutish"
+      ],
+      "answer": 1,
+      "why": "Object storage va baza o'rtasida umumiy tranzaksiya yo'q. Baza holat manbai bo'lib, ikki tomonlama nomuvofiqliklar fon jarayonlari bilan tozalanadi."
+    },
+    {
+      "q": "S3 event notification orqali thumbnail yaratuvchi worker ba'zan bir xil obyekt uchun ikki marta ishga tushadi. Bu xatomi va nima qilish kerak?",
+      "options": [
+        "S3 xatosi, bunday bo'lmasligi kerak",
+        "Kutilgan holat: notification'lar at-least-once yetkaziladi; worker idempotent bo'lishi kerak (natija deterministik kalitga, holat tekshiruvi)",
+        "Worker'ni bitta instance'ga cheklash kerak",
+        "Notification'larni o'chirib, cron ishlatish shart"
+      ],
+      "answer": 1,
+      "why": "AWS notification'larni kamida bir marta yetkazishga mo'ljallagan va dublikatlar mumkin. Idempotent iste'molchi buni xavfsiz qiladi."
+    },
+    {
+      "q": "Har biri 20 KB bo'lgan 50 million mayda obyekt (thumbnail) Standard-IA class'iga ko'chirilmoqchi. Qaysi nuance narxni kutilganidan oshiradi?",
+      "options": [
+        "IA'da o'qish bepul",
+        "IA'da 128 KB dan kichik obyektlar 128 KB deb hisoblanadi va 30 kunlik minimal saqlash muddati bor",
+        "IA'da obyektlar siqiladi",
+        "IA faqat 5 GB dan katta obyektlar uchun"
+      ],
+      "answer": 1,
+      "why": "20 KB obyekt 128 KB deb hisoblanadi - hisoblanadigan hajm 6 baravardan ko'p oshadi. Mayda obyektlar uchun arzon class'lar ko'pincha foydasiz."
+    }
+  ]
+}

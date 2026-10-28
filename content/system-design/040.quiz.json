@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "State-based CRDT'ning merge funksiyasi qaysi uchta xossaga ega bo'lishi shart?",
+      "options": [
+        "Kommutativ, assotsiativ, idempotent",
+        "Deterministik, tez, kichik",
+        "Linearizable, serializable, durable",
+        "Kommutativ, tranzitiv, monoton kamayuvchi"
+      ],
+      "answer": 0,
+      "why": "Shunda holatlar tartibsiz, takroriy va guruhlab kelganda ham bir xil natijaga birlashadi (join-semilattice)."
+    },
+    {
+      "q": "G-Counter: R1 = [3,0,0], R2 = [1,4,0], R3 = [0,0,2]. Hammasi birlashtirilgach qiymat nechaga teng?",
+      "options": ["7", "9", "10", "6"],
+      "answer": 1,
+      "why": "Slot bo'yicha max: [3,4,2], yig'indi 9. Qiymatlarni oddiy qo'shish (3+5+2=10) noto'g'ri - R2 dagi 1 R1 ning slotidan kelgan eski nusxa."
+    },
+    {
+      "q": "Nima uchun replikalardagi hisoblagich qiymatlarini oddiy qo'shib birlashtirish noto'g'ri?",
+      "options": [
+        "Qo'shish sekin",
+        "Qo'shish idempotent emas: bir holat ikki marta kelsa, ikki marta sanaladi",
+        "Qo'shish kommutativ emas",
+        "Qo'shish manfiy sonlarni qo'llab-quvvatlamaydi"
+      ],
+      "answer": 1,
+      "why": "Gossip tarmog'ida bir holat bir necha marta kelishi mumkin. Max idempotent, qo'shish esa yo'q."
+    },
+    {
+      "q": "2P-Set'da \"moy\" elementi o'chirildi. Keyinroq foydalanuvchi uni qayta qo'shdi. Natija?",
+      "options": [
+        "Element qaytadan paydo bo'ladi",
+        "Element o'chirilgan holda qoladi - 2P-Set'da tombstone'li elementni qayta qo'shib bo'lmaydi",
+        "Konflikt xatosi",
+        "Ikkita \"moy\" elementi paydo bo'ladi"
+      ],
+      "answer": 1,
+      "why": "2P-Set remove-wins va o'chirilganlar to'plami faqat o'sadi. Qayta qo'shish uchun OR-Set kerak."
+    },
+    {
+      "q": "OR-Set: boshlang'ich {shina:a1}. R1 shinani o'chiradi (a1 tombstone), R2 bir vaqtda shinani qayta qo'shadi (tag c1). Merge natijasi?",
+      "options": [
+        "Shina yo'q - o'chirish yutadi",
+        "Shina bor - R1 ning o'chirishi c1 tag'ini ko'rmagan, add-wins",
+        "Konflikt, foydalanuvchi tanlashi kerak",
+        "Natija qaysi replika birinchi sinxronlashga bog'liq"
+      ],
+      "answer": 1,
+      "why": "O'chirish faqat ko'rilgan tag'larni o'chiradi. Concurrent yangi qo'shish saqlanadi, va natija tartibga bog'liq emas."
+    },
+    {
+      "q": "Strong eventual consistency oddiy eventual consistency'dan nimasi bilan kuchliroq?",
+      "options": [
+        "U linearizability beradi",
+        "Bir xil yangilanishlar to'plamini olgan replikalar tartibdan qat'i nazar darhol bir xil holatda bo'ladi, qo'shimcha konflikt hal qilish raundisiz",
+        "Replikatsiya sinxron bo'ladi",
+        "Partition paytida yozish taqiqlanadi"
+      ],
+      "answer": 1,
+      "why": "Oddiy eventual consistency faqat \"oxir-oqibat\" deydi va qanday birlashishni aytmaydi. SEC convergence'ni matematik kafolatlaydi."
+    },
+    {
+      "q": "Ikki replikada PN-Counter bilan ombor qoldig'i 1 dona. Ikkala replika bir vaqtda 1 donani sotadi. Birlashtirilgach natija?",
+      "options": [
+        "0 - CRDT buni oldini oladi",
+        "-1: CRDT \"qiymat 0 dan past bo'lmasin\" invariantini ta'minlay olmaydi",
+        "Ikkinchi sotuv avtomatik bekor qilinadi",
+        "Konflikt xatosi"
+      ],
+      "answer": 1,
+      "why": "Global invariantlar koordinatsiya (consensus, linearizable tranzaksiya) yoki escrow talab qiladi."
+    },
+    {
+      "q": "Redis Active-Active'da ikki regionda bir vaqtda `INCRBY counter 7` va `INCRBY counter 3` bajarildi. Sinxronlashdan keyin qiymat?",
+      "options": ["3", "7", "10", "Kattaroq vaqt belgisiga ega qiymat"],
+      "answer": 2,
+      "why": "Hisoblagich sifatida ishlatilgan string'lar semantik birlashtiriladi - barcha regionlardagi operatsiyalar yig'iladi. Oddiy SET esa LWW bo'lardi."
+    },
+    {
+      "q": "Figma'ning multiplayer yondashuvi haqida qaysi gap to'g'ri?",
+      "options": [
+        "Figma to'liq peer-to-peer CRDT ishlatadi",
+        "Markaziy server avtoritet; konflikt obyekt xususiyati darajasida LWW, tartib uchun fractional indexing",
+        "Figma 2PC ishlatadi",
+        "Figma barcha konfliktlarni foydalanuvchiga ko'rsatadi"
+      ],
+      "answer": 1,
+      "why": "Markaziy server bo'lgani uchun to'liq CRDT shart emas; CRDT g'oyalaridan ilhomlangan soddaroq tizim."
+    },
+    {
+      "q": "Har bir mashinada kuniga 20 ta ogohlantirish OR-Set'ga qo'shilib o'chiriladi, tag + tombstone ~32 bayt. 10 000 mashina, 1 yil. Tombstone'lar taxminan qancha joy egallaydi?",
+      "options": ["~23 MB", "~230 MB", "~2.3 GB", "~23 GB"],
+      "answer": 2,
+      "why": "10 000 × 20 × 365 × 32 B ≈ 2.3 GB. Shuning uchun \"hamma replika ko'rdi\" nuqtasidan keyin tombstone'larni tozalash kerak."
+    }
+  ]
+}

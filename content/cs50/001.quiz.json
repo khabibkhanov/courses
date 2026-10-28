@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Qaysi biri muammo (problem) emas, balki uning instance i?",
+      "options": [
+        "Tartiblangan ro'yxatda berilgan qiymatning indeksini topish",
+        "Ikki musbat butun sonning eng katta umumiy bo'luvchisini topish",
+        "1000 sahifali aniq telefon kitobida \"Karimov\" familiyasini topish",
+        "Ixtiyoriy matndagi so'zlar sonini hisoblash"
+      ],
+      "answer": 2,
+      "why": "Instance - aniq kirish ma'lumoti bilan berilgan bitta holat. Qolgan variantlar har qanday kirish uchun umumiy talabni ifodalaydi."
+    },
+    {
+      "q": "HTTP serverning event loop i ataylab cheksiz ishlaydi. Knuth ta'rifi bo'yicha u nima?",
+      "options": [
+        "Algoritm, chunki har bir qadami aniq",
+        "Computational method, chunki u to'xtamasligi mumkin",
+        "Algoritm emas, chunki inputi yo'q",
+        "Algoritm, chunki output beradi"
+      ],
+      "answer": 1,
+      "why": "Algoritm cheklangan qadamdan keyin to'xtashi shart (finiteness). Shu xususiyatdan boshqa hammasiga ega jarayonni Knuth computational method deb ataydi."
+    },
+    {
+      "q": "Saralangan 2 000 000 elementli massivda binary search eng yomon holatda nechta solishtirish qiladi?",
+      "options": ["20", "21", "1 000 000", "2 000 000"],
+      "answer": 1,
+      "why": "Formula ⌊log₂ n⌋ + 1. log₂ 2 000 000 ≈ 20.93, demak ⌊20.93⌋ + 1 = 21. Hajmni 10⁶ dan ikki baravar oshirish bitta qadam qo'shdi."
+    },
+    {
+      "q": "\"Ikki sahifadan\" algoritmda ism o'tib ketilganini tekshirib, bitta sahifa orqaga qaytish qadami olib tashlansa nima bo'ladi?",
+      "options": [
+        "Algoritm tezroq va baribir to'g'ri bo'ladi",
+        "Algoritm ba'zi instance larda mavjud ismni topmaydi, ya'ni noto'g'ri bo'ladi",
+        "Algoritm binary search ga aylanadi",
+        "Algoritm hech qachon to'xtamaydi"
+      ],
+      "answer": 1,
+      "why": "Ikki sahifadan sakraganda kerakli sahifa o'tkazib yuborilishi mumkin. Tuzatishsiz algoritm tez, lekin har qanday instance uchun to'g'ri emas."
+    },
+    {
+      "q": "[5, 1, 9, 3] massivida binary search bilan 5 qidirilsa, nima bo'ladi?",
+      "options": [
+        "0 indeks qaytadi",
+        "Dastur xato (exception) bilan to'xtaydi",
+        "-1 (topilmadi) qaytadi va hech qanday ogohlantirish bo'lmaydi",
+        "Cheksiz siklga tushadi"
+      ],
+      "answer": 2,
+      "why": "Massiv saralanmagan, ya'ni precondition buzilgan. mid = 1 da 1 kichik bo'lgani uchun chap yarim tashlanadi, keyin 9 katta, oraliq bo'shaydi va -1 qaytadi, garchi 5 massivda bo'lsa ham."
+    },
+    {
+      "q": "Binary search siklida `lo = mid + 1` o'rniga `lo = mid` yozildi. Qaysi holatda muammo chiqadi?",
+      "options": [
+        "Hech qachon, faqat bitta ortiqcha qadam bo'ladi",
+        "lo va hi qo'shni bo'lib, qidirilayotgan qiymat a[lo] dan katta bo'lganda cheksiz sikl",
+        "Faqat massiv bo'sh bo'lganda",
+        "Faqat qiymat massivning o'rtasida bo'lganda"
+      ],
+      "answer": 1,
+      "why": "lo va hi qo'shni bo'lsa, mid = lo bo'ladi. lo = mid oraliqni kichraytirmaydi, termination buziladi va sikl cheksiz aylanadi."
+    },
+    {
+      "q": "C da int 32-bitli. lo = 1 500 000 000, hi = 2 000 000 000 bo'lsa, o'rtani qaysi ifoda to'g'ri hisoblaydi?",
+      "options": [
+        "(lo + hi) / 2",
+        "lo + (hi - lo) / 2",
+        "(lo + hi) * 0.5",
+        "Ikkalasi ham bir xil natija beradi"
+      ],
+      "answer": 1,
+      "why": "lo + hi = 3.5 milliard, bu INT_MAX (2 147 483 647) dan katta: signed overflow, C da undefined behavior. hi - lo esa kichik va overflow bo'lmaydi."
+    },
+    {
+      "q": "Soniyasiga 10⁹ amal bajaradigan mashinada n = 10⁶ uchun n² algoritm taxminan qancha vaqt oladi?",
+      "options": ["1 ms", "1 soniya", "Taxminan 16.7 daqiqa", "Taxminan 31.7 yil"],
+      "answer": 2,
+      "why": "n² = 10¹² amal, 10¹² / 10⁹ = 1000 soniya, ya'ni taxminan 16.7 daqiqa. 31.7 yil n = 10⁹ uchun bo'lardi."
+    },
+    {
+      "q": "Protsessor 100 baravar tezlashdi. n² algoritm bir xil vaqtda avvalgidan necha baravar katta n ni qayta ishlay oladi?",
+      "options": ["100 baravar", "50 baravar", "10 baravar", "2 baravar"],
+      "answer": 2,
+      "why": "Vaqt n² ga proporsional. 100 baravar ko'p amal bajarilsa, n² 100 baravar oshishi mumkin, demak n √100 = 10 baravar oshadi."
+    },
+    {
+      "q": "Nega hech qanday static analyzer barcha dasturlar uchun \"bu kodda cheksiz sikl yo'q\" deb aniq kafolat bera olmaydi?",
+      "options": [
+        "Chunki analyzer lar hali yetarlicha tez emas",
+        "Chunki halting problem uchun umumiy algoritm mavjud emasligi isbotlangan",
+        "Chunki cheksiz sikl faqat ish vaqtida paydo bo'ladi",
+        "Chunki dasturlash tillari bunga ruxsat bermaydi"
+      ],
+      "answer": 1,
+      "why": "Ixtiyoriy dastur to'xtashini har doim to'g'ri aniqlaydigan algoritm yo'q (Turing, 1936 natijasi). Shu sabab analyzer lar faqat taxminiy ishlaydi."
+    }
+  ]
+}

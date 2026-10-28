@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Quyidagilardan qaysi biri API gateway'ga TEGISHLI EMAS?",
+      "options": [
+        "TLS termination va JWT imzosini tekshirish",
+        "Tenant bo'yicha rate limiting",
+        "Premium tenant mashinasi 3 kundan ko'p oflayn bo'lsa, maxsus ogohlantirish yaratish qoidasi",
+        "URL yo'li bo'yicha servisga routing"
+      ],
+      "answer": 2,
+      "why": "Bu domen qoidasi va servisda yashashi kerak. Biznes logika bilan to'lgan gateway ESB'ga aylanib, hamma jamoaning to'sig'i bo'ladi."
+    },
+    {
+      "q": "Mobil tarmoqda RTT 150 ms. Ekran 4 ta ketma-ket so'rov talab qiladi. Gateway aggregation bilan (data-markaz ichida chaqiruvlar ~5 ms) tarmoq kechikishi taxminan qancha bo'ladi?",
+      "options": ["600 ms dan ~155 ms ga", "600 ms dan 300 ms ga", "O'zgarmaydi", "150 ms dan 600 ms ga"],
+      "answer": 0,
+      "why": "4 x 150 = 600 ms o'rniga 1 ta klient RTT (150 ms) va arzon ichki chaqiruvlar. Kechikish qimmat tarmoqdan arzon tarmoqqa ko'chadi."
+    },
+    {
+      "q": "Gateway mavjudligi 99.99%, orqadagi servis 99.9%. Foydalanuvchi ko'radigan mavjudlik taxminan qancha?",
+      "options": ["99.99%", "99.9%", "Taxminan 99.89%", "99.999%"],
+      "answer": 2,
+      "why": "0.9999 x 0.999 ≈ 0.9989. Gateway ketma-ket qo'shilgan komponent, shuning uchun u backend'dan ishonchliroq bo'lishi kerak."
+    },
+    {
+      "q": "BFF odatda kim tomonidan yuritiladi va nega?",
+      "options": [
+        "Markaziy platforma jamoasi, standartlash uchun",
+        "O'sha klient UI'sini quradigan jamoa, shunda UI va API birga o'zgaradi va boshqa jamoani kutmaydi",
+        "Ma'lumotlar bazasi jamoasi",
+        "Xavfsizlik jamoasi"
+      ],
+      "answer": 1,
+      "why": "BFF'ning asosiy foydasi - frontend jamoasining avtonomiyasi. Markaziy jamoa egaligi umumiy gateway muammosini qaytaradi."
+    },
+    {
+      "q": "BFF bir nechta servisdan ma'lumot yig'adi. Video servis vaqti-vaqti bilan javob bermaydi. Eng to'g'ri yondashuv?",
+      "options": [
+        "Promise.all ishlatish va xato bo'lsa 500 qaytarish",
+        "Promise.allSettled va timeout bilan, video qismini 'unavailable' deb qisman javob qaytarish",
+        "Video servisni cheksiz kutish",
+        "Har safar 5 marta retry qilish"
+      ],
+      "answer": 1,
+      "why": "Graceful degradation: bitta ixtiyoriy qism xatosi butun ekranni yiqitmasligi kerak. Timeout byudjetni himoya qiladi."
+    },
+    {
+      "q": "Gateway timeout'i 5 s, backend timeout'i 10 s. Backend so'rovni 7 soniyada muvaffaqiyatli tugatdi. Nima bo'ladi?",
+      "options": [
+        "Klient muvaffaqiyatli javob oladi",
+        "Klient xato oladi, ehtimol retry qiladi, backend esa ishni allaqachon bajargan - dublikat xavfi",
+        "Gateway backend'ni avtomatik bekor qiladi va hech narsa o'zgarmaydi",
+        "Backend ham 5 soniyada to'xtaydi"
+      ],
+      "answer": 1,
+      "why": "Ichki timeout'lar tashqi timeout'dan qisqa bo'lishi kerak. Aks holda ish bajariladi, lekin natija yo'qoladi va retry dublikat hosil qiladi."
+    },
+    {
+      "q": "Haydovchilar 200 MB video yuklashi kerak. AWS API Gateway (REST) ishlatilmoqda. Qanday dizayn to'g'ri?",
+      "options": [
+        "Faylni API Gateway orqali bir so'rovda yuborish",
+        "Gateway timeout'ini oshirish",
+        "Gateway faqat pre-signed URL beradi, fayl to'g'ridan-to'g'ri object storage'ga yuklanadi",
+        "Faylni base64 qilib JSON ichida yuborish"
+      ],
+      "answer": 2,
+      "why": "API Gateway payload chegarasi 10 MB va o'zgartirilmaydi. Katta fayllar gateway'ni chetlab o'tishi kerak."
+    },
+    {
+      "q": "Service mesh va API gateway'ning asosiy farqi qaysi?",
+      "options": [
+        "Mesh tashqi (north-south), gateway ichki (east-west) trafik uchun",
+        "Gateway tashqi kirish (north-south), mesh servislararo ichki (east-west) trafik uchun",
+        "Ular bir xil narsa",
+        "Gateway faqat gRPC uchun"
+      ],
+      "answer": 1,
+      "why": "Gateway tashqi klientlar uchun yagona kirish nuqtasi, mesh esa servislar orasidagi aloqani (mTLS, retry, telemetriya) boshqaradi."
+    },
+    {
+      "q": "Netflix Zuul 1 dan Zuul 2 ga (blocking dan non-blocking ga) o'tishda asosiy foyda nima bo'lgan?",
+      "options": [
+        "Barcha klasterlarda CPU ikki baravar kamaygan",
+        "Ko'p sonli doimiy ulanishlarni arzon ushlab turish (connection scaling); CPU-intensive klasterlarda sezilarli samaradorlik o'sishi bo'lmagan",
+        "Kod soddalashgan va debug osonlashgan",
+        "Latency nolga tushgan"
+      ],
+      "answer": 1,
+      "why": "Non-blocking ulanishlar soni muammosini yechadi. Netflix CPU-bound klasterlarda deyarli farq ko'rmagan, debug esa qiyinlashgan."
+    },
+    {
+      "q": "GPS trekerlar TCP binary protokol bilan ulanadi. Ularni HTTP API gateway orqali o'tkazish kerakmi?",
+      "options": [
+        "Ha, barcha trafik gateway orqali o'tishi shart",
+        "Yo'q: alohida L4 load balancer orqali ingest servisga; HTTP gateway bu protokol uchun emas va qo'shimcha hop hamda SPOF qo'shadi",
+        "Ha, lekin faqat BFF orqali",
+        "Trekerlarni to'g'ridan-to'g'ri bazaga ulash kerak"
+      ],
+      "answer": 1,
+      "why": "Gateway HTTP klientlar uchun. Telemetriya ingest - boshqa protokol va eng yuqori ishonchlilik talabi, unga minimal yo'l kerak."
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Servis bazaga commit qiladi, keyin Kafka'ga yuboradi va yuborish xato bersa 5 marta retry qiladi. Bu dual write muammosini hal qiladimi?",
+      "options": [
+        "Ha, 5 ta retry yetarli",
+        "Yo'q: commit va yuborish orasida jarayon qulasa, retry umuman bajarilmaydi va hodisa yo'qoladi",
+        "Ha, agar Kafka acks=all bo'lsa",
+        "Ha, agar idempotent producer yoqilgan bo'lsa"
+      ],
+      "answer": 1,
+      "why": "Ikki mustaqil tizimga yozish atomik emas. Retry faqat jarayon tirik bo'lganda ishlaydi."
+    },
+    {
+      "q": "Transactional outbox'da hodisa qachon brokerga yetkaziladi?",
+      "options": [
+        "Faqat biznes ma'lumoti bilan birga commit qilingandan keyin, relay orqali",
+        "Tranzaksiya boshlanishi bilan",
+        "Commit'dan oldin, sinxron",
+        "Faqat consumer so'raganda"
+      ],
+      "answer": 0,
+      "why": "Hodisa biznes ma'lumoti bilan bitta tranzaksiyada saqlanadi. Rollback'da u ham yo'qoladi, commit'dan keyin relay uni yetkazadi."
+    },
+    {
+      "q": "Polling relay 'WHERE id > oxirgi_yuborilgan_id' bilan o'qiydi (bigserial). Qanday xavf bor?",
+      "options": [
+        "Hech qanday xavf yo'q",
+        "Bigserial to'lib qoladi",
+        "Hodisalar ikki baravar sekin yuboriladi",
+        "Kichikroq ID olgan, lekin kechroq commit qilgan tranzaksiyaning hodisasi o'tkazib yuborilishi mumkin"
+      ],
+      "answer": 3,
+      "why": "Ketma-ketlik qiymati olinish tartibida beriladi, commit tartibida emas. published_at IS NULL bo'yicha o'qish yoki log tailing kerak."
+    },
+    {
+      "q": "Baza soatiga 6 GB WAL hosil qiladi, bo'sh disk 360 GB. Debezium to'xtadi va slot faol emas. Disk taxminan qancha vaqtda to'ladi?",
+      "options": [
+        "6 soat",
+        "36 soat",
+        "60 soat",
+        "Hech qachon, PostgreSQL eski WAL'ni o'chiradi"
+      ],
+      "answer": 2,
+      "why": "Replication slot o'qilmagan WAL'ni ushlab turadi: 360 / 6 = 60 soat. max_slot_wal_keep_size default -1 (cheksiz)."
+    },
+    {
+      "q": "max_slot_wal_keep_size qo'yilgan va slot uning chegarasidan oshdi. Natija?",
+      "options": [
+        "Baza yozishni to'xtatadi",
+        "Slot invalid bo'ladi: baza diski qutqariladi, lekin CDC davom eta olmaydi va qayta snapshot kerak",
+        "Debezium avtomatik ravishda yetib oladi",
+        "WAL siqiladi"
+      ],
+      "answer": 1,
+      "why": "Bu ataylab tanlanadigan trade-off: asosiy bazani himoya qilish evaziga CDC holatini yo'qotish."
+    },
+    {
+      "q": "Morling tasvirlagan outbox hiylasi: yozuvni INSERT qilib, o'sha tranzaksiyada DELETE qilish. Nega hodisa baribir yetkaziladi?",
+      "options": [
+        "INSERT WAL'da qayd etilgan, Debezium uni o'qib hodisa chiqaradi, outbox DELETE'larini esa filtrlaydi",
+        "PostgreSQL DELETE'ni bajarmaydi",
+        "Kafka DELETE'ni bekor qiladi",
+        "Hodisa yetkazilmaydi"
+      ],
+      "answer": 0,
+      "why": "Log tailing jadval holatini emas, log'dagi o'zgarishlarni o'qiydi. Jadval bo'sh qoladi va tozalash kerak emas."
+    },
+    {
+      "q": "Boshqa jamoaning billing servisi trips jadvalining xom Debezium CDC oqimini to'g'ridan-to'g'ri iste'mol qiladi. Asosiy xavf?",
+      "options": [
+        "CDC juda sekin",
+        "Billing tranzaksiya chegaralarini ko'radi",
+        "CDC dublikat bermaydi",
+        "Ichki jadval sxemasi kontraktga aylanadi: ustunni o'zgartirish billing'ni buzadi; outbox bilan barqaror domen hodisasi yaxshiroq"
+      ],
+      "answer": 3,
+      "why": "Xom CDC ichki tuzilmani oshkor qiladi. Boshqa jamoalar uchun outbox orqali versiyalangan integratsiya hodisalari kerak."
+    },
+    {
+      "q": "PostgreSQL hujjatiga ko'ra qulashdan keyin logical replication slot nima qilishi mumkin?",
+      "options": [
+        "Hech qachon takror yubormaydi",
+        "Barcha o'zgarishlarni boshidan yuboradi",
+        "Oxirgi checkpoint'dagi LSN ga qaytib, so'nggi o'zgarishlarni qayta yuborishi mumkin - consumer dublikatlarga tayyor bo'lishi kerak",
+        "O'chib ketadi"
+      ],
+      "answer": 2,
+      "why": "Slot pozitsiyasi checkpoint'da saqlanadi, shuning uchun CDC at-least-once."
+    },
+    {
+      "q": "Debezium UPDATE hodisasida before maydonida faqat primary key bor. Barcha eski qiymatlarni olish uchun nima kerak?",
+      "options": [
+        "wal_level = replica",
+        "ALTER TABLE ... REPLICA IDENTITY FULL",
+        "snapshot.mode = always",
+        "Primary key'ni olib tashlash"
+      ],
+      "answer": 1,
+      "why": "Default REPLICA IDENTITY faqat kalitni yozadi. FULL WAL'ga eski qatorning barcha ustunlarini yozadi."
+    },
+    {
+      "q": "Outbox + Kafka + consumer'dagi inbox (processed_events) jadvali birgalikda nimani beradi?",
+      "options": [
+        "2PC'siz effectively-once: producer atomik, broker at-least-once, consumer dublikatni filtrlaydi",
+        "Faqat at-most-once",
+        "Kafka ichidagi exactly-once tranzaksiya",
+        "Global tartib"
+      ],
+      "answer": 0,
+      "why": "Har bir halqa o'z kafolatini beradi, birgalikda natija xuddi bir marta qayta ishlangandek bo'ladi."
+    }
+  ]
+}

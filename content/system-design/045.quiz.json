@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Treker 14:03 da nuqta o'lchadi, tunnel tufayli u 14:21 da keldi. 5 daqiqalik tumbling oyna processing time bo'yicha bo'lsa, nuqta qaysi oynaga tushadi?",
+      "options": [
+        "14:20-14:25",
+        "14:00-14:05",
+        "Hech qaysi biriga",
+        "Ikkalasiga ham"
+      ],
+      "answer": 0,
+      "why": "Processing time oynasi hodisa qayta ishlangan vaqtga qaraydi. Shuning uchun biznes hisoblari event time'da bo'lishi kerak."
+    },
+    {
+      "q": "Sliding oyna: o'lcham 15 daqiqa, qadam 30 soniya. Har bir hodisa nechta oynaga tushadi?",
+      "options": [
+        "1",
+        "15",
+        "60",
+        "30"
+      ],
+      "answer": 3,
+      "why": "W / S = 900 s / 30 s = 30 oyna."
+    },
+    {
+      "q": "Flink window operatori 3 ta kirishdan watermark oladi: 14:10, 14:12 va 13:50. Operatorning event time'i qaysi?",
+      "options": [
+        "14:12",
+        "14:10",
+        "13:50",
+        "O'rtacha 14:04"
+      ],
+      "answer": 2,
+      "why": "Bir nechta kirishli operator kirishlar watermark'larining minimumini oladi. Shuning uchun sekin yoki bo'sh kirish butun quvurni ushlab turadi."
+    },
+    {
+      "q": "Tunda bitta Kafka partitionga umuman hodisa kelmayapti va 5 daqiqalik oynalar natija chiqarmay qo'ydi. Eng to'g'ri tuzatish?",
+      "options": [
+        "Processing time'ga o'tish",
+        "Watermark strategiyasiga idleness qo'shish (masalan, withIdleness 1 daqiqa)",
+        "Allowed lateness'ni 0 ga tushirish",
+        "Partitionlar sonini oshirish"
+      ],
+      "answer": 1,
+      "why": "Jim partition watermark'ni oldinga surmaydi va minimum qoidasi tufayli hamma narsani to'xtatadi. Idleness uni hisobdan chiqaradi."
+    },
+    {
+      "q": "Watermark = ko'rilgan eng katta vaqt - 5 s. Lekin mashinalarning 10% i 2-3 daqiqa kechikib yuboradi. Natija?",
+      "options": [
+        "Watermark juda tez, ko'p hodisa kechikkan bo'ladi va default allowed lateness 0 bilan tashlanadi",
+        "Watermark juda sekin, natija keraksiz kechikadi",
+        "Hech qanday ta'sir yo'q",
+        "Flink avtomatik ravishda chegarani oshiradi"
+      ],
+      "answer": 0,
+      "why": "Chegara haqiqiy tartibsizlikdan kichik bo'lsa, oynalar erta yopiladi. Allowed lateness yoki side output bo'lmasa, ma'lumot jim yo'qoladi."
+    },
+    {
+      "q": "Session oynasi gap = 10 daqiqa. Hodisalar 14:00, 14:08 va 14:24 da kelgan, ikki sessiya chiqarilgan. Keyin 14:15 dagi kechikkan hodisa keldi. Nima bo'lishi kerak?",
+      "options": [
+        "14:15 ikkinchi sessiyaga qo'shiladi",
+        "Hech narsa o'zgarmaydi",
+        "14:15 alohida uchinchi sessiya bo'ladi",
+        "Ikki sessiya bitta sessiyaga birlashadi, chunki bo'shliqlar 7 va 9 daqiqa bo'ladi"
+      ],
+      "answer": 3,
+      "why": "Session chegarasi ma'lumotdan chiqadi. Kechikkan hodisa bo'shliqni yopib, oynalarni birlashtiradi va avval chiqarilgan natijalarni bekor qilishni talab qilishi mumkin."
+    },
+    {
+      "q": "Flink exactly-once checkpointing yoqilgan, sink esa oddiy HTTP POST (idempotent emas). Nosozlikdan keyin nima bo'lishi mumkin?",
+      "options": [
+        "Hech qanday dublikat bo'lmaydi",
+        "Flink HTTP so'rovlarni avtomatik orqaga qaytaradi",
+        "Oxirgi checkpoint'dan keyingi hodisalar qayta ishlanib, sink'ka ikkinchi marta yuborilishi mumkin",
+        "Ma'lumot yo'qoladi"
+      ],
+      "answer": 2,
+      "why": "Flink'ning exactly-once kafolati ichki holat uchun. End-to-end uchun sink tranzaksion yoki idempotent bo'lishi kerak."
+    },
+    {
+      "q": "100 000 mashina, 5 daqiqalik tumbling oyna, allowed lateness 1 soat, oyna boshiga 64 bayt agregat. Holat hajmi taxminan qancha?",
+      "options": [
+        "Taxminan 6.4 MB",
+        "Taxminan 83 MB",
+        "Taxminan 830 MB",
+        "Taxminan 8.3 GB"
+      ],
+      "answer": 1,
+      "why": "Bir vaqtda ochiq oynalar: 60 / 5 + 1 = 13. 100 000 x 13 x 64 B = 83.2 MB."
+    },
+    {
+      "q": "Dispetcher 15 daqiqalik oyna natijasini yopilishini kutmasdan ko'rishi kerak, lekin keyin aniq natija ham kerak. Dataflow modelida bu qaysi mexanizm?",
+      "options": [
+        "Early, on-time va late trigger'lar kombinatsiyasi",
+        "Kattaroq watermark chegarasi",
+        "Processing time oynasi",
+        "Global oyna"
+      ],
+      "answer": 0,
+      "why": "Trigger'lar natija qachon chiqarilishini belgilaydi va bir necha marta ishlashi mumkin: early taxmin, on-time asosiy, late tuzatish."
+    },
+    {
+      "q": "Kafka Streams agregati kechikkan yozuv tufayli bir oyna uchun ikkinchi natija chiqardi. Sink jadvalga qanday yozishi kerak?",
+      "options": [
+        "INSERT - har bir natija yangi qator",
+        "Jadvalni har safar to'liq qayta yaratish",
+        "Ikkinchi natijani e'tiborsiz qoldirish",
+        "Oyna kaliti bo'yicha UPSERT - yangi natija oldingisini almashtiradi"
+      ],
+      "answer": 3,
+      "why": "Agregat KTable hosil qiladi va yangilangan natija oldingisini almashtiradi (accumulating). INSERT dublikat qatorlarga olib keladi."
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Pul miqdorini saqlash uchun qaysi tur to'g'ri?",
+      "options": [
+        "DOUBLE PRECISION, chunki u aniq",
+        "Minor units da BIGINT (masalan, 10.99 USD = 1099) yoki NUMERIC, valyuta kodi bilan",
+        "TEXT, formatlash oson bo'lishi uchun",
+        "REAL, xotira tejash uchun"
+      ],
+      "answer": 1,
+      "why": "Float ikkilik tizimda o'nlik kasrlarni aniq ifodalamaydi va xatolar yig'iladi. Butun son yoki aniq o'nlik tur kerak."
+    },
+    {
+      "q": "Double-entry ledger da qaysi invariant doim bajarilishi kerak?",
+      "options": [
+        "Har bir hisob balansi musbat",
+        "Har bir journal entry ichidagi postinglar yig'indisi (har bir valyuta bo'yicha) nolga teng",
+        "Har bir posting bir xil summada",
+        "Har kuni kamida bitta yozuv bo'lishi"
+      ],
+      "answer": 1,
+      "why": "Pul faqat hisoblar orasida ko'chadi. Shu sababli butun tizim bo'yicha balanslar yig'indisi ham doim nol."
+    },
+    {
+      "q": "Ledger da xato posting topildi (summa noto'g'ri yozilgan). To'g'ri tuzatish usuli qaysi?",
+      "options": [
+        "Postingni UPDATE qilish",
+        "Postingni DELETE qilib qayta yozish",
+        "Teskari (reversal) journal entry va to'g'ri yangi entry qo'shish",
+        "Faqat accounts.balance ni qo'lda o'zgartirish"
+      ],
+      "answer": 2,
+      "why": "Postinglar immutable; tuzatish ham yozuv sifatida qoladi va audit izi saqlanadi."
+    },
+    {
+      "q": "Server provayderga 'pul yech' so'rovini yubordi va timeout oldi. Eng xavfli xato qaysi?",
+      "options": [
+        "Mijozga 'tekshirilmoqda' deb ko'rsatish",
+        "Yangi idempotency kaliti bilan provayderga qayta yuborish",
+        "Provayderning status API sini order ID bo'yicha so'rash",
+        "Webhook kutish"
+      ],
+      "answer": 1,
+      "why": "Birinchi so'rov bajarilgan bo'lishi mumkin. Yangi kalit bilan qayta yuborish ikki marta yechishga olib keladi."
+    },
+    {
+      "q": "Stripe API da bir xil Idempotency-Key bilan, lekin boshqa summa bilan so'rov yuborildi. Nima bo'ladi?",
+      "options": [
+        "Yangi to'lov yaratiladi",
+        "Eski javob qaytariladi va yangi summa e'tiborsiz qoldiriladi",
+        "Xato qaytariladi, chunki parametrlar asl so'rovdan farq qiladi",
+        "Summa yangilanadi"
+      ],
+      "answer": 2,
+      "why": "Idempotency qatlami parametrlarni solishtiradi va noto'g'ri qayta ishlatishni xato bilan rad etadi."
+    },
+    {
+      "q": "Brandur Leach modelida recovery_point nima uchun kerak?",
+      "options": [
+        "Kalitni shifrlash uchun",
+        "Qayta so'rov kelganda yoki completer ishlaganda oxirgi tugallangan atomic phase dan davom etish uchun",
+        "Javobni cache qilish uchun",
+        "Rate limiting uchun"
+      ],
+      "answer": 1,
+      "why": "Tashqi o'zgarishlar orasidagi lokal ishlar tranzaksiya bilan commit qilinadi va checkpoint yoziladi. Qayta urinish allaqachon bajarilgan tashqi qadamlarni takrorlamaydi."
+    },
+    {
+      "q": "Provayder webhook'i bir xil event ni 2 marta va tartibsiz yuboradi. Handler qanday bo'lishi kerak?",
+      "options": [
+        "Hodisalarni created vaqti bo'yicha tartiblab qayta ishlash",
+        "Imzoni tekshirish, event ID ni processed_events ga ON CONFLICT DO NOTHING bilan yozish, yangi bo'lsa navbatga qo'yish va tez 2xx qaytarish",
+        "Har bir event ni sinxron to'liq qayta ishlab, keyin javob berish",
+        "Ikkinchi nusxada 500 qaytarish"
+      ],
+      "answer": 1,
+      "why": "Dublikatlar event ID bilan, tartibsizlik esa holat mashinasi va obyektni qayta o'qish bilan hal qilinadi."
+    },
+    {
+      "q": "Hamma to'lovlar bitta revenue hisobiga tushadi va har bir yozuv uning balance qatorini UPDATE qiladi. Yuklama oshganda qanday muammo chiqadi?",
+      "options": [
+        "Disk tez to'ladi",
+        "Hot account: bitta qator qulfi uchun raqobat, tranzaksiyalar navbatga tushadi",
+        "Balans manfiy bo'ladi",
+        "Indeks ishlamay qoladi"
+      ],
+      "answer": 1,
+      "why": "Yechim: hisobni sub-hisoblarga bo'lish yoki bunday hisob balansini postinglardan asinxron hisoblash."
+    },
+    {
+      "q": "Oylik hisob-faktura yaratuvchi job xato tufayli ikki marta ishga tushdi. Qaysi mexanizm ikki marta hisob-faktura chiqishini oldini oladi?",
+      "options": [
+        "Job ni faqat bitta serverda ishga tushirish",
+        "journal_entries.idempotency_key UNIQUE, kalit invoice:{tenant}:{yyyy-mm}",
+        "Hisob-fakturalarni oy oxirida qo'lda tekshirish",
+        "Redis TTL"
+      ],
+      "answer": 1,
+      "why": "Deterministik idempotency kaliti va UNIQUE constraint job necha marta ishlamasin natija bitta bo'lishini kafolatlaydi."
+    },
+    {
+      "q": "Real vaqt mexanizmlari (idempotency, webhook) bo'lsa ham nega kunlik reconciliation kerak?",
+      "options": [
+        "Kerak emas, ular yetarli",
+        "Webhook yo'qolishi, bug, qo'lda o'zgarish kabi farqlar faqat tashqi hisobot va bank ko'chirmasi bilan solishtirganda topiladi",
+        "Faqat soliq uchun",
+        "Faqat valyuta kurslari uchun"
+      ],
+      "answer": 1,
+      "why": "Reconciliation oxirgi himoya chizig'i: ichki ledger va tashqi haqiqat (provayder, bank) muntazam solishtiriladi."
+    }
+  ]
+}

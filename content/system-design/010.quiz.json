@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Rolling deploy paytida producer v2 Kafka ga yangi maydonli xabar yozdi, hali yangilanmagan consumer v1 uni o'qiydi. Bu qaysi turdagi moslikni talab qiladi?",
+      "options": [
+        "Backward compatibility",
+        "Forward compatibility",
+        "Hech qanday, Kafka o'zi hal qiladi",
+        "Faqat binary compatibility"
+      ],
+      "answer": 1,
+      "why": "Eski kod yangi ma'lumotni o'qiyapti - bu forward compatibility. Backward esa yangi kod eski ma'lumotni o'qishi."
+    },
+    {
+      "q": "Node.js frontend JSON da id: 9007199254740993 ni oldi. Qanday natija bo'ladi?",
+      "options": [
+        "To'g'ri o'qiladi",
+        "JSON.parse xato beradi",
+        "Qiymat jimgina 9007199254740992 ga yaxlitlanadi, chunki 2^53 dan katta butun son double da aniq ifodalanmaydi",
+        "Avtomatik BigInt ga aylanadi"
+      ],
+      "answer": 2,
+      "why": "JavaScript raqamlari IEEE 754 double; MAX_SAFE_INTEGER = 2^53 - 1. 64 bitli ID larni satr sifatida yuborish kerak."
+    },
+    {
+      "q": "Protobuf da field 1 ga 150 qiymati yozildi (wire type VARINT). Baytlar qanday?",
+      "options": ["01 96", "08 96 01", "08 01 96", "0A 96 01"],
+      "answer": 1,
+      "why": "Tag = (1 << 3) | 0 = 0x08. 150 varint: 0x96 (davomi bor, payload 0010110) va 0x01; little-endian 7 bitli guruhlar = 150."
+    },
+    {
+      "q": "Protobuf da harorat maydoni int32 bilan e'lon qilingan va ko'pincha -5 kabi qiymatlar oladi. Muammo nima?",
+      "options": [
+        "Manfiy son yozib bo'lmaydi",
+        "int32 manfiy sonni two's complement varint sifatida yozadi va u 10 bayt oladi; sint32 (ZigZag) 1 bayt oladi",
+        "int32 faqat 4 bayt oladi, muammo yo'q",
+        "Manfiy son JSON ga o'tkazilmaydi"
+      ],
+      "answer": 1,
+      "why": "ZigZag manfiy n ni 2|n|-1 ga aylantiradi: -5 -> 9, bitta bayt."
+    },
+    {
+      "q": "Protobuf xabaridan 'old_fuel' (field 7) o'chirildi. Keyinroq boshqa dasturchi yangi 'driver_score' maydoniga 7 raqamini berdi. Nima bo'ladi?",
+      "options": [
+        "Hech narsa, raqamlar faqat kod uchun",
+        "Eski ma'lumotdagi old_fuel qiymatlari driver_score sifatida noto'g'ri talqin qilinadi; o'chirilgan raqamlarni reserved qilish kerak edi",
+        "Kompilyator har doim xato beradi",
+        "Faqat JSON mapping buziladi"
+      ],
+      "answer": 1,
+      "why": "Simda faqat raqam bor. Raqamni qayta ishlatish eski yozuvlarni yangi ma'noda o'qishga olib keladi."
+    },
+    {
+      "q": "Avro da reader sxemasiga 'confidence' maydoni default siz qo'shildi. Eski (bu maydonsiz yozilgan) ma'lumotni o'qishda nima bo'ladi?",
+      "options": [
+        "Maydon null bo'ladi",
+        "Maydon 0 bo'ladi",
+        "Schema resolution xato beradi, chunki reader da bor, writer da yo'q maydonning default i yo'q",
+        "Maydon e'tiborsiz qoldiriladi"
+      ],
+      "answer": 2,
+      "why": "Avro spetsifikatsiyasi: reader dagi maydon writer da yo'q bo'lsa default ishlatiladi; default bo'lmasa xato."
+    },
+    {
+      "q": "Nega Avro ma'lumotni writer sxemasisiz o'qib bo'lmaydi, Protobuf ni esa qisman o'qish mumkin?",
+      "options": [
+        "Avro shifrlangan",
+        "Avro binar kodlashda tag ham, maydon nomi ham, tip ma'lumoti ham yo'q - faqat qiymatlar ketma-ketligi; Protobuf da har bir qiymat oldida tag va wire type bor",
+        "Protobuf matnli format",
+        "Avro siqilgan"
+      ],
+      "answer": 1,
+      "why": "Shuning uchun Avro eng ixcham, lekin writer sxemasini (fayl boshida, fingerprint yoki registry orqali) doim saqlash kerak."
+    },
+    {
+      "q": "Kafka topic retention 30 kun, consumer lar ba'zan topic ni boshidan qayta o'qiydi. Schema registry da qaysi rejim eng xavfsiz?",
+      "options": [
+        "NONE",
+        "BACKWARD (faqat oxirgi versiyaga nisbatan)",
+        "BACKWARD_TRANSITIVE yoki FULL_TRANSITIVE",
+        "FORWARD"
+      ],
+      "answer": 2,
+      "why": "Qayta o'qishda consumer topic dagi barcha eski versiyalarni o'qiy olishi kerak; oddiy BACKWARD faqat oxirgi versiyani tekshiradi."
+    },
+    {
+      "q": "Confluent schema registry bilan har bir Avro xabariga qancha overhead qo'shiladi?",
+      "options": [
+        "Butun sxema JSON ko'rinishida",
+        "5 bayt: 1 bayt magic byte va 4 bayt schema ID",
+        "8 bayt CRC-64 fingerprint",
+        "Hech qanday"
+      ],
+      "answer": 1,
+      "why": "Consumer schema ID bo'yicha writer sxemasini registry dan olib cache laydi. 8 baytlik fingerprint Avro single-object encoding ga tegishli."
+    },
+    {
+      "q": "proto3 da implicit (optional siz) 'engine_temp' maydoni. Treker datchigi yo'q va maydonni yubormadi. Consumer nima ko'radi?",
+      "options": [
+        "null",
+        "0 - va uni 'harorat 0 daraja' dan ajratib bo'lmaydi",
+        "Xato",
+        "Oxirgi ma'lum qiymat"
+      ],
+      "answer": 1,
+      "why": "Implicit maydon standart qiymatda simga yozilmaydi va yo'q bo'lsa standart qiymat qaytariladi. Farq kerak bo'lsa optional (explicit presence) ishlatiladi."
+    }
+  ]
+}

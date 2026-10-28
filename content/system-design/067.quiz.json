@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "RED va USE metodlarining asosiy farqi nima?",
+      "options": [
+        "RED faqat frontend uchun, USE faqat backend uchun",
+        "RED servislar va foydalanuvchi tajribasi uchun (rate, errors, duration), USE har bir resurs uchun (utilization, saturation, errors)",
+        "Ular bir xil",
+        "USE faqat Kubernetes uchun"
+      ],
+      "answer": 1,
+      "why": "Amaliy qoida: RED bilan alert qiling (foydalanuvchi nimani his qilyapti), USE bilan debug qiling (nima to'lib qolgan)."
+    },
+    {
+      "q": "Qaysi alert eng to'g'ri page nomzodi?",
+      "options": [
+        "Node CPU 85% dan yuqori 5 daqiqa",
+        "Dispetcher API xato budget ini 1 soatlik va 5 daqiqalik oynalarda 14.4x tezlikda sarflamoqda",
+        "Bitta pod restart bo'ldi",
+        "Xotira 70% dan yuqori"
+      ],
+      "answer": 1,
+      "why": "Simptom asosidagi, SLO ga bog'liq alert foydalanuvchi ta'sirini bevosita ko'rsatadi. Qolganlari sabab metrikalari va ko'pincha shovqin."
+    },
+    {
+      "q": "Servis soatiga 20 ta so'rov oladi, alert 'xato ulushi > 5% 5 daqiqa davomida'. Muammo nima?",
+      "options": [
+        "Muammo yo'q",
+        "Kam trafikda bitta xato ham ulushni keskin oshiradi; mutlaq son sharti yoki uzunroq oyna kerak",
+        "5% juda kichik chegara",
+        "5 daqiqa juda uzun"
+      ],
+      "answer": 1,
+      "why": "Google misolidagi kabi ulush va mutlaq xato soni shartini birga qo'yish kam trafikdagi shovqinni yo'qotadi."
+    },
+    {
+      "q": "Ingest servisi to'satdan metrika yubormay qo'ydi. White-box SLO alert'lari jim. Bu holatni qaysi mexanizm ushlaydi?",
+      "options": [
+        "Hech qaysi, bu normal",
+        "'Ma'lumot yo'q' alerti va black-box prober",
+        "Grafana dashboard",
+        "Log darajasini oshirish"
+      ],
+      "answer": 1,
+      "why": "White-box metrikalar yo'qolganda alert'lar ishlamaydi; ma'lumot yo'qligining o'zi va tashqi tekshiruv signal bo'lishi kerak."
+    },
+    {
+      "q": "Butun Kubernetes klaster yetib bo'lmaydigan bo'ldi va undagi 40 ta servis bo'yicha 40 ta alert keldi. Qaysi Alertmanager mexanizmi buni bitta xabarga keltiradi?",
+      "options": ["Silence", "Inhibition va grouping", "Retry", "Deduplication o'chirilishi"],
+      "answer": 1,
+      "why": "Inhibition klaster alerti faol bo'lganda servis alert'larini bostiradi, grouping o'xshash alert'larni bitta xabarga yig'adi."
+    },
+    {
+      "q": "USE metodi bo'yicha PostgreSQL connection pool uchun saturation ni qaysi metrika ko'rsatadi?",
+      "options": [
+        "Band connection'lar soni",
+        "Connection olishni kutayotgan so'rovlar soni yoki kutish vaqti",
+        "Baza CPU",
+        "Jami so'rovlar soni"
+      ],
+      "answer": 1,
+      "why": "Saturation - resurs xizmat ko'rsata olmayotgan qo'shimcha ish, odatda navbat. Band connection'lar utilization."
+    },
+    {
+      "q": "SRE kitobiga ko'ra 12 soatlik on-call smenada nechta incident barqaror maksimum hisoblanadi va nima uchun?",
+      "options": [
+        "10, chunki alert'lar avtomatik",
+        "2, chunki bitta incident tahlil va postmortem bilan o'rtacha taxminan 6 soat oladi",
+        "1, chunki uyqu kerak",
+        "Cheksiz, agar runbook bo'lsa"
+      ],
+      "answer": 1,
+      "why": "Kitobda smenada ko'pi bilan 2 incident va bitta incident o'rtacha 6 soat deb keltirilgan."
+    },
+    {
+      "q": "Har kecha bir xil alert keladi va on-call har safar bir xil skriptni ishga tushiradi. To'g'ri yechim qaysi?",
+      "options": [
+        "Alert ni saqlab qolish, chunki u ishlayapti",
+        "Javobni avtomatlashtirish yoki asl sababni tuzatish; robotik javob page bo'lmasligi kerak",
+        "Alert ni email ga o'tkazish va e'tiborsiz qoldirish",
+        "Yana bir on-call qo'shish"
+      ],
+      "answer": 1,
+      "why": "Page aql talab qilishi va yangi muammo haqida bo'lishi kerak. Takroriy robotik page - texnik qarz belgisi."
+    },
+    {
+      "q": "Bigtable jamoasi SLO ni o'rtacha latency ga asoslagan va alert'lar doim yonib turgan. Asosiy sabab nima edi?",
+      "options": [
+        "Monitoring tizimi buzilgan",
+        "Eng sekin 5% so'rovlar o'rtachani boshqargan va alert'lar shovqinga aylangan",
+        "Bigtable juda tez edi",
+        "Alert'lar faqat emailda edi"
+      ],
+      "answer": 1,
+      "why": "O'rtacha dumga sezgir; jamoa vaqtincha 75-percentile ga o'tib, email alert'larini o'chirib, asosiy muammolarni tuzatgan."
+    },
+    {
+      "q": "Kunlik faol trekerlar soni o'tgan haftaga nisbatan 30% tushdi. Bu bizning ingest muammomizmi yoki mobil operator muammosimi, eng tez qanday aniqlash mumkin?",
+      "options": [
+        "Barcha serverlarni restart qilish",
+        "Metrikani SIM operatori bo'yicha ajratish: faqat bitta operator tushgan bo'lsa, ehtimol operator muammosi",
+        "Faqat CPU ga qarash",
+        "Mijozlardan so'rash"
+      ],
+      "answer": 1,
+      "why": "To'g'ri past cardinality o'lchov (operator) bo'yicha ajratish simptomni sabab bilan tez bog'laydi."
+    }
+  ]
+}

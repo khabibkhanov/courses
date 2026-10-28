@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "5 qatlamli chaqiruv zanjirida har bir qatlam 3 marta urinadi (jami urinishlar). Eng pastki baza qiynalganda uning yuklamasi necha baravar oshishi mumkin?",
+      "options": [
+        "15",
+        "243",
+        "125",
+        "3"
+      ],
+      "answer": 1,
+      "why": "3^5 = 243. Shuning uchun retry bitta qatlamda bo'lishi kerak."
+    },
+    {
+      "q": "Kirish 2 000 xabar/s, consumer quvvati 2 500 xabar/s. Bog'liqlik 1 soat o'chiq bo'lib, backlog to'plandi. Tiklanish (backlog bo'shashi) qancha davom etadi?",
+      "options": [
+        "4 soat",
+        "2 soat",
+        "1 soat",
+        "48 daqiqa"
+      ],
+      "answer": 0,
+      "why": "Backlog = 2 000 x 3 600 = 7.2 mln. Bo'shash tezligi 500/s. 7.2 mln / 500 = 14 400 s = 4 soat."
+    },
+    {
+      "q": "Time-series baza 20 daqiqa o'chiq. Consumer har bir xabarni 3 marta urinib DLQ ga yuboradi. Natija va to'g'ri yondashuv?",
+      "options": [
+        "Hammasi to'g'ri, DLQ shu uchun",
+        "Xabarlarni tashlab yuborish kerak",
+        "Urinishlar sonini 100 ga oshirish kerak",
+        "DLQ yuz minglab sog'lom xabar bilan to'ladi; bog'liqlik xatosida consumer'ni pauza qilish kerak"
+      ],
+      "answer": 3,
+      "why": "Bog'liqlik uzilishi xabarning aybi emas. Pauza qilib, Kafka retention'ni bufer sifatida ishlatish to'g'ri."
+    },
+    {
+      "q": "Kafka consumer xabar 17 da doimiy xato oladi va uni joyida cheksiz qayta uradi. Nima bo'ladi?",
+      "options": [
+        "Faqat xabar 17 kechikadi",
+        "Kafka xabarni avtomatik DLQ ga ko'chiradi",
+        "Offset siljimaydi va partitiondagi keyingi barcha xabarlar to'xtab qoladi (head-of-line blocking)",
+        "Rebalance xabarni boshqa consumer'ga beradi va muammo hal bo'ladi"
+      ],
+      "answer": 2,
+      "why": "Consumer group'da offset ketma-ket. Retry topiclar yoki DLQ bilan xabarni chetga olib, offset'ni commit qilish kerak."
+    },
+    {
+      "q": "Exponential backoff base = 1 s, har urinishda 2 baravar, cap yo'q, 9 ta urinish (0 dan 8 gacha). Umumiy kutish taxminan qancha?",
+      "options": [
+        "Taxminan 4 daqiqa",
+        "Taxminan 8.5 daqiqa",
+        "Taxminan 17 daqiqa",
+        "Taxminan 1 daqiqa"
+      ],
+      "answer": 1,
+      "why": "1 + 2 + ... + 256 = 511 s = taxminan 8.5 daqiqa."
+    },
+    {
+      "q": "1 000 ta consumer bir vaqtda xato olib, jitter'siz exponential backoff bilan qayta urinadi. Muammo nima?",
+      "options": [
+        "Ularning hammasi bir xil paytlarda qayta uradi (thundering herd) - jitter yuklamani vaqt bo'yicha yoyadi",
+        "Hech qanday muammo yo'q",
+        "Backoff juda sekin",
+        "Consumer'lar DLQ ga yozolmaydi"
+      ],
+      "answer": 0,
+      "why": "Bir vaqtda muvaffaqiyatsiz bo'lgan mijozlar bir xil kechikish bilan yana to'qnashadi. Full jitter amaliy tanlov."
+    },
+    {
+      "q": "Consumer'lar lag oshganda avtomatik 10 baravar ko'paydi, lekin lag kamaymadi va baza yiqildi. Ehtimoliy sabab?",
+      "options": [
+        "Consumer'lar yetarli emas edi",
+        "Jitter yo'q edi",
+        "Kafka partitionlari ko'p edi",
+        "Cheklovchi bo'g'in consumer emas, baza edi; consumer'larni ko'paytirish bazaga yuklamani oshirdi - concurrency chegarasi kerak"
+      ],
+      "answer": 3,
+      "why": "Pastki tizim cheklovchi bo'lsa, masshtablash uni bosib qo'yadi. Backpressure va concurrency limit kerak."
+    },
+    {
+      "q": "SMS provayderi 400 'invalid phone number' qaytardi. To'g'ri harakat?",
+      "options": [
+        "Exponential backoff bilan 10 marta qayta urinish",
+        "Xabarni navbat boshiga qaytarish",
+        "Doimiy xato: retry qilmasdan DLQ yoki rad etish va mijoz sozlamasini belgilash",
+        "Consumer'ni qayta ishga tushirish"
+      ],
+      "answer": 2,
+      "why": "Doimiy xatoni retry qilish resurs isrofi. Faqat vaqtinchalik xatolar (timeout, 503, 429) retry qilinadi."
+    },
+    {
+      "q": "Kafka retry topic zinapoyasi ishlatilmoqda. 'Safar boshlandi' (17) retry topicga ketdi, 'safar tugadi' (18) esa muvaffaqiyatli qayta ishlandi. Bu nimani anglatadi?",
+      "options": [
+        "Hech narsa, tartib saqlanadi",
+        "Kalit bo'yicha tartib buziladi; consumer versiya bo'yicha tartibsizlikka chidamli bo'lishi yoki kalit bloklanishi kerak",
+        "Xabar 18 ham avtomatik retry topicga ketadi",
+        "Kafka xabar 17 ni qayta asosiy topicga qo'yadi"
+      ],
+      "answer": 1,
+      "why": "Retry topiclar partitionni to'smaydi, lekin evaziga kalit ichidagi tartib kafolatini yo'qotadi."
+    },
+    {
+      "q": "DLQ'da 500 000 xabar bor. Bug tuzatildi. Eng to'g'ri redrive usuli?",
+      "options": [
+        "Cheklangan tezlikda, jonli trafikdan ajratilgan holda (masalan, birinchi retry topicga) qaytarish, consumer idempotent bo'lishi",
+        "Hammasini birdan asosiy topicga qaytarish",
+        "DLQ'ni o'chirish",
+        "Har birini qo'lda tekshirish"
+      ],
+      "answer": 0,
+      "why": "Cheksiz redrive yangi backlog yaratadi va jonli trafikni bosadi. Ba'zi xabarlar allaqachon qayta ishlangan bo'lishi mumkin, shuning uchun idempotency shart."
+    }
+  ]
+}

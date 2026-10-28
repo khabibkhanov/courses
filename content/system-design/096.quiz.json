@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "50 000 qurilma harakatda (har 10 s), 50 000 to'xtagan (har 300 s). Burilishlarsiz cho'qqi nuqta/s taxminan qancha?",
+      "options": ["1 700", "5 170", "10 000", "50 000"],
+      "answer": 1,
+      "why": "50 000/10 = 5 000 va 50 000/300 ≈ 167; jami ≈ 5 170."
+    },
+    {
+      "q": "Operator 2 soat uzildi, 40 000 qurilma o'rtacha 400 yozuv buferladi va ular 5 daqiqa ichida kelmoqda. Ingest tezligi taxminan qancha?",
+      "options": ["5 300/s", "53 000/s", "530 000/s", "16 000/s"],
+      "answer": 1,
+      "why": "40 000 x 400 = 16 million; 16 000 000 / 300 s ≈ 53 000 nuqta/s."
+    },
+    {
+      "q": "Gateway Codec 8 paketiga qachon ACK (qabul qilingan yozuvlar soni) yuborishi kerak?",
+      "options": [
+        "Paket parse qilinishi bilan darhol",
+        "Yozuvlar Kafka ga acks=all bilan yozilgandan keyin",
+        "Yozuvlar TimescaleDB ga yozilib, hisobotlar yangilangandan keyin",
+        "ACK umuman kerak emas"
+      ],
+      "answer": 1,
+      "why": "ACK dan keyin qurilma yozuvlarni o'chiradi, shuning uchun ACK durable yozuvdan keyin; bazani kutish esa ingest ni baza sekinligiga bog'lab qo'yadi."
+    },
+    {
+      "q": "Paketdagi 25 yozuvdan 2 tasining GPS vaqti 1970 yil (fix yo'q). To'g'ri harakat?",
+      "options": [
+        "Butun paketni rad etish (ACK 0)",
+        "23 deb ACK qilish",
+        "Yaroqsiz yozuvlarni invalid topic ga yozib, 25 deb ACK qilish",
+        "Ulanishni uzish"
+      ],
+      "answer": 2,
+      "why": "Rad etilsa qurilma bir xil yozuvlarni abadiy qayta yuboradi (poison message); ularni alohida saqlab, butun paketni qabul qilish kerak."
+    },
+    {
+      "q": "Kafka sekinlashdi va gateway ACK larni kechiktirmoqda. Qurilmalardagi ma'lumotga nima bo'ladi?",
+      "options": [
+        "Yo'qoladi",
+        "Qurilma buferida qoladi; qurilma tabiiy backpressure buferi bo'lib xizmat qiladi",
+        "Gateway xotirasida cheksiz to'planadi",
+        "Avtomatik UDP ga o'tadi"
+      ],
+      "answer": 1,
+      "why": "ACK olinmaguncha qurilma yozuvlarni o'chirmaydi va yangisini yubormaydi."
+    },
+    {
+      "q": "Black box dan 2 soatlik eski nuqtalar keldi. Xaritadagi oxirgi holat qanday yangilanishi kerak?",
+      "options": [
+        "Har kelgan nuqta bilan almashtirish",
+        "Faqat kelgan nuqtaning GPS vaqti saqlangandan katta bo'lsa almashtirish",
+        "Server vaqti bo'yicha almashtirish",
+        "Black box nuqtalarini umuman e'tiborsiz qoldirish"
+      ],
+      "answer": 1,
+      "why": "Aks holda mashina xaritada o'tmishdagi joylashuvga sakraydi; shartli LWW event time bo'yicha."
+    },
+    {
+      "q": "Writer bazaga batch yozdi, lekin Kafka offset ni commit qilishdan oldin o'ldi. Qayta ishga tushganda dublikatlarni nima hal qiladi?",
+      "options": [
+        "Kafka exactly-once avtomatik",
+        "(device_id, gps_time) bo'yicha UNIQUE indeks va ON CONFLICT DO NOTHING",
+        "Redis",
+        "Hech narsa, dublikatlar zararsiz"
+      ],
+      "answer": 1,
+      "why": "At-least-once qayta ishlash tabiiy kalit bo'yicha idempotent yozish bilan xavfsiz bo'ladi."
+    },
+    {
+      "q": "Qurilma aloqasiz yurganda geofence dan chiqdi; hodisa 2 soatdan keyin black box bilan aniqlandi. To'g'ri xatti-harakat?",
+      "options": [
+        "Dispetcherga darhol jonli push yuborish",
+        "Hodisani event time bilan qayd etish, lekin kechikkan deb belgilab, jonli push yubormaslik",
+        "Hodisani tashlab yuborish",
+        "Qurilmani bloklash"
+      ],
+      "answer": 1,
+      "why": "Hodisa hisobot uchun kerak, lekin 'hozir chiqdi' deb push chalg'itadi; event_time va detected_at farqi bo'yicha qaror."
+    },
+    {
+      "q": "Bitta tenant 500 mashina uchun 1 oylik yoqilg'i hisobotini so'radi. Boshqa tenantlarga ta'sir qilmaslik uchun eng to'g'ri yondashuv?",
+      "options": [
+        "Xom nuqtalardan sinxron hisoblash",
+        "Asinxron hisobot, soatlik/kunlik agregatlardan, alohida resurs (replica yoki analitik baza) va tenant bo'yicha adolatli navbat",
+        "Hisobotlarni taqiqlash",
+        "Primary bazada yuqori prioritet bilan"
+      ],
+      "answer": 1,
+      "why": "Agregatlar 150 million xom nuqta o'rniga ~360 000 qator; izolyatsiya va adolatli navbat shovqinli qo'shnini bartaraf etadi."
+    },
+    {
+      "q": "10x (1 million qurilma) da birinchi bo'lib qaysi komponent chegaraga yaqinlashadi va Kafka markazdaligi buni qanday osonlashtiradi?",
+      "options": [
+        "Redis; uni o'chirish kerak",
+        "Tarixiy baza yozishi va analitika; ClickHouse ni yangi consumer group sifatida mavjud tizimga tegmasdan qo'shish mumkin",
+        "IMEI keshi; uni bazaga ko'chirish kerak",
+        "Notification servis; SMS ni o'chirish kerak"
+      ],
+      "answer": 1,
+      "why": "Yangi saqlash qo'shish = yangi consumer group; ingest va boshqa iste'molchilar o'zgarmaydi."
+    }
+  ]
+}

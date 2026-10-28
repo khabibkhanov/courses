@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Klaster hash(key) mod N bilan ishlaydi, N 10 dan 11 ga oshdi. Kalitlarning taxminan qancha qismi boshqa tugunga ko'chadi?",
+      "options": [
+        "Taxminan 91%",
+        "Taxminan 9%",
+        "Taxminan 50%",
+        "0%"
+      ],
+      "answer": 0,
+      "why": "Kalit joyida qolishi uchun h mod 10 = h mod 11 bo'lishi kerak, bu taxminan 10/110 holatda. Ideal holatda faqat 1/11 ko'chishi kerak edi."
+    },
+    {
+      "q": "Telemetriya jadvali key range partitioning bilan, kalit faqat timestamp. Qanday muammo?",
+      "options": [
+        "Range so'rovlar sekin",
+        "Partition lar avtomatik o'chadi",
+        "Hash to'qnashuvlari ko'payadi",
+        "Barcha yangi yozuvlar oxirgi diapazonga, ya'ni bitta partition ga tushadi va u hotspot bo'ladi"
+      ],
+      "answer": 3,
+      "why": "Ketma-ket kalitlar range partitioning da bitta partition ga yig'iladi. Oldiga yuqori kardinallikdagi qiymat (device_id) qo'yish kerak."
+    },
+    {
+      "q": "Cassandra da PRIMARY KEY ((device_id), ts). 'Qurilma 42 ning 1-7 mart treki' so'rovi qancha partition ga tegadi?",
+      "options": [
+        "Barcha partition larga",
+        "7 ta partition ga, har kun uchun bittadan",
+        "Bitta partition ga, uning ichida ts bo'yicha range scan",
+        "Replication factor soni qadar"
+      ],
+      "answer": 2,
+      "why": "device_id partition ni aniqlaydi, ts esa partition ichidagi tartib. Compound key range so'rovni bitta partition ichida saqlaydi."
+    },
+    {
+      "q": "Bitta qurilma yiliga 315 MB nuqta hosil qiladi, kalit ((device_id), ts), ma'lumot 5 yil saqlanadi. Eng to'g'ri tuzatish?",
+      "options": [
+        "Hech narsa, partition hajmi muhim emas",
+        "Partition key ga vaqt bucket qo'shish: ((device_id, month), ts)",
+        "ts ni partition key boshiga qo'yish",
+        "Replication factor ni oshirish"
+      ],
+      "answer": 1,
+      "why": "Chegarasiz o'suvchi partition (5 yilda taxminan 1.5 GB) Cassandra uchun juda katta. Oylik bucket uni taxminan 26 MB da ushlaydi."
+    },
+    {
+      "q": "Notion nega mantiqiy shard lar sonini 512 emas, 480 tanlagan?",
+      "options": [
+        "480 ning bo'luvchilari ko'p, fizik bazalar sonini 32, 40, 48 kabi bosqichma-bosqich oshirib, shard larni tekis taqsimlash mumkin",
+        "480 tasi xotiraga yaxshiroq sig'adi",
+        "PostgreSQL 512 schema ni qo'llab-quvvatlamaydi",
+        "Tasodifiy tanlov"
+      ],
+      "answer": 0,
+      "why": "Ikkining darajasi har safar fizik bazalar sonini ikki baravar oshirishni talab qilardi."
+    },
+    {
+      "q": "200 GB partition ni 100 MB/s cheklangan tezlikda ko'chirish taxminan qancha vaqt oladi (quvib yetishsiz)?",
+      "options": [
+        "Taxminan 3 daqiqa",
+        "Taxminan 5.5 soat",
+        "Taxminan 2 kun",
+        "Taxminan 33 daqiqa"
+      ],
+      "answer": 3,
+      "why": "200 000 MB / 100 MB/s = 2 000 s, taxminan 33 daqiqa. Kichikroq partition lar tezroq va xavfsizroq ko'chadi."
+    },
+    {
+      "q": "DynamoDB da bitta partition key ga soniyasiga 3 000 ta 1 KB lik yozuv yuborilmoqda va throttling bo'lyapti, jadval sig'imi esa yetarli. Sabab?",
+      "options": [
+        "Jadval sig'imi noto'g'ri hisoblangan",
+        "Yozuvlar juda katta",
+        "Bitta partition taxminan 1 000 WCU/s bilan cheklangan, bitta kalit bitta partition da",
+        "Sort key yo'q"
+      ],
+      "answer": 2,
+      "why": "Hot key umumiy sig'imdan qat'i nazar bitta partition limitiga uriladi. Write sharding (kalitga suffiks) yozuvni tarqatadi."
+    },
+    {
+      "q": "B2B SaaS uchun relational ma'lumotda shard kaliti sifatida tenant_id ning asosiy afzalligi?",
+      "options": [
+        "Har doim mukammal tekis taqsimot",
+        "Bir mijozning jadvallari colocation bilan bitta shard da, JOIN, tranzaksiya va foreign key lar ishlayveradi va ko'p so'rovlar bitta shard ga tegadi",
+        "Hech qachon rebalancing kerak bo'lmaydi",
+        "Range so'rovlar avtomatik tezlashadi"
+      ],
+      "answer": 1,
+      "why": "B2B da ma'lumot asosan bitta mijoz atrofida. Kamchiligi - juda katta tenant alohida hal qilinishi kerak."
+    },
+    {
+      "q": "Dinamik range partitioning ishlatadigan bazada yangi bo'sh jadvalga katta import boshlandi va bitta tugun 100% yuklamada. Sabab va yechim?",
+      "options": [
+        "Jadval bitta partition dan boshlanadi va u bo'linguncha hamma yozuv bitta tugunga ketadi; pre-splitting bilan boshlang'ich chegaralarni berish",
+        "Indeks yo'q, indeks qo'shish",
+        "Replication factor juda yuqori",
+        "Hash funksiya noto'g'ri"
+      ],
+      "answer": 0,
+      "why": "Dinamik split hajmga yetganda bo'ladi. Kalit taqsimoti ma'lum bo'lsa, oldindan bo'lib qo'yish yuklamani darhol tarqatadi."
+    },
+    {
+      "q": "Qaysi holat 'erta sharding' xatosiga misol?",
+      "options": [
+        "Bitta PostgreSQL CPU 85%, replikalar va cache allaqachon bor, eng katta jadval 4 TB va IOPS limitiga yaqin",
+        "Elasticsearch indeksini 10-50 GB shard larga bo'lish",
+        "Telemetriyani vaqt bo'yicha partition qilib, eski partition larni DROP qilish",
+        "Baza 80 GB, CPU 20%, yozuv 300/s, lekin 'kelajakda kerak bo'ladi' deb 64 shard qilish"
+      ],
+      "answer": 3,
+      "why": "Hozirgi yuklama bitta server sig'imidan ancha past. Sharding murakkabligi har kuni to'lanadi, foyda esa yo'q."
+    }
+  ]
+}

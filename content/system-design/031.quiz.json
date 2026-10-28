@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Klient serverga \"balansdan 100 so'm yech\" so'rovini yubordi va timeout oldi. Qaysi xulosa to'g'ri?",
+      "options": [
+        "Operatsiya bajarilmagan, xavfsiz qayta yuborish mumkin",
+        "Operatsiya bajarilgan bo'lishi ham, bajarilmagan bo'lishi ham mumkin - klient buni ajrata olmaydi",
+        "Server qulab tushgan, failover kerak",
+        "TCP paketni qayta yuborgani uchun operatsiya aniq bir marta bajarilgan"
+      ],
+      "answer": 1,
+      "why": "Javob yo'qolishi va so'rov yo'qolishi klient uchun bir xil ko'rinadi. Shuning uchun retry faqat idempotent operatsiya bilan xavfsiz."
+    },
+    {
+      "q": "Downstream servis latency'si: p50 = 10 ms, p99 = 60 ms, p99.9 = 180 ms. Siz 0.1% gacha noto'g'ri timeout'ga rozisiz. AWS tavsiyasiga ko'ra timeout taxminan qancha bo'ladi?",
+      "options": ["10 ms", "60 ms", "180 ms atrofida (kichik zaxira bilan)", "30 soniya"],
+      "answer": 2,
+      "why": "Qabul qilinadigan noto'g'ri timeout ulushi 0.1% bo'lsa, unga mos percentile p99.9 olinadi."
+    },
+    {
+      "q": "5 qavatli chaqiruv stekida har bir qavat so'rovni 3 marta urinadi. Eng pastdagi baza to'liq ishlamay qolsa, unga keladigan yuklama necha baravar oshadi?",
+      "options": ["15 baravar", "125 baravar", "243 baravar", "3 baravar"],
+      "answer": 2,
+      "why": "Har qavat urinishlarni 3 ga ko'paytiradi: 3^5 = 243. Shuning uchun retry bitta qavatda qilinadi."
+    },
+    {
+      "q": "Raft safety'si qaysi model ostida ham saqlanadi, liveness esa qaysi taxminni talab qiladi?",
+      "options": [
+        "Safety faqat synchronous modelda, liveness asynchronous'da",
+        "Safety asynchronous modelda ham saqlanadi, liveness esa partial synchrony (tarmoq oxir-oqibat barqarorlashishi) ni talab qiladi",
+        "Ikkalasi ham faqat synchronous modelda",
+        "Ikkalasi ham Byzantine modelda"
+      ],
+      "answer": 1,
+      "why": "Consensus algoritmlari xabar kechikishidan qat'i nazar noto'g'ri qaror qabul qilmaydi, lekin progress uchun vaqt chegaralari vaqtincha bajarilishi kerak."
+    },
+    {
+      "q": "Phi accrual detector'da φ = 3 nimani anglatadi?",
+      "options": [
+        "Tugun 3 soniyadan beri javob bermayapti",
+        "Tugunni hozir o'lik deb e'lon qilsak, xato bo'lish ehtimoli taxminan 0.1%",
+        "3 ta heartbeat yo'qolgan",
+        "Tugun 3 marta qayta ishga tushgan"
+      ],
+      "answer": 1,
+      "why": "φ = -log10(P), demak φ = 3 da P = 10^-3, ya'ni heartbeat hali kelishi ehtimoli 0.1%."
+    },
+    {
+      "q": "Load balancer health check'i 200 qaytaradi, lekin foydalanuvchilarning 30% so'rovlari shu instance'da timeout bo'lyapti. Bu qanday hodisa?",
+      "options": [
+        "Network partition",
+        "Byzantine failure",
+        "Gray failure - detector va klient ko'rinishi farq qiladi",
+        "Crash-stop"
+      ],
+      "answer": 2,
+      "why": "Gray failure differential observability: failure detector sog'lom deb ko'radi, klientlar esa nosozlikni his qiladi."
+    },
+    {
+      "q": "Tugun lease'ni tekshirdi (\"lease amal qiladi\"), keyin 20 soniyalik GC pause bo'ldi, keyin yozuv qildi. Asosiy muammo nima?",
+      "options": [
+        "GC pause faqat Java'da bo'ladi, boshqa tillarda muammo yo'q",
+        "Tekshiruv va yozuv orasida lease tugagan va boshqa tugun egalik qilgan bo'lishi mumkin - tugun o'zining eskirganini bilmaydi",
+        "Lease mexanizmi umuman ishlamaydi",
+        "Disk yozuvi sekin bo'lgan"
+      ],
+      "answer": 1,
+      "why": "Process pause tugunning o'zi haqidagi bilimini eskirtiradi. Yechim saqlash tomonida tekshiriladigan fencing token (38-dars)."
+    },
+    {
+      "q": "Data-markaz ichida network partition haqida qaysi gap real ma'lumotlarga mos?",
+      "options": [
+        "Zamonaviy data-markazlarda partition deyarli bo'lmaydi",
+        "Redundant tarmoq yo'llari barcha nosozliklarni bartaraf qiladi",
+        "Partition va link nosozliklari muntazam bo'ladi; Microsoft tadqiqotida redundancy median trafikni faqat 43% ga yaxshilagan",
+        "Partition faqat regionlararo aloqada bo'ladi"
+      ],
+      "answer": 2,
+      "why": "Gill va boshq. (SIGCOMM 2011) kuniga o'nlab link nosozligini va redundancy'ning cheklangan samarasini ko'rsatgan."
+    },
+    {
+      "q": "Byzantine nosozliklarga chidamli bo'lish uchun f ta nosoz tugunga nechta tugun kerak, crash nosozligi uchun-chi?",
+      "options": [
+        "Ikkalasiga ham f + 1",
+        "Byzantine uchun 3f + 1, crash uchun 2f + 1",
+        "Byzantine uchun 2f + 1, crash uchun 3f + 1",
+        "Ikkalasiga ham 2f"
+      ],
+      "answer": 1,
+      "why": "Yolg'on gapiradigan tugunlarni ustun qilish uchun ko'proq halol tugun kerak; crash'da esa oddiy majority yetarli."
+    },
+    {
+      "q": "500 RPS keladigan servisda downstream to'liq osilib qoldi. Timeout 2 s bo'lsa, Little qonuniga ko'ra bir vaqtda nechta so'rov ochiq turadi?",
+      "options": ["250", "500", "1 000", "2 000"],
+      "answer": 2,
+      "why": "L = λ × W = 500 × 2 = 1 000. Uzun timeout connection pool va thread'larni tez to'ldiradi."
+    }
+  ]
+}

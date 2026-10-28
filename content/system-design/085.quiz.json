@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Push worker APNs ga so'rov yubordi va 200 OK oldi. Bu nimani anglatadi?",
+      "options": [
+        "Foydalanuvchi xabarni o'qidi",
+        "Xabar qurilmaga albatta yetkazildi",
+        "APNs so'rovni qabul qildi; yetkazish best-effort, kechikishi, guruhlanishi yoki yetkazilmasligi mumkin",
+        "Xabar 30 kun saqlanadi va albatta yetkaziladi"
+      ],
+      "answer": 2,
+      "why": "APNs va FCM provayder darajasidagi qabulni bildiradi. Kritik xabar uchun ilova ichidagi ack va eskalatsiya kerak."
+    },
+    {
+      "q": "SMS agregatorga so'rov timeout bilan tugadi. Xabar 'to'qnashuv ogohlantirishi'. Eng to'g'ri yondashuv qaysi?",
+      "options": [
+        "Hech qachon qayta yubormaslik, dublikat xavfli",
+        "Agregatorga bir xil mijoz xabar ID si (idempotency kaliti) bilan qayta yuborish; agar dedup qo'llanmasa ham at-least-once ni tanlash",
+        "Darhol 5 marta parallel yuborish",
+        "Xabarni email ga o'zgartirish"
+      ],
+      "answer": 1,
+      "why": "Kritik ogohlantirishda yo'qolish dublikatdan yomonroq. Provayder dedup kaliti dublikat xavfini kamaytiradi."
+    },
+    {
+      "q": "Barcha kanallar (push, SMS, email) bitta navbat va bitta worker pool da. SMS agregator sekinlashdi. Nima bo'ladi?",
+      "options": [
+        "Faqat SMS kechikadi",
+        "Worker'lar SMS chaqiruvlarida band bo'lib, push va email ham kechikadi; kanal bo'yicha bulkhead kerak edi",
+        "Navbat avtomatik ravishda SMS ni o'tkazib yuboradi",
+        "Hech narsa, navbat buni hal qiladi"
+      ],
+      "answer": 1,
+      "why": "Umumiy resurs pool bitta sekin bog'liqlik tufayli to'ladi. Alohida navbat va worker pool izolyatsiya beradi."
+    },
+    {
+      "q": "Kirill harflarida yozilgan 120 belgilik SMS necha segmentga bo'linadi?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer": 1,
+      "why": "UCS-2 da bitta SMS 70 belgi, ko'p qismli xabarda har qism 67 belgi. 120 / 67 yuqoriga yaxlitlansa 2 segment, ikki barobar narx."
+    },
+    {
+      "q": "APNs 410 Unregistered qaytardi. Worker nima qilishi kerak?",
+      "options": [
+        "Exponential backoff bilan qayta urinish",
+        "Token ni bekor deb belgilab o'chirish va unga boshqa yubormaslik",
+        "Xabarni DLQ ga qo'yib, ertaga qayta yuborish",
+        "Payload ni kichraytirib qayta yuborish"
+      ],
+      "answer": 1,
+      "why": "410 doimiy xato: ilova o'chirilgan yoki token eskirgan. Retry ma'nosiz, tokenni tozalash kerak."
+    },
+    {
+      "q": "Navbat 3 soat to'lib qoldi va endi 'mashina hozir taqiqlangan zonaga kirdi' degan eski ogohlantirishlar ketmoqda. Qaysi mexanizm buni oldini olardi?",
+      "options": [
+        "Kattaroq navbat",
+        "Xabar turiga mos TTL (expires_at): muddati o'tgan xabar yuborilmaydi",
+        "Ko'proq SMS agregator",
+        "Ogohlantirishlarni email ga o'tkazish"
+      ],
+      "answer": 1,
+      "why": "Eskirgan real vaqt ogohlantirishi chalg'itadi. TTL va kerak bo'lsa eskirgan holatni tarixga yozish yetarli."
+    },
+    {
+      "q": "Telegram guruhiga daqiqasiga 60 ta ogohlantirish yuborish kerak bo'lib qoldi, guruh limiti taxminan 20/daqiqa. To'g'ri yechim qaysi?",
+      "options": [
+        "429 xatolarini e'tiborsiz qoldirib qayta-qayta yuborish",
+        "Guruhga daqiqalik digest yuborish, kritik hodisalarni alohida shaxsiy chatlarga yo'naltirish",
+        "Bir nechta bot yaratib limitni aylanib o'tish",
+        "Xabarlarni o'chirib qo'yish"
+      ],
+      "answer": 1,
+      "why": "Agregatsiya ham limitga mos keladi, ham ogohlantirish charchog'ini kamaytiradi. Limitni aylanib o'tish bloklanishga olib keladi."
+    },
+    {
+      "q": "Geofence servisi bazaga hodisani yozdi va shu kod ichida Kafka ga NotificationRequested yubordi. Tranzaksiya keyin rollback bo'ldi. Muammo va yechim?",
+      "options": [
+        "Muammo yo'q",
+        "Mavjud bo'lmagan hodisa haqida xabar ketdi; transactional outbox bilan hodisa tranzaksiya ichida yoziladi va commitdan keyin relay chiqaradi",
+        "Kafka avtomatik rollback qiladi",
+        "Faqat Kafka acks=all qo'yish kerak"
+      ],
+      "answer": 1,
+      "why": "Baza va broker orasida dual write muammosi. Outbox ikkalasini bitta tranzaksiyaga bog'laydi."
+    },
+    {
+      "q": "300 000 hodisa/kun, har biri 3 kishiga. Past prioritetlarning 80% i digest ga tushadi va jami taxminan 250 000 xabar qoladi. Agar hammasi SMS bilan ketsa, oyiga nechta SMS?",
+      "options": [
+        "Taxminan 250 000",
+        "Taxminan 7.5 million",
+        "Taxminan 900 000",
+        "Taxminan 75 million"
+      ],
+      "answer": 1,
+      "why": "250 000 x 30 = 7.5 million. Shuning uchun SMS faqat kritik va eskalatsiya uchun ishlatiladi."
+    },
+    {
+      "q": "Kritik SOS ogohlantirishi uchun 3 daqiqada tasdiq talab qilinadi. Qaysi dizayn mos?",
+      "options": [
+        "Faqat push yuborish",
+        "Bir vaqtda barcha kanallarga 10 martadan yuborish",
+        "Push va in-app, ack bo'lmasa taymer bo'yicha Telegram, keyin SMS va qo'ng'iroqqa eskalatsiya; ack kelsa zanjir to'xtaydi",
+        "Kunlik email digest"
+      ],
+      "answer": 2,
+      "why": "Eskalatsiya zanjiri kafolatsiz kanallarni ack va taymerlar bilan ishonchli jarayonga aylantiradi, shu bilan birga keraksiz SMS narxini kamaytiradi."
+    }
+  ]
+}

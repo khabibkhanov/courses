@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "PostgreSQL asinxron replication bilan ishlaydi. Leader commit ni tasdiqladi va 50 ms dan keyin disk bilan birga yo'qoldi. Follower ko'tarildi. Nima bo'lishi mumkin?",
+      "options": [
+        "Hech narsa yo'qolmaydi, chunki commit tasdiqlangan",
+        "Follower avtomatik ravishda yo'qolgan yozuvlarni leader dan so'raydi",
+        "Follower ga yetib bormagan tasdiqlangan tranzaksiyalar yo'qoladi",
+        "Barcha ma'lumot yo'qoladi"
+      ],
+      "answer": 2,
+      "why": "Asinxron rejimda leader follower ni kutmasdan javob beradi. Leader yo'qolsa, uning oxirgi yozuvlari follower da bo'lmasligi mumkin."
+    },
+    {
+      "q": "synchronous_standby_names = 'FIRST 1 (s1)' va s1 o'chdi. Boshqa nomzod yo'q. Yozuvlar bilan nima bo'ladi?",
+      "options": [
+        "Avtomatik asinxron rejimga o'tadi",
+        "Commit lar sinxron standby tasdig'ini kutib, cheksiz osilib qoladi",
+        "Leader o'zini o'chiradi",
+        "Yozuvlar s1 qaytganda qayta yuboriladi"
+      ],
+      "answer": 1,
+      "why": "PostgreSQL hujjati: talab qilingan sinxron standby mavjud bo'lmasa, commit lar kutadi. Shuning uchun zaxira nomzod yoki ANY bilan quorum kerak."
+    },
+    {
+      "q": "Foydalanuvchi geofence ni saqladi, sahifa qayta yuklandi va geofence ko'rinmadi, keyingi yangilashda paydo bo'ldi. Qaysi anomaliya va eng oddiy yechim?",
+      "options": [
+        "Read-your-writes buzilishi, foydalanuvchi o'zi o'zgartirgan ma'lumotni yozuvdan keyin qisqa vaqt leader dan o'qish",
+        "Write skew, Serializable izolyatsiya",
+        "Lost update, SELECT FOR UPDATE",
+        "Split brain, fencing token"
+      ],
+      "answer": 0,
+      "why": "Yozuv leader ga ketdi, o'qish orqada qolgan replikadan. O'z yozuvidan keyin leader dan yoki LSN ga yetgan replikadan o'qish yetarli."
+    },
+    {
+      "q": "Leader va sinxron standby turli AZ da, RTT 2 ms, standby fsync 1 ms. Bitta ulanishdan ketma-ket commit lar soniyasiga taxminan nechta bo'lishi mumkin (faqat replication qo'shimchasini hisobga olsak)?",
+      "options": [
+        "Taxminan 33",
+        "Taxminan 3 333",
+        "Cheklov yo'q",
+        "Taxminan 333"
+      ],
+      "answer": 3,
+      "why": "Har bir commit ga taxminan 3 ms qo'shiladi: 1 / 0.003 = taxminan 333. Ko'p parallel ulanish umumiy throughput ni saqlaydi."
+    },
+    {
+      "q": "MySQL semi-sinxron replication da barcha replikalar 15 soniya javob bermadi. Nima bo'ladi?",
+      "options": [
+        "Yozuvlar to'xtaydi",
+        "Leader replikalarni qayta ishga tushiradi",
+        "Timeout dan keyin leader jim asinxron rejimga o'tadi va durability kafolati vaqtincha yo'qoladi",
+        "Tranzaksiyalar rollback qilinadi"
+      ],
+      "answer": 2,
+      "why": "Semi-sinxron mavjudlikni ustun qo'yadi: rpl_semi_sync_source_timeout dan keyin asinxronga qaytadi."
+    },
+    {
+      "q": "Hisobot replikasida 20 daqiqalik so'rov 'canceling statement due to conflict with recovery' xatosi bilan tugadi. Sabab va trade-off?",
+      "options": [
+        "Replika diski to'lgan",
+        "Leader dagi VACUUM so'rov ko'rishi kerak bo'lgan qator versiyalarini o'chirdi; hot_standby_feedback yoqish konfliktni kamaytiradi, lekin leader da bloat oshadi",
+        "Replika leader dan uzilgan",
+        "So'rov noto'g'ri yozilgan"
+      ],
+      "answer": 1,
+      "why": "max_standby_streaming_delay o'tgach replay davom etishi uchun so'rov bekor qilinadi. Alternativa - uzun delay, lekin lag oshadi."
+    },
+    {
+      "q": "GitHub 2018 hodisasida 43 soniyalik tarmoq uzilishi nega 24 soatdan ortiq degradatsiyaga aylandi?",
+      "options": [
+        "Avtomatik failover primary larni boshqa regionga ko'chirdi va ikkala tomonda boshqasida yo'q yozuvlar paydo bo'ldi, xavfsiz qaytish imkonsiz bo'ldi",
+        "Backup lar buzilgan edi",
+        "MySQL versiyasi eskirgan edi",
+        "DNS TTL juda uzun edi"
+      ],
+      "answer": 0,
+      "why": "Replikatsiya qilinmagan yozuvlar ikki regionda qolgan. Xulosa: regionlararo avtomatik failover ni cheklash."
+    },
+    {
+      "q": "Foydalanuvchi sahifani ikki marta yangiladi: birinchisida yangi alert ko'rindi, ikkinchisida yo'q. Qaysi kafolat buzilgan va yechim?",
+      "options": [
+        "Read-your-writes, leader dan o'qish",
+        "Consistent prefix, bitta partition",
+        "Linearizability, consensus",
+        "Monotonic reads, foydalanuvchining o'qishlarini doim bitta replikaga yo'naltirish"
+      ],
+      "answer": 3,
+      "why": "Ikki so'rov lag i turlicha bo'lgan replikalarga tushgan. Bitta replikaga bog'lash vaqt orqaga ketishini oldini oladi."
+    },
+    {
+      "q": "DR replikasi boshqa regionda 6 soat uzilib qoldi, physical replication slot ishlatiladi. Leader da qanday xavf bor?",
+      "options": [
+        "Hech qanday, slot avtomatik o'chiriladi",
+        "Leader replikaga qayta ulanishni to'xtatadi",
+        "Slot follower olmagan WAL ni saqlab turadi, pg_wal hajmi o'sib leader diski to'lishi mumkin",
+        "Leader asinxron rejimga o'tadi"
+      ],
+      "answer": 2,
+      "why": "Replication slot WAL o'chirilishini to'xtatadi. max_slot_wal_keep_size va disk monitoringi kerak."
+    },
+    {
+      "q": "Qaysi tasdiq to'g'ri?",
+      "options": [
+        "Replika backup o'rnini bosadi",
+        "Noto'g'ri DELETE replikalarga ham darhol ketadi, shuning uchun point-in-time recovery li backup alohida kerak",
+        "Sinxron replika DELETE ni rad etadi",
+        "Logical replication DELETE ni ko'chirmaydi"
+      ],
+      "answer": 1,
+      "why": "Replication o'zgarishlarni ko'chiradi, xatolarni ham. Backup va PITR o'tmishdagi holatga qaytish imkonini beradi."
+    }
+  ]
+}

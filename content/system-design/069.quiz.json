@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Baza har kuni soat 02:00 da to'liq snapshot qilinadi, boshqa hech narsa yo'q. Soat 23:00 da baza diski yo'qoldi. Ma'lumot yo'qotish oynasi qancha?",
+      "options": ["0", "1 soat", "21 soat", "24 soat"],
+      "answer": 2,
+      "why": "Oxirgi tiklash nuqtasi 02:00. 02:00 dan 23:00 gacha 21 soatlik ma'lumot yo'qoladi. Shu strategiyada eng yomon RPO 24 soat."
+    },
+    {
+      "q": "Noto'g'ri migratsiya `vehicles` jadvalidagi barcha qatorlarni o'chirdi. Sinxron replika bor. Nima yordam beradi?",
+      "options": [
+        "Sinxron replikaga failover",
+        "PITR: base backup + WAL ni migratsiyadan oldingi vaqtgacha tiklash",
+        "Replikani restart qilish",
+        "Hech narsa, ma'lumot yo'qoldi"
+      ],
+      "answer": 1,
+      "why": "Replikatsiya o'chirishni darhol barcha nusxaga ko'chiradi. Ma'lumot buzilishidan faqat vaqt nuqtasiga qaytish imkonini beradigan backup himoya qiladi."
+    },
+    {
+      "q": "Qaysi DR strategiyasi 'ma'lumot replikatsiyasi va baza doim ishlaydi, ilova serverlari esa o'chiq va falokatda yoqiladi' deb ta'riflanadi?",
+      "options": ["Backup and restore", "Pilot light", "Warm standby", "Multi-site active/active"],
+      "answer": 1,
+      "why": "Pilot light: asosiy ma'lumot qatlami doim ishlaydi, hisoblash qismi falokatda yoqilib kengaytiriladi."
+    },
+    {
+      "q": "AWS whitepaper iga ko'ra failover da nima uchun faqat data plane operatsiyalariga tayanish tavsiya qilinadi?",
+      "options": [
+        "Ular arzonroq",
+        "Data plane odatda yuqoriroq availability maqsadiga ega; control plane (yangi instance, Auto Scaling, restore) falokat paytida mavjud bo'lmasligi mumkin",
+        "Control plane faqat bitta regionda ishlaydi",
+        "Data plane tezroq hisoblaydi"
+      ],
+      "answer": 1,
+      "why": "Static stability: failover uchun kerakli capacity va mexanizm oldindan tayyor bo'lsa, falokatda yangi control plane harakati kerak bo'lmaydi."
+    },
+    {
+      "q": "2 TB backup boshqa regionda, yuklab olish 500 MB/s, keyin 200 GB WAL ni 100 MB/s da replay. Texnik restore vaqti taxminan qancha?",
+      "options": ["10 daqiqa", "Taxminan 1 soat 40 daqiqa", "Taxminan 6 soat", "Taxminan 20 soat"],
+      "answer": 1,
+      "why": "2 000 000 MB / 500 = 4 000 s ≈ 67 daqiqa; 200 000 MB / 100 = 2 000 s ≈ 33 daqiqa. Jami taxminan 100 daqiqa, aniqlash va qaror vaqtisiz."
+    },
+    {
+      "q": "GitLab 2017 hodisasida kunlik pg_dump backup'lari nima uchun yordam bermadi?",
+      "options": [
+        "Ular shifrlangan edi",
+        "pg_dump versiyasi baza versiyasiga mos emas edi va jim muvaffaqiyatsiz bo'lgan, xato email'lari esa yetib bormagan",
+        "Backup'lar juda katta edi",
+        "S3 ishlamay qolgan"
+      ],
+      "answer": 1,
+      "why": "pg_dump 9.2 PostgreSQL 9.6 ga qarshi ishlagan; xato xabarlari rad etilgan; bucket bo'sh bo'lgan. Sinalmagan backup - backup emas."
+    },
+    {
+      "q": "Hujumchi production admin credential'larini oldi. Qaysi backup dizayni omon qolish ehtimoli eng yuqori?",
+      "options": [
+        "Xuddi shu akkauntdagi bucket da kunlik snapshot'lar",
+        "Alohida akkauntdagi, compliance rejimidagi Object Lock bilan himoyalangan bucket, production credential'larida o'chirish huquqi yo'q",
+        "Production bazasining sinxron replikasi",
+        "Admin noutbukidagi nusxa"
+      ],
+      "answer": 1,
+      "why": "Compliance rejimida muddat tugaguncha hech kim, hatto root ham, versiyani o'chira olmaydi; alohida akkaunt va credential izolyatsiyani kuchaytiradi."
+    },
+    {
+      "q": "Asosiy region tarmoq bo'yicha ajraldi, lekin ishlayapti. Zaxira regionni primary qildingiz. Eng katta xavf nima va unga qarshi nima qilinadi?",
+      "options": [
+        "Xavf yo'q",
+        "Split-brain: ikki primary turli yozuvlarni qabul qiladi; eski primary ni fencing qilish (yozishni bloklash, credential bekor qilish)",
+        "DNS cache",
+        "Backup hajmi oshadi"
+      ],
+      "answer": 1,
+      "why": "Ikki tarix bir-biriga zid bo'ladi va keyin birlashtirish qiyin yoki imkonsiz. Fencing eski primary yozuvlarini to'xtatadi."
+    },
+    {
+      "q": "Bug 3 hafta davomida sezilmasdan ma'lumotni buzgan. Backup'lar 7 kun saqlanadi. Muammo nima?",
+      "options": [
+        "Muammo yo'q, oxirgi backup dan tiklash mumkin",
+        "Barcha mavjud backup'lar allaqachon buzilgan ma'lumotni o'z ichiga oladi; saqlash muddati buzilishni aniqlash vaqtidan uzun bo'lishi va validatorlar kerak",
+        "Backup chastotasi juda past",
+        "Faqat replika kerak"
+      ],
+      "answer": 1,
+      "why": "SRE kitobi tezlik omilini ajratadi: sekin buzilishga qarshi uzoq saqlash va erta aniqlash (validatorlar) kerak."
+    },
+    {
+      "q": "GPS trekerlar aloqa yo'qligida 48 soatlik nuqtalarni buferlaydi va serverga DNS nom orqali ulanadi. Data-markaz yo'qolib, 3 soatda zaxira sayt ishga tushdi. Telemetriya uchun amaldagi RPO taxminan qancha?",
+      "options": [
+        "3 soat",
+        "Server backup chastotasiga teng",
+        "Yangi qabul qilinadigan nuqtalar uchun deyarli 0, chunki trekerlar buferlangan nuqtalarni yangi saytga yuboradi (server tomonda qabul qilingan, lekin replikatsiya qilinmagan nuqtalar bundan mustasno)",
+        "48 soat"
+      ],
+      "answer": 2,
+      "why": "Eng chetdagi bufer zaxira vazifasini bajaradi; ulanish nom orqali bo'lgani uchun trekerlar yangi saytga yetadi. Allaqachon ACK berilgan, lekin replikatsiya qilinmagan nuqtalar esa server RPO siga bog'liq."
+    }
+  ]
+}

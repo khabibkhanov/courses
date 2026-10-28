@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "MapReduce'da worker mashina o'ldi. Uning qaysi task'lari qayta bajariladi?",
+      "options": [
+        "Faqat bajarilayotgan task'lar",
+        "Bajarilayotgan va tugallangan map task'lari (chiqishi lokal diskda edi), lekin tugallangan reduce task'lari emas (chiqishi global fayl tizimida)",
+        "Hamma task'lar, shu jumladan boshqa mashinalardagilar",
+        "Hech biri, ish to'xtatiladi"
+      ],
+      "answer": 1,
+      "why": "Map chiqishi o'lgan mashinaning lokal diskida yo'qoladi, reduce chiqishi esa replikatsiyalangan GFS'da saqlanib qoladi."
+    },
+    {
+      "q": "MapReduce maqolasidagi sort sinovida backup tasks o'chirilganda ish vaqti 891 s dan 1 283 s ga oshgan. Bu nimani ko'rsatadi?",
+      "options": [
+        "Backup tasks resursni ikki baravar ko'paytiradi",
+        "Bir nechta sekin task (straggler) butun ishni cho'zadi; ularning zaxira nusxasini ishga tushirish vaqtni sezilarli qisqartiradi",
+        "Disk tezligi muhim emas",
+        "Reduce task'lar soni kam bo'lgan"
+      ],
+      "answer": 1,
+      "why": "Ish eng sekin task'ni kutadi. Zaxira nusxalar resursni bir necha foizgagina oshiradi, lekin dumni kesadi (44% farq)."
+    },
+    {
+      "q": "O'rtacha tezlikni hisoblash uchun combiner sifatida reduce funksiyasini (o'rtacha qiymat) to'g'ridan-to'g'ri ishlatish mumkinmi?",
+      "options": [
+        "Ha, o'rtacha har doim assotsiativ",
+        "Yo'q: o'rtachalarning o'rtachasi umumiy o'rtacha emas; combiner (yig'indi, son) juftini chiqarishi kerak",
+        "Ha, lekin faqat Spark'da",
+        "Combiner faqat sort uchun ishlatiladi"
+      ],
+      "answer": 1,
+      "why": "Combiner uchun operatsiya assotsiativ va kommutativ bo'lishi kerak. Yig'indi va son shunday, ularni oxirida bo'lish orqali o'rtacha olinadi."
+    },
+    {
+      "q": "Spark'da filter -> map -> reduceByKey -> map zanjiri. Nechta stage hosil bo'ladi va nega?",
+      "options": [
+        "4 ta, har operatorga bitta",
+        "2 ta: reduceByKey wide dependency (shuffle) - stage chegarasi; filter va map narrow, pipeline qilinadi",
+        "1 ta, Spark hammasini birlashtiradi",
+        "3 ta"
+      ],
+      "answer": 1,
+      "why": "Stage chegaralari shuffle'larda. Narrow amallar bitta stage ichida diskka yozmasdan ketma-ket bajariladi."
+    },
+    {
+      "q": "Spark executor o'ldi va keshlangan RDD partition'i yo'qoldi. Spark uni qanday tiklaydi?",
+      "options": [
+        "Replikadan o'qiydi, har RDD 3 nusxada saqlanadi",
+        "Lineage bo'yicha ota-ona partition'lardan qayta hisoblaydi",
+        "Butun ishni boshidan qayta ishga tushiradi",
+        "Tiklab bo'lmaydi, ma'lumot yo'qoladi"
+      ],
+      "answer": 1,
+      "why": "RDD qanday yaratilganini eslab qoladi. Coarse-grained transformatsiyalar tufayli faqat yo'qolgan partition'ni qayta hisoblash yetarli."
+    },
+    {
+      "q": "26 milliard GPS nuqta bo'yicha har qurilma-kun probegini hisoblash kerak. groupByKey va reduceByKey farqi nimada?",
+      "options": [
+        "Farqi yo'q",
+        "reduceByKey map tomonida oldindan yig'adi va shuffle hajmini tartiblar bilan kamaytiradi; groupByKey barcha qiymatlarni tarmoq orqali yuboradi",
+        "groupByKey tezroq, chunki sodda",
+        "reduceByKey faqat sonlar uchun ishlaydi"
+      ],
+      "answer": 1,
+      "why": "Spark hujjatlari agregatsiya uchun reduceByKey yoki aggregateByKey'ni tavsiya qiladi - bu MapReduce combiner'ining analogi."
+    },
+    {
+      "q": "Milliardlab nuqtadan iborat jadval 20 MB lik mashinalar ma'lumotnomasi bilan join qilinadi. Eng samarali strategiya?",
+      "options": [
+        "Sort-merge join, ikkala jadvalni shuffle qilib",
+        "Broadcast hash join: kichik jadval har worker'ga yuboriladi, katta jadval shuffle'siz joyida join qilinadi",
+        "Nested loop join",
+        "Ikkala jadvalni bitta mashinaga yig'ish"
+      ],
+      "answer": 1,
+      "why": "Kichik jadvalni tarqatish katta jadvalni shuffle qilishdan ancha arzon. Spark 10 MB dan kichik jadvallarni default holatda avtomatik broadcast qiladi; 20 MB uchun chegarani oshirish yoki hint kerak."
+    },
+    {
+      "q": "Spark ishida 199 ta task 2 daqiqada tugaydi, bittasi 3 soat ishlaydi. Partition kaliti tenant_id, bitta mijozda 20 000 mashina. Sabab va yechim?",
+      "options": [
+        "Sekin mashina; backup task yetarli",
+        "Data skew: bitta kalitga juda ko'p yozuv; yechim - kalitni o'zgartirish (device_id) yoki salting, AQE skew join",
+        "Xotira yetmaydi; executor xotirasini oshirish",
+        "Tarmoq sekin"
+      ],
+      "answer": 1,
+      "why": "Sekinlik ma'lumot taqsimotida, mashinada emas, shuning uchun backup task yordam bermaydi. Kalitni bo'laklash kerak."
+    },
+    {
+      "q": "Batch ishi hisoblangan kunlik agregatlarni PostgreSQL OLTP bazaga har task'dan qator-qator INSERT qiladi. Asosiy muammolar?",
+      "options": [
+        "Muammo yo'q",
+        "Minglab parallel yozuv online foydalanuvchilarga ta'sir qiladi, task qayta bajarilsa dublikat yoki qisman natija qoladi",
+        "PostgreSQL INSERT'ni qo'llab-quvvatlamaydi",
+        "Faqat disk joyi muammosi"
+      ],
+      "answer": 1,
+      "why": "To'g'ri yo'l - natijani alohida jadval yoki fayllarga yaratish (COPY, bulk) va atomik almashtirish; bu idempotentlik va rollback beradi."
+    },
+    {
+      "q": "Masala sharti: oylik hisobot uchun 400 GB siqilgan Parquet, har yadro 150 MB/s o'qiydi, klasterda 64 yadro, storage cheklov emas. Faqat skanerlash taxminan qancha vaqt oladi?",
+      "options": ["~4 soniya", "~45 soniya", "~45 daqiqa", "~7.5 soat"],
+      "answer": 1,
+      "why": "400 000 MB / 150 MB/s ≈ 2 670 yadro-soniya; 2 670 / 64 ≈ 42 soniya."
+    }
+  ]
+}

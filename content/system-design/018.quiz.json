@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "PostgreSQL Read Committed'da ikki parallel tranzaksiya `UPDATE vehicles SET odometer = odometer + 50 WHERE id = 1` va `... + 30` ni bajaradi. Natija?",
+      "options": [
+        "Faqat bittasining qiymati qoladi (lost update)",
+        "Ikkinchisi doim 40001 xatosini oladi",
+        "Ikkinchi UPDATE birinchisi commit bo'lishini kutadi va eng yangi versiya ustida ishlaydi - jami +80",
+        "Deadlock bo'ladi"
+      ],
+      "answer": 2,
+      "why": "UPDATE qatorning eng yangi commit qilingan versiyasi ustida WHERE va ifodani qayta baholaydi, shuning uchun atomik inkrement Read Committed'da xavfsiz."
+    },
+    {
+      "q": "Kod: avval SELECT bilan odometrni o'qiydi, ilovada qo'shadi, keyin UPDATE SET odometer = $yangi. Read Committed'da parallel chaqiruvlarda nima bo'ladi?",
+      "options": [
+        "Lost update: ikkala tranzaksiya bir xil eski qiymatni o'qiydi va biri ikkinchisining natijasini yozib yuboradi",
+        "Hammasi to'g'ri ishlaydi",
+        "Write skew",
+        "Dirty read"
+      ],
+      "answer": 0,
+      "why": "Read-modify-write ilovada bajarilganda baza qiymat qayerdan kelganini bilmaydi; atomik UPDATE, FOR UPDATE yoki CAS kerak."
+    },
+    {
+      "q": "Shifoxona misoli: ikki shifokor bir vaqtda navbatdan chiqadi, har biri o'z qatorini yangilaydi. PostgreSQL Repeatable Read'da natija?",
+      "options": [
+        "Ikkinchisi 40001 oladi, chunki bir xil qator yangilangan",
+        "Ikkalasi ham commit bo'ladi - write skew, navbatchi qolmaydi",
+        "Ikkinchisi birinchisini kutadi va to'g'ri hisoblaydi",
+        "Dirty write sababli ikkalasi ham bekor qilinadi"
+      ],
+      "answer": 1,
+      "why": "Turli qatorlarga yozilgani uchun yozish konflikti yo'q; snapshot isolation write skew'ni aniqlamaydi. Serializable yoki qulf kerak."
+    },
+    {
+      "q": "Bron tizimi: 'bu vaqt oralig'ida bron yo'qmi?' tekshirib, keyin INSERT qiladi. Nega SELECT ... FOR UPDATE bu yerda yordam bermaydi?",
+      "options": [
+        "FOR UPDATE faqat Serializable'da ishlaydi",
+        "FOR UPDATE INSERT'ni bloklaydi",
+        "FOR UPDATE faqat indeksli ustunlarda ishlaydi",
+        "Tekshirilayotgan narsa qatorlarning yo'qligi; qulflanadigan qator mavjud emas (phantom)"
+      ],
+      "answer": 3,
+      "why": "Phantom: yozish boshqa tranzaksiyaning qidiruv natijasini o'zgartiradi. Exclusion constraint, ota qatorni qulflash yoki Serializable kerak."
+    },
+    {
+      "q": "Mashinani bron qilishda ustma-ust tushishning eng ishonchli oldini olish usuli PostgreSQL'da qaysi?",
+      "options": [
+        "Ilovada tekshirish va retry",
+        "EXCLUDE USING gist (vehicle_id WITH =, tstzrange(starts_at, ends_at) WITH &&)",
+        "Repeatable Read izolyatsiyasi",
+        "UNIQUE (vehicle_id, starts_at)"
+      ],
+      "answer": 1,
+      "why": "Exclusion constraint oraliqlar kesishishini izolyatsiya darajasidan qat'i nazar atomik tekshiradi; UNIQUE faqat aynan bir xil boshlanish vaqtini ushlaydi."
+    },
+    {
+      "q": "PostgreSQL Repeatable Read'da 'phantom read yo'q'. Bu nimani anglatadi?",
+      "options": [
+        "Phantom tufayli write skew ham bo'lmaydi",
+        "INSERT'lar bloklanadi",
+        "Tranzaksiya ichida bir xil so'rovni qayta bajarsangiz, boshqa tranzaksiya qo'shgan yangi qatorlarni ko'rmaysiz; lekin phantom asosidagi write skew baribir mumkin",
+        "Faqat bitta tranzaksiya yoza oladi"
+      ],
+      "answer": 2,
+      "why": "Snapshot izchil ko'rinish beradi, lekin boshqa tranzaksiyaning parallel INSERT'ini ko'rmasdan qaror qabul qilish xavfi qoladi."
+    },
+    {
+      "q": "Haydovchining kunlik qolgan limiti driver_daily_limits.remaining_l da. Ikki karta bir vaqtda 60 litr so'raydi, qoldiq 100. Read Committed'da qaysi SQL to'g'ri himoya qiladi?",
+      "options": [
+        "SELECT remaining_l; agar >= 60 bo'lsa UPDATE SET remaining_l = $hisoblangan",
+        "INSERT INTO fuel_transactions va keyin SUM bilan tekshirish",
+        "Har bir so'rovni alohida autocommit bilan yuborish",
+        "UPDATE ... SET remaining_l = remaining_l - 60 WHERE driver_id = $1 AND day = $2 AND remaining_l >= 60 va yangilangan qatorlar sonini tekshirish"
+      ],
+      "answer": 3,
+      "why": "Ikkinchi UPDATE birinchisini kutadi, yangi qiymat (40) ustida WHERE ni qayta baholaydi va 0 qator yangilaydi - limit buzilmaydi."
+    },
+    {
+      "q": "Tranzaksiya A 1-qatorni, keyin 2-qatorni qulflaydi; tranzaksiya B 2-qatorni, keyin 1-qatorni. PostgreSQL nima qiladi va qanday oldini olish mumkin?",
+      "options": [
+        "Taxminan deadlock_timeout (standart 1 s) dan keyin deadlock aniqlanadi, biri 40P01 bilan bekor qilinadi; qulflarni doim bir xil tartibda (masalan, ID o'sishi bo'yicha) olish kerak",
+        "Ikkalasi abadiy kutadi; timeout qo'yish kerak",
+        "PostgreSQL ikkala tranzaksiyani ham commit qiladi",
+        "Ikkinchi tranzaksiya avtomatik Serializable'ga o'tadi"
+      ],
+      "answer": 0,
+      "why": "Deadlock detektori siklni topib bittasini bekor qiladi; barqaror qulf tartibi siklning paydo bo'lishiga yo'l qo'ymaydi."
+    },
+    {
+      "q": "Serializable (SSI) yoqildi. Ilova tomonidan majburiy nima qilinishi kerak?",
+      "options": [
+        "Hech narsa, baza hammasini o'zi hal qiladi",
+        "40001 xatosini ushlab, butun tranzaksiyani boshidan qayta bajarish",
+        "Barcha SELECT'larga FOR UPDATE qo'shish",
+        "Read replikalarda ham Serializable kafolatiga tayanish"
+      ],
+      "answer": 1,
+      "why": "SSI xavfli bog'liqlikda tranzaksiyani bekor qiladi; qayta urinishsiz bu foydalanuvchiga xato bo'lib qaytadi. Hujjatlarga ko'ra himoya replikalarga tarqalmaydi."
+    },
+    {
+      "q": "Bir nechta worker jobs jadvalidan vazifa oladi. Bir-birini kutmasligi uchun qaysi so'rov mos?",
+      "options": [
+        "SELECT ... ORDER BY id LIMIT 10",
+        "SELECT ... ORDER BY id LIMIT 10 FOR UPDATE",
+        "SELECT ... ORDER BY id LIMIT 10 FOR UPDATE SKIP LOCKED",
+        "LOCK TABLE jobs"
+      ],
+      "answer": 2,
+      "why": "SKIP LOCKED boshqa worker qulflagan qatorlarni o'tkazib yuboradi; hujjatlarga ko'ra umumiy ish uchun emas, aynan navbat jadvallari uchun."
+    }
+  ]
+}

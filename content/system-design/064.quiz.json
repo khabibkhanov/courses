@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Cache hit rate 95%, frontend 20 000 so'rov/s yuboradi. Cache to'liq o'chsa bazaga tushadigan yuklama necha baravar oshadi?",
+      "options": ["1.05 baravar", "5 baravar", "20 baravar", "95 baravar"],
+      "answer": 2,
+      "why": "Normal holatda baza 5% = 1 000 so'rov/s oladi, cache siz 20 000. 20 000 / 1 000 = 20 baravar."
+    },
+    {
+      "q": "Servis 10 000 QPS da sog'lom, 11 000 QPS da yiqildi. Yuklama 9 000 QPS ga tushdi, lekin servis tiklanmadi. Bunga nima sabab?",
+      "options": [
+        "Monitoring xatosi",
+        "Gisterezis: crash bo'lgan serverlar qaytganda kam sonli sog'lom serverlar butun yuklamani olib yana yiqiladi",
+        "9 000 QPS hali ham capacity dan ko'p",
+        "Retry'lar faqat 11 000 QPS da ishlaydi"
+      ],
+      "answer": 1,
+      "why": "Yiqitgan yuklama va tiklash uchun kerakli yuklama bir xil emas. Barqarorlashish uchun yuklamani ancha pastga tushirish kerak bo'lishi mumkin."
+    },
+    {
+      "q": "Metastable failure maqolasiga ko'ra uzilishning asosiy sababi sifatida nima tuzatilishi kerak?",
+      "options": [
+        "Trigger (masalan, deploy)",
+        "Sustaining effect, ya'ni tizimni yomon holatda ushlab turuvchi teskari aloqa",
+        "Monitoring tizimi",
+        "Eng sekin server"
+      ],
+      "answer": 1,
+      "why": "Bir xil teskari aloqaga ko'p xil trigger olib kelishi mumkin. Teskari aloqani buzish kelajakdagi barcha trigger'lardan himoya qiladi."
+    },
+    {
+      "q": "Kubernetes liveness probe har safar PostgreSQL ga SELECT 1 yuboradi. Baza 2 daqiqaga o'chsa nima bo'ladi?",
+      "options": [
+        "Hech narsa, probe faqat ma'lumot uchun",
+        "Barcha pod'lar restart bo'ladi, baza qaytganda ular cold start da bo'ladi va bu tiklanishni sekinlashtiradi",
+        "Faqat trafik to'xtaydi, restart yo'q",
+        "Kubernetes avtomatik yangi baza yaratadi"
+      ],
+      "answer": 1,
+      "why": "Liveness muvaffaqiyatsizligi restart ga olib keladi. Downstream tekshiruvi readiness da (yoki umuman yo'q) bo'lishi kerak."
+    },
+    {
+      "q": "Graceful degradation va AWS tanqid qilgan fallback ning asosiy farqi nima?",
+      "options": [
+        "Farq yo'q",
+        "Degradation kamroq ish qiladi va yuklamani kamaytiradi; xavfli fallback bir xil natijani boshqa, kamdan-kam ishlaydigan yo'l bilan oladi va yuklamani oshirishi mumkin",
+        "Fallback har doim tezroq",
+        "Degradation faqat frontend da ishlaydi"
+      ],
+      "answer": 1,
+      "why": "Masalan, tavsiyalar blokini yashirish - degradation; cache o'chganda bazaga to'g'ridan-to'g'ri borish - xavfli fallback."
+    },
+    {
+      "q": "Cascade paytida Google SRE tavsiyasiga ko'ra trafikni keskin tashlagandan keyin qanday qilish kerak?",
+      "options": [
+        "Barcha trafikni darhol qaytarish",
+        "Avval asl sababni tuzatib, keyin trafikni bosqichma-bosqich oshirish",
+        "Trafikni hech qachon qaytarmaslik",
+        "Faqat serverlarni restart qilish"
+      ],
+      "answer": 1,
+      "why": "Sababsiz va birdan qaytarilgan trafik cascade ni qaytaradi. Facebook 2021 da ham tiklash bosqichma-bosqich qilingan."
+    },
+    {
+      "q": "AWS 2021 yil 7 dekabr hodisasida tirbandlikni nima ushlab turgan?",
+      "options": [
+        "Disk nosozligi",
+        "Client'larning retry qilishi va to'g'ri backoff qilmasligi",
+        "DDoS hujumi",
+        "Noto'g'ri DNS yozuvi"
+      ],
+      "answer": 1,
+      "why": "Trigger - avtomatik capacity kengaytirish; sustaining effect - xato va kechikishga javoban retry. AWS backoff dagi yashirin muammoni tuzatishni e'lon qilgan."
+    },
+    {
+      "q": "Mahsulot sahifasidagi tavsiyalar servisi ishlamay qoldi. Qaysi yondashuv uni soft dependency ga aylantiradi?",
+      "options": [
+        "Tavsiyalar servisi tiklanguncha sahifani 503 bilan qaytarish",
+        "Qisqa timeout, xato bo'lsa blokni yashirish yoki cache dagi eski tavsiyalarni ko'rsatish",
+        "Tavsiyalar chaqiruviga 10 ta retry qo'shish",
+        "Timeout ni 60 s ga oshirish"
+      ],
+      "answer": 1,
+      "why": "Soft dependency usiz ham javob foydali bo'ladi. Timeout va degradation uni serial availability formulasidan chiqaradi."
+    },
+    {
+      "q": "Fleet tizimida Kafka consumer lag 8 daqiqaga yetdi. Alert servisi minglab 'mashina signal bermayapti' ogohlantirishlarini yuborishni boshladi. Bu nima?",
+      "options": [
+        "To'g'ri ishlayotgan monitoring",
+        "Tizim o'z ichki kechikishini tashqi nosozlik deb talqin qilishi, qo'shimcha yuklama yaratadigan teskari aloqa",
+        "Trekerlardagi haqiqiy nosozlik",
+        "Kafka bug i"
+      ],
+      "answer": 1,
+      "why": "Lag paytida bunday ogohlantirishlar o'chirilishi kerak: ular soxta va SMS provayder hamda dispetcherlarga keraksiz yuklama qo'shadi."
+    },
+    {
+      "q": "Load balancer barcha backend'larni bir vaqtda nosog'lom deb topdi. Fail-open xatti-harakat nima qiladi va nima uchun?",
+      "options": [
+        "Trafikni to'liq to'xtatadi, chunki xavfsizroq",
+        "Trafikni baribir barcha backend'larga yuboradi, chunki hammasi birdan o'lganidan ko'ra health check ning o'zi xato ishlayotgani ehtimolroq",
+        "Trafikni boshqa regionga yo'naltiradi",
+        "Backend'larni restart qiladi"
+      ],
+      "answer": 1,
+      "why": "Fail-open noto'g'ri health check tufayli to'liq uzilishning oldini oladi."
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Hujumchi 1 Gbit/s chiquvchi kanalga ega va DNS reflektorlardan foydalanadi (amplification ~50x). Qurbonga taxminan qancha trafik yetadi va asosiy shart nima?",
+      "options": [
+        "1 Gbit/s - amplification faqat TCP da ishlaydi",
+        "~50 Mbit/s",
+        "~50 Gbit/s - hujumchi so'rovda manba IP sifatida qurbon IP sini soxtalashtira olishi (spoofing) kerak",
+        "Hech narsa - DNS javoblari kichik"
+      ],
+      "answer": 2,
+      "why": "1 x 50 = 50 Gbit/s. Reflection IP spoofing ga tayanadi; BCP 38 provayderlarda soxta manba IP larni filtrlashni tavsiya qiladi."
+    },
+    {
+      "q": "SYN cookies SYN flood ga qarshi qanday ishlaydi?",
+      "options": [
+        "Server yarim ochiq ulanish uchun holat saqlamaydi, kerakli ma'lumotni SYN-ACK sequence raqamiga kriptografik kodlaydi va faqat to'g'ri ACK kelganda holatni tiklaydi",
+        "Barcha SYN paketlarni bloklaydi",
+        "Klientdan CAPTCHA so'raydi",
+        "SYN navbatini cheksiz kattalashtiradi"
+      ],
+      "answer": 0,
+      "why": "RFC 4987: soxta SYN lar hech qanday resurs sarflamaydi, chunki ular hech qachon to'g'ri ACK qaytarmaydi."
+    },
+    {
+      "q": "HTTP/2 Rapid Reset hujumida eng samarali himoya qaysi?",
+      "options": [
+        "Har bir bekor qilingan so'rovni alohida bloklash",
+        "HTTP/1.1 ni o'chirish",
+        "Bir vaqtdagi stream limitini oshirish",
+        "Suiiste'mol aniqlangan butun TCP ulanishni yopish va ulanish statistikasini (bekor qilingan streamlar ulushi) kuzatish"
+      ],
+      "answer": 3,
+      "why": "Hujumchi streamlarni darhol bekor qilib limitga yetmaydi; alohida so'rovlarni bloklash samarasiz, ulanish darajasida harakat kerak."
+    },
+    {
+      "q": "Sayt CDN/WAF ortida, lekin hujumchi origin serverning haqiqiy IP sini topdi. Qaysi chora eng muhim?",
+      "options": [
+        "WAF qoidalarini kuchaytirish",
+        "Origin ni faqat edge provayder IP diapazonlaridan (yoki mTLS bilan) trafik qabul qiladigan qilish va sizgan IP ni almashtirish",
+        "DNS TTL ni kamaytirish",
+        "Ko'proq server qo'shish"
+      ],
+      "answer": 1,
+      "why": "Origin to'g'ridan-to'g'ri ochiq bo'lsa, edge himoyasi chetlab o'tiladi."
+    },
+    {
+      "q": "Yangi WAF ni CRS PL2 bilan darhol block rejimida yoqish taklif qilindi. Asosiy xavf?",
+      "options": [
+        "WAF trafikni sekinlashtiradi",
+        "Qonuniy so'rovlar (geofence JSON, hisobot filtrlari) false positive sifatida bloklanadi; to'g'ri yo'l - count rejimida boshlash va istisnolar yozish",
+        "WAF faqat GET so'rovlarni tekshiradi",
+        "PL2 hech narsani aniqlamaydi"
+      ],
+      "answer": 1,
+      "why": "Yuqori paranoia darajasi ko'proq hujumni aniqlaydi, lekin ko'proq qonuniy trafikni ham bloklaydi. Bosqichma-bosqich joriy etish kerak."
+    },
+    {
+      "q": "Credential stuffing: 50 000 IP dan har biri daqiqasiga 3 ta login urinishi. Per-IP limit 5 daqiqada 20 urinish. Nima bo'ladi?",
+      "options": [
+        "Hujum to'liq to'xtaydi",
+        "Login endpointi avtomatik o'chadi",
+        "Faqat yarmi o'tadi",
+        "Har IP limitdan past qoladi, hujum o'tadi (~2 500 so'rov/s); global anomaliya, akkaunt bo'yicha limit va challenge kerak"
+      ],
+      "answer": 3,
+      "why": "50 000 x 3 / 60 = 2 500 so'rov/s; har IP 5 daqiqada 15 urinish qiladi. Taqsimlangan sekin hujumga bitta kalit yetmaydi."
+    },
+    {
+      "q": "Haydovchi ilovasi foydalanuvchilari asosan mobil operator CGNAT ortida. Autentifikatsiyalangan API uchun rate limit kaliti sifatida faqat IP ishlatilsa nima bo'ladi?",
+      "options": [
+        "Bitta ommaviy IP ortidagi yuzlab qonuniy foydalanuvchi birgalikda bloklanishi mumkin; token yoki tenant bo'yicha limit to'g'riroq",
+        "Eng aniq natija",
+        "CGNAT rate limitga ta'sir qilmaydi",
+        "IP limit faqat UDP uchun ishlaydi"
+      ],
+      "answer": 0,
+      "why": "CGNAT da ko'p abonent bitta IP ni bo'lishadi. Autentifikatsiyadan keyin aniqroq kalit mavjud."
+    },
+    {
+      "q": "L7 hujumi 200 000 so'rov/s, qonuniy trafik 1 000, origin sig'imi 3 000 so'rov/s. Edge filtr samaradorligi 98% bo'lsa nima bo'ladi?",
+      "options": [
+        "Origin bemalol ishlaydi",
+        "Origin ga faqat qonuniy trafik yetadi",
+        "Origin ga ~4 000 hujum + 1 000 qonuniy = ~5 000 so'rov/s yetadi - sig'imdan oshadi; ilova ichida load shedding kerak",
+        "Origin ga 200 so'rov/s yetadi"
+      ],
+      "answer": 2,
+      "why": "200 000 x 0.02 = 4 000. 99.5% da esa 1 000 hujum + 1 000 qonuniy = 2 000 - sig'imga sig'adi. Oxirgi qatlam sifatida load shedding majburiy."
+    },
+    {
+      "q": "Hujumchi xarita endpointiga har safar tasodifiy query parametri qo'shib so'rov yubormoqda va CDN hit rate nolga tushdi. Bu qaysi hujum va chorasi?",
+      "options": [
+        "SYN flood - SYN cookies",
+        "Rapid Reset - ulanishni yopish",
+        "DNS amplification - BCP 38",
+        "Cache-busting - cache kalitini normalizatsiya qilish (noma'lum parametrlarni chiqarish) va endpoint bo'yicha limit"
+      ],
+      "answer": 3,
+      "why": "Cache-busting CDN ni chetlab o'tib har so'rovni origin ga majburlaydi. AWS whitepaper uni L7 hujum turi sifatida keltiradi."
+    },
+    {
+      "q": "GPS trekerlar binar TCP protokolda ulanadi. Ular uchun eng kuchli 'hujum yuzasini kamaytirish' chorasi qaysi?",
+      "options": [
+        "Trekerlarni mobil operator APN/VPN orqali yopiq tarmoqqa ulash - ingest gateway internetda umuman ko'rinmaydi",
+        "HTTP WAF qoidalarini yoqish",
+        "Barcha portlarni ochish",
+        "Trekerlarga CAPTCHA qo'shish"
+      ],
+      "answer": 0,
+      "why": "HTTP uchun mo'ljallangan WAF binar TCP ga mos emas. Ommaviy internetda ko'rinmaslik eng samarali himoya; ochiq qism uchun L4 himoya va tez rad etish."
+    }
+  ]
+}

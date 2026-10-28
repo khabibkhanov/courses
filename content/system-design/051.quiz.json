@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Modular monolitni oddiy monolitdan nima ajratadi?",
+      "options": [
+        "Modular monolit bir nechta process sifatida deploy qilinadi",
+        "Bitta deploy birligi, lekin domenlar orasidagi chegaralar (public API, ma'lumot egaligi) qat'iy majburlangan",
+        "Har bir modul alohida bazaga ega bo'lishi shart",
+        "Modular monolit faqat NestJS da bo'ladi"
+      ],
+      "answer": 1,
+      "why": "Deploy birligi bir xil (1 ta). Farq - modullar faqat ochiq interfeys orqali gaplashadi va boshqa modul jadvaliga to'g'ridan-to'g'ri yozmaydi."
+    },
+    {
+      "q": "Foydalanuvchi so'rovi 6 ta servisdan parallel javob kutadi, har birining p99 qiymati 50 ms. So'rovlarning taxminan qancha qismi kamida bitta servisning sekin dumiga tushadi?",
+      "options": ["1%", "Taxminan 6%", "50%", "0.01%"],
+      "answer": 1,
+      "why": "1 - 0.99^6 ≈ 0.059. Har servis 1% sekin bo'lsa ham, ko'p servisga bog'liq so'rov tail latency'ni ko'proq his qiladi."
+    },
+    {
+      "q": "Ketma-ket bog'langan 5 ta servisning har biri 99.9% mavjud. Zanjirning umumiy mavjudligi taxminan qancha?",
+      "options": ["99.9%", "99.95%", "99.5%", "95%"],
+      "answer": 2,
+      "why": "0.999^5 ≈ 0.995. Har bir qo'shimcha sinxron bog'liqlik mavjudlikni kamaytiradi."
+    },
+    {
+      "q": "Qaysi holat distributed monolith belgisi?",
+      "options": [
+        "Servislar Kafka orqali event almashadi",
+        "Har bir servis o'z bazasiga ega va mustaqil deploy qilinadi",
+        "Uchta servis bitta PostgreSQL sxemasiga to'g'ridan-to'g'ri yozadi va har release'da birga deploy qilinadi",
+        "Bitta NestJS kod bazasidan api va worker rollari alohida ishga tushiriladi"
+      ],
+      "answer": 2,
+      "why": "Umumiy sxema va birga deploy - mustaqillik yo'q, lekin tarmoq narxi bor. Bu ikkala dunyoning yomon tomoni."
+    },
+    {
+      "q": "5 kishilik jamoa yangi mahsulot boshlamoqda, domen hali aniq emas. Eng asosli boshlang'ich tanlov qaysi?",
+      "options": [
+        "Har bir obyekt uchun alohida microservice",
+        "Majburlangan chegaralarga ega modular monolit",
+        "Serverless funksiyalar to'plami, har endpoint alohida",
+        "Chegarasiz klassik monolit, keyin hammasini qayta yozish"
+      ],
+      "answer": 1,
+      "why": "Chegaralar noaniq bo'lganda ularni monolit ichida ko'chirish arzon refaktor. Microservice premium kichik jamoada o'zini oqlamaydi, chegarasiz monolit esa keyin ajratishni qiyinlashtiradi."
+    },
+    {
+      "q": "Amazon Prime Video monitoring servisi misolining to'g'ri saboqi qaysi?",
+      "options": [
+        "Microservice'lar har doim monolitdan qimmat",
+        "AWS Step Functions'dan foydalanmaslik kerak",
+        "Juda katta hajmli ma'lumot oqimini komponentlar orasida tarmoq va S3 orqali uzatish qimmat, chegarani zich oqim o'rtasidan o'tkazmaslik kerak",
+        "Prime Video butun arxitekturasini monolitga o'tkazdi"
+      ],
+      "answer": 2,
+      "why": "Kadrlarni S3 orqali uzatish va har soniyadagi ko'p state transition narxni oshirgan. Prime Video'ning qolgan qismi microservice'larda qolgan."
+    },
+    {
+      "q": "Qaysi biri servisni ajratish uchun eng kuchli signal?",
+      "options": [
+        "Kod bazasi 200 ming qatordan oshdi",
+        "Video transcoding GPU talab qiladi va CRUD API'dan butunlay boshqacha masshtablanadi",
+        "Yangi texnologiyani sinab ko'rish istagi",
+        "Kelajakda yuklama oshishi mumkin"
+      ],
+      "answer": 1,
+      "why": "Keskin farqli resurs profili mustaqil masshtablashni talab qiladi. Kod hajmi esa modullashtirish signali, servis signali emas."
+    },
+    {
+      "q": "Og'ir hisobot generatsiyasi API latency'ni buzmoqda. Microservice'siz eng arzon birinchi qadam qaysi?",
+      "options": [
+        "Hisobotni darhol alohida servisga ajratib, alohida bazaga ko'chirish",
+        "Bir xil kod bazasidan alohida worker roli sifatida ishga tushirish va read replica'dan o'qish",
+        "API serverlarining CPU'sini ikki baravar oshirish va hech narsani o'zgartirmaslik",
+        "Hisobotlarni o'chirib qo'yish"
+      ],
+      "answer": 1,
+      "why": "Alohida process resurs izolyatsiyasini beradi, read replica esa asosiy bazani yuklamadan himoya qiladi. Bu mustaqil masshtablash ehtiyojining katta qismini premiumsiz yechadi."
+    },
+    {
+      "q": "Strangler fig usulida eng ko'p unutiladigan, lekin muhim qadam qaysi?",
+      "options": [
+        "Proxy qatlam qo'yish",
+        "Yangi servisni yozish",
+        "Trafik to'liq ko'chgach, monolitdagi eski implementatsiyani o'chirish",
+        "Monitoring qo'shish"
+      ],
+      "answer": 2,
+      "why": "Eski kod o'chirilmasa ikki implementatsiya yillab yashaydi va ikkalasi ham qo'llab-quvvatlanadi, ko'chirish tugamaydi."
+    },
+    {
+      "q": "12 ta servis, har biri HA uchun 2 replika va har replikaga 0.25 vCPU rezerv. Trafik bo'lmasa ham faqat rezerv uchun qancha vCPU kerak?",
+      "options": ["3 vCPU", "6 vCPU", "12 vCPU", "24 vCPU"],
+      "answer": 1,
+      "why": "12 x 2 x 0.25 = 6 vCPU. Bu microservice premiumning o'zgarmas infratuzilma qismi."
+    }
+  ]
+}

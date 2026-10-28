@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Kubernetes da gRPC klient 5 replikali servisga oddiy ClusterIP Service orqali ulanadi. Monitoring da bitta pod 100% CPU, qolganlari bo'sh. Asosiy sabab?",
+      "options": [
+        "Service round robin algoritmi buzilgan",
+        "Pod larning readiness probe i noto'g'ri",
+        "gRPC bitta uzoq yashovchi HTTP/2 ulanishda barcha so'rovlarni multiplex qiladi, L4 balancing esa ulanish darajasida",
+        "gRPC faqat bitta server bilan ishlay oladi"
+      ],
+      "answer": 2,
+      "why": "L4 qaror faqat ulanish ochilganda qabul qilinadi. So'rov darajasida taqsimlash uchun klient tomonida balancing yoki L7 proksi kerak."
+    },
+    {
+      "q": "API ning /healthz endpointi har safar PostgreSQL ga SELECT 1 yuboradi. Baza 40 soniya sekinlashdi. Eng ehtimolli natija?",
+      "options": [
+        "Faqat sekin instance lar chiqariladi, qolganlari ishlaydi",
+        "Barcha instance lar bir vaqtda nosog'lom deb topiladi va LB ularni chiqaradi yoki fail-open ga o'tadi, servis to'liq ishlamay qolishi mumkin",
+        "Hech narsa bo'lmaydi, chunki health check timeout 5 soniya",
+        "LB avtomatik ravishda bazani qayta ishga tushiradi"
+      ],
+      "answer": 1,
+      "why": "Dependency health check umumiy bog'liqlik buzilganda butun flotni bir vaqtda nosog'lom qiladi. LB uchun liveness va local tekshiruvlar tavsiya etiladi."
+    },
+    {
+      "q": "ALB health check: interval 30 s, unhealthy threshold 2. Server o'ldi. Uni aniqlash uchun eng yomon holatda taxminan qancha vaqt kerak?",
+      "options": [
+        "60 soniyadan ortiq",
+        "5 soniya",
+        "30 soniya",
+        "150 soniya"
+      ],
+      "answer": 0,
+      "why": "Ketma-ket 2 ta muvaffaqiyatsiz tekshiruv kerak, ular 30 soniya interval bilan: taxminan 60 soniya plus timeout. 150 soniya - tiklangan serverni qayta qo'shish vaqti."
+    },
+    {
+      "q": "20 ta L7 proksi least connections ishlatadi. Yangi backend qo'shilgach u bir necha soniyada yiqildi. Nima uchun?",
+      "options": [
+        "Least connections yangi serverlarni e'tiborsiz qoldiradi",
+        "Health check yangi serverni o'chiradi",
+        "Proksilar yangi server IP sini bilmaydi",
+        "Har bir proksi yangi serverni eng bo'sh deb ko'radi va barcha proksilar bir vaqtda unga yuklama yuboradi, server esa hali isimagan"
+      ],
+      "answer": 3,
+      "why": "Bu herd effect. Slow start yoki power of two choices bu muammoni yumshatadi."
+    },
+    {
+      "q": "Power of two choices algoritmining least connections ga nisbatan asosiy afzalligi nima ko'p LB li tizimda?",
+      "options": [
+        "U har doim eng bo'sh serverni topadi",
+        "Holat talab qilmaydi",
+        "Deyarli shunchalik tekis taqsimlaydi, lekin barcha LB lar bir vaqtda bitta eng bo'sh serverga yopirilmaydi",
+        "U faqat ikkita server bilan ishlaydi"
+      ],
+      "answer": 2,
+      "why": "Tanlov tasodifiy juftlik ichida bo'lgani uchun herd effect kamayadi. Mitzenmacher natijasi: bitta tanlovdan ikkiga o'tish eksponensial yaxshilanish beradi."
+    },
+    {
+      "q": "To'xtab turgan mashinadagi treker har 7 daqiqada bir marta paket yuboradi va NLB orqali TCP ulanishni ochiq ushlaydi (keepalive yo'q). NLB standart sozlamasida nima bo'ladi?",
+      "options": [
+        "Hech narsa, NLB ulanishlarni cheksiz ushlaydi",
+        "350 soniya jimlikdan keyin ulanish flow jadvalidan o'chadi, keyingi paket RST oladi",
+        "Ulanish 60 soniyada uziladi",
+        "NLB o'zi keepalive yuborib ulanishni saqlaydi"
+      ],
+      "answer": 1,
+      "why": "7 daqiqa = 420 soniya, bu standart 350 soniyalik idle timeout dan uzun. Keepalive interval zanjirdagi eng qisqa timeout dan kichik bo'lishi kerak."
+    },
+    {
+      "q": "Cache serverlar oldida LB qaysi algoritm bilan ishlashi kerak, server qo'shilganda hit rate keskin tushmasligi uchun?",
+      "options": [
+        "Consistent hashing (masalan, NGINX hash $key consistent yoki Maglev)",
+        "Round robin",
+        "hash(key) mod N",
+        "Least connections"
+      ],
+      "answer": 0,
+      "why": "Consistent hashing da server qo'shilganda faqat kalitlarning kichik qismi ko'chadi. mod N da deyarli barcha kalit boshqa serverga ketadi."
+    },
+    {
+      "q": "Maglev va Katran kabi L4 balancer lar nega bir-biri bilan ulanish holatini sinxronlamasa ham bitta ulanishni bir xil backend ga yuboradi?",
+      "options": [
+        "Ular markaziy bazadan foydalanadi",
+        "Router har bir ulanishni doim bitta LB ga yuboradi va bu hech qachon o'zgarmaydi",
+        "Ular DSR ishlatgani uchun",
+        "Backend ni paket 5-tuple idan consistent hashing bilan hisoblaydi, natija qaysi LB hisoblashidan qat'i nazar bir xil"
+      ],
+      "answer": 3,
+      "why": "Deterministik consistent hash har bir LB da bir xil natija beradi. Connection tracking cache esa faqat optimallashtirish."
+    },
+    {
+      "q": "Envoy outlier detection standart holatda max_ejection_percent 10%. Bu nimadan himoya qiladi?",
+      "options": [
+        "DDoS hujumidan",
+        "Sekin host lardan",
+        "Umumiy bog'liqlik buzilib hamma host 5xx qaytarganda butun klasterni chiqarib tashlashdan",
+        "Noto'g'ri TLS sertifikatdan"
+      ],
+      "answer": 2,
+      "why": "Agar muammo umumiy bo'lsa, barcha host xato beradi. Cheklov tufayli klasterning ko'p qismi trafikda qoladi."
+    },
+    {
+      "q": "Qaysi holatda L7 o'rniga L4 load balancer to'g'ri tanlov?",
+      "options": [
+        "URL yo'li bo'yicha turli servislarga routing kerak",
+        "HTTP bo'lmagan xom TCP protokolli 100 ming IoT ulanishini gateway larga taqsimlash",
+        "Canary deploy da 5% trafikni yangi versiyaga yuborish kerak",
+        "Har bir gRPC so'rovni turli pod larga taqsimlash"
+      ],
+      "answer": 1,
+      "why": "L4 protokolni tushunishi shart emas, juda arzon va tez. Qolgan uchta vazifa so'rov darajasidagi ma'lumotni talab qiladi, ya'ni L7."
+    }
+  ]
+}

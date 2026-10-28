@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Qaysi biri yaxshi nomlangan event?",
+      "options": [
+        "SendWelcomeSms",
+        "UpdateFuelLevel",
+        "FuelCardBlocked",
+        "GetTripStatus"
+      ],
+      "answer": 2,
+      "why": "Event o'tgan zamondagi fakt. SendWelcomeSms va UpdateFuelLevel - buyruq, GetTripStatus - query."
+    },
+    {
+      "q": "VehicleUpdated hodisasida faqat vehicleId bor, 8 ta servis har hodisada vehicle-service'ga GET so'rov yuboradi. vehicle-service o'chsa nima bo'ladi va qaysi pattern buni yechadi?",
+      "options": [
+        "Hech narsa bo'lmaydi, hodisa navbatda saqlanadi",
+        "Consumer'lar ma'lumot ololmaydi; event-carried state transfer (hodisada to'liq holat) bu bog'liqlikni yo'qotadi",
+        "Event sourcing'ga o'tish kerak",
+        "Consumer'larni ko'paytirish kerak"
+      ],
+      "answer": 1,
+      "why": "Event notification'da consumer manbaga qaytma so'rov yuboradi. State transfer'da ma'lumot hodisaning ichida, consumer lokal nusxadan foydalanadi."
+    },
+    {
+      "q": "Event sourcing'da ikki jarayon bir aggregate'ning 57-versiyasini o'qib, ikkalasi 58-versiyani yozmoqchi. UNIQUE (stream_id, version) bor. Nima bo'ladi?",
+      "options": [
+        "Biri muvaffaqiyatli, ikkinchisi constraint xatosini oladi va stream'ni qayta o'qib, qoidalarni qayta tekshirishi kerak",
+        "Ikkala hodisa ham yoziladi",
+        "Ikkalasi ham rad etiladi",
+        "Baza deadlock bo'ladi"
+      ],
+      "answer": 0,
+      "why": "Bu kutilgan versiya bilan optimistic concurrency. Lost update qulfsiz oldini olinadi."
+    },
+    {
+      "q": "Aggregate'da 40 000 hodisa, har birini qo'llash 10 mikrosekund. Har 1 000 hodisada snapshot olinsa, eng yomon holatda nechta hodisa qo'llanadi va qancha vaqt?",
+      "options": [
+        "40 000 hodisa, 400 ms",
+        "0 hodisa",
+        "1 000 hodisa, 1 ms",
+        "999 hodisa, taxminan 10 ms (snapshot yuklashdan tashqari)"
+      ],
+      "answer": 3,
+      "why": "Oxirgi snapshot'dan keyin ko'pi bilan 999 hodisa qoladi: 999 x 10 us = taxminan 10 ms."
+    },
+    {
+      "q": "Projection bug tuzatilgach, butun hodisalar log'i qayta o'ynaldi va mijozlarga 50 000 ta eski SMS ketdi. To'g'ri dizayn qanday bo'lishi kerak edi?",
+      "options": [
+        "Replay qilmaslik",
+        "SMS provayderini o'zgartirish",
+        "Tashqi effektlarni replay paytida o'chiriladigan gateway yoki faqat yangi hodisalarga reaksiya qiladigan alohida integratsiya handler orqali bajarish",
+        "Hodisalarni o'chirish"
+      ],
+      "answer": 2,
+      "why": "Fowler tavsiyasi: tashqi tizimlarni replay paytida o'chiriladigan gateway'lar ortiga yashirish."
+    },
+    {
+      "q": "FuelPurchased hodisasini replay qilganda xarajat hisoboti boshqa natija berdi, chunki narx joriy narxlar jadvalidan olinadi. Eng yaxshi tuzatish?",
+      "options": [
+        "Narxlar jadvalini o'zgartirmaslik",
+        "Sotib olish paytidagi narxni hodisaning o'ziga yozish",
+        "Replay'ni taqiqlash",
+        "Hisobotni processing time'da hisoblash"
+      ],
+      "answer": 1,
+      "why": "Tashqi ma'lumot vaqt o'tishi bilan o'zgaradi. Hodisa qaror qabul qilingan paytdagi qiymatlarni o'zida saqlasa, replay deterministik bo'ladi."
+    },
+    {
+      "q": "Nima uchun Kafka odatda event sourcing uchun event store sifatida yetarli emas?",
+      "options": [
+        "Millionlab aggregate stream'ini alohida samarali o'qish va kutilgan versiya bilan shartli yozish imkoniyati yo'q",
+        "Kafka hodisalarni saqlay olmaydi",
+        "Kafka JSON ni qo'llamaydi",
+        "Kafka faqat 7 kun saqlaydi"
+      ],
+      "answer": 0,
+      "why": "Event store aggregate bo'yicha o'qish va optimistic concurrency talab qiladi. Kafka bu yerda tarqatish qatlami, hodisalar unga outbox/CDC orqali nashr qilinadi."
+    },
+    {
+      "q": "Foydalanuvchi o'z shaxsiy ma'lumotini o'chirishni talab qildi, tizim esa event sourcing (append-only). Qaysi yondashuv to'g'ri?",
+      "options": [
+        "Hodisalarni joyida tahrirlash",
+        "Talabni rad etish",
+        "Butun stream'ni o'chirish va audit'dan voz kechish",
+        "Crypto-shredding yoki shaxsiy ma'lumotni event store'dan tashqarida saqlab, hodisada faqat ID ishlatish"
+      ],
+      "answer": 3,
+      "why": "Har bir shaxs uchun alohida kalit bilan shifrlab, kalitni o'chirish yoki PII ni tashqarida saqlash o'zgarmaslikni buzmasdan o'chirish imkonini beradi."
+    },
+    {
+      "q": "iQuariX GPS nuqtalarini (kuniga yuz millionlab) event sourcing aggregate stream'lari sifatida saqlash taklif qilindi. Eng yaxshi baho?",
+      "options": [
+        "To'g'ri, chunki har bir nuqta hodisa",
+        "To'g'ri, agar snapshot har 10 nuqtada olinsa",
+        "Odatda noto'g'ri: biznes qoidasi va concurrency yo'q, hajm katta; Kafka va time-series ombori mosroq",
+        "Faqat PostgreSQL ishlatilsa to'g'ri"
+      ],
+      "answer": 2,
+      "why": "Event sourcing aggregate, biznes qoidalari va audit qiymati bor domenlar uchun. Telemetriya - time-series muammosi."
+    },
+    {
+      "q": "Bir yildan keyin PartUsed hodisasiga yangi maydon qo'shildi. Saqlangan eski hodisalarni o'zgartirmasdan yangi kodda o'qishning to'g'ri usuli?",
+      "options": [
+        "Barcha eski hodisalarni bazada qayta yozish",
+        "Upcasting yoki tolerant deserialization: o'qishda eski versiyani joriy sxemaga aylantirish yoki default qiymat berish",
+        "Eski hodisalarni o'chirish",
+        "Yangi maydonni majburiy qilish va eski hodisalarni xato deb hisoblash"
+      ],
+      "answer": 1,
+      "why": "Hodisalar o'zgarmas, schema evolution o'qish tomonida hal qilinadi. Joyida migratsiya - oxirgi chora."
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "UUIDv7 ning RFC 9562 bo'yicha tuzilishi qaysi?",
+      "options": [
+        "122 bit tasodif va 6 bit versiya/variant",
+        "48 bit Unix millisekund vaqt, 4 bit versiya, 12 bit rand_a, 2 bit variant, 62 bit rand_b",
+        "41 bit vaqt, 10 bit mashina, 12 bit ketma-ketlik",
+        "60 bit vaqt (100 ns) va 48 bit MAC manzil"
+      ],
+      "answer": 1,
+      "why": "Vaqt eng katta bitlarda bo'lgani uchun UUIDv7 taxminan vaqt bo'yicha tartiblanadi. Uchinchi variant Snowflake, to'rtinchisi UUIDv1."
+    },
+    {
+      "q": "Cybertec sinovida UUIDv4 indeksi bo'yicha COUNT taxminan 2 baravar sekin, UUIDv7 esa deyarli bigint tezligida. Asosiy sabab nima?",
+      "options": [
+        "UUID 16 bayt, bigint 8 bayt",
+        "UUIDv4 tasodifiy bo'lgani uchun ma'lumot locality'si yo'q va juda ko'p buffer murojaati kerak bo'ladi",
+        "UUIDv7 siqilgan holda saqlanadi",
+        "PostgreSQL UUIDv4 ni qo'llab-quvvatlamaydi"
+      ],
+      "answer": 1,
+      "why": "UUIDv4 va UUIDv7 indekslari bir xil hajmda (301 MB), lekin UUIDv4 ~8.5 million buffer hit talab qilgan. Muammo hajmda emas, tasodifiylikda."
+    },
+    {
+      "q": "Snowflake 41 bitlik millisekund vaqt maydoni taxminan qancha vaqtga yetadi?",
+      "options": ["Taxminan 35 yil", "Taxminan 69.7 yil", "Taxminan 139 yil", "Taxminan 8 900 yil"],
+      "answer": 1,
+      "why": "2^41 ms ≈ 2.2 x 10^12 ms ≈ 69.7 yil. Shuning uchun maxsus epoch ishlatiladi; Unix epoch'idan boshlansa 2039 yilda tugaydi."
+    },
+    {
+      "q": "Snowflake'da 12 bitlik ketma-ketlik maydoni bitta worker uchun soniyasiga taxminan nechta ID beradi?",
+      "options": ["4 096", "Taxminan 4.1 million", "Taxminan 1 024", "Taxminan 4.2 milliard"],
+      "answer": 1,
+      "why": "2^12 = 4 096 ID millisekundda, 1 000 ms bilan ~4.1 million/s. 4.2 milliard - 1 024 worker birgalikdagi nazariy sig'im."
+    },
+    {
+      "q": "Node.js API Snowflake ID'ni JSON'da son sifatida qaytaradi: 1830472948573462528. Brauzerdagi JS klient nimani ko'radi?",
+      "options": [
+        "Aynan shu sonni",
+        "Xato, JSON.parse ishlamaydi",
+        "Yaxlitlangan boshqa sonni, chunki Number faqat 2^53 - 1 gacha butun sonlarni aniq ifodalaydi",
+        "Satrni"
+      ],
+      "answer": 2,
+      "why": "2^53 - 1 ≈ 9 x 10^15, bu ID undan katta. JSON.parse jimgina yaxlitlaydi. Discord shu sababli snowflake'larni satr sifatida beradi."
+    },
+    {
+      "q": "Snowflake generatori ishlayotgan serverda NTP soatni 200 ms orqaga surdi. Generator hech narsa qilmasa, qanday xavf bor?",
+      "options": [
+        "Xavf yo'q, ketma-ketlik maydoni himoya qiladi",
+        "Oldin berilgan millisekund qayta kelib, bir xil worker va ketma-ketlik bilan takroriy ID yaratilishi mumkin",
+        "ID'lar manfiy bo'lib qoladi",
+        "Faqat tartib biroz buziladi"
+      ],
+      "answer": 1,
+      "why": "Vaqt + worker + ketma-ketlik kombinatsiyasi takrorlanishi mumkin. Generator soat orqaga ketganini aniqlab, kutishi yoki rad etishi kerak."
+    },
+    {
+      "q": "Stream processor at-least-once bilan ishlaydi va qayta ishlashda bir xil yoqilg'i to'kib olish hodisasini ikki marta chiqarishi mumkin. Qaysi ID strategiyasi dublikat ogohlantirishni oldini olishga yordam beradi?",
+      "options": [
+        "Har safar yangi UUIDv4",
+        "Har safar yangi UUIDv7",
+        "Deterministik ID, masalan device_id + event_type + start_time asosidagi UUIDv5",
+        "bigserial"
+      ],
+      "answer": 2,
+      "why": "Bir xil kirish ma'lumotidan bir xil ID chiqadi, shuning uchun qayta ishlangan hodisa unique cheklov yoki upsert bilan dublikat sifatida aniqlanadi."
+    },
+    {
+      "q": "Kuniga 864 million GPS nuqta saqlanadi. Har nuqtaga UUID PK qo'shish faqat ID ustuni uchun kuniga qancha joy oladi va muqobil nima?",
+      "options": [
+        "~1.4 GB; muqobil yo'q",
+        "~13.8 GB; muqobil - tabiiy kalit (device_id, recorded_at), u dublikatni ham aniqlaydi",
+        "~138 GB; muqobil - Snowflake",
+        "~13.8 MB; ahamiyatsiz"
+      ],
+      "answer": 1,
+      "why": "864 x 10^6 x 16 B ≈ 13.8 GB. Time-series uchun tabiiy kalit ham joy tejaydi, ham treker qayta yuborgan nuqtalarni deduplikatsiya qiladi."
+    },
+    {
+      "q": "UUIDv7 ID'lari ikki turli serverda yaratilgan. A serverda B dan keyinroq yaratilgan ID B nikidan kichik chiqdi. Bu mumkinmi?",
+      "options": [
+        "Yo'q, UUIDv7 qat'iy global tartib kafolatlaydi",
+        "Ha: monotonlik faqat bitta generator ichida; serverlar orasida soat farqi va bir millisekund ichidagi tasodif tartibni buzishi mumkin",
+        "Faqat UUIDv4 da mumkin",
+        "Faqat kabisa soniyasida mumkin"
+      ],
+      "answer": 1,
+      "why": "UUIDv7 taxminan vaqt tartibini beradi. Qat'iy global tartib uchun bitta sequence yoki log offset kerak."
+    },
+    {
+      "q": "Parolni tiklash havolasi uchun token sifatida nima ishlatish to'g'ri?",
+      "options": [
+        "UUIDv7, chunki u noyob",
+        "Snowflake ID",
+        "Kamida 128 bit to'liq kriptografik tasodifiy qiymat (masalan 32 bayt), bazada hash ko'rinishida saqlanadi",
+        "Foydalanuvchi ID va vaqt birikmasi"
+      ],
+      "answer": 2,
+      "why": "UUIDv7 ning bir qismi vaqt, Snowflake esa deyarli to'liq bashorat qilinadi. Maxfiy token to'liq tasodifiy bo'lishi va hash bilan saqlanishi kerak."
+    }
+  ]
+}

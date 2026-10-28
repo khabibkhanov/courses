@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "50 daqiqalik interview da 28-daqiqada siz hali arxitektura diagrammasini chizyapsiz. Eng to'g'ri harakat qaysi?",
+      "options": [
+        "Diagrammani to'liq va chiroyli tugatish, chunki u asosiy natija",
+        "Diagrammani yetarli darajada yopib, 2-3 eng xavfli qism bo'yicha chuqur tahlilga o'tish",
+        "Talablarga qaytib, yangi savollar berish",
+        "Nosozliklar bo'limini o'tkazib yuborib, evolyutsiyaga o'tish"
+      ],
+      "answer": 1,
+      "why": "Kuchli va o'rta nomzod asosan chuqur tahlilda ajraladi, shuning uchun unga 12-15 daqiqa qolishi kerak."
+    },
+    {
+      "q": "Qaysi talablar savoli dizaynga eng katta ta'sir qiladi?",
+      "options": [
+        "Backend qaysi dasturlash tilida yoziladi?",
+        "Kubernetes ishlatsak bo'ladimi?",
+        "Qabul qilingan ma'lumot yo'qolishi qanchalik qimmat va qancha eskirgan ma'lumot qabul qilinadi?",
+        "Logotip qaysi rangda bo'ladi?"
+      ],
+      "answer": 2,
+      "why": "Durability va freshness talablari replication rejimi, acks, cache va consistency modelini to'g'ridan-to'g'ri belgilaydi."
+    },
+    {
+      "q": "Kuniga 100 million yozuv bo'lsa, o'rtacha yozish tezligi taxminan qancha?",
+      "options": ["120 / s", "1 160 / s", "11 600 / s", "100 000 / s"],
+      "answer": 1,
+      "why": "100 000 000 / 86 400 ≈ 1 157 yozuv/s."
+    },
+    {
+      "q": "Kuniga 50 million yozuv, har biri 1 KB, 5 yil saqlanadi, 3 replica. Hisob-kitobdan qanday xulosa chiqadi?",
+      "options": [
+        "Yozish QPS juda katta, darhol sharding kerak",
+        "Yozish taxminan 580/s - kichik, lekin jami taxminan 270 TB - asosiy muammo saqlash va retention",
+        "Hammasi bitta 1 TB diskli serverga sig'adi",
+        "Ma'lumot xotiraga to'liq sig'adi"
+      ],
+      "answer": 1,
+      "why": "50 GB/kun x 1825 kun ≈ 91 TB, x3 ≈ 274 TB. Yozish yuklamasi kichik, hajm esa bitta mashinaga sig'maydi."
+    },
+    {
+      "q": "Google design doc tuzilmasida qaysi bo'lim tanlangan yechim nega maqsadlarga eng mos ekanini ko'rsatgani uchun eng muhimlaridan biri hisoblanadi?",
+      "options": ["Context and scope", "Alternatives considered", "Cross-cutting concerns", "Glossary"],
+      "answer": 1,
+      "why": "Alternativalar va ularning trade-offlari qarorning asoslanganligini ko'rsatadi."
+    },
+    {
+      "q": "ADR ning Status maydoni nima uchun kerak?",
+      "options": [
+        "Qaror qaysi sprintda qilinganini ko'rsatish uchun",
+        "Qaror taklif qilingan, qabul qilingan yoki boshqa ADR bilan almashtirilganini (superseded) kuzatish uchun",
+        "Qaror muallifining lavozimini yozish uchun",
+        "Qarorning narxini yozish uchun"
+      ],
+      "answer": 1,
+      "why": "Qarorlar eskiradi; Status va superseded havolasi qaror tarixini saqlaydi."
+    },
+    {
+      "q": "Reviewer: 'Redis o'chsa nima bo'ladi?' Eng yaxshi javob tuzilmasi qaysi?",
+      "options": [
+        "Redis juda ishonchli, o'chmaydi",
+        "Bu savol hozir muhim emas",
+        "Muammoni tasdiqlash, ta'sirini baholash (nima yo'qoladi, nima saqlanadi), yechim va uning narxini aytish",
+        "Darhol Redis o'rniga boshqa texnologiyani taklif qilish"
+      ],
+      "answer": 2,
+      "why": "Bu shablon reviewer ga fikrlash zanjirini ko'rsatadi va trade-off ni ochiq qiladi."
+    },
+    {
+      "q": "Nosozliklar bosqichida ko'pincha eng ko'p e'tibordan chetda qoladigan va eng xavfli holat qaysi?",
+      "options": [
+        "Serverning to'liq o'chishi",
+        "Komponentning sekinlashishi - so'rovlar kutib, resurslar tugashi va kaskad",
+        "Diskning to'lishi haqida ogohlantirish",
+        "Yangi versiya chiqishi"
+      ],
+      "answer": 1,
+      "why": "To'liq o'chish tez aniqlanadi; sekinlashish esa timeout, thread pool va navbatlarni to'ldirib cascading failure ga olib keladi."
+    },
+    {
+      "q": "Google SRE PRR yo'nalishlariga qaysi biri KIRMAYDI?",
+      "options": [
+        "Instrumentatsiya va monitoring",
+        "Capacity planning",
+        "Change management",
+        "UI dizaynining estetikasi"
+      ],
+      "answer": 3,
+      "why": "PRR arxitektura, monitoring, favqulodda javob, capacity, change management va performance ni ko'radi."
+    },
+    {
+      "q": "Hisob-kitob bosqichini qachon qisqartirish mumkin?",
+      "options": [
+        "Hech qachon, har doim batafsil bo'lishi kerak",
+        "Natija hech qanday arxitektura qaroriga ta'sir qilmasa",
+        "Interviewer raqam so'ramasa",
+        "Faqat yozish og'ir tizimlarda"
+      ],
+      "answer": 1,
+      "why": "Hisob-kitobning maqsadi qarorni o'zgartirish; qarorga ta'sir qilmaydigan raqam vaqtni sarflaydi."
+    }
+  ]
+}

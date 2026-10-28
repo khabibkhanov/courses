@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "n = 5, w = 3, r = 3. Nechta tugun o'lganda ham yozish va o'qish ishlaydi?",
+      "options": [
+        "1",
+        "3",
+        "0",
+        "2"
+      ],
+      "answer": 3,
+      "why": "Yozish n - w = 2, o'qish n - r = 2 tugun nosozligiga chidaydi. w + r = 6 > 5, kesishish bor."
+    },
+    {
+      "q": "n = 3, w = 1, r = 1 konfiguratsiyasining asosiy xavfi?",
+      "options": [
+        "Yozish mavjudligi past",
+        "Read repair ishlamaydi",
+        "w + r = 2, n dan kichik, shuning uchun o'qish yangi yozuvni ko'rmagan replikadan eski qiymat olishi mumkin",
+        "Hinted handoff o'chadi"
+      ],
+      "answer": 2,
+      "why": "Yozish va o'qish to'plamlari kesishmasligi mumkin. Mavjudlik maksimal, lekin eskirgan o'qish ehtimoli yuqori."
+    },
+    {
+      "q": "Cassandra da QUORUM yozish va QUORUM o'qish ishlatilmoqda. Qaysi holatda ham eskirgan qiymat qaytishi mumkin?",
+      "options": [
+        "Hech qachon, bu linearizable",
+        "Yozuv faqat 1 replikada muvaffaqiyatli bo'lib, mijozga xato qaytgan, lekin u replikada qolgan va keyingi o'qishlar uni goh ko'radi, goh ko'rmaydi",
+        "Faqat barcha tugunlar o'lganda",
+        "Faqat ONE ishlatilganda"
+      ],
+      "answer": 1,
+      "why": "Muvaffaqiyatsiz yozuv orqaga qaytarilmaydi. Quorum kesishishni ta'minlaydi, lekin linearizability ni emas."
+    },
+    {
+      "q": "Multi-leader ko'p regionli tizimda ikki dispetcher bir vaqtda bitta mashina nomini o'zgartirdi, LWW ishlatiladi. Natija?",
+      "options": [
+        "Vaqt belgisi kattaroq bo'lgan o'zgarish qoladi, ikkinchisi jimgina yo'qoladi, ikkala dispetcher ham OK olgan",
+        "Ikkala o'zgarish birlashtiriladi",
+        "Ikkinchi yozuv rad etiladi",
+        "Baza xato beradi va replikatsiya to'xtaydi"
+      ],
+      "answer": 0,
+      "why": "LWW parallel yozuvlardan birini ogohlantirishsiz tashlaydi. Soat noto'g'ri bo'lsa, haqiqatda keyinroq bo'lgan yozuv ham yo'qolishi mumkin."
+    },
+    {
+      "q": "Version vector lar: A = [R1:3, R2:1], B = [R1:2, R2:2]. Ular orasidagi munosabat?",
+      "options": [
+        "A B dan oldin",
+        "B A dan oldin",
+        "Ular bir xil",
+        "Parallel (concurrent), konflikt"
+      ],
+      "answer": 3,
+      "why": "R1 bo'yicha A katta, R2 bo'yicha B katta. Hech biri ikkinchisini to'liq qamramaydi, demak parallel."
+    },
+    {
+      "q": "Cassandra replikasi 5 soat o'lik bo'ldi va qaytdi, max_hint_window standart. Nima bo'ladi?",
+      "options": [
+        "Barcha o'tkazib yuborilgan yozuvlar hint lardan avtomatik keladi",
+        "Replika klasterdan chiqariladi",
+        "Faqat birinchi 3 soatlik hint lar saqlangan, qolgan farq read repair yoki anti-entropy repair gacha qoladi",
+        "Replika o'zi boshqa replikalardan to'liq nusxa oladi"
+      ],
+      "answer": 2,
+      "why": "Hint lar best effort va standart holatda 3 soatlik nosozlik uchun to'planadi. Kafolatli tiklanish - repair."
+    },
+    {
+      "q": "Sloppy quorum yozish mavjudligini oshiradi. Evaziga nimani yo'qotadi?",
+      "options": [
+        "Durability ni butunlay",
+        "w + r > n bo'lsa ham o'qish yangi qiymatni ko'rish kafolatini, chunki w tasdiq uy replikalaridan bo'lmasligi mumkin",
+        "Read repair imkoniyatini",
+        "Merkle tree ni"
+      ],
+      "answer": 1,
+      "why": "Yozuv vaqtincha boshqa tugunlarda saqlanadi. Uy replikalaridan r ta o'qish ular bilan kesishmasligi mumkin."
+    },
+    {
+      "q": "SaaS ikki regionda ishlaydi va yozish latency si past bo'lishi kerak. Konfliktlarni deyarli yo'q qiladigan eng sodda yondashuv?",
+      "options": [
+        "Har bir tenant ga uy region berish va uning barcha yozuvlarini shu region leader iga yo'naltirish",
+        "Barcha jadvallar uchun LWW",
+        "Regionlararo sinxron replication",
+        "Leaderless quorum ONE bilan"
+      ],
+      "answer": 0,
+      "why": "Bitta yozuv doim bitta leader orqali o'tadi, shuning uchun parallel konflikt bo'lmaydi. Murakkablik faqat uy region o'zgarganda."
+    },
+    {
+      "q": "Dynamo xarid savatida konfliktli versiyalar union bilan birlashtiriladi. Qanday nojo'ya ta'sir bo'lishi mumkin?",
+      "options": [
+        "Savatga qo'shilgan mahsulot yo'qoladi",
+        "Savat ikki baravar ko'payadi",
+        "Hech qanday",
+        "O'chirilgan mahsulot qayta paydo bo'lishi mumkin"
+      ],
+      "answer": 3,
+      "why": "Union qo'shishlarni saqlaydi, lekin bir versiyada o'chirilgan element boshqa versiyada bo'lsa qaytadi. Tombstone bilan yumshatiladi."
+    },
+    {
+      "q": "Anti-entropy da Merkle tree nima uchun ishlatiladi?",
+      "options": [
+        "Yozuvlarni shifrlash uchun",
+        "Leader tanlash uchun",
+        "Replikalar butun ma'lumotni uzatmasdan, hash larni solishtirib faqat farq qilgan diapazonlarni topishi uchun",
+        "Kalitlarni partition larga taqsimlash uchun"
+      ],
+      "answer": 2,
+      "why": "Ildiz hash teng bo'lsa diapazon bir xil. Farq bo'lsa, faqat farq qilgan shoxlarga tushiladi, bu tarmoq trafigini keskin kamaytiradi."
+    }
+  ]
+}

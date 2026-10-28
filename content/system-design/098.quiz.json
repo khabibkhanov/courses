@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "1 soatlik video 8 Mbit/s bitrate da. Fayl hajmi taxminan qancha?",
+      "options": ["360 MB", "3.6 GB", "28.8 GB", "8 GB"],
+      "answer": 1,
+      "why": "8 Mbit/s x 3 600 s = 28 800 Mbit = 3 600 MB ≈ 3.6 GB."
+    },
+    {
+      "q": "Kuniga 500 million ko'rish soati, o'rtacha 2.5 Mbit/s. Kunlik egress taxminan qancha?",
+      "options": ["5.6 PB", "56 PB", "560 PB", "5.6 EB"],
+      "answer": 2,
+      "why": "1 soat x 2.5 Mbit/s ≈ 1.125 GB; 500M x 1.125 GB ≈ 562 PB."
+    },
+    {
+      "q": "Video platformada odatda qaysi xarajat eng katta?",
+      "options": ["Metadata bazasi", "Egress (CDN orqali tomoshabinlarga trafik)", "API serverlari", "DNS"],
+      "answer": 1,
+      "why": "Ko'rishlar yuklashdan minglab marta ko'p; har ko'rish megabaytlab trafik."
+    },
+    {
+      "q": "2 soatlik videoni 10 daqiqa ichida tayyorlash uchun transkodlashda asosiy usul qaysi?",
+      "options": [
+        "Kuchliroq bitta server",
+        "Videoni GOP chegaralari bo'yicha bo'laklarga bo'lib, parallel kodlash va birlashtirish",
+        "Faqat audio kodlash",
+        "Transkodni brauzerda bajarish"
+      ],
+      "answer": 1,
+      "why": "Split-map-reduce shakli: bo'laklar mustaqil worker larda parallel kodlanadi."
+    },
+    {
+      "q": "Nega AV1 kabi samarali, lekin qimmat kodek barcha videolar uchun darhol qo'llanmaydi?",
+      "options": [
+        "AV1 pleyerlarda ishlamaydi",
+        "Kam ko'riladigan videolarda kodlash xarajati egress tejamini hech qachon qoplamaydi",
+        "AV1 sifati past",
+        "AV1 segmentlashni qo'llab-quvvatlamaydi"
+      ],
+      "answer": 1,
+      "why": "Qimmat kodlash faqat ko'p ko'riladigan videolarda o'zini oqlaydi; shuning uchun mashhurlik chegarasidan keyin."
+    },
+    {
+      "q": "Mobil foydalanuvchi 3 GB videoni yuklayotganda 70% da aloqa uzildi. Qaysi dizayn qayta boshlashdan qutqaradi?",
+      "options": [
+        "Bitta katta POST so'rov",
+        "Resumable yuklash: server saqlangan offset ni HEAD bilan qaytaradi, mijoz PATCH bilan davom ettiradi",
+        "Videoni email orqali yuborish",
+        "Yuklashni WebSocket da"
+      ],
+      "answer": 1,
+      "why": "tus yoki multipart upload uzilgan joydan davom etishga imkon beradi."
+    },
+    {
+      "q": "Viral video chiqdi va minglab edge serverlar bir vaqtda bir xil segmentni origin dan so'ramoqda. Qaysi komponent himoya qiladi?",
+      "options": ["Origin shield (regional kesh) va request coalescing", "Ko'proq metadata replica", "Rate limit tomoshabinlarga", "Segmentlarni kattalashtirish"],
+      "answer": 0,
+      "why": "Shield edge miss larini yig'ib, origin ga bitta so'rov yuboradi."
+    },
+    {
+      "q": "Segment davomiyligini 2 s dan 10 s ga oshirishning asosiy salbiy oqibati nima?",
+      "options": [
+        "CDN so'rovlari ko'payadi",
+        "Start va sifat almashinuvi sekinlashadi",
+        "Saqlash 5 baravar oshadi",
+        "Video sifati pasayadi"
+      ],
+      "answer": 1,
+      "why": "Uzun segmentda pleyer sifatni kamroq tez moslaydi va birinchi segment kattaroq."
+    },
+    {
+      "q": "Mashhur videoning ko'rishlar soni uchun har ko'rishda UPDATE views = views + 1 qilinmoqda va baza qiynalmoqda. Yechim?",
+      "options": [
+        "Kattaroq baza serveri",
+        "Hodisalarni Kafka ga yuborib, oynalar bo'yicha agregatsiya qilib, bitta views += N yozuvi",
+        "Ko'rishlarni hisoblamaslik",
+        "Har ko'rishga alohida qator"
+      ],
+      "answer": 1,
+      "why": "Stream agregatsiya hot row ga yozishni sekundiga bir necha marta kamaytiradi; hisoblagich eventual."
+    },
+    {
+      "q": "iQuariX dashkamera kliplari o'rtacha 0-1 marta ko'riladi. YouTube uslubidagi qaysi komponent bu yerda deyarli keraksiz?",
+      "options": [
+        "Resumable yuklash",
+        "Object storage",
+        "Ko'p sifatli ABR ladder va CDN keshlash",
+        "Imzolangan URL"
+      ],
+      "answer": 2,
+      "why": "Kesh faqat takroriy ko'rishlarda foyda beradi; bitta sifat va to'g'ridan-to'g'ri object storage yetadi."
+    }
+  ]
+}

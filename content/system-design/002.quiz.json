@@ -1,0 +1,85 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Bir endpoint sikl ichida bazaga 100 ta ketma-ket so'rov yuboradi (N+1). Baza bitta data-markazda, har bir round trip taxminan 0.5 ms. Faqat tarmoq kutishiga qancha vaqt ketadi?",
+      "options": ["0.5 ms", "5 ms", "50 ms", "500 ms"],
+      "answer": 2,
+      "why": "100 x 0.5 ms = 50 ms. Bu vaqtda CPU millionlab operatsiya bajarishi mumkin edi, shuning uchun round trip lar sonini kamaytirish kod optimizatsiyasidan foydaliroq."
+    },
+    {
+      "q": "Toshkentdan Frankfurtgacha to'g'ri chiziq masofa taxminan 4 700 km. Optik tola orqali nazariy minimal RTT qancha?",
+      "options": ["Taxminan 5 ms", "Taxminan 16 ms", "Taxminan 47 ms", "Taxminan 150 ms"],
+      "answer": 2,
+      "why": "Tolada ~5 µs/km bir tomonga: 4 700 x 5 µs ≈ 23.5 ms, round trip ≈ 47 ms. 16 ms vakuumdagi yorug'lik uchun bir tomonlama qiymatga yaqin, tolada esa sekinroq."
+    },
+    {
+      "q": "2009 yildagi Jeff Dean jadvali bilan 2026 dagi raqamlarni solishtirganda qaysi xulosa to'g'ri?",
+      "options": [
+        "Barcha raqamlar taxminan 100 baravar yaxshilangan",
+        "Tasodifiy disk o'qish SSD tufayli ~100 baravar tezlashgan, qit'alararo round trip esa fizika tufayli deyarli o'zgarmagan",
+        "RAM endi SSD bilan bir xil tezlikda",
+        "Data-markaz ichidagi round trip endi nanosoniyalarda o'lchanadi"
+      ],
+      "answer": 1,
+      "why": "HDD seek ~10 ms edi, NVMe SSD random read ~100 µs. Qit'alararo latency yorug'lik tezligi bilan cheklangan va apparat bilan tuzalmaydi."
+    },
+    {
+      "q": "Servis 1 Gbps tarmoq kartasiga ega. 50 MB lik faylni nazariy minimal qancha vaqtda yuboradi?",
+      "options": ["0.05 s", "0.4 s", "4 s", "50 ms dan kam"],
+      "answer": 1,
+      "why": "1 Gbps = 125 MB/s. 50 MB / 125 MB/s = 0.4 s. Bit va baytni aralashtirish 8 baravar xatoga olib keladi."
+    },
+    {
+      "q": "SLO 99.99% oylik availability. Nega bu talab amalda avtomatik failover ni talab qiladi?",
+      "options": [
+        "Chunki 99.99% faqat Kubernetes da mumkin",
+        "Oyiga atigi ~4.3 daqiqa ishlamaslikka ruxsat bor, bu inson alert ga reaksiya qilib muammoni tushunishiga ham yetmaydi",
+        "Chunki 99.99% oyiga 43 daqiqa ruxsat beradi",
+        "Avtomatik failover talab qilinmaydi, faqat backup kerak"
+      ],
+      "answer": 1,
+      "why": "30 kun x 24 x 60 x 0.0001 ≈ 4.32 daqiqa. Qo'lda tiklash odatda bundan uzoqroq davom etadi."
+    },
+    {
+      "q": "150 mln DAU, har biri kuniga 2 ta yozuv qiladi. Cho'qqi koeffitsienti 2. Cho'qqi yozish QPS taxminan qancha?",
+      "options": ["~350", "~3 500", "~7 000", "~300 000"],
+      "answer": 2,
+      "why": "150 x 10^6 x 2 / 86 400 ≈ 3 500 o'rtacha, cho'qqi 2 x 3 500 ≈ 7 000."
+    },
+    {
+      "q": "Bitta oqimda har bir commit 300 µs lik fsync talab qiladi. Group commit siz bitta oqim soniyasiga taxminan nechta commit qila oladi?",
+      "options": ["~300", "~3 300", "~33 000", "~300 000"],
+      "answer": 1,
+      "why": "1 / 0.0003 s ≈ 3 333 commit/s. Bazalar bundan yuqoriga group commit va parallel oqimlar orqali chiqadi."
+    },
+    {
+      "q": "4 000 kamera, har biri 1 Mbps, kuniga 10 soat. Kunlik video hajmi taxminan qancha?",
+      "options": ["1.8 TB", "18 TB", "180 TB", "4.5 TB"],
+      "answer": 1,
+      "why": "1 Mbps = 125 KB/s; 125 KB x 36 000 s = 4.5 GB bitta kamera uchun; 4 000 x 4.5 GB = 18 TB."
+    },
+    {
+      "q": "Back-of-envelope natija: tizimga 1 000 yozuv/s kerak, tanlangan baza esa sizning sinovlaringizda 100 000 yozuv/s ko'taradi. Eng to'g'ri keyingi qadam qaysi?",
+      "options": [
+        "Darhol batafsil benchmark o'tkazish",
+        "Bu qismni chuqur tekshirishga vaqt sarflamay, boshqa xavfliroq joyga (masalan, hajm yoki narx) o'tish",
+        "Shardingni oldindan qo'shish",
+        "Bazani tezroq bazaga almashtirish"
+      ],
+      "answer": 1,
+      "why": "Natija chegaradan 100 baravar uzoq bo'lsa, aniqroq o'lchov qarorni o'zgartirmaydi. Benchmark faqat natija chegaraga yaqin bo'lganda kerak."
+    },
+    {
+      "q": "Hisob-kitobda sezgirlik tahlilining maqsadi nima?",
+      "options": [
+        "Natijani iloji boricha aniq qilish",
+        "Qaysi taxmin o'zgarsa natija eng ko'p o'zgarishini topib, aynan o'shani birinchi aniqlashtirish",
+        "Barcha taxminlarni 2 baravar oshirib, xavfsizlik zaxirasi qo'shish",
+        "Interviewer ga ko'proq raqam ko'rsatish"
+      ],
+      "answer": 1,
+      "why": "Masalan, video misolida saqlash muddati va qaysi video bulutga kerakligi natijani bir necha baravar o'zgartiradi, shuning uchun mijozga birinchi shu savollar beriladi."
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Yakuniy loyiha uchun qaysi mavzu eng kam mos?",
+      "options": [
+        "Telemetriya ingest ini 10x ga qayta loyihalash",
+        "Foydalanuvchi profilini tahrirlash CRUD sahifasi",
+        "Multi-region kengayish va data residency",
+        "Ombor qoldig'i va qurilma tayinlash invariantlari bilan ichki ERP moduli"
+      ],
+      "answer": 1,
+      "why": "Yakuniy loyihada kamida ikkita jiddiy chuqur tahlil mavzusi bo'lishi kerak; oddiy CRUD da ular yo'q."
+    },
+    {
+      "q": "Design doc da 'Ombor qoldig'i manfiy bo'lmasin' invarianti Redis keshidagi qiymatni tekshirish orqali ta'minlangan. Rubrika bo'yicha bu nima?",
+      "options": [
+        "Yaxshi optimallashtirish",
+        "Qizil bayroq: kuchli invariant eventual komponentga tayanadi",
+        "Kichik kamchilik, 1 ball kamayadi",
+        "Muammo emas, agar TTL qisqa bo'lsa"
+      ],
+      "answer": 1,
+      "why": "Invariantlar baza darajasida atomik yozuv yoki tranzaksiya bilan ushlanishi kerak."
+    },
+    {
+      "q": "Hisob-kitob bo'limida faqat o'rtacha QPS bor. Bu qanday baholanadi?",
+      "options": [
+        "Yetarli",
+        "Qizil bayroq: cho'qqi yuklama yo'q",
+        "Faqat narx yo'qligi muammo",
+        "Faqat interview da muhim"
+      ],
+      "answer": 1,
+      "why": "Tizimlar cho'qqida va ekstremal stsenariylarda sinadi; o'rtacha dizaynni belgilamaydi."
+    },
+    {
+      "q": "Rubrikada jami 40 balldan 29 ball, lekin bitta qizil bayroq bor. Natija?",
+      "options": [
+        "Review dan o'tadi",
+        "Balldan qat'i nazar qayta ishlashga qaytariladi",
+        "Faqat ADR qo'shish kerak",
+        "Kuchli senior darajasi"
+      ],
+      "answer": 1,
+      "why": "Qizil bayroqlar fundamental xatolarni bildiradi va ballni bekor qiladi."
+    },
+    {
+      "q": "Chuqur tahlilda rad etilgan alternativa ataylab zaif qilib ko'rsatilgan. Muammo nimada?",
+      "options": [
+        "Muammo yo'q, tanlov yaxshi ko'rinadi",
+        "Tanlov asoslanmagan bo'lib qoladi - alternativalar haqiqiy va ishlaydigan bo'lishi kerak",
+        "Doc juda uzun bo'ladi",
+        "ADR kerak bo'lmaydi"
+      ],
+      "answer": 1,
+      "why": "'Somon odam' alternativa reviewer ga trade-off tahlili qilinmaganini ko'rsatadi."
+    },
+    {
+      "q": "8-qadamda 'Kubernetes bilan avtomatik masshtablanadi' deb yozilgan. Rubrika bo'yicha qancha ball va nega?",
+      "options": [
+        "4 - zamonaviy yechim",
+        "0-1 - nima birinchi sinishi, tartib va trigger metrikalari yo'q",
+        "3 - yetarli",
+        "Baholanmaydi"
+      ],
+      "answer": 1,
+      "why": "Evolyutsiya - aniq komponent qachon va nima uchun sinishi; stateful qismlar Kubernetes bilan o'z-o'zidan masshtablanmaydi."
+    },
+    {
+      "q": "Yakuniy loyiha B variantida (mavjud tizimni qayta loyihalash) eng ko'p unutiladigan qism qaysi?",
+      "options": ["Diagramma", "Migratsiya rejasi - bosqichlar va har birining qaytarilishi", "API nomlari", "Manbalar"],
+      "answer": 1,
+      "why": "Migratsiyasiz dizayn yangi loyiha fantaziyasiga aylanadi; real tizim to'xtamasdan o'zgarishi kerak."
+    },
+    {
+      "q": "Haydovchi skoringi namunasida 'real-time ball' non-goal sifatida yozilgan. Bu qanday arxitektura qaroriga olib keldi?",
+      "options": [
+        "Barcha hisoblar stream da",
+        "Hodisalarni aniqlash stream da, ballni hisoblash kuniga bir marta batch da",
+        "Ball hisoblash umuman yo'q",
+        "Har nuqtada ball yangilanadi"
+      ],
+      "answer": 1,
+      "why": "Non-goal murakkab real-time agregatsiyani olib tashlab, oddiy va qayta hisoblanadigan batch ga imkon berdi."
+    },
+    {
+      "q": "Formula o'zgarganda o'tgan oy ballarini qayta hisoblash talabi qaysi patternni tabiiy qiladi?",
+      "options": ["Write-through cache", "Event sourcing: xom hodisalar o'zgarmas, ball - ulardan hosila", "2PC", "Consistent hashing"],
+      "answer": 1,
+      "why": "O'zgarmas hodisalar logi istalgan formula versiyasi bilan qayta hisoblashga imkon beradi."
+    },
+    {
+      "q": "Review da reviewer sizning dizayningizda SPOF topdi. Eng to'g'ri munosabat qaysi?",
+      "options": [
+        "Bu ehtimoli kam deb himoya qilish",
+        "Tasdiqlash, ta'sirni baholash, yechim va narxini taklif qilib, ochiq savollar yoki ADR ga qo'shish",
+        "Savolni keyinga qoldirish",
+        "Butun dizaynni qaytadan boshlash"
+      ],
+      "answer": 1,
+      "why": "Topilgan zaif joy - review ning eng qimmatli natijasi; uni tuzilmali qayta ishlash kerak."
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Circuit breaker Open holatda nima qiladi?",
+      "options": [
+        "Chaqiruvlarni sekinroq tezlikda o'tkazadi",
+        "Chaqiruvlarni downstream ga yubormasdan darhol xato yoki fallback qaytaradi",
+        "Faqat retry'larni bloklaydi",
+        "Barcha chaqiruvlarni navbatga qo'yadi"
+      ],
+      "answer": 1,
+      "why": "Open holat client resurslarini timeout kutishdan ozod qiladi va qiynalayotgan downstream ga tiklanish uchun imkon beradi."
+    },
+    {
+      "q": "Saqlash tizimining 10 ta shard idan bittasi ortiqcha yuklangan. Client'da butun saqlash tizimi uchun bitta circuit breaker bor. Nima xavf bor?",
+      "options": [
+        "Hech qanday xavf yo'q, breaker faqat o'sha shard ni bloklaydi",
+        "Breaker ochilsa sog'lom 9 ta shard ga tegishli so'rovlar ham rad etiladi va qisman nosozlik to'liqqa aylanadi",
+        "Breaker hech qachon ochilmaydi",
+        "Shard avtomatik qayta taqsimlanadi"
+      ],
+      "answer": 1,
+      "why": "Brooker tanqidi: bitta breaker tizimning ichki tuzilishini bilmaydi va qisman nosozlikni butun tizimga yoyadi."
+    },
+    {
+      "q": "Report servisiga 50 so'rov/s keladi, p99 latency 200 ms. Little qonuni bo'yicha bulkhead uchun minimal parallel chaqiruvlar soni qancha?",
+      "options": ["2.5", "10", "50", "250"],
+      "answer": 1,
+      "why": "L = lambda x W = 50 x 0.2 = 10. Odatda ustiga zaxira qo'shiladi, masalan 20."
+    },
+    {
+      "q": "Servisning median latency si client timeout iga teng bo'lib qoldi. AWS load shedding maqolasiga ko'ra availability taxminan qancha?",
+      "options": ["99%", "90%", "50%", "0%"],
+      "answer": 2,
+      "why": "Median timeout ga teng bo'lsa, so'rovlarning taxminan yarmi timeout dan oshadi. Server ularni baribir qayta ishlab, behuda ish qiladi."
+    },
+    {
+      "q": "Ortiqcha yuklamada qaysi so'rov turi eng yuqori prioritetga ega bo'lishi kerak?",
+      "options": [
+        "Crawler trafigi",
+        "Load balancer health check",
+        "Kvotadan oshgan burst trafik",
+        "Batch eksport"
+      ],
+      "answer": 1,
+      "why": "Health check rad etilsa, load balancer serverni flotdan chiqaradi, qolganlarga yuklama ko'payadi va ular ham yiqiladi."
+    },
+    {
+      "q": "Client 1 000 so'rov yubordi, backend 400 tasini qabul qildi, K = 2. Google adaptive throttling formulasi bo'yicha client lokal rad etish ehtimoli taxminan qancha?",
+      "options": ["0", "Taxminan 20%", "Taxminan 60%", "100%"],
+      "answer": 1,
+      "why": "max(0, (1000 - 2 x 400) / 1001) ≈ 0.2."
+    },
+    {
+      "q": "Nega ortiqcha yuklamada FIFO o'rniga LIFO yoki CoDel navbati tavsiya qilinadi?",
+      "options": [
+        "LIFO tezroq ishlaydi",
+        "Eski so'rovlarning client'lari ehtimol allaqachon voz kechgan, yangi so'rovlarga xizmat ko'rsatish goodput ni oshiradi",
+        "FIFO ma'lumot yo'qotadi",
+        "LIFO adolatliroq"
+      ],
+      "answer": 1,
+      "why": "Navbatda uzoq turgan so'rov deadline idan o'tgan bo'lishi mumkin. Yangilariga xizmat qilish foydali ish ulushini oshiradi."
+    },
+    {
+      "q": "Servis CPU 70% da load shedding boshlaydi, autoscaling ham CPU 70% da ishga tushadi. Nima muammo?",
+      "options": [
+        "Muammo yo'q, ular bir-birini to'ldiradi",
+        "Shedding CPU ni chegara ostida ushlab turadi va autoscaling hech qachon ishga tushmasligi mumkin",
+        "Autoscaling shedding ni o'chiradi",
+        "Shedding faqat xotiraga qaraydi"
+      ],
+      "answer": 1,
+      "why": "AWS maqolasi ogohlantiradi: shedding signal metrikani bosib turadi va reaktiv autoscaling bloklanadi. Shedding chegarasi yuqoriroq bo'lishi kerak."
+    },
+    {
+      "q": "Netflix concurrency-limits dagi Vegas algoritmida limit L = 60, minRTT = 20 ms, sampleRTT = 30 ms. Navbatdagi so'rovlar taxmini qancha va limit qayerga siljiydi?",
+      "options": [
+        "0, limit oshadi",
+        "20, limit kamayadi",
+        "40, limit oshadi",
+        "60, limit o'zgarmaydi"
+      ],
+      "answer": 1,
+      "why": "60 x (1 - 20/30) = 20. Bu beta (taxminan 4-6) dan katta, shuning uchun limit kamaytiriladi."
+    },
+    {
+      "q": "Bitta Node.js servisida auth, report va notification uchun bitta umumiy 100 connection li HTTP agent bor. Report servisi sekinlashdi. Eng to'g'ri yechim qaysi?",
+      "options": [
+        "Umumiy pool ni 1 000 gacha oshirish",
+        "Har bir downstream uchun alohida cheklangan pool yoki semaphore (bulkhead)",
+        "Report timeout ini oshirish",
+        "Barcha chaqiruvlarga retry qo'shish"
+      ],
+      "answer": 1,
+      "why": "Bulkhead report muammosini uning o'z pool i bilan cheklaydi, auth va notification ishlashda davom etadi."
+    }
+  ]
+}

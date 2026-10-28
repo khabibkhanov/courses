@@ -1,0 +1,490 @@
+# Kursda ishlatiladigan manbalar ro'yxati.
+# Darslar `sources` maydonida shu kalitlarga (id) murojaat qiladi.
+# Bob/bo'lim aniqligi dars faylida `note` orqali beriladi.
+
+cc1:
+  title: "Clean Code: A Handbook of Agile Software Craftsmanship"
+  author: Robert C. Martin
+  year: 2008
+  kind: book
+  url: https://www.oreilly.com/library/view/clean-code-a/9780136083238/
+cc2:
+  title: "Clean Code, 2nd Edition"
+  author: Robert C. Martin
+  year: 2025
+  kind: book
+  url: https://www.pearson.com/en-us/subject-catalog/p/clean-code-a-handbook-of-agile-software-craftsmanship-2nd-edition/P200000013239
+aposd:
+  title: "A Philosophy of Software Design, 2nd Edition"
+  author: John Ousterhout
+  year: 2021
+  kind: book
+  url: https://web.stanford.edu/~ouster/cgi-bin/book.php
+aposd-vs-cc:
+  title: "Ousterhout va Martin munozarasi: APOSD vs Clean Code"
+  author: John Ousterhout, Robert C. Martin
+  year: 2025
+  kind: article
+  url: https://github.com/johnousterhout/aposd-vs-clean-code
+refactoring:
+  title: "Refactoring: Improving the Design of Existing Code, 2nd Edition"
+  author: Martin Fowler
+  year: 2018
+  kind: book
+  url: https://martinfowler.com/books/refactoring.html
+refactoring-catalog:
+  title: "Catalog of Refactorings"
+  author: Martin Fowler
+  year: 2018
+  kind: web
+  url: https://refactoring.com/catalog/
+pragprog:
+  title: "The Pragmatic Programmer, 20th Anniversary Edition"
+  author: David Thomas, Andrew Hunt
+  year: 2019
+  kind: book
+  url: https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/
+code-complete:
+  title: "Code Complete, 2nd Edition"
+  author: Steve McConnell
+  year: 2004
+  kind: book
+  url: https://www.oreilly.com/library/view/code-complete-2nd/0735619670/
+welc:
+  title: "Working Effectively with Legacy Code"
+  author: Michael Feathers
+  year: 2004
+  kind: book
+  url: https://www.oreilly.com/library/view/working-effectively-with/0131177052/
+tdd-beck:
+  title: "Test-Driven Development: By Example"
+  author: Kent Beck
+  year: 2002
+  kind: book
+  url: https://www.oreilly.com/library/view/test-driven-development/0321146530/
+tidy-first:
+  title: "Tidy First? A Personal Exercise in Empirical Software Design"
+  author: Kent Beck
+  year: 2023
+  kind: book
+  url: https://www.oreilly.com/library/view/tidy-first/9781098151232/
+effective-ts:
+  title: "Effective TypeScript, 2nd Edition (83 Specific Ways)"
+  author: Dan Vanderkam
+  year: 2024
+  kind: book
+  url: https://www.oreilly.com/library/view/effective-typescript/9781098155056/
+clean-arch:
+  title: "Clean Architecture"
+  author: Robert C. Martin
+  year: 2017
+  kind: book
+  url: https://www.oreilly.com/library/view/clean-architecture-a/9780134494272/
+ddd-evans:
+  title: "Domain-Driven Design: Tackling Complexity in the Heart of Software"
+  author: Eric Evans
+  year: 2003
+  kind: book
+  url: https://www.domainlanguage.com/ddd/
+gof:
+  title: "Design Patterns: Elements of Reusable Object-Oriented Software"
+  author: Gamma, Helm, Johnson, Vlissides
+  year: 1994
+  kind: book
+  url: https://www.oreilly.com/library/view/design-patterns-elements/0201633612/
+xunit-patterns:
+  title: "xUnit Test Patterns: Refactoring Test Code"
+  author: Gerard Meszaros
+  year: 2007
+  kind: book
+  url: http://xunitpatterns.com/
+parnas-1972:
+  title: "On the Criteria To Be Used in Decomposing Systems into Modules"
+  author: David L. Parnas
+  year: 1972
+  kind: paper
+  url: https://dl.acm.org/doi/10.1145/361598.361623
+liskov-wing:
+  title: "A Behavioral Notion of Subtyping"
+  author: Barbara Liskov, Jeannette Wing
+  year: 1994
+  kind: paper
+  url: https://dl.acm.org/doi/10.1145/197320.197383
+knuth-1974:
+  title: "Structured Programming with go to Statements"
+  author: Donald Knuth
+  year: 1974
+  kind: paper
+  url: https://dl.acm.org/doi/10.1145/356635.356640
+cunningham-1992:
+  title: "The WyCash Portfolio Management System (OOPSLA '92) - texnik qarz metaforasi"
+  author: Ward Cunningham
+  year: 1992
+  kind: paper
+  url: https://c2.com/doc/oopsla92.html
+fowler-debt-quadrant:
+  title: "TechnicalDebtQuadrant"
+  author: Martin Fowler
+  year: 2009
+  kind: article
+  url: https://martinfowler.com/bliki/TechnicalDebtQuadrant.html
+fowler-quality-cost:
+  title: "Is High Quality Software Worth the Cost?"
+  author: Martin Fowler
+  year: 2019
+  kind: article
+  url: https://martinfowler.com/articles/is-quality-worth-cost.html
+fowler-yagni:
+  title: "Yagni"
+  author: Martin Fowler
+  year: 2015
+  kind: article
+  url: https://martinfowler.com/bliki/Yagni.html
+fowler-beck-design-rules:
+  title: "BeckDesignRules"
+  author: Martin Fowler
+  year: 2015
+  kind: article
+  url: https://martinfowler.com/bliki/BeckDesignRules.html
+fowler-code-smell:
+  title: "CodeSmell"
+  author: Martin Fowler
+  year: 2006
+  kind: article
+  url: https://martinfowler.com/bliki/CodeSmell.html
+fowler-test-pyramid:
+  title: "The Practical Test Pyramid"
+  author: Ham Vocke (martinfowler.com)
+  year: 2018
+  kind: article
+  url: https://martinfowler.com/articles/practical-test-pyramid.html
+fowler-mocks-arent-stubs:
+  title: "Mocks Aren't Stubs"
+  author: Martin Fowler
+  year: 2007
+  kind: article
+  url: https://martinfowler.com/articles/mocksArentStubs.html
+fowler-strangler:
+  title: "StranglerFigApplication"
+  author: Martin Fowler
+  year: 2004
+  kind: article
+  url: https://martinfowler.com/bliki/StranglerFigApplication.html
+fowler-parallel-change:
+  title: "ParallelChange"
+  author: Danilo Sato (martinfowler.com)
+  year: 2014
+  kind: article
+  url: https://martinfowler.com/bliki/ParallelChange.html
+fowler-branch-by-abstraction:
+  title: "BranchByAbstraction"
+  author: Martin Fowler
+  year: 2014
+  kind: article
+  url: https://martinfowler.com/bliki/BranchByAbstraction.html
+fowler-workflows-refactoring:
+  title: "Workflows of Refactoring"
+  author: Martin Fowler
+  year: 2014
+  kind: article
+  url: https://martinfowler.com/articles/workflowsOfRefactoring/
+fowler-ubiquitous-language:
+  title: "UbiquitousLanguage"
+  author: Martin Fowler
+  year: 2006
+  kind: article
+  url: https://martinfowler.com/bliki/UbiquitousLanguage.html
+fowler-command-query:
+  title: "CommandQuerySeparation"
+  author: Martin Fowler
+  year: 2005
+  kind: article
+  url: https://martinfowler.com/bliki/CommandQuerySeparation.html
+fowler-tell-dont-ask:
+  title: "TellDontAsk"
+  author: Martin Fowler
+  year: 2013
+  kind: article
+  url: https://martinfowler.com/bliki/TellDontAsk.html
+fowler-value-object:
+  title: "ValueObject"
+  author: Martin Fowler
+  year: 2016
+  kind: article
+  url: https://martinfowler.com/bliki/ValueObject.html
+fowler-ddd-aggregate:
+  title: "DDD_Aggregate"
+  author: Martin Fowler
+  year: 2013
+  kind: article
+  url: https://martinfowler.com/bliki/DDD_Aggregate.html
+fowler-microservice-premium:
+  title: "MicroservicePremium"
+  author: Martin Fowler
+  year: 2015
+  kind: article
+  url: https://martinfowler.com/bliki/MicroservicePremium.html
+uncle-bob-srp:
+  title: "The Single Responsibility Principle"
+  author: Robert C. Martin
+  year: 2014
+  kind: article
+  url: https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html
+uncle-bob-tdd-cycles:
+  title: "The Cycles of TDD"
+  author: Robert C. Martin
+  year: 2014
+  kind: article
+  url: https://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html
+uncle-bob-clean-arch-post:
+  title: "The Clean Architecture"
+  author: Robert C. Martin
+  year: 2012
+  kind: article
+  url: https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
+cockburn-hexagonal:
+  title: "Hexagonal Architecture (Ports and Adapters)"
+  author: Alistair Cockburn
+  year: 2005
+  kind: article
+  url: https://alistair.cockburn.us/hexagonal-architecture/
+parse-dont-validate:
+  title: "Parse, don't validate"
+  author: Alexis King
+  year: 2019
+  kind: article
+  url: https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/
+metz-wrong-abstraction:
+  title: "The Wrong Abstraction"
+  author: Sandi Metz
+  year: 2016
+  kind: article
+  url: https://sandimetz.com/blog/2016/1/20/the-wrong-abstraction
+dodds-aha:
+  title: "AHA Programming"
+  author: Kent C. Dodds
+  year: 2020
+  kind: article
+  url: https://kentcdodds.com/blog/aha-programming
+dodds-testing-trophy:
+  title: "The Testing Trophy and Testing Classifications"
+  author: Kent C. Dodds
+  year: 2021
+  kind: article
+  url: https://kentcdodds.com/blog/the-testing-trophy-and-testing-classifications
+dodds-implementation-details:
+  title: "Testing Implementation Details"
+  author: Kent C. Dodds
+  year: 2020
+  kind: article
+  url: https://kentcdodds.com/blog/testing-implementation-details
+abramov-goodbye-clean:
+  title: "Goodbye, Clean Code"
+  author: Dan Abramov
+  year: 2020
+  kind: article
+  url: https://overreacted.io/goodbye-clean-code/
+qntm-clean:
+  title: "It's probably time to stop recommending Clean Code"
+  author: qntm
+  year: 2020
+  kind: article
+  url: https://qntm.org/clean
+muratori-performance:
+  title: "\"Clean\" Code, Horrible Performance"
+  author: Casey Muratori
+  year: 2023
+  kind: article
+  url: https://www.computerenhance.com/p/clean-code-horrible-performance
+bernhardt-boundaries:
+  title: "Boundaries (Functional Core, Imperative Shell)"
+  author: Gary Bernhardt
+  year: 2012
+  kind: talk
+  url: https://www.destroyallsoftware.com/talks/boundaries
+nygard-adr:
+  title: "Documenting Architecture Decisions"
+  author: Michael Nygard
+  year: 2011
+  kind: article
+  url: https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
+google-code-review:
+  title: "Google Engineering Practices: Code Review"
+  author: Google
+  year: 2019
+  kind: web
+  url: https://google.github.io/eng-practices/review/
+conventional-commits:
+  title: "Conventional Commits 1.0.0"
+  author: conventionalcommits.org
+  year: 2019
+  kind: web
+  url: https://www.conventionalcommits.org/en/v1.0.0/
+twelve-factor-config:
+  title: "The Twelve-Factor App: III. Config"
+  author: Adam Wiggins
+  year: 2011
+  kind: web
+  url: https://12factor.net/config
+twelve-factor-logs:
+  title: "The Twelve-Factor App: XI. Logs"
+  author: Adam Wiggins
+  year: 2011
+  kind: web
+  url: https://12factor.net/logs
+rfc-9457:
+  title: "RFC 9457: Problem Details for HTTP APIs"
+  author: IETF
+  year: 2023
+  kind: spec
+  url: https://www.rfc-editor.org/rfc/rfc9457
+ts-handbook:
+  title: "TypeScript Handbook"
+  author: Microsoft
+  year: 2025
+  kind: docs
+  url: https://www.typescriptlang.org/docs/handbook/intro.html
+ts-tsconfig-strict:
+  title: "TSConfig: strict"
+  author: Microsoft
+  year: 2025
+  kind: docs
+  url: https://www.typescriptlang.org/tsconfig/#strict
+react-docs-thinking:
+  title: "Thinking in React"
+  author: React team
+  year: 2025
+  kind: docs
+  url: https://react.dev/learn/thinking-in-react
+react-docs-effect:
+  title: "You Might Not Need an Effect"
+  author: React team
+  year: 2025
+  kind: docs
+  url: https://react.dev/learn/you-might-not-need-an-effect
+react-docs-state:
+  title: "Choosing the State Structure"
+  author: React team
+  year: 2025
+  kind: docs
+  url: https://react.dev/learn/choosing-the-state-structure
+nextjs-docs:
+  title: "Next.js Documentation (App Router)"
+  author: Vercel
+  year: 2026
+  kind: docs
+  url: https://nextjs.org/docs/app
+nextjs-server-client:
+  title: "Next.js: Server and Client Components"
+  author: Vercel
+  year: 2026
+  kind: docs
+  url: https://nextjs.org/docs/app/getting-started/server-and-client-components
+nestjs-docs:
+  title: "NestJS Documentation"
+  author: NestJS
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/
+nestjs-exception-filters:
+  title: "NestJS: Exception filters"
+  author: NestJS
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/exception-filters
+nestjs-providers:
+  title: "NestJS: Providers (Dependency Injection)"
+  author: NestJS
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/providers
+eslint-config:
+  title: "ESLint: Configuration Files (flat config)"
+  author: ESLint
+  year: 2026
+  kind: docs
+  url: https://eslint.org/docs/latest/use/configure/configuration-files
+typescript-eslint:
+  title: "typescript-eslint"
+  author: typescript-eslint
+  year: 2026
+  kind: docs
+  url: https://typescript-eslint.io/
+prettier-rationale:
+  title: "Prettier: Rationale"
+  author: Prettier
+  year: 2026
+  kind: docs
+  url: https://prettier.io/docs/rationale
+mdn-abortcontroller:
+  title: "AbortController"
+  author: MDN
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/API/AbortController
+mdn-error-cause:
+  title: "Error: cause"
+  author: MDN
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause
+testcontainers-node:
+  title: "Testcontainers for Node.js"
+  author: Testcontainers
+  year: 2026
+  kind: docs
+  url: https://node.testcontainers.org/
+testing-library-principles:
+  title: "Testing Library: Guiding Principles"
+  author: Testing Library
+  year: 2026
+  kind: docs
+  url: https://testing-library.com/docs/guiding-principles
+stryker:
+  title: "Stryker Mutator"
+  author: Stryker
+  year: 2026
+  kind: docs
+  url: https://stryker-mutator.io/
+pino:
+  title: "Pino - Node.js logger"
+  author: Pino
+  year: 2026
+  kind: docs
+  url: https://getpino.io/
+dependency-cruiser:
+  title: "dependency-cruiser"
+  author: Sander Verweij
+  year: 2026
+  kind: docs
+  url: https://github.com/sverweij/dependency-cruiser
+prisma-docs:
+  title: "Prisma ORM Documentation"
+  author: Prisma
+  year: 2026
+  kind: docs
+  url: https://www.prisma.io/docs/orm
+kysely-docs:
+  title: "Kysely Documentation"
+  author: Kysely
+  year: 2026
+  kind: docs
+  url: https://kysely.dev/docs/intro
+zod-docs:
+  title: "Zod Documentation"
+  author: Colin McDonnell
+  year: 2026
+  kind: docs
+  url: https://zod.dev/
+mccabe-1976:
+  title: "A Complexity Measure"
+  author: Thomas J. McCabe
+  year: 1976
+  kind: paper
+  url: https://ieeexplore.ieee.org/document/1702388
+sonar-cognitive:
+  title: "Cognitive Complexity (white paper)"
+  author: G. Ann Campbell, SonarSource
+  year: 2018
+  kind: paper
+  url: https://www.sonarsource.com/resources/cognitive-complexity/

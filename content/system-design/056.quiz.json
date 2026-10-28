@@ -1,0 +1,90 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Limit: fixed window bilan daqiqasiga 100 so'rov. Eng yomon holatda klient 2 soniya ichida nechta so'rov o'tkaza oladi?",
+      "options": ["100", "Taxminan 103", "200", "Cheksiz"],
+      "answer": 2,
+      "why": "Oynaning oxirgi soniyasida 100 ta va keyingi oynaning birinchi soniyasida yana 100 ta - ikkala oynada limit buzilmagan, lekin 2 soniyada 200."
+    },
+    {
+      "q": "Sliding window counter: limit daqiqasiga 50, joriy oyna 15 soniya oldin boshlangan, joriy oynada 18, oldingi oynada 42 so'rov. Taxminiy son qancha?",
+      "options": ["60", "49.5", "28.5", "42"],
+      "answer": 1,
+      "why": "42 x (60 - 15)/60 + 18 = 42 x 0.75 + 18 = 49.5. Limitdan past, so'rov qabul qilinadi."
+    },
+    {
+      "q": "Token bucket: sig'im B = 20, tezlik r = 100 token/daqiqa. Boshida chelak to'la. Bitta daqiqa ichida eng ko'pi bilan nechta so'rov o'tishi mumkin?",
+      "options": ["20", "100", "Taxminan 120", "200"],
+      "answer": 2,
+      "why": "Boshidagi to'la chelak (20) va daqiqa davomida to'ldirilgan tokenlar (100): jami taxminan 120. Uzoq muddatda o'rtacha r ga teng."
+    },
+    {
+      "q": "10 ta API instance, har biri xotirada o'z hisoblagichini yuritadi, limit 100/daqiqa. Load balancer so'rovlarni teng taqsimlasa, klient amalda nechta so'rov o'tkaza oladi?",
+      "options": ["100", "Taxminan 1 000", "10", "Taxminan 110"],
+      "answer": 1,
+      "why": "Har instance alohida 100 ga ruxsat beradi: 10 x 100 = 1 000. Distributed limiter uchun umumiy store yoki ulushlarni taqsimlash kerak."
+    },
+    {
+      "q": "Rate limiter Redis'da GET, keyin tekshirish, keyin SET bilan yozilgan. Yuqori yuklamada limit ba'zan oshib ketadi. Sababi va yechimi?",
+      "options": [
+        "Redis sekin; Redis'ni kattaroq serverga ko'chirish",
+        "Read-modify-write race: ikki instance bir xil qiymatni o'qiydi; yechim - Lua script bilan atomik o'qish-qaror-yozish",
+        "TTL juda qisqa; TTL'ni oshirish",
+        "Kalitlar soni ko'p; kalitlarni birlashtirish"
+      ],
+      "answer": 1,
+      "why": "Alohida buyruqlar orasida boshqa instance qiymatni o'zgartiradi. Lua script Redis'da atomik bajariladi va bitta round trip oladi."
+    },
+    {
+      "q": "Token bucket Lua script'ida vaqt nega ilova serveridan emas, Redis TIME buyrug'idan olinadi?",
+      "options": [
+        "Redis vaqti aniqroq formatda",
+        "Turli ilova serverlarining soatlari farq qilishi mumkin va bu refill hisobini buzadi; bitta manba izchillik beradi",
+        "Lua'da Date funksiyasi yo'q",
+        "Bu faqat uslub masalasi"
+      ],
+      "answer": 1,
+      "why": "Soat farqi bilan bir server chelakni ortiqcha to'ldiradi, boshqasi kam. Barcha qarorlar bitta vaqt manbasiga tayanishi kerak."
+    },
+    {
+      "q": "Redis 2 daqiqa javob bermayapti. Login endpoint'i va umumiy GET /vehicles endpoint'i uchun eng asosli siyosat?",
+      "options": [
+        "Ikkalasi ham fail-closed",
+        "Ikkalasi ham fail-open",
+        "Login fail-closed (bruteforce xavfi), GET /vehicles fail-open va lokal zaxira limit bilan",
+        "Login fail-open, GET /vehicles fail-closed"
+      ],
+      "answer": 2,
+      "why": "Xavfsizlik-kritik endpoint himoyasiz qolmasligi kerak, umumiy API esa rate limiter sababli butunlay o'chmasligi kerak."
+    },
+    {
+      "q": "Sliding window log 1 million faol klient uchun, limit 1 000/daqiqa. MEMORY USAGE o'lchovi 1 000 elementli sorted set uchun 118 000 bayt ko'rsatdi (skiplist encoding). Eng yomon holatda xotira taxminan qancha?",
+      "options": ["118 MB", "1.2 GB", "Taxminan 118 GB", "1.2 TB"],
+      "answer": 2,
+      "why": "1 000 000 x 118 000 B = 1.18 x 10^11 B ≈ 118 GB. Shuning uchun katta masshtabda sliding window counter yoki token bucket afzal."
+    },
+    {
+      "q": "Korporativ mijozning 300 xodimi bitta ofisdan ishlaydi va tez-tez 429 oladi, garchi har biri kam so'rov yuborsa ham. Eng ehtimoliy sabab?",
+      "options": [
+        "Token bucket noto'g'ri ishlaydi",
+        "Limit IP bo'yicha qo'yilgan va hamma NAT ortida bitta tashqi IP'dan chiqadi",
+        "Redis xotirasi to'lgan",
+        "Ularning brauzeri retry qilyapti"
+      ],
+      "answer": 1,
+      "why": "NAT yoki CGNAT ortida ko'p foydalanuvchi bitta IP'ga tushadi. Autentifikatsiyadan keyin foydalanuvchi yoki tenant bo'yicha cheklash kerak."
+    },
+    {
+      "q": "429 va 503 javoblarining farqi qaysi?",
+      "options": [
+        "Farqi yo'q, ikkalasi ham 'keyinroq urinib ko'ring'",
+        "429 - klient o'z limitidan oshgan; 503 - server hozir umuman xizmat ko'rsata olmaydi (masalan load shedding)",
+        "429 faqat GET uchun, 503 POST uchun",
+        "503 klient xatosi, 429 server xatosi"
+      ],
+      "answer": 1,
+      "why": "RFC 6585 bo'yicha 429 foydalanuvchi ko'p so'rov yuborganini bildiradi. Ularni aralashtirish klientlarning retry xatti-harakatini noto'g'ri qiladi."
+    }
+  ]
+}

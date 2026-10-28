@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Saga T1, T2, T3, T4 dan iborat. T3 biznes sababi bilan muvaffaqiyatsiz bo'ldi. Garcia-Molina va Salem kafolatiga ko'ra nima bajariladi?",
+      "options": [
+        "C2, C1 (teskari tartibda)",
+        "C1, C2, C3",
+        "C1, C2 (to'g'ri tartibda)",
+        "Hech narsa, T4 bajariladi"
+      ],
+      "answer": 0,
+      "why": "T1..Tj bajarilgan bo'lsa, Cj..C1 teskari tartibda bajariladi. T3 bajarilmagani uchun C3 kerak emas."
+    },
+    {
+      "q": "Onboarding saga'sida to'lovni yechish birinchi qadamda, montajchi slotini band qilish uchinchida. Montajchi tez-tez topilmaydi. Asosiy muammo?",
+      "options": [
+        "Muammo yo'q",
+        "Choreography ishlatish kerak",
+        "To'lov retryable qadam",
+        "Qaytarish qimmat qadam (to'lov) muvaffaqiyatsiz bo'lishi ehtimoli yuqori qadamdan oldin - tez-tez refund kerak bo'ladi"
+      ],
+      "answer": 3,
+      "why": "Muvaffaqiyatsizlik ehtimoli yuqori va arzon qaytariladigan qadamlar oldinga, pivot (to'lov) iloji boricha oxirroqqa qo'yilishi kerak."
+    },
+    {
+      "q": "Pivot qadamdan keyingi qadamlar qanday bo'lishi kerak?",
+      "options": [
+        "Compensable",
+        "Pivot'dan keyin qadam bo'lmasligi kerak",
+        "Retryable: idempotent va oxir-oqibat muvaffaqiyatli bo'lishi kafolatlangan",
+        "Faqat sinxron"
+      ],
+      "answer": 2,
+      "why": "Pivot'dan keyin kompensatsiya qo'llanmaydi, shuning uchun qolgan qadamlar albatta yakunlanishi kerak."
+    },
+    {
+      "q": "Orchestrator 'qurilmani band qil' command'iga timeout oldi va 'bandni bekor qil' yubordi. Keyin kechikkan 'band qil' xabari yetib keldi. To'g'ri ishtirokchi xatti-harakati?",
+      "options": [
+        "Qurilmani band qilish",
+        "Bekor qilish allaqachon kelganini eslab qolib, kechikkan 'band qil' ni rad etish",
+        "Ikkala xabarni ham e'tiborsiz qoldirish va xato qaytarish",
+        "Orchestrator'ni qayta ishga tushirish"
+      ],
+      "answer": 1,
+      "why": "Kompensatsiya asl qadamdan oldin kelishi mumkin. Ishtirokchi saga_id bo'yicha bekor qilishni yozib qo'yishi kerak (version file chorasi)."
+    },
+    {
+      "q": "Netflix Conductor'ni yaratish sabablaridan qaysi biri maqolada keltirilgan?",
+      "options": [
+        "Pub/sub asosidagi choreography'da jarayon oqimlari bir nechta ilova kodiga singib ketgan va jarayon holatini ko'rish qiyin bo'lgan",
+        "Kafka juda sekin edi",
+        "2PC ishlatish majburiy edi",
+        "Saga pattern'i noto'g'ri edi"
+      ],
+      "answer": 0,
+      "why": "Netflix ko'rinish yo'qligi va o'zgarishga moslashish qiyinligini asosiy sabablar sifatida keltiradi."
+    },
+    {
+      "q": "Saga A oxirgi trekerni band qildi, hisobot 'omborda 0' ko'rsatdi va xarid bo'limi buyurtma berdi. Keyin Saga A kompensatsiya qilindi. Bu qaysi anomaliya?",
+      "options": [
+        "Lost update",
+        "Phantom read",
+        "Write skew",
+        "Dirty read"
+      ],
+      "answer": 3,
+      "why": "Yakunlanmagan va keyin bekor qilingan saga o'zgarishi asosida qaror qabul qilindi - dirty read."
+    },
+    {
+      "q": "Qaysi qarshi chora 'RESERVED' yoki 'PENDING' kabi ilova darajasidagi holatdan foydalanadi?",
+      "options": [
+        "Commutative updates",
+        "Reread value",
+        "Semantic lock",
+        "Pessimistic view"
+      ],
+      "answer": 2,
+      "why": "Semantic lock - yangilanish davom etayotganini bildiradigan ilova bayrog'i. Unga muddat va tozalash mexanizmi kerak."
+    },
+    {
+      "q": "Temporal workflow kodida to'g'ridan-to'g'ri Date.now() va HTTP so'rov ishlatildi. Nima uchun bu xavfli?",
+      "options": [
+        "Temporal JavaScript'ni qo'llamaydi",
+        "Nosozlikdan keyin workflow kodi tarix bilan qayta o'ynaladi, deterministik bo'lmagan chaqiruvlar boshqa natija berib replay'ni buzadi; tashqi ishlar activity'da bo'lishi kerak",
+        "HTTP so'rovlar sekin",
+        "Xavfli emas"
+      ],
+      "answer": 1,
+      "why": "Durable execution replay'ga asoslangan. Activity natijalari yoziladi va qayta bajarilmaydi, workflow kodi esa deterministik bo'lishi shart."
+    },
+    {
+      "q": "Saga 3 kun davom etadigan, inson qadami bor, to'lovni o'z ichiga olgan jarayon. AWS Step Functions'da qaysi workflow turi mos?",
+      "options": [
+        "Standard - bir yilgacha davom etadi va exactly-once bajarilish semantikasiga ega",
+        "Express (asinxron)",
+        "Express (sinxron)",
+        "Hech biri"
+      ],
+      "answer": 0,
+      "why": "Express maksimal 5 daqiqa. Standard uzoq jarayonlar va idempotent bo'lmagan qadamlar uchun mo'ljallangan."
+    },
+    {
+      "q": "Ikki servis deyarli har bir operatsiyada bir-biri bilan saga talab qiladi. Eng to'g'ri xulosa?",
+      "options": [
+        "Saga'ni choreography'ga o'tkazish",
+        "Orchestrator'lar sonini ko'paytirish",
+        "2PC ga o'tish",
+        "Servis chegaralari noto'g'ri bo'lishi mumkin - ularni bitta bounded context/servisga birlashtirishni ko'rib chiqish"
+      ],
+      "answer": 3,
+      "why": "Saga zarurat, maqsad emas. Doimiy birga o'zgaradigan ma'lumot bitta tranzaksiya chegarasida bo'lishi kerak."
+    }
+  ]
+}

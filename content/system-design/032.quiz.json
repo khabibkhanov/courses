@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Servisda HTTP so'rov davomiyligi `Date.now()` farqi bilan o'lchanadi va ba'zan manfiy qiymat chiqadi. Asosiy sabab va yechim qaysi?",
+      "options": [
+        "CPU juda tez - nanosekundli taymer kerak",
+        "Wall-clock NTP yoki leap second tufayli orqaga sakragan - davomiylikni monotonic soat bilan o'lchash kerak",
+        "Node.js event loop bloklangan - worker thread kerak",
+        "Vaqt zonasi noto'g'ri - UTC ga o'tish kerak"
+      ],
+      "answer": 1,
+      "why": "Time-of-day soat sakrashi mumkin. Davomiylik uchun faqat oldinga yuradigan monotonic soat (performance.now, process.hrtime) ishlatiladi."
+    },
+    {
+      "q": "Server kvars generatori 200 ppm drift qiladi va NTP'siz qoldi. Bir kunda soat taxminan qanchaga adashadi?",
+      "options": ["0.2 s", "1.7 s", "17 s", "200 s"],
+      "answer": 2,
+      "why": "200 µs/s × 86 400 s = 17.28 s."
+    },
+    {
+      "q": "NTP almashuvida t0 = 0, t1 = 50, t2 = 51, t3 = 21 (ms, har biri o'z soati bo'yicha). Klient offset'i qancha?",
+      "options": ["Klient 40 ms orqada", "Klient 40 ms oldinda", "Klient 10 ms orqada", "Offset 0"],
+      "answer": 0,
+      "why": "θ = ((t1 - t0) + (t2 - t3)) / 2 = (50 + 30) / 2 = 40 ms. Musbat θ server soati oldinda, ya'ni klient 40 ms orqada ekanini bildiradi."
+    },
+    {
+      "q": "Ikki hodisa uchun Lamport vaqtlari L(a) = 3 va L(b) = 7. Nima deyish mumkin?",
+      "options": [
+        "a albatta b dan oldin bo'lgan (a → b)",
+        "b a dan oldin bo'lgan",
+        "b → a emas; lekin a → b yoki a va b concurrent bo'lishi mumkin",
+        "a va b albatta concurrent"
+      ],
+      "answer": 2,
+      "why": "Lamport clock faqat a → b dan L(a) < L(b) ni kafolatlaydi. Teskarisi to'g'ri emas, shuning uchun concurrency'ni aniqlab bo'lmaydi. Lekin L(b) > L(a) bo'lgani uchun b → a bo'lishi mumkin emas."
+    },
+    {
+      "q": "Vector clock qiymatlari V(a) = [2,1,0] va V(b) = [1,2,0]. Ular orasidagi munosabat qanday?",
+      "options": ["a → b", "b → a", "a va b concurrent", "a va b bir xil hodisa"],
+      "answer": 2,
+      "why": "Birinchi komponentda a katta, ikkinchisida b katta. Hech biri ikkinchisidan komponentlar bo'yicha kichik emas, demak concurrent."
+    },
+    {
+      "q": "A tugun soati B dan 30 ms oldinda. Klient A orqali x=1 yozdi, keyin uni o'qib, B orqali x=2 yozdi (10 ms keyin). Baza wall-clock LWW ishlatadi. Natija qanday?",
+      "options": [
+        "x = 2, chunki u keyin yozilgan",
+        "x = 1 bo'lishi mumkin - sababiy jihatdan keyingi yozuv jimgina yo'qoladi",
+        "Baza konflikt xatosi qaytaradi",
+        "Ikkala qiymat ham siblings sifatida saqlanadi"
+      ],
+      "answer": 1,
+      "why": "B dagi vaqt belgisi A nikidan kichik bo'lib chiqadi va LWW eski qiymatni tanlaydi. Wall-clock LWW soat farqi ichidagi tartibni kafolatlamaydi."
+    },
+    {
+      "q": "HLC holati (101, 1) bo'lgan tugunga xabar (105, 3) keldi, lokal fizik soat pt = 99. Yangi holat qanday?",
+      "options": ["(101, 2)", "(105, 4)", "(105, 0)", "(99, 0)"],
+      "answer": 1,
+      "why": "l = max(101, 105, 99) = 105. l faqat xabardagi l_m ga teng, demak c = c_m + 1 = 4."
+    },
+    {
+      "q": "Spanner'da TrueTime noaniqligi ε o'rtacha 4 ms dan 20 ms ga oshdi. Nima bo'ladi?",
+      "options": [
+        "External consistency buziladi",
+        "Tranzaksiyalar tartibi tasodifiy bo'lib qoladi",
+        "To'g'rilik saqlanadi, lekin commit wait uzayib, yozish latency'si oshadi",
+        "Spanner avtomatik ravishda LWW ga o'tadi"
+      ],
+      "answer": 2,
+      "why": "Commit wait kamida 2ε kutadi. ε katta bo'lsa kutish uzayadi, lekin vaqt belgilari tartibi kafolati saqlanadi."
+    },
+    {
+      "q": "CockroachDB'da max-offset 500 ms. Tugun soati klasterning ko'pchiligidan 450 ms farq qila boshladi. Nima bo'ladi?",
+      "options": [
+        "Hech narsa, chegara 500 ms",
+        "Tugun o'zini o'chiradi, chunki farq max-offset'ning 80% idan (400 ms) oshdi",
+        "Tugun avtomatik soatini to'g'rilaydi va ishlashda davom etadi",
+        "Klaster LWW rejimiga o'tadi"
+      ],
+      "answer": 1,
+      "why": "Consistency soat taxminiga tayangani uchun, taxmin buzilish xavfi bo'lganda tugun to'xtashni afzal ko'radi."
+    },
+    {
+      "q": "Oflayn ishlaydigan mobil ilova va veb-panel bir yozuvni tahrirlaydi. Concurrent o'zgarishlarni aniqlash uchun eng mos mexanizm qaysi?",
+      "options": [
+        "Wall-clock vaqt belgisi va LWW",
+        "Lamport clock",
+        "HLC",
+        "Version vector (replikalar yoki qurilmalar bo'yicha)"
+      ],
+      "answer": 3,
+      "why": "Faqat vector clock oilasi concurrency'ni aniqlaydi. Lamport va HLC umumiy tartib beradi, lekin concurrent yozuvlarni ajratmaydi."
+    }
+  ]
+}

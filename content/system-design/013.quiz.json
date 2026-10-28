@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "SSTable ichidagi kalitlar saralangan bo'lgani uchun qaysi imkoniyat paydo bo'ladi?",
+      "options": [
+        "Har bir kalitni RAM'dagi hash map'da saqlash shart emas: har bir blokning birinchi kaliti (siyrak indeks) yetarli",
+        "Fayllarni hech qachon birlashtirish shart emas",
+        "Yozish random IO bilan bajariladi",
+        "Bloom filter keraksiz bo'ladi"
+      ],
+      "answer": 0,
+      "why": "Saralangan faylda kalit ikki indeks yozuvi orasidagi blokda ekani aniq; blokni o'qib ichida qidirish mumkin."
+    },
+    {
+      "q": "LSM'da yo'q kalitni qidirish nega eng qimmat holat?",
+      "options": [
+        "Chunki yo'q kalit WAL'ga yoziladi",
+        "Chunki memtable, L0 ning barcha fayllari va har bir darajadan bittadan fayl tekshirilishi kerak",
+        "Chunki compaction to'xtatiladi",
+        "Chunki faqat oxirgi darajani tekshirish kerak"
+      ],
+      "answer": 1,
+      "why": "Mavjud kalit birinchi topilgan joyda to'xtaydi, yo'q kalit esa hamma joyni ko'radi. Bloom filter aynan shu holatni arzonlashtiradi."
+    },
+    {
+      "q": "Har bir kalitga 10 bit ajratilgan Bloom filter, optimal k bilan. Kutilgan false positive darajasi taxminan qancha?",
+      "options": [
+        "10%",
+        "0.01%",
+        "1%",
+        "0%"
+      ],
+      "answer": 2,
+      "why": "(1 - e^(-7/10))^7 taxminan 0.82%; klassik qoida: 1% uchun taxminan 9.6 bit/kalit."
+    },
+    {
+      "q": "1 mlrd kalit uchun 10 bit/kalit Bloom filterlar jami qancha RAM oladi?",
+      "options": [
+        "125 MB",
+        "12.5 GB",
+        "10 GB",
+        "1.25 GB"
+      ],
+      "answer": 3,
+      "why": "10^9 x 10 bit = 10^10 bit = 1.25 x 10^9 bayt."
+    },
+    {
+      "q": "Append-only telemetriya (update yo'q, 90 kunlik TTL) uchun Cassandra'da qaysi compaction strategiyasi eng mos?",
+      "options": [
+        "Leveled - chunki o'qish amplification'i past",
+        "Size-tiered - chunki u standart",
+        "Compaction'ni o'chirib qo'yish",
+        "Time-window - eski oynalar qayta yozilmaydi va TTL tugaganda butun SSTable tashlanadi"
+      ],
+      "answer": 3,
+      "why": "Takrorlanmaydigan append-only ma'lumotni leveled bilan qayta-qayta yozish foydasiz; TWCS TTL'li time-series uchun mo'ljallangan."
+    },
+    {
+      "q": "Leveled compaction'da write amplification nega yuqori?",
+      "options": [
+        "Chunki L darajadagi fayl L+1 dagi taxminan 10 ta qoplanuvchi fayl bilan birlashtirilib, har darajada ma'lumot ko'p marta qayta yoziladi",
+        "Chunki leveled compaction WAL'ni ikki marta yozadi",
+        "Chunki Bloom filterlar har compaction'da qayta quriladi",
+        "Chunki L0 fayllari hech qachon compaction qilinmaydi"
+      ],
+      "answer": 0,
+      "why": "Darajalar orasidagi 10x nisbat har bir o'tishda taxminan 10 baravar qayta yozishni anglatadi; RocksDB tuning qo'llanmasi misolida jami 1 + 2 + 10 + 10 + 10 = 33."
+    },
+    {
+      "q": "Cassandra'da gc_grace_seconds 10 kundan 1 soatga tushirildi, lekin repair haftada bir marta ishlaydi. Qanday xavf paydo bo'ladi?",
+      "options": [
+        "Disk tezroq to'ladi",
+        "O'chirish paytida ishlamagan replika qaytganda, boshqa replikalarda tombstone allaqachon tozalangan bo'lsa, o'chirilgan ma'lumot qayta tiriladi",
+        "Yozishlar bloklanadi",
+        "Bloom filterlar buziladi"
+      ],
+      "answer": 1,
+      "why": "Grace period replikalar tombstone'ni olishi uchun vaqt; repair siklidan qisqa bo'lsa, zombi ma'lumot paydo bo'ladi."
+    },
+    {
+      "q": "Bloom filter qaysi so'rovga yordam BERMAYDI?",
+      "options": [
+        "GET vehicle:1042 aniq kalit bo'yicha",
+        "Prefix Bloom bilan: bu faylda vehicle_id=1042 ning birorta yozuvi bormi",
+        "Mavjud bo'lmagan kalitni qidirish",
+        "ts BETWEEN 10:00 AND 11:00 bo'yicha barcha mashinalar bo'ylab oraliq skan"
+      ],
+      "answer": 3,
+      "why": "Oraliq skanida qaysi aniq kalitlarni tekshirish kerakligi oldindan noma'lum; filter faqat aniq kalit yoki prefiks uchun javob beradi."
+    },
+    {
+      "q": "LSM'da ko'p sonli DELETE'dan keyin disk hajmi darhol kamaymadi, hatto biroz oshdi. Sababi?",
+      "options": [
+        "Bu bug",
+        "WAL o'chirilmaydi",
+        "O'chirish tombstone yozuvi qo'shadi; eski qiymat va tombstone faqat keyingi compaction'da olib tashlanadi",
+        "Memtable diskka qayta yoziladi"
+      ],
+      "answer": 2,
+      "why": "Append-only tuzilmada o'chirish ham yozuv; joy faqat compaction'da qaytadi."
+    },
+    {
+      "q": "Telemetriya: 1 MB/s ilova yozuvi, leveled compaction bilan WA taxminan 30. Disk kuniga qancha yozadi?",
+      "options": [
+        "Taxminan 2.6 TB",
+        "Taxminan 86 GB",
+        "Taxminan 30 MB",
+        "Taxminan 260 GB"
+      ],
+      "answer": 0,
+      "why": "1 MB/s x 30 = 30 MB/s; 30 MB x 86 400 s taxminan 2.6 TB/kun - jonli ma'lumotdan ham ko'p, shuning uchun time-series uchun TWCS afzal."
+    }
+  ]
+}

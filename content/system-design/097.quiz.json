@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Hujjat 'EASY AS 123'. Luiz boshiga 'IT ' (3 belgi) kiritdi. John parallel ravishda 9-11 pozitsiyalarni o'chirdi. Luiz nusxasida John ning operatsiyasi qanday transform qilinadi?",
+      "options": ["delete(9-11) o'zgarishsiz", "delete(12-14)", "delete(6-8)", "Operatsiya tashlanadi"],
+      "answer": 1,
+      "why": "Kiritish o'chirish pozitsiyasidan oldin bo'lgani uchun o'chirish kiritilgan uzunlikka (3) siljiydi."
+    },
+    {
+      "q": "Nega mijoz o'z tahririni serverni kutmasdan darhol lokal qo'llaydi?",
+      "options": [
+        "Server kamroq yuklanishi uchun",
+        "Har tugma uchun tarmoq kechikishi foydalanish tajribasini buzadi; bu optimistik nusxa va keyinchalik yaqinlashtirishni talab qiladi",
+        "Xavfsizlik uchun",
+        "CRDT shuni talab qiladi"
+      ],
+      "answer": 1,
+      "why": "NFR-1 (darhol ko'rinish) butun arxitekturani belgilaydi: mijozlar vaqtincha farqlanadi va algoritm ularni yaqinlashtiradi."
+    },
+    {
+      "q": "Google Docs protokolida mijozda bir vaqtda nechta tasdiqlanmagan (yuborilgan, ACK siz) o'zgarish bo'lishi mumkin?",
+      "options": ["Cheksiz", "Faqat bitta; qolganlari ACK kelguncha kutilayotgan ro'yxatda", "Ikkita", "Har foydalanuvchi uchun 10 ta"],
+      "answer": 1,
+      "why": "Bu qoida transform holatlarini soddalashtiradi va server har mijoz holatini kuzatmasligiga imkon beradi."
+    },
+    {
+      "q": "CRDT matn tiplarida transform nima uchun kerak emas?",
+      "options": [
+        "Chunki faqat bitta foydalanuvchi yozadi",
+        "Har belgi o'zgarmas global ID ga ega va kiritish pozitsiya emas, 'ID X dan keyin' sifatida ifodalanadi",
+        "Chunki server hamma narsani tartiblaydi",
+        "Chunki o'chirish taqiqlangan"
+      ],
+      "answer": 1,
+      "why": "ID pozitsiya o'zgarsa ham o'zgarmaydi, operatsiyalar kommutativ bo'ladi."
+    },
+    {
+      "q": "CRDT ning OT ga nisbatan asosiy narxi qaysi?",
+      "options": [
+        "Konvergensiya kafolati yo'q",
+        "Har belgi uchun ID va tombstone tufayli katta metadata va xotira",
+        "Oflayn ishlay olmaydi",
+        "Markaziy server majburiy"
+      ],
+      "answer": 1,
+      "why": "CRDT oflayn va P2P da kuchli, lekin metadata va tombstone tozalash narxi bor."
+    },
+    {
+      "q": "Figma bir xil obyektning bir xil xususiyatini ikki foydalanuvchi parallel o'zgartirsa nima qiladi?",
+      "options": [
+        "Qiymatlarni o'rtacha qiladi",
+        "Serverga oxirgi kelgan qiymat yutadi (xususiyat bo'yicha LWW)",
+        "Foydalanuvchidan so'raydi",
+        "OT bilan transform qiladi"
+      ],
+      "answer": 1,
+      "why": "Figma server-authoritative va xususiyat darajasida last-writer-wins ishlatadi."
+    },
+    {
+      "q": "Ikki session server bir hujjatni o'zini egasi deb hisoblamoqda. Hujjat buzilishidan nima himoya qiladi?",
+      "options": [
+        "WebSocket ping",
+        "Lease + epoch fencing va (doc_id, revision) noyob kaliti bilan shartli log yozish",
+        "Mijoz tomonidagi undo",
+        "CDN"
+      ],
+      "answer": 1,
+      "why": "Ikkinchi egasi bir xil revision ni yoza olmaydi va eski epoch yozuvlari rad etiladi."
+    },
+    {
+      "q": "Server operatsiyani boshqa mijozlarga tarqatib, keyin logga yozishdan oldin o'ldi. Qanday muammo bo'ladi?",
+      "options": [
+        "Hech qanday",
+        "Boshqa mijozlar logda yo'q revision ni ko'rgan bo'ladi va tiklangan server bilan farqlanadi",
+        "Faqat presence yo'qoladi",
+        "Snapshot buziladi"
+      ],
+      "answer": 1,
+      "why": "Xavfsiz tartib: avval logga durable yozish, keyin ACK va tarqatish."
+    },
+    {
+      "q": "Bitta hujjatda 100 tahrirlovchi, har biri sekundiga 5 operatsiya. Server fan-out xabarlari taxminan qancha?",
+      "options": ["500/s", "5 000/s", "50 000/s", "500 000/s"],
+      "answer": 2,
+      "why": "500 op/s x 99 qabul qiluvchi ≈ 50 000 xabar/s."
+    },
+    {
+      "q": "Transform funksiyasidagi nozik bug nusxalarni jim farqlantirishi mumkin. Qaysi mexanizm buni aniqlaydi?",
+      "options": [
+        "Mijoz va server hujjat holati hash ini davriy solishtirib, farq bo'lsa serverdan qayta yuklash",
+        "Presence xabarlari",
+        "Rate limiting",
+        "Snapshot larni o'chirish"
+      ],
+      "answer": 0,
+      "why": "Hash solishtirish farqlanishni aniqlaydi va o'z-o'zini tuzatishga imkon beradi."
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Posting list'lar: kamaz = {d1, d3, d7, d9}, toshkent = {d1, d2, d7}. AND so'rov 'kamaz toshkent' natijasi?",
+      "options": ["{d1, d2, d3, d7, d9}", "{d1, d7}", "{d1}", "{d2, d3, d9}"],
+      "answer": 1,
+      "why": "AND - saralangan posting list'lar kesishmasi. OR esa birlashma bo'lardi."
+    },
+    {
+      "q": "Indekslashda stemming yoqilgan ('quydi' -> 'quy'), so'rovda esa standart analyzer ishlatiladi. Foydalanuvchi 'quydi' deb qidirsa nima bo'ladi?",
+      "options": [
+        "Hamma mos hujjatlar topiladi",
+        "So'rov 'quydi' termini qidiradi, indeksda esa 'quy' bor - mos hujjatlar topilmaydi",
+        "Elasticsearch avtomatik moslashtiradi",
+        "Xato qaytadi"
+      ],
+      "answer": 1,
+      "why": "Indekslash va so'rov analyzer'lari mos bo'lishi shart, aks holda termlar bir-biriga to'g'ri kelmaydi."
+    },
+    {
+      "q": "N = 10 000 hujjat. 'hyundai' 100 hujjatda, 'toshkent' 5 000 hujjatda. Lucene BM25 IDF'i bo'yicha qaysi to'g'ri?",
+      "options": [
+        "Ikkalasining IDF'i teng",
+        "hyundai IDF ≈ 4.6, toshkent IDF ≈ 0.69: noyob so'z ancha ko'p ball beradi",
+        "toshkent IDF kattaroq, chunki ko'p uchraydi",
+        "IDF faqat so'z uzunligiga bog'liq"
+      ],
+      "answer": 1,
+      "why": "IDF = ln(1 + (N - n + 0.5)/(n + 0.5)): ln(99.5) ≈ 4.6 va ln(2) ≈ 0.69. Kam uchraydigan so'z ko'proq ma'lumot beradi."
+    },
+    {
+      "q": "BM25'da k1 = 1.2. Term hujjatda 1 marta va 5 marta uchragan (uzunlik o'rtacha). TF qismi nisbati taxminan qancha?",
+      "options": ["5 baravar", "Taxminan 1.8 baravar", "1 baravar", "25 baravar"],
+      "answer": 1,
+      "why": "tf=1: 2.2/2.2 = 1; tf=5: 5 x 2.2/6.2 ≈ 1.77. k1 to'yinishni beradi - ko'p takror chiziqli o'smaydi."
+    },
+    {
+      "q": "Hujjat Elasticsearch'ga muvaffaqiyatli indekslandi, lekin darhol qilingan qidiruvda topilmadi. Eng ehtimoliy sabab?",
+      "options": [
+        "Hujjat yo'qolgan",
+        "Hujjat hali refresh qilinmagan: u xotira buferida, yangi segment ochilmagan (default ~1 s)",
+        "Translog to'lgan",
+        "Replika sinxron emas, shuning uchun hujjat hech qachon ko'rinmaydi"
+      ],
+      "answer": 1,
+      "why": "Elasticsearch near real-time: refresh buferni qidiriladigan segmentga aylantiradi. Kerak bo'lsa refresh=wait_for ishlatiladi."
+    },
+    {
+      "q": "Har 10 soniyada yangilanadigan 'mashinaning oxirgi joylashuvi' hujjatlarini Elasticsearch'da saqlash nega qimmat?",
+      "options": [
+        "Elasticsearch geo ma'lumotni saqlay olmaydi",
+        "Segment'lar o'zgarmas: har yangilash eski versiyani o'chirilgan deb belgilab, yangi hujjatni indekslaydi, keyin merge joyni tozalaydi",
+        "Translog yangilashni taqiqlaydi",
+        "Replika'lar soni oshadi"
+      ],
+      "answer": 1,
+      "why": "Yangilash = o'chirish + qo'shish. Tez-tez o'zgaradigan holat uchun Redis yoki maxsus geo tuzilma mosroq."
+    },
+    {
+      "q": "Indeks 5 primary shard bilan yaratilgan. Hajm o'sdi va 10 ta kerak. number_of_shards sozlamasini oddiygina o'zgartirish mumkinmi?",
+      "options": [
+        "Ha, darhol",
+        "Yo'q: routing hash(_routing) mod shard_soni ga bog'liq; Split API yoki yangi indeksga reindex va alias almashtirish kerak",
+        "Ha, lekin faqat replica'lar uchun",
+        "Faqat klasterni qayta ishga tushirib"
+      ],
+      "answer": 1,
+      "why": "Shard soni o'zgarsa, hujjatlarning shard'ga taqsimoti o'zgaradi. Bu 28-darsdagi hash mod N muammosining o'zi."
+    },
+    {
+      "q": "Foydalanuvchi qidiruv natijalarining 1 000-sahifasiga o'tmoqchi (from = 9 990, size = 10). Muammo va yechim?",
+      "options": [
+        "Muammo yo'q",
+        "Har shard 10 000 natija qaytarib saralashi kerak; default from + size 10 000 bilan cheklangan; search_after + point in time ishlatish",
+        "Faqat size'ni oshirish kerak",
+        "Scroll API eng yaxshi yechim"
+      ],
+      "answer": 1,
+      "why": "Scatter-gather'da chuqur offset har shardda katta ish. Elasticsearch chuqur pagination uchun search_after va PIT'ni tavsiya qiladi."
+    },
+    {
+      "q": "Ilova PostgreSQL'ga yozadi va keyin alohida chaqiruv bilan Elasticsearch'ga indekslaydi. ES chaqiruvi vaqti-vaqti bilan timeout bo'ladi. Natija va to'g'ri yechim?",
+      "options": [
+        "ES o'zi tiklanadi",
+        "Qidiruv jimgina eskiradi (dual-write nomuvofiqligi); transactional outbox yoki CDC orqali idempotent, versiyalangan indekslash",
+        "ES'ni asosiy baza qilish",
+        "Har yozuvdan keyin to'liq reindex"
+      ],
+      "answer": 1,
+      "why": "Ikki tizimga atomik yozish yo'q. Outbox/CDC va external versioning ishonchli va tartibni saqlaydigan sinxronlash beradi."
+    },
+    {
+      "q": "220 000 ta mashina va haydovchi yozuvi bo'yicha imlo xatolariga chidamli qidiruv kerak, tranzaksion izchillik muhim. Eng oqilona birinchi tanlov?",
+      "options": [
+        "Darhol 3 node'li Elasticsearch klaster",
+        "PostgreSQL: normalizatsiyalangan ustunlar, pg_trgm GIN indeks, tenant filtri bilan",
+        "LIKE '%...%' indekssiz",
+        "Har tenant uchun alohida Elasticsearch indeks"
+      ],
+      "answer": 1,
+      "why": "Bu hajmda pg_trgm GIN indeks bilan trigram o'xshashligi yetarli, alohida klaster va sinxronlash pipeline'ining operatsion narxi yo'q."
+    }
+  ]
+}

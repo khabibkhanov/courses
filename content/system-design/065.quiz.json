@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Hujjatda 'API oyiga 99.9% mavjud bo'ladi' deb yozilgan, buzilsa hech qanday kompensatsiya yo'q. Bu nima?",
+      "options": ["SLA", "SLO", "SLI", "Error budget"],
+      "answer": 1,
+      "why": "SRE kitobi testi: aniq oqibat (pul, kredit) bo'lmasa, bu SLA emas, SLO."
+    },
+    {
+      "q": "Qaysi biri latency uchun eng yaxshi SLI ta'rifi?",
+      "options": [
+        "O'rtacha javob vaqti",
+        "Server CPU utilization",
+        "Yaroqli so'rovlardan 300 ms dan tez javob olganlari ulushi",
+        "Maksimal javob vaqti"
+      ],
+      "answer": 2,
+      "why": "Good/valid shakli dumni hisobga oladi, 0-100% oralig'ida bo'ladi va budget hisoblash uchun qulay."
+    },
+    {
+      "q": "4 hafta ichida 2 000 000 so'rov, SLO 99.9%. Error budget nechta xato?",
+      "options": ["200", "2 000", "20 000", "1 998 000"],
+      "answer": 1,
+      "why": "2 000 000 x (1 - 0.999) = 2 000."
+    },
+    {
+      "q": "SLO 99.9%, joriy xato darajasi 0.6%. Burn rate qancha va 30 kunlik budget qancha vaqtda tugaydi?",
+      "options": [
+        "0.6, 50 kun",
+        "6, taxminan 5 kun",
+        "60, 12 soat",
+        "1, 30 kun"
+      ],
+      "answer": 1,
+      "why": "Burn rate = 0.006 / 0.001 = 6. 30 / 6 = 5 kun."
+    },
+    {
+      "q": "Burn rate 14.4 bilan 1 soatlik oyna 30 kunlik budgetning qancha qismini sarflaganini bildiradi?",
+      "options": ["0.5%", "2%", "14.4%", "50%"],
+      "answer": 1,
+      "why": "14.4 x 1 soat / 720 soat = 0.02 = 2%."
+    },
+    {
+      "q": "Multiwindow alertda qisqa oyna (masalan, 1 soatlik uzun oyna uchun 5 daqiqa) nima uchun kerak?",
+      "options": [
+        "Alert tezroq ishga tushishi uchun",
+        "Muammo tugagandan keyin alert tez o'chishi uchun, uzun oyna esa sezilarli budget sarflanganini kafolatlaydi",
+        "Hisoblash arzonroq bo'lishi uchun",
+        "Faqat ticket alertlari uchun"
+      ],
+      "answer": 1,
+      "why": "Uzun oyna o'rtachasi xatolar tugagandan keyin ham uzoq vaqt yuqori qoladi; qisqa oyna reset vaqtini yaxshilaydi."
+    },
+    {
+      "q": "Google Workbook dagi namuna policy bo'yicha bitta incident 4 haftalik budgetning 25 foizini sarfladi. Nima majburiy?",
+      "options": [
+        "Hech narsa, budget hali tugamagan",
+        "Kamida bitta P0 action item bilan postmortem",
+        "Servisni o'chirish",
+        "SLO ni pasaytirish"
+      ],
+      "answer": 1,
+      "why": "Namuna siyosatda bitta incident budgetning 20 foizidan ko'pini sarflasa, P0 action item li postmortem talab qilinadi."
+    },
+    {
+      "q": "Ichki SLO 99.95%, tashqi SLA 99.5%. Bu farq nima uchun kerak?",
+      "options": [
+        "Bu xato, ular teng bo'lishi kerak",
+        "Ichki SLO buzilganda jamoa muammoni SLA buzilishidan oldin tuzatishga vaqt va budget oladi",
+        "SLA har doim qattiqroq bo'lishi kerak",
+        "Faqat buxgalteriya uchun"
+      ],
+      "answer": 1,
+      "why": "SRE kitobi zaxira tavsiya qiladi: ichki maqsad buzilishi erta signal, shartnoma buzilishi esa pul va obro'."
+    },
+    {
+      "q": "Servis bir necha chorak davomida 99.999% ishladi, e'lon qilingan SLO esa 99.9%. Google Chubby tajribasiga ko'ra xavf nima?",
+      "options": [
+        "Xavf yo'q, bu yaxshi natija",
+        "Foydalanuvchilar haqiqiy darajaga moslashib, fallback siz bog'lanib qoladi va keyingi oddiy uzilish ularni sindiradi",
+        "Monitoring noto'g'ri ishlayapti",
+        "SLA kreditlari oshadi"
+      ],
+      "answer": 1,
+      "why": "Shuning uchun Google Chubby da real uzilish bo'lmagan chorakda rejalashtirilgan uzilish qilgan."
+    },
+    {
+      "q": "Treker uzilish paytida nuqtalarni xotirada saqlab, keyin yuboradi. Gateway 20 daqiqa ishlamadi, bironta nuqta yo'qolmadi. SLI dizayni bo'yicha eng to'g'ri xulosa qaysi?",
+      "options": [
+        "Hech qanday budget sarflanmadi, chunki ma'lumot yo'qolmadi",
+        "Availability SLI (darhol ACK) budget sarfladi, durability/completeness SLI esa sarflamadi; ikkalasini alohida o'lchash kerak",
+        "Faqat CPU metrikasiga qarash kerak",
+        "Bunday holatda SLO ni o'chirish kerak"
+      ],
+      "answer": 1,
+      "why": "Turli foydalanuvchi kutishlari turli SLI talab qiladi: o'z vaqtida qabul qilish va oxir-oqibat saqlash har xil narsalar."
+    }
+  ]
+}

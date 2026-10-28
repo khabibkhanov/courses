@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Kamera GOP ni 10 soniya qilib sozlangan. Dispetcher jonli ko'rishni bosganda nima kuzatiladi?",
+      "options": [
+        "Video darhol boshlanadi, GOP faqat sifatga ta'sir qiladi",
+        "Pleyer keyingi I-frame ni kutadi, shuning uchun ko'rish 10 soniyagacha kech boshlanishi mumkin",
+        "Video umuman ochilmaydi",
+        "Faqat audio keladi"
+      ],
+      "answer": 1,
+      "why": "Dekodlash faqat I-frame dan boshlanadi. Uzun GOP kirish kechikishini va HLS segment uzunligini oshiradi."
+    },
+    {
+      "q": "LTE modemli mashinadagi kameraga markaziy server RTSP bilan ulanmoqchi. Asosiy muammo nima?",
+      "options": [
+        "RTSP H.264 ni qo'llab-quvvatlamaydi",
+        "Mashina operator NAT i ortida, tashqi IP yo'q yoki o'zgaradi, shuning uchun server unga ulana olmaydi; push modeli yoki xususiy APN kerak",
+        "RTSP faqat UDP da ishlaydi",
+        "RTSP faqat 554-portda ishlaydi va u har doim bloklangan"
+      ],
+      "answer": 1,
+      "why": "RTSP da server kameraga ulanadi (pull). Mobil tarmoqdagi qurilma o'zi serverga ulanishi kerak."
+    },
+    {
+      "q": "HLS da 6 soniyalik segment va pleyer playlist oxiridan 3 segment orqadan boshlaydi. Kechikishning eng katta qismi qayerdan keladi?",
+      "options": [
+        "DNS resolve dan",
+        "Pleyer buferi: taxminan 3 x 6 = 18 s, ustiga segmentni to'liq yozish uchun 6 s",
+        "TLS handshake dan",
+        "Brauzer dekoderidan"
+      ],
+      "answer": 1,
+      "why": "RFC 8216 6.3.3 bo'yicha pleyer oxirgi 3 target duration ichidan boshlamaydi: 3 x 6 = 18 s bufer, ustiga segmentni to'liq yozish 6 s va yetkazish. Jami 25-31 s."
+    },
+    {
+      "q": "Kamera allaqachon H.264 720p oqim beradi va uni brauzerga HLS sifatida ko'rsatish kerak. Eng arzon yo'l qaysi?",
+      "options": [
+        "H.264 ni H.265 ga transcode qilish",
+        "Transmuxing: kodekni o'zgartirmay RTP dan fMP4/TS segmentlarga qayta o'rash",
+        "Har bir kadrni JPEG qilib yuborish",
+        "To'liq ABR ladder ga transcode qilish"
+      ],
+      "answer": 1,
+      "why": "Transmux bitlarni nusxalaydi va deyarli CPU talab qilmaydi. Transcoding esa dekod va qayta encode, ancha qimmat."
+    },
+    {
+      "q": "2 000 mashina, har birida 4 kamera, 1 Mbit/s, kuniga 10 soat. Uzluksiz yuklashda kunlik hajm taxminan qancha?",
+      "options": [
+        "Taxminan 3.6 TB",
+        "Taxminan 36 TB",
+        "Taxminan 360 GB",
+        "Taxminan 360 TB"
+      ],
+      "answer": 1,
+      "why": "1 Mbit/s = 125 KB/s = 450 MB/soat. 4 x 450 MB x 10 soat = 18 GB mashina boshiga, x 2 000 = 36 TB/kun."
+    },
+    {
+      "q": "Dispetcher bitta kamerani haydovchi bilan ovozli gaplashib ko'rishi kerak, kechikish 1 s dan kam bo'lishi shart. Qaysi protokol mos?",
+      "options": [
+        "Oddiy HLS",
+        "WebRTC",
+        "MPEG-DASH 10 s segment bilan",
+        "Arxivdan MP4 yuklab olish"
+      ],
+      "answer": 1,
+      "why": "WebRTC interaktiv aloqa uchun qurilgan (UDP, SRTP, kechikish yuzlab ms darajasida). HLS va DASH segment asosida: pleyer kamida bir necha segment yoki part orqada turadi."
+    },
+    {
+      "q": "Bitta jonli oqimni 50 000 kishi bir vaqtda ko'radi va 5 s kechikish qabul qilinadi. Nega WebRTC o'rniga LL-HLS tanlanadi?",
+      "options": [
+        "WebRTC 5 s dan katta kechikish beradi",
+        "LL-HLS HTTP segmentlari CDN orqali cache qilinadi, WebRTC esa har bir tomoshabin uchun holatli ulanish va SFU resursi talab qiladi",
+        "LL-HLS UDP da ishlaydi",
+        "WebRTC brauzerlarda ishlamaydi"
+      ],
+      "answer": 1,
+      "why": "HTTP asosidagi yetkazish stateless va CDN bilan arzon masshtablanadi."
+    },
+    {
+      "q": "RTSP SETUP da RTP ni TCP interleaved rejimida tanlashning asosiy kamchiligi nima?",
+      "options": [
+        "Firewall va NAT dan o'tmaydi",
+        "Paket yo'qolganda TCP qayta yuborishi tufayli kechikish sakraydi (head-of-line blocking)",
+        "Video siqilmaydi",
+        "SDP ishlatib bo'lmaydi"
+      ],
+      "answer": 1,
+      "why": "Interleaved TCP NAT dan oson o'tadi, lekin yo'qolgan paket butun oqimni ushlab turadi. UDP da esa kadr yo'qolishi mumkin, lekin kechikish barqaror."
+    },
+    {
+      "q": "Keskin tormoz hodisasi uchun MDVR 10 s oldin va 10 s keyingi klipni 4 kameradan (har biri 1 Mbit/s) yuklaydi. Klip hajmi taxminan qancha?",
+      "options": [
+        "Taxminan 1 MB",
+        "Taxminan 10 MB",
+        "Taxminan 100 MB",
+        "Taxminan 450 MB"
+      ],
+      "answer": 1,
+      "why": "20 s x 125 KB/s = 2.5 MB kamera boshiga, x 4 = 10 MB. Bu uzluksiz yuklashdan yuzlab barobar arzon."
+    },
+    {
+      "q": "Dispetcher jonli ko'rish tabini ochiq qoldirib uyiga ketdi. Qanday dizayn qarori bu holatda trafik isrofini oldini oladi?",
+      "options": [
+        "Mobil tarifni cheksiz qilish",
+        "Jonli sessiyaga maksimal muddat va mijoz heartbeat'i; heartbeat kelmasa server MDVR ga to'xtatish buyrug'ini yuboradi",
+        "Bitrate ni oshirish",
+        "Videoni HLS o'rniga RTSP da berish"
+      ],
+      "answer": 1,
+      "why": "Har bir daqiqa jonli video mobil trafik va server resursi. Sessiya muddati va heartbeat bilan avtomatik to'xtatish kerak."
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Ray casting algoritmida nuqtadan chiqarilgan nur poligon tomonlarini 3 marta kesib o'tdi. Natija qanday?",
+      "options": [
+        "Nuqta tashqarida",
+        "Nuqta ichida",
+        "Nuqta chegarada",
+        "Aniqlab bo'lmaydi, yana bitta nur kerak"
+      ],
+      "answer": 1,
+      "why": "Toq sondagi kesishish - nuqta ichida, juft - tashqarida."
+    },
+    {
+      "q": "Mashina zavod chegarasi yonida to'xtab turibdi va GPS nuqtalari ichkari-tashqariga sakramoqda. Soxta 'kirdi-chiqdi' hodisalarini kamaytirishning eng to'g'ri usuli qaysi?",
+      "options": [
+        "GPS yuborish chastotasini oshirish",
+        "Debounce (N nuqta yoki T soniya tasdiq) va chiqish uchun kengaytirilgan bufer poligon (gisterezis)",
+        "Poligonni kichraytirish",
+        "Hodisalarni faqat soatiga bir marta chiqarish"
+      ],
+      "answer": 1,
+      "why": "Tasdiq va gisterezis chegaradagi tebranishni yo'qotadi. Evaziga hodisa kechikishi biroz oshadi."
+    },
+    {
+      "q": "Uber geofence servisi 2016 da qaysi yondashuvni tanlagan?",
+      "options": [
+        "Har bir so'rovni PostGIS ga yuborish",
+        "Ikki darajali ierarxiya: avval shahar geozonasi, keyin shahar ichidagilar, ikkalasida chiziqli skan va ray casting",
+        "Faqat S2 covering va hash lookup",
+        "GPU da brute force"
+      ],
+      "answer": 1,
+      "why": "Ierarxiya qidiruv maydonini o'n minglardan yuzlargacha qisqartirdi va oddiy chiziqli skan yetarli bo'ldi: 170k QPS, p99 50 ms dan kam."
+    },
+    {
+      "q": "Geofence evaluator'lari uchun Kafka partition kaliti sifatida nima tanlanishi kerak?",
+      "options": [
+        "geofence_id",
+        "device_id",
+        "Tasodifiy kalit, yuklama teng taqsimlanishi uchun",
+        "Vaqt belgisi"
+      ],
+      "answer": 1,
+      "why": "Bitta qurilmaning nuqtalari bitta partitionga tartib bilan tushadi, holat mashinasi lokal qoladi va taqsimlangan lock kerak bo'lmaydi."
+    },
+    {
+      "q": "H3 polygonToCells standart (markaz bo'yicha) rejimida geozonani qoplab, indeks qurildi. Qanday muammo chiqishi mumkin?",
+      "options": [
+        "Indeks juda katta bo'ladi",
+        "Markazi poligondan tashqarida, lekin qisman ichkarida bo'lgan chegara hujayralari tushib qoladi, poligon chetidagi nuqtalar nomzod bo'lmay qoladi",
+        "Pentagonlar tufayli barcha so'rovlar xato beradi",
+        "Hech qanday muammo yo'q"
+      ],
+      "answer": 1,
+      "why": "Indeks uchun chegarani to'liq qoplash kerak: overlapping rejim yoki poligonni bufer qilib qoplash."
+    },
+    {
+      "q": "Mashina 30 s oraliqda nuqta yuboradi va 60 km/soat tezlikda 50 x 50 m li AYoQSh yonidan o'tdi. Nima uchun point-in-polygon buni ko'rmasligi mumkin va yechim nima?",
+      "options": [
+        "GPS xatosi tufayli; yechim yo'q",
+        "30 s da mashina taxminan 500 m yuradi, ikki nuqta ham geozonadan tashqarida bo'lishi mumkin; ketma-ket nuqtalar segmentini poligon bilan kesishishini tekshirish kerak",
+        "Ray casting kichik poligonda ishlamaydi",
+        "AYoQSh geozonasini doira bilan almashtirish yetarli"
+      ],
+      "answer": 1,
+      "why": "60 km/soat = 16.7 m/s, 30 s da taxminan 500 m. Segment-poligon kesishuvi o'tib ketishni aniqlaydi."
+    },
+    {
+      "q": "30 000 qurilma har 10 s da nuqta yuboradi, tenant filtri va bbox dan keyin nuqta boshiga o'rtacha 2 ta aniq test qoladi. Cho'qqi 2x bo'lsa, soniyasiga nechta ray casting bajariladi?",
+      "options": [
+        "3 000",
+        "6 000",
+        "12 000",
+        "120 000"
+      ],
+      "answer": 2,
+      "why": "O'rtacha 3 000 nuqta/s, cho'qqi 6 000. 6 000 x 2 = 12 000 aniq test/s, bu bitta yadroga sig'adi."
+    },
+    {
+      "q": "'Mijozda 2 soatdan ortiq turdi' (dwell) hodisasini faqat yangi GPS nuqta kelganda tekshirish nega yetarli emas?",
+      "options": [
+        "Dwell hodisasi umuman kerak emas",
+        "Dvigatel o'chganda treker kamdan-kam yoki umuman yubormaydi, shuning uchun hodisa kechikadi yoki chiqmaydi; taymer kerak",
+        "Nuqtalar juda ko'p keladi",
+        "Dwell ni faqat ClickHouse hisoblay oladi"
+      ],
+      "answer": 1,
+      "why": "Holat mashinasi Inside holatiga o'tganda taymer ro'yxatga olinishi kerak, aks holda hodisa yangi nuqtaga bog'lanib qoladi."
+    },
+    {
+      "q": "Treker 2 soat aloqasiz bo'lib, 480 ta eski nuqtani bir paketda yubordi. To'g'ri xatti-harakat qaysi?",
+      "options": [
+        "Nuqtalarni processing time bo'yicha qayta ishlash va hamma ogohlantirishlarni yuborish",
+        "Nuqtalarni event time bo'yicha saralab, hodisalar jurnalini to'ldirish, lekin eskirgan real vaqt ogohlantirishlarini yubormaslik yoki belgilash",
+        "Paketni butunlay tashlash",
+        "Faqat oxirgi nuqtani ishlatish"
+      ],
+      "answer": 1,
+      "why": "Tarixiy hisobot aniq bo'lishi kerak, lekin 2 soat oldingi kirish uchun hozir 'tezkor' ogohlantirish yuborish dispetcherni chalg'itadi."
+    },
+    {
+      "q": "20 000 mashinaning oxirgi joylashuvi bo'yicha 'eng yaqin 5 ta mashina' so'rovi kerak, lekin daryo va bir tomonlama ko'chalar tufayli yo'l masofasi muhim. Qaysi yondashuv to'g'ri?",
+      "options": [
+        "Faqat haversine bo'yicha 5 ta eng yaqinni qaytarish",
+        "Hujayra/radius bo'yicha ko'proq nomzod (masalan, 15) olib, ular uchun marshrutlash servisidan ETA olish va ETA bo'yicha saralash",
+        "Barcha 20 000 mashina uchun ETA hisoblash",
+        "Faqat bir xil H3 hujayradagi mashinalarni qaytarish"
+      ],
+      "answer": 1,
+      "why": "Arzon geometrik filtr nomzodlarni qisqartiradi, qimmat ETA esa faqat ular uchun hisoblanadi."
+    }
+  ]
+}

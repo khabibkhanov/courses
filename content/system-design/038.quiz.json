@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Klient lease'ni tekshirdi (amal qiladi), keyin 40 soniyalik GC pause bo'ldi, keyin storage'ga yozdi. Lease 30 s edi. Qaysi chora bu xatoni oldini oladi?",
+      "options": [
+        "Yozishdan oldin lease'ni ikki marta tekshirish",
+        "Lease muddatini 60 s ga oshirish",
+        "Fencing token: storage kichikroq token bilan kelgan yozuvni rad etadi",
+        "Redlock ishlatish"
+      ],
+      "answer": 2,
+      "why": "Pause tekshiruv va yozuv orasida bo'lishi mumkin, shuning uchun klient tomonidagi har qanday tekshiruv yetarli emas. Tekshiruv storage tomonda bo'lishi kerak."
+    },
+    {
+      "q": "Kunlik hisobotni 3 replikadan faqat bittasi generatsiya qilishi kerak; ikki marta generatsiya bo'lsa, faqat ortiqcha CPU sarflanadi va natija unique kalit bilan saqlanadi. Qaysi vosita yetarli?",
+      "options": [
+        "etcd va fencing token",
+        "Bitta Redis instance'da SET NX PX",
+        "Redlock 5 ta master bilan",
+        "2PC"
+      ],
+      "answer": 1,
+      "why": "Bu samaradorlik lock'i: buzilsa faqat ortiqcha ish. Bitta Redis sodda va yetarli."
+    },
+    {
+      "q": "Redis lock'ni bo'shatish uchun nega oddiy DEL o'rniga \"qiymat meniki bo'lsa o'chir\" kerak?",
+      "options": [
+        "DEL sekin",
+        "Sizning lease'ingiz tugab, boshqa klient lock olgan bo'lsa, DEL uning lock'ini o'chirib yuboradi",
+        "DEL replikaga tarqalmaydi",
+        "DEL TTL'ni o'chirmaydi"
+      ],
+      "answer": 1,
+      "why": "Har bir egasi noyob tasodifiy qiymat qo'yadi va faqat o'z qiymatini o'chiradi (Lua skript yoki Redis 8.4+ da DELEX IFEQ)."
+    },
+    {
+      "q": "Kleppmann Redlock'ni to'g'rilik lock'i sifatida tavsiya qilmasligining asosiy sababi qaysi?",
+      "options": [
+        "U juda sekin",
+        "Uning xavfsizligi chegaralangan kechikish, pause va soat xatosiga tayanadi va u monoton fencing token bermaydi",
+        "U 5 dan kam instance bilan ishlamaydi",
+        "Redis'da TTL yo'q"
+      ],
+      "answer": 1,
+      "why": "Soat sakrashi yoki process pause ikki klientga lock berishi mumkin, va tasodifiy qiymat fencing uchun yaroqsiz."
+    },
+    {
+      "q": "Storage oxirgi qabul qilingan token sifatida 34 ni saqlaydi. Uchta yozuv keladi: token 35, keyin token 33, keyin token 35 (qayta). Qaysilari qabul qilinadi (shart: token >= max)?",
+      "options": [
+        "Hammasi",
+        "Faqat birinchi 35",
+        "35 va qayta kelgan 35; 33 rad etiladi",
+        "Faqat 33"
+      ],
+      "answer": 2,
+      "why": "33 < 35 bo'lgani uchun rad etiladi. Bir xil token bilan takror ega o'zgarmagani uchun qabul qilinadi; takrorning o'zini idempotency bilan boshqarish kerak."
+    },
+    {
+      "q": "etcd asosidagi lock uchun fencing token sifatida eng tabiiy tanlov qaysi?",
+      "options": [
+        "Lease ID",
+        "Kalitning create_revision yoki mod_revision qiymati",
+        "Klient hostname'i",
+        "Wall-clock vaqt belgisi"
+      ],
+      "answer": 1,
+      "why": "Revision klaster bo'yicha monoton oshadi va Raft orqali tartiblangan."
+    },
+    {
+      "q": "ZooKeeper lock retseptida nima uchun har bir kutuvchi faqat o'zidan oldingi tugunga watch qo'yadi?",
+      "options": [
+        "ZooKeeper bittadan ortiq watch'ni qo'llamaydi",
+        "Lock bo'shaganda faqat bitta kutuvchi uyg'onishi uchun - herd effect'ning oldini olish",
+        "Xavfsizlik uchun",
+        "Ephemeral tugunlar faqat bitta watch'ga ruxsat beradi"
+      ],
+      "answer": 1,
+      "why": "Hamma lock tuguniga watch qo'ysa, har bo'shatishda barcha kutuvchilar bir vaqtda so'rov yuboradi."
+    },
+    {
+      "q": "Leader election: lease 15 s, retry 2 s. Lider to'satdan o'lsa, eng yomon holatda yangi lider taxminan qachon ishga tushadi?",
+      "options": ["~2 s", "~10 s", "~17 s", "~60 s"],
+      "answer": 2,
+      "why": "Lease to'liq tugashi (15 s) va keyingi urinish oralig'i (2 s): 15 + 2 = 17 s."
+    },
+    {
+      "q": "Mashinaga haydovchi tayinlash ma'lumoti PostgreSQL'da. Bir vaqtda ikki dispetcher tayinlashidan himoyalanishning eng sodda to'g'ri usuli qaysi?",
+      "options": [
+        "Redis'da lock olish, keyin PostgreSQL'ga yozish",
+        "Redlock",
+        "Versiya ustuni bilan shartli UPDATE yoki SELECT ... FOR UPDATE bitta tranzaksiyada",
+        "Kubernetes Lease"
+      ],
+      "answer": 2,
+      "why": "Lock va ma'lumot bitta linearizable tizimda bo'lsa, alohida lock xizmati va fencing muammosi yo'qoladi."
+    },
+    {
+      "q": "Redis master lock'ni yozdi va async replikaga yetkazishdan oldin qulab tushdi; replika master bo'ldi. Nima bo'ladi?",
+      "options": [
+        "Lock yangi masterda saqlanadi",
+        "Yangi master lock haqida bilmaydi va uni boshqa klientga berishi mumkin - mutual exclusion buziladi",
+        "Barcha klientlar xato oladi",
+        "Lock avtomatik ravishda TTL'ga ko'ra tiklanadi"
+      ],
+      "answer": 1,
+      "why": "Asinxron replikatsiya tufayli failover'da oxirgi yozuvlar yo'qolishi mumkin. Redis hujjati ham shuni qayd etadi."
+    }
+  ]
+}

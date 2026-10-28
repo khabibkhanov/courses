@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Yangi modul uchun baza tanlashda birinchi qadam qaysi?",
+      "options": [
+        "Eng tez benchmark natijasiga ega bazani tanlash",
+        "Asosiy kirish yo'llari jadvalini tuzish: so'rov, kalit, turi, chastota, latency va yangilik talabi",
+        "Jamoaning eng ko'p yulduzli GitHub loyihasini tanlash",
+        "Darhol prototip yozish"
+      ],
+      "answer": 1,
+      "why": "Model va engine so'rov shaklidan kelib chiqadi; kirish yo'llari qarorning yarmini beradi."
+    },
+    {
+      "q": "Video hodisalar moduli: kuniga 40 000 hodisa (har biri 2 KB metadata va 1.9 MB klip). Eng oqilona saqlash?",
+      "options": [
+        "Klip va metadatani PostgreSQL bytea ustunida",
+        "Hammasini Cassandra'ga",
+        "Hammasini Redis'da",
+        "Metadata - mavjud PostgreSQL, klip - object storage, bazada faqat havola"
+      ],
+      "answer": 3,
+      "why": "Metadata yiliga taxminan 29 GB - PostgreSQL uchun kichik; klip yiliga taxminan 27 TB - object storage vazifasi."
+    },
+    {
+      "q": "Notion PostgreSQL'ni shard qilishining blogda keltirilgan asosiy sababi?",
+      "options": [
+        "VACUUM muntazam to'xtab qolgani va TXID wraparound xavfi",
+        "PostgreSQL JOIN'larni qo'llamagani",
+        "Litsenziya narxi",
+        "Full-text qidiruv yo'qligi"
+      ],
+      "answer": 0,
+      "why": "19-darsdagi MVCC mexanikasining amaliy oqibati: vacuum yetib ololmasa, bloat va wraparound yozishni to'xtatish xavfini tug'diradi."
+    },
+    {
+      "q": "Figma CockroachDB, TiDB, Spanner va Vitess'ni ko'rib chiqib, nega PostgreSQL'ni o'zi shard qilishni tanladi?",
+      "options": [
+        "Ular PostgreSQL'dan sekinroq ekani isbotlangan",
+        "Ular SQL'ni qo'llamaydi",
+        "O'sish sur'ati va vaqt zaxirasini hisobga olib migratsiya juda xavfli deb topilgan, RDS PostgreSQL bo'yicha ichki tajriba ham muhim bo'lgan",
+        "Litsenziya taqiqlagan"
+      ],
+      "answer": 2,
+      "why": "Migratsiya xavfi va jamoa tajribasi baza tanlashda texnik xususiyatlar bilan teng og'irlikdagi omillar."
+    },
+    {
+      "q": "Ilova mashina holatini PostgreSQL'ga yozadi va keyin xuddi shu kod Elasticsearch'ga ham yozadi (dual write). Asosiy xavf?",
+      "options": [
+        "Elasticsearch sekinlashadi",
+        "PostgreSQL bloklanadi",
+        "Bitta yozish muvaffaqiyatsiz bo'lsa yoki parallel yozishlar turli tartibda yetib borsa, ikki tizim doimiy nomuvofiq qoladi",
+        "Xavf yo'q, ikkala yozish ham tez"
+      ],
+      "answer": 2,
+      "why": "Ikki tizim orasida atomik yozish yo'q; CDC yoki transactional outbox bilan bitta haqiqat manbaidan hosila qurish kerak."
+    },
+    {
+      "q": "Haydovchi reytingi (top-100, 'men nechanchiman') soniyasiga 300 so'rov. Asosiy ballar PostgreSQL'da. Qaysi yondashuv to'g'ri?",
+      "options": [
+        "Har so'rovda PostgreSQL'da butun jadvalni ORDER BY bilan saralash va ballarni faqat Redis'da saqlash",
+        "Ballar haqiqat manbai sifatida PostgreSQL'da, reyting esa hosila (masalan, Redis sorted set) sifatida va undan qayta qurish mumkin",
+        "Reytingni faqat Redis'da saqlash, PostgreSQL'dan voz kechish",
+        "Har bir reyting uchun alohida MongoDB kolleksiyasi"
+      ],
+      "answer": 1,
+      "why": "Haqiqat manbai bitta bo'lishi kerak; hosila tez o'qish uchun va buzilsa manbadan qayta quriladi."
+    },
+    {
+      "q": "PostgreSQL'da analitik hisobotlar OLTP p99 latency'sini oshirmoqda. Odatda birinchi navbatda nima qilinadi?",
+      "options": [
+        "Darhol ClickHouse klasteri va CDC",
+        "OLTP bazani MongoDB'ga ko'chirish",
+        "Hisobotlarni o'chirish",
+        "Hisobotlarni read replica'ga ko'chirish va/yoki oldindan agregat jadvallar, materialized view; hajm va ad-hoc talab o'sganda ustunli OLAP baza"
+      ],
+      "answer": 3,
+      "why": "Avval mavjud stek ichidagi arzon yechimlar; maxsus baza o'lchangan aniq to'siq bo'lganda."
+    },
+    {
+      "q": "DynamoDB yoki Cassandra kabi query-first bazani tanlash qachon xavfli?",
+      "options": [
+        "Kirish yo'llari hali noaniq va tez o'zgarib turganda - yangi so'rov qo'shish yangi jadval yoki indeks va ma'lumot ko'chirishni talab qiladi",
+        "Yozish hajmi katta bo'lganda",
+        "Ma'lumot kalit bo'yicha o'qilganda",
+        "Ko'p region kerak bo'lganda"
+      ],
+      "answer": 0,
+      "why": "Relational model kirish yo'llarini oldindan to'liq bilmasdan ham yangi so'rovlar qo'shishga imkon beradi; query-first modelda bu qimmat."
+    },
+    {
+      "q": "Qaror hujjatida (ADR) 'qayta ko'rib chiqish sharti' nima uchun kerak?",
+      "options": [
+        "Rasmiyatchilik uchun",
+        "Investorlar uchun",
+        "Qaror qaysi aniq raqamli sharoitda (masalan, yozish 30 ming/s dan oshsa) eskirishini oldindan belgilaydi, shunda u dogmaga aylanmaydi va har hafta qayta muhokama ham qilinmaydi",
+        "Faqat interview uchun"
+      ],
+      "answer": 2,
+      "why": "Trade-off ma'lum shartlarda to'g'ri; shart o'zgarsa, qaror qayta ko'rilishi kerakligi ko'rinadi."
+    },
+    {
+      "q": "Discord xabarlarni Cassandra'dan ScyllaDB'ga ko'chirdi; Meta MySQL'da InnoDB'ni RocksDB'ga (MyRocks) almashtirdi. Ikkalasidagi umumiy migratsiya strategiyasi?",
+      "options": [
+        "Relational modeldan NoSQL'ga o'tish",
+        "Ma'lumot modeli va API saqlanib, faqat storage engine almashtirilgan - migratsiya xavfi kamaygan",
+        "Barcha ma'lumotni object storage'ga ko'chirish",
+        "Sharding'dan voz kechish"
+      ],
+      "answer": 1,
+      "why": "Model va engine alohida qarorlar (11-dars); modelni saqlab engine'ni almashtirish ilova kodini deyarli o'zgartirmaydi."
+    }
+  ]
+}

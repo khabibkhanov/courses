@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "ACID'dagi atomicity'ning eng aniq ma'nosi qaysi?",
+      "options": [
+        "Boshqa tranzaksiyalar oraliq holatni ko'ra olmaydi",
+        "Xato bo'lganda tranzaksiyaning barcha yozishlari bekor qilinadi, shuning uchun uni xavfsiz qayta urinish mumkin",
+        "Har bir buyruq bitta CPU instruksiyasida bajariladi",
+        "Commit qilingan ma'lumot diskda saqlanadi"
+      ],
+      "answer": 1,
+      "why": "Kleppmann uni 'abortability' deb ataydi; oraliq holatni ko'rmaslik - bu isolation, diskda saqlash - durability."
+    },
+    {
+      "q": "Nega ACID'dagi 'C' asosan ilovaning xususiyati deyiladi?",
+      "options": [
+        "Chunki invariantlarni ilova belgilaydi va ularni saqlaydigan tranzaksiyalarni ilova yozadi; baza faqat e'lon qilingan constraint'larni tekshiradi",
+        "Chunki bazalar constraint'larni umuman qo'llamaydi",
+        "Chunki consistency faqat replikatsiyaga tegishli",
+        "Chunki C - CAP teoremasidagi consistency"
+      ],
+      "answer": 0,
+      "why": "Foreign key, unique, CHECK baza tomonidan tekshiriladi, lekin 'tarif limiti' kabi qoidalar ilova va izolyatsiyaga bog'liq."
+    },
+    {
+      "q": "PostgreSQL tranzaksiyasi ichida INSERT unique constraint xatosini berdi. Keyin ilova xuddi shu tranzaksiyada UPDATE yubordi. Nima bo'ladi?",
+      "options": [
+        "UPDATE bajariladi, INSERT shunchaki o'tkazib yuboriladi",
+        "Butun tranzaksiya avtomatik commit qilinadi",
+        "INSERT avtomatik qayta uriniladi",
+        "UPDATE 'current transaction is aborted' xatosini oladi; ROLLBACK yoki ROLLBACK TO SAVEPOINT kerak"
+      ],
+      "answer": 3,
+      "why": "PostgreSQL'da xatodan keyin tranzaksiya aborted holatda; davom etish uchun savepoint'ga qaytish yoki rollback kerak."
+    },
+    {
+      "q": "Ulanish puli 20 ta. Tranzaksiya o'rtacha 5 ms, lekin ichida 300 ms lik tashqi API chaqiruvi qo'shildi. Pulning maksimal throughput'i taxminan qanday o'zgaradi?",
+      "options": [
+        "4 000 dan 3 900 tranzaksiya/s ga",
+        "O'zgarmaydi, API chaqiruvi bazaga ta'sir qilmaydi",
+        "4 000 dan taxminan 65 tranzaksiya/s ga",
+        "4 000 dan 2 000 ga"
+      ],
+      "answer": 2,
+      "why": "Little qonuni: 20 / 0.005 = 4 000; 20 / 0.305 taxminan 65. Qulflar ham shuncha uzoq ushlab turiladi."
+    },
+    {
+      "q": "Klient COMMIT yubordi va tarmoq uzildi, javob kelmadi. To'g'ri yondashuv qaysi?",
+      "options": [
+        "Commit bo'lmagan deb hisoblab, tranzaksiyani darhol qayta yuborish",
+        "Natija noma'lum; idempotency kaliti yoki unique constraint orqali qayta urinish dublikat yaratmasligini ta'minlash va holatni tekshirish",
+        "Commit bo'lgan deb hisoblash",
+        "Bazani qayta ishga tushirish"
+      ],
+      "answer": 1,
+      "why": "Commit serverda bajarilgan bo'lishi mumkin; idempotency bo'lmasa, qayta urinish ikki marta yozadi."
+    },
+    {
+      "q": "PostgreSQL'da synchronous_commit = off bilan server qulab tushdi. Eng yomon holatda nima bo'ladi?",
+      "options": [
+        "Baza buziladi va backup'dan tiklash kerak",
+        "Hech narsa yo'qolmaydi",
+        "Faqat indekslar buziladi",
+        "Oxirgi bir necha yuz millisekunddagi 'commit qilingan' tranzaksiyalar yo'qolishi mumkin, lekin baza izchil qoladi"
+      ],
+      "answer": 3,
+      "why": "WAL tartibi saqlanadi, faqat flush kechikadi (wal_writer_delay ning uch baravarigacha); fsync = off dan farqli, buzilish yo'q."
+    },
+    {
+      "q": "Tranzaksiya ichida reys yopiladi va shu yerda Kafka'ga 'trip_closed' hodisasi yuboriladi. Keyin COMMIT serialization xatosi bilan muvaffaqiyatsiz bo'ldi. Muammo?",
+      "options": [
+        "Hodisa ketdi, lekin reys yopilmadi; qayta urinishda hodisa yana ketadi. Transactional outbox kerak",
+        "Muammo yo'q, Kafka xabari ham rollback bo'ladi",
+        "Kafka xabari faqat commit'dan keyin yuboriladi",
+        "PostgreSQL Kafka xabarini avtomatik bekor qiladi"
+      ],
+      "answer": 0,
+      "why": "Tashqi yon ta'sirlar baza rollback'i bilan bekor bo'lmaydi; outbox hodisani tranzaksiyaning bir qismi sifatida yozadi."
+    },
+    {
+      "q": "Serialization failure (SQLSTATE 40001) olinganda PostgreSQL hujjatlari nimani tavsiya qiladi?",
+      "options": [
+        "Faqat oxirgi UPDATE ni qayta yuborish",
+        "Izolyatsiyani Read Uncommitted ga tushirish",
+        "Tranzaksiyani bekor qilib, uni boshidan, o'qishlari bilan birga qayta bajarish",
+        "Xatoni e'tiborsiz qoldirish"
+      ],
+      "answer": 2,
+      "why": "Qarorlar yangi ma'lumotga asoslanishi uchun o'qishlar ham qayta bajarilishi kerak; faqat yozuvchi tranzaksiyalar bu xatoni oladi."
+    },
+    {
+      "q": "DynamoDB'da bitta TransactWriteItems bilan 5 000 ta itemni atomik yangilash rejalashtirilgan. Nima bo'ladi?",
+      "options": [
+        "Muammosiz ishlaydi",
+        "Faqat global tables'da ishlaydi",
+        "DynamoDB tranzaksiyalarni umuman qo'llamaydi",
+        "Mumkin emas: tranzaksiya 100 tagacha unique item va 4 MB gacha ma'lumotni qamraydi"
+      ],
+      "answer": 3,
+      "why": "AWS hujjatlaridagi chegaralar dizaynni belgilaydi: katta o'zgarishlarni idempotent partiyalarga bo'lish kerak."
+    },
+    {
+      "q": "Redis'da MULTI ... EXEC ichidagi ikkinchi buyruq bajarilish paytida WRONGTYPE xatosini berdi. Qolgan buyruqlar bilan nima bo'ladi?",
+      "options": [
+        "Hammasi rollback qilinadi",
+        "Qolgan buyruqlar baribir bajariladi; Redis rollback qilmaydi",
+        "EXEC bloklanadi",
+        "Faqat oldingi buyruqlar bekor qilinadi"
+      ],
+      "answer": 1,
+      "why": "Redis hujjatlariga ko'ra, EXEC'dan keyingi xatolar tranzaksiyani to'xtatmaydi; klient har bir javobni tekshirishi kerak."
+    }
+  ]
+}

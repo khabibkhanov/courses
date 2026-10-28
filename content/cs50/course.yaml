@@ -1,0 +1,121 @@
+# Kurs tavsifi va syllabus. Dars fayli: NNN.md (frontmatter: title, minutes) + NNN.quiz.json.
+# Dars sarlavhasi shu yerdagi title bilan aynan bir xil bo'lishi shart.
+slug: cs50
+title: CS50
+subtitle: Computer science asoslari, Harvard CS50x dasturi asosida - 60 dars
+description: "CS50x ketma-ketligi: C, xotira, algoritmlar, ma'lumotlar tuzilmalari, Python, SQL, web, xavfsizlik va AI. Har darsda ichki mexanika, ishlaydigan kod, test va dasturlash topshirig'i."
+audience: "Dasturlashni noldan yoki tizimli ravishda boshlamoqchi bo'lganlar uchun. Oldindan tajriba shart emas; kod yozganlar uchun esa kompyuter ichida nima bo'layotganini to'liq ochib beradi."
+order: 1
+color: "#c2410c"
+format: lessons-md
+passScore: 0.8
+library:
+- title: CS50x 2026
+  by: Harvard, David J. Malan
+  href: "https://cs50.harvard.edu/x/2026/"
+- title: The C Programming Language, 2-nashr
+  by: Kernighan, Ritchie
+  href: "https://www.cs.princeton.edu/~bwk/cbook.html"
+- title: "Computer Systems: A Programmer's Perspective"
+  by: "Bryant, O'Hallaron"
+  href: "https://csapp.cs.cmu.edu/"
+- title: Introduction to Algorithms (CLRS), 4-nashr
+  by: Cormen, Leiserson, Rivest, Stein
+  href: "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/"
+- title: The Art of Computer Programming
+  by: Donald Knuth
+  href: "https://www-cs-faculty.stanford.edu/~knuth/taocp.html"
+- title: Python documentation
+  by: Python Software Foundation
+  href: "https://docs.python.org/3/"
+- title: SQLite documentation
+  by: SQLite
+  href: "https://sqlite.org/docs.html"
+- title: MDN Web Docs
+  by: Mozilla
+  href: "https://developer.mozilla.org/"
+modules:
+- n: 1
+  title: Hisoblash tafakkuri va C asoslari
+  goal: "Week 0-1: muammo, algoritm, ma'lumot ko'rinishi va C da birinchi dasturlar"
+  lessons:
+  - {n: 1, title: "Computer science nima: muammo, input/output, algoritm"}
+  - {n: 2, title: "Ma'lumot ko'rinishi: binary, hex, ASCII, Unicode va UTF-8"}
+  - {n: 3, title: "Rasm, ovoz, video: RGB, piksel, sampling va siqish"}
+  - {n: 4, title: "Abstraction va dasturlash bloklari: funksiya, shart, sikl, o'zgaruvchi"}
+  - {n: 5, title: "C ga kirish: source code, compiler, main, printf, terminal"}
+  - {n: 6, title: "C da tiplar: int, long, char, float, double va ularning chegaralari"}
+  - {n: 7, title: Integer overflow va floating-point imprecision}
+  - {n: 8, title: "C: shartlar, sikllar, funksiyalar va scope"}
+  - {n: 9, title: "Kompilyatsiya ichida: preprocessing, compiling, assembling, linking"}
+  - {n: 10, title: "Debugging va kod sifati: correctness, design, style"}
+- n: 2
+  title: Arrays, strings va algoritmlar
+  goal: "Week 2-3: massivlar, satrlar, qidiruv, saralash, rekursiya va asimptotik tahlil"
+  lessons:
+  - {n: 11, title: "Arrays: xotirada ketma-ket joylashuv va indekslash"}
+  - {n: 12, title: "Strings: char massivi, NUL terminator, string.h"}
+  - {n: 13, title: Command-line arguments va exit status}
+  - {n: 14, title: "Klassik shifrlar: Caesar, Vigenere, substitution"}
+  - {n: 15, title: Linear search va binary search}
+  - {n: 16, title: "Asimptotik tahlil: Big O, Omega, Theta"}
+  - {n: 17, title: 'Selection sort, bubble sort, insertion sort'}
+  - {n: 18, title: "Rekursiya: call stack, base case, rekursiv fikrlash"}
+  - {n: 19, title: Merge sort va divide and conquer}
+  - {n: 20, title: "struct va saylov algoritmlari: plurality, runoff, ranked pairs"}
+- n: 3
+  title: "Xotira va ma'lumotlar tuzilmalari"
+  goal: "Week 4-5: pointerlar, dinamik xotira, fayllar, linked list, tree, hash table, trie"
+  lessons:
+  - {n: 21, title: Xotira manzillari va pointerlar}
+  - {n: 22, title: Pointer arifmetikasi va string sifatida char*}
+  - {n: 23, title: "Dinamik xotira: malloc, free, memory leak, Valgrind"}
+  - {n: 24, title: 'Stack va heap, garbage values, buffer overflow'}
+  - {n: 25, title: "Pass by value va pointer orqali uzatish: swap, scanf"}
+  - {n: 26, title: "Fayllar: fopen, fread, fwrite va binary formatlar (BMP, JPEG)"}
+  - {n: 27, title: "Abstract data types: stack va queue"}
+  - {n: 28, title: "Linked list: qo'shish, qidirish, o'chirish, free"}
+  - {n: 29, title: "Daraxtlar: binary search tree va balans muammosi"}
+  - {n: 30, title: "Hash table va trie: hash funksiya, collision, load factor"}
+- n: 4
+  title: Python va SQL
+  goal: "Week 6-7: yuqori darajali til va relyatsion ma'lumotlar bazalari"
+  lessons:
+  - {n: 31, title: "C dan Python ga: interpreter, sintaksis, dinamik tiplar"}
+  - {n: 32, title: "Python ma'lumot tuzilmalari: list, tuple, dict, set va ularning narxi"}
+  - {n: 33, title: "Python: funksiyalar, modullar, exceptions"}
+  - {n: 34, title: "Python: fayllar, CSV, regular expressions"}
+  - {n: 35, title: "CPython ichida: obyekt modeli, reference counting, GIL"}
+  - {n: 36, title: "Flat-file va relational ma'lumotlar bazasi"}
+  - {n: 37, title: "SQL asoslari: SELECT, WHERE, ORDER BY, GROUP BY, aggregatsiya"}
+  - {n: 38, title: "SQL: JOIN, primary key, foreign key, normalizatsiya"}
+  - {n: 39, title: 'Indekslar, tranzaksiyalar, race condition, SQL injection'}
+  - {n: 40, title: "Python va SQL birga: sqlite3, parametrlangan so'rovlar"}
+- n: 5
+  title: Web dasturlash
+  goal: "Week 8-9: internet, HTTP, HTML, CSS, JavaScript va Flask"
+  lessons:
+  - {n: 41, title: "Internet qanday ishlaydi: IP, TCP, DNS, port"}
+  - {n: 42, title: "HTTP: so'rov va javob, metodlar, status kodlar, header"}
+  - {n: 43, title: "HTML: hujjat tuzilmasi, semantika, formalar"}
+  - {n: 44, title: "CSS: selektorlar, cascade, box model, flexbox, grid"}
+  - {n: 45, title: "JavaScript asoslari: til, DOM, eventlar"}
+  - {n: 46, title: "JavaScript: event loop, async/await, fetch, JSON"}
+  - {n: 47, title: "Flask: routing, request, Jinja template"}
+  - {n: 48, title: "Flask: formalar, cookie, session"}
+  - {n: 49, title: "Flask va SQL: to'liq CRUD ilova, MVC"}
+  - {n: 50, title: "Web xavfsizlik: parol hashlash, XSS, CSRF"}
+- n: 6
+  title: Xavfsizlik, AI va yakuniy loyiha
+  goal: "Artificial Intelligence ma'ruzasi, xavfsizlik, Week 10 va Final Project: o'z loyihangiz"
+  lessons:
+  - {n: 51, title: "Kiberxavfsizlik: tahdid modeli, parollar, 2FA, passkey"}
+  - {n: 52, title: "Kriptografiya: hash, simmetrik va asimmetrik shifrlash, HTTPS"}
+  - {n: 53, title: "AI asoslari: qidiruv, minimax, evristika"}
+  - {n: 54, title: "Machine learning: supervised learning va neural network"}
+  - {n: 55, title: "Large language model: transformer, token, AI yordamchi bilan ishlash"}
+  - {n: 56, title: "Mashina darajasi: assembly, CPU va kompilyator nima qiladi"}
+  - {n: 57, title: "Dasturiy muhandislik: git, testlar, code review"}
+  - {n: 58, title: "Yakuniy loyiha: g'oya, talablar va loyihalash"}
+  - {n: 59, title: "Yakuniy loyiha: amalga oshirish va deploy"}
+  - {n: 60, title: "Yakuniy loyiha review va keyingi yo'l"}

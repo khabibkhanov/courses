@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "RF=3, min.insync.replicas=2, acks=all. Ikki broker o'chdi, faqat lider qoldi. Nima bo'ladi?",
+      "options": [
+        "Yozish davom etadi, acks=all endi faqat liderni kutadi",
+        "Yozish NotEnoughReplicas bilan rad etiladi, mavjud commit qilingan ma'lumot saqlanadi",
+        "Klaster avtomatik ravishda RF ni 1 ga tushiradi",
+        "Unclean leader election boshlanadi"
+      ],
+      "answer": 1,
+      "why": "ISR hajmi (1) min.insync.replicas (2) dan kichik, shuning uchun acks=all yozishlar rad etiladi. Bu availability'ni durability'ga almashtirish."
+    },
+    {
+      "q": "RF=3, min.insync.replicas=1, acks=all. Ikki follower sekinlashib ISR dan chiqdi. Lider yozuvni qabul qilib ack berdi va darhol diski bilan birga o'ldi. Natija?",
+      "options": [
+        "Yozuv yo'qolishi mumkin: ISR faqat liderdan iborat edi, acks=all amalda acks=1 ga teng bo'lgan",
+        "Yozuv saqlangan, chunki acks=all edi",
+        "Producer avtomatik ravishda boshqa liderga qayta yozadi",
+        "Follower'lar yozuvni page cache'dan tiklaydi"
+      ],
+      "answer": 0,
+      "why": "acks=all joriy ISR ni kutadi. min ISR=1 bo'lgani uchun bitta replika bilan ham yozish qabul qilingan."
+    },
+    {
+      "q": "Kafka ISR modeli 2 ta broker nosozligida commit qilingan ma'lumotni yo'qotmaslik uchun nechta replika talab qiladi, Raft esa nechta?",
+      "options": [
+        "Ikkalasi 5",
+        "ISR 5, Raft 3",
+        "Ikkalasi 3",
+        "ISR 3, Raft 5"
+      ],
+      "answer": 3,
+      "why": "ISR bilan f+1 replika f nosozlikka chidaydi, majority quorum esa 2f+1 talab qiladi. f=2 da 3 va 5."
+    },
+    {
+      "q": "O'rtacha 5 000 yozuv/s, 400 bayt, retention 7 kun, RF=3, siqish 4 baravar. Klaster disk hajmi (to'ldirish zaxirasiz) taxminan qancha?",
+      "options": [
+        "Taxminan 300 GB",
+        "Taxminan 3.6 TB",
+        "Taxminan 900 GB",
+        "Taxminan 1.2 TB"
+      ],
+      "answer": 2,
+      "why": "5 000 x 400 B = 2 MB/s; x 86 400 = 172.8 GB/kun; x 7 = 1.21 TB; x 3 = 3.63 TB; / 4 = taxminan 907 GB."
+    },
+    {
+      "q": "Consume-transform-produce servisida Kafka tranzaksiyasi ishlatiladi, lekin downstream consumer default sozlamada. Muammo nima?",
+      "options": [
+        "Hech qanday muammo yo'q",
+        "Default isolation.level=read_uncommitted, consumer bekor qilingan tranzaksiyalarning yozuvlarini ham ko'radi",
+        "Consumer hech narsa o'qiy olmaydi",
+        "Tranzaksiyalar faqat bitta partitionda ishlaydi"
+      ],
+      "answer": 1,
+      "why": "Effectively-once uchun downstream consumer read_committed bo'lishi kerak, aks holda abort qilingan ma'lumot ham ko'rinadi."
+    },
+    {
+      "q": "Kafka tranzaksiyasi bilan servis Kafka'dan o'qiydi va natijani PostgreSQL ga yozadi. Exactly-once ta'minlanganmi?",
+      "options": [
+        "Yo'q, Kafka tranzaksiyasi faqat Kafka ichidagi o'qish-yozish va offset'ni atomik qiladi, PostgreSQL yozuvi idempotent bo'lishi yoki offset'ni bazada saqlash kerak",
+        "Ha, Kafka tranzaksiyasi tashqi bazani ham qamrab oladi",
+        "Ha, agar acks=all bo'lsa",
+        "Ha, agar enable.idempotence=true bo'lsa"
+      ],
+      "answer": 0,
+      "why": "Tashqi tizim uchun end-to-end kafolat ilova darajasida (idempotency yoki offset'ni natija bilan bitta DB tranzaksiyasida saqlash) kerak."
+    },
+    {
+      "q": "Compacted topicda consumer 3 kun to'xtab qoldi, delete.retention.ms default (1 kun). Qanday xavf bor?",
+      "options": [
+        "Hech qanday xavf yo'q, compaction hamma narsani saqlaydi",
+        "Offset'lar o'zgaradi va consumer xato beradi",
+        "Compaction to'xtaydi",
+        "Consumer ba'zi kalitlarning tombstone'ini ko'rmay qolishi va o'chirilgan kalitlarni o'z holatida saqlab qolishi mumkin"
+      ],
+      "answer": 3,
+      "why": "Tombstone'lar delete.retention.ms dan keyin o'chiriladi. Undan uzoq orqada qolgan consumer o'chirish markerini o'tkazib yuboradi."
+    },
+    {
+      "q": "Uchta replikaning hammasi ISR dan chiqqan, faqat orqada qolgan bitta replika tirik, unclean.leader.election.enable=false. Nima bo'ladi?",
+      "options": [
+        "Orqada qolgan replika darhol lider bo'ladi",
+        "Kafka avtomatik ravishda yangi replika yaratadi",
+        "Partition ISR replikasi qaytguncha ishlamaydi, ma'lumot yo'qolmaydi",
+        "Producer'lar boshqa partitionga yozadi va tartib saqlanadi"
+      ],
+      "answer": 2,
+      "why": "Default holatda Kafka consistency'ni tanlaydi va ISR replikasini kutadi. Unclean election yoqilsa, availability evaziga commit qilingan ma'lumot yo'qoladi."
+    },
+    {
+      "q": "Producer tarmoq xatosi tufayli bir xil batch'ni qayta yubordi (enable.idempotence=true, bitta sessiya). Broker nima qiladi?",
+      "options": [
+        "Ikkinchi nusxani ham yozadi",
+        "PID va partition bo'yicha sequence raqamini tekshirib, dublikatni tashlaydi",
+        "Producer'ni bloklaydi",
+        "Tranzaksiyani abort qiladi"
+      ],
+      "answer": 1,
+      "why": "Idempotent producer'da har bir (PID, partition) uchun sequence raqami bor, broker takroriy sequence'ni dublikat sifatida rad etadi."
+    },
+    {
+      "q": "Har bir mashinaning oxirgi joylashuvini saqlaydigan topic uchun qaysi sozlama eng mos va nega?",
+      "options": [
+        "cleanup.policy=compact, kalit vehicle_id - yangi servis boshidan o'qib har bir mashinaning oxirgi holatini oladi",
+        "cleanup.policy=delete, retention 1 soat",
+        "Tiered storage va retention 1 yil",
+        "acks=0 va RF=1"
+      ],
+      "answer": 0,
+      "why": "Compaction har bir kalitning oxirgi qiymatini saqlaydi. 1 soatlik delete retention bilan uzoq turgan mashinaning joylashuvi yo'qoladi, tiered storage esa compacted topicni qo'llamaydi."
+    }
+  ]
+}

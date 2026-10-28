@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Jadval vehicle_id bo'yicha 16 shard ga bo'lingan, plate uchun local index bor. plate = X so'rovi nima qiladi?",
+      "options": [
+        "Bitta shard ga boradi",
+        "Global index ga boradi",
+        "Barcha 16 shard ga yuboriladi va natijalar birlashtiriladi (scatter-gather)",
+        "Faqat leader shard ga"
+      ],
+      "answer": 2,
+      "why": "Local index faqat o'z partition qatorlarini biladi. Shard kaliti bo'lmagan so'rov hamma partition larga ketadi."
+    },
+    {
+      "q": "Har bir shard p99 latency si 1 s, odatiy javob 10 ms. So'rov 100 shard dan parallel javob yig'adi. Taxminan qancha so'rov 1 s dan uzoq davom etadi?",
+      "options": [
+        "1%",
+        "63%",
+        "10%",
+        "99%"
+      ],
+      "answer": 1,
+      "why": "1 - 0.99^100, taxminan 0.63. Fan-out tail latency ni odatiy holatga aylantiradi."
+    },
+    {
+      "q": "DynamoDB GSI dan o'qishda qaysi tasdiq to'g'ri?",
+      "options": [
+        "Faqat eventually consistent: GSI asinxron yangilanadi va natija eskirgan bo'lishi mumkin",
+        "Kuchli consistent o'qish mumkin",
+        "GSI asosiy jadval bilan bitta tranzaksiyada yangilanadi",
+        "GSI faqat jadval yaratilganda qo'shiladi"
+      ],
+      "answer": 0,
+      "why": "GSI o'zgarishlari asinxron, odatda soniyaning bir qismida yetadi. Kuchli consistent o'qish va jadval yaratilgandagina qo'shilish LSI xususiyatlari."
+    },
+    {
+      "q": "GSI yozish sig'imi asosiy jadvalnikidan ancha past qo'yildi. Og'ir yozuv yuklamasida nima bo'ladi?",
+      "options": [
+        "Faqat GSI eskiradi, asosiy jadvalga yozish ishlaydi",
+        "GSI avtomatik o'chiriladi",
+        "Yozuvlar navbatga qo'yiladi va keyin bajariladi",
+        "Asosiy jadvalga yozish ham throttling ga uchraydi"
+      ],
+      "answer": 3,
+      "why": "Yozuv muvaffaqiyatli bo'lishi uchun jadval va barcha GSI larda sig'im yetarli bo'lishi kerak. Index asosiy jadvalga teskari bosim beradi."
+    },
+    {
+      "q": "Global (term-partitioned) index ning local index ga nisbatan asosiy afzalligi?",
+      "options": [
+        "Yozish arzonroq",
+        "Har doim darhol izchil",
+        "Secondary kalit bo'yicha o'qish barcha partition larga emas, bitta index partition ga va keyin bitta ma'lumot partition ga boradi",
+        "Hot spot bo'lmaydi"
+      ],
+      "answer": 2,
+      "why": "Global index o'qishni maqsadli qiladi, evaziga yozish bir nechta tugunni o'zgartiradi va ko'pincha asinxron."
+    },
+    {
+      "q": "Partition ko'chirildi, lekin ba'zi router lar eski xaritani ishlatib eski tugunga yozmoqda. Eng xavfsiz himoya?",
+      "options": [
+        "Router larni har daqiqada qayta ishga tushirish",
+        "Har bir so'rov bilan xarita versiyasini (epoch) yuborish, tugun eski versiyani rad etib, router ni xaritani yangilashga majburlashi",
+        "DNS TTL ni kamaytirish",
+        "Eski tugunni darhol o'chirish"
+      ],
+      "answer": 1,
+      "why": "Versiya tekshiruvi eskirgan routing ni aniqlaydi va eski egaga yozuvni bloklaydi (MOVED yoki stale config). Bu fencing g'oyasiga yaqin."
+    },
+    {
+      "q": "DynamoDB da bitta juda issiq element bor. Adaptive capacity va split for heat bilan uning maksimal yozish throughput i qancha bo'lishi mumkin?",
+      "options": [
+        "Bitta partition chegarasi, ya'ni taxminan 1 000 WCU/s",
+        "Cheksiz, jadval sig'imiga teng",
+        "Taxminan 300 WCU/s",
+        "Taxminan 10 000 WCU/s"
+      ],
+      "answer": 0,
+      "why": "Issiq element o'zi alohida partition olishi mumkin, lekin partition maksimumi 3 000 RCU va 1 000 WCU. Undan ortig'i uchun kalitni bo'lish kerak."
+    },
+    {
+      "q": "B2B SaaS da shard kaliti tenant_id. Qaysi so'rov eng arzon bajariladi?",
+      "options": [
+        "WHERE plate = X",
+        "WHERE driver_phone = Y",
+        "SELECT count(*) FROM vehicles",
+        "WHERE tenant_id = 7 AND plate = X, (tenant_id, plate) lokal index bilan"
+      ],
+      "answer": 3,
+      "why": "Shard kaliti so'rovni bitta shard ga yo'naltiradi, lokal index esa shard ichida tez topadi. Qolganlari scatter-gather."
+    },
+    {
+      "q": "Hedged requests texnikasi qanday ishlaydi va narxi qanday?",
+      "options": [
+        "Har bir so'rov darhol ikki replikaga yuboriladi, yuklama ikki baravar",
+        "Sekin so'rovlar bekor qilinadi",
+        "So'rov kutilgan 95-percentile vaqtdan uzoq javobsiz qolsa, ikkinchi replikaga yuboriladi va birinchi javob olinadi, qo'shimcha yuklama taxminan 5% bilan cheklanadi",
+        "So'rovlar navbatga qo'yilib, guruh bilan yuboriladi"
+      ],
+      "answer": 2,
+      "why": "Dean va Barroso misolida 10 ms kechikish bilan hedging 99.9-percentile ni 1 800 ms dan 74 ms ga tushirgan va atigi 2% qo'shimcha so'rov yuborgan."
+    },
+    {
+      "q": "Telemetriya hisoblagichi bitta tenant kaliti bo'yicha soniyasiga 5 000 marta yangilanadi va uning partition i throttling da. Qaysi yechim to'g'ri va narxi qanday?",
+      "options": [
+        "Replication factor ni oshirish",
+        "Kalitni 10 ta suffiks bilan bo'lish (salting): yozish 10 partition ga tarqaladi, o'qishda 10 kalitni yig'ish kerak",
+        "Secondary index qo'shish",
+        "Partition sonini kamaytirish"
+      ],
+      "answer": 1,
+      "why": "Write sharding bitta issiq kalitni bir nechta partition ga tarqatadi. Buferlab davriy flush qilish ham muqobil. Replika yozishni masshtablamaydi."
+    }
+  ]
+}

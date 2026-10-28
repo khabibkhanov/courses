@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "PostgreSQL da (lat, lon) composite B-tree indeksi bor. 'Nuqtadan 1 km radiusdagi mashinalar' so'rovida nima bo'ladi?",
+      "options": [
+        "Indeks ikkala o'lchov bo'yicha ham hududni aniq toraytiradi",
+        "Indeks faqat lat oralig'ini toraytiradi, shu kenglik tasmasidagi barcha nuqtalar lon bo'yicha qayta filtrlanadi",
+        "Indeks umuman ishlatilmaydi",
+        "Indeks faqat lon bo'yicha ishlaydi"
+      ],
+      "answer": 1,
+      "why": "B-tree bir o'lchovli tartib. Birinchi ustun oraliq bilan filtrlansa, ikkinchi ustun bo'yicha samarali toraytirish bo'lmaydi."
+    },
+    {
+      "q": "Geohash bilan radius so'rovida nega markaz hujayra bilan birga uning 8 qo'shnisi ham tekshiriladi?",
+      "options": [
+        "Geohash hujayralari ustma-ust tushgani uchun",
+        "Yaqin nuqtalar hujayra chegarasining narigi tomonida bo'lib, umumiy prefiksga ega bo'lmasligi mumkin",
+        "Redis buni talab qilgani uchun",
+        "Qo'shnilar natijani tartiblash uchun kerak"
+      ],
+      "answer": 1,
+      "why": "Umumiy prefiks yaqinlikni bildiradi, lekin yaqinlik umumiy prefiksni kafolatlamaydi. Chegara holatlarini qo'shnilar yopadi."
+    },
+    {
+      "q": "Toshkentda (kenglik taxminan 41.3) 1 daraja uzunlik taxminan necha km?",
+      "options": [
+        "111 km",
+        "Taxminan 83 km",
+        "Taxminan 55 km",
+        "Taxminan 140 km"
+      ],
+      "answer": 1,
+      "why": "111 km x cos(41.3) taxminan 111 x 0.75 = 83 km. Shu sabab darajada hisoblangan 'doira' aslida ellips."
+    },
+    {
+      "q": "H3 res 9 da qo'shni hujayra markazlari orasidagi masofa taxminan 350 m. 1 km radiusni qoplash uchun gridDisk k = 3 tanlansa, nechta hujayra olinadi?",
+      "options": [
+        "19",
+        "37",
+        "49",
+        "61"
+      ],
+      "answer": 1,
+      "why": "gridDisk hujayralar soni 3k(k+1)+1. k = 3 da 3x3x4+1 = 37."
+    },
+    {
+      "q": "Uber H3 da nega olti burchakni tanlagan?",
+      "options": [
+        "Olti burchakni 7 ta kichik olti burchakka aniq bo'lish mumkin",
+        "Barcha qo'shnilar markazdan bir xil masofada, bu silliqlash va qo'shnilik tahlilini soddalashtiradi",
+        "Olti burchak kvadratdan kamroq xotira oladi",
+        "Faqat olti burchak sferani pentagonlarsiz qoplaydi"
+      ],
+      "answer": 1,
+      "why": "Kvadratda qo'shnilar ikki xil masofada (tomon va burchak). Olti burchakda 6 qo'shni bir xil masofada. Ierarxiya esa aksincha taxminiy, H3 da 12 pentagon ham bor."
+    },
+    {
+      "q": "S2 da hujayra ID lari Hilbert curve bo'yicha berilgani amalda nima beradi?",
+      "options": [
+        "Hujayralar olti burchakli bo'ladi",
+        "Ketma-ket ID lar deyarli doim fazoviy qo'shni, hujayra ichidagi barcha barg ID lar bitta uzluksiz oraliq bo'ladi va B-tree range scan bilan o'qiladi",
+        "Hujayralar maydoni hamma joyda aynan teng bo'ladi",
+        "Qutblar indekslanmaydi"
+      ],
+      "answer": 1,
+      "why": "Hilbert curve Z-curve kabi uzoqqa sakramaydi. Shuning uchun S2 covering hujayralari oddiy son oraliqlariga aylanadi."
+    },
+    {
+      "q": "Zavod va omborlarning poligon geozonalarini saqlash va 'nuqta qaysi poligon ichida' degan aniq javob uchun qaysi indeks eng mos?",
+      "options": [
+        "Redis GEO",
+        "PostGIS GiST (R-tree) indeksi va ST_Contains/ST_Intersects",
+        "Faqat geohash satri bo'yicha B-tree",
+        "Hash indeks device_id bo'yicha"
+      ],
+      "answer": 1,
+      "why": "R-tree shakllarni MBR bilan indekslaydi, so'ng aniq geometrik tekshiruv qiladi. Redis GEO faqat nuqtalarni saqlaydi."
+    },
+    {
+      "q": "20 000 mashina har 10 s da joylashuv yangilaydi. 'Yaqin mashinalar' qidiruvi uchun oxirgi joylashuvni qayerda saqlash afzalroq?",
+      "options": [
+        "PostGIS jadvalida har 10 s da UPDATE va GiST indeks",
+        "Xotiradagi strukturada: Redis GEO yoki hujayra -> mashinalar xaritasi",
+        "Faqat ClickHouse xom telemetriya jadvalida",
+        "Har bir so'rovda trekerdan joylashuvni so'rash"
+      ],
+      "answer": 1,
+      "why": "2 000 yangilanish/s ni disk indeksida qilish bloat va WAL yuklamasi beradi. Xotiradagi O(1) yoki O(log N) yangilash arzonroq."
+    },
+    {
+      "q": "Hujayra asosidagi KNN qidiruvida birinchi halqalarda K ta nomzod topildi. Nega darhol to'xtash xato bo'lishi mumkin?",
+      "options": [
+        "Hujayralar dublikat beradi",
+        "Keyingi halqadagi nuqta joriy nomzodlarning eng uzoqrog'idan yaqinroq bo'lishi mumkin",
+        "K ta nuqta har doim noto'g'ri tartiblangan",
+        "Halqalar soni toq bo'lishi kerak"
+      ],
+      "answer": 1,
+      "why": "Hujayra chegarasi doira emas. Topilgan eng uzoq nomzod masofasini qoplaydigan qo'shimcha halqa tekshirilishi kerak."
+    },
+    {
+      "q": "PostGIS da ORDER BY geom <-> nuqta LIMIT 5 so'rovi indeksni ishlatishi uchun qaysi shart kerak?",
+      "options": [
+        "<-> WHERE ichida bo'lishi kerak",
+        "<-> ORDER BY ichida va bir tomoni konstanta geometriya bo'lishi kerak",
+        "Jadvalda BRIN indeks bo'lishi kerak",
+        "Faqat geometry turi, geography emas"
+      ],
+      "answer": 1,
+      "why": "PostGIS hujjatiga ko'ra <-> indeksni faqat ORDER BY da va bir tomoni konstanta bo'lganda ishlatadi. Geography ham qo'llab-quvvatlanadi."
+    }
+  ]
+}

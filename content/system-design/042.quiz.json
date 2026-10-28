@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Producer routing key 't7.fuel.critical' bilan topic exchange'ga yuboradi. Bindinglar: A = '*.fuel', B = '*.*.critical', C = 't7.#', D = 'fuel.#'. Qaysi navbatlar xabarni oladi?",
+      "options": [
+        "Faqat B",
+        "A, B va C",
+        "B va C",
+        "Hammasi"
+      ],
+      "answer": 2,
+      "why": "'*' aynan bitta so'z, '#' nol yoki ko'p so'z. '*.fuel' faqat ikki so'zga mos, 'fuel.#' esa 'fuel' bilan boshlanishi kerak. B va C mos keladi."
+    },
+    {
+      "q": "SQS consumer xabarni oldi, visibility timeout 60 s, ish esa 90 s davom etdi va keyin DeleteMessage chaqirildi. Nima bo'lishi mumkin?",
+      "options": [
+        "Hech narsa, DeleteMessage xabarni o'chiradi va dublikat bo'lmaydi",
+        "60 s dan keyin xabar yana ko'rinadi va boshqa consumer uni ham qayta ishlaydi - dublikat",
+        "SQS ishni avtomatik ravishda to'xtatadi",
+        "Xabar darhol DLQ ga ko'chiriladi"
+      ],
+      "answer": 1,
+      "why": "Visibility timeout tugagach xabar yana ko'rinadi. Ish davomida ChangeMessageVisibility bilan heartbeat qilish kerak edi."
+    },
+    {
+      "q": "10 000 qurilma har 10 s da 300 baytlik xabar yuboradi, SQS standard, har xabarga send, receive, delete. Batch'siz oylik (30 kun) narx taxminan qancha ($0.40 / mln)?",
+      "options": [
+        "Taxminan $3 110",
+        "Taxminan $1 040",
+        "Taxminan $310",
+        "Taxminan $31 100"
+      ],
+      "answer": 0,
+      "why": "1 000 xabar/s x 86 400 x 30 = 2 592 mln xabar, x 3 so'rov = 7 776 mln so'rov; 1 mln bepul so'rovni ayirib, x $0.40 / mln = taxminan $3 110."
+    },
+    {
+      "q": "SQS FIFO navbatida barcha xabarlar bitta MessageGroupId bilan yuboriladi va 20 ta consumer bor. Natija qanday?",
+      "options": [
+        "20 ta consumer parallel ishlaydi, tartib saqlanadi",
+        "Xato qaytariladi, chunki kamida 20 ta guruh kerak",
+        "SQS xabarlarni avtomatik ravishda 20 ta guruhga bo'ladi",
+        "Guruhdan xabar in-flight bo'lganda keyingilari berilmaydi, amalda parallelizm deyarli bitta consumer darajasiga tushadi"
+      ],
+      "answer": 3,
+      "why": "FIFO tartib va blokirovka guruh darajasida ishlaydi. Parallelizm faol guruhlar soni bilan cheklangan."
+    },
+    {
+      "q": "RabbitMQ consumer har bir xabarni 1 ms da qayta ishlaydi, broker bilan RTT 2 ms. Prefetch = 1 bo'lsa throughput taxminan qancha?",
+      "options": [
+        "Taxminan 1 000 xabar/s",
+        "Taxminan 500 xabar/s",
+        "Taxminan 333 xabar/s",
+        "Taxminan 3 000 xabar/s"
+      ],
+      "answer": 2,
+      "why": "Prefetch = 1 da har bir xabar ish + RTT = 3 ms oladi, 1 000 / 3 = taxminan 333. Katta prefetch RTT ni yashirib, 1 000 xabar/s ga yaqinlashtiradi."
+    },
+    {
+      "q": "Muhim to'lov hodisalari uchun RabbitMQ 4.x da qaysi navbat turi va sozlama to'g'ri?",
+      "options": [
+        "Classic mirrored queue, auto-ack",
+        "Quorum queue, publisher confirms, manual ack, DLX",
+        "Classic queue, exclusive, prefetch 0",
+        "Stream, auto-ack, DLX"
+      ],
+      "answer": 1,
+      "why": "Mirrored queue'lar 4.0 da olib tashlangan, classic replikatsiya qilinmaydi, stream DLX ni qo'llamaydi. Quorum queue va to'liq confirm/ack zanjiri kerak."
+    },
+    {
+      "q": "SQS standard navbatida manba retention 4 kun, DLQ retention ham 4 kun. Xabar manbada 3 kun turib DLQ ga o'tdi. U DLQ da qancha saqlanadi?",
+      "options": [
+        "Taxminan 1 kun",
+        "7 kun",
+        "4 kun",
+        "14 kun"
+      ],
+      "answer": 0,
+      "why": "Standard navbatda enqueue vaqti DLQ ga o'tganda o'zgarmaydi, retention asl yuborilgan vaqtdan hisoblanadi: 4 - 3 = 1 kun. Shuning uchun DLQ retention uzunroq bo'lishi kerak."
+    },
+    {
+      "q": "SQS FIFO 5 daqiqalik deduplication nimani kafolatlaydi?",
+      "options": [
+        "Consumer xabarni aniq bir marta qayta ishlashini",
+        "Turli guruhlar orasida global tartibni",
+        "Visibility timeout tugasa ham xabar qayta berilmasligini",
+        "Producer retry qilsa, bir xil dedup ID li xabar navbatga ikki marta qo'shilmasligini"
+      ],
+      "answer": 3,
+      "why": "Dedup producer tomonidagi dublikatni filtrlaydi. Consumer timeout ichida o'chirmasa, xabar baribir qayta beriladi, shuning uchun consumer idempotent bo'lishi kerak."
+    },
+    {
+      "q": "Quorum queue'da xabar har safar consumer'ni yiqitadi (poison message). RabbitMQ 4.0+ default holatda nima bo'ladi?",
+      "options": [
+        "Xabar cheksiz qayta yetkaziladi",
+        "Navbat avtomatik o'chiriladi",
+        "Default delivery-limit 20 dan oshgach xabar tashlanadi yoki DLX sozlangan bo'lsa dead-letter qilinadi",
+        "Xabar classic queue ga ko'chiriladi"
+      ],
+      "answer": 2,
+      "why": "4.0 dan boshlab quorum queue'larda default delivery-limit 20. DLX sozlanmagan bo'lsa xabar jim yo'qoladi, shuning uchun DLX tavsiya etiladi."
+    },
+    {
+      "q": "Multi-tenant SaaS'da bitta katta mijoz 1 mln xabarlik to'lqin yuboradi va kichik mijozlarning xabarlari soatlab kechikadi (SQS standard). Eng kam o'zgarish talab qiladigan yechim qaysi?",
+      "options": [
+        "FIFO navbatga o'tish va bitta MessageGroupId ishlatish",
+        "Fair queue: xabarlarga MessageGroupId = tenant_id qo'shish",
+        "Visibility timeout'ni oshirish",
+        "Retention'ni 14 kunga oshirish"
+      ],
+      "answer": 1,
+      "why": "SQS fair queues standard navbatda tenant ID bo'yicha shovqinli qo'shni ta'sirini kamaytiradi va consumer tomonda o'zgarish talab qilmaydi."
+    }
+  ]
+}

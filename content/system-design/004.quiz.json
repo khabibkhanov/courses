@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "7 200 RPM HDD da o'rtacha rotational latency taxminan qancha?",
+      "options": ["0.42 ms", "4.2 ms", "8.3 ms", "42 ms"],
+      "answer": 1,
+      "why": "7 200 / 60 = 120 aylanish/s, bitta aylanish 8.33 ms, o'rtacha yarim aylanish kutiladi: ~4.2 ms."
+    },
+    {
+      "q": "Ilova write() chaqirdi va u muvaffaqiyatli qaytdi. Shu zahoti serverda elektr o'chdi. Nima bo'ladi?",
+      "options": [
+        "Ma'lumot albatta diskda, chunki write() muvaffaqiyatli qaytdi",
+        "Ma'lumot faqat page cache da dirty page sifatida bo'lishi mumkin va yo'qolishi mumkin",
+        "Yadro elektr o'chishidan oldin avtomatik fsync qiladi",
+        "Faqat HDD da yo'qoladi, SSD da saqlanadi"
+      ],
+      "answer": 1,
+      "why": "write() ma'lumotni page cache ga nusxalaydi. Diskka kafolatli yozish uchun fsync (va butun stek bo'yicha flush) kerak."
+    },
+    {
+      "q": "Nega SSD da ham kichik tasodifiy yozishlar katta ketma-ket yozishlardan yomonroq?",
+      "options": [
+        "SSD da seek bor",
+        "SSD joyida yangilamaydi: kichik tarqoq yozishlar ko'proq garbage collection va write amplification keltirib chiqaradi",
+        "SSD faqat ketma-ket yozishni qo'llab-quvvatlaydi",
+        "Farq yo'q, SSD da hammasi bir xil"
+      ],
+      "answer": 1,
+      "why": "Erase faqat block birligida. Tirik va o'lik page lar aralash bloklarni GC ko'chirishi kerak, bu qo'shimcha yozish va latency sakrashlari beradi."
+    },
+    {
+      "q": "Kafka nega katta JVM heap cache o'rniga OS page cache ga tayanadi?",
+      "options": [
+        "JVM fayllarni o'qiy olmaydi",
+        "Java obyekt overhead i va GC katta heap ni samarasiz qiladi, page cache esa restart da ham issiq qoladi va sendfile bilan zero-copy imkonini beradi",
+        "Page cache RAM dan tezroq",
+        "Kafka faqat HDD da ishlaydi"
+      ],
+      "answer": 1,
+      "why": "Kafka dizayn hujjati aynan shu sabablarni keltiradi: GC siz 28-30 GB cache, restart da issiq cache va zero-copy."
+    },
+    {
+      "q": "Bitta oqimda NVMe SSD random read latency 100 µs. Queue depth 1 da maksimal IOPS taxminan qancha?",
+      "options": ["1 000", "10 000", "100 000", "1 000 000"],
+      "answer": 1,
+      "why": "Little qonuni: IOPS = queue depth / latency = 1 / 0.0001 s = 10 000. To'liq tezlik uchun parallel so'rovlar kerak."
+    },
+    {
+      "q": "PostgreSQL ajratilgan 64 GB serverda. shared_buffers uchun eng asosli boshlang'ich qiymat qaysi?",
+      "options": ["512 MB", "16 GB", "56 GB", "64 GB"],
+      "answer": 1,
+      "why": "Rasmiy hujjat RAM ning 25% ini boshlang'ich qiymat sifatida tavsiya qiladi; PostgreSQL OS page cache ga ham tayanadi, shuning uchun 40% dan ko'pi odatda foyda bermaydi."
+    },
+    {
+      "q": "Telemetriya jadvalida bitta qurilmaning kunlik 8 640 nuqtasi qo'shilish tartibida saqlangan (boshqa 10 000 qurilma nuqtalari bilan aralash). Sovuq cache da marshrut so'rovi uchun eng to'g'ri baho qaysi?",
+      "options": [
+        "Taxminan 1 ta page o'qiladi",
+        "Taxminan 100 ta ketma-ket page",
+        "Minglab tasodifiy page o'qishi, chunki nuqtalar turli page larga tarqalgan",
+        "Indeks bo'lsa, joylashuv ahamiyatsiz"
+      ],
+      "answer": 2,
+      "why": "Indeks qatorlarni topadi, lekin har bir qator boshqa page da bo'lsa, har biri alohida IO. Qurilma bo'yicha klasterlash buni ~100 ketma-ket page ga tushiradi."
+    },
+    {
+      "q": "Redis AOF appendfsync everysec rejimida server qulasa, qancha ma'lumot yo'qolishi mumkin?",
+      "options": ["Hech narsa", "Taxminan oxirgi 1 soniya yozuvlari", "Oxirgi snapshot dan beri hammasi", "Faqat o'qish so'rovlari"],
+      "answer": 1,
+      "why": "fsync har soniyada fonda bajariladi, shuning uchun oxirgi ~1 soniya yozuvlari diskka yetmagan bo'lishi mumkin."
+    },
+    {
+      "q": "Ikki thread turli hisoblagichlarni oshiradi, lekin ikkalasi ham bitta 64 baytlik cache line da joylashgan. Natija qanday?",
+      "options": [
+        "Hech qanday ta'sir yo'q, ular turli o'zgaruvchilar",
+        "False sharing: cache line yadrolar orasida doimiy bekor qilinadi va ishlash sezilarli sekinlashadi",
+        "Ma'lumot buziladi",
+        "Tezroq ishlaydi, chunki bitta line yuklanadi"
+      ],
+      "answer": 1,
+      "why": "Coherence cache line darajasida ishlaydi. Yechim - har bir hisoblagichni alohida cache line ga joylash (padding)."
+    },
+    {
+      "q": "Telemetriya bazasida tasodifiy UUIDv4 asosiy kalitni vaqt bo'yicha tartiblangan UUIDv7 ga almashtirishning asosiy IO foydasi nima?",
+      "options": [
+        "Kalit hajmi kichrayadi",
+        "Yangi yozuvlar B-tree indeksining bir chetiga tushadi, issiq page lar RAM da qoladi va tasodifiy yozish IO si kamayadi",
+        "Indeks butunlay kerak bo'lmay qoladi",
+        "fsync kerak bo'lmay qoladi"
+      ],
+      "answer": 1,
+      "why": "UUIDv4 indeks bo'ylab tasodifiy page larga yozadi; vaqt bo'yicha tartiblangan kalit yozishni kichik issiq hududga jamlaydi."
+    }
+  ]
+}

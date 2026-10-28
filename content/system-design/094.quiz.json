@@ -1,0 +1,85 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Oyiga 1 milliard sahifa yuklanishi kerak. O'rtacha talab qilinadigan tezlik taxminan qancha?",
+      "options": ["38 sahifa/s", "385 sahifa/s", "3 850 sahifa/s", "11 600 sahifa/s"],
+      "answer": 1,
+      "why": "10^9 / (30 x 86 400) ≈ 10^9 / 2.6 x 10^6 ≈ 385 sahifa/s."
+    },
+    {
+      "q": "800 sahifa/s, bitta yuklash o'rtacha 1 soniya. Little qonuni bo'yicha nechta bir vaqtdagi ulanish kerak?",
+      "options": ["8", "80", "800", "8 000"],
+      "answer": 2,
+      "why": "L = λ x W = 800 x 1 = 800."
+    },
+    {
+      "q": "Politeness qoidasi: bitta host ga har 2 soniyada bitta so'rov. 800 sahifa/s uchun bir vaqtda kamida nechta turli host faol bo'lishi kerak?",
+      "options": ["8", "400", "1 600", "Hostlar soni ahamiyatsiz"],
+      "answer": 2,
+      "why": "Har host 0.5 sahifa/s beradi, 800 / 0.5 = 1 600 host."
+    },
+    {
+      "q": "URL frontier dagi back queue larning asosiy vazifasi nima?",
+      "options": [
+        "URL larni prioritet bo'yicha saralash",
+        "Har biri bitta host URL larini saqlab, heap orqali host ga murojaatlar orasidagi pauzani ta'minlash",
+        "Ko'rilgan URL larni dedup qilish",
+        "DNS natijalarini keshlash"
+      ],
+      "answer": 1,
+      "why": "Front queue lar prioritet, back queue lar politeness uchun."
+    },
+    {
+      "q": "robots.txt so'rovi 503 qaytardi. RFC 9309 ga ko'ra crawler nima qilishi kerak?",
+      "options": [
+        "Hamma narsaga ruxsat bor deb hisoblash",
+        "To'liq taqiq deb hisoblash",
+        "Faqat bosh sahifani yuklash",
+        "robots.txt ni e'tiborsiz qoldirish"
+      ],
+      "answer": 1,
+      "why": "5xx yoki tarmoq xatosida fayl yetib bo'lmaydigan hisoblanadi va crawler complete disallow ni qabul qilishi kerak."
+    },
+    {
+      "q": "10 milliard URL uchun 1% false positive li Bloom filter taxminan qancha xotira oladi?",
+      "options": ["1.2 GB", "12 GB", "80 GB", "800 GB"],
+      "answer": 1,
+      "why": "1% FP uchun ~9.6 bit/element; 10^10 x 9.6 bit ≈ 12 GB."
+    },
+    {
+      "q": "Ikki sahifa faqat reklama bloki va sana bilan farq qiladi. Qaysi usul ularni takror deb topadi?",
+      "options": ["SHA-256 checksum", "URL normalizatsiya", "Simhash va kichik Hamming masofasi", "Bloom filter"],
+      "answer": 2,
+      "why": "Checksum bir bayt farqda ham boshqa; simhash o'xshash sahifalarga bir necha bitda farqlanadigan fingerprint beradi."
+    },
+    {
+      "q": "Taqsimlangan frontier ni qanday shardlash politeness ni eng oddiy qiladi?",
+      "options": [
+        "URL hash i bo'yicha",
+        "Host bo'yicha - har host faqat bitta frontier tugunida",
+        "Tasodifiy",
+        "Prioritet bo'yicha"
+      ],
+      "answer": 1,
+      "why": "Host bitta tugunda bo'lsa, pauza va bir vaqtdagi ulanish cheklovi lokal tekshiriladi, taqsimlangan lock kerak emas."
+    },
+    {
+      "q": "Server oxirgi so'rovga 1.5 soniyada javob berdi. '10x oxirgi yuklash vaqti' qoidasi bo'yicha keyingi so'rov qachon?",
+      "options": ["0.15 s dan keyin", "1.5 s dan keyin", "15 s dan keyin", "Darhol"],
+      "answer": 2,
+      "why": "Pauza = 10 x 1.5 s = 15 s; sekinlashgan server avtomatik kamroq yuklanadi."
+    },
+    {
+      "q": "Nega xom sahifalar har biri alohida obyekt emas, katta WARC fayllarda saqlanadi?",
+      "options": [
+        "WARC siqilmaydi",
+        "Milliardlab kichik obyekt so'rov narxi va metadata yukini oshiradi; katta fayllar object storage uchun samarali",
+        "Object storage kichik fayllarni qabul qilmaydi",
+        "WARC shifrlangan"
+      ],
+      "answer": 1,
+      "why": "Object storage katta ketma-ket obyektlar bilan arzon va tez ishlaydi; per-request narx va listing kichik obyektlarda qimmat."
+    }
+  ]
+}

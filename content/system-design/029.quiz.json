@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Ring da 20 ta tugun, vnode lar bilan tekis taqsimlangan. 21-tugun qo'shildi. Kalitlarning taxminan qancha qismi ko'chadi?",
+      "options": [
+        "Taxminan 50%",
+        "Taxminan 5%",
+        "Taxminan 95%",
+        "0%"
+      ],
+      "answer": 1,
+      "why": "O'rtacha K/N: yangi tugun o'z ulushini, ya'ni 1/21, taxminan 4.8% ni oladi. Faqat shu kalitlar ko'chadi."
+    },
+    {
+      "q": "Ring da har bir tugun bitta token oladi. Tugun B o'ldi. Uning yuklamasi qayerga ketadi?",
+      "options": [
+        "To'liq soat strelkasi bo'yicha keyingi bitta tugunga, u taxminan ikki baravar yuklanadi",
+        "Barcha tugunlarga teng taqsimlanadi",
+        "Yo'qoladi",
+        "Eng kam yuklangan tugunga"
+      ],
+      "answer": 0,
+      "why": "Vnode siz o'lgan tugunning butun yoyi bitta qo'shniga o'tadi. Vnode lar bu yuklamani ko'p tugunlarga tarqatadi."
+    },
+    {
+      "q": "Tugun boshiga vnode sonini 1 dan 100 ga oshirish asosan nima beradi?",
+      "options": [
+        "Qidiruvni O(1) qiladi",
+        "Hot key muammosini hal qiladi",
+        "Replication factor ni oshiradi",
+        "Tugunlar orasidagi yuklama notekisligini keskin kamaytiradi (nisbiy chetlanish taxminan 1/sqrt(V) ga proporsional)"
+      ],
+      "answer": 3,
+      "why": "Ko'p kichik yoylar yig'indisi o'rtachaga yaqinlashadi. Lekin bitta issiq kalit baribir bitta tugunda qoladi."
+    },
+    {
+      "q": "Cassandra hujjatiga ko'ra tugun boshiga juda ko'p token ishlatishning kamchiligi qaysi?",
+      "options": [
+        "Yozish sekinlashadi",
+        "Ma'lumot siqilmaydi",
+        "Har bir token yangi qo'shni qo'shadi, ikki tugun bir vaqtda o'lganda ko'proq diapazon barcha replikalarini yo'qotishi mumkin va repair sekinlashadi",
+        "Token lar xotiraga sig'maydi"
+      ],
+      "answer": 2,
+      "why": "Ko'p token - ko'p qo'shni juftliklar. Bu mavjudlik ehtimolini pasaytiradi va butun klaster bo'yicha jarayonlarni sekinlashtiradi."
+    },
+    {
+      "q": "Rendezvous (HRW) hashing ning asosiy kamchiligi qaysi?",
+      "options": [
+        "Tugun o'lganda hamma kalit ko'chadi",
+        "Har bir qidiruv barcha N tugun uchun hash hisoblaydi, ya'ni O(N)",
+        "Ring va vnode talab qiladi",
+        "Faqat ketma-ket raqamlangan bucket lar bilan ishlaydi"
+      ],
+      "answer": 1,
+      "why": "HRW har bir tugun bilan score hisoblab eng kattasini oladi. O'nlab tugunda muammo emas, minglab tugunda sezilarli."
+    },
+    {
+      "q": "Jump consistent hash qaysi holatda noqulay?",
+      "options": [
+        "Ixtiyoriy nomli tugunni o'rtadan olib tashlash kerak bo'lganda",
+        "Shard lar 0 dan N-1 gacha raqamlangan va faqat oxiridan qo'shiladi",
+        "Xotira cheklangan bo'lganda",
+        "Juda ko'p kalit bo'lganda"
+      ],
+      "answer": 0,
+      "why": "Algoritm bucket lar ketma-ket raqamlanishini talab qiladi. Shuning uchun odatda kalit -> shard raqami uchun ishlatiladi, shard -> tugun esa alohida xarita."
+    },
+    {
+      "q": "Video cache da consistent hashing ishlatiladi, lekin mashhur bitta video bitta serverni to'ldiryapti. Qaysi yondashuv to'g'ridan-to'g'ri yordam beradi?",
+      "options": [
+        "Vnode sonini oshirish",
+        "mod N ga o'tish",
+        "Replication factor ni kamaytirish",
+        "Consistent hashing with bounded loads: server sig'imi o'rtacha x (1 + epsilon) dan oshsa, so'rov ring bo'yicha keyingi serverga"
+      ],
+      "answer": 3,
+      "why": "Bounded loads yuklamani cheklaydi, kalit taqsimotini emas. Vimeo HAProxy da shu algoritm bilan cache o'tkazuvchanligini deyarli 8 baravar kamaytirgan."
+    },
+    {
+      "q": "Cache klasteri: 50 000 o'qish/s, hit 99%, baza 2 000/s ko'taradi. Ring + vnode bilan 11-tugun qo'shilib, taxminan 9% kalit ko'chdi. Baza nimani ko'radi?",
+      "options": [
+        "Hech qanday o'zgarish",
+        "Taxminan 45 000/s",
+        "Taxminan 500/s dan taxminan 5 000/s gacha, sig'imdan oshadi, shuning uchun yangi tugunni bosqichma-bosqich qo'shish yoki isitish kerak",
+        "Taxminan 1 000/s"
+      ],
+      "answer": 2,
+      "why": "Hit ratio taxminan 90% ga tushadi: 50 000 x 0.1 = 5 000/s. Consistent hashing ko'chishni kamaytiradi, lekin nolga emas."
+    },
+    {
+      "q": "Dynamo nega oxir-oqibat tasodifiy tokenlar o'rniga hash maydonini Q ta teng partition ga bo'lib, tugunlarga Q/S tadan berish strategiyasini tanlagan?",
+      "options": [
+        "U tezroq hash hisoblaydi",
+        "Eng yaxshi yuklama taqsimoti, ancha kichik a'zolik metama'lumoti, partition lar butunligicha ko'chadi va arxivlash oddiy",
+        "U consistent hashing ni talab qilmaydi",
+        "U replikatsiyani o'chiradi"
+      ],
+      "answer": 1,
+      "why": "Tasodifiy tokenlar bilan bootstrapping yuqori mavsumda deyarli bir kun olgan. Fixed partition lar bu muammolarni hal qilgan."
+    },
+    {
+      "q": "Ikki API server ring ning turli versiyasini ko'rmoqda (biri yangi tugunni biladi, ikkinchisi yo'q). Qanday xavf?",
+      "options": [
+        "Bir kalit ikki turli tugunga yozilishi va o'qilishi mumkin, eskirgan yoki yo'qolgan ma'lumot paydo bo'ladi",
+        "Hech qanday, consistent hashing buni avtomatik hal qiladi",
+        "Faqat latency oshadi",
+        "Ring o'zini qayta quradi"
+      ],
+      "answer": 0,
+      "why": "Kalit -> tugun moslashuvi ring ga bog'liq. A'zolik ro'yxati barcha mijozlarga izchil tarqatilishi kerak."
+    }
+  ]
+}

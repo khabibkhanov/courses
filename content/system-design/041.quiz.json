@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Consumer xabarni oladi, darhol ack yuboradi, keyin bazaga yozishdan oldin qulab tushadi. Bu qaysi semantika va natija qanday?",
+      "options": [
+        "At-most-once, xabar yo'qoladi",
+        "At-least-once, xabar qayta yetkaziladi",
+        "Exactly-once, broker xabarni qayta ishlanmaganini biladi",
+        "At-least-once, xabar dublikat bo'ladi"
+      ],
+      "answer": 0,
+      "why": "Ack qayta ishlashdan oldin yuborilgani uchun broker xabarni tugagan deb hisoblaydi va qayta bermaydi. Bu at-most-once."
+    },
+    {
+      "q": "TripCompleted hodisasini billing, analitika va notification servislari olishi kerak, har bir servisning esa 3 tadan instansi bor. To'g'ri model qaysi?",
+      "options": [
+        "Sinxron HTTP chaqiruvlar, chunki 3 ta servis kam",
+        "Har bir instansga alohida navbat, jami 9 ta navbat",
+        "Bitta navbat, 9 ta competing consumer",
+        "Pub/sub orqali har bir servisga bitta nusxa, servis ichida competing consumers"
+      ],
+      "answer": 3,
+      "why": "Har bir servis hodisani bir marta olishi kerak (pub/sub), servis ichidagi instanslar esa ishni bo'lishishi kerak (competing consumers). Bitta umumiy navbatda har bir xabar faqat bitta servisga borardi."
+    },
+    {
+      "q": "Cho'qqida 1 soat davomida 4 000 xabar/s keladi, consumer'lar 2 500 xabar/s qayta ishlaydi. Cho'qqidan keyin kirish 1 000 xabar/s ga tushadi. Navbat qancha vaqtda bo'shaydi?",
+      "options": [
+        "36 daqiqa",
+        "1.5 soat",
+        "1 soat",
+        "3.6 soat"
+      ],
+      "answer": 2,
+      "why": "Navbat: (4 000 - 2 500) x 3 600 = 5.4 mln. Bo'shash tezligi 2 500 - 1 000 = 1 500/s. 5.4 mln / 1 500 = 3 600 s = 1 soat."
+    },
+    {
+      "q": "Barqaror holatda navbatda o'rtacha 30 000 xabar turadi, kirish tezligi 1 500 xabar/s. Xabar navbatda o'rtacha qancha kutadi?",
+      "options": [
+        "2 s",
+        "20 s",
+        "45 s",
+        "200 s"
+      ],
+      "answer": 1,
+      "why": "Little qonuni: W = L / λ = 30 000 / 1 500 = 20 s."
+    },
+    {
+      "q": "Broker exactly-once delivery va'da qiladi. Consumer natijani PostgreSQL ga yozadi. Nima qilish kerak?",
+      "options": [
+        "Consumer'ni baribir idempotent qilish yoki offset'ni natija bilan bitta DB tranzaksiyasida saqlash",
+        "Hech narsa, broker kafolat beradi",
+        "Auto-ack ni yoqish",
+        "Prefetch ni 1 ga qo'yish"
+      ],
+      "answer": 0,
+      "why": "Brokerning exactly-once kafolati tashqi bazaga yozishni qamrab olmaydi. End-to-end to'g'rilikni faqat ilova idempotency yoki atomik commit bilan ta'minlaydi."
+    },
+    {
+      "q": "Bitta navbatda 10 ta competing consumer ishlaydi. Bitta mashinaning GPS nuqtalari tartib bilan qayta ishlanishi kerak. Eng yaxshi yechim qaysi?",
+      "options": [
+        "Prefetch ni oshirish",
+        "Consumer'lar sonini 1 ga tushirish",
+        "Har bir xabarga timestamp qo'shib, consumer'da sort qilish",
+        "Xabarlarni vehicle_id kaliti bo'yicha partition yoki message group ga yo'naltirish"
+      ],
+      "answer": 3,
+      "why": "Tartib faqat bitta mashina ichida kerak. Kalit bo'yicha guruhlash tartibni saqlaydi va turli mashinalarni parallel qayta ishlashga imkon beradi."
+    },
+    {
+      "q": "Push modelda broker consumer'ni bosib qo'ymasligi uchun RabbitMQ'da asosiy mexanizm qaysi?",
+      "options": [
+        "Long polling",
+        "Exclusive queue",
+        "Prefetch (basic.qos) - ack qilinmagan xabarlar chegarasi",
+        "Message TTL"
+      ],
+      "answer": 2,
+      "why": "Prefetch consumer'da bir vaqtda ack qilinmagan xabarlar sonini cheklaydi. Long polling pull modelga tegishli."
+    },
+    {
+      "q": "MQTT QoS 2 ishlatilsa, broker dan keyingi servis xabarni bazaga yozishda qulasa nima bo'ladi?",
+      "options": [
+        "QoS 2 buni ham kafolatlaydi, xabar aniq bir marta yoziladi",
+        "QoS 2 faqat mijoz va broker orasidagi bitta hop uchun kafolat, keyingi qadamni ilova o'zi ta'minlashi kerak",
+        "Broker avtomatik ravishda tranzaksiyani orqaga qaytaradi",
+        "Xabar MQTT tomonidan qayta yuboriladi"
+      ],
+      "answer": 1,
+      "why": "MQTT QoS bitta protokol hopi doirasida ishlaydi. End-to-end kafolat ilova darajasida kerak."
+    },
+    {
+      "q": "Qaysi holatda log-based broker (Kafka) klassik queue (SQS) dan yaxshiroq?",
+      "options": [
+        "Yangi servis 7 kunlik hodisalar tarixini boshidan qayta o'qishi kerak",
+        "Har bir vazifa 5 daqiqa davom etadi, alohida retry kerak, tartib muhim emas",
+        "Kuniga 100 ta PDF hisobot yaratish",
+        "Har bir xabarni alohida kechiktirib qayta urinish kerak"
+      ],
+      "answer": 0,
+      "why": "Log ack dan keyin ham xabarni retention muddatigacha saqlaydi va offset'ni orqaga surib replay qilishga imkon beradi. Qolganlari klassik work queue holatlari."
+    },
+    {
+      "q": "SQS standard navbati haqida qaysi gap to'g'ri?",
+      "options": [
+        "Faqat bitta consumer ulanishi mumkin",
+        "Qat'iy FIFO tartib va exactly-once kafolatlaydi",
+        "At-most-once yetkazadi, lekin tartib qat'iy",
+        "At-least-once yetkazadi, tartib best-effort, dublikat bo'lishi mumkin"
+      ],
+      "answer": 3,
+      "why": "AWS hujjatiga ko'ra standard navbat at-least-once va best-effort ordering beradi, ilova dublikat va tartibsizlikka chidamli bo'lishi kerak."
+    }
+  ]
+}

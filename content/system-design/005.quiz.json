@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "TCP ulanish window 64 KB (window scaling siz), RTT 80 ms. Kanal 1 Gbps. Bitta ulanishning maksimal throughput i taxminan qancha?",
+      "options": ["~1 Gbps", "~100 Mbps", "~6.4 Mbps", "~640 Kbps"],
+      "answer": 2,
+      "why": "throughput ≤ window / RTT = 64 KB / 0.08 s = 800 KB/s ≈ 6.4 Mbps. Kanal kengligi bu yerda cheklov emas."
+    },
+    {
+      "q": "initcwnd = 10 segment (~14.6 KB), har RTT da ikki baravar o'sadi. 64 KB javobni (handshake dan keyin) uzatish uchun taxminan nechta RTT kerak?",
+      "options": ["1", "2", "3", "5"],
+      "answer": 2,
+      "why": "64 KB ≈ 45 segment. Yuborilgan jami: 10, 10+20=30, 30+40=70. Uchinchi RTT da 45 dan oshadi."
+    },
+    {
+      "q": "Servis boshqa servisga har bir so'rov uchun yangi TCP ulanish ochib, o'zi yopadi. Yuklama oshganda 'cannot assign requested address' xatolari paydo bo'ldi. Sababi?",
+      "options": [
+        "Server tomonda xotira tugagan",
+        "Klient tomonda TIME-WAIT soketlari to'planib, ephemeral portlar tugagan",
+        "DNS ishlamayapti",
+        "Congestion control yo'qolishni aniqlagan"
+      ],
+      "answer": 1,
+      "why": "Yopishni boshlagan tomon TIME-WAIT da qoladi. Ko'p qisqa ulanishlar portlarni band qiladi. Yechim - connection pool va keep-alive."
+    },
+    {
+      "q": "Treker TCP orqali nuqtani yubordi va TCP ACK oldi, shundan keyin nuqtani buferdan o'chirdi. Server ilovasi parse qilishdan oldin qulagan. Nima bo'ladi?",
+      "options": [
+        "Nuqta saqlangan, chunki TCP ACK kelgan",
+        "Nuqta yo'qoladi: TCP ACK faqat server yadrosi olganini bildiradi, ilova saqlaganini emas",
+        "TCP avtomatik qayta yuboradi",
+        "Server qayta ishga tushganda yadro buferdan tiklaydi"
+      ],
+      "answer": 1,
+      "why": "End-to-end kafolat uchun ilova darajasidagi tasdiq kerak: nuqta navbat yoki bazaga yozilgandan keyin."
+    },
+    {
+      "q": "HTTP/2 da 20 ta so'rov bitta TCP ulanishda multiplekslangan. Bitta paket yo'qoldi. Nima bo'ladi?",
+      "options": [
+        "Faqat o'sha paket tegishli so'rov kechikadi",
+        "Qayta yuborilguncha barcha oqimlar kutadi, chunki TCP tartibli yetkazadi (head-of-line blocking)",
+        "Ulanish uziladi",
+        "Hech narsa, HTTP/2 yo'qolishni o'zi tuzatadi"
+      ],
+      "answer": 1,
+      "why": "TCP bayt oqimida bo'shliq bo'lsa, keyingi ma'lumot ilovaga berilmaydi. QUIC buni har bir oqim uchun alohida tartib bilan hal qiladi."
+    },
+    {
+      "q": "Flow control va congestion control ning farqi qaysi?",
+      "options": [
+        "Ular bir xil mexanizm",
+        "Flow control qabul qiluvchi buferini himoya qiladi (rwnd), congestion control tarmoqni himoya qiladi (cwnd)",
+        "Flow control faqat UDP da, congestion control faqat TCP da",
+        "Congestion control qabul qiluvchi tomonidan boshqariladi"
+      ],
+      "answer": 1,
+      "why": "Yuborilgan, lekin tasdiqlanmagan ma'lumot min(rwnd, cwnd) bilan cheklanadi."
+    },
+    {
+      "q": "BBR ning yo'qolishga asoslangan algoritmlardan (Reno, CUBIC) asosiy farqi nima?",
+      "options": [
+        "BBR paket yo'qolishini e'tiborsiz qoldiradi va cheksiz tezlikda yuboradi",
+        "BBR bottleneck bandwidth va minimal RTT ni o'lchab, router buferlarini to'ldirmasdan tezlikni tanlaydi",
+        "BBR faqat UDP uchun",
+        "BBR handshake ni olib tashlaydi"
+      ],
+      "answer": 1,
+      "why": "Yo'qolishga asoslangan algoritmlar bufer to'lguncha tezlashadi va navbat hosil qiladi; BBR tarmoq modelini o'lchab, navbatni kichik ushlaydi."
+    },
+    {
+      "q": "TCP Fast Open bilan SYN ichida qaysi so'rovni yuborish xavfli?",
+      "options": [
+        "GET /status",
+        "TLS ClientHello",
+        "Idempotentlik himoyasisiz POST /payments",
+        "DNS so'rovi"
+      ],
+      "answer": 2,
+      "why": "SYN dagi ma'lumot kamdan-kam hollarda ikki marta yetkazilishi mumkin. RFC 7413 idempotent bo'lmagan so'rovlarni SYN da yubormaslikni talab qiladi."
+    },
+    {
+      "q": "Mobil operator NAT i bo'sh TCP ulanishni 5 daqiqada unutadi. Linux TCP keepalive standart taymeri 2 soat. Treker uchun eng to'g'ri yechim qaysi?",
+      "options": [
+        "Hech narsa qilmaslik, TCP o'zi hal qiladi",
+        "Ilova darajasida NAT timeout dan qisqaroq heartbeat yuborish va server tomonda jim ulanishlarni aniqlash",
+        "UDP ga o'tish NAT muammosini to'liq hal qiladi",
+        "Har bir nuqta uchun yangi ulanish ochish"
+      ],
+      "answer": 1,
+      "why": "Heartbeat NAT binding ni yangilab turadi va server o'lik ulanishlarni tez aniqlaydi. UDP da NAT binding odatda yanada tez eskiradi."
+    },
+    {
+      "q": "Joylashuvni real vaqtda xaritada ko'rsatish uchun UDP ni tanlashning eng kuchli argumenti qaysi?",
+      "options": [
+        "UDP TCP dan har doim tezroq va ishonchliroq",
+        "Eskirgan joylashuvni kutish keraksiz: yo'qolgan paketni qayta yuborish va HOL blocking o'rniga keyingi yangi nuqtani ishlatish mumkin",
+        "UDP congestion control ni avtomatik qiladi",
+        "UDP NAT dan yaxshiroq o'tadi"
+      ],
+      "answer": 1,
+      "why": "Real vaqt ma'lumotida yangi nuqta eskisini almashtiradi. Lekin har bir o'qish muhim bo'lgan ma'lumot (masalan, yoqilg'i) uchun ilova ishonchlilikni o'zi qilishi kerak bo'ladi."
+    }
+  ]
+}

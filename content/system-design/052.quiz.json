@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Bounded context nima?",
+      "options": [
+        "Bitta jadval va unga tegishli CRUD API",
+        "Bitta model va bitta ubiquitous language izchil va bir ma'noli bo'lgan chegara",
+        "Bitta Kubernetes namespace",
+        "Kompaniyaning butun biznes sohasi"
+      ],
+      "answer": 1,
+      "why": "Bounded context - model chegarasi. Uning tashqarisida bir xil so'z boshqa ma'noga ega bo'lishi mumkin va kontekstlar orasida tarjima kerak."
+    },
+    {
+      "q": "Fleet kompaniyasi uchun autentifikatsiya va SMS yuborish qaysi subdomain turiga kiradi va nima qilish oqilona?",
+      "options": [
+        "Core - eng kuchli jamoa bilan ichkarida qurish",
+        "Supporting - tezkor framework bilan ichkarida yozish",
+        "Generic - tayyor yechim yoki xizmatni sotib olish/qo'llash",
+        "Bular subdomain emas"
+      ],
+      "answer": 2,
+      "why": "Generic subdomainlar hamma uchun bir xil va allaqachon yechilgan. Ularga resurs sarflash raqobat ustunligi bermaydi."
+    },
+    {
+      "q": "Turli treker ishlab chiqaruvchilarining protokollari telemetriya kontekstiga ulanmoqda. Qaysi context map patterni eng mos?",
+      "options": [
+        "Conformist - har protokol modelini to'g'ridan-to'g'ri qabul qilish",
+        "Shared Kernel - protokol kodini hamma kontekst bilan bo'lishish",
+        "Anticorruption Layer - tashqi protokolni ichki modelga tarjima qiluvchi qatlam",
+        "Separate Ways - integratsiya qilmaslik"
+      ],
+      "answer": 2,
+      "why": "ACL tashqi tushunchalarni (masalan AVL ID) ichki modelga oqib kirishidan himoya qiladi. Yangi protokol qo'shilganda faqat ACL o'zgaradi."
+    },
+    {
+      "q": "FuelTank aggregate ichida oxirgi 30 kunlik barcha o'lchovlar ro'yxati saqlanadi va har 10 soniyada yangi o'lchov qo'shiladi. Asosiy muammo nima?",
+      "options": [
+        "Muammo yo'q, aggregate hamma bog'liq ma'lumotni saqlashi kerak",
+        "Aggregate juda katta: har yozuvda ko'p ma'lumot yuklanadi va concurrent yozuvlar optimistic lock to'qnashuviga uchraydi",
+        "Value object ishlatish taqiqlangan",
+        "Aggregate root bo'lmaydi"
+      ],
+      "answer": 1,
+      "why": "O'lchovlar tarixi invariant emas, so'rov uchun kerak. Uni alohida append-only yozuv sifatida saqlash kerak, aggregate esa kichik qolishi kerak."
+    },
+    {
+      "q": "Vernon qoidalariga ko'ra aggregate'lar orasidagi munosabat qanday bo'lishi kerak?",
+      "options": [
+        "Obyekt havolasi orqali, bitta tranzaksiyada hammasi yangilanadi",
+        "Faqat ID orqali havola, chegaradan tashqarida eventual consistency",
+        "Har doim 2PC bilan",
+        "Aggregate'lar bir-biriga hech qachon murojaat qilmaydi"
+      ],
+      "answer": 1,
+      "why": "ID orqali havola aggregate'larni alohida yuklash va saqlashga imkon beradi. Bitta tranzaksiya bitta aggregate instance'ini o'zgartiradi."
+    },
+    {
+      "q": "Sahifa 200 ta mashina uchun 4 ta kontekstdan alohida-alohida sinxron so'rov yuboradi. Sahifa daqiqada 1 000 marta ochiladi. Faqat shu sahifadan kontekstlarga taxminan qancha so'rov/s tushadi?",
+      "options": ["Taxminan 67", "Taxminan 800", "Taxminan 13 000", "Taxminan 200 000"],
+      "answer": 2,
+      "why": "200 x 4 = 800 so'rov bir sahifaga; 800 x 1 000 = 800 000 so'rov/daqiqa, ya'ni ~13 300 so'rov/s. Batch API yoki read model buni tartiblar bilan kamaytiradi."
+    },
+    {
+      "q": "Telemetriya konteksti 5 ta turli iste'molchiga nuqtalarni beradi. Har biri uchun alohida integratsiya qilish qimmat. Qaysi pattern juftligi mos?",
+      "options": [
+        "Conformist va Separate Ways",
+        "Open Host Service va Published Language (barqaror, versiyalangan event formati)",
+        "Shared Kernel va Partnership",
+        "Big Ball of Mud"
+      ],
+      "answer": 1,
+      "why": "OHS ko'p iste'molchi uchun bitta barqaror protokol beradi, Published Language esa hujjatlangan almashuv formati (masalan Protobuf sxema)."
+    },
+    {
+      "q": "Ichki domain event'larni (ichki model maydonlari bilan) to'g'ridan-to'g'ri Kafka'ga chiqarib, boshqa kontekstlarga berishning asosiy xavfi nima?",
+      "options": [
+        "Kafka ichki event'larni saqlay olmaydi",
+        "Ichki model boshqa kontekstlarga oqib kiradi va har ichki refaktor iste'molchilar uchun breaking change bo'ladi",
+        "Event'lar juda kichik bo'lib qoladi",
+        "Hech qanday xavf yo'q"
+      ],
+      "answer": 1,
+      "why": "Kontekstlar orasida alohida, barqaror va versiyalangan integration event kontrakti kerak, aks holda ichki model tashqi kontraktga aylanadi."
+    },
+    {
+      "q": "So'nggi 6 oyda yoqilg'i bo'yicha har bir o'zgarish fuel va telemetry modullarini birga o'zgartirishni talab qilgan. Bu nimani ko'rsatadi?",
+      "options": [
+        "Ikki modul alohida microservice bo'lishi kerak",
+        "Chegara noto'g'ri chizilgan bo'lishi mumkin: mas'uliyat noto'g'ri taqsimlangan yoki ular bitta kontekst",
+        "Ko'proq unit test kerak",
+        "Bu normal, chegarani o'zgartirish kerak emas"
+      ],
+      "answer": 1,
+      "why": "Doim birga o'zgaradigan modullar yuqori coupling belgisi. Bu chegarani qayta ko'rib chiqish signali."
+    },
+    {
+      "q": "Haydovchi skori reys tugagandan keyin hisoblanadi. Biznes 'skor 10 soniya kechikib yangilansa muammo yo'q' deydi. Bu chegara uchun nimani anglatadi?",
+      "options": [
+        "Skor va reys bitta aggregate ichida bo'lishi shart",
+        "Skor alohida kontekstda bo'lishi va reys event'i orqali eventual consistency bilan yangilanishi mumkin",
+        "2PC ishlatish kerak",
+        "Skorni har so'rovda qaytadan hisoblash kerak"
+      ],
+      "answer": 1,
+      "why": "Darhol izchillik talab qilinmasa, kontekstlar event orqali bog'lanishi mumkin. Bu ularni mustaqil va kichik qiladi."
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Foydalanuvchi autentifikatsiyadan va rol tekshiruvidan o'tdi, lekin URL dagi tenant parametrini o'zgartirib boshqa mijoz ma'lumotini ko'rdi. Qaysi qatlam yetishmayapti?",
+      "options": [
+        "Autentifikatsiya",
+        "TLS shifrlash",
+        "Tenant izolyatsiyasi: tenant ID tasdiqlangan tokendan olinishi va har bir resursda majburiy qo'llanishi",
+        "Rate limiting"
+      ],
+      "answer": 2,
+      "why": "AWS qo'llanmasi ta'kidlaganidek, authN va authZ dan o'tgan foydalanuvchi ham izolyatsiya bo'lmasa boshqa tenantga kira oladi. Tenant ID klientdan olinmaydi."
+    },
+    {
+      "q": "Ilova PgBouncer transaction pooling orqali ulanadi va har so'rov boshida session darajasida SET app.tenant_id = 'acme' bajaradi. Qanday xavf bor?",
+      "options": [
+        "Keyingi tranzaksiya boshqa klientning server ulanishida bajarilib, eski tenant qiymatini ko'rishi mumkin - tenantlararo sizish",
+        "Hech qanday, SET har doim ishlaydi",
+        "PgBouncer so'rovni sekinlashtiradi",
+        "RLS o'chib qoladi"
+      ],
+      "answer": 0,
+      "why": "Transaction pooling da server ulanishi tranzaksiyalar orasida almashadi va session SET qo'llab-quvvatlanmaydi. Tranzaksiya ichida SET LOCAL yoki set_config(..., true) ishlatiladi."
+    },
+    {
+      "q": "Jadvalga RLS policy qo'yildi, lekin testda ilova barcha tenantlarning qatorlarini ko'rmoqda. Eng ehtimolli sabab?",
+      "options": [
+        "Policy da WITH CHECK yo'q",
+        "current_setting NULL qaytarmoqda",
+        "Indeks yo'q",
+        "Ilova jadval egasi rolida ulangan va FORCE ROW LEVEL SECURITY o'rnatilmagan"
+      ],
+      "answer": 3,
+      "why": "Jadval egasi FORCE bo'lmasa RLS ni chetlab o'tadi. NULL qiymat esa aksincha hech qanday qatorni ko'rsatmaydi."
+    },
+    {
+      "q": "200 tenant, har biriga silo oyiga 250 dollar. 150 tasi kichik va resursning 5 foizini ham ishlatmaydi. Silo uchun oylik narx va asosiy xulosa?",
+      "options": [
+        "5 000 dollar - silo arzon",
+        "50 000 dollar - ko'p resurs bo'sh turadi, kichik tenantlar uchun pool ancha arzon",
+        "12 500 dollar - farqi yo'q",
+        "250 dollar - bitta silo yetarli"
+      ],
+      "answer": 1,
+      "why": "200 x 250 = 50 000 dollar. Pool yuklamaga proporsional masshtablanadi, shuning uchun SaaS odatda pool bilan boshlab, silo ni yuqori tier ga beradi."
+    },
+    {
+      "q": "8 ta worker, har mijozga 2 tasi. Oddiy sharding bilan shuffle sharding da bitta zaharli mijoz ta'sir qiladigan ulush qanday farq qiladi?",
+      "options": [
+        "Ikkalasida ham 25%",
+        "Oddiyda 25% (4 shard), shuffle da taxminan 1/28 - har mijozga noyob juftlik",
+        "Oddiyda 12.5%, shuffle da 50%",
+        "Shuffle sharding faqat DNS uchun ishlaydi"
+      ],
+      "answer": 1,
+      "why": "C(8,2) = 28 noyob kombinatsiya. Boshqa mijozning ikkala workeri ham aynan o'sha juftlik bo'lish ehtimoli juda past."
+    },
+    {
+      "q": "2 000 tenant, schema-per-tenant, har schemada 80 jadval, har jadval o'rtacha 4 ta relation (jadval, indekslar, TOAST). Bazada taxminan nechta relation bo'ladi?",
+      "options": [
+        "8 000",
+        "160 000",
+        "2 000",
+        "640 000"
+      ],
+      "answer": 3,
+      "why": "2 000 x 80 x 4 = 640 000. Catalog, backend keshlari, autovacuum va pg_dump shuncha obyekt bilan sezilarli og'irlashadi."
+    },
+    {
+      "q": "Hisobot servisi Redis kalitini report:2026-10 deb saqlaydi. Pool modelida nima bo'lishi mumkin?",
+      "options": [
+        "Birinchi hisoblagan tenantning hisoboti boshqa tenantga cache dan qaytariladi",
+        "Hech narsa, Redis tenantni o'zi ajratadi",
+        "Kalit juda qisqa, Redis rad etadi",
+        "Faqat TTL muammosi bo'ladi"
+      ],
+      "answer": 0,
+      "why": "Izolyatsiya har bir resurs turida kerak: cache kaliti tenant prefiksi bilan (t:acme:report:2026-10)."
+    },
+    {
+      "q": "5 000 mashinali tenant firmware xatosi tufayli 10 s o'rniga har 1 s da nuqta yuboradi. Qaysi chora boshqa tenantlarni eng to'g'ridan-to'g'ri himoya qiladi?",
+      "options": [
+        "Barcha tenantlar uchun umumiy limitni oshirish",
+        "Bazaga ko'proq indeks qo'shish",
+        "Per-tenant ingest limiti va ortiqcha yuklamani alohida overflow navbatga yo'naltirish",
+        "Tenantni darhol o'chirish"
+      ],
+      "answer": 2,
+      "why": "Noisy neighbor ni cheklash uchun resurs iste'moli tenant bo'yicha chegaralanadi va ortiqcha ish boshqalarning yo'liga tushmaydigan joyga ajratiladi."
+    },
+    {
+      "q": "Tenantni pool dan silo ga ko'chirishni osonlashtiradigan oldindan qilingan qaror qaysi?",
+      "options": [
+        "SERIAL (avtoinkrement) ID lar",
+        "Tenant ma'lumotini cache da saqlash",
+        "Barcha ma'lumotni bitta JSON ustunda saqlash",
+        "Har bir jadvalda tenant_id va global unikal ID (masalan UUIDv7)"
+      ],
+      "answer": 3,
+      "why": "tenant_id tenantning barcha ma'lumotini ajratib olishni, global unikal ID esa boshqa bazaga qo'shishda to'qnashuv bo'lmasligini ta'minlaydi."
+    },
+    {
+      "q": "Cell-based arxitekturada cell router haqida qaysi tavsiya to'g'ri?",
+      "options": [
+        "Router iloji boricha sodda, biznes mantiqsiz bo'lishi va bitta cell yetib bo'lmasa ham boshqalarga yo'naltirishni davom ettirishi kerak",
+        "Router da biznes mantiqni markazlashtirish kerak",
+        "Har cell o'z routeriga ega bo'lishi shart emas, routerning o'zi baza bo'lishi kerak",
+        "Router faqat bitta instance bo'lishi kerak"
+      ],
+      "answer": 0,
+      "why": "Router barcha cell lar uchun umumiy komponent, shuning uchun uning murakkabligi butun tizimning blast radiusini oshiradi. AWS qo'llanmasi uni eng ingichka qatlam deb ataydi."
+    }
+  ]
+}

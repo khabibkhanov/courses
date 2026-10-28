@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Qaysi biri o'lchanadigan nofunksional talab?",
+      "options": [
+        "Tizim tez va ishonchli ishlashi kerak",
+        "Marshrut so'rovi p99 1 soniyadan tez, 500 so'rov/s yuklamada",
+        "Dispetcher mashinaning marshrutini ko'ra olishi kerak",
+        "Tizim zamonaviy texnologiyalarda qurilishi kerak"
+      ],
+      "answer": 1,
+      "why": "O'lchanadigan NFR da metrika (p99 javob vaqti), chegara (1 s) va sharoit (500 so'rov/s) bor. Uchinchi variant funksional talab."
+    },
+    {
+      "q": "Fault va failure ning farqi nima?",
+      "options": [
+        "Ular sinonim",
+        "Fault - foydalanuvchi xatosi, failure - server xatosi",
+        "Fault - bitta qismning me'yordan chiqishi, failure - tizim butunlay xizmat ko'rsata olmasligi",
+        "Fault - dasturiy xato, failure - apparat xatosi"
+      ],
+      "answer": 2,
+      "why": "Fault tolerance ning maqsadi fault larni yo'qotish emas, ularning failure ga aylanishiga yo'l qo'ymaslik."
+    },
+    {
+      "q": "Nega javob vaqti odatda o'rtacha qiymat emas, percentile (p99) bilan beriladi?",
+      "options": [
+        "Percentile hisoblash osonroq",
+        "O'rtacha qiymat sekin so'rovlar dumini yashiradi, foydalanuvchilar esa aynan dumni his qiladi",
+        "O'rtacha qiymat har doim p99 dan katta bo'ladi",
+        "Monitoring tizimlari o'rtachani hisoblay olmaydi"
+      ],
+      "answer": 1,
+      "why": "O'rtacha 50 ms bo'lgani holda p99 bir necha soniya bo'lishi mumkin. Percentile taqsimotning dumini ko'rsatadi."
+    },
+    {
+      "q": "Twitter home timeline uchun fan-out on write ni asosan nima uchun tanlagan?",
+      "options": [
+        "Yozish o'qishdan ko'p bo'lgani uchun",
+        "O'qishlar yozishlardan ikki tartib ko'p bo'lgani uchun, o'qishni arzonlashtirish foydaliroq edi",
+        "Redis boshqa yondashuvni qo'llab-quvvatlamagani uchun",
+        "Mashhur akkauntlar uchun bu eng arzon yo'l bo'lgani uchun"
+      ],
+      "answer": 1,
+      "why": "2012 yil noyabrda 300 ming timeline o'qish/s ga nisbatan o'rtacha 4.6 ming tvit yozish/s bo'lgan (Kleppmann, DDIA 1-bob). Mashhur akkauntlar esa aksincha istisno sifatida o'qishda qo'shiladi."
+    },
+    {
+      "q": "\"Bizning tizim scalable\" degan gapning muammosi nimada?",
+      "options": [
+        "Hech qanday muammo yo'q",
+        "Yuklama parametrlari va o'sish miqdori aytilmagan, shuning uchun tekshirib bo'lmaydi",
+        "Scalable tizimlar har doim qimmat",
+        "Bu faqat microservice larga tegishli"
+      ],
+      "answer": 1,
+      "why": "To'g'ri savol: qaysi yuklama parametri necha marta oshsa, tizim qanday o'zgaradi va nima qilinadi."
+    },
+    {
+      "q": "Quyidagilardan qaysi biri odatda qaytarish eng qimmat (1-tur) qaror?",
+      "options": [
+        "Load balancer algoritmini round-robin dan least-connections ga almashtirish",
+        "Servis oldiga cache qo'shish",
+        "Katta jadvalning sharding kalitini tanlash",
+        "Server instance turini o'zgartirish"
+      ],
+      "answer": 2,
+      "why": "Sharding kalitini o'zgartirish barcha ma'lumotni qayta taqsimlashni talab qiladi. Qolganlari nisbatan arzon qaytariladi."
+    },
+    {
+      "q": "10 000 qurilma har 10 soniyada 100 baytlik nuqta yuboradi. Kunlik hajm taxminan qancha?",
+      "options": ["86 MB", "860 MB", "8.6 GB", "86 GB"],
+      "answer": 2,
+      "why": "10 000 / 10 = 1 000 nuqta/s; 1 000 x 100 B = 100 KB/s; 100 KB x 86 400 s ≈ 8.64 GB."
+    },
+    {
+      "q": "Dizayn jarayonida chuqur tahlil (deep dive) uchun qaysi qismlarni tanlash kerak?",
+      "options": [
+        "Hamma qismni bir xil chuqurlikda",
+        "Eng tanish texnologiyalar ishlatilgan qismlarni",
+        "Eng ko'p yuklama, eng qimmat xato yoki eng katta noaniqlik bo'lgan 1-3 qismni",
+        "Faqat frontend qismini"
+      ],
+      "answer": 2,
+      "why": "Vaqt cheklangan, shuning uchun xavf eng yuqori bo'lgan joylarga sarflanadi."
+    },
+    {
+      "q": "Kleppmann ta'rifi bo'yicha latency va response time farqi qaysi?",
+      "options": [
+        "Farqi yo'q",
+        "Latency - so'rov xizmat ko'rsatilishini kutgan vaqt; response time - mijoz ko'radigan to'liq vaqt",
+        "Latency faqat tarmoqqa, response time faqat bazaga tegishli",
+        "Response time har doim latency dan kichik"
+      ],
+      "answer": 1,
+      "why": "Response time ga tarmoq, navbatda kutish va qayta ishlash kiradi. Server so'rovni tez qayta ishlasa ham, navbat uzun bo'lsa javob sekin keladi."
+    },
+    {
+      "q": "Talablar bosqichida \"ko'lamga nima kirmaydi\" ni yozish nima uchun muhim?",
+      "options": [
+        "Bu faqat rasmiyatchilik",
+        "Ko'lamni toraytirish dizaynni sezilarli soddalashtiradi va keraksiz murakkablikning oldini oladi",
+        "Interviewer shuni talab qiladi",
+        "Bu NFR ning bir turi"
+      ],
+      "answer": 1,
+      "why": "Masalan, to'lovni ko'lamdan chiqarish tranzaksiya, idempotency va audit talablarining katta qismini olib tashlaydi."
+    }
+  ]
+}

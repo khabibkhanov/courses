@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "N=3, R=2, W=2. Bitta replica uzoq GC pauzasida. Yozish latency siga nima bo'ladi?",
+      "options": [
+        "Yozish GC tugaguncha kutadi",
+        "Koordinator eng tez 2 ta javobni kutadi, sekin replica latency ga ta'sir qilmaydi",
+        "Yozish rad etiladi",
+        "Yozish faqat bitta replica ga ketadi"
+      ],
+      "answer": 1,
+      "why": "W < N bo'lgani uchun eng sekin replica kutilmaydi - bu tail latency ni yashiradi."
+    },
+    {
+      "q": "Sloppy quorum bilan N=3, R=2, W=2. Qaysi da'vo to'g'ri?",
+      "options": [
+        "R + W > N bo'lgani uchun o'qish har doim oxirgi yozuvni ko'radi",
+        "Yozuv preference list dan tashqari tugunlarga tushishi mumkin, shuning uchun o'qish va yozish to'plamlari kesishmasligi mumkin",
+        "Sloppy quorum consistency ni kuchaytiradi",
+        "Sloppy quorum faqat o'qishga taalluqli"
+      ],
+      "answer": 1,
+      "why": "Sloppy quorum availability va durability uchun; kesishish kafolati faqat qat'iy quorum da ishlaydi."
+    },
+    {
+      "q": "D3 [(Sx,2),(Sy,1)] va D4 [(Sx,2),(Sz,1)] versiyalari qanday munosabatda?",
+      "options": ["D3 D4 ni qamraydi", "D4 D3 ni qamraydi", "Ular parallel, ikkalasi saqlanadi", "Ular bir xil"],
+      "answer": 2,
+      "why": "Har birida ikkinchisida yo'q hisoblagich bor (Sy va Sz), shuning uchun hech biri ikkinchisining ajdodi emas."
+    },
+    {
+      "q": "Savat versiyalarini oddiy to'plam birlashmasi (union) bilan birlashtirish qanday anomaliyaga olib keladi?",
+      "options": [
+        "Qo'shilgan mahsulot yo'qoladi",
+        "O'chirilgan mahsulot qayta paydo bo'lishi mumkin",
+        "Savat butunlay bo'shab qoladi",
+        "Narxlar o'zgaradi"
+      ],
+      "answer": 1,
+      "why": "Bir versiyada o'chirilgan, boshqasida bor element union da qaytadi; OR-Set kabi CRDT buni hal qiladi."
+    },
+    {
+      "q": "10 milliard kalit x 2 KB, N=3, LSM space amplification 1.5. Bitta tugun 2 TB foydali disk. Disk bo'yicha taxminan nechta tugun kerak?",
+      "options": ["10", "30", "45", "150"],
+      "answer": 2,
+      "why": "20 TB x 3 = 60 TB, x1.5 = 90 TB, / 2 TB = 45 tugun."
+    },
+    {
+      "q": "Merkle tree anti-entropy ning asosiy afzalligi nima?",
+      "options": [
+        "Yozish latency sini kamaytiradi",
+        "Replica larni solishtirishda faqat farqli diapazonlar ko'chiriladi, hamma kalit yuborilmaydi",
+        "Vector clock o'rnini bosadi",
+        "Hinted handoff ni keraksiz qiladi"
+      ],
+      "answer": 1,
+      "why": "Ildiz hashlari teng bo'lsa sinxronlash kerak emas; farq bo'lsa daraxt bo'ylab tushib faqat farqli barglar ko'chiriladi."
+    },
+    {
+      "q": "Dynamo nega tugunning vaqtinchalik uzilishida halqani avtomatik qayta taqsimlamaydi?",
+      "options": [
+        "Gossip buni qo'llab-quvvatlamaydi",
+        "Tarmoq tebranishi massiv ma'lumot ko'chishiga olib kelmasligi uchun; vaqtinchalik nosozlik hinted handoff bilan yopiladi",
+        "Consistent hashing qayta taqsimlashga imkon bermaydi",
+        "Bu xavfsizlik talabi"
+      ],
+      "answer": 1,
+      "why": "Membership o'zgarishi aniq administrator amali; vaqtinchalik uzilish uchun hint mexanizmi bor."
+    },
+    {
+      "q": "Cassandra uslubidagi tizimda tombstone gc muddati (gc_grace) repair davridan qisqa bo'lsa nima bo'ladi?",
+      "options": [
+        "Disk tez to'ladi",
+        "O'chirilgan ma'lumot o'chirishni ko'rmagan eski replica dan qayta tirilishi mumkin",
+        "Yozish to'xtaydi",
+        "Hech narsa"
+      ],
+      "answer": 1,
+      "why": "Tombstone barcha replica larga yetmasdan o'chirilsa, repair eski qiymatni boshqa replica larga qayta tarqatadi."
+    },
+    {
+      "q": "DynamoDB ning Dynamo dan asosiy arxitektura farqi qaysi?",
+      "options": [
+        "DynamoDB consistent hashing ishlatmaydi",
+        "DynamoDB da har partition replica lari Multi-Paxos bilan leader tanlaydi; yozuvlar leader orqali",
+        "DynamoDB faqat bitta replica saqlaydi",
+        "DynamoDB vector clock larni mijozga qaytaradi"
+      ],
+      "answer": 1,
+      "why": "DynamoDB leaderless emas: partition bo'yicha single-leader + consensus, bu bashorat qilinadigan consistency beradi."
+    },
+    {
+      "q": "iQuariX dagi qurilma 'oxirgi holati' uchun LWW ishlatilmoqda. Qaysi timestamp to'g'ri?",
+      "options": [
+        "Server qabul qilgan vaqt",
+        "Qurilmaning GPS vaqti, shartli yozish bilan: faqat yangi bo'lsa almashtirish",
+        "Kafka offset",
+        "Tasodifiy UUID"
+      ],
+      "answer": 1,
+      "why": "Oflayn qurilma keyin eski nuqtalarni yuborsa, server vaqti bo'yicha ular yangi holatni noto'g'ri bosib ketadi."
+    }
+  ]
+}

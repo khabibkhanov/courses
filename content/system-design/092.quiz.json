@@ -1,0 +1,90 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "10 yilda 365 milliard havola saqlanadi. base62 alfavitida minimal qancha belgi kerak?",
+      "options": ["6 belgi (62^6 ≈ 56.8 milliard)", "7 belgi (62^7 ≈ 3.5 trillion)", "8 belgi (62^8 ≈ 218 trillion)", "11 belgi"],
+      "answer": 1,
+      "why": "62^6 365 milliarddan kichik, 62^7 esa taxminan 10 baravar katta, shuning uchun 7 belgi yetadi."
+    },
+    {
+      "q": "Kuniga 100 million havola yaratiladi va o'qish/yozish nisbati 10:1. O'rtacha redirect/s taxminan qancha?",
+      "options": ["1 160", "11 600", "116 000", "1 000 000"],
+      "answer": 1,
+      "why": "100M / 86 400 ≈ 1 160 yaratish/s, x10 ≈ 11 600 redirect/s."
+    },
+    {
+      "q": "Shortener click statistikasini ko'rsatishi va phishing havolani darhol bloklay olishi kerak. Qaysi redirect kodi mos?",
+      "options": [
+        "301, chunki server yuklamasi kamroq",
+        "302, chunki standart bo'yicha brauzerda cache lanmaydi va har bir click serverga keladi",
+        "200 va JavaScript redirect",
+        "304 Not Modified"
+      ],
+      "answer": 1,
+      "why": "301 brauzerda cache lanib, keyingi click lar serverga kelmasligi mumkin - analitika va bloklash yo'qoladi."
+    },
+    {
+      "q": "Counter asosidagi kodlarning asosiy xavfsizlik muammosi va uning yechimi qaysi?",
+      "options": [
+        "To'qnashuv; yechim - hash",
+        "Ketma-ket kodlar taxmin qilinadi va sanab chiqiladi; yechim - base62 dan oldin teskari aylanadigan aralashtirish",
+        "Kodlar juda uzun; yechim - base64",
+        "Counter juda sekin; yechim - UUID"
+      ],
+      "answer": 1,
+      "why": "Biyektiv aralashtirish noyoblikni saqlaydi, lekin natijani tasodifiy ko'rsatadi."
+    },
+    {
+      "q": "Counter diapazonlari (har instance 10 000 lik blok oladi) yondashuvida instance o'lsa nima bo'ladi?",
+      "options": [
+        "Kodlar takrorlanadi",
+        "Blokning ishlatilmagan qismi yo'qoladi, lekin noyoblik buzilmaydi",
+        "Butun tizim to'xtaydi",
+        "Barcha instance lar qayta sinxronlanishi kerak"
+      ],
+      "answer": 1,
+      "why": "Blok faqat bitta instance ga berilgan; ishlatilmagan raqamlar shunchaki tashlanadi, 3.5 trillionlik maydonda bu ahamiyatsiz."
+    },
+    {
+      "q": "Bitta viral havola sekundiga 50 000 marta ochilmoqda va bitta Redis shardi chegaraga yetdi. Eng to'g'ri birinchi chora?",
+      "options": [
+        "Redis ni kattaroq mashinaga ko'chirish",
+        "Redirect servis ichida qisqa TTL li lokal in-process cache qo'shish",
+        "Havolani o'chirish",
+        "Bazaga to'g'ridan-to'g'ri o'qishga o'tish"
+      ],
+      "answer": 1,
+      "why": "Lokal cache bitta kalitga Redis so'rovlarini instance soniga va TTL ga bog'liq kichik songa tushiradi."
+    },
+    {
+      "q": "Analitika bazasi (ClickHouse) sekinlashdi. To'g'ri dizaynda redirect latency siga nima bo'ladi?",
+      "options": [
+        "Redirect ham sekinlashadi",
+        "Ta'sir qilmaydi, chunki click hodisalari Kafka orqali asinxron yuboriladi",
+        "Redirect to'xtaydi",
+        "Redirect 301 ga o'tadi"
+      ],
+      "answer": 1,
+      "why": "Redirect va analitika yo'llari ajratilgan; analitika sekinlashishi faqat statistika kechikishiga olib keladi."
+    },
+    {
+      "q": "Botlar mavjud bo'lmagan tasodifiy kodlar bilan skanerlamoqda va har so'rov bazaga tushmoqda. Qaysi chora?",
+      "options": ["Negative cache - topilmadi natijasini qisqa muddat cache lash", "Cache TTL ni oshirish", "301 ga o'tish", "Kod uzunligini qisqartirish"],
+      "answer": 0,
+      "why": "Mavjud bo'lmagan kalitlar oddiy cache-aside da har doim miss beradi; negative cache bu yuklamani yutadi."
+    },
+    {
+      "q": "Kod partition key bo'lib, kodlar ketma-ket counter dan keladi. Qaysi partitioning sxemasi hot partition yaratadi?",
+      "options": ["Hash partitioning", "Range partitioning kod bo'yicha", "Consistent hashing", "Virtual node lar bilan hash"],
+      "answer": 1,
+      "why": "Range partitioning da ketma-ket yangi kalitlar hammasi oxirgi diapazonga, ya'ni bitta shardga tushadi."
+    },
+    {
+      "q": "Hash + 7 belgiga qisqartirish yondashuvida bazada 365 milliard kod bo'lsa, yangi tasodifiy kodning band bo'lish ehtimoli taxminan qancha?",
+      "options": ["0.0001%", "1%", "10%", "50%"],
+      "answer": 2,
+      "why": "365 milliard / 3.52 trillion ≈ 0.10, ya'ni har 10 ta urinishdan biri to'qnashadi."
+    }
+  ]
+}

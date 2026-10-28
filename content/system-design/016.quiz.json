@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Fakt jadvali: 1 mlrd qator, 100 ustun, har biri 8 bayt. So'rov 3 ta ustunni ishlatadi. Siqishsiz ustunli storage qator bo'yicha storage'ga nisbatan taxminan qancha kam o'qiydi?",
+      "options": [
+        "3 baravar",
+        "Taxminan 33 baravar (800 GB o'rniga 24 GB)",
+        "100 baravar",
+        "Farqi yo'q"
+      ],
+      "answer": 1,
+      "why": "Qator bo'yicha 1 mlrd x 800 B = 800 GB; ustunli 3 x 1 mlrd x 8 B = 24 GB. Siqish bu farqni yana bir necha baravar oshiradi."
+    },
+    {
+      "q": "Ustunli bazada saralash kaliti (ORDER BY) nega shunchalik muhim?",
+      "options": [
+        "Faqat natijani chiroyli chiqarish uchun",
+        "Saralash kaliti unique bo'lishi shart",
+        "U faqat JOIN tezligiga ta'sir qiladi",
+        "U siqishni (RLE, delta) va qaysi granula/bloklar o'tkazib yuborilishini belgilaydi"
+      ],
+      "answer": 3,
+      "why": "Saralangan ustunlarda takrorlar ketma-ket keladi va siyrak indeks filtrlarga mos granulalarni aniq topadi."
+    },
+    {
+      "q": "ClickHouse MergeTree'ga ingest servisi har bir GPS nuqtani alohida INSERT bilan yozmoqda (10 000 insert/s). Kutiladigan muammo?",
+      "options": [
+        "Har bir insert alohida part yaratadi, fon merge'lar ulgurmaydi, partlar soni portlaydi",
+        "Hech qanday muammo yo'q",
+        "ClickHouse insert'larni rad etadi, faqat COPY ishlaydi",
+        "Ma'lumot qator bo'yicha saqlanib qoladi"
+      ],
+      "answer": 0,
+      "why": "Ustunli LSM uslubidagi storage partiyalab yozishni talab qiladi; navbatdan soniyalar yoki o'n minglab qatorlar bo'yicha batch qiling."
+    },
+    {
+      "q": "Vectorized execution tuple-at-a-time (Volcano) modeliga nisbatan nimani yaxshilaydi?",
+      "options": [
+        "Diskdan kam o'qiydi",
+        "Tranzaksiyalarni tezlashtiradi",
+        "Har bir qiymatga to'g'ri keladigan interpretatsiya overhead'ini 1 000 atrofidagi qiymatli vektor (X100'da standart 1024) bo'yicha taqsimlaydi va qattiq sikllar SIMD/pipelining'ga imkon beradi",
+        "Indekslarni keraksiz qiladi"
+      ],
+      "answer": 2,
+      "why": "MonetDB/X100 tajribasida (TPC-H Q1) vektor o'lchami 1 bo'lsa overhead qaytadi, 8K dan katta bo'lsa oraliq natijalar CPU cache'dan chiqadi; optimal 1 000 atrofida, 128-8K oralig'i yaxshi ishlagan."
+    },
+    {
+      "q": "OLTP PostgreSQL'dan analitika uchun read replica ajratildi. Qaysi muammo hal BO'LMAYDI?",
+      "options": [
+        "Analitik so'rovlar primary'ning shared_buffers'ini siqib chiqarishi",
+        "Analitik so'rovlar primary diskini band qilishi",
+        "Ilova so'rovlari va hisobotlarning bitta CPU uchun raqobati",
+        "Qator bo'yicha storage tufayli har bir skan barcha ustunlarni o'qishi"
+      ],
+      "answer": 3,
+      "why": "Replika resurs to'qnashuvini ajratadi, lekin storage tartibi o'zgarmaydi; ustunli skan afzalligi paydo bo'lmaydi."
+    },
+    {
+      "q": "Muntazam 10 soniyalik intervalda kelgan vaqt belgilari uchun qaysi kodlash eng samarali?",
+      "options": [
+        "Dictionary encoding",
+        "Delta-of-delta",
+        "Bitmap indeks",
+        "Hech qanday, vaqt siqilmaydi"
+      ],
+      "answer": 1,
+      "why": "Deltalar bir xil (10 s), demak delta-of-delta nolga teng; Gorilla maqolasida vaqt belgilarining 96% ga yaqini bitta bitga siqilgan."
+    },
+    {
+      "q": "Star schema'da fakt jadvali va o'lchov jadvali farqi qaysi?",
+      "options": [
+        "Fakt - har bir hodisa uchun qator (ko'p qator, o'lchovlar va raqamlar), o'lchov - kim/nima/qayerda/qachon tavsiflari (kichikroq, keng)",
+        "Fakt - kichik va tavsifiy, o'lchov - katta va raqamli",
+        "Ular bir xil, faqat nomi boshqa",
+        "O'lchov jadvallari faqat sana uchun"
+      ],
+      "answer": 0,
+      "why": "Masalan, fact_trips har bir reys; dim_vehicle, dim_driver, dim_date esa uning atributlarini tavsiflaydi."
+    },
+    {
+      "q": "ClickHouse hujjatlariga ko'ra, ko'p mijozli jadvalda customer_id bo'yicha qanday ishlash tavsiya qilinadi?",
+      "options": [
+        "Har bir mijoz uchun alohida partition",
+        "Har bir mijoz uchun alohida jadval",
+        "customer_id ni ORDER BY kalitining boshiga qo'yish, partitionni esa (kerak bo'lsa) oylik vaqt bo'yicha qilish",
+        "customer_id ni umuman saqlamaslik"
+      ],
+      "answer": 2,
+      "why": "Mijoz bo'yicha partition partlar sonini portlatadi; saralash kalitining boshidagi mijoz ID'si siyrak indeks orqali kerakli granulalarni tez topadi."
+    },
+    {
+      "q": "Late materialization nimani anglatadi?",
+      "options": [
+        "Natijani diskka kechroq yozish",
+        "Avval filtr ustunlarida mos pozitsiyalarni topish, boshqa ustunlarni faqat shu pozitsiyalar uchun o'qish va to'liq qatorni iloji boricha kech yig'ish",
+        "Materialized view'ni kechasi yangilash",
+        "Indekslarni so'rovdan keyin qurish"
+      ],
+      "answer": 1,
+      "why": "Filtrdan o'tmagan qatorlarning boshqa ustunlari o'qilmaydi va ochilmaydi - IO va CPU tejaladi."
+    },
+    {
+      "q": "1 500 mashinali park, hisobotlar faqat kunlik va oldindan ma'lum. Eng oqilona yechim?",
+      "options": [
+        "Darhol ClickHouse klasteri va CDC pipeline",
+        "BigQuery'ga har kecha eksport",
+        "Hisobotlarni har safar xom nuqtalardan primary'da hisoblash",
+        "PostgreSQL'da vaqt bo'yicha partitionlar, BRIN va kechasi to'ldiriladigan agregat jadvallar (yoki materialized view)"
+      ],
+      "answer": 3,
+      "why": "Hajm kichik va so'rovlar ma'lum - oldindan agregatlar yetarli; qo'shimcha OLAP tizimi operatsion narx keltiradi."
+    }
+  ]
+}

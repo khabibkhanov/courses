@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Kubernetes Deployment da 10 replika, default maxUnavailable va maxSurge (25%). Deploy paytida minimal tayyor va maksimal mavjud pod'lar soni qancha?",
+      "options": [
+        "7 tayyor, 12 mavjud",
+        "8 tayyor, 13 mavjud",
+        "8 tayyor, 12 mavjud",
+        "7 tayyor, 13 mavjud"
+      ],
+      "answer": 1,
+      "why": "maxUnavailable pastga yaxlitlanadi: floor(2.5) = 2, demak 8 tayyor. maxSurge yuqoriga: ceil(2.5) = 3, demak 13 mavjud."
+    },
+    {
+      "q": "Yangi versiyadagi defekt so'rovlarning 20 foizini buzadi va 5% canary da ishlayapti. Umumiy xato darajasi grafigida u qanday ko'rinadi?",
+      "options": ["20%", "Taxminan 1%", "5%", "0.2%"],
+      "answer": 1,
+      "why": "0.05 x 0.2 = 0.01. Shuning uchun canary va control alohida label bilan solishtirilishi kerak."
+    },
+    {
+      "q": "Deploy va release ni ajratishning asosiy foydasi nima?",
+      "options": [
+        "Deploy tezroq bo'ladi",
+        "Kod kichik qismlarda tez-tez yetkaziladi, funksiyani ochish va yopish esa kod o'zgarishisiz, flag orqali boshqariladi",
+        "Testlar kerak bo'lmaydi",
+        "Rollback hech qachon kerak bo'lmaydi"
+      ],
+      "answer": 1,
+      "why": "Release toggle tugallanmagan kodni yashirin yetkazadi va release ni biznes qaroriga aylantiradi."
+    },
+    {
+      "q": "Ustun nomini o'zgartirish kerak. Rolling deploy va tez rollback imkoniyatini saqlab qolish uchun qaysi tartib to'g'ri?",
+      "options": [
+        "Bitta migratsiyada RENAME COLUMN va yangi kodni deploy qilish",
+        "Yangi ustun qo'shish, ikkalasiga yozish, backfill, yangisidan o'qish, eskisiga yozishni to'xtatish, oxirida eski ustunni o'chirish",
+        "Eski ustunni o'chirib, yangisini qo'shish",
+        "Avval kodni deploy, keyin migratsiya"
+      ],
+      "answer": 1,
+      "why": "Expand/contract: har bosqichda eski va yangi kod bazaga mos ishlaydi, qaytarilmaydigan qadam oxirida alohida."
+    },
+    {
+      "q": "Kafka xabar formati o'zgaradi. Producer va consumer'larni qaysi tartibda chiqarish kerak?",
+      "options": [
+        "Avval producer yangi formatda yozadi, keyin consumer'lar yangilanadi",
+        "Avval consumer'lar ikkala formatni o'qiydigan bo'ladi, keyin producer yangi formatga o'tadi",
+        "Hammasi bir vaqtda",
+        "Tartib muhim emas"
+      ],
+      "answer": 1,
+      "why": "Aks holda eski consumer yangi formatni o'qiy olmaydi, va producer rollback qilinsa ham topic da yangi formatdagi xabarlar qoladi."
+    },
+    {
+      "q": "Blue-green ni yagona tekshiruv usuli sifatida ishlatishning Workbook ko'rsatgan asosiy kamchiligi qaysi?",
+      "options": [
+        "Rollback sekin",
+        "Bu aslida 'oldin va keyin' taqqoslash, vaqtga bog'liq trafik o'zgarishlari natijani chalkashtiradi, va taxminan 2x resurs kerak",
+        "Ikki versiya hech qachon birga ishlamaydi",
+        "Baza bilan ishlamaydi"
+      ],
+      "answer": 1,
+      "why": "Canary bir vaqtning o'zida canary va control ni solishtiradi; blue-green to'liq o'tish esa oldingi davr bilan solishtiradi."
+    },
+    {
+      "q": "CrowdStrike 2024 va Cloudflare 2025 uzilishlarining umumiy saboqi qaysi?",
+      "options": [
+        "Faqat kod deploy lariga canary kerak",
+        "Konfiguratsiya va ma'lumot fayllari ham kod kabi bosqichma-bosqich yetkazilishi va qat'iy tekshirilishi kerak",
+        "Kernel drayverlari ishlatilmasligi kerak",
+        "ClickHouse ishonchsiz"
+      ],
+      "answer": 1,
+      "why": "Ikkala holatda ham muammoli kontent yoki konfiguratsiya fayli tez global tarqalgan; tuzatishlar staged rollout, validatsiya va kill switch'larni o'z ichiga oladi."
+    },
+    {
+      "q": "SLO 99.9% / 30 kun (43.2 daqiqa budget). 5% canary 30 daqiqa davomida eng yomon holatda 100% xato beradi. Budgetning qancha qismi sarflanadi?",
+      "options": ["Taxminan 0.35%", "Taxminan 3.5%", "Taxminan 35%", "100%"],
+      "answer": 1,
+      "why": "0.05 x 30 = 1.5 daqiqa to'liq uzilish ekvivalenti; 1.5 / 43.2 ≈ 3.5%."
+    },
+    {
+      "q": "Yangi yoqilg'i anomaliya algoritmini foydalanuvchi ta'sirisiz real trafikda sinash uchun qaysi strategiya mos?",
+      "options": [
+        "Blue-green",
+        "Shadow: yangi algoritm parallel ishlaydi, natijalari faqat loglanadi va eski bilan solishtiriladi",
+        "Recreate",
+        "100% rolling"
+      ],
+      "answer": 1,
+      "why": "Shadow foydalanuvchiga hech narsa qaytarmaydi; yon ta'sirlar (SMS) o'chirilgan holda natijalarni solishtirish mumkin."
+    },
+    {
+      "q": "Feature flag servisi 10 daqiqaga ishlamay qoldi. To'g'ri dizayn qanday xatti-harakat beradi?",
+      "options": [
+        "Ilova ishga tushmaydi",
+        "SDK oxirgi ma'lum qiymatlarni lokal cache dan ishlatadi yoki xavfsiz default ga o'tadi",
+        "Barcha flag'lar yoqiladi",
+        "Har so'rovda flag servisiga retry qilinadi"
+      ],
+      "answer": 1,
+      "why": "Flag tizimi SPOF bo'lmasligi kerak: static stability va xavfsiz default."
+    }
+  ]
+}

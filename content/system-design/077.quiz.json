@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Toshkentdan Frankfurtgacha katta-aylana bo'yicha 4 670 km. Optik tolada signal ~200 km/ms. Nazariy minimal RTT qancha?",
+      "options": [
+        "~5 ms",
+        "~23 ms",
+        "~47 ms",
+        "~150 ms"
+      ],
+      "answer": 2,
+      "why": "RTT ≈ 2 x 4 670 / 200 ≈ 47 ms. Real marshrutlarda odatda bundan ham ko'p."
+    },
+    {
+      "q": "Asinxron replikatsiyali active-passive tizimda primary region to'satdan o'chdi va standby ko'tarildi. Qanday muammo kutiladi?",
+      "options": [
+        "Replikatsiya qilinmagan oxirgi yozuvlar eski regionda qolgan; region qaytgach biznes mantiq bo'yicha reconciliation kerak",
+        "Hech qanday - barcha yozuvlar allaqachon standby da",
+        "Standby faqat o'qiy oladi, yozishni hech qachon qabul qilmaydi",
+        "DNS avtomatik barcha ma'lumotni ko'chiradi"
+      ],
+      "answer": 0,
+      "why": "AWS qo'llanmasi ta'kidlaydi: asinxron replikatsiyada yuborilishi kutilayotgan yozuvlar ehtimoli yuqori va reconciliation baza emas, biznes mantiq vazifasi."
+    },
+    {
+      "q": "DynamoDB global tables (MREC) da A regionda element status maydoni, B regionda driver_id maydoni bir vaqtda o'zgartirildi. Natija?",
+      "options": [
+        "Ikkala o'zgarish ham saqlanadi (maydon darajasida birlashtiriladi)",
+        "Ikkala region ham yozuvni rad etadi",
+        "Tranzaksiya xato bilan qaytadi",
+        "Last writer wins element darajasida: keyingi yozuv butun elementni belgilaydi, birinchi o'zgarish jimgina yo'qolishi mumkin"
+      ],
+      "answer": 3,
+      "why": "Konflikt element darajasida vaqt belgisi bo'yicha hal qilinadi va qayd etilmaydi. Shuning uchun hisoblagich va balans kabi ma'lumot uchun LWW xavfli."
+    },
+    {
+      "q": "B2B SaaS da konfliktlarsiz, lekin har foydalanuvchiga lokal yozish latency si beradigan multi-region yondashuv qaysi?",
+      "options": [
+        "Barcha regionlarda multi-writer, last writer wins",
+        "Home region: har tenant bitta primary regionga ega (tenant = shard), boshqa regionlar nusxa saqlaydi",
+        "Faqat backup va restore",
+        "Barcha yozuvlarni sinxron 3 regionga yozish"
+      ],
+      "answer": 1,
+      "why": "Har ma'lumot uchun yagona yozuvchi konfliktni dizayn bilan yo'qotadi, region uzilishi esa faqat o'sha shardlarga ta'sir qiladi."
+    },
+    {
+      "q": "Read-local, write-global modelida foydalanuvchi profilini yangiladi, sahifani yangiladi va eski ma'lumotni ko'rdi. Bu qaysi anomaliya va yechimi?",
+      "options": [
+        "Lost update - optimistik lock",
+        "Read-your-writes buzilishi - yozuvdan keyin qisqa muddat o'qishni primary ga yo'naltirish yoki versiya bo'yicha replika yetib kelishini kutish",
+        "Write skew - serializable izolyatsiya",
+        "Split-brain - fencing"
+      ],
+      "answer": 1,
+      "why": "O'qish asinxron replikadan, u hali yozuvni olmagan. Klient versiyasi yoki primary ga yopishish bilan hal qilinadi."
+    },
+    {
+      "q": "Regionlararo sinxron replikatsiya bilan RPO = 0 kerak. AWS qo'llanmasiga ko'ra odatda qanday konfiguratsiya va narx?",
+      "options": [
+        "2 region, yozish latency o'zgarmaydi",
+        "Faqat DNS failover",
+        "1 region yetarli",
+        "3 region va 2/3 kvorum; yozish latency si bir tartibga oshadi va ilova timeout/retry ni bunga moslashi kerak"
+      ],
+      "answer": 3,
+      "why": "Bitta region buzilganda ham yozish davom etishi uchun kvorum kerak, va har commit regionlararo RTT ni to'laydi."
+    },
+    {
+      "q": "DNS failover qilindi (TTL 60 s), lekin 10 daqiqadan keyin ham ba'zi mobil klientlar eski o'lik regionga ulanmoqda. Sabab?",
+      "options": [
+        "Resolverlar va klient kutubxonalari (ulanish pool lari, DNS cache) eski IP ni TTL dan uzoqroq ushlab turadi",
+        "DNS TTL ishlamaydi",
+        "Anycast xatosi",
+        "Health check o'chirilgan"
+      ],
+      "answer": 0,
+      "why": "DNS asosidagi failover klient xatti-harakatiga bog'liq. Anycast yoki global LB, qisqa ulanish umri va qayta resolve yordam beradi."
+    },
+    {
+      "q": "Regionlararo aloqa uzildi va ikkala region ham o'zini primary deb e'lon qilib yozishni davom ettirdi. Bu nima va qanday oldi olinadi?",
+      "options": [
+        "Replication lag - kattaroq kanal bilan",
+        "Hot partition - sharding bilan",
+        "Split-brain - uchinchi joydagi kvorum/witness va eski primary ni fencing qilish bilan",
+        "Cache stampede - lock bilan"
+      ],
+      "answer": 2,
+      "why": "Tarmoq uzilishi regionni o'lik kabi ko'rsatadi. Qaror kvorum bilan, eski primary esa epoch yoki fencing token bilan to'xtatiladi."
+    },
+    {
+      "q": "2 000 kamera, har biri 1 Mbit/s. To'liq regionlararo replikatsiya oyiga (30 kun) taxminan qancha ma'lumot ko'chiradi?",
+      "options": [
+        "~6.5 TB",
+        "~65 TB",
+        "~6.5 PB",
+        "~650 TB"
+      ],
+      "answer": 3,
+      "why": "2 Gbit/s = 250 MB/s; 250 MB x 2.59 mln s ≈ 650 TB. Shuning uchun video ma'lumot sinfi bo'yicha tanlab replikatsiya qilinadi."
+    },
+    {
+      "q": "Ma'lum mamlakat foydalanuvchilari ma'lumotini faqat o'sha mamlakat regionida saqlash kerak. Qaysi routing usuli to'g'ri?",
+      "options": [
+        "Deterministik routing: geolocation yoki yaxshisi ilova darajasida tenantning home region iga yo'naltirish",
+        "Weighted DNS 50/50",
+        "Latency-based DNS - u eng tez regionni tanlaydi",
+        "Tasodifiy round-robin"
+      ],
+      "answer": 0,
+      "why": "Latency routing deterministik emas va foydalanuvchini boshqa mamlakat regioniga yuborishi mumkin. Residency uchun ma'lumot joylashuvi aniq boshqarilishi kerak."
+    }
+  ]
+}

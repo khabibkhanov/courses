@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Hujumchi SQL injection orqali ishlab turgan PostgreSQL dan haydovchilar jadvalini o'qidi. Disk shifrlash (encryption at rest) yoqilgan edi. Natija?",
+      "options": [
+        "Ma'lumot shifrlangan holda chiqadi, xavf yo'q",
+        "PostgreSQL so'rovni rad etadi",
+        "Ma'lumot ochiq chiqadi - disk shifrlash faqat fizik disk o'g'irligidan himoya qiladi",
+        "Faqat indekslar ochiq chiqadi"
+      ],
+      "answer": 2,
+      "why": "Ishlab turgan baza o'z klientlariga ma'lumotni ochib beradi. Bunday tahdidga qarshi ilova yoki ustun darajasidagi shifrlash va to'g'ri avtorizatsiya kerak."
+    },
+    {
+      "q": "Envelope encryption da 2 GB video faylni shifrlash uchun KMS ga nima yuboriladi?",
+      "options": [
+        "Faqat DEK yaratish yoki ochish so'rovi - fayl lokal ravishda DEK bilan shifrlanadi",
+        "Faylning SHA-256 xeshi",
+        "Butun 2 GB fayl",
+        "Hech narsa, KMS ishlatilmaydi"
+      ],
+      "answer": 0,
+      "why": "Hajm KMS ga bormaydi. KMS faqat kichik DEK ni yaratadi yoki KEK bilan o'raydi/ochadi."
+    },
+    {
+      "q": "KEK almashtirildi. Envelope encryption da 50 TB ma'lumot uchun nima qilish kerak?",
+      "options": [
+        "50 TB ni to'liq qayta shifrlash",
+        "Barcha backuplarni o'chirish",
+        "Hech narsa, eski DEK lar o'z-o'zidan yangilanadi",
+        "Faqat shifrlangan DEK larni yangi KEK bilan qayta o'rash (re-wrap)"
+      ],
+      "answer": 3,
+      "why": "Ma'lumot DEK bilan shifrlangan, KEK faqat DEK larni himoyalaydi. Shuning uchun rotation arzon."
+    },
+    {
+      "q": "Bitta AES-GCM kaliti tasodifiy 96-bitli IV bilan soniyasiga 10 000 xabar shifrlaydi. NIST SP 800-38D dagi 2^32 chaqiruv chegarasiga taxminan qancha vaqtda yetadi?",
+      "options": [
+        "5 soat",
+        "5 kun",
+        "5 oy",
+        "50 yil"
+      ],
+      "answer": 1,
+      "why": "2^32 ≈ 4.3 mlrd; 4.3 mlrd / 10 000 ≈ 429 000 s ≈ 5 kun. Shuning uchun yuqori throughputda kalit rotation yoki har obyektga yangi DEK majburiy."
+    },
+    {
+      "q": "Telemetriya servisi har bir GPS nuqtasini alohida KMS Decrypt bilan ochishni rejalashtirmoqda. Hisobot 1 million nuqtani o'qiydi, KMS kvotasi 10 000 so'rov/s. Asosiy muammo?",
+      "options": [
+        "Hech qanday muammo yo'q",
+        "Bitta hisobot uchun kamida 100 soniya faqat KMS kvotasiga sarflanadi - DEK granulyarligi juda mayda",
+        "KMS nuqtalarni saqlay olmaydi",
+        "AES-GCM bunday kichik ma'lumotni shifrlay olmaydi"
+      ],
+      "answer": 1,
+      "why": "1 000 000 / 10 000 = 100 s. DEK obyekt yoki partition darajasida yaratiladi va ochilgan DEK qisqa muddat cache qilinadi."
+    },
+    {
+      "q": "Kubernetes Secret obyektlari haqida qaysi gap to'g'ri (encryption at rest sozlanmagan klaster)?",
+      "options": [
+        "Ular etcd da AES bilan shifrlangan",
+        "Ular base64 da, ya'ni shifrlangan",
+        "Ularni faqat cluster-admin o'qiy oladi",
+        "Ular etcd da shifrlanmagan; namespace da Pod yarata oladigan har kim ularni o'qiy oladi"
+      ],
+      "answer": 3,
+      "why": "Kubernetes hujjati buni ochiq ogohlantiradi. base64 - kodlash, shifrlash emas."
+    },
+    {
+      "q": "Oddiy TLS va mTLS ning asosiy farqi nima?",
+      "options": [
+        "mTLS da klient ham sertifikat taqdim etadi va server klient identitetini kriptografik tekshiradi",
+        "mTLS tezroq",
+        "mTLS shifrlamaydi, faqat autentifikatsiya qiladi",
+        "mTLS faqat UDP da ishlaydi"
+      ],
+      "answer": 0,
+      "why": "Oddiy TLS faqat serverni autentifikatsiya qiladi. mTLS ikki tomonni ham, va identitet IP ga emas, sertifikatga bog'lanadi."
+    },
+    {
+      "q": "Istio da mTLS ni mavjud klasterga joriy qilish. Qaysi ketma-ketlik eng xavfsiz?",
+      "options": [
+        "Darhol STRICT - ochiq trafik yuboradigan servislar uziladi, lekin bu tez",
+        "DISABLE da qoldirish",
+        "PERMISSIVE bilan boshlash, barcha workloadlar sidecar va mTLS bilan ishlayotganini tasdiqlash, keyin STRICT",
+        "Faqat tashqi ingress da TLS"
+      ],
+      "answer": 2,
+      "why": "Istio hujjati DISABLE va STRICT orasida oraliq PERMISSIVE bosqichini tavsiya qiladi: u ham mTLS, ham ochiq trafikni qabul qiladi."
+    },
+    {
+      "q": "Workload sertifikatlari 24 soat yashaydi va avtomatik yangilanadi. Bu nima uchun revocation (CRL/OCSP) ehtiyojini keskin kamaytiradi?",
+      "options": [
+        "Qisqa sertifikatlarni buzib bo'lmaydi",
+        "24 soatlik sertifikatlar imzosiz bo'ladi",
+        "CRL faqat uzun sertifikatlar uchun ishlaydi",
+        "Buzilgan kalitli sertifikat tez orada o'z-o'zidan yaroqsiz bo'ladi, oyna kichik"
+      ],
+      "answer": 3,
+      "why": "Bu qisqa umrli access token mantiqi bilan bir xil: revocation kechikishi umr bilan chegaralanadi."
+    },
+    {
+      "q": "SMS provayder API kaliti ommaviy Git repozitoriyga tushib qoldi. Birinchi navbatda nima qilish kerak?",
+      "options": [
+        "Kalitni bekor qilish va yangisiga almashtirish, keyin ishlatilganini loglardan tekshirish",
+        "Git tarixini tozalash (force push)",
+        "Repozitoriyni private qilish",
+        "Kalitni environment variable ga ko'chirish"
+      ],
+      "answer": 0,
+      "why": "Ommaviy repodagi secret allaqachon klonlangan yoki skanerlangan deb hisoblanadi. Tarixni tozalash ikkinchi darajali."
+    }
+  ]
+}

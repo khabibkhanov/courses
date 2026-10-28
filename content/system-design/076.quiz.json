@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "HPA: 10 pod, maqsad o'rtacha CPU 60%, hozirgi 90%. Standart sozlamalarda nechta replika tavsiya qilinadi?",
+      "options": [
+        "10",
+        "12",
+        "15",
+        "20"
+      ],
+      "answer": 2,
+      "why": "ceil(10 x 90 / 60) = 15. Nisbat 1.5, tolerance (0.1) dan ancha katta."
+    },
+    {
+      "q": "HPA maqsadi 60%, hozirgi o'rtacha 64%. Nima bo'ladi?",
+      "options": [
+        "Hech narsa: nisbat 64/60 ≈ 1.07, standart 10% tolerance ichida",
+        "1 ta pod qo'shiladi",
+        "Pod soni ikki baravar oshadi",
+        "Scale-down boshlanadi"
+      ],
+      "answer": 0,
+      "why": "Tolerance tebranishni kamaytiradi: nisbat 1.0 ga 10% dan yaqin bo'lsa scaling qilinmaydi."
+    },
+    {
+      "q": "Barcha node lar haqiqiy CPU bo'yicha 95% band, lekin barcha podlar joylashgan (Pending yo'q). Cluster Autoscaler nima qiladi?",
+      "options": [
+        "Darhol yangi node qo'shadi",
+        "HPA ni o'chiradi",
+        "Eng band podlarni o'ldiradi",
+        "Hech narsa: u pending podlar va requests ga qaraydi, haqiqiy foydalanishga emas"
+      ],
+      "answer": 3,
+      "why": "CA ning vazifasi pending podlarga joy topish. Haqiqiy yuklama bo'yicha reaksiya HPA ning ishi."
+    },
+    {
+      "q": "M/M/1 modelida xizmat vaqti 10 ms. Bandlik 90% dan 95% ga oshsa, o'rtacha javob vaqti qanday o'zgaradi?",
+      "options": [
+        "Deyarli o'zgarmaydi (10 ms dan 10.5 ms)",
+        "100 ms dan 200 ms ga - ikki baravar",
+        "20 ms dan 25 ms ga",
+        "Kamayadi"
+      ],
+      "answer": 1,
+      "why": "W = S / (1 - ρ): 10/0.1 = 100 ms, 10/0.05 = 200 ms. Yuqori bandlikda latency chiziqli emas, portlaydi."
+    },
+    {
+      "q": "Yuklama 5 daqiqada 2 baravar o'sadi, maqsad bandlik 60%, autoscaling reaksiyasi (node qo'shish bilan) 5 daqiqa. Eng yomon holatda nima bo'ladi?",
+      "options": [
+        "Bandlik 66% ga chiqadi - xavfsiz",
+        "Bandlik ~120% ga yetadi - autoscaler ulgurmay tizim to'yinadi",
+        "Autoscaler oldindan biladi",
+        "Bandlik 30% ga tushadi"
+      ],
+      "answer": 1,
+      "why": "60% x 2 = 120%. Yechim: pastroq maqsad bandlik, overprovisioning (reaksiyani ~1 daqiqaga tushirish) yoki jadval asosida oldindan kengaytirish."
+    },
+    {
+      "q": "Kafka topic 24 partitionli. Consumer HPA si 40 podgacha kengaydi. Natija?",
+      "options": [
+        "Throughput 40/24 baravar oshadi",
+        "Consumer group buziladi",
+        "Kafka avtomatik partition qo'shadi",
+        "Faqat 24 ta consumer partition oladi, 16 tasi bo'sh turadi"
+      ],
+      "answer": 3,
+      "why": "Consumer group da faol consumerlar soni partitionlar soni bilan cheklangan. Partition soni - capacity planning qarori."
+    },
+    {
+      "q": "API servis asosan PostgreSQL ni kutadi; to'yinganda CPU 20%, lekin p99 latency 3 s. HPA CPU 60% maqsad bilan. Muammo?",
+      "options": [
+        "CPU bu servis uchun yomon signal - HPA hech narsa qilmaydi; in-flight so'rovlar yoki latency kabi metrika kerak (va bazaning o'zi bottleneck bo'lishi mumkin)",
+        "HPA juda tez scale qiladi",
+        "CPU limit juda past",
+        "Readiness probe xato"
+      ],
+      "answer": 0,
+      "why": "I/O-bog'liq servis CPU ishlatmasdan to'yinadi. Shuningdek, ko'proq pod bazaga ko'proq ulanish degani - downstream ni ham tekshirish kerak."
+    },
+    {
+      "q": "API 10 dan 40 podga kengaydi, har pod 20 ulanishli DB pool ochadi, PostgreSQL max_connections = 500. Nima bo'ladi?",
+      "options": [
+        "Hech narsa, PostgreSQL o'zi kengayadi",
+        "Faqat latency biroz oshadi",
+        "Ulanishlar 200 dan 800 ga - limitdan oshadi, yangi podlar bazaga ulana olmaydi; PgBouncer va pool hajmini qayta ko'rish kerak",
+        "HPA buni avtomatik hisobga oladi"
+      ],
+      "answer": 2,
+      "why": "Autoscaling butun zanjirni yuklaydi. 40 x 20 = 800 > 500."
+    },
+    {
+      "q": "Google SRE kitobidagi N+2 talabi nimani anglatadi?",
+      "options": [
+        "Har servisda 2 ta pod",
+        "2 ta regionda ishlash",
+        "Yuklama 2 baravar o'sishiga tayyor bo'lish",
+        "Talabni qondirish uchun N birlik + 2 zaxira: bittasi rejali xizmatda, bittasi kutilmagan buzilishda bo'lsa ham talab qondiriladi"
+      ],
+      "answer": 3,
+      "why": "N+2 bir vaqtda bitta rejali va bitta rejasiz yo'qotishga chidash imkonini beradi."
+    },
+    {
+      "q": "Lokal data-markazda yangi server xarid qilib o'rnatish 10 hafta oladi. Capacity prognozi gorizonti qanday bo'lishi kerak?",
+      "options": [
+        "Kamida lead time dan uzun (10 haftadan ko'p), odatda bir necha chorak",
+        "1 hafta - autoscaling qolganini qiladi",
+        "Prognoz kerak emas",
+        "Faqat cho'qqi kuni"
+      ],
+      "answer": 0,
+      "why": "SRE kitobi prognoz yangi resurs olish vaqtidan uzoqroq muddatga qarashi kerakligini aytadi. Autoscaler faqat mavjud hovuzdan resurs oladi."
+    }
+  ]
+}

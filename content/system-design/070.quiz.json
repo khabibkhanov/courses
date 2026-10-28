@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Chaos eksperimentining to'g'ri birinchi qadami qaysi?",
+      "options": [
+        "Tasodifiy serverni o'chirish",
+        "Tizimning normal xatti-harakatini ko'rsatadigan o'lchanadigan steady state ni aniqlash",
+        "Barcha alert'larni o'chirish",
+        "Production ga to'liq trafik bilan buzilish kiritish"
+      ],
+      "answer": 1,
+      "why": "Principles of Chaos Engineering: avval steady state, keyin gipoteza, keyin real buzilish va farqni qidirish."
+    },
+    {
+      "q": "Netflix Chaos Monkey nima uchun ish soatlarida ishlaydi?",
+      "options": [
+        "Tunda trafik yo'q",
+        "Muhandislar kuzatib turgan paytda nosozlikdan o'rganish va avtomatik tiklanishni qurish uchun",
+        "AWS tunda instance o'chirishga ruxsat bermaydi",
+        "Bu tasodif"
+      ],
+      "answer": 1,
+      "why": "Maqsad - zararni maksimal qilish emas, nazorat ostida o'rganish va zaifliklarni tuzatish."
+    },
+    {
+      "q": "SRE kitobiga ko'ra quyidagilardan qaysi biri incident e'lon qilish mezoni EMAS?",
+      "options": [
+        "Muammoni tuzatish uchun ikkinchi jamoa kerak",
+        "Uzilish mijozlarga ko'rinadi",
+        "Bir soatlik jamlangan tahlildan keyin ham hal bo'lmagan",
+        "Bitta pod bir marta restart bo'ldi va o'zi tiklandi"
+      ],
+      "answer": 3,
+      "why": "Qolgan uchtasi kitobdagi mezonlar. O'zi tiklangan, ta'sirsiz restart incident emas."
+    },
+    {
+      "q": "Incident paytida Incident Commander ning asosiy vazifasi nima?",
+      "options": [
+        "O'zi eng chuqur debugging qilish",
+        "Umumiy holatni ushlab turish, rollarni tayinlash, jonli incident hujjatini yuritish",
+        "Faqat mijozlar bilan gaplashish",
+        "Postmortem yozish"
+      ],
+      "answer": 1,
+      "why": "IC katta rasmni ko'radi va muvofiqlashtiradi; tizimni o'zgartirish ops lead da, tashqi aloqa communications lead da."
+    },
+    {
+      "q": "Deploy dan 15 daqiqa o'tib xatolar keskin oshdi, sabab hali noma'lum. Workbook tavsiyasiga ko'ra birinchi harakat qaysi?",
+      "options": [
+        "Asl sababni topguncha hech narsa qilmaslik",
+        "Umumiy yumshatish: deploy ni rollback qilish, keyin sabab tahlili",
+        "Barcha serverlarni restart qilish",
+        "Postmortem yozishni boshlash"
+      ],
+      "answer": 1,
+      "why": "Avval foydalanuvchi ta'sirini to'xtatish. Rollback sabab tushunilmasdan ham qo'llanadigan umumiy yumshatish."
+    },
+    {
+      "q": "Postmortem da qaysi formula blameless yondashuvga mos?",
+      "options": [
+        "Muhandis noto'g'ri serverda buyruq bajardi",
+        "Primary va replika host'lari bir xil ko'rinardi va xavfli buyruq tasdiq so'ramadi",
+        "Jamoa ehtiyotkor emas edi",
+        "Kimdir testni o'tkazib yubordi"
+      ],
+      "answer": 1,
+      "why": "Blameless postmortem shaxsni emas, qarorni shakllantirgan tizim va jarayonni tasvirlaydi va tuzatadi."
+    },
+    {
+      "q": "Qaysi action item eng sifatli?",
+      "options": [
+        "Monitoringni yaxshilash",
+        "Ehtiyotkorroq bo'lish",
+        "Ingest parser maksimal paket o'lchamini 64 KB bilan cheklaydi va undan kattasini rad etadi; integratsiya testi bilan, egasi: ingest jamoasi, muddat: 2 hafta",
+        "Ko'proq test yozish"
+      ],
+      "answer": 2,
+      "why": "Yaxshi action item aniq, tekshiriladigan, egali va muddatli. Qolganlari hech qachon yopilmaydi."
+    },
+    {
+      "q": "Google DiRT qoidalariga ko'ra har bir disaster test da nima bo'lishi shart?",
+      "options": [
+        "VP tasdig'i har doim",
+        "Qaytarish (rollback) rejasi",
+        "Faqat staging muhit",
+        "Mijozlarga oldindan xabar"
+      ],
+      "answer": 1,
+      "why": "Har bir testda revert rejasi majburiy; VP tasdig'i faqat production ga yuqori ta'sir xavfi bo'lgan testlar uchun."
+    },
+    {
+      "q": "Gateway pod'lari OOM bilan crash loop da. Muhandis pod sonini ikki baravar oshirdi, lekin yordam bermadi. Nima uchun?",
+      "options": [
+        "Kubernetes yangi pod'larni ishga tushirmadi",
+        "Har bir yangi pod ham o'sha zaharli paketlarni olib crash bo'ladi; muammo capacity emas, shuning uchun rollback yoki muammoli trafikni bloklash kerak",
+        "Pod soni yetarlicha oshirilmadi",
+        "OOM faqat bitta pod da edi"
+      ],
+      "answer": 1,
+      "why": "SRE kitobi: o'lim spiralida resurs qo'shish yordam bermasligi mumkin. Bu holatda yumshatish - versiyani qaytarish yoki yomon trafikni to'xtatish."
+    },
+    {
+      "q": "Netflix Chaos Kong mashqlari 2015 yil sentyabrdagi us-east-1 DynamoDB muammosida qanday foyda berdi?",
+      "options": [
+        "Hech qanday foyda bermadi",
+        "Muntazam region evakuatsiyasi mashqlari tufayli tizim trafikni boshqa regionga o'tkazishga tayyor edi va Netflix faqat qisqa availability tebranishini ko'rdi",
+        "Netflix DynamoDB dan voz kechdi",
+        "Chaos Kong DynamoDB ni tuzatdi"
+      ],
+      "answer": 1,
+      "why": "Netflix TechBlog ga ko'ra Chaos Kong mashqlari tufayli tizim region ishdan chiqqanda trafikni o'tkazishga tayyor edi, shuning uchun jiddiy ta'sirdan qochildi."
+    }
+  ]
+}

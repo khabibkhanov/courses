@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Raft serveri ovoz berdi, `votedFor` ni faqat xotirada saqladi, qulab qayta turdi va o'sha termning o'zida boshqa candidate'dan RequestVote oldi. Nima xavf bor?",
+      "options": [
+        "Hech qanday xavf yo'q",
+        "U ikkinchi candidate'ga ham ovoz berishi va bitta termda ikki lider paydo bo'lishi mumkin",
+        "Log yo'qoladi, lekin saylov to'g'ri",
+        "Faqat performance pasayadi"
+      ],
+      "answer": 1,
+      "why": "Election Safety har bir server bitta termda bitta ovoz berishiga tayanadi. Shuning uchun currentTerm va votedFor javobdan oldin diskka yoziladi."
+    },
+    {
+      "q": "5 server, oxirgi log yozuvlari (indeks, term): S1 (10,4), S2 (10,4), S3 (9,4), S4 (11,3), S5 (8,4). Qaysi server election restriction tufayli hech kimdan (o'zidan tashqari) ovoz ololmaydi?",
+      "options": ["S1", "S3", "S4", "S5"],
+      "answer": 2,
+      "why": "S4 eng uzun logga ega, lekin oxirgi termi 3 - boshqalarning oxirgi termi 4. Avval term solishtiriladi, keyin uzunlik."
+    },
+    {
+      "q": "Nega Raft election timeout'ni intervaldan (masalan 150-300 ms) tasodifiy tanlaydi?",
+      "options": [
+        "Tarmoq trafigini kamaytirish uchun",
+        "Bir nechta follower bir vaqtda candidate bo'lib, ovozlar cheksiz bo'linishining oldini olish uchun",
+        "Soatlarni sinxronlash uchun",
+        "Snapshot vaqtini tanlash uchun"
+      ],
+      "answer": 1,
+      "why": "Odatda bitta server boshqalardan oldin uyg'onib, saylovda g'olib bo'ladi. Maqoladagi tajribada tasodifiylik yo'q bo'lganda saylov 10 soniyadan oshgan."
+    },
+    {
+      "q": "Lider term 4 da. Uning logidagi term 2 yozuvi endi majority serverlarda bor. Lider uni darhol commit deb hisoblay oladimi?",
+      "options": [
+        "Ha, majority'da bo'lgani yetarli",
+        "Yo'q: oldingi term yozuvi faqat joriy term yozuvi majority'ga yozilgandan keyin bilvosita commit bo'ladi",
+        "Ha, agar barcha serverlarda bo'lsa ham",
+        "Faqat snapshot olingandan keyin"
+      ],
+      "answer": 1,
+      "why": "Maqoladagi 8-rasm: bunday yozuvni keyinroq boshqa lider ustiga yozishi mumkin. Shuning uchun yangi lider no-op commit qiladi."
+    },
+    {
+      "q": "Follower AppendEntries(prevLogIndex=7, prevLogTerm=3) oldi, lekin uning 7-indeksidagi yozuv termi 2. U nima qiladi?",
+      "options": [
+        "Yangi yozuvlarni baribir qo'shadi",
+        "success=false qaytaradi; lider nextIndex'ni kamaytirib, moslik nuqtasini topadi va undan keyingi ziddiyatli yozuvlar o'chiriladi",
+        "O'zini lider deb e'lon qiladi",
+        "Liderdan snapshot so'raydi va logni saqlab qoladi"
+      ],
+      "answer": 1,
+      "why": "Log Matching tekshiruvi. Lider logi haqiqat; follower'ning commit qilinmagan ziddiyatli yozuvlari o'chiriladi."
+    },
+    {
+      "q": "etcd tugunlari orasida RTT 75 ms. Hujjat tavsiyasiga ko'ra election timeout kamida qancha bo'lishi kerak?",
+      "options": ["75 ms", "150 ms", "750 ms", "7 500 ms"],
+      "answer": 2,
+      "why": "Election timeout kamida 10 × RTT. 75 × 10 = 750 ms; disk latency'si va zaxira bilan undan ham ko'proq."
+    },
+    {
+      "q": "Partition'ning minority tomonida qolgan eski lider klientning o'qish so'roviga o'z lokal holatidan javob berdi. Qaysi mexanizm buni oldini olardi?",
+      "options": [
+        "PreVote",
+        "ReadIndex: javobdan oldin majority bilan heartbeat almashib, liderlikni tasdiqlash",
+        "Snapshot",
+        "Joint consensus"
+      ],
+      "answer": 1,
+      "why": "Majority bilan tasdiq olmasdan lider o'zining eskirganini bilmaydi. Lease alternativasi ham bor, lekin u soat taxminiga tayanadi."
+    },
+    {
+      "q": "Tarmoqdan uzilib qaytgan follower o'z termini 37 ga oshirib yuborgan, barqaror klasterda term 12. U qaytganda barqaror liderni ag'darib yubormasligi uchun nima ishlatiladi?",
+      "options": ["Leader lease", "PreVote", "InstallSnapshot", "Learner a'zo"],
+      "answer": 1,
+      "why": "PreVote'da candidate termni oshirmasdan ovoz so'raydi; majority lider bilan aloqada bo'lsa, rad etadi. etcd'da standart yoqilgan."
+    },
+    {
+      "q": "Data-markaz ichida RTT 0.5 ms, liderda va follower'larda fsync 2 ms. 3 serverli Raft'da bitta yozuvning klientga ko'rinadigan latency'si taxminan qancha (klient-lider tarmog'isiz)?",
+      "options": ["~0.5 ms", "~2.5-4.5 ms", "~20 ms", "~100 ms"],
+      "answer": 1,
+      "why": "Lider fsync (2 ms) va eng tez follower'ga round-trip + uning fsync'i (0.5 + 2 ms) - parallel bo'lsa taxminan 2.5 ms, ketma-ket bo'lsa 4.5 ms atrofida."
+    },
+    {
+      "q": "Lider buyruqni commit qildi va state machine'ga qo'lladi, lekin klientga javob yuborishdan oldin qulab tushdi. Klient qayta yuboradi. Raft maqolasi ikki marta bajarilmasligi uchun nimani tavsiya qiladi?",
+      "options": [
+        "Klientga hech qachon qayta yubormaslikni aytish",
+        "Har bir buyruqqa klient seriya raqami; state machine har klient uchun oxirgi raqam va javobni saqlab, takrorga saqlangan javobni qaytaradi",
+        "Election timeout'ni oshirish",
+        "Logni har safar to'liq qayta yuborish"
+      ],
+      "answer": 1,
+      "why": "Bu idempotency: takroriy buyruq aniqlanadi va qayta bajarilmaydi."
+    }
+  ]
+}

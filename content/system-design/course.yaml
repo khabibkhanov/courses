@@ -1,0 +1,178 @@
+# Kurs tavsifi va syllabus. Dars fayli: NNN.md (frontmatter: title, minutes) + NNN.quiz.json.
+# Dars sarlavhasi shu yerdagi title bilan aynan bir xil bo'lishi shart.
+slug: system-design
+title: System Design
+subtitle: "Talablardan distributed systems va case study'largacha - 100 dars"
+description: "Talablar va trade-offlardan storage internals, masshtablash, distributed systems, messaging, ishonchlilik, xavfsizlik va real tizimlar case study'larigacha. Har darsda ichki mexanika, raqamlar\
+  \ bilan hisob-kitob, diagrammalar, test va loyihalash topshirig'i."
+audience: "Backend yoki full-stack tajribasi bor dasturchilar uchun: HTTP, SQL va bitta backend tilini bilasiz deb hisoblanadi. Asoslar o'tkazib yuborilmaydi, lekin boshlang'ich darajada tushuntirilmaydi."
+order: 3
+color: "#2f5bea"
+format: lessons-md
+passScore: 0.8
+library:
+- title: Designing Data-Intensive Applications, 2-nashr (2026)
+  by: Kleppmann, Riccomini
+  href: "https://www.oreilly.com/library/view/designing-data-intensive/9781098119058/"
+- title: Database Internals
+  by: Alex Petrov
+  href: "https://www.databass.dev/"
+- title: Understanding Distributed Systems
+  by: Roberto Vitillo
+  href: "https://understandingdistributed.systems/"
+- title: Site Reliability Engineering
+  by: Google
+  href: "https://sre.google/sre-book/table-of-contents/"
+- title: System Design Interview, 1-2 jild
+  by: Alex Xu
+  href: "https://bytebytego.com/"
+- title: 6.5840 Distributed Systems
+  by: MIT
+  href: "https://pdos.csail.mit.edu/6.824/"
+- title: "Amazon Builders' Library"
+  by: AWS
+  href: "https://aws.amazon.com/builders-library/"
+- title: System Design Primer
+  by: donnemartin
+  href: "https://github.com/donnemartin/system-design-primer"
+modules:
+- n: 1
+  title: Asoslar va fikrlash usuli
+  goal: Talablarni aniqlash, raqamlar bilan fikrlash, tarmoq va API qatlamini chuqur tushunish
+  lessons:
+  - {n: 1, title: "System design nima: talablar, trade-off va dizayn jarayoni"}
+  - {n: 2, title: Latency raqamlari va back-of-envelope hisob-kitob}
+  - {n: 3, title: 'Throughput, latency, percentile (p50/p99), tail latency va Little qonuni'}
+  - {n: 4, title: "Mashina ichida: CPU cache, RAM, SSD/HDD, sequential vs random IO, page cache"}
+  - {n: 5, title: "Tarmoq: TCP/IP, handshake, congestion control, UDP"}
+  - {n: 6, title: "DNS: resolve jarayoni, TTL, anycast, DNS orqali load balancing"}
+  - {n: 7, title: 'HTTP/1.1, HTTP/2, HTTP/3 (QUIC) va TLS 1.3'}
+  - {n: 8, title: "Real-time aloqa: polling, long polling, SSE, WebSocket, MQTT"}
+  - {n: 9, title: "API dizayn: REST, gRPC, GraphQL, pagination, versioning, idempotency key"}
+  - {n: 10, title: "Serialization va schema evolution: JSON, Protobuf, Avro"}
+- n: 2
+  title: "Ma'lumot saqlashning ichki tuzilishi"
+  goal: "Bazalar ichida nima bo'layotganini bilish: storage engine, indeks, tranzaksiya, izolyatsiya"
+  lessons:
+  - {n: 11, title: "Ma'lumot modellari: relational, document, graph, wide-column, key-value"}
+  - {n: 12, title: "Storage engine asoslari: append-only log va hash index"}
+  - {n: 13, title: 'LSM-tree, SSTable, compaction, Bloom filter'}
+  - {n: 14, title: 'B-tree, WAL va B-tree vs LSM (write/read/space amplification)'}
+  - {n: 15, title: "Indekslar: secondary, composite, covering, partial, GIN/GiST va query planner"}
+  - {n: 16, title: 'OLTP vs OLAP, column-oriented storage'}
+  - {n: 17, title: "Tranzaksiyalar: ACID ning haqiqiy ma'nosi"}
+  - {n: 18, title: "Isolation darajalari va anomaliyalar: lost update, write skew, phantom"}
+  - {n: 19, title: 'MVCC, snapshot isolation va Serializable (2PL, SSI)'}
+  - {n: 20, title: "Baza tanlash: qaror freymvorki"}
+- n: 3
+  title: Masshtablash
+  goal: "Yuklama oshganda tizimni qanday kengaytirish: LB, cache, replication, sharding"
+  lessons:
+  - {n: 21, title: 'Vertical va horizontal scaling, stateless servislar'}
+  - {n: 22, title: "Load balancing: L4 vs L7, algoritmlar, health check"}
+  - {n: 23, title: "Caching strategiyalari: cache-aside, write-through, write-back, eviction"}
+  - {n: 24, title: "Caching muammolari: invalidation, stampede, hot key; Redis ichki tuzilishi"}
+  - {n: 25, title: CDN va edge caching}
+  - {n: 26, title: "Replication: single-leader, sync/async, replication lag"}
+  - {n: 27, title: 'Multi-leader va leaderless replication, quorum'}
+  - {n: 28, title: "Partitioning (sharding): range, hash, rebalancing"}
+  - {n: 29, title: Consistent hashing va virtual node}
+  - {n: 30, title: 'Sharding va secondary index, request routing, hot partition'}
+- n: 4
+  title: Distributed systems nazariyasi
+  goal: Taqsimlangan tizimlarning fundamental cheklovlari va ularni yengish algoritmlari
+  lessons:
+  - {n: 31, title: "Distributed tizim muammolari: tarmoq, partial failure, timeout"}
+  - {n: 32, title: "Vaqt va soatlar: NTP, Lamport, vector clock, HLC"}
+  - {n: 33, title: "Consistency modellari: linearizability, causal, eventual"}
+  - {n: 34, title: "CAP va PACELC ni to'g'ri tushunish"}
+  - {n: 35, title: "Consensus muammosi, FLP natijasi, Paxos g'oyasi"}
+  - {n: 36, title: "Raft batafsil: leader election, log replication, safety"}
+  - {n: 37, title: "Distributed tranzaksiyalar: 2PC va uning muammolari"}
+  - {n: 38, title: 'Leader election, distributed lock, lease va fencing token'}
+  - {n: 39, title: Idempotency va exactly-once tushunchasi}
+  - {n: 40, title: CRDT va konfliktlarni hal qilish}
+- n: 5
+  title: Asinxron tizimlar, messaging va streaming
+  goal: Navbatlar, Kafka, event-driven arxitektura va ular atrofidagi patternlar
+  lessons:
+  - {n: 41, title: "Message queue asoslari: point-to-point vs pub/sub, delivery semantics"}
+  - {n: 42, title: RabbitMQ va SQS modeli}
+  - {n: 43, title: "Kafka arxitekturasi: log, partition, consumer group, offset"}
+  - {n: 44, title: "Kafka chuqur: replication, ISR, acks, retention, compaction"}
+  - {n: 45, title: "Stream processing: windowing, watermark, event time vs processing time"}
+  - {n: 46, title: Event-driven arxitektura va event sourcing}
+  - {n: 47, title: CQRS}
+  - {n: 48, title: Transactional outbox va CDC}
+  - {n: 49, title: "Saga pattern: orchestration vs choreography"}
+  - {n: 50, title: 'Backpressure, dead letter queue, retry strategiyalari'}
+- n: 6
+  title: Arxitektura patternlari va qurilish bloklari
+  goal: Servislarni ajratish, aloqa, gateway, rate limiting, ID, search, blob storage
+  lessons:
+  - {n: 51, title: "Monolit, modular monolit, microservices: qachon qaysi"}
+  - {n: 52, title: "Servis chegaralari: DDD va bounded context"}
+  - {n: 53, title: "Servislar aloqasi: sync vs async, service discovery"}
+  - {n: 54, title: API Gateway va BFF}
+  - {n: 55, title: Service mesh va sidecar}
+  - {n: 56, title: "Rate limiting: token bucket, sliding window, distributed rate limiter"}
+  - {n: 57, title: "Unique ID generatsiya: UUIDv7, Snowflake"}
+  - {n: 58, title: "Batch processing: MapReduce va Spark g'oyalari"}
+  - {n: 59, title: "Qidiruv tizimlari: inverted index va Elasticsearch"}
+  - {n: 60, title: Object storage (S3) va fayl yuklash dizayni}
+- n: 7
+  title: Ishonchlilik va operatsiyalar
+  goal: Tizim buzilganda ham ishlashi, uni kuzatish va xavfsiz deploy qilish
+  lessons:
+  - {n: 61, title: "Reliability asoslari: fault vs failure, redundancy, SPOF"}
+  - {n: 62, title: 'Timeout, retry, exponential backoff va jitter'}
+  - {n: 63, title: 'Circuit breaker, bulkhead, load shedding'}
+  - {n: 64, title: Cascading failure va graceful degradation}
+  - {n: 65, title: 'SLI, SLO, SLA va error budget'}
+  - {n: 66, title: "Observability: metrics, logs, traces, OpenTelemetry"}
+  - {n: 67, title: "Monitoring va alerting dizayni: RED va USE"}
+  - {n: 68, title: "Deploy strategiyalari: blue-green, canary, feature flag"}
+  - {n: 69, title: "Disaster recovery: RPO/RTO, backup, multi-region failover"}
+  - {n: 70, title: 'Chaos engineering, incident management, postmortem'}
+- n: 8
+  title: Xavfsizlik va infratuzilma
+  goal: Auth, multi-tenancy, Kubernetes, multi-region va xarajatni hisobga olgan dizayn
+  lessons:
+  - {n: 71, title: "Autentifikatsiya: session, JWT, OAuth2, OIDC"}
+  - {n: 72, title: "Avtorizatsiya: RBAC, ABAC, ReBAC (Zanzibar)"}
+  - {n: 73, title: Multi-tenancy dizayni (SaaS)}
+  - {n: 74, title: 'Shifrlash, secrets boshqaruvi, mTLS'}
+  - {n: 75, title: "Konteynerlar va Kubernetes: system design nuqtai nazaridan"}
+  - {n: 76, title: Autoscaling va capacity planning}
+  - {n: 77, title: Multi-region arxitektura va geo-routing}
+  - {n: 78, title: "Data lifecycle: retention, arxivlash, data residency"}
+  - {n: 79, title: Xarajatni hisobga olgan (cost-aware) dizayn}
+  - {n: 80, title: DDoS himoyasi va WAF}
+- n: 9
+  title: Maxsus tizimlar
+  goal: "Time-series, geo, video, notification, to'lov va AI tizimlari dizayni"
+  lessons:
+  - {n: 81, title: "Time-series ma'lumotlar: saqlash, downsampling, ClickHouse/TimescaleDB"}
+  - {n: 82, title: "Geospatial indekslash: geohash, quadtree, S2, H3, R-tree"}
+  - {n: 83, title: Geofencing va proximity search}
+  - {n: 84, title: "Video ingest va streaming: RTSP, HLS, transcoding"}
+  - {n: 85, title: "Notification tizimi: push, SMS, email"}
+  - {n: 86, title: Real-time chat va presence}
+  - {n: 87, title: "News feed: fan-out on write vs fan-out on read"}
+  - {n: 88, title: "To'lov tizimlari: ledger, double-entry, idempotency"}
+  - {n: 89, title: Recommendation va ML serving asoslari}
+  - {n: 90, title: "LLM tizimlari dizayni: RAG va inference serving"}
+- n: 10
+  title: Case study va yakuniy loyiha
+  goal: "O'rganilgan hamma narsani real tizimlarni boshidan oxirigacha loyihalashda qo'llash"
+  lessons:
+  - {n: 91, title: "Interview va review freymvorki: dizaynni qanday taqdim etish"}
+  - {n: 92, title: "Case: URL shortener"}
+  - {n: 93, title: "Case: distributed key-value store (Dynamo)"}
+  - {n: 94, title: "Case: web crawler"}
+  - {n: 95, title: "Case: ride-hailing (Uber)"}
+  - {n: 96, title: "Case: fleet tracking platforma - 100k qurilmadan telemetriya"}
+  - {n: 97, title: "Case: collaborative editing (Google Docs)"}
+  - {n: 98, title: "Case: video platforma (YouTube)"}
+  - {n: 99, title: "Case: chipta sotish va flash sale (Ticketmaster)"}
+  - {n: 100, title: "Yakuniy loyiha: o'z tizimingizni to'liq dizayn qilish va review"}

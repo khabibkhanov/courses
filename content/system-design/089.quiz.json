@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Nega recommendation tizimlari ko'p bosqichli voronka (candidate generation, ranking) bilan quriladi?",
+      "options": [
+        "Bitta model yetarlicha aniq emas",
+        "Millionlab elementni og'ir model bilan baholash juda qimmat; arzon bosqich nomzodlarni yuzlargacha qisqartiradi, og'ir model faqat ularni baholaydi",
+        "Har bir bosqich boshqa dasturlash tilida yozilgani uchun",
+        "Faqat A/B test qilish oson bo'lishi uchun"
+      ],
+      "answer": 1,
+      "why": "10 million element x 1 ms = 10 000 s. Voronka har bosqichda nomzodlarni kamaytirib, og'ir hisobni kichik to'plamga qoldiradi."
+    },
+    {
+      "q": "5 000 so'rov/s, so'rov boshiga 500 nomzod, ranking element boshiga 20 mikrosekund CPU. Taxminan nechta CPU yadro faqat ranking uchun kerak?",
+      "options": [
+        "Taxminan 5",
+        "Taxminan 50",
+        "Taxminan 500",
+        "Taxminan 5 000"
+      ],
+      "answer": 1,
+      "why": "5 000 x 500 = 2.5 M baholash/s, x 20 us = 50 CPU-soniya har soniyada, ya'ni taxminan 50 yadro (zaxirasiz)."
+    },
+    {
+      "q": "Model offline baholashda a'lo natija berdi, production'da esa yomon. Feature'lar train uchun Spark SQL da, serving uchun Node.js kodida alohida hisoblanadi. Eng ehtimolli sabab?",
+      "options": [
+        "Model juda kichik",
+        "Training-serving skew: ikki xil kod bir xil feature uchun turli qiymat beradi",
+        "GPU yo'q",
+        "Kafka kechikishi"
+      ],
+      "answer": 1,
+      "why": "Feature ta'rifi bitta bo'lishi yoki serving paytidagi feature'lar log qilinib, train shulardan qilinishi kerak."
+    },
+    {
+      "q": "Train ma'lumotida 'haydovchining 30 kunlik tormoz soni' feature'i misol vaqti uchun emas, bugungi kun uchun hisoblangan. Qanday muammo?",
+      "options": [
+        "Hech qanday muammo yo'q",
+        "Point-in-time to'g'rilik buzilgan: kelajak ma'lumoti feature'ga sizib kiradi va offline metrikalar sun'iy yaxshi chiqadi",
+        "Feature store hajmi oshadi",
+        "Model sekinlashadi"
+      ],
+      "answer": 1,
+      "why": "Har bir train misoli uchun feature o'sha paytda ma'lum bo'lgan qiymat bo'lishi kerak (point-in-time join)."
+    },
+    {
+      "q": "10 million element, 256 o'lchovli float32 embedding. Xom vektorlar taxminan qancha xotira oladi?",
+      "options": [
+        "Taxminan 1 GB",
+        "Taxminan 10 GB",
+        "Taxminan 100 GB",
+        "Taxminan 1 TB"
+      ],
+      "answer": 1,
+      "why": "10 000 000 x 256 x 4 bayt = 10.24 GB. HNSW graf bog'lanishlari ustiga qo'shiladi."
+    },
+    {
+      "q": "HNSW ning aniq (exact) kNN ga nisbatan asosiy trade-off'i nima?",
+      "options": [
+        "Aniqroq, lekin sekinroq",
+        "Ancha tez (maqolaga ko'ra logarifmik o'sish), lekin recall 100% emas va xotira hamda qurish vaqti ko'proq",
+        "Xotira kamroq, lekin faqat 2 o'lchovda ishlaydi",
+        "Faqat GPU da ishlaydi"
+      ],
+      "answer": 1,
+      "why": "ANN aniqlikning ozgina qismini tezlikka almashtiradi. HNSW graf qo'shimcha xotira talab qiladi."
+    },
+    {
+      "q": "Haydovchi xavf skori kirishlari 30 kunlik hodisalar va skor kuniga bir marta yangilansa yetarli. Qaysi serving usuli mos?",
+      "options": [
+        "Online GPU model servis, har so'rovda",
+        "Kunlik batch job, natija jadvalga yoziladi va UI shu jadvaldan o'qiydi",
+        "Edge, trekerning ichida",
+        "Har GPS nuqtada streaming inference"
+      ],
+      "answer": 1,
+      "why": "Natija sekin o'zgaradi. Batch eng arzon va sodda; online servis bu yerda keraksiz murakkablik."
+    },
+    {
+      "q": "Yangi ranking modelini real foydalanuvchilarga ta'sir qilmasdan latency va xatolar bo'yicha tekshirish usuli qaysi?",
+      "options": [
+        "Darhol 100% trafikka chiqarish",
+        "Shadow deploy: model real trafikni qayta ishlaydi, natija faqat log qilinadi va eski model bilan solishtiriladi",
+        "Faqat offline baholash",
+        "Modelni ishlab chiquvchi noutbukida sinash"
+      ],
+      "answer": 1,
+      "why": "Shadow real yuklama va kirishlarda xavfsiz tekshiruv beradi. Keyin canary yoki A/B bilan biznes ta'siri o'lchanadi."
+    },
+    {
+      "q": "Yangi turdagi ДУТ datchiklari o'rnatilgach, yoqilg'i anomaliya modeli soxta ogohlantirishlarni ko'paytirdi, servis latency va xatolari normal. Bu nima va qanday aniqlanadi?",
+      "options": [
+        "Infratuzilma nosozligi; CPU monitoringi bilan",
+        "Data drift: kirish feature taqsimoti o'zgargan; feature va prediction taqsimotini datchik turi bo'yicha monitoring qilish kerak",
+        "Kafka lag; consumer lag metrikasi bilan",
+        "Concept drift emas, faqat tasodif"
+      ],
+      "answer": 1,
+      "why": "ML ga xos monitoring (feature va prediction drift) oddiy servis metrikalarida ko'rinmaydigan muammolarni ushlaydi."
+    },
+    {
+      "q": "Model servis 300 ms timeout bilan javob bermadi. Recommendation sahifasi uchun to'g'ri xatti-harakat qaysi?",
+      "options": [
+        "Foydalanuvchiga 500 xato ko'rsatish",
+        "Oddiy fallback (mashhur yoki qoidalar asosidagi ro'yxat) qaytarish va hodisani log qilish",
+        "Cheksiz kutish",
+        "Sahifani bo'sh qoldirib, qayta yuklashni so'rash"
+      ],
+      "answer": 1,
+      "why": "Graceful degradation: ML qismi ishlamay qolishi butun sahifa ishlamay qolishiga aylanmasligi kerak."
+    }
+  ]
+}

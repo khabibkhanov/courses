@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Qaysi operatsiya tabiiy ravishda idempotent?",
+      "options": [
+        "UPDATE accounts SET balance = balance - 100 WHERE id = 7",
+        "INSERT INTO orders (...) avtomatik ID bilan",
+        "UPDATE vehicles SET status = 'blocked' WHERE id = 42",
+        "SMS yuborish"
+      ],
+      "answer": 2,
+      "why": "Qiymatni to'g'ridan-to'g'ri o'rnatish necha marta bajarilsa ham bir xil holat beradi. Inkrement, yangi ID bilan insert va tashqi side effect'lar idempotent emas."
+    },
+    {
+      "q": "Nega tarmoq ustida xabarni fizik jihatdan aniq bir marta yetkazish imkonsiz?",
+      "options": [
+        "TCP buni qo'llab-quvvatlamaydi",
+        "Jo'natuvchi tasdiq olmasa, qayta yuborish (dublikat) yoki yubormaslik (yo'qotish) orasida tanlashi kerak - xabar yetganini bilish imkoni yo'q",
+        "Broker'lar juda sekin",
+        "Soatlar sinxron emas"
+      ],
+      "answer": 1,
+      "why": "31-darsdagi noaniqlik: javob yo'qolishi va so'rov yo'qolishi bir xil ko'rinadi. Amaliy exactly-once = at-least-once + idempotent qayta ishlash."
+    },
+    {
+      "q": "Idempotency key qayerda yaratilishi kerak?",
+      "options": [
+        "Serverda, birinchi so'rov kelganda",
+        "Klientda, mantiqiy operatsiya boshlanganda, va barcha retry'larda o'zgarmaydi",
+        "Load balancer'da",
+        "Har bir retry'da yangi kalit"
+      ],
+      "answer": 1,
+      "why": "Klient javobni olmasa, server yaratgan kalitni bilmaydi. Kalit retry'lar orasida bir xil bo'lsagina takrorni tanish mumkin."
+    },
+    {
+      "q": "Bir xil Idempotency-Key bilan ikkinchi so'rov keldi, lekin summa boshqacha. IETF draft va Stripe amaliyotiga ko'ra server nima qilishi kerak?",
+      "options": [
+        "Birinchi javobni qaytarish",
+        "Yangi summa bilan operatsiyani bajarish",
+        "Xato qaytarish (draft bo'yicha 422) - kalit noto'g'ri qayta ishlatilgan",
+        "Hech narsa qaytarmaslik"
+      ],
+      "answer": 2,
+      "why": "Server asl parametrlarni saqlab, solishtiradi. Farq bo'lsa, bu klient xatosi va operatsiya bajarilmaydi."
+    },
+    {
+      "q": "Birinchi so'rov hali bajarilmoqda (in_progress) va xuddi shu kalit bilan ikkinchi so'rov keldi. To'g'ri javob qaysi?",
+      "options": [
+        "Operatsiyani ikkinchi marta parallel bajarish",
+        "409 - hali bajarilmoqda, keyinroq qayta urinish",
+        "200 bo'sh javob bilan",
+        "Birinchi so'rovni bekor qilish"
+      ],
+      "answer": 1,
+      "why": "Parallel takrorni bajarish dublikatga olib keladi. Klient so'rovni o'zgartirmasdan keyinroq qayta yuborishi mumkin."
+    },
+    {
+      "q": "Idempotency kalitlari Redis'da, biznes ma'lumot PostgreSQL'da saqlanadi. Asosiy xavf nima?",
+      "options": [
+        "Redis sekin",
+        "Ikki tizim orasida atomiklik yo'q: biriga yozilib, ikkinchisiga yozilmasa, dublikat yoki yo'qolgan operatsiya bo'ladi",
+        "PostgreSQL kalitlarni saqlay olmaydi",
+        "Hech qanday xavf yo'q"
+      ],
+      "answer": 1,
+      "why": "Kalit yozuvi va biznes o'zgarish birga muvaffaqiyatli yoki birga muvaffaqiyatsiz bo'lishi kerak; eng sodda yo'li - bitta bazada bitta tranzaksiya."
+    },
+    {
+      "q": "Kafka consumer xabarni qayta ishlab, natijani PostgreSQL'ga yozdi, lekin offset commit qilishdan oldin quladi. Kafka EOS yoqilgan. Natija bazada ikki marta paydo bo'lishi mumkinmi?",
+      "options": [
+        "Yo'q, Kafka EOS buni to'liq oldini oladi",
+        "Ha: Kafka transactions tashqi bazaga yozishni qamramaydi; inbox jadvali yoki offset'ni bazada saqlash kerak",
+        "Faqat read_uncommitted bo'lsa",
+        "Faqat producer idempotent bo'lmasa"
+      ],
+      "answer": 1,
+      "why": "Kafka EOS Kafka ichidagi holat uchun. Tashqi side effect'larni ilova o'zi idempotent qilishi kerak."
+    },
+    {
+      "q": "Consumer kuniga 50 million xabar qayta ishlaydi, har bir inbox yozuvi ~60 bayt, dedup oynasi 7 kun. Inbox jadvali taxminan qancha joy egallaydi?",
+      "options": ["~3 GB", "~21 GB", "~210 GB", "~2.1 TB"],
+      "answer": 1,
+      "why": "50M × 7 × 60 B = 21 GB. Tabiiy kalit bilan upsert yoki partition bo'yicha offset saqlash bu hajmni keskin kamaytiradi."
+    },
+    {
+      "q": "Kafka idempotent producer qaysi dublikatlarni yo'q qiladi?",
+      "options": [
+        "Foydalanuvchi tugmani ikki marta bosganda paydo bo'lgan dublikatlarni",
+        "Producer retry'lari tufayli bitta partition'ga takror yozilgan batch'larni (producer ID va ketma-ket raqam bo'yicha)",
+        "Consumer qayta ishlash dublikatlarini",
+        "Turli producer'lar yuborgan bir xil xabarlarni"
+      ],
+      "answer": 1,
+      "why": "Broker har partition uchun oxirgi raqamni eslab, takroriy batch'ni rad etadi. Ilova darajasidagi dublikatlar boshqa mexanizm talab qiladi."
+    },
+    {
+      "q": "SMS provayderi request_id ni 24 soat eslaydi. Notification servisi 30 soatlik uzilishdan keyin qayta ishga tushib, eski hodisalarni qayta yuboradi. Qanday himoya kerak?",
+      "options": [
+        "Provayderning dedup'iga ishonish yetarli",
+        "O'z bazasida \"yuborildi\" holatini hodisa ID'si bo'yicha saqlash va yuborishdan oldin tekshirish",
+        "Request_id ni har safar yangilash",
+        "Uzilishdan keyin barcha hodisalarni o'chirish"
+      ],
+      "answer": 1,
+      "why": "Tashqi tizimning dedup oynasi cheklangan. Uzunroq uzilishlar uchun o'z holatingiz (outbox yoki sent jadvali) kerak."
+    }
+  ]
+}

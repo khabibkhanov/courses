@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Microservices tizimida 12 ta servis JWT ni HS256 bilan tekshiradi. Asosiy xavf nima?",
+      "options": [
+        "HS256 imzosi juda katta, trafik oshadi",
+        "HS256 ni brauzerlar qo'llab-quvvatlamaydi",
+        "Secret ni biladigan har bir servis token soxtalashtira oladi - bittasi buzilsa, butun tizim buziladi",
+        "HS256 tokenlarida exp claimi bo'lmaydi"
+      ],
+      "answer": 2,
+      "why": "Simmetrik algoritmda tekshirish kaliti va imzolash kaliti bitta. Asimmetrik (ES256, RS256) da faqat auth server private key ga ega, servislar faqat public key ni biladi."
+    },
+    {
+      "q": "Kutubxona JWT headeridagi alg qiymatiga qarab tekshirish usulini tanlaydi. Token RS256 bilan imzolanishi kerak edi. Hujumchi nima qila oladi?",
+      "options": [
+        "alg ni HS256 ga o'zgartirib, ochiq public key ni HMAC secret sifatida ishlatib o'zi imzolaydi",
+        "Hech narsa, RSA kalitini buzib bo'lmaydi",
+        "Faqat exp ni uzaytira oladi",
+        "Faqat payloadni o'qiy oladi, o'zgartira olmaydi"
+      ],
+      "answer": 0,
+      "why": "Bu RFC 8725 da tasvirlangan algoritm almashtirish hujumi. Yechim - ruxsat etilgan algoritmni oldindan belgilash va bir kalitni faqat bitta algoritm bilan ishlatish."
+    },
+    {
+      "q": "Access token umri 1 soat, denylist yo'q. Admin xodimni 10:00 da bloklaydi, xodimning tokeni 9:55 da chiqarilgan. Eng yomon holatda xodim API ga qachongacha kira oladi?",
+      "options": [
+        "10:00 gacha",
+        "10:05 gacha",
+        "11:00 gacha",
+        "10:55 gacha"
+      ],
+      "answer": 3,
+      "why": "Self-contained token exp gacha amal qiladi: 9:55 + 60 daqiqa = 10:55. Revocation kechikishi token umriga teng, shuning uchun access tokenlar qisqa umrli qilinadi."
+    },
+    {
+      "q": "Authorization code oqimida PKCE qaysi hujumni to'sadi?",
+      "options": [
+        "XSS orqali cookie o'g'irlashni",
+        "Ushlab qolingan authorization code ni boshqa tomon tokenga almashtirishini",
+        "Parolni brute-force qilishni",
+        "DDoS hujumini"
+      ],
+      "answer": 1,
+      "why": "AS faqat code_challenge (verifier xeshi) ni biladi. Code ni ushlagan hujumchida asl code_verifier yo'q, shuning uchun token endpoint uni rad etadi."
+    },
+    {
+      "q": "RFC 9700 ga ko'ra Resource Owner Password Credentials grant haqida qaysi biri to'g'ri?",
+      "options": [
+        "Faqat mobil ilovalar uchun tavsiya etiladi",
+        "Ishlatilmasligi shart (MUST NOT): parol klientga ochiladi va MFA bilan mos emas",
+        "PKCE bilan birga ishlatilsa xavfsiz",
+        "Faqat confidential klientlar uchun majburiy"
+      ],
+      "answer": 1,
+      "why": "Password grant foydalanuvchi parolini klientga beradi va ko'p bosqichli autentifikatsiyani qo'llamaydi, shuning uchun BCP uni taqiqlaydi."
+    },
+    {
+      "q": "Frontend dasturchi foydalanuvchi ma'lumotini olish uchun ID token ni fleet API ga Bearer sifatida yuborishni taklif qiladi. Nima noto'g'ri?",
+      "options": [
+        "Hech narsa, ID token ham JWT",
+        "ID token faqat bir marta ishlatiladi",
+        "ID token shifrlangan, API uni o'qiy olmaydi",
+        "ID token client uchun chiqarilgan (aud = client_id), API uchun emas; API faqat o'ziga mo'ljallangan access tokenni qabul qilishi kerak"
+      ],
+      "answer": 3,
+      "why": "ID token login natijasini clientga bildiradi. API ga access token yuboriladi va API aud ni tekshirib, o'ziga tegishli bo'lmagan tokenni rad etadi."
+    },
+    {
+      "q": "Ikki xil OIDC provayderdan kelgan foydalanuvchini bir akkauntga bog'lash uchun qaysi kalit to'g'ri?",
+      "options": [
+        "iss va sub juftligi",
+        "preferred_username",
+        "email",
+        "Telefon raqami"
+      ],
+      "answer": 0,
+      "why": "sub faqat bitta issuer ichida unikal va barqaror. Email o'zgaradi va tasdiqlanmagan bo'lishi mumkin, email bo'yicha avtomatik birlashtirish account takeover ga olib keladi."
+    },
+    {
+      "q": "Bank darajasidagi SPA uchun RFC 10017 qaysi arxitekturani eng kuchli tavsiya qiladi?",
+      "options": [
+        "Tokenlarni localStorage da saqlaydigan public client",
+        "Implicit grant",
+        "BFF: tokenlar serverda, brauzerda faqat HttpOnly session cookie",
+        "Token-mediating backend, access token brauzerga beriladi"
+      ],
+      "answer": 2,
+      "why": "BFF da brauzer hech qachon tokenni ko'rmaydi, shuning uchun XSS tokenni o'g'irlay olmaydi. Hujjat uni biznes va shaxsiy ma'lumotli ilovalar uchun qat'iy tavsiya qiladi."
+    },
+    {
+      "q": "Haydovchi ilovasining access tokeni o'g'irlandi. Token DPoP bilan bog'langan. Hujumchi uni boshqa qurilmadan ishlata oladimi?",
+      "options": [
+        "Ha, bearer token kimda bo'lsa o'sha ishlatadi",
+        "Faqat exp o'tgandan keyin yo'q",
+        "Faqat GET so'rovlar uchun ha",
+        "Yo'q: RS har so'rovda client private key bilan imzolangan proof va token ichidagi cnf.jkt mosligini talab qiladi"
+      ],
+      "answer": 3,
+      "why": "DPoP tokenni client kalitiga bog'laydi. Private key siz to'g'ri proof yaratib bo'lmaydi, shuning uchun o'g'irlangan token yaroqsiz."
+    },
+    {
+      "q": "GPS trekerlar faqat IMEI ni yuborib autentifikatsiya qilinadi. Asosiy muammo nima?",
+      "options": [
+        "IMEI secret emas - korpusda yozilgan va ma'lum, uni bilgan har kim shu mashina nomidan soxta koordinata yubora oladi",
+        "IMEI juda uzun, trafik oshadi",
+        "IMEI ni ma'lumotlar bazasida saqlab bo'lmaydi",
+        "IMEI har kuni o'zgaradi"
+      ],
+      "answer": 0,
+      "why": "Identifikator va credential ni ajratish kerak. IMEI - identifikator; isbot uchun qurilma secret yoki mTLS sertifikat kerak."
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "GPS treker har 10 soniyada nuqta yuboradi. Gorilla uslubidagi delta-of-delta kodlashda vaqt belgilari nega juda yaxshi siqiladi?",
+      "options": [
+        "Vaqt belgilari ZSTD bilan siqilgani uchun",
+        "Qo'shni nuqtalar orasidagi farq deyarli doim bir xil, shuning uchun farqlar farqi deyarli doim 0 va bitta bit bilan kodlanadi",
+        "Vaqt belgilari 32 bitga qisqartirilgani uchun",
+        "Vaqt belgilari faqat har 1000-nuqtada saqlangani uchun"
+      ],
+      "answer": 1,
+      "why": "Davriy ma'lumotda delta doimiy, delta-of-delta esa 0 ga yaqin. Gorilla maqolasida vaqt belgilarining taxminan 96 foizi bitta bitga siqilgan."
+    },
+    {
+      "q": "90 kundan eski telemetriyani o'chirishning eng to'g'ri usuli qaysi?",
+      "options": [
+        "Har kecha DELETE FROM gps WHERE ts < now() - 90 kun",
+        "Vaqt bo'yicha partition/chunk qilib, eski bo'lakni butunlay tashlash (drop_chunks, DROP PARTITION yoki TTL)",
+        "Jadvalni har 90 kunda TRUNCATE qilish",
+        "Eski qatorlarni UPDATE bilan NULL ga aylantirish"
+      ],
+      "answer": 1,
+      "why": "Bo'lakni tashlash metadata amali va deyarli bepul. Katta DELETE esa vacuum, bloat va IO yuklamasini keltiradi."
+    },
+    {
+      "q": "Soatlik rollup jadvalida har soat uchun faqat avg(speed) saqlangan. Kunlik o'rtacha tezlikni shu 24 ta avg ning o'rtachasi sifatida olish nimaga olib keladi?",
+      "options": [
+        "Aniq natija, chunki har soat teng og'irlikda",
+        "Noto'g'ri natija bo'lishi mumkin, chunki soatlarda nuqtalar soni har xil; sum va count saqlash kerak edi",
+        "Faqat yaxlitlash xatosi, amalda farq yo'q",
+        "ClickHouse bunday so'rovga ruxsat bermaydi"
+      ],
+      "answer": 1,
+      "why": "O'rtachalarning o'rtachasi faqat har bir guruh hajmi teng bo'lsa to'g'ri. Rollupda sum va count yoki agregat state saqlanadi."
+    },
+    {
+      "q": "ClickHouse ga 1 000 ta qurilmadan kelgan har bir GPS nuqtani alohida INSERT qilish (soniyasiga 1 000 insert) nimaga olib keladi?",
+      "options": [
+        "Muammo yo'q, ClickHouse har bir insertni xotirada buferlaydi",
+        "Har bir insert yangi part yaratadi, merge'lar ulgurmaydi va oxir-oqibat Too many parts xatosi chiqadi",
+        "Faqat replication sekinlashadi",
+        "Sparse index har bir qator uchun yozuv qo'shib, xotira to'ladi"
+      ],
+      "answer": 1,
+      "why": "Sinxron insert har safar diskda part hosil qiladi. Tavsiya: 10 000 - 100 000 qatorli batch, soniyasiga taxminan bitta insert yoki async_insert."
+    },
+    {
+      "q": "Asosiy so'rov - 'bitta qurilmaning tanlangan kundagi marshruti'. ClickHouse jadvali uchun qaysi ORDER BY eng mos?",
+      "options": [
+        "ORDER BY (ts)",
+        "ORDER BY (ts, device_id)",
+        "ORDER BY (tenant_id, device_id, ts)",
+        "ORDER BY (lat, lon)"
+      ],
+      "answer": 2,
+      "why": "Shunda bitta qurilmaning nuqtalari diskda ketma-ket yotadi va sparse index orqali bir necha granule o'qiladi. (ts, device_id) da qurilma nuqtalari butun kun bo'ylab sochiladi."
+    },
+    {
+      "q": "8.87 million qatorli MergeTree jadval, index_granularity = 8192. Primary indexda taxminan nechta mark bo'ladi?",
+      "options": [
+        "8.87 million",
+        "Taxminan 1 083",
+        "Taxminan 8 192",
+        "Taxminan 108"
+      ],
+      "answer": 1,
+      "why": "8 870 000 / 8 192 taxminan 1 083. Sparse index har bir granule uchun bitta mark saqlaydi, shuning uchun xotirada juda kichik."
+    },
+    {
+      "q": "TimescaleDB da 32 GB RAM, shared_buffers 8 GB. Faol chunk indekslari kuniga 3 GB o'sadi. Qaysi chunk_time_interval mosroq?",
+      "options": [
+        "7 kun (standart)",
+        "30 kun",
+        "1-2 kun",
+        "1 soat"
+      ],
+      "answer": 2,
+      "why": "Faol chunk indekslari taxminan shared_buffers ga sig'ishi kerak: 7 kun x 3 GB = 21 GB sig'maydi, 2 kun x 3 GB = 6 GB sig'adi. 1 soat esa juda ko'p chunk hosil qiladi."
+    },
+    {
+      "q": "Qurilma 3 kun aloqasiz bo'lib, keyin eski nuqtalarni yubordi. TimescaleDB continuous aggregate bilan nima bo'ladi?",
+      "options": [
+        "Eski nuqtalar agregatga hech qachon tushmaydi",
+        "O'zgarish invalidation log'iga yoziladi va keyingi refresh paytida tegishli bucket'lar qayta hisoblanadi",
+        "Butun agregat noldan qayta quriladi",
+        "Insert rad etiladi, chunk allaqachon yopilgan"
+      ],
+      "answer": 1,
+      "why": "Continuous aggregate eski vaqtdagi o'zgarishlarni log qiladi va refresh faqat ta'sirlangan bucket'larni qayta hisoblaydi. Refresh oynasi bu vaqtni qamrashi kerak."
+    },
+    {
+      "q": "ClickHouse da TTL ts + INTERVAL 90 DAY DELETE qo'yilgan. Muddati o'tgan qator nega yana bir necha soat so'rovda ko'rinishi mumkin?",
+      "options": [
+        "TTL faqat server qayta ishga tushganda ishlaydi",
+        "TTL faqat merge paytida qo'llanadi, merge_with_ttl_timeout standart 4 soat",
+        "TTL faqat ClickHouse Cloud da ishlaydi",
+        "Bu bug, TTL darhol ishlashi kerak"
+      ],
+      "answer": 1,
+      "why": "ClickHouse eskirgan qatorlarni fon merge paytida olib tashlaydi. Zarur bo'lsa so'rovda ts filtri qo'shiladi yoki OPTIMIZE ... FINAL ishlatiladi."
+    },
+    {
+      "q": "10 000 qurilma, har 10 s da 80 baytlik nuqta, columnar siqish taxminan 10x. 90 kunlik xom ma'lumot taxminan qancha joy oladi?",
+      "options": [
+        "Taxminan 6 GB",
+        "Taxminan 62 GB",
+        "Taxminan 620 GB",
+        "Taxminan 6 TB"
+      ],
+      "answer": 1,
+      "why": "1 000 nuqta/s x 86 400 x 80 B = 6.9 GB/kun xom, 90 kun = 620 GB, 10x siqish bilan taxminan 62 GB."
+    }
+  ]
+}
