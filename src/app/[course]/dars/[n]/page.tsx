@@ -42,7 +42,7 @@ export default async function LessonPage({ params }: PageProps<"/[course]/dars/[
   const prev = published.filter((x) => x < n).at(-1);
   const next = published.find((x) => x > n);
 
-  const { html, segments, playgrounds } = await renderLesson(lesson.body);
+  const { html, segments, playgrounds } = await renderLesson(lesson.body, { course: course.slug, n });
   const toc = extractToc(html);
   const task = lesson.task && {
     title: lesson.task.title,

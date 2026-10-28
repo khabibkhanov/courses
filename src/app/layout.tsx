@@ -25,7 +25,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Logo />
                 {SITE.name}
               </Link>
-              <ThemeToggle />
+              <div className="flex items-center gap-4">
+                <Link href="/lugat" className="text-sm text-muted hover:text-ink">
+                  Lug&apos;at
+                </Link>
+                <ThemeToggle />
+              </div>
             </nav>
           </header>
           <main className="flex-1">{children}</main>

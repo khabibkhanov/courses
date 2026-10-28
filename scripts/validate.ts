@@ -9,6 +9,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import { getCourse, getLesson, listCourses, publishedNumbers, syllabus, type Course, type Lesson } from "../src/lib/content";
 import { TESTABLE, runLang } from "../src/lib/playground";
+import { glossary, termMatcher } from "../src/lib/glossary";
 
 const [onlyCourse, fromArg, toArg] = process.argv.slice(2);
 const from = Number(fromArg ?? 1);
@@ -120,6 +121,52 @@ for (const course of courses) {
     errors.push(...e.map((x) => `${where}: ${x}`));
   }
 }
+
+/**
+ * Lug'at: sxema, takrorlanmaslik, atama o'z darsida va umuman darslar matnida uchrashi
+ * (aks holda dars raqami xato yoki atama hech qayerda bog'lanmaydi).
+ */
+function checkGlossary() {
+  const e: string[] = [];
+  let entries;
+  try {
+    entries = glossary();
+  } catch (err) {
+    return [(err as Error).message.split("\n").slice(0, 6).join(" ")];
+  }
+  const forms = new Map<string, string>();
+  const slugs = new Set<string>();
+  for (const g of entries) {
+    if (slugs.has(g.slug)) e.push(`takroriy atama: ${g.term}`);
+    slugs.add(g.slug);
+    for (const f of [g.term, ...g.aliases]) {
+      const k = f.toLowerCase();
+      if (forms.has(k) && forms.get(k) !== g.slug) e.push(`"${f}" ikki atamada: ${forms.get(k)}, ${g.slug}`);
+      forms.set(k, g.slug);
+    }
+    if (FORBIDDEN_DASHES.test(g.term + g.uz + g.aliases.join(""))) e.push(`${g.term}: em/en-dash bor`);
+  }
+  const { find } = termMatcher();
+  const found = new Set<string>();
+  const inOwn = new Set<string>();
+  for (const course of listCourses())
+    for (const n of publishedNumbers(course)) {
+      const body = getLesson(course, n)?.body ?? "";
+      for (const m of find(prose(body))) {
+        found.add(m.entry.slug);
+        if (m.entry.course === course.slug && m.entry.lesson === n) inOwn.add(m.entry.slug);
+      }
+    }
+  for (const g of entries) {
+    const course = getCourse(g.course)!;
+    if (!publishedNumbers(course).includes(g.lesson)) e.push(`${g.term}: ${g.course} #${g.lesson} hali yozilmagan`);
+    else if (!found.has(g.slug)) e.push(`${g.term}: darslar matnida uchramaydi`);
+    else if (!inOwn.has(g.slug)) e.push(`${g.term}: o'z darsida (${g.course} #${g.lesson}) uchramaydi`);
+  }
+  return e.map((x) => `lug'at: ${x}`);
+}
+
+if (!onlyCourse) errors.push(...checkGlossary());
 
 if (errors.length) {
   console.error(errors.join("\n"));

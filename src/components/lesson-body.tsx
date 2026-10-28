@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
 import { Playground } from "./playground/playground";
+import { TermTooltip } from "./term-tooltip";
 import type { PlaygroundSpec } from "@/lib/playground";
 
 let seq = 0;
@@ -11,7 +12,7 @@ type Props = { course: string; n: number; segments: string[]; playgrounds: Playg
 
 /**
  * Dars matni (serverda tayyorlangan HTML bo'laklari), ular orasidagi playground'lar
- * va mermaid diagrammalar - mavzuga mos chiziladi.
+ * mermaid diagrammalar (mavzuga mos chiziladi) va lug'at atamalari izohi.
  */
 export function LessonBody({ course, n, segments, playgrounds }: Props) {
   const ref = useRef<HTMLDivElement>(null);
@@ -56,6 +57,7 @@ export function LessonBody({ course, n, segments, playgrounds }: Props) {
           {playgrounds[i] && <Playground {...playgrounds[i]} course={course} n={n} index={i} />}
         </Fragment>
       ))}
+      <TermTooltip root={ref} />
     </div>
   );
 }

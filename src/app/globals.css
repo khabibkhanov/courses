@@ -122,6 +122,18 @@ body {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* Lug'at atamasi: oddiy matn rangida, nuqtali chiziq bilan - matnni o'qishga xalaqit bermaydi. */
+.lesson a.term {
+  color: inherit;
+  text-decoration: underline dotted;
+  text-decoration-color: var(--muted);
+  text-underline-offset: 3px;
+  cursor: help;
+}
+.lesson a.term:hover,
+.lesson a.term:focus-visible {
+  text-decoration-color: var(--line);
+}
 .lesson strong {
   font-weight: 600;
 }

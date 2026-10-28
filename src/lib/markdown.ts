@@ -5,10 +5,12 @@ import remarkRehype from "remark-rehype";
 import rehypeSlug from "rehype-slug";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeStringify from "rehype-stringify";
-import type { Element, Root } from "hast";
+import type { Element, ElementContent, Root, Text } from "hast";
 import { visit } from "unist-util-visit";
+import { visitParents } from "unist-util-visit-parents";
 import type { VFile } from "vfile";
 import { runLang, type PlaygroundSpec } from "./playground";
+import { termMatcher } from "./glossary";
 
 /** ```mermaid bloklari Shiki'ga tushmaydi: <pre class="mermaid"> qilib qoldiriladi, brauzerda chiziladi. */
 function rehypeMermaid() {
@@ -76,6 +78,46 @@ function rehypeExternalLinks() {
   };
 }
 
+/** Atama bog'lanmaydigan joylar: kod, havola, sarlavha. */
+const NO_TERMS = new Set(["a", "code", "pre", "h1", "h2", "h3", "h4", "kbd", "button"]);
+
+/**
+ * Lug'atdagi har atamaning darsdagi birinchi uchrashi lug'atga havola bo'ladi
+ * (atama tushuntirilgan darsning o'zida emas). Faqat file.data.lesson berilganda ishlaydi.
+ */
+function rehypeGlossary() {
+  return (tree: Root, file: VFile) => {
+    const lesson = file.data.lesson as { course: string; n: number } | undefined;
+    if (!lesson) return;
+    const { find } = termMatcher();
+    const seen = new Set<string>();
+    visitParents(tree, "text", (node: Text, ancestors) => {
+      if (ancestors.some((a) => a.type === "element" && (NO_TERMS.has(a.tagName) || a.properties.dataPlayground !== undefined))) return;
+      const parent = ancestors[ancestors.length - 1] as Element | Root;
+      const parts: ElementContent[] = [];
+      let last = 0;
+      for (const { start, end, entry } of find(node.value)) {
+        if (seen.has(entry.slug)) continue;
+        seen.add(entry.slug);
+        if (entry.course === lesson.course && entry.lesson === lesson.n) continue;
+        if (start > last) parts.push({ type: "text", value: node.value.slice(last, start) });
+        parts.push({
+          type: "element",
+          tagName: "a",
+          properties: { href: `/lugat#${entry.slug}`, className: ["term"], dataTerm: entry.term, dataDef: entry.uz, dataMore: entry.href, dataWhere: entry.where },
+          children: [{ type: "text", value: node.value.slice(start, end) }],
+        });
+        last = end;
+      }
+      if (parts.length === 0) return;
+      if (last < node.value.length) parts.push({ type: "text", value: node.value.slice(last) });
+      const i = parent.children.indexOf(node);
+      parent.children.splice(i, 1, ...parts);
+      return i + parts.length;
+    });
+  };
+}
+
 const processor = unified()
   .use(remarkParse)
   .use(remarkGfm)
@@ -84,6 +126,7 @@ const processor = unified()
   .use(rehypePlayground)
   .use(rehypeMermaid)
   .use(rehypeExternalLinks)
+  .use(rehypeGlossary)
   .use(rehypePrettyCode, {
     theme: { light: "github-light", dark: "github-dark-dimmed" },
     keepBackground: false,
@@ -95,9 +138,15 @@ export async function markdownToHtml(markdown: string): Promise<string> {
   return String(await processor.process(markdown));
 }
 
-/** Dars matni: playground joylari bo'yicha bo'laklarga ajratilgan HTML va playground'lar ro'yxati. */
-export async function renderLesson(markdown: string): Promise<{ html: string; segments: string[]; playgrounds: PlaygroundSpec[] }> {
-  const file = await processor.process(markdown);
+/**
+ * Dars matni: playground joylari bo'yicha bo'laklarga ajratilgan HTML va playground'lar ro'yxati.
+ * Atamalar lug'atga bog'lanadi (dars o'zi tushuntiradigan atamalardan tashqari).
+ */
+export async function renderLesson(
+  markdown: string,
+  lesson: { course: string; n: number },
+): Promise<{ html: string; segments: string[]; playgrounds: PlaygroundSpec[] }> {
+  const file = await processor.process({ value: markdown, data: { lesson } });
   const html = String(file);
   return {
     html,

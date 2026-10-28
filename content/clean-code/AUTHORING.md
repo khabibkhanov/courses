@@ -89,3 +89,20 @@ check("takrorlar", lambda: lower_bound([2, 2, 2, 2], 2) == 0)
 - Ikki blok orasida matn bo'lmasin, tillar bir xil bo'lsin - aks holda validator xatosi.
 - Boshlang'ich kod testlardan o'tmasligi, namunaviy yechim esa hammasidan o'tishi kerak. Ikkalasini `python3 scripts/run-blocks.py <fayl>` bilan tekshiring (u test bloklarini ham ishga tushiradi; boshlang'ich kodda `TEST XATO` kutilgan natija).
 - Faqat to'g'ri javobni emas, kerak bo'lsa usulni ham tekshiring (masalan, binary search o'rniga chiziqli qidiruv o'tmasligi uchun o'qishlar sonini sanash).
+
+## Atamalar lug'ati
+
+Dars yangi texnik atamani tushuntirsa, uni `content/glossary/` dagi YAML faylga qo'shing:
+
+```yaml
+- term: cache-aside
+  aliases: [lazy loading]
+  uz: "Ilova avval cache'dan o'qiydi, topilmasa bazadan olib cache'ga yozadi."
+  course: system-design
+  lesson: 23
+```
+
+- `term` va `aliases` - darslar matnida aynan shu ko'rinishda uchraydigan shakllar. Matnda atama birinchi uchragan joy avtomatik lug'atga bog'lanadi (kod, havola va sarlavhalardan tashqari; atama tushuntirilgan darsning o'zida bog'lanmaydi). Katta harfli qisqartmalar (SRP, DRY) faqat katta harf bilan topiladi.
+- `uz` - 1-2 gap, oddiy matn. `lesson` - atama batafsil tushuntirilgan dars.
+- Umumiy so'zlarni (data, server, test, class) qo'shmang: ular har darsda ortiqcha havolaga aylanadi.
+- Validator tekshiradi: takror yo'q, atama o'z darsida va darslar matnida uchraydi, dars yozilgan.
