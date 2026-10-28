@@ -56,6 +56,11 @@ export function glossary(): GlossaryEntry[] {
 
 // So'z chegarasi: lotin harf, raqam, "_" va "-" so'z ichida hisoblanadi ("cache" "cache-aside" ichida topilmaydi).
 const WORD = "A-Za-z0-9_\\-";
+/**
+ * O'zbekcha qo'shimchalar atamaga qo'shib yoziladi ("texnik qarzni", "branded tiplar"): faqat shu ro'yxatdagilar,
+ * shuning uchun inglizcha "indexing" "index" deb topilmaydi.
+ */
+const SUFFIX = "(?:lar)?(?:im|ing|imiz|ingiz|i|si)?(?:ni|ning|ga|ka|qa|da|ta|dan|tan|dagi|gacha|dek|day|cha)?";
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 /** Bosh harfli qisqartmalar (SRP, DRY) faqat aynan shu ko'rinishda topiladi. */
 const isAcronym = (form: string) => /^[A-Z0-9]{2,}$/.test(form);
@@ -73,14 +78,15 @@ export function termMatcher(): TermMatcher {
   for (const entry of glossary())
     for (const form of [entry.term, ...entry.aliases]) byForm.set(form.toLowerCase(), { form, entry });
   const forms = [...byForm.values()].map((f) => f.form).sort((a, b) => b.length - a.length);
-  const re = forms.length ? new RegExp(`(?<![${WORD}])(?:${forms.map(escape).join("|")})(?![${WORD}])`, "gi") : null;
+  const re = forms.length ? new RegExp(`(?<![${WORD}])(?<t>${forms.map(escape).join("|")})${SUFFIX}(?![${WORD}])`, "gi") : null;
   matcher = {
     find(text) {
       if (!re) return [];
       const out: { start: number; end: number; entry: GlossaryEntry }[] = [];
       for (const m of text.matchAll(re)) {
-        const hit = byForm.get(m[0].toLowerCase());
-        if (!hit || (isAcronym(hit.form) && m[0] !== hit.form)) continue;
+        const stem = m.groups!.t;
+        const hit = byForm.get(stem.toLowerCase());
+        if (!hit || (isAcronym(hit.form) && stem !== hit.form)) continue;
         out.push({ start: m.index, end: m.index + m[0].length, entry: hit.entry });
       }
       return out;
