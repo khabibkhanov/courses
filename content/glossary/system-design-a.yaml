@@ -1,0 +1,532 @@
+# System Design 1-50 va CS50 1-dars atamalari.
+- term: trade-off
+  uz: "Bir xususiyatni yaxshilash evaziga boshqasidan voz kechish. System design'da yagona to'g'ri javob yo'q, faqat ongli tanlangan va ochiq yozilgan trade-off'lar bor."
+  course: system-design
+  lesson: 1
+- term: QPS
+  aliases: [RPS]
+  uz: "Soniyadagi so'rovlar soni. O'rtacha QPS kunlik amallar sonini 86 400 ga bo'lib topiladi, tizim esa o'rtachaga emas, cho'qqi qiymatga loyihalanadi."
+  course: system-design
+  lesson: 2
+- term: RTT
+  aliases: [round trip]
+  uz: "Round-trip time - paket borib, javob qaytib kelguncha o'tgan vaqt. Masofa bilan fizik cheklangan, shuning uchun ketma-ket round trip'lar soni latency'ni belgilaydi."
+  course: system-design
+  lesson: 2
+- term: latency
+  uz: "So'rov kutib turgan yoki javob olguncha o'tgan vaqt. Amaliyotda ko'pincha response time ma'nosida ishlatiladi va o'rtacha bilan emas, percentile bilan o'lchanadi."
+  course: system-design
+  lesson: 3
+- term: throughput
+  uz: "Vaqt birligida tugallangan ishlar soni: so'rov/s, xabar/s yoki MB/s. Latency doim ma'lum throughput uchun aytiladi, chunki yuklama oshsa navbat va kutish ham oshadi."
+  course: system-design
+  lesson: 3
+- term: percentile
+  aliases: [p99, p50]
+  uz: "Taqsimotdagi chegara qiymat: masalan p99 - so'rovlarning 99 foizi shu vaqtdan tez javob olgan. p50 median, p99 va undan yuqorisi dumni ko'rsatadi; percentile'larni o'rtachalab bo'lmaydi."
+  course: system-design
+  lesson: 3
+- term: tail latency
+  uz: "Latency taqsimotining eng sekin qismi (p99, p99.9). Fan-out'da javob eng sekin backend'ni kutgani uchun kamdan-kam uchraydigan sekinlik ko'p so'rovlarga ta'sir qiladi."
+  course: system-design
+  lesson: 3
+- term: fan-out
+  uz: "Bitta so'rovning ko'p servis yoki backend'ga parallel tarqalishi. Javob eng sekin backend'ni kutadi, shuning uchun fan-out tail latency'ni kuchaytiradi."
+  course: system-design
+  lesson: 3
+- term: Little qonuni
+  aliases: [Little's law]
+  uz: "L = λ × W: tizimdagi o'rtacha ishlar soni kelish tezligi bilan har bir ishning tizimda o'tkazgan o'rtacha vaqti ko'paytmasiga teng. Concurrency, navbat va pool hajmini hisoblashda ishlatiladi."
+  course: system-design
+  lesson: 3
+- term: page cache
+  uz: "Linux yadrosi boshqaradigan, bo'sh RAM'ni egallaydigan fayl bloklari cache'i. O'qish va yozish avval shu yerdan o'tadi, ma'lumot diskka yetganini esa fsync kafolatlaydi."
+  course: system-design
+  lesson: 4
+- term: handshake
+  aliases: [three-way handshake]
+  uz: "Ma'lumot uzatishdan oldin ulanishni o'rnatish uchun tomonlar almashadigan xabarlar: TCP'da SYN, SYN-ACK, ACK, TLS'da kalit kelishuvi. Har biri qo'shimcha RTT oladi."
+  course: system-design
+  lesson: 5
+- term: head-of-line blocking
+  aliases: [HOL blocking]
+  uz: "Navbat boshidagi bitta element kechiksa, orqasidagilar ham kutib qolishi. TCP'da bitta segment yo'qolsa, keyingilari kelgan bo'lsa ham ilovaga u qayta yuborilguncha berilmaydi."
+  course: system-design
+  lesson: 5
+- term: anycast
+  uz: "Bitta IP manzil ko'p joydan (data-markaz, PoP) BGP orqali e'lon qilinadi va routerlar paketni eng yaqin joyga yuboradi. DNS va CDN'da latency va chidamlilik uchun ishlatiladi."
+  course: system-design
+  lesson: 6
+- term: TTL
+  uz: "Time to live - yozuv yoki cache'dagi qiymat necha soniya yaroqli ekani. DNS'da resolver qancha cache'lashini belgilaydi: qisqa TTL tez o'zgarish, uzun TTL kam yuklama beradi."
+  course: system-design
+  lesson: 6
+- term: QUIC
+  uz: "UDP ustida ishlaydigan transport protokoli, HTTP/3 asosi. TCP va TLS vazifalarini o'zi bajaradi, stream'lar mustaqil bo'lgani uchun TCP darajasidagi head-of-line blocking yo'qoladi."
+  course: system-design
+  lesson: 7
+- term: long polling
+  uz: "Klient so'rov yuboradi, server yangi ma'lumot paydo bo'lguncha yoki timeout'gacha javobni ushlab turadi; javob kelgach klient darhol yangi so'rov yuboradi."
+  course: system-design
+  lesson: 8
+- term: SSE
+  uz: "Server-Sent Events - bitta ochiq HTTP javobi orqali serverdan klientga uzluksiz hodisalar oqimi. Bir tomonlama, brauzer uzilganda o'zi qayta ulanadi."
+  course: system-design
+  lesson: 8
+- term: WebSocket
+  uz: "Bitta TCP ulanish ustida ikki tomonlama, to'liq dupleks, xabarlarga asoslangan kanal (RFC 6455). HTTP handshake bilan boshlanadi."
+  course: system-design
+  lesson: 8
+- term: pagination
+  uz: "Katta ro'yxatni sahifalarga bo'lib qaytarish. Offset pagination sodda, lekin katta va o'zgaruvchan ro'yxatlarda sekin va beqaror; cursor usuli oxirgi ko'rilgan elementdan davom etadi."
+  course: system-design
+  lesson: 9
+- term: idempotency key
+  uz: "Klient har bir mantiqiy operatsiya uchun yaratadigan noyob kalit, qayta yuborishda xuddi shu kalit ishlatiladi. Server birinchi natijani saqlab, takroriy so'rovlarga saqlangan javobni qaytaradi."
+  course: system-design
+  lesson: 9
+- term: schema evolution
+  uz: "Ma'lumot sxemasini vaqt o'tishi bilan eski va yangi kodning birga ishlashini buzmasdan o'zgartirish. Backward (yangi kod eski ma'lumotni o'qiydi) va forward (eski kod yangi ma'lumotni o'qiydi) compatibility'ga tayanadi."
+  course: system-design
+  lesson: 10
+- term: append-only log
+  uz: "Yozuvlar faqat fayl oxiriga qo'shiladigan, mavjudlari o'zgartirilmaydigan tuzilma. Ketma-ket IO tufayli tez va ishonchli; WAL, LSM-tree va Kafka shu g'oyaga tayanadi."
+  course: system-design
+  lesson: 12
+- term: hash index
+  uz: "Har bir kalit uchun log faylidagi joyini saqlaydigan xotiradagi hash map (Bitcask modeli). Nuqtali qidiruv tez, lekin barcha kalitlar RAM'ga sig'ishi kerak va range so'rovlar bo'lmaydi."
+  course: system-design
+  lesson: 12
+- term: tombstone
+  uz: "O'chirishni bildiruvchi maxsus yozuv: append-only tuzilmada qiymatni o'chirib bo'lmagani uchun kalit o'chirildi degan belgi qo'shiladi. Merge yoki compaction'da kalitning eski qiymatlari tashlanadi."
+  course: system-design
+  lesson: 12
+- term: LSM-tree
+  uz: "Log-Structured Merge-tree: yozuv avval WAL va xotiradagi memtable'ga tushadi, so'ng saralangan SSTable fayllariga yoziladi va fonda compaction bilan birlashtiriladi. Yozish arzon, o'qish bir nechta faylni tekshiradi."
+  course: system-design
+  lesson: 13
+- term: SSTable
+  uz: "Sorted String Table - yozuvlari kalit bo'yicha saralangan va har bir kalit bir marta uchraydigan fayl. LSM-tree'ning diskdagi asosiy birligi."
+  course: system-design
+  lesson: 13
+- term: compaction
+  uz: "Fonda segment yoki SSTable'larni birlashtirib, eski qiymatlar va tombstone'larni tozalash va fayllar sonini kamaytirish. O'qishni tezlashtiradi, lekin ma'lumotni qayta yozgani uchun write amplification beradi."
+  course: system-design
+  lesson: 13
+- term: Bloom filter
+  uz: "Kalit to'plamda albatta yo'qligini tez aytadigan ixcham ehtimollik tuzilmasi; false positive bo'lishi mumkin, lekin yo'q kalitni bor demaydi. LSM'da keraksiz SSTable o'qishlarini oldini oladi."
+  course: system-design
+  lesson: 13
+- term: write amplification
+  uz: "Diskka haqiqatda yozilgan baytlarning ilova yozgan baytlarga nisbati. LSM'da compaction, B-tree'da sahifani to'liq qayta yozish va indekslar uni oshiradi."
+  course: system-design
+  lesson: 13
+- term: B-tree
+  uz: "Ma'lumotni qat'iy hajmli sahifalarga bo'lib, daraxt shaklida bog'laydigan indeks tuzilmasi. Joyida yangilaydi, qidiruv logarifmik va bashorat qilinadigan; aksariyat relational bazalarda standart indeks."
+  course: system-design
+  lesson: 14
+- term: WAL
+  aliases: [write-ahead log]
+  uz: "Write-ahead log - o'zgarish ma'lumot sahifasiga tegishdan oldin ketma-ket logga yoziladi. Crash'dan keyin baza shu logdan tiklanadi; durability va replikatsiya asosi."
+  course: system-design
+  lesson: 14
+- term: secondary index
+  uz: "Jadvalning asosiy kalitidan boshqa ustun(lar) bo'yicha qo'shimcha indeks; uning kalitlari unique bo'lishi shart emas. O'qishni tezlashtiradi, lekin har bir yozishda yangilanishi kerak."
+  course: system-design
+  lesson: 15
+- term: OLTP
+  uz: "Online transaction processing - ko'p sonli kichik, nuqtali o'qish va yozishlar, past latency va tranzaksiyalar. Ilovaning asosiy bazasi odatda shu yuklama uchun."
+  course: system-design
+  lesson: 16
+- term: OLAP
+  uz: "Online analytical processing - kam sonli, lekin katta hajmni skanerlab agregatlaydigan analitik so'rovlar. Odatda alohida ombor va column-oriented storage'da bajariladi."
+  course: system-design
+  lesson: 16
+- term: column-oriented
+  aliases: [columnar]
+  uz: "Har bir ustun alohida saqlanadigan storage: so'rov faqat kerakli ustunlarni o'qiydi va qiymatlar yaxshi siqiladi. OLAP uchun mos, tez-tez update va nuqtali o'qishlar uchun emas."
+  course: system-design
+  lesson: 16
+- term: ACID
+  uz: "Tranzaksiya kafolatlari: atomicity (xatoda to'liq bekor qilish), consistency (ilova invariantlari), isolation (parallel tranzaksiyalarni ajratish), durability (commit qilingan ma'lumot saqlanishi)."
+  course: system-design
+  lesson: 17
+- term: read committed
+  uz: "Izolyatsiya darajasi: faqat commit qilingan ma'lumot o'qiladi va ustidan yoziladi (dirty read va dirty write yo'q). PostgreSQL'da standart, lekin read skew, lost update va write skew'ga yo'l qo'yadi."
+  course: system-design
+  lesson: 18
+- term: read skew
+  aliases: [non-repeatable read]
+  uz: "Bitta tranzaksiya turli paytda o'qigan ma'lumotlar bir-biriga mos kelmasligi, chunki oraliqda boshqa tranzaksiya commit qildi. Snapshot isolation bilan yo'qotiladi."
+  course: system-design
+  lesson: 18
+- term: lost update
+  uz: "Ikki tranzaksiya bir qiymatni o'qib, o'zgartirib, qaytarib yozganda (read-modify-write) ikkinchi yozuv birinchisini yo'qotishi. Atomik operatsiya, qulf yoki avtomatik aniqlash bilan oldi olinadi."
+  course: system-design
+  lesson: 18
+- term: write skew
+  uz: "Ikki tranzaksiya bir xil holatni o'qib, shunga tayanib turli obyektlarga yozadi va natijada invariant buziladi. Snapshot isolation buni to'xtatmaydi; Serializable yoki aniq qulf kerak."
+  course: system-design
+  lesson: 18
+- term: snapshot isolation
+  uz: "Har bir tranzaksiya bitta izchil snapshot'ni ko'radigan izolyatsiya darajasi. Read skew'ni yo'q qiladi, lekin write skew mumkin; PostgreSQL'da Repeatable Read shunday ishlaydi."
+  course: system-design
+  lesson: 18
+- term: serializable
+  uz: "Eng kuchli izolyatsiya darajasi: natija tranzaksiyalar qandaydir ketma-ket tartibda bajarilgandek bo'ladi. Haqiqiy ketma-ket bajarish, 2PL yoki SSI bilan amalga oshiriladi; ilova retry'ga tayyor bo'lishi kerak."
+  course: system-design
+  lesson: 18
+- term: MVCC
+  uz: "Multi-Version Concurrency Control - baza har bir qatorning bir nechta versiyasini saqlaydi, har bir tranzaksiya o'z snapshot'iga mos versiyani o'qiydi. Yozuvchi eski versiyani o'chirmay, yangisini yaratadi."
+  course: system-design
+  lesson: 19
+- term: 2PL
+  aliases: [two-phase locking]
+  uz: "Two-phase locking - tranzaksiya avval faqat qulf oladi, keyin faqat bo'shatadi; amalda barcha qulflar commit yoki abort'gacha ushlab turiladi. Serializable beradi, lekin o'quvchi va yozuvchi bir-birini kutadi."
+  course: system-design
+  lesson: 19
+- term: vertical scaling
+  uz: "Scale up - mavjud mashinani kuchliroq mashinaga almashtirish: ko'proq CPU, RAM, tezroq disk. Ilova kodi o'zgarmaydi, lekin bitta mashinaning chegarasi va narxi bor."
+  course: system-design
+  lesson: 21
+- term: horizontal scaling
+  uz: "Scale out - bir xil vazifani bajaradigan mashinalar sonini oshirib, yuklamani ular orasida taqsimlash. Kod va arxitektura bunga tayyor bo'lishi kerak."
+  course: system-design
+  lesson: 21
+- term: stateless
+  uz: "Har qanday so'rovni har qanday instance bir xil natija bilan bajara oladigan servis, chunki doimiy holat tashqi saqlash joyida. Bunday servisni ko'paytirish oson, stateful servis esa replication va sharding talab qiladi."
+  course: system-design
+  lesson: 21
+- term: load balancer
+  aliases: [LB, load balancing]
+  uz: "So'rovlarni bir nechta server orasida taqsimlaydigan komponent: o'lgan serverni health check bilan aniqlab chiqaradi, yangisini ohista qo'shadi. L4 (TCP) yoki L7 (HTTP) darajasida ishlaydi."
+  course: system-design
+  lesson: 22
+- term: health check
+  uz: "Load balancer backend'ga muntazam so'rov yuborib, javobga qarab uni sog'lom yoki nosog'lom deb belgilashi. Tashqi bog'liqlikni health check'ga bog'lash barcha serverlarni bir vaqtda chiqarib yuborishi mumkin."
+  course: system-design
+  lesson: 22
+- term: cache-aside
+  aliases: [lazy loading]
+  uz: "Ilova avval cache'dan o'qiydi, topilmasa bazadan olib cache'ga yozadi. Eng keng tarqalgan cache naqshi; ilova cache'ni ham, bazani ham o'zi boshqaradi."
+  course: system-design
+  lesson: 23
+- term: write-through
+  uz: "Yozish bazaga va cache'ga sinxron bajariladi, cache doim yangi qiymatga ega. Kamchiligi: har yozish ikki joyga ketadi va hech o'qilmaydigan ma'lumot cache xotirasini egallaydi."
+  course: system-design
+  lesson: 23
+- term: write-back
+  aliases: [write-behind]
+  uz: "Yozish avval cache'ga tushadi, bazaga keyinroq yoziladi. Tez, lekin cache tuguni o'lsa saqlandi deb javob berilgan ma'lumot yo'qolmasligi uchun durable log kerak."
+  course: system-design
+  lesson: 23
+- term: eviction
+  uz: "Cache xotirasi limitga yetganda siyosatga ko'ra (LRU, LFU va boshqalar) kalitlarni chiqarish. TTL'dan farqli o'laroq, eskirish uchun emas, sig'im uchun."
+  course: system-design
+  lesson: 23
+- term: hit ratio
+  uz: "So'rovlarning cache'dan javob olgan ulushi. Cache samaradorligining asosiy metrikasi: o'rtacha latency va bazaga tushadigan yuklama shunga bog'liq."
+  course: system-design
+  lesson: 23
+- term: LRU
+  uz: "Least recently used - eng uzoq vaqt murojaat qilinmagan kalitni chiqaradigan eviction siyosati. Bitta katta skan issiq kalitlarni siqib chiqarishi mumkin."
+  course: system-design
+  lesson: 23
+- term: invalidation
+  aliases: [cache invalidation]
+  uz: "Ma'lumot o'zgarganda cache'dagi eski nusxani o'chirish yoki yangilash. Usullari: TTL, aniq delete, versiyali kalit, CDC yoki pub/sub orqali xabar."
+  course: system-design
+  lesson: 24
+- term: cache stampede
+  aliases: [stampede]
+  uz: "Mashhur kalit cache'dan yo'qolganda ko'p parallel so'rov bir vaqtda miss olib, hammasi bazaga borib bir xil qiymatni qayta hisoblashi. Lock yoki request coalescing, lease va muddatdan oldin ehtimoliy yangilash bilan oldi olinadi."
+  course: system-design
+  lesson: 24
+- term: hot key
+  uz: "Murojaatlar shunchalik ko'p bo'lgan bitta kalit-ki, uni saqlayotgan bitta tugun sig'imi yetmaydi. Kalit bitta shard'ga tegishli bo'lgani uchun klasterga tugun qo'shish yordam bermaydi."
+  course: system-design
+  lesson: 24
+- term: CDN
+  uz: "Content Delivery Network - foydalanuvchiga yaqin PoP'larda joylashgan va kontent nusxasini saqlaydigan serverlar tarmog'i. Latency'ni va origin yuklamasini kamaytiradi, hujumlarga chidamlilikni oshiradi."
+  course: system-design
+  lesson: 25
+- term: replication
+  uz: "Bir xil ma'lumot nusxalarini bir nechta mashinada saqlash: ishonchlilik va o'qish sig'imi uchun. Asosiy qiyinchilik o'zgarishlarni nusxalarga to'g'ri tartibda yetkazishda."
+  course: system-design
+  lesson: 26
+- term: single-leader
+  uz: "Replication modeli: barcha yozuvlar bitta leader'ga ketadi, u o'zgarishlarni replication log orqali follower'larga yuboradi. O'qish leader'dan ham, follower'lardan ham bo'lishi mumkin."
+  course: system-design
+  lesson: 26
+- term: replication lag
+  uz: "Asinxron follower'ning leader'dan orqada qolish vaqti. Odatda millisekundlar, lekin yuklama yoki nosozlikda soniya va daqiqalarga yetadi va read-your-writes kabi anomaliyalarga olib keladi."
+  course: system-design
+  lesson: 26
+- term: read-your-writes
+  uz: "Foydalanuvchi o'zi yozgan ma'lumotni keyingi o'qishda albatta ko'rishi kafolati. Replication lag'da buziladi; yechim - yozgandan keyin ma'lum vaqt leader'dan o'qish."
+  course: system-design
+  lesson: 26
+- term: failover
+  uz: "Leader o'lganda follower'lardan birini yangi leader qilish, mijozlarni unga yo'naltirish va qolgan follower'larni unga ulash. Xavflari: split brain, yo'qolgan yozuvlar, noto'g'ri tanlangan timeout."
+  course: system-design
+  lesson: 26
+- term: split brain
+  uz: "Ikki tugun bir vaqtda o'zini leader deb hisoblab, ikkalasi ham yozuv qabul qilishi; ma'lumot ikkiga bo'linadi. Fencing token, eski leader'ni majburan o'chirish yoki faqat quorum bilan yozish orqali himoyalanadi."
+  course: system-design
+  lesson: 26
+- term: multi-leader
+  uz: "Yozuvni bir nechta leader qabul qiladigan replication modeli, har biri o'z replikalari bilan. Bir obyekt ikki joyda parallel o'zgartirilsa konflikt paydo bo'ladi va uni hal qilish kerak."
+  course: system-design
+  lesson: 27
+- term: leaderless
+  uz: "Leader umuman yo'q replication modeli (Dynamo uslubi): mijoz bir vaqtda bir nechta replikaga yozadi va o'qiydi. Eskirgan replikalar read repair, hinted handoff va anti-entropy bilan tuzatiladi."
+  course: system-design
+  lesson: 27
+- term: quorum
+  uz: "Yozish w ta, o'qish r ta replikadan javob olishi; n replikada w + r > n bo'lsa, ikki to'plam kamida bitta tugunda kesishadi va o'qish yangi qiymatni ko'radi. Consensus'da ko'pchilik (majority) ham quorum deyiladi."
+  course: system-design
+  lesson: 27
+- term: LWW
+  aliases: [last-write-wins]
+  uz: "Last write wins - har bir yozuvga vaqt belgisi qo'yiladi, eng kattasi g'olib, qolganlari jimgina tashlanadi. Sodda, lekin concurrent yozuvlarni yo'qotadi va soatlar sinxronligiga bog'liq."
+  course: system-design
+  lesson: 27
+- term: partitioning
+  aliases: [sharding]
+  uz: "Katta ma'lumotni qismlarga (partition, shard) bo'lib, turli tugunlarga taqsimlash. Odatda replication bilan birga ishlatiladi: har bir shard'ning o'z replikalari bor."
+  course: system-design
+  lesson: 28
+- term: range partitioning
+  uz: "Kalitlar tartiblangan va har bir partition uzluksiz diapazonga ega, lug'at jildlari kabi. Range so'rovlar samarali, lekin chegaralarni ma'lumot taqsimotiga moslash kerak va ketma-ket kalitlar hotspot berishi mumkin."
+  course: system-design
+  lesson: 28
+- term: hash partitioning
+  uz: "Partition kalitning hash qiymati bo'yicha tanlanadi, shuning uchun o'xshash kalitlar ham tekis tarqaladi. Hash funksiya barqaror bo'lishi shart; range so'rovlar esa barcha partition'larga boradi."
+  course: system-design
+  lesson: 28
+- term: consistent hashing
+  uz: "Kalitlar va tugunlar bitta hash ring'ga joylashtiriladi, kalit ring bo'ylab keyingi tugunga tegishli. Tugun qo'shilganda yoki olinganda o'rtacha faqat K/N kalit ko'chadi."
+  course: system-design
+  lesson: 29
+- term: virtual node
+  aliases: [vnode]
+  uz: "Consistent hashing'da har bir fizik tugun ring'da bitta emas, ko'p token oladi. Taqsimot tekislanadi va tugun qo'shilganda yuklama ko'p tugundan oz-ozdan o'tadi."
+  course: system-design
+  lesson: 29
+- term: hot partition
+  uz: "Bitta kalit yoki mijoz juda mashhur bo'lgani uchun bitta partition'ga yuklama keskin ko'p tushishi. Hash partitioning buni hal qilmaydi; kalitni bo'lish yoki alohida ajratish kerak."
+  course: system-design
+  lesson: 30
+- term: network partition
+  uz: "Tarmoq nosozligi tufayli tugunlar guruhlari bir-biri bilan aloqa qila olmasligi. Kam uchraydigan nazariy holat emas, dizayn uni albatta bo'ladi deb hisoblashi kerak."
+  course: system-design
+  lesson: 31
+- term: Lamport clock
+  uz: "Har bir jarayon butun son hisoblagich saqlaydi va xabarlar orqali uni yangilaydi; a hodisa b dan oldin bo'lsa L(a) < L(b). Teskarisi to'g'ri emas, shuning uchun concurrency'ni aniqlay olmaydi."
+  course: system-design
+  lesson: 32
+- term: vector clock
+  uz: "Har bir jarayon barcha jarayonlar bo'yicha hisoblagichlar vektorini saqlaydi. Ikki hodisa ketma-ketmi yoki concurrent ekanini aniqlay oladi."
+  course: system-design
+  lesson: 32
+- term: linearizability
+  aliases: [linearizable]
+  uz: "Tizim xuddi ma'lumotning bitta nusxasi bordek ishlaydi: har bir operatsiya o'z boshlanishi va javobi orasidagi bir nuqtada bir zumda bajarilgandek ko'rinadi va real vaqt tartibi saqlanadi."
+  course: system-design
+  lesson: 33
+- term: causal consistency
+  uz: "Sababiy bog'liq operatsiyalar hamma joyda bir xil tartibda ko'rinadi, bir-biridan bexabar operatsiyalar tartibi esa farq qilishi mumkin. Latency'si tarmoq kechikishiga bog'liq bo'lmagan eng kuchli kafolat."
+  course: system-design
+  lesson: 33
+- term: eventual consistency
+  uz: "Yangi yozuvlar to'xtasa, oxir-oqibat barcha replikalar bir xil qiymatga keladi, lekin qachon ekani aytilmaydi. Oraliqda eski qiymat o'qilishi mumkin; eng kuchsiz, lekin eng arzon kafolat."
+  course: system-design
+  lesson: 33
+- term: CAP theorem
+  aliases: [CAP]
+  uz: "Network partition paytida tizim linearizability (C) va ishlayotgan har bir tugunning javob berishi (A) dan faqat bittasini kafolatlay oladi. Isbotlangan versiya juda tor va kundalik dizayn uchun kam narsa aytadi."
+  course: system-design
+  lesson: 34
+- term: PACELC
+  uz: "CAP'ning kengaytmasi: partition bo'lsa availability va consistency orasida, aks holda normal ishda latency va consistency orasida tanlov qilinadi."
+  course: system-design
+  lesson: 34
+- term: consensus
+  uz: "Bir nechta jarayon taklif qilingan qiymatlardan bittasiga kelishishi: agreement, validity, integrity va termination xossalari bilan. Leader election, lock va metadata uchun asos."
+  course: system-design
+  lesson: 35
+- term: FLP
+  uz: "Fischer, Lynch, Paterson (1985) natijasi: to'liq asinxron tizimda bitta jarayon qulashi mumkin bo'lsa ham, har doim yakunlanishni kafolatlaydigan deterministik consensus algoritmi yo'q. Safety saqlanadi, yakunlanish vaqti kafolatlanmaydi."
+  course: system-design
+  lesson: 35
+- term: Paxos
+  uz: "Leslie Lamport'ning consensus algoritmi: proposer raqamlangan taklif bilan acceptor'lar ko'pchiligidan rozilik oladi. To'g'ri, lekin to'liq tizim sifatida amalga oshirish qiyin."
+  course: system-design
+  lesson: 35
+- term: Raft
+  uz: "Tushunarlilik uchun loyihalangan consensus algoritmi: masala leader election, log replication va safety'ga bo'lingan, barcha yozuvlar kuchli lider orqali o'tadi."
+  course: system-design
+  lesson: 36
+- term: heartbeat
+  uz: "Tugun tirikligini bildirish uchun muntazam yuboriladigan xabar. Raft'da lider bo'sh AppendEntries yuboradi; follower election timeout davomida hech narsa olmasa, saylov boshlaydi."
+  course: system-design
+  lesson: 36
+- term: 2PC
+  aliases: [two-phase commit]
+  uz: "Two-phase commit - koordinator avval barcha ishtirokchilardan prepare javobini oladi, keyin hammaga commit yoki abort buyrug'ini beradi. Koordinator qulasa, ishtirokchilar qulf ushlab kutib qoladi (blocking protocol)."
+  course: system-design
+  lesson: 37
+- term: leader election
+  uz: "Bir nechta jarayondan faqat bittasi ma'lum vazifani bajarishi uchun lider tanlash. Lider aslida lider degan lock'ni ushlab turgan jarayon."
+  course: system-design
+  lesson: 38
+- term: distributed lock
+  uz: "Taqsimlangan tizimda resursga bir vaqtda faqat bitta jarayon kirishini ta'minlash. Jarayon qulashi va pauzalar tufayli lease va fencing token'siz xavfli."
+  course: system-design
+  lesson: 38
+- term: lease
+  uz: "Muddatli lock: muddat tugasa, lock avtomatik bo'shaydi, shuning uchun qulagan egasi uni abadiy ushlab qolmaydi. Lekin pauza tufayli ega muddat o'tganini bilmasligi mumkin."
+  course: system-design
+  lesson: 38
+- term: fencing token
+  uz: "Lock xizmati har lock berishda qaytaradigan monoton o'suvchi raqam. Storage har yozuvda token'ni tekshiradi va ko'rgan eng kattasidan kichik token bilan kelgan yozuvni rad etadi."
+  course: system-design
+  lesson: 38
+- term: idempotency
+  aliases: [idempotent]
+  uz: "Operatsiyani N marta bajarish 1 marta bajarish bilan bir xil natija holat berishi. Retry va at-least-once yetkazishda dublikatlarni zararsiz qiladi."
+  course: system-design
+  lesson: 39
+- term: exactly-once
+  uz: "Har bir xabar ta'siri aynan bir marta qo'llanishi. Amalda bu at-least-once yetkazish va idempotent qayta ishlash yoki deduplication birikmasi (effectively-once)."
+  course: system-design
+  lesson: 39
+- term: CRDT
+  uz: "Conflict-free Replicated Data Type - replikalari birlashtirilganda avtomatik va doim bir xil natija beradigan ma'lumot turi. Strong eventual consistency kafolatini beradi."
+  course: system-design
+  lesson: 40
+- term: at-least-once
+  uz: "Xabar yo'qolmaydi, lekin bir necha marta kelishi mumkin: ack qayta ishlashdan keyin beriladi. Consumer idempotent bo'lishi shart. Teskarisi - at-most-once: yo'qolishi mumkin, lekin takrorlanmaydi."
+  course: system-design
+  lesson: 41
+- term: pub/sub
+  aliases: [publish/subscribe]
+  uz: "Publish/subscribe - har bir xabar obuna bo'lgan barcha iste'molchilarga yetkaziladi. Point-to-point modelda esa har bir xabarni faqat bitta consumer oladi."
+  course: system-design
+  lesson: 41
+- term: broker
+  aliases: [message broker]
+  uz: "Xabarlarni qabul qiladigan, saqlaydigan va iste'molchilarga tarqatadigan oraliq servis. Ishlab chiqaruvchi xabarni brokerga beradi, iste'molchi uni o'zi tayyor bo'lganda oladi."
+  course: system-design
+  lesson: 41
+- term: visibility timeout
+  uz: "Consumer olgan xabar navbatda qoladi, lekin shu muddat davomida boshqa consumer'larga ko'rinmaydi. Muddat ichida o'chirilmasa, xabar qayta ko'rinadi va yana yetkaziladi."
+  course: system-design
+  lesson: 42
+- term: consumer group
+  uz: "Kafka'da topic'ni birgalikda o'qiydigan consumer'lar guruhi: guruhlar bir-biridan mustaqil va o'z offset'larini saqlaydi, guruh ichida har bir partition bir vaqtda faqat bitta consumer'ga biriktiriladi."
+  course: system-design
+  lesson: 43
+- term: ISR
+  uz: "In-sync replicas - Kafka'da lider bilan sinxron deb hisoblanadigan replikalar to'plami (lider ham kiradi). Orqada qolgan yoki o'lik follower ISR'dan chiqariladi, yetib olgach qaytariladi."
+  course: system-design
+  lesson: 44
+- term: log compaction
+  uz: "Kafka har bir kalit uchun kamida oxirgi qiymatni saqlab, eskilarini fonda o'chiradi. Topic o'zgarishlar oqimidan kalit-qiymat holatiga aylanadi."
+  course: system-design
+  lesson: 44
+- term: stream processing
+  uz: "Cheksiz (unbounded) ma'lumot oqimi ustida uzluksiz hisob-kitob, masalan oynalar bo'yicha agregatlar. Hodisalarni faqat tashish emas, ularni hisoblash."
+  course: system-design
+  lesson: 45
+- term: event time
+  uz: "Hodisa manbada sodir bo'lgan vaqt. Natijani ma'lumotning o'ziga bog'laydi va kechikkan hodisalarda ham bir xil natija beradi; processing time esa hodisa qayta ishlangan paytdagi mashina soati."
+  course: system-design
+  lesson: 45
+- term: high watermark
+  uz: "Kafka partitionida commit qilingan oxirgi pozitsiya: lider uni ISR dagi eng sekin replika yetib kelgan joyga suradi. Consumer faqat high watermark gacha o'qiy oladi."
+  course: system-design
+  lesson: 44
+- term: watermark
+  uz: "Stream processing'da event time bo'yicha qaysi vaqtgacha hodisalar kelib bo'lganini taxmin qiladigan belgi. U oyna oxiridan o'tganda oyna yopiladi, keyin kelganlar kechikkan hisoblanadi."
+  course: system-design
+  lesson: 45
+- term: event sourcing
+  uz: "Holatni joriy qiymat sifatida emas, uni o'zgartirgan hodisalar ketma-ketligi sifatida append-only event store'da saqlash. Joriy holat hodisalarni qayta qo'llab tiklanadi."
+  course: system-design
+  lesson: 46
+- term: CQRS
+  uz: "Command Query Responsibility Segregation - yozish va o'qish uchun alohida modellar ishlatish. G'oya sodda, lekin ko'p tizimlar uchun ortiqcha murakkablik qo'shadi."
+  course: system-design
+  lesson: 47
+- term: read model
+  uz: "Faqat o'qish uchun so'rovlarga moslab tayyorlangan ma'lumot ko'rinishi. Projection uni hodisalardan quradi, shuning uchun u yozish modelidan biroz orqada bo'lishi mumkin."
+  course: system-design
+  lesson: 47
+- term: transactional outbox
+  aliases: [outbox]
+  uz: "Hodisa biznes ma'lumoti bilan bitta tranzaksiyada bazadagi outbox jadvaliga yoziladi, keyin alohida relay jarayoni uni brokerga yetkazadi. Dual write muammosini hal qiladi."
+  course: system-design
+  lesson: 48
+- term: CDC
+  aliases: [change data capture]
+  uz: "Change Data Capture - bazaning tranzaksiya log'ini (PostgreSQL'da WAL) o'qib, har bir o'zgarishni hodisa sifatida oqimga chiqarish."
+  course: system-design
+  lesson: 48
+- term: saga
+  uz: "Uzun jarayonni mustaqil lokal tranzaksiyalar ketma-ketligiga bo'lish; biror qadam muvaffaqiyatsiz bo'lsa, oldingilarining ta'siri kompensatsiya tranzaksiyalari bilan semantik bekor qilinadi."
+  course: system-design
+  lesson: 49
+- term: orchestration
+  uz: "Saga'ni markaziy orchestrator boshqaradi: holat mashinasini saqlaydi, ishtirokchilarga command yuboradi, javobni kutadi va keyingi qadamni tanlaydi."
+  course: system-design
+  lesson: 49
+- term: choreography
+  uz: "Markaziy boshqaruvchisiz saga: har bir servis hodisa chiqaradi, keyingi servis unga obuna bo'lib o'z qadamini bajaradi."
+  course: system-design
+  lesson: 49
+- term: backpressure
+  uz: "Qabul qiluvchi tomonning sekinroq degan signali ishlab chiqaruvchigacha yetib borishi. Tez producer sekin consumer'ni bosib qo'ymaydi va oradagi navbatlar chegaralangan qoladi."
+  course: system-design
+  lesson: 50
+- term: DLQ
+  aliases: [dead letter queue]
+  uz: "Dead letter queue - hech qachon muvaffaqiyatli qayta ishlanmaydigan xabarlar ajratiladigan alohida navbat, ular keyin tahlil qilinadi yoki qayta yuboriladi."
+  course: system-design
+  lesson: 50
+- term: exponential backoff
+  uz: "Har bir qayta urinishdan oldingi kutish vaqtini eksponensial oshirish (1, 2, 4, 8 soniya), odatda yuqori chegara (cap) bilan."
+  course: system-design
+  lesson: 50
+- term: jitter
+  uz: "Retry kutish vaqtiga tasodifiylik qo'shish, shunda xato olgan ko'p klient bir vaqtda qayta urinib, tizimga birdaniga yopirilmaydi."
+  course: system-design
+  lesson: 50
+- term: pseudocode
+  uz: "Algoritmni kodga o'tkazishdan oldin oddiy tilda, lekin aniq qadamlar bilan yozish. Funksiyalar, shartlar, mantiqiy ifodalar va sikllardan quriladi."
+  course: cs50
+  lesson: 1
+- term: linear search
+  uz: "Elementlarni boshidan bittalab tekshirib qidirish. Tartib talab qilmaydi, lekin eng yomon holatda n qadam oladi."
+  course: cs50
+  lesson: 1
+- term: binary search
+  uz: "Saralangan to'plamda o'rtadagi elementni solishtirib, har qadamda qidiruv oralig'ining yarmini tashlab yuborish. Eng yomon holatda taxminan log₂ n qadam oladi."
+  course: cs50
+  lesson: 1
+- term: precondition
+  uz: "Algoritm to'g'ri ishlashi uchun kirish oldindan qanoatlantirishi shart bo'lgan shart. Masalan, binary search uchun ma'lumot saralangan bo'lishi kerak."
+  course: cs50
+  lesson: 1
+- term: invariant
+  uz: "Algoritm yoki siklning har bir qadamida rost bo'lib qoladigan da'vo. Loop invariant siklning har aylanishi boshida rost bo'ladi va to'g'rilikni isbotlashda ishlatiladi."
+  course: cs50
+  lesson: 1
+- term: integer overflow
+  uz: "Butun son natijasi tip sig'imidan (masalan, INT_MAX) oshib ketishi. C'da signed integer overflow undefined behavior, shuning uchun o'rtani lo + (hi - lo) / 2 shaklida hisoblash xavfsizroq."
+  course: cs50
+  lesson: 1
+- term: halting problem
+  uz: "Ixtiyoriy dastur berilgan kirishda to'xtaydimi degan savolga har doim to'g'ri javob beradigan algoritm mavjud emas. Hamma muammo ham algoritm bilan yechilmasligining klassik isboti."
+  course: cs50
+  lesson: 1

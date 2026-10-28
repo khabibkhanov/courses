@@ -43,20 +43,32 @@ export function TermTooltip({ root }: { root: RefObject<HTMLElement | null> }) {
       const el = termOf(e.target);
       if (el) show(el);
     };
+    // Bosishdan oldingi holat: focusin pointerdown'da oynani ochib qo'yadi, click esa undan keyin keladi.
+    let openBeforePress: boolean | null = null;
+    const isOpenFor = (el: HTMLAnchorElement) => box.current?.dataset.for === el.dataset.term;
+    const onDown = (e: PointerEvent) => {
+      const el = termOf(e.target);
+      openBeforePress = el ? isOpenFor(el) : null;
+    };
     const onClick = (e: MouseEvent) => {
       const el = termOf(e.target);
       if (!el) return;
       // Oyna shu atama uchun hali ochilmagan bo'lsa (sensorli ekran) - avval izoh ko'rsatiladi.
-      if (box.current?.dataset.for !== el.dataset.term) {
+      // Klaviaturada (Enter) pointerdown yo'q: fokus oynani ochgan, havola ishlaydi.
+      const wasOpen = openBeforePress ?? isOpenFor(el);
+      openBeforePress = null;
+      if (!wasOpen) {
         e.preventDefault();
         show(el);
       }
     };
+    container.addEventListener("pointerdown", onDown);
     container.addEventListener("pointerover", onOver);
     container.addEventListener("pointerout", onOut);
     container.addEventListener("focusin", onFocus);
     container.addEventListener("click", onClick);
     return () => {
+      container.removeEventListener("pointerdown", onDown);
       container.removeEventListener("pointerover", onOver);
       container.removeEventListener("pointerout", onOut);
       container.removeEventListener("focusin", onFocus);
