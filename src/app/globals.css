@@ -14,6 +14,15 @@
   --warn: #c2412d;
   /* Kurs sahifalarida kurs rangi bilan almashtiriladi (style="--line: ..."). */
   --line: #2a5bd7;
+  --plex-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --plex-mono: "IBM Plex Mono", ui-monospace, monospace;
+  /* Kod muharriri (CodeMirror) ranglari */
+  --cm-keyword: #7c3aed;
+  --cm-string: #0f7b45;
+  --cm-number: #b45309;
+  --cm-comment: #6b7280;
+  --cm-function: #1d4ed8;
+  --cm-type: #b91c4b;
 }
 
 .dark {
@@ -25,6 +34,12 @@
   --soft: #1b212a;
   --done: #4cc38a;
   --warn: #f08a62;
+  --cm-keyword: #c4a5ff;
+  --cm-string: #7ee2a8;
+  --cm-number: #ffbe7a;
+  --cm-comment: #8b95a3;
+  --cm-function: #8fb4ff;
+  --cm-type: #ff9fbd;
   color-scheme: dark;
 }
 
@@ -38,8 +53,8 @@
   --color-done: var(--done);
   --color-warn: var(--warn);
   --color-line: var(--line);
-  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-sans: var(--plex-sans);
+  --font-mono: var(--plex-mono);
 }
 
 html {
@@ -49,7 +64,7 @@ html {
 body {
   background: var(--paper);
   color: var(--ink);
-  font-family: var(--font-sans);
+  font-family: var(--plex-sans);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -85,7 +100,7 @@ body {
 .lesson table,
 .lesson blockquote,
 .lesson figure,
-.lesson > pre {
+.lesson pre {
   margin: 0 0 1.15rem;
 }
 .lesson ul {
@@ -111,7 +126,7 @@ body {
   font-weight: 600;
 }
 .lesson :not(pre) > code {
-  font-family: var(--font-mono);
+  font-family: var(--plex-mono);
   font-size: 0.86em;
   background: var(--soft);
   padding: 0.1em 0.35em;
@@ -149,7 +164,7 @@ body {
 /* Kod bloklari (rehype-pretty-code, ikki mavzuli Shiki) */
 figure[data-rehype-pretty-code-figure] pre,
 .lesson pre {
-  font-family: var(--font-mono);
+  font-family: var(--plex-mono);
   font-size: 0.84rem;
   line-height: 1.6;
   background: var(--sheet);
@@ -188,6 +203,22 @@ figure[data-rehype-pretty-code-figure] span {
 .lesson pre.mermaid svg {
   max-width: 100%;
   height: auto;
+}
+
+/* Playground ichidagi chiqish bloklariga dars uslubi tegmaydi. */
+.lesson [data-playground-root] pre {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  font-size: inherit;
+}
+.lesson [data-playground-root] table {
+  display: table;
+  width: auto;
+  margin: 0;
+  font-size: inherit;
 }
 
 @media (prefers-reduced-motion: reduce) {

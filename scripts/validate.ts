@@ -8,6 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { getCourse, getLesson, listCourses, publishedNumbers, syllabus, type Course, type Lesson } from "../src/lib/content";
+import { runLang } from "../src/lib/playground";
 
 const [onlyCourse, fromArg, toArg] = process.argv.slice(2);
 const from = Number(fromArg ?? 1);
@@ -91,6 +92,8 @@ for (const course of courses) {
     if (FORBIDDEN_DASHES.test(raw)) e.push("em/en-dash bor, faqat \"-\" ruxsat");
     for (const re of FORBIDDEN_TEXT) if (re.test(raw)) e.push(`taqiqlangan matn: ${re.source}`);
     for (const q of lesson.quiz?.questions ?? []) if (q.answer >= q.options.length) e.push("quiz javob indeksi xato");
+    for (const [, lang, meta] of lesson.body.matchAll(/^```(\w*)([^\n]*)$/gm))
+      if (/(^|\s)run(\s|$)/.test(meta) && !runLang(lang)) e.push(`"run" bloki uchun til qo'llab-quvvatlanmaydi: ${lang || "(yo'q)"}`);
     errors.push(...e.map((x) => `${where}: ${x}`));
   }
 }

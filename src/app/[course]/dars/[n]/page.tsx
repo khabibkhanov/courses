@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCourse, getLesson, listCourses, publishedNumbers, syllabus } from "@/lib/content";
-import { codeToMarkdown, extractToc, markdownToHtml } from "@/lib/markdown";
+import { codeToMarkdown, extractToc, markdownToHtml, renderLesson } from "@/lib/markdown";
 import { LessonBody } from "@/components/lesson-body";
 import { Quiz } from "@/components/quiz";
 import { AnswerBox } from "@/components/answer-box";
@@ -42,7 +42,7 @@ export default async function LessonPage({ params }: PageProps<"/[course]/dars/[
   const prev = published.filter((x) => x < n).at(-1);
   const next = published.find((x) => x > n);
 
-  const html = await markdownToHtml(lesson.body);
+  const { html, segments, playgrounds } = await renderLesson(lesson.body);
   const toc = extractToc(html);
   const task = lesson.task && {
     title: lesson.task.title,
@@ -143,10 +143,10 @@ export default async function LessonPage({ params }: PageProps<"/[course]/dars/[
 
           {dbEnabled ? (
             <TextFeedback course={course.slug} n={n} lessonHash={lessonHash}>
-              <LessonBody html={html} />
+              <LessonBody segments={segments} playgrounds={playgrounds} />
             </TextFeedback>
           ) : (
-            <LessonBody html={html} />
+            <LessonBody segments={segments} playgrounds={playgrounds} />
           )}
 
           {lesson.sources.length > 0 && (

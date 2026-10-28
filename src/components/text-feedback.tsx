@@ -28,6 +28,9 @@ export function TextFeedback({ course, n, lessonHash, children }: Props) {
     if (!root || !sel || sel.rangeCount === 0 || sel.isCollapsed) return null;
     const range = sel.getRangeAt(0);
     if (!root.contains(range.commonAncestorContainer)) return null;
+    // Kod muharriri ichidagi belgilash - izoh uchun emas.
+    const anchor = range.commonAncestorContainer;
+    if ((anchor instanceof Element ? anchor : anchor.parentElement)?.closest("[data-playground-root]")) return null;
     const raw = range.toString();
     const quote = normalize(raw);
     if (quote.length < 2) return null;

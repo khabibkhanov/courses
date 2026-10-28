@@ -198,7 +198,7 @@ export function chkSpd(pts: Pt[]) {
 
 `zn === 1` nimani anglatadi? `60` va `90` qanday chegara? `250` nima uchun? Bu raqamlarni qidirsangiz, boshqa modullardagi `60` (daqiqa), `90` (kun), `250` (ms) bilan aralashadi.
 
-```ts
+```ts run
 type SpeedZone = "urban" | "highway";
 
 type TelemetryPoint = {
@@ -223,6 +223,14 @@ export function findSpeedingPoints(points: TelemetryPoint[]): TelemetryPoint[] {
     return isPlausible && isOverLimit;
   });
 }
+
+// Sinab ko'ring: ma'lumotni o'zgartiring va "Ishga tushirish"ni bosing.
+const sample: TelemetryPoint[] = [
+  { vehicleId: "01A123BC", speedKmh: 72, zone: "urban", recordedAtMs: 0 },
+  { vehicleId: "01A123BC", speedKmh: 72, zone: "highway", recordedAtMs: 1000 },
+  { vehicleId: "01B456CD", speedKmh: 410, zone: "highway", recordedAtMs: 2000 },
+];
+console.log(findSpeedingPoints(sample));
 ```
 
 Nima o'zgardi:

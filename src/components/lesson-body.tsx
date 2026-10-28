@@ -1,12 +1,19 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
+import { Playground } from "./playground/playground";
+import type { PlaygroundSpec } from "@/lib/playground";
 
 let seq = 0;
 
-/** Dars HTML'i (serverda tayyorlangan) va undagi mermaid diagrammalar - mavzuga mos chiziladi. */
-export function LessonBody({ html }: { html: string }) {
+type Props = { segments: string[]; playgrounds: PlaygroundSpec[] };
+
+/**
+ * Dars matni (serverda tayyorlangan HTML bo'laklari), ular orasidagi playground'lar
+ * va mermaid diagrammalar - mavzuga mos chiziladi.
+ */
+export function LessonBody({ segments, playgrounds }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
 
@@ -39,7 +46,16 @@ export function LessonBody({ html }: { html: string }) {
     return () => {
       cancelled = true;
     };
-  }, [html, resolvedTheme]);
+  }, [segments, resolvedTheme]);
 
-  return <div ref={ref} className="lesson" dangerouslySetInnerHTML={{ __html: html }} />;
+  return (
+    <div ref={ref} className="lesson">
+      {segments.map((html, i) => (
+        <Fragment key={i}>
+          <div className="contents" dangerouslySetInnerHTML={{ __html: html }} />
+          {playgrounds[i] && <Playground {...playgrounds[i]} />}
+        </Fragment>
+      ))}
+    </div>
+  );
 }

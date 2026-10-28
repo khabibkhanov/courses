@@ -88,3 +88,19 @@ Boshqa darslarga havola: "(23-dars)" ko'rinishida, raqamlar `content/system-desi
 node -e 'const f=process.argv[1];const q=JSON.parse(require("fs").readFileSync(f,"utf8"));if(q.questions.length!==10)throw "10 emas";q.questions.forEach((x,i)=>{if(x.options.length!==4||x.answer<0||x.answer>3)throw "savol "+i})' content/system-design/NNN.quiz.json
 grep -n "[—–]" content/system-design/NNN.md content/system-design/NNN.quiz.json   # hech narsa chiqmasligi kerak
 ```
+
+## Ishga tushiriladigan kod (playground)
+
+Kod blokiga `run` belgisi qo'shilsa, u darsda tahrirlanadigan va brauzerda ishga tushiriladigan blokka aylanadi:
+
+````
+```python run
+print("salom")
+```
+````
+
+- Tillar: `python`, `sql` (SQLite), `js`, `ts`. Boshqa til bilan `run` - validator xatosi.
+- Blok o'zi yetarli bo'lishi kerak: SQL'da jadvallarni yaratish va ma'lumot qo'shish shu blok ichida; JS/TS'da natija `console.log` bilan chiqariladi. `import` ishlamaydi.
+- Kod yozishdan oldin lokal ishga tushirib, natijasini tekshiring. Matnda natijaga tayanilsa, u haqiqiy natija bilan bir xil bo'lsin.
+- Hamma blokni `run` qilmang: faqat o'quvchi o'zgartirib ko'rishidan foyda bo'ladigan, natija chiqaradigan misollar uchun.
+- Vaqt chegarasi: Python 15 soniya, qolganlari 5 soniya.
