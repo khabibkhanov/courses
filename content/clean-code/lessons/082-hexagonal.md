@@ -292,7 +292,7 @@ Muammolar: SDK klienti klass ichida yaratiladi (almashtirib bo'lmaydi), tiyinlar
 
 Yaxshi variant. Port ilova tilida, adapter vendor tilida:
 
-```ts
+```ts run
 // core/payments.ts
 export type ChargeResult =
   | { status: "succeeded"; providerRef: string }
@@ -310,6 +310,14 @@ export class Checkout {
     return this.payments.charge(orderId, amountUzs);
   }
 }
+
+// Sinab ko'ring: soxta gateway javobini yoki summani o'zgartiring.
+const fakeGateway: PaymentGateway = {
+  charge: async (orderId) => ({ status: "succeeded", providerRef: `fake-${orderId}` }),
+};
+const checkout = new Checkout(fakeGateway);
+console.log(await checkout.pay("order-7", 150_000));
+console.log(await checkout.pay("order-8", 0));
 ```
 
 ```ts

@@ -242,7 +242,7 @@ U ishlaydi. Lekin keyingi talablar allaqachon ko'rinib turibdi: shahar ichida ch
 
 Strategik versiya - 10-20% qo'shimcha vaqt bilan:
 
-```ts
+```ts run
 type TrackerMessage = { imei: string; speedKmh: number; at: Date };
 
 type SpeedViolation = { imei: string; speedKmh: number; limitKmh: number; at: Date };
@@ -284,6 +284,14 @@ export class TrackerHandler {
     if (violation) await this.notifier.notify(violation);
   }
 }
+
+// Sinab ko'ring: tezlik chegarasini yoki xabarlarni o'zgartiring.
+const consoleNotifier: ViolationNotifier = {
+  notify: async (v) => console.log(`Ogohlantirish: ${v.imei}, ${v.speedKmh} km/soat (chegara ${v.limitKmh})`),
+};
+const handler = new TrackerHandler(new FixedSpeedPolicy(90), consoleNotifier);
+await handler.handle({ imei: "356938035643809", speedKmh: 72, at: new Date() });
+await handler.handle({ imei: "356938035643809", speedKmh: 118, at: new Date() });
 ```
 
 Nima investitsiya qilindi va nima qilinmadi:

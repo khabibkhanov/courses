@@ -8,7 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { getCourse, getLesson, listCourses, publishedNumbers, syllabus, type Course, type Lesson } from "../src/lib/content";
-import { runLang } from "../src/lib/playground";
+import { TESTABLE, runLang } from "../src/lib/playground";
 
 const [onlyCourse, fromArg, toArg] = process.argv.slice(2);
 const from = Number(fromArg ?? 1);
@@ -21,8 +21,10 @@ const FORBIDDEN_TEXT = [/iquarix/i, /chatga yuboring/i];
 const errors: string[] = [];
 let checked = 0;
 
-const words = (s: string) => s.replace(/```[\s\S]*?```/g, " ").split(/\s+/).filter(Boolean).length;
-const headings = (body: string) => [...body.matchAll(/^## (.+)$/gm)].map((m) => m[1].trim());
+/** Kod bloklarisiz matn: kod ichidagi `# komment` sarlavha deb hisoblanmasin. */
+const prose = (s: string) => s.replace(/```[\s\S]*?```/g, " ");
+const words = (s: string) => prose(s).split(/\s+/).filter(Boolean).length;
+const headings = (body: string) => [...prose(body).matchAll(/^## (.+)$/gm)].map((m) => m[1].trim());
 
 /** Format bo'yicha sifat qoidalari: har kurs o'z dars standartiga ega (docs/<kurs>/). */
 const RULES: Record<Course["format"], (l: Lesson, raw: string) => string[]> = {
@@ -30,7 +32,7 @@ const RULES: Record<Course["format"], (l: Lesson, raw: string) => string[]> = {
     const e: string[] = [];
     for (const s of ["Ko'p uchraydigan xatolar", "Xulosa", "Amaliy topshiriq", "Manbalar"])
       if (!l.body.includes(`## ${s}`)) e.push(`bo'lim yo'q: ${s}`);
-    if (/^# /m.test(l.body)) e.push("# sarlavha bor");
+    if (/^# /m.test(prose(l.body))) e.push("# sarlavha bor");
     if (!l.body.includes("```mermaid")) e.push("mermaid yo'q");
     if (!/\n\|.*\|\n\|[-| :]+\|/.test(l.body)) e.push("jadval yo'q");
     const links = (l.body.split("## Manbalar")[1] ?? "").match(/\]\(https?:\/\//g) ?? [];
@@ -52,10 +54,32 @@ const RULES: Record<Course["format"], (l: Lesson, raw: string) => string[]> = {
     for (const s of ["Muammo", "Asosiy g'oya", "Chuqurroq", "Misol", "Qachon qo'llamaslik kerak", "Xulosa"])
       if (!hs.some((h) => h.startsWith(s))) e.push(`"## ${s}" bo'limi yo'q`);
     if (words(l.body) < 1100) e.push(`qisqa: ${words(l.body)} so'z`);
-    if (!/```(ts|tsx|js|typescript)\n/.test(l.body)) e.push("ts/tsx kod bloki yo'q");
+    if (!/```(ts|tsx|js|typescript)[ \t\n]/.test(l.body)) e.push("ts/tsx kod bloki yo'q");
     return e;
   },
 };
+
+/** ```<til> run va undan keyin keladigan ```<til> test bloklari qoidalari. */
+function checkRunBlocks(body: string): string[] {
+  const e: string[] = [];
+  const blocks = [...body.matchAll(/^```(\w*)([^\n]*)\n[\s\S]*?^```[ \t]*$/gm)].map((m) => ({
+    lang: m[1],
+    run: /(^|\s)run(\s|$)/.test(m[2]),
+    test: /(^|\s)test(\s|$)/.test(m[2]),
+    start: m.index!,
+    end: m.index! + m[0].length,
+  }));
+  blocks.forEach((b, i) => {
+    if (b.run && !runLang(b.lang)) e.push(`"run" bloki uchun til qo'llab-quvvatlanmaydi: ${b.lang || "(yo'q)"}`);
+    if (!b.test) return;
+    const prev = blocks[i - 1];
+    if (!prev?.run || body.slice(prev.end, b.start).trim() !== "")
+      e.push(`"test" bloki darhol "run" blokidan keyin kelishi kerak (${b.lang})`);
+    else if (runLang(prev.lang) !== runLang(b.lang)) e.push(`"test" bloki tili "run" bloki tili bilan bir xil emas`);
+    else if (!TESTABLE.includes(runLang(b.lang)!)) e.push(`"test" bloki ${b.lang} uchun qo'llab-quvvatlanmaydi`);
+  });
+  return e;
+}
 
 function rawFiles(course: Course, n: number): string[] {
   const dir = path.join(process.cwd(), "content", course.slug);
@@ -92,8 +116,7 @@ for (const course of courses) {
     if (FORBIDDEN_DASHES.test(raw)) e.push("em/en-dash bor, faqat \"-\" ruxsat");
     for (const re of FORBIDDEN_TEXT) if (re.test(raw)) e.push(`taqiqlangan matn: ${re.source}`);
     for (const q of lesson.quiz?.questions ?? []) if (q.answer >= q.options.length) e.push("quiz javob indeksi xato");
-    for (const [, lang, meta] of lesson.body.matchAll(/^```(\w*)([^\n]*)$/gm))
-      if (/(^|\s)run(\s|$)/.test(meta) && !runLang(lang)) e.push(`"run" bloki uchun til qo'llab-quvvatlanmaydi: ${lang || "(yo'q)"}`);
+    e.push(...checkRunBlocks(lesson.body));
     errors.push(...e.map((x) => `${where}: ${x}`));
   }
 }

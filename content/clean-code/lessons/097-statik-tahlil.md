@@ -253,7 +253,7 @@ export function validateBooking(b: Booking, blacklist: Set<string>): string[] {
 
 Ballning yarmi nesting'dan: uchinchi darajadagi `if` bitta o'zi 3 ball. Endi har bir tekshiruvni mustaqil qoida sifatida yozamiz:
 
-```ts
+```ts run
 type Booking = { carId: string; days: number; driverAge: number; hasDeposit: boolean };
 
 const MIN_DRIVER_AGE = 21;
@@ -274,6 +274,12 @@ export function validateBooking(b: Booking, blacklist: Set<string>): string[] {
   return errors;
 }
 // Cognitive complexity: 5. Cyclomatic: 6 (o'zgarmadi).
+
+// Sinab ko'ring: bron maydonlarini o'zgartiring.
+const blacklist = new Set(["car-13"]);
+console.log(validateBooking({ carId: "car-1", days: 5, driverAge: 25, hasDeposit: false }, blacklist));
+console.log(validateBooking({ carId: "car-13", days: 2, driverAge: 19, hasDeposit: true }, blacklist));
+console.log(validateBooking({ carId: "car-2", days: 2, driverAge: 30, hasDeposit: false }, blacklist));
 ```
 
 Cyclomatic o'zgarmadi, chunki qaror nuqtalari soni bir xil: biz hech qanday mantiqni olib tashlamadik. Cognitive ikki baravar kamaydi, chunki shartlarni tekis `else if` zanjiriga aylantirish (26-darsdagi ichma-ichlikni kamaytirish g'oyasi) nesting'ni yo'qotdi. Xatti-harakat ham saqlandi: kunlar noto'g'ri bo'lsa ham qora ro'yxat tekshiruvi bajariladi, xuddi asl versiyadagidek. Bu metrika inson sezgisiga mos keladigan holat: ikkinchi versiyani yuqoridan pastga bir marta o'qib tushunish mumkin.

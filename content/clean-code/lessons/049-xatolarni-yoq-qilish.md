@@ -263,7 +263,7 @@ interface BookingRepo {
 
 Yaxshi:
 
-```ts
+```ts run
 export class BookingCompletedError extends Error {
   constructor(readonly bookingId: string) {
     super(`Yakunlangan bronni bekor qilib bo'lmaydi: ${bookingId}`);
@@ -288,6 +288,16 @@ export async function cancelBooking(repo: BookingRepo, id: string): Promise<bool
       return true;
   }
 }
+
+// Sinab ko'ring: bir bronni ikki marta bekor qiling.
+const statuses = new Map<string, Booking["status"]>([["b1", "active"], ["b2", "completed"]]);
+const repo: BookingRepo = {
+  getOrThrow: async (id) => ({ id, status: statuses.get(id)! }),
+  updateStatus: async (id, status) => void statuses.set(id, status),
+};
+console.log(await cancelBooking(repo, "b1"));
+console.log(await cancelBooking(repo, "b1"));
+await cancelBooking(repo, "b2").catch((e) => console.log(e.name, e.message));
 ```
 
 Nima o'zgardi va nega:

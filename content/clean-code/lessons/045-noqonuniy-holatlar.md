@@ -270,7 +270,7 @@ function summary(r: Rental): string {
 
 Holat mashinasida o'tishlarni funksiyalar sifatida yozing, ular faqat ruxsat etilgan holatni qabul qilsin:
 
-```ts
+```ts run
 type Active = Extract<Rental, { status: "active" }>;
 type Returned = Extract<Rental, { status: "returned" }>;
 
@@ -279,6 +279,21 @@ function returnRental(r: Active, at: Date, odometerEnd: number): Returned {
     throw new RangeError("Odometr ko'rsatkichi kamayishi mumkin emas");
   }
   return { ...r, status: "returned", returnedAt: at, odometerEnd };
+}
+
+// Sinab ko'ring: odometr ko'rsatkichini o'zgartiring.
+const active: Active = {
+  status: "active",
+  vehicleId: "01A123BC",
+  startedAt: new Date("2026-10-20T09:00:00Z"),
+  odometerStart: 48_200,
+};
+const returned = returnRental(active, new Date("2026-10-25T18:00:00Z"), 48_950);
+console.log(returned.status, returned.odometerEnd - returned.odometerStart, "km");
+try {
+  returnRental(active, new Date(), 40_000);
+} catch (e) {
+  console.log((e as Error).message);
 }
 ```
 

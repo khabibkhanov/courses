@@ -231,7 +231,7 @@ To'rt qoida bo'yicha review:
 
 Refaktoringdan keyin:
 
-```ts
+```ts run
 type PaymentProvider = "payme" | "click" | "uzum";
 
 type FeeRule = { rate: number; minFeeUzs: number };
@@ -246,6 +246,11 @@ export function calculatePaymentFee(amountUzs: number, provider: PaymentProvider
   const { rate, minFeeUzs } = FEE_RULES[provider];
   return Math.max(amountUzs * rate, minFeeUzs);
 }
+
+// Sinab ko'ring: summa va provayderni o'zgartiring.
+console.log(calculatePaymentFee(1_000_000, "payme"));
+console.log(calculatePaymentFee(10_000, "uzum"));
+console.log(calculatePaymentFee(400_000, "click"));
 ```
 
 Va birinchi qoida uchun:

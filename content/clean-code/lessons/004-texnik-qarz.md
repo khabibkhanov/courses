@@ -220,7 +220,7 @@ Bu prudent deliberate qarz bo'lishi mumkin edi: MVP, ikkita promo-kod, ishga tus
 
 Qarzni qaytarish - promo qoidalarini ma'lumotga aylantirish va kombinatsiya qoidasini bitta joyga yig'ish:
 
-```ts
+```ts run
 type Promo = {
   code: string;
   discountRate: number;
@@ -246,6 +246,13 @@ function applicableDiscounts(days: number, promo?: Promo): number[] {
   if (promo.exclusive) return [promo.discountRate];
   return [...longRent, promo.discountRate];
 }
+
+// Sinab ko'ring: kunlar soni va promo-kodni o'zgartiring.
+const summer: Promo = { code: "SUMMER", discountRate: 0.1, exclusive: false };
+const vip: Promo = { code: "VIP", discountRate: 0.2, exclusive: true };
+console.log(calculateRentPrice({ days: 5, dailyRateUzs: 300_000 }));
+console.log(calculateRentPrice({ days: 40, dailyRateUzs: 300_000, promo: summer }));
+console.log(calculateRentPrice({ days: 40, dailyRateUzs: 300_000, promo: vip }));
 ```
 
 Bu yerda biz promo-kodlarni bazaga chiqarmadik, qoidalar dvigatelini qurmadik. Faqat foiz to'lanayotgan joyni tuzatdik: yangi promo - ma'lumot, kombinatsiya qoidasi - bitta funksiya. Agar marketing ertaga "promo faqat dam olish kunlari" desa, bu yangi qarz bo'ladi va uni o'shanda hal qilamiz (9-dars, YAGNI).

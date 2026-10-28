@@ -13,6 +13,8 @@ export type LessonProgress = {
   checklist?: number[];
   /** Oxirgi yuborilgan baho (server ham saqlaydi, bu - formani to'ldirish uchun). */
   rating?: { stars: number; tags: string[]; comment: string };
+  /** Darsdagi testli mashqlar: blok tartib raqami bo'yicha o'quvchi kodi va natijasi. */
+  exercises?: Record<string, { code: string; passed: boolean }>;
 };
 export type CourseProgress = Record<string, LessonProgress>;
 
@@ -80,7 +82,8 @@ export function useProgress(course: string): CourseProgress {
 export function saveProgress(course: string, n: number, patch: Partial<LessonProgress>) {
   const store = read(course);
   const prev = store[n] ?? { passed: false, score: 0 };
-  const next = { ...store, [n]: { ...prev, ...patch, passed: prev.passed || Boolean(patch.passed) } };
+  const exercises = patch.exercises ? { ...prev.exercises, ...patch.exercises } : prev.exercises;
+  const next = { ...store, [n]: { ...prev, ...patch, exercises, passed: prev.passed || Boolean(patch.passed) } };
   try {
     localStorage.setItem(key(course), JSON.stringify(next));
   } catch {

@@ -237,7 +237,7 @@ Transport parki tizimida haydovchi reytingi hisoblanadi. Yangi talab: tunda (22:
 
 Aralash yondashuv - talabni to'g'ridan-to'g'ri mavjud kodga tiqish:
 
-```ts
+```ts run
 type DrivingEvent = {
   type: "harsh_brake" | "speeding" | "harsh_turn";
   occurredAt: Date;
@@ -258,6 +258,15 @@ export function driverScore(events: DrivingEvent[]): number {
   }
   return Math.max(score, 0);
 }
+
+// Sinab ko'ring: hodisalarni qo'shing yoki vaqtini o'zgartiring (22:00-06:00 - tun).
+const events: DrivingEvent[] = [
+  { type: "harsh_brake", occurredAt: new Date(2026, 9, 1, 23, 15), speedKmh: 70 },
+  { type: "harsh_brake", occurredAt: new Date(2026, 9, 1, 14, 0), speedKmh: 50 },
+  { type: "speeding", occurredAt: new Date(2026, 9, 1, 15, 30), speedKmh: 124 },
+  { type: "harsh_turn", occurredAt: new Date(2026, 9, 1, 16, 0), speedKmh: 40 },
+];
+console.log("Ball:", driverScore(events)); // 100 - 6 - 3 - 5 - 2 = 84
 ```
 
 Ishlaydi, lekin keyingi talab ("tunda tezlikni oshirish ham ikki baravar") yana bitta takror tekshiruv qo'shadi. Review'da esa diff'ning qaysi qismi yangi xatti-harakat ekanini ko'rish oson emas.

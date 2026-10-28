@@ -287,7 +287,7 @@ export function finishTrip(trip: Trip): void {
 
 Yaxshi variant. `Liters` value object va `Trip` aggregate ildizi:
 
-```ts
+```ts run
 export class Liters {
   private constructor(readonly value: number) {}
 
@@ -342,6 +342,15 @@ export class Trip {
     return this.fuelEvents;
   }
 }
+
+// Sinab ko'ring: bak hajmini yoki quyilgan litrlarni o'zgartiring.
+const trip = Trip.start("t-1", "01A123BC", Liters.of(60));
+console.log("40 L:", trip.refuel(Liters.of(40), new Date()));
+console.log("75 L:", trip.refuel(Liters.of(75), new Date()));
+console.log("Jami:", trip.totalFuel()?.value);
+trip.finish();
+console.log("Tugagandan keyin 10 L:", trip.refuel(Liters.of(10), new Date()));
+try { Liters.of(-5); } catch (e) { console.log("Xato:", (e as Error).message); }
 ```
 
 Nima o'zgardi:

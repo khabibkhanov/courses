@@ -275,7 +275,7 @@ Talab: yoqilg'i tranzaksiyalaridan oylik hisobot - har bir mashina uchun jami li
 
 **Bundling usuli.** Avval interfeys o'ylanadi:
 
-```ts
+```ts run
 export type FuelTransaction = {
   vehicleId: string;
   liters: number;
@@ -321,6 +321,17 @@ export function buildMonthlyFuelReport(
     suspicious,
   };
 }
+
+// Sinab ko'ring: litrlarni yoki bak hajmini (60) o'zgartiring.
+const at = new Date("2026-10-05T10:00:00Z");
+const transactions: FuelTransaction[] = [
+  { vehicleId: "10B", liters: 30, amountUzs: 360_000, at },
+  { vehicleId: "01A", liters: 40, amountUzs: 480_000, at },
+  { vehicleId: "01A", liters: 75, amountUzs: 900_000, at },
+];
+const report = buildMonthlyFuelReport(transactions, () => 60);
+console.log("Mashinalar:", report.vehicles);
+console.log("Shubhali quyishlar (L):", report.suspicious.map((t) => t.liters));
 ```
 
 Keyin o'sha sessiyada testlar:

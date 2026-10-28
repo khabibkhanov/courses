@@ -262,7 +262,7 @@ Bu test bitta muvaffaqiyatli holatni tekshiradi. Chegaraviy holatlar (mashina ha
 
 Avval logikani sof funksiyaga ajratamiz va chegaraviy holatlarni arzon joyda tekshiramiz:
 
-```ts
+```ts run
 export type FuelReading = { at: Date; liters: number; speedKmh: number };
 
 export type DrainRule = { minDropLiters: number; maxWindowMinutes: number };
@@ -279,6 +279,12 @@ export function detectFuelDrain(
   const minutes = (current.at.getTime() - previous.at.getTime()) / 60_000;
   return isParked && drop >= rule.minDropLiters && minutes <= rule.maxWindowMinutes;
 }
+
+// Sinab ko'ring: litr, tezlik yoki vaqtni o'zgartiring.
+const at = (minute: number) => new Date(Date.UTC(2026, 9, 1, 10, minute));
+console.log("To'xtab turib, 5 daqiqada 40 L:", detectFuelDrain({ at: at(0), liters: 180, speedKmh: 0 }, { at: at(5), liters: 140, speedKmh: 0 }));
+console.log("Harakatda, 5 daqiqada 40 L:", detectFuelDrain({ at: at(0), liters: 180, speedKmh: 60 }, { at: at(5), liters: 140, speedKmh: 60 }));
+console.log("To'xtab turib, 30 daqiqada 40 L:", detectFuelDrain({ at: at(0), liters: 180, speedKmh: 0 }, { at: at(30), liters: 140, speedKmh: 0 }));
 ```
 
 ```ts

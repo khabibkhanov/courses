@@ -209,7 +209,7 @@ export async function confirmOrder(repo: OrderRepo, sms: Sms, orderId: string): 
 
 Bir darajaga keltirilgan:
 
-```ts
+```ts run
 const UZ_PHONE = /^\+998\d{9}$/;
 
 export async function confirmOrder(repo: OrderRepo, sms: Sms, orderId: string): Promise<void> {
@@ -234,6 +234,20 @@ export function orderTotal(order: Order): number {
 function confirmationText(orderId: string, total: number): string {
   return `Buyurtma #${orderId} tasdiqlandi. Jami: ${total} so'm`;
 }
+
+// Sinab ko'ring: xotiradagi repo va konsolga yozadigan SMS bilan.
+const lines: OrderLine[] = [
+  { sku: "OIL-5W30", quantity: 2, unitPrice: 95_000 },
+  { sku: "FILTER", quantity: 1, unitPrice: 40_000 },
+];
+const orders = new Map<string, Order>([["42", { id: "42", customerPhone: "+998901234567", lines, status: "draft" }]]);
+const repo: OrderRepo = {
+  find: async (id) => orders.get(id) ?? null,
+  save: async (order) => void orders.set(order.id, order),
+};
+const sms: Sms = { send: async (phone, text) => console.log(`SMS ${phone}: ${text}`) };
+await confirmOrder(repo, sms, "42");
+console.log(orders.get("42")?.status);
 ```
 
 O'zgarishlar sababi:

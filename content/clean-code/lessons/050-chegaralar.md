@@ -342,7 +342,7 @@ export class TripService {
 
 Yaxshi - port ilova tilida, adapter SDK bilimini yashiradi:
 
-```ts
+```ts run
 // domain/positions.ts
 export type Position = Readonly<{
   imei: string;
@@ -379,6 +379,17 @@ export class AcmePositionSource implements PositionSource {
     };
   }
 }
+
+// Sinab ko'ring: SDK paketini o'zgartiring. Domen faqat Position'ni ko'radi.
+const fakeClient: AcmeClient = {
+  getLastPacket: async (imei) =>
+    imei === "356938035643809"
+      ? { imei, lat_e6: 41_299_500, lng_e6: 69_240_100, spd_knots: 27, ts: 1_793_000_000 }
+      : undefined,
+};
+const source: PositionSource = new AcmePositionSource(fakeClient);
+console.log(await source.lastKnown("356938035643809"));
+console.log(await source.lastKnown("000000000000000"));
 ```
 
 Nima o'zgardi va nega:

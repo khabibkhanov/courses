@@ -251,7 +251,7 @@ Mockist hamjamiyatda keng tarqalgan maslahat: uchinchi tomon kutubxonasini (masa
 
 Servis bronni tasdiqlaydi: mashina bandmi tekshiradi, bronni saqlaydi, mijozga email yuboradi.
 
-```ts
+```ts run
 export type Booking = { id: string; carId: string; status: "pending" | "confirmed"; email: string };
 
 export interface BookingRepository {
@@ -282,6 +282,16 @@ export class BookingConfirmationService {
     return confirmed;
   }
 }
+
+// Sinab ko'ring: hasConfirmedOverlap'ni true qilib, xatoni ko'ring.
+const rows = new Map<string, Booking>([["b-1", { id: "b-1", carId: "c-1", status: "pending", email: "mijoz@mail.uz" }]]);
+const repo: BookingRepository = {
+  findById: async (id) => rows.get(id) ?? null,
+  hasConfirmedOverlap: async () => false,
+  save: async (b) => { rows.set(b.id, b); },
+};
+const mailer: Mailer = { send: async (to, subject) => console.log(`Email -> ${to}: ${subject}`) };
+console.log(await new BookingConfirmationService(repo, mailer).confirm("b-1"));
 ```
 
 Mockist uslubdagi, implementatsiyani qotiruvchi test:

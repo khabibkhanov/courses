@@ -197,7 +197,7 @@ Xulosa: yangi funksionallikni avval mavjud komponentlarni birlashtirish orqali o
 
 Merosning eng og'riqli muammosi - **mo'rt ota klass**. Ota klass muallifi ommaviy interfeysni o'zgartirmasdan ichki implementatsiyani o'zgartiradi va vorislar buziladi. Klassik misol:
 
-```ts
+```ts run
 class TripLog {
   protected readonly trips: string[] = [];
   add(tripId: string): void {
@@ -219,6 +219,12 @@ class CountingTripLog extends TripLog {
     super.addAll(tripIds);
   }
 }
+
+// Sinab ko'ring: 3 ta qatnov qo'shiladi - count nechaga teng bo'ladi?
+const log = new CountingTripLog();
+log.add("trip-1");
+log.addAll(["trip-2", "trip-3"]);
+console.log("Kutilgan: 3, haqiqiy count:", log.count);
 ```
 
 `CountingTripLog` muallifi ota klassning ichki qarorini (`addAll` `add`ni chaqiradi) bilishi kerak edi. Agar u buni bilib, `addAll` override'ni olib tashlasa, keyin ota klass muallifi `addAll`ni `this.trips.push(...tripIds)` bilan optimallashtirsa, hisoblagich yana noto'g'ri bo'ladi. Ommaviy interfeys o'zgarmadi, lekin voris buzildi. Bu white-box bog'lanishning bevosita natijasi va 51-darsdagi semantik coupling'ning eng toza namunasi.

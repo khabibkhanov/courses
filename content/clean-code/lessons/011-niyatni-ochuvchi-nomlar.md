@@ -201,7 +201,7 @@ export function check(evs: Ev[], lim: number) {
 
 Har bir nom savol tug'diradi. `check` nimani tekshiradi va nima qaytaradi? `lvl` litrdami, foizdami? `lim` nimaning chegarasi? `86_400_000` nima? `out` qanday hodisalar? Bularni bilish uchun chaqiruvchi kodni o'qish kerak.
 
-```ts
+```ts run
 type FuelLevelReading = {
   vehicleId: string;
   levelLiters: number;
@@ -224,6 +224,16 @@ export function findSuspectedFuelDrains(
     return isRecent && dropLiters > minDropLiters;
   });
 }
+
+// Sinab ko'ring: minDropLiters yoki vaqtlarni o'zgartiring.
+const nowMs = Date.parse("2026-10-28T12:00:00Z");
+const HOUR_MS = 60 * 60 * 1000;
+const readings: FuelLevelReading[] = [
+  { vehicleId: "01A123BC", previousLevelLiters: 80, levelLiters: 52, recordedAtMs: nowMs - 2 * HOUR_MS },
+  { vehicleId: "01A123BC", previousLevelLiters: 52, levelLiters: 50, recordedAtMs: nowMs - HOUR_MS },
+  { vehicleId: "10B456CD", previousLevelLiters: 90, levelLiters: 40, recordedAtMs: nowMs - 30 * HOUR_MS },
+];
+console.log(findSuspectedFuelDrains(readings, 15, nowMs));
 ```
 
 Nima o'zgardi va nima uchun:

@@ -233,7 +233,7 @@ export function applyHappyHourDiscount(order: Order): Order {
 
 Bu funksiya chaqiruvchining obyektini o'zgartiradi va uni qaytaradi, shuning uchun chaqiruvchi yangi obyekt oldim deb o'ylashi mumkin. Natija soatga bog'liq va testda 14:00 ni kutish yoki soatni mock qilish kerak. Sof versiya:
 
-```ts
+```ts run
 type OrderLine = { readonly sku: string; readonly quantity: number; readonly unitPrice: number };
 type Order = {
   readonly id: string;
@@ -259,6 +259,18 @@ export function applyHappyHourDiscount(order: Order, at: Date): Order {
     discountApplied: true,
   };
 }
+
+// Sinab ko'ring: soatni o'zgartiring (chegirma 14:00-16:00 oralig'ida).
+const order: Order = {
+  id: "o1",
+  lines: [{ sku: "COFFEE", quantity: 2, unitPrice: 18_000 }],
+  total: 36_000,
+  discountApplied: false,
+};
+const discounted = applyHappyHourDiscount(order, new Date(2026, 9, 28, 15, 0));
+console.log("yangi:", discounted.total, discounted.discountApplied);
+console.log("asl:", order.total, order.discountApplied);
+console.log(applyHappyHourDiscount(order, new Date(2026, 9, 28, 18, 0)) === order);
 ```
 
 Nima o'zgardi:

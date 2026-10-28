@@ -205,7 +205,7 @@ export function analyze(tripTelemetryPointsForAnalysis: { s: number; t: number }
 
 Bu kodda nom uzunligi scope'ga teskari: sikl ichidagi vaqtinchalik o'zgaruvchilar juda uzun, funksiyadan tashqariga chiqadigan natija (`m`) va maydonlar (`s`, `t`) esa juda qisqa.
 
-```ts
+```ts run
 type TelemetryPoint = { speedKmh: number; recordedAtMs: number };
 
 export type TripSummary = { maxSpeedKmh: number; idleDurationMs: number };
@@ -225,6 +225,15 @@ export function summarizeTrip(points: TelemetryPoint[]): TripSummary {
 
   return { maxSpeedKmh, idleDurationMs };
 }
+
+// Sinab ko'ring: tezlik va vaqtlarni o'zgartiring.
+const points: TelemetryPoint[] = [
+  { speedKmh: 40, recordedAtMs: 0 },
+  { speedKmh: 0, recordedAtMs: 60_000 },
+  { speedKmh: 0, recordedAtMs: 180_000 },
+  { speedKmh: 85, recordedAtMs: 240_000 },
+];
+console.log(summarizeTrip(points));
 ```
 
 Nima o'zgardi:

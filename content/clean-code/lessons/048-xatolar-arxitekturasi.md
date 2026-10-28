@@ -312,7 +312,7 @@ Bu format `code` va `type` ni ajratish imkonini ham beradi: `type` - hujjatlasht
 
 Butun zanjirni ko'raylik. Domen xatosi:
 
-```ts
+```ts run
 export abstract class DomainError extends Error {
   abstract readonly code: string;
   constructor(message: string, readonly context: Record<string, string | number> = {}) {
@@ -327,6 +327,11 @@ export class InsufficientBalanceError extends DomainError {
     super(`Hamyonda mablag' yetarli emas`, { walletId, requested, available });
   }
 }
+
+// Sinab ko'ring: xato obyektida filtr uchun nimalar bor?
+const error = new InsufficientBalanceError("wallet_42", 350_000, 120_000);
+console.log(error instanceof DomainError, error.name, error.code);
+console.log(error.message, JSON.stringify(error.context));
 ```
 
 Filter (asosiy qismi):

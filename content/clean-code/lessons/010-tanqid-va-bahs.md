@@ -273,7 +273,7 @@ To'rt nigoh:
 
 Muvozanatli versiya:
 
-```ts
+```ts run
 type GpsPoint = { latitude: number; longitude: number };
 
 const EARTH_RADIUS_KM = 6371;
@@ -296,6 +296,15 @@ export function routeDistanceKm(points: GpsPoint[]): number {
   }
   return totalKm;
 }
+
+// Sinab ko'ring: nuqtalarni o'zgartiring. Marshrut: Toshkent - Chirchiq - Toshkent.
+const route: GpsPoint[] = [
+  { latitude: 41.2995, longitude: 69.2401 },
+  { latitude: 41.4689, longitude: 69.5822 },
+  { latitude: 41.2995, longitude: 69.2401 },
+];
+console.log(`Bir tomonga: ${haversineKm(route[0], route[1]).toFixed(1)} km`);
+console.log(`Butun marshrut: ${routeDistanceKm(route).toFixed(1)} km`);
 ```
 
 Bitta haqiqiy abstraksiya (formula) saqlandi va hujjatlandi. Yashirin holat yo'qoldi. Kod tez va o'qilishi oson. Bu "Martin yutdi" ham, "Ousterhout yutdi" ham emas: bu ikkalasining kelishgan nuqtalari (yon ta'sirsiz, nomli, chuqur abstraksiya) asosida qurilgan.

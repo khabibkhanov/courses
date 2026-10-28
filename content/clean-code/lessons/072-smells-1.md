@@ -273,7 +273,7 @@ Smell'lar: `rep`, `vid`, `r`, `d` (Mysterious Name); filtr va yig'indi ikki mart
 
 Refaktoringdan keyin:
 
-```ts
+```ts run
 type FuelEvent = { vehicleId: string; at: Date; liters: number };
 type Period = { from: Date; to: Date };
 
@@ -305,6 +305,17 @@ export function drainSummary(query: FuelReportQuery, events: FuelEvent[]): strin
   const drains = eventsFor(query, events).filter((e) => e.liters < -query.minLitersChange);
   return summaryLine("Drains", drains);
 }
+
+// Sinab ko'ring: davr, mashina yoki minLitersChange'ni o'zgartiring.
+const events: FuelEvent[] = [
+  { vehicleId: "01A123BC", at: new Date("2026-10-01T08:00:00Z"), liters: 45 },
+  { vehicleId: "01A123BC", at: new Date("2026-10-03T22:10:00Z"), liters: -18.5 },
+  { vehicleId: "01A123BC", at: new Date("2026-10-05T09:30:00Z"), liters: 2 },
+  { vehicleId: "10B777AA", at: new Date("2026-10-02T12:00:00Z"), liters: 60 },
+];
+const period = { from: new Date("2026-10-01T00:00:00Z"), to: new Date("2026-10-31T23:59:59Z") };
+const query: FuelReportQuery = { vehicleId: "01A123BC", period, minLitersChange: 5 };
+console.log(refuelSummary(query, events) + drainSummary(query, events));
 ```
 
 Qadamlar va ularning nomlari:

@@ -292,7 +292,7 @@ Servis bakning sig'imi, joriy miqdori va "to'la" degan qoidani biladi. Bu bilim 
 
 Yaxshi:
 
-```ts
+```ts run
 type RefuelResult = { becameFull: boolean };
 
 export class FuelTank {
@@ -325,6 +325,17 @@ export class RefuelService {
     const { becameFull } = vehicle.refuel(liters);
     if (becameFull) this.events.publish({ type: "tank_full", vehicleId: vehicle.id });
   }
+}
+
+// Sinab ko'ring: bak sig'imi va quyiladigan litrlarni o'zgartiring.
+const service = new RefuelService({ publish: (e) => console.log("hodisa:", JSON.stringify(e)) });
+const vehicle = new Vehicle("01A123BC", new FuelTank(60, 20));
+service.refuel(vehicle, 25);
+service.refuel(vehicle, 13);
+try {
+  service.refuel(vehicle, 10);
+} catch (e) {
+  console.log((e as Error).message);
 }
 ```
 

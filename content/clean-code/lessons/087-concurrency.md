@@ -238,7 +238,7 @@ Node.js uchun bularni uchta amaliy qoidaga keltiramiz:
 
 JavaScript'da sinxron kod bo'lagi to'xtatilmasdan oxirigacha bajariladi. Bu haqiqiy kafolat: `balance -= amount` qatorining o'rtasida boshqa kod ishlamaydi. Lekin `await` funksiyani to'xtatadi va boshqaruvni event loop'ga qaytaradi. Shu payt boshqa so'rov handler'i ishlashi mumkin.
 
-```ts
+```ts run
 let walletBalance = 100_000;
 
 async function withdraw(amount: number, audit: () => Promise<void>): Promise<void> {
@@ -252,6 +252,9 @@ export async function demoLostUpdate(): Promise<number> {
   await Promise.all([withdraw(30_000, audit), withdraw(50_000, audit)]);
   return walletBalance; // 20_000 emas, 50_000 yoki 70_000
 }
+
+// Sinab ko'ring: 100 000 - 30 000 - 50 000 = 20 000 bo'lishi kerak edi.
+console.log("Yakuniy balans:", await demoLostUpdate());
 ```
 
 Ikkala chaqiruv ham `current = 100_000` ni o'qiydi, ikkalasi ham kutadi, keyin ikkalasi ham o'z hisobini yozadi. Ikkinchi yozuv birinchisini o'chiradi: **lost update**. Hech qanday thread yo'q, lekin xato bor.
@@ -274,7 +277,7 @@ Process ichidagi mutex (masalan, kalit bo'yicha `Promise` zanjiri) faqat bitta p
 
 Kesh bo'sh bo'lganda parallel so'rovlar bir xil qimmat ishni boshlaydi. Natijani emas, **Promise'ni** keshlash bu muammoni process ichida hal qiladi:
 
-```ts
+```ts run
 export function singleFlight<K, V>(load: (key: K) => Promise<V>): (key: K) => Promise<V> {
   const inFlight = new Map<K, Promise<V>>();
   return (key: K) => {
@@ -287,6 +290,16 @@ export function singleFlight<K, V>(load: (key: K) => Promise<V>): (key: K) => Pr
 }
 
 // const monthlyReport = singleFlight((companyId: string) => buildMonthlyReport(companyId));
+
+// Sinab ko'ring: bir vaqtda kelgan 3 ta so'rov yuklashni necha marta chaqiradi?
+let loads = 0;
+const report = singleFlight(async (companyId: string) => {
+  loads++;
+  await new Promise((resolve) => setTimeout(resolve, 50));
+  return `${companyId} hisoboti`;
+});
+console.log(await Promise.all([report("c-1"), report("c-1"), report("c-2")]));
+console.log("load chaqiruvlari:", loads);
 ```
 
 `get` va `set` orasida `await` yo'q, shuning uchun bu ikki qadam sinxron va atomik. `finally` xato bo'lganda ham yozuvni o'chiradi, aks holda rad etilgan Promise abadiy keshlanib qoladi.

@@ -283,7 +283,7 @@ Tashqaridan toza: konstantalar nomlangan, TSDoc bor. Review savollari:
 
 Tuzatilgan variant:
 
-```ts
+```ts run
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const LONG_RENTAL_MIN_DAYS = 7; // biznes bilan tasdiqlandi: 7 kun ham kiradi
 const LONG_RENTAL_DISCOUNT = 0.1;
@@ -302,6 +302,15 @@ export function rentalPriceUzs(start: Date, end: Date, dailyRateUzs: number): nu
   const days = rentalDays(start, end);
   const discount = days >= LONG_RENTAL_MIN_DAYS ? LONG_RENTAL_DISCOUNT : 0;
   return Math.round(days * dailyRateUzs * (1 - discount));
+}
+
+// Sinab ko'ring: sanalar yoki kunlik narxni o'zgartiring.
+console.log("6 kun:", rentalPriceUzs(new Date(2026, 9, 1), new Date(2026, 9, 7), 400_000));
+console.log("7 kun:", rentalPriceUzs(new Date(2026, 9, 1), new Date(2026, 9, 8), 400_000));
+try {
+  rentalPriceUzs(new Date(2026, 9, 5), new Date(2026, 9, 5), 400_000);
+} catch (e) {
+  console.log(e instanceof InvalidRentalPeriodError, (e as Error).message);
 }
 ```
 

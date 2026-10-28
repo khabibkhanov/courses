@@ -274,7 +274,7 @@ Bu yerda uchta yolg'on bor. `as` tashqi API javobi aynan shu shaklda deb da'vo q
 
 Halol variant:
 
-```ts
+```ts run
 type Driver = { name: string };
 type Vehicle = { id: string; plate: string; driver: Driver | null };
 
@@ -305,6 +305,13 @@ export function parseVehicleList(body: unknown): Vehicle[] {
 export function firstDriverName(vehicles: Vehicle[]): string | undefined {
   return vehicles[0]?.driver?.name.toUpperCase();
 }
+
+// Sinab ko'ring: JSON'ni buzib ko'ring (masalan, "plate"ni olib tashlang).
+const body: unknown = JSON.parse('{"vehicles":[{"id":"v1","plate":"01A123BC","driver":{"name":"Aziz"}},{"id":"v2","plate":"10B777AA","driver":null}]}');
+const vehicles = parseVehicleList(body);
+console.log(vehicles);
+console.log("Birinchi haydovchi:", firstDriverName(vehicles));
+try { parseVehicleList({ vehicles: [{ id: 1 }] }); } catch (e) { console.log("Xato:", (e as Error).message); }
 ```
 
 Nima o'zgardi:

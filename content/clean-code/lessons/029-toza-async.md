@@ -235,7 +235,7 @@ export async function loadOrderPage(orderId: string) {
 
 Bu yerda haqiqiy bog'liqlik bitta: mijoz va mashina buyurtmaga bog'liq. Tavsiyalar hech narsaga bog'liq emas va ixtiyoriy. Qayta yozilgan:
 
-```ts
+```ts run
 type OrderPage = {
   order: Order;
   customer: Customer;
@@ -258,6 +258,23 @@ export async function loadOrderPage(orderId: string, signal?: AbortSignal): Prom
 
   return { order, customer, vehicle, recommendations };
 }
+
+// Sinab ko'ring: getJson o'rniga har so'rovi 300 ms davom etadigan soxta API.
+// Tavsiyalar servisi ishlamayapti, sahifa baribir yuklanadi.
+const FAKE_API: Record<string, unknown> = {
+  orders: { id: "o1", customerId: "c1", vehicleId: "v1" },
+  customers: { id: "c1", name: "Aziz" },
+  vehicles: { id: "v1", plate: "01A123BC" },
+};
+async function getJson<T>(url: string, _signal?: AbortSignal): Promise<T> {
+  const resource = url.split("/")[2].split("?")[0];
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  if (!(resource in FAKE_API)) throw new Error(`503: ${url}`);
+  return FAKE_API[resource] as T;
+}
+const startedAt = Date.now();
+console.log(JSON.stringify(await loadOrderPage("o1")));
+console.log(`~${Math.round((Date.now() - startedAt) / 100) * 100} ms (ketma-ket bo'lsa ~1200 ms)`);
 ```
 
 Nima o'zgardi:

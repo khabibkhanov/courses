@@ -243,7 +243,7 @@ export async function pay(repo: AccountRepo, accountId: string, amount: number):
 
 Kutilgan natijalar Result'da, nosozliklar exception'da:
 
-```ts
+```ts run
 type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
 
 type PayError =
@@ -264,6 +264,19 @@ export async function pay(
   }
   await repo.debit(accountId, amount); // DB xatosi exception bo'lib yuqoriga chiqadi
   return { ok: true, value: { charged: amount } };
+}
+
+// Sinab ko'ring: balans yoki summani o'zgartiring.
+const accounts = new Map<string, Account>([
+  ["acc_1", { id: "acc_1", balance: 200_000, blocked: false }],
+  ["acc_2", { id: "acc_2", balance: 900_000, blocked: true }],
+]);
+const repo: AccountRepo = {
+  find: async (id) => accounts.get(id) ?? null,
+  debit: async (id, amount) => void (accounts.get(id)!.balance -= amount),
+};
+for (const [id, amount] of [["acc_1", 150_000], ["acc_1", 150_000], ["acc_2", 10_000], ["acc_9", 10_000]] as const) {
+  console.log(JSON.stringify(await pay(repo, id, amount)));
 }
 ```
 

@@ -7,13 +7,13 @@ import type { PlaygroundSpec } from "@/lib/playground";
 
 let seq = 0;
 
-type Props = { segments: string[]; playgrounds: PlaygroundSpec[] };
+type Props = { course: string; n: number; segments: string[]; playgrounds: PlaygroundSpec[] };
 
 /**
  * Dars matni (serverda tayyorlangan HTML bo'laklari), ular orasidagi playground'lar
  * va mermaid diagrammalar - mavzuga mos chiziladi.
  */
-export function LessonBody({ segments, playgrounds }: Props) {
+export function LessonBody({ course, n, segments, playgrounds }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
 
@@ -53,7 +53,7 @@ export function LessonBody({ segments, playgrounds }: Props) {
       {segments.map((html, i) => (
         <Fragment key={i}>
           <div className="contents" dangerouslySetInnerHTML={{ __html: html }} />
-          {playgrounds[i] && <Playground {...playgrounds[i]} />}
+          {playgrounds[i] && <Playground {...playgrounds[i]} course={course} n={n} index={i} />}
         </Fragment>
       ))}
     </div>

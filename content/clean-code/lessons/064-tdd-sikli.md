@@ -295,7 +295,7 @@ export function rentalTotal(_quote: RentalQuote): number {
 
 **4-sikl:** 30 kun. Kodda ikkinchi `if` paydo bo'ladi. Endi refactor bosqichi keldi, chunki chegirma qoidalari ma'lumotga o'xshab qoldi:
 
-```ts
+```ts run
 export type RentalQuote = { dailyRate: number; days: number };
 
 const LONG_RENTAL_DISCOUNTS = [
@@ -310,6 +310,12 @@ export function rentalTotal(quote: RentalQuote): number {
   const discount = LONG_RENTAL_DISCOUNTS.find((d) => quote.days >= d.fromDays)?.rate ?? 0;
   return Math.round(quote.dailyRate * quote.days * (1 - discount));
 }
+
+// Sinab ko'ring: kunlar sonini o'zgartiring, 0 yoki 2.5 kunda nima bo'lishini ko'ring.
+for (const days of [1, 6, 7, 29, 30]) {
+  console.log(`${days} kun -> ${rentalTotal({ dailyRate: 300_000, days })}`);
+}
+try { rentalTotal({ dailyRate: 300_000, days: 0 }); } catch (e) { console.log("Xato:", (e as Error).message); }
 ```
 
 Va yakuniy testlar:

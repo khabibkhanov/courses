@@ -254,7 +254,7 @@ Endi butun mantiq bir joyda ko'rinadi va yashirin holat yo'qoldi. Xatti-harakat 
 
 **2-bosqich: to'g'ri chegarada qayta extract qilish.**
 
-```ts
+```ts run
 export function fuelConsumptionPer100Km(trips: readonly Trip[]): number | null {
   const km = trips.reduce((s, t) => s + t.distanceKm, 0);
   if (km === 0) return null;
@@ -266,6 +266,14 @@ export function fuelReport(trips: readonly Trip[]): string {
   const consumption = fuelConsumptionPer100Km(trips);
   return consumption === null ? "Ma'lumot yo'q" : `${consumption.toFixed(1)} l/100km`;
 }
+
+// Sinab ko'ring: reyslarni o'zgartiring yoki bo'sh ro'yxat bering.
+const trips: Trip[] = [
+  { distanceKm: 120, fuelLiters: 14.4, idleMinutes: 10 },
+  { distanceKm: 80, fuelLiters: 11, idleMinutes: 25 },
+];
+console.log(fuelReport(trips));
+console.log(fuelReport([]));
 ```
 
 Endi bo'linish chizig'i haqiqiy tushunchalar orasida: **hisoblash** (sof, raqam qaytaradi, boshqa joylarda ham kerak) va **formatlash**. `totalKm` va `totalFuel` alohida funksiya bo'lib qaytmadi, chunki ular bir qatorli va faqat shu yerda kerak. Nolga bo'lish holati esa alohida xatti-harakat o'zgarishi: uni refaktoring commit'laridan alohida, o'z testi bilan kiritamiz.

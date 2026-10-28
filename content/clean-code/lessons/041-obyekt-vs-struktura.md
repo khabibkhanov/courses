@@ -259,7 +259,7 @@ Bu yerda ikki yo'l bor va ikkalasi ham toza. Qaysi biri - o'zgarish yo'nalishiga
 
 **Variant A: ma'lumot strukturasi va funksiyalar.** Agar sayohat holatlari barqaror bo'lsa, lekin ular ustida yangi operatsiyalar (hisobotlar, eksport, billing) tez-tez qo'shilsa:
 
-```ts
+```ts run
 export type Trip =
   | { readonly kind: "planned"; readonly id: string }
   | { readonly kind: "in_progress"; readonly id: string; readonly startedAt: Date }
@@ -290,6 +290,23 @@ export function durationMinutes(trip: Trip): number | null {
       return unreachable;
     }
   }
+}
+
+// Sinab ko'ring: sayohatni boshlang, keyin uni qayta boshlashga urining.
+const started = startTrip({ kind: "planned", id: "t1" }, new Date("2026-10-28T08:00:00Z"));
+console.log(started.kind, durationMinutes(started));
+const finished: Trip = {
+  kind: "finished",
+  id: "t0",
+  startedAt: new Date("2026-10-28T06:00:00Z"),
+  finishedAt: new Date("2026-10-28T07:25:00Z"),
+  distanceKm: 64,
+};
+console.log(finished.kind, durationMinutes(finished));
+try {
+  startTrip(started, new Date());
+} catch (e) {
+  console.log((e as Error).message);
 }
 ```
 

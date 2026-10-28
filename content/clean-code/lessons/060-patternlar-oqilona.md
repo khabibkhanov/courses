@@ -253,7 +253,7 @@ Hozir bu yaxshi. Uchta usul, hammasi bitta joyda va ko'rinib turadi. Pattern ker
 
 Olti oydan keyin: yettita usul, har biri o'z qoidalari bilan, ikkitasi tashqi API chaqiradi (Yandex Delivery, BTS) va hamkor kompaniyalar o'z usullarini qo'shishi kerak. Endi o'zgarish o'qi isbotlangan va Strategy o'zini oqlaydi:
 
-```ts
+```ts run
 export type Order = { totalUzs: number; weightKg: number; city: string };
 
 export type DeliveryMethod = {
@@ -288,6 +288,11 @@ export function btsDelivery(client: { tariff(kg: number, city: string): Promise<
 export async function deliveryQuotes(order: Order, methods: readonly DeliveryMethod[]) {
   return Promise.all(methods.map(async (m) => ({ id: m.id, label: m.label, feeUzs: await m.quoteUzs(order) })));
 }
+
+// Sinab ko'ring: buyurtma summasi, og'irligi yoki shaharni o'zgartiring.
+const fakeBts = { tariff: async (kg: number, _city: string) => ({ price: 15_000 + Math.ceil(kg) * 3_000 }) };
+const order: Order = { totalUzs: 320_000, weightKg: 2.4, city: "Samarqand" };
+console.log(await deliveryQuotes(order, [pickup, courier, btsDelivery(fakeBts)]));
 ```
 
 Nima o'zgardi va nega:

@@ -8,7 +8,8 @@ import type { RunLang } from "@/lib/playground";
 export type { RunLang };
 export type Output =
   | { kind: "out" | "err" | "info"; text: string }
-  | { kind: "table"; columns: string[]; rows: unknown[][] };
+  | { kind: "table"; columns: string[]; rows: unknown[][] }
+  | { kind: "test"; name: string; ok: boolean; error?: string };
 
 const PYODIDE = "https://cdn.jsdelivr.net/npm/pyodide@314.0.7/";
 const SQLJS = "https://cdn.jsdelivr.net/npm/sql.js@1.15.2/dist/";
@@ -20,11 +21,18 @@ const JS_WORKER = `
 const fmt = (v) => typeof v === "string" ? v : (() => { try { return JSON.stringify(v, null, 2) ?? String(v); } catch { return String(v); } })();
 const send = (kind) => (...a) => postMessage({ type: "out", out: { kind, text: a.map(fmt).join(" ") } });
 const console = { log: send("out"), info: send("out"), debug: send("out"), warn: send("err"), error: send("err"), table: send("out") };
+const pending = [];
+// Testlar uchun: check("nom", () => shart). Shart xato bersa yoki false bo'lsa - test o'tmadi.
+const check = (name, fn) => pending.push((async () => {
+  try { postMessage({ type: "out", out: { kind: "test", name, ok: Boolean(await fn()) } }); }
+  catch (err) { postMessage({ type: "out", out: { kind: "test", name, ok: false, error: String(err && err.message || err) } }); }
+})());
 self.onmessage = async (e) => {
   try {
     const exports = {};
     const require = (m) => { throw new Error("import/require bu yerda ishlamaydi: " + m); };
-    await new Function("console", "exports", "require", '"use strict"; return (async () => {\\n' + e.data.code + '\\n})()')(console, exports, require);
+    await new Function("console", "exports", "require", "check", '"use strict"; return (async () => {\\n' + e.data.code + '\\n})()')(console, exports, require, check);
+    await Promise.all(pending);
   } catch (err) {
     postMessage({ type: "out", out: { kind: "err", text: err && err.stack ? String(err.stack).split("\\n    at new Function")[0] : String(err) } });
   }
@@ -33,6 +41,14 @@ self.onmessage = async (e) => {
 
 const PY_WORKER = `
 import { loadPyodide } from "${PYODIDE}pyodide.mjs";
+const CHECK = \`
+def check(name, fn):
+    try:
+        ok, err = bool(fn()), None
+    except Exception as e:
+        ok, err = False, f"{type(e).__name__}: {e}"
+    _report(name, ok, err)
+\`;
 let py;
 const ready = (async () => {
   py = await loadPyodide({ indexURL: "${PYODIDE}" });
@@ -46,6 +62,11 @@ self.onmessage = async (e) => {
   try {
     await py.loadPackagesFromImports(e.data.code);
     await py.runPythonAsync(e.data.code, { globals: ns });
+    if (e.data.tests) {
+      ns.set("_report", (name, ok, error) => postMessage({ type: "out", out: { kind: "test", name, ok, error: error ?? undefined } }));
+      await py.runPythonAsync(CHECK, { globals: ns });
+      await py.runPythonAsync(e.data.tests, { globals: ns });
+    }
   } catch (err) {
     postMessage({ type: "out", out: { kind: "err", text: String(err.message || err) } });
   } finally {
@@ -125,14 +146,21 @@ export type RunHandle = { done: Promise<void>; stop: () => void };
  * Kodni ishga tushiradi. onOutput har bir chiqish bo'lagi uchun chaqiriladi,
  * onLoading - runtime birinchi marta yuklanayotganda.
  */
-export function run(lang: RunLang, code: string, onOutput: (o: Output) => void, onLoading: (loading: boolean) => void): RunHandle {
+export function run(
+  lang: RunLang,
+  code: string,
+  onOutput: (o: Output) => void,
+  onLoading: (loading: boolean) => void,
+  tests?: string,
+): RunHandle {
   const kind = lang === "ts" ? "js" : lang;
   let stop = () => {};
   const done = (async () => {
     let source = code;
     if (kind === "js") {
       try {
-        source = await transpile(code, lang === "ts");
+        // JS/TS'da testlar kod bilan bitta scope'da: o'quvchining funksiyalari testlarga ko'rinadi.
+        source = await transpile(tests ? `${code}\n;\n${tests}` : code, lang === "ts");
       } catch (err) {
         onOutput({ kind: "err", text: `Sintaksis xatosi: ${(err as Error).message}` });
         return;
@@ -171,7 +199,7 @@ export function run(lang: RunLang, code: string, onOutput: (o: Output) => void, 
           resolve();
         }
       };
-      worker.postMessage({ code: source });
+      worker.postMessage({ code: source, tests: kind === "python" ? tests : undefined });
     });
   })();
   return { done, stop: () => stop() };

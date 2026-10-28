@@ -338,7 +338,7 @@ Jarima qoidasini tekshirish uchun repository, to'lov klienti va vaqt mock qilini
 
 Core'ga ajratamiz:
 
-```ts
+```ts run
 // late-fee.ts - functional core
 const HOUR_MS = 60 * 60 * 1000;
 const GRACE_PERIOD_MS = HOUR_MS;
@@ -349,6 +349,13 @@ export function calculateLateFee(dueAt: Date, returnedAt: Date, dailyRate: numbe
   if (lateMs <= 0) return 0;
   const startedHours = Math.ceil(lateMs / HOUR_MS);
   return Math.min(startedHours * dailyRate * HOURLY_FEE_SHARE, dailyRate);
+}
+
+// Sinab ko'ring: kechikish daqiqalarini yoki kunlik narxni o'zgartiring.
+const due = new Date("2026-10-20T10:00:00Z");
+for (const minutesLate of [30, 60, 61, 121, 30 * 60]) {
+  const fee = calculateLateFee(due, new Date(due.getTime() + minutesLate * 60_000), 400_000);
+  console.log(`${minutesLate} daqiqa kechikish -> ${fee} so'm`);
 }
 ```
 

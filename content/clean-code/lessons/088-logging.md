@@ -257,7 +257,7 @@ Pino tez bo'lish uchun yaratilgan va bu dizayn qarorlarida ko'rinadi. Masalan, h
 
 Yomon variant:
 
-```ts
+```ts run
 export async function handlePaymeWebhook(body: Record<string, unknown>, apply: () => Promise<void>) {
   console.log("webhook received", body);
   try {
@@ -268,6 +268,11 @@ export async function handlePaymeWebhook(body: Record<string, unknown>, apply: (
     throw e;
   }
 }
+
+// Sinab ko'ring: loglarga qarang - qaysi tranzaksiya, qaysi buyurtma, nima bo'ldi?
+const body = { transaction_id: "tx-981", order_id: "o-42", amount: 15_000_000 };
+await handlePaymeWebhook(body, async () => {});
+await handlePaymeWebhook(body, async () => { throw new Error("duplicate key"); }).catch(() => {});
 ```
 
 Muammolar: butun tana (karta ma'lumotlari, token) logga tushadi, darajalar yo'q, kontekst (qaysi buyurtma, qaysi tranzaksiya) yo'q, `"ERROR " + e` stack'ni yo'qotadi, va `throw e` dan keyin yuqori qatlam xatoni yana log qiladi.

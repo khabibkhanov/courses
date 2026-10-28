@@ -288,7 +288,7 @@ Linter dizaynni baholamaydi. U funksiyaning to'g'ri abstraksiya ekanini, nomning
 
 Kompilyatsiya bo'ladigan, lekin noto'g'ri NestJS kodi:
 
-```ts
+```ts run
 type Payment = { id: string; status: "pending" | "paid" };
 
 interface PaymentRepository {
@@ -315,6 +315,18 @@ export class PaymentReconciler {
     });
   }
 }
+
+// Sinab ko'ring: shlyuz faqat p1 ni to'langan deydi. Nechta to'lov "paid" bo'lib qoldi?
+const markedPaid: string[] = [];
+const reconciler = new PaymentReconciler(
+  {
+    findPending: async () => [{ id: "p1", status: "pending" }, { id: "p2", status: "pending" }],
+    markPaid: async (id) => void markedPaid.push(id),
+  },
+  { isPaid: async (id) => id === "p1" },
+);
+await reconciler.reconcile();
+console.log("paid deb belgilandi:", markedPaid);
 ```
 
 Uchta bug. Ulardan ikkitasi (`forEach(async ...)` va `await`siz `markPaid`) `tsc` dan jimgina o'tadi; ikkinchisini esa `strictNullChecks` yoqilgan zamonaviy TypeScript ham ushlaydi (TS2801: "bu Promise har doim aniqlangan"), lekin faqat to'g'ridan-to'g'ri shart ichida:
@@ -325,7 +337,7 @@ Uchta bug. Ulardan ikkitasi (`forEach(async ...)` va `await`siz `markPaid`) `tsc
 
 Tuzatilgan versiya:
 
-```ts
+```ts run
 export class PaymentReconciler {
   constructor(
     private readonly repo: PaymentRepository,
@@ -340,6 +352,18 @@ export class PaymentReconciler {
     }
   }
 }
+
+// Sinab ko'ring: oldingi blokdagi bilan bir xil ma'lumot. Natijani solishtiring.
+const markedPaid: string[] = [];
+const reconciler = new PaymentReconciler(
+  {
+    findPending: async () => [{ id: "p1", status: "pending" }, { id: "p2", status: "pending" }],
+    markPaid: async (id) => void markedPaid.push(id),
+  },
+  { isPaid: async (id) => id === "p1" },
+);
+await reconciler.reconcile();
+console.log("paid deb belgilandi:", markedPaid);
 ```
 
 Ketma-ket `for...of` tanlandi: gateway rate limit'ga ega bo'lishi mumkin. Parallel kerak bo'lsa, cheklangan concurrency bilan `Promise.all` (29-dars). Muhimi - bu xatolarni odam emas, CI topdi.

@@ -257,7 +257,7 @@ Uch modul bir-birini import qilmaydi. Formal ravishda coupling yo'q. Amalda esa 
 
 Yaxshilangan holat: qoida bitta modulda, boshqalar uning natijasidan foydalanadi.
 
-```ts
+```ts run
 // orders/cancellation-policy.ts
 export type OrderStatus = "new" | "paid" | "shipped" | "cancelled";
 
@@ -274,6 +274,13 @@ export function canCancel(order: { createdAt: Date; status: OrderStatus }, now: 
 export function wasCancelledLate(order: { createdAt: Date; cancelledAt: Date }): boolean {
   return order.cancelledAt > cancellationDeadline(order.createdAt);
 }
+
+// Sinab ko'ring: vaqtlarni yoki statusni o'zgartiring va "Ishga tushirish"ni bosing.
+const order = { createdAt: new Date("2026-10-20T09:00:00Z"), status: "new" as OrderStatus };
+console.log("Muddat:", cancellationDeadline(order.createdAt).toISOString());
+console.log("10 soatdan keyin:", canCancel(order, new Date("2026-10-20T19:00:00Z")));
+console.log("30 soatdan keyin:", canCancel(order, new Date("2026-10-21T15:00:00Z")));
+console.log("Kech bekor qilinganmi:", wasCancelledLate({ ...order, cancelledAt: new Date("2026-10-22T09:00:00Z") }));
 ```
 
 ```ts

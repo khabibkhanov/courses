@@ -235,7 +235,7 @@ export function paidTotalInUzs(payments: Payment[], usdRate: number): number {
 
 Bu yerda beshta funksiya bor, lekin `accumulate` va `reset` sayoz: ular hech narsani yashirmaydi, faqat modul darajasidagi `total`ni boshqaradi. Bundan ham yomoni, `paidTotalInUzs` ikki joydan parallel chaqirilsa (masalan, async kod ichida), natija buziladi. Chuqur versiya:
 
-```ts
+```ts run
 type Currency = "UZS" | "USD";
 type Payment = { id: string; amount: number; currency: Currency; status: "pending" | "paid" | "failed" };
 
@@ -248,6 +248,14 @@ export function paidTotalInUzs(payments: readonly Payment[], usdRate: number): n
 function toUzs(amount: number, currency: Currency, usdRate: number): number {
   return currency === "USD" ? amount * usdRate : amount;
 }
+
+// Sinab ko'ring: dollar kursini yoki to'lov holatlarini o'zgartiring.
+const payments: Payment[] = [
+  { id: "1", amount: 150_000, currency: "UZS", status: "paid" },
+  { id: "2", amount: 20, currency: "USD", status: "paid" },
+  { id: "3", amount: 99_000, currency: "UZS", status: "failed" },
+];
+console.log(paidTotalInUzs(payments, 12_800));
 ```
 
 Nima o'zgardi:

@@ -232,7 +232,7 @@ Diagnostika:
 
 Murakkablikni kamaytirilgan versiya:
 
-```ts
+```ts run
 type PaymentProvider = "payme" | "click" | "uzum" | "cash";
 
 type Payment =
@@ -282,6 +282,17 @@ export function refundableAmount(payment: Payment): number {
 
 export function statusLabel(payment: Payment): string {
   return STATUS_LABELS[payment.status];
+}
+
+// Sinab ko'ring: to'lov holatini yoki provayderni o'zgartiring.
+const payments: Payment[] = [
+  { id: "t1", status: "paid", provider: "payme", amount: 250_000 },
+  { id: "t2", status: "partially_refunded", provider: "click", amount: 300_000, refundedAmount: 100_000 },
+  { id: "t3", status: "paid", provider: "cash", amount: 80_000 },
+  { id: "t4", status: "failed", provider: "uzum", amount: 50_000, reason: "card_expired" },
+];
+for (const p of payments) {
+  console.log(`${p.id}: ${statusLabel(p)}, qaytarish mumkin: ${refundableAmount(p)} so'm`);
 }
 ```
 

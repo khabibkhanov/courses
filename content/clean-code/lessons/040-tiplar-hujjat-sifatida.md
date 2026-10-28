@@ -259,7 +259,7 @@ Muammolar: `ok: true` va `error` bir vaqtda bo'lishi mumkin, `!` operatori komme
 
 Tiplar bilan ifodalangan versiya:
 
-```ts
+```ts run
 type DeclineCode = "insufficient_funds" | "card_expired";
 
 type ChargeResult =
@@ -281,6 +281,14 @@ function describeCharge(result: ChargeResult): string {
     }
   }
 }
+
+// Sinab ko'ring: natija turlarini o'zgartiring.
+const results: ChargeResult[] = [
+  { kind: "success", transactionId: "tx_1001" },
+  { kind: "declined", code: "card_expired" },
+  { kind: "provider_unavailable", retryAfterSec: 30 },
+];
+for (const r of results) console.log(describeCharge(r));
 ```
 
 Nima o'zgardi va nega:

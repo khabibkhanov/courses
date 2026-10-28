@@ -276,7 +276,7 @@ Hozirgi talab: faqat CSV. XLSX, PDF, JSON - hech kim so'ramagan. To'rt xarajat: 
 
 Hozirgi talabga mos oddiy versiya:
 
-```ts
+```ts run
 type FuelReportRow = { plate: string; liters: number; costUzs: number };
 
 const CSV_SEPARATOR = ";";
@@ -288,6 +288,13 @@ export function fuelReportToCsv(rows: FuelReportRow[]): string {
   );
   return [header, ...lines].join("\n");
 }
+
+// Sinab ko'ring: qatorlarni o'zgartiring va CSV natijasini ko'ring.
+const rows: FuelReportRow[] = [
+  { plate: "01A123BC", liters: 45.5, costUzs: 568_750.4 },
+  { plate: "10B456CD", liters: 120, costUzs: 1_500_000 },
+];
+console.log(fuelReportToCsv(rows));
 ```
 
 Natijada tiplar kuchliroq bo'ldi (ustunlar nomi va formati aniq), kod qisqardi va o'qish uchun bitta funksiya yetarli. XLSX haqiqatan kerak bo'lganda, biz o'sha paytdagi talablarni (ko'p varaqmi? formatlashmi? kutubxona qaysi?) bilamiz va to'g'ri abstraksiyani shunda quramiz. Agar ikkinchi format hech qachon kelmasa, biz hech narsa yo'qotmadik.

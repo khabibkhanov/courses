@@ -282,7 +282,7 @@ Smell'lar:
 
 Refaktoringdan keyin:
 
-```ts
+```ts run
 type ContractStatus = "active" | "terminated";
 type Money = { readonly tiyin: number; readonly currency: "UZS" | "USD" };
 
@@ -308,6 +308,13 @@ export class Contract {
       : Math.round(this.monthlyRent.tiyin * DAILY_PENALTY_RATE * penalizedDays);
     return { tiyin: fee, currency: this.monthlyRent.currency };
   }
+}
+
+// Sinab ko'ring: sanani yoki statusni ("terminated") o'zgartiring.
+const contract = new Contract({ tiyin: 500_000_000, currency: "UZS" }, new Date("2026-10-01T00:00:00Z"), "active");
+for (const day of ["2026-10-04", "2026-10-06", "2026-10-16"]) {
+  const today = new Date(`${day}T00:00:00Z`);
+  console.log(`${day}: ${contract.daysOverdue(today)} kun kechikish, jarima`, contract.lateFee(today));
 }
 ```
 

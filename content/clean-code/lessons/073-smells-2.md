@@ -260,7 +260,7 @@ Talab: "USD'dagi e'lonlarni qo'llab-quvvatlaymiz". Endi har bir joyda valyuta te
 
 Move Function va Combine Functions into Class bilan pulni bitta joyga yig'amiz:
 
-```ts
+```ts run
 export type Currency = "UZS" | "USD";
 
 export class Money {
@@ -283,6 +283,12 @@ export class Money {
     return (Number(this.minorUnits) / 100).toFixed(2);
   }
 }
+
+// Sinab ko'ring: summa (tiyin/sentlarda) yoki valyutani o'zgartiring.
+const rent = Money.of(450_000_000n, "UZS");
+const fee = Money.of(1_999n, "USD");
+console.log(rent.format(), "|", rent.toExportValue());
+console.log(fee.format(), "|", fee.toExportValue());
 ```
 
 Endi chaqiruvchilar `listing.price.format()` yozadi. Yangi valyuta qo'shish - bitta faylga tegish. Muhim qaror: qaysi yaxlitlash "to'g'ri" ekanini tanlash xatti-harakat o'zgarishi. Refaktoring paytida har bir joyning eski xatti-harakatini saqlash kerak (masalan, SMS uchun alohida `formatForSms()` qoldirish), keyin biznes bilan kelishib, alohida commit'da birlashtirish.

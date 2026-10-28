@@ -262,7 +262,7 @@ export class BookingService {
 
 Tozalangan versiya:
 
-```ts
+```ts run
 type Booking = { id: string; startsAt: Date; status: "active" | "cancelled" };
 
 interface BookingRepository {
@@ -293,6 +293,20 @@ export class BookingService {
     await this.repo.save(booking);
   }
 }
+
+// Sinab ko'ring: bron boshlanish vaqtini o'zgartiring.
+const HOUR_MS = 60 * 60 * 1000;
+const bookings = new Map<string, Booking>([
+  ["b1", { id: "b1", startsAt: new Date(Date.now() + 48 * HOUR_MS), status: "active" }],
+  ["b2", { id: "b2", startsAt: new Date(Date.now() + 3 * HOUR_MS), status: "active" }],
+]);
+const service = new BookingService({
+  findById: async (id) => bookings.get(id) ?? null,
+  save: async (booking) => void bookings.set(booking.id, booking),
+});
+await service.cancel("b1");
+console.log("b1:", bookings.get("b1")?.status);
+await service.cancel("b2").catch((e) => console.log("b2:", e.constructor.name));
 ```
 
 Nima o'zgardi va nega:

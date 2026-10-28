@@ -239,7 +239,7 @@ export function closeJob(job: Job, legs: Leg[], now: Date) {
 
 Dispetcherlar "smena" va "reys" deydi. `Job` va `Leg` dasturchining texnik tanlovi. "Worker" - haydovchi, "car" - parkdagi har qanday transport. Dispetcher "reyssiz smenani yopib bo'lmaydi" desa, dasturchi uni "no legs" xatosiga tarjima qilishi kerak.
 
-```ts
+```ts run
 type DriverId = string;
 type VehicleId = string;
 
@@ -265,6 +265,25 @@ export function closeShift(shift: Shift, trips: Trip[], closedAt: Date): ClosedS
   if (trips.length === 0) throw new ShiftWithoutTripsError(shift.id);
   const totalDistanceKm = trips.reduce((sum, trip) => sum + trip.distanceKm, 0);
   return { ...shift, closedAt, totalDistanceKm };
+}
+
+// Sinab ko'ring: reyslarni o'zgartiring yoki ro'yxatni bo'shating.
+const shift: Shift = {
+  id: "sh_7",
+  driverId: "drv_1",
+  vehicleId: "01A123BC",
+  startedAt: new Date("2026-10-28T06:00:00Z"),
+  closedAt: null,
+};
+const trips: Trip[] = [
+  { shiftId: "sh_7", origin: "Chilonzor", destination: "Sergeli", distanceKm: 14 },
+  { shiftId: "sh_7", origin: "Sergeli", destination: "Yunusobod", distanceKm: 21.5 },
+];
+console.log(closeShift(shift, trips, new Date("2026-10-28T15:00:00Z")).totalDistanceKm);
+try {
+  closeShift(shift, [], new Date());
+} catch (e) {
+  console.log(e instanceof ShiftWithoutTripsError, (e as Error).message);
 }
 ```
 

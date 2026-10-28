@@ -252,7 +252,7 @@ Fowler muhim chegarani ko'rsatadi: assertion faqat **dasturchi xatosi** uchun. A
 
 Ijara platformasida e'lon narxini ko'rsatish:
 
-```ts
+```ts run
 type Listing = { priceTiyin: number; ownerId: string; discountPercent: number | null };
 type Viewer = { id: string; isPartner: boolean } | null;
 
@@ -278,6 +278,12 @@ export function displayPrice(listing: Listing, viewer: Viewer): string {
   }
   return result;
 }
+
+// Sinab ko'ring: chegirma foizini yoki tomoshabinni o'zgartiring.
+const listing: Listing = { priceTiyin: 120_000_000, ownerId: "u-1", discountPercent: 10 };
+console.log("Mehmon:", displayPrice(listing, null));
+console.log("Hamkor:", displayPrice(listing, { id: "u-2", isPartner: true }));
+console.log("Egasi:", displayPrice(listing, { id: "u-1", isPartner: false }));
 ```
 
 **1-qadam, Introduce Special Case.** `viewer === null` - mehmon foydalanuvchi. U `id` ga ega emas va hamkor emas:

@@ -233,7 +233,7 @@ Lekin har bir backend'da CPU-bound qismlar ham bor: telemetriya qayta ishlash, h
 
 Har bir yangi GPS nuqta uchun mashina ruxsat etilgan hududlardan birida ekanini tekshirish. "Toza" OOP variant:
 
-```ts
+```ts run
 interface Zone {
   contains(lat: number, lng: number): boolean;
 }
@@ -261,6 +261,15 @@ function approxDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number
 export function isInsideAny(zones: Zone[], lat: number, lng: number): boolean {
   return zones.some((z) => z.contains(lat, lng));
 }
+
+// Sinab ko'ring: nuqta koordinatalarini yoki zonalarni o'zgartiring.
+const zones: Zone[] = [
+  new CircleZone(41.3111, 69.2797, 2), // Toshkent markazi, 2 km radius
+  new RectZone(41.25, 69.15, 41.28, 69.2), // ombor hududi
+];
+console.log("Amir Temur xiyoboni:", isInsideAny(zones, 41.311, 69.279));
+console.log("Ombor:", isInsideAny(zones, 41.26, 69.18));
+console.log("Chilonzor:", isInsideAny(zones, 41.2856, 69.2034));
 ```
 
 Bu kod o'qilishi oson va yangi zona turini qo'shish oson (54-dars, OCP). Ko'p holatda bu to'g'ri tanlov: kompaniyada 20 ta zona va sekundiga 50 ta nuqta bo'lsa, farqni o'lchab ham topib bo'lmaydi.

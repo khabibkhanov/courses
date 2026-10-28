@@ -233,13 +233,20 @@ Avval konsensusga intiling. Qiyin bo'lsa, yozishmani to'xtatib, yuzma-yuz yoki v
 
 PR'dagi kod:
 
-```ts
+```ts run
 export function calcRentPrice(days: number, dailyRate: number, isVip: boolean): number {
   let price = days * dailyRate;
   if (days >= 7) price = price * 0.9;
   if (days >= 30) price = price * 0.8;
   if (isVip) price = price * 0.95;
   return Math.round(price);
+}
+
+// Sinab ko'ring: 29 va 30 kunlik chegirmani solishtiring.
+for (const days of [6, 7, 29, 30]) {
+  const price = calcRentPrice(days, 100_000, false);
+  const discount = Math.round((1 - price / (days * 100_000)) * 100);
+  console.log(`${days} kun: ${price} so'm, chegirma ${discount}%`);
 }
 ```
 

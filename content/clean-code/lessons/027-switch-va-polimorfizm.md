@@ -233,7 +233,7 @@ export function receiptLabel(p: Payment): string {
 
 `receiptLabel`da `installment` allaqachon unutilgan va `default` buni yashirgan. Union va jadval bilan:
 
-```ts
+```ts run
 type Payment =
   | { method: "cash"; amount: number }
   | { method: "card"; amount: number; cardBin: string }
@@ -270,6 +270,14 @@ export function commission(p: Payment): number {
 export function receiptLabel(p: Payment): string {
   return RECEIPT_LABEL[p.method];
 }
+
+// Sinab ko'ring: to'lov usulini yoki muddatini o'zgartiring.
+const payments: Payment[] = [
+  { method: "cash", amount: 500_000 },
+  { method: "card", amount: 500_000, cardBin: "860002" },
+  { method: "installment", amount: 500_000, months: 6 },
+];
+for (const p of payments) console.log(`${receiptLabel(p)}: ${commission(p)} so'm`);
 ```
 
 Nima o'zgardi:

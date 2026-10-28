@@ -255,7 +255,7 @@ Beck bu ziddiyatni formulaga aylantirmaydi. U ikkala kuchni ko'rish va har bir h
 
 Talab: haydovchi reytingi hisobotiga "tungi qatnovlar soni" ustunini qo'shish. Hozirgi kod:
 
-```ts
+```ts run
 type Trip = { driverId: string; startedAt: Date; distanceKm: number; harshEvents: number };
 
 export function driverRows(trips: Trip[], drivers: Map<string, string>): string[][] {
@@ -275,6 +275,14 @@ export function driverRows(trips: Trip[], drivers: Map<string, string>): string[
   }
   return out;
 }
+
+// Sinab ko'ring: qatnovlarni o'zgartiring.
+const trips: Trip[] = [
+  { driverId: "d-1", startedAt: new Date("2026-10-01T08:00:00Z"), distanceKm: 120, harshEvents: 3 },
+  { driverId: "d-2", startedAt: new Date("2026-10-01T09:00:00Z"), distanceKm: 80, harshEvents: 0 },
+  { driverId: "d-1", startedAt: new Date("2026-10-02T07:30:00Z"), distanceKm: 60, harshEvents: 1 },
+];
+console.log(driverRows(trips, new Map([["d-1", "Aziz"], ["d-2", "Bobur"]])));
 ```
 
 Beck savoli: qaysi tidying keyingi xatti-harakat o'zgarishini osonlashtiradi?
@@ -283,7 +291,7 @@ Beck savoli: qaysi tidying keyingi xatti-harakat o'zgarishini osonlashtiradi?
 
 **Tidying 2, Explaining Variables va Explaining Constants:** `ev`, `km`, `1000` ga nom beramiz, shunda yangi hisob qayerga qo'shilishi aniq bo'ladi.
 
-```ts
+```ts run
 const HARSH_EVENTS_PER_KM_WEIGHT = 1000;
 const MAX_SCORE = 100;
 
@@ -308,6 +316,14 @@ export function driverRows(trips: Trip[], driverNames: Map<string, string>): str
   }
   return rows;
 }
+
+// Sinab ko'ring: tartiblashdan keyin ham natija avvalgisi bilan bir xil bo'lishi kerak.
+const trips: Trip[] = [
+  { driverId: "d-1", startedAt: new Date("2026-10-01T08:00:00Z"), distanceKm: 120, harshEvents: 3 },
+  { driverId: "d-2", startedAt: new Date("2026-10-01T09:00:00Z"), distanceKm: 80, harshEvents: 0 },
+  { driverId: "d-1", startedAt: new Date("2026-10-02T07:30:00Z"), distanceKm: 60, harshEvents: 1 },
+];
+console.log(driverRows(trips, new Map([["d-1", "Aziz"], ["d-2", "Bobur"]])));
 ```
 
 Bu ikki tidying alohida PR (yoki kamida alohida commit). Testlar o'zgarmaydi.

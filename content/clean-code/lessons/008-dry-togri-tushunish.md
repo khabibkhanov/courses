@@ -227,7 +227,7 @@ Mexanik DRY: `validateOrderOrRefund` ga birlashtirish. Lekin to'g'ri savol: qays
 - **Telefon formati** - bitta bilim: "O'zbekiston mobil raqami". U o'zgarsa (masalan, xorijiy raqamlarga ruxsat), ikkala joyda bir xil o'zgarishi kerak.
 - **Miqdor chegarasi** - ikki xil bilim. Buyurtmadagi 100 - ombor va logistika cheklovi. Qaytarishdagi chegara aslida "dastlabki buyurtmadagi miqdordan oshmasin" bo'lishi kerak, va bu yerda 100 tasodifan nusxa ko'chirilgan.
 
-```ts
+```ts run
 const UZ_MOBILE_PHONE = /^\+998\d{9}$/;
 
 export function isUzMobilePhone(phone: string): boolean {
@@ -254,6 +254,11 @@ export function validateRefund(input: RefundInput): ValidationError[] {
   if (!isUzMobilePhone(input.phone)) errors.push("phone");
   return errors;
 }
+
+// Sinab ko'ring: telefon raqami yoki miqdorni o'zgartiring.
+console.log(validateOrder({ quantity: 3, phone: "+998901234567" }));
+console.log(validateOrder({ quantity: 0, phone: "90 123 45 67" }));
+console.log(validateRefund({ quantity: 5, phone: "+998901234567", originalQuantity: 3 }));
 ```
 
 Natijada bir qism takror qoldi (`errors` massivi, `quantity < 1` tekshiruvi). Bu ataylab: ikki funksiya turli biznes jarayonlarini ifodalaydi va mustaqil o'zgaradi. Bilim takrori esa yo'qoldi, va bu jarayonda yashirin bug ham topildi: qaytarish miqdori 100 bilan emas, asl buyurtma bilan cheklanishi kerak edi. DRY'ni bilim nuqtai nazaridan ko'rish ko'pincha shunday bug'larni ochadi.

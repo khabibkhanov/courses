@@ -254,7 +254,7 @@ export function selectSafestDrivers(drivers: Driver[], limit: number): Driver[] 
 
 Nomlar ko'p narsani aytdi: bu xavfsizlik bali, katta yaxshi (`safest`). Ammo hali ham ochiq savollar bor. Ular kod bilan ifodalanmaydi, shuning uchun Ousterhout yondashuvidagi interfeys kommenti qo'shiladi:
 
-```ts
+```ts run
 type Driver = {
   id: string;
   /** 0 dan 100 gacha. Oxirgi 30 kunlik keskin tormoz, tezlik oshirish va burilishlar asosida. */
@@ -272,6 +272,16 @@ export function selectSafestDrivers(drivers: Driver[], limit: number): Driver[] 
     .sort((a, b) => b.safetyScore - a.safetyScore)
     .slice(0, limit);
 }
+
+// Sinab ko'ring: ballarni yoki limitni o'zgartiring.
+const drivers: Driver[] = [
+  { id: "drv_1", safetyScore: 78 },
+  { id: "drv_2", safetyScore: 92 },
+  { id: "drv_3", safetyScore: 92 },
+  { id: "drv_4", safetyScore: 65 },
+];
+console.log(selectSafestDrivers(drivers, 3).map((d) => d.id));
+console.log(drivers.map((d) => d.id));
 ```
 
 Nima o'zgardi va nega:

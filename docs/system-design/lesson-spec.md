@@ -104,3 +104,26 @@ print("salom")
 - Kod yozishdan oldin lokal ishga tushirib, natijasini tekshiring. Matnda natijaga tayanilsa, u haqiqiy natija bilan bir xil bo'lsin.
 - Hamma blokni `run` qilmang: faqat o'quvchi o'zgartirib ko'rishidan foyda bo'ladigan, natija chiqaradigan misollar uchun.
 - Vaqt chegarasi: Python 15 soniya, qolganlari 5 soniya.
+
+### Testli mashq (`test` bloki)
+
+`run` blokidan darhol keyin shu tildagi ```` ```<til> test ```` bloki qo'yilsa, u o'quvchiga ko'rinmaydi va blok mashqqa aylanadi: "Tekshirish" tugmasi testlarni o'quvchi kodidan keyin ishga tushiradi va "5 / 7 test o'tdi" ko'rinishida natija chiqaradi. O'quvchining kodi va natijasi brauzerda shu dars progressida saqlanadi.
+
+````
+```python run
+def lower_bound(a, x):
+    # Yechimingizni shu yerga yozing
+    return -1
+```
+
+```python test
+check("bo'sh ro'yxat", lambda: lower_bound([], 5) == 0)
+check("takrorlar", lambda: lower_bound([2, 2, 2, 2], 2) == 0)
+```
+````
+
+- Tillar: `python`, `js`, `ts` (`sql` uchun test yo'q). JS/TS'da: `check("nom", () => shart)`, shart `async` bo'lishi mumkin.
+- `check` ichidagi xato yoki `false` - test o'tmadi; xato matni o'quvchiga ko'rsatiladi. Test nomi o'quvchi nimani tuzatishi kerakligini aytsin.
+- Ikki blok orasida matn bo'lmasin, tillar bir xil bo'lsin - aks holda validator xatosi.
+- Boshlang'ich kod testlardan o'tmasligi, namunaviy yechim esa hammasidan o'tishi kerak. Ikkalasini `python3 scripts/run-blocks.py <fayl>` bilan tekshiring (u test bloklarini ham ishga tushiradi; boshlang'ich kodda `TEST XATO` kutilgan natija).
+- Faqat to'g'ri javobni emas, kerak bo'lsa usulni ham tekshiring (masalan, binary search o'rniga chiziqli qidiruv o'tmasligi uchun o'qishlar sonini sanash).

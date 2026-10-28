@@ -143,10 +143,10 @@ export default async function LessonPage({ params }: PageProps<"/[course]/dars/[
 
           {dbEnabled ? (
             <TextFeedback course={course.slug} n={n} lessonHash={lessonHash}>
-              <LessonBody segments={segments} playgrounds={playgrounds} />
+              <LessonBody course={course.slug} n={n} segments={segments} playgrounds={playgrounds} />
             </TextFeedback>
           ) : (
-            <LessonBody segments={segments} playgrounds={playgrounds} />
+            <LessonBody course={course.slug} n={n} segments={segments} playgrounds={playgrounds} />
           )}
 
           {lesson.sources.length > 0 && (

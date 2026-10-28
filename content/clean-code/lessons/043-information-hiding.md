@@ -252,7 +252,7 @@ export function detectDrains(rows: string[][]): { at: string; liters: number }[]
 
 Information hiding bilan:
 
-```ts
+```ts run
 // fuel-sensor-format.ts - format haqidagi yagona joy
 export type FuelReading = Readonly<{ at: Date; liters: number }>;
 
@@ -285,6 +285,15 @@ export function detectDrains(readings: readonly FuelReading[]): FuelReading[] {
   }
   return drains;
 }
+
+// Sinab ko'ring: CSV qatorlarini o'zgartiring.
+const csv = `timestamp,sensor,liters
+2026-10-28T08:00:00Z,dut1,80
+2026-10-28T08:05:00Z,dut1,78
+2026-10-28T08:10:00Z,dut1,45
+2026-10-28T08:15:00Z,dut1,44`;
+const drains = detectDrains(parseFuelReadings(csv));
+console.log(drains.map((d) => `${d.at.toISOString()}: -${d.liters} l`));
 ```
 
 Nima o'zgardi va nega:

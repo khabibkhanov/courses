@@ -216,7 +216,7 @@ export class DispatchManager {
 
 Beshta metod, beshta grammatik xato. `driver()` va `assignment()` ot, lekin biri qiymat qaytaradi, ikkinchisi amal bajaradi. `delete` nimani o'chiradi va u `assignment` ning juftimi? `available` - boolean, lekin savol emas. `handle` nima bilan ishlaydi?
 
-```ts
+```ts run
 export type VehicleId = string;
 export type DriverId = string;
 
@@ -250,6 +250,17 @@ export class DriverAssignments {
     this.notifyDispatcher(`GPS signali yo'qoldi: ${vehicleId}, haydovchi: ${driverId}`);
   }
 }
+
+// Sinab ko'ring: smenadagi haydovchilarni o'zgartiring.
+const onShift = new Set(["drv_1", "drv_2"]);
+const assignments = new DriverAssignments(
+  (driverId) => onShift.has(driverId),
+  (message) => console.log(`[dispetcher] ${message}`),
+);
+assignments.assign("01A123BC", "drv_1");
+console.log(["drv_1", "drv_2", "drv_3"].map((id) => `${id}: ${assignments.isDriverAvailable(id)}`));
+assignments.reportGpsSignalLost("01A123BC");
+assignments.reportGpsSignalLost("10B456CD");
 ```
 
 Nima o'zgardi:

@@ -249,7 +249,7 @@ Bu kodda uchta tashqi narsa ichkariga kirgan: Prisma tipi `Order` (chiqish qiyma
 
 Yaxshiroq variant. Use case o'z tilida gaplashadi va o'z portlarini e'lon qiladi:
 
-```ts
+```ts run
 // orders/domain/cancel-order.ts
 export type OrderStatus = "pending" | "paid" | "shipped" | "cancelled";
 
@@ -286,6 +286,17 @@ export class CancelOrder {
     return { ok: true, refundAmount };
   }
 }
+
+// Sinab ko'ring: DB o'rniga Map - use case'ni infratuzilmasiz tekshiramiz.
+const rows = new Map<string, OrderForCancellation>([
+  ["o-1", { id: "o-1", status: "paid", paidAmount: 250_000, cancellationFee: 20_000 }],
+  ["o-2", { id: "o-2", status: "shipped", paidAmount: 90_000, cancellationFee: 0 }],
+]);
+const store: OrderStore = {
+  load: async (id) => rows.get(id) ?? null,
+  saveCancellation: async (id, refund) => console.log(`saqlandi: ${id}, qaytariladi ${refund}`),
+};
+for (const id of ["o-1", "o-2", "o-3"]) console.log(id, await new CancelOrder(store).execute(id));
 ```
 
 Adapter tashqi doirada yashaydi va ikki dunyoni tarjima qiladi:

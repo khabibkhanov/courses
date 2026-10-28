@@ -258,7 +258,7 @@ Uchta qatlam bitta imzoni (`getPrice(stationId): Promise<number>`) uzatadi. Oust
 
 Yaxshi variant:
 
-```ts
+```ts run
 export type FuelPrice = { stationId: string; pricePerLiterUzs: number; observedAt: Date };
 
 export interface FuelPrices {
@@ -277,6 +277,15 @@ export async function currentFuelPrice(
   if (now.getTime() - price.observedAt.getTime() > MAX_PRICE_AGE_MS) return null;
   return price.pricePerLiterUzs;
 }
+
+// Sinab ko'ring: observedAt'ni o'zgartirib, 24 soatlik chegarani tekshiring.
+const observed = new Map<string, FuelPrice>([
+  ["st-1", { stationId: "st-1", pricePerLiterUzs: 12_600, observedAt: new Date("2026-10-20T08:00:00Z") }],
+  ["st-2", { stationId: "st-2", pricePerLiterUzs: 11_900, observedAt: new Date("2026-10-18T08:00:00Z") }],
+]);
+const prices: FuelPrices = { latest: async (stationId) => observed.get(stationId) ?? null };
+const now = new Date("2026-10-20T12:00:00Z");
+for (const id of ["st-1", "st-2", "st-3"]) console.log(id, await currentFuelPrice(prices, id, now));
 ```
 
 Nima o'zgardi:

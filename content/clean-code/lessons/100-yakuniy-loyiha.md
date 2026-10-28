@@ -421,7 +421,7 @@ async handle(reading: RawReading): Promise<{ ok: boolean }> {
 
 Nomlar va shartlar tozalangan, lekin aniqlash qoidasi hali ham saqlash va xabar berish bilan aralash. Split Phase'dan keyin:
 
-```ts
+```ts run
 type Liters = number;
 type FuelChange = { kind: "none" } | { kind: "refuel"; liters: Liters } | { kind: "drain"; liters: Liters };
 
@@ -437,6 +437,12 @@ export function detectFuelChange(previous: Liters | undefined, current: Liters, 
   if (-delta > DRAIN_THRESHOLD && speedKmh < MAX_SPEED_FOR_DRAIN_KMH) return { kind: "drain", liters: -delta };
   return { kind: "none" };
 }
+
+// Sinab ko'ring: qiymatlarni o'zgartiring; previous = 0 holatiga e'tibor bering.
+console.log(detectFuelChange(20, 45, 0));
+console.log(detectFuelChange(60, 40, 0));
+console.log(detectFuelChange(60, 40, 50));
+console.log(detectFuelChange(0, 30, 0));
 ```
 
 E'tibor bering: `if (!previous)` ataylab saqlangan, garchi u xato bo'lsa ham. Bu refaktoring commit'i, va unda xatti-harakat o'zgarmasligi kerak. Izoh xatoni va u qachon tuzatilishini aytadi. 5-bosqichdagi alohida commit `!previous` ni `previous === undefined` ga o'zgartiradi va tegishli testni yangilaydi. Review qiluvchi ikkala commit'ni alohida ko'radi: birinchisida "faqat struktura", ikkinchisida "bitta xatti-harakat o'zgarishi va uning sababi".

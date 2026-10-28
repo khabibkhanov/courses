@@ -25,6 +25,14 @@ function rehypeMermaid() {
   };
 }
 
+function testBlockText(node: Element): string | undefined {
+  const code = node.tagName === "pre" ? node.children[0] : undefined;
+  if (code?.type !== "element" || code.tagName !== "code") return undefined;
+  const meta = (code.data as { meta?: string } | undefined)?.meta ?? "";
+  if (!/(^|\s)test(\s|$)/.test(meta)) return undefined;
+  return code.children.map((c) => (c.type === "text" ? c.value : "")).join("").replace(/\n$/, "");
+}
+
 /** ```python run kabi bloklar: o'rniga belgi qo'yiladi, kodi esa file.data.playgrounds ga yig'iladi. */
 function rehypePlayground() {
   return (tree: Root, file: VFile) => {
@@ -40,7 +48,15 @@ function rehypePlayground() {
       const lang = runLang(fence);
       if (!lang) return;
       const text = code.children.map((c) => (c.type === "text" ? c.value : "")).join("");
-      specs.push({ lang, code: text.replace(/\n$/, "") });
+      const spec: PlaygroundSpec = { lang, code: text.replace(/\n$/, "") };
+      // Darhol keyingi ```<til> test bloki - yashirin testlar: playground'ga biriktiriladi va matndan olib tashlanadi.
+      const next = parent.children.findIndex((c, k) => k > index && c.type === "element");
+      const testCode = next === -1 ? undefined : testBlockText(parent.children[next] as Element);
+      if (testCode !== undefined) {
+        spec.tests = testCode;
+        parent.children.splice(next, 1);
+      }
+      specs.push(spec);
       parent.children[index] = { type: "element", tagName: "div", properties: { dataPlayground: String(specs.length - 1) }, children: [] };
     });
     file.data.playgrounds = specs;

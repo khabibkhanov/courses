@@ -265,7 +265,7 @@ Ba'zi loggerlar va monitoring vositalari (masalan, pino'ning error serializer'la
 
 ### TypeScript'da custom xato klasslari
 
-```ts
+```ts run
 export class DomainError extends Error {
   constructor(
     readonly code: string,
@@ -293,6 +293,18 @@ export class InsufficientBalanceError extends DomainError {
     );
   }
 }
+
+// Sinab ko'ring: ushlovchi tomon xato haqida nimalarni biladi?
+try {
+  throw new InsufficientBalanceError("wallet_42", 350_000, 120_000);
+} catch (e) {
+  if (e instanceof DomainError) {
+    console.log(e.name, e.code);
+    console.log(e.message);
+    console.log(JSON.stringify(e.context));
+  }
+}
+console.log(new VehicleNotFoundError("01A123BC") instanceof DomainError);
 ```
 
 Tafsilotlar:
@@ -307,12 +319,17 @@ Tafsilotlar:
 
 JS'da istalgan narsani throw qilish mumkin: satr, son, `undefined`, Promise. Shuning uchun TypeScript `strict` rejimida (`useUnknownInCatchVariables` orqali) catch o'zgaruvchisi `unknown`. Vanderkam *Effective TypeScript*da `unknown`ni `any`dan afzal ko'rishni tavsiya qiladi: u ishlatishdan oldin toraytirishni majburlaydi.
 
-```ts
+```ts run
 function describeError(e: unknown): string {
   if (e instanceof Error) return `${e.name}: ${e.message}`;
   if (typeof e === "string") return e;
   return `Noma'lum xato qiymati: ${JSON.stringify(e)}`;
 }
+
+// Sinab ko'ring: turli "xato" qiymatlarini bering.
+console.log(describeError(new RangeError("Litr manfiy bo'lishi mumkin emas")));
+console.log(describeError("card not found"));
+console.log(describeError({ code: 42 }));
 ```
 
 `catch (e: any)` yoki `(e as Error).message` - bu tekshiruvni chetlab o'tish. Agar kutubxona satr throw qilsa, `e.message` `undefined` beradi va log yolg'on gapiradi.

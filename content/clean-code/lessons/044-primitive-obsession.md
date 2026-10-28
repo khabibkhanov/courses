@@ -249,7 +249,7 @@ TypeScript structural typing ishlatadi: ikki tip bir xil shaklga ega bo'lsa, ula
 
 Dan Vanderkam *Effective TypeScript*da nominal typing'ni simulyatsiya qilish uchun **brand** ishlatishni taklif qiladi: primitiv tipga faqat tip darajasida mavjud bo'lgan belgi qo'shiladi.
 
-```ts
+```ts run
 declare const brand: unique symbol;
 type Brand<T, B extends string> = T & { readonly [brand]: B };
 
@@ -269,6 +269,15 @@ export function parsePlateNumber(raw: string): PlateNumber {
 export function parseImei(raw: string): Imei {
   if (!/^\d{15}$/.test(raw)) throw new Error(`IMEI 15 raqam bo'lishi kerak: ${raw}`);
   return raw as Imei;
+}
+
+// Sinab ko'ring: turli yozuvdagi raqamlarni bering.
+console.log(parsePlateNumber("01 a 123 bc"));
+console.log(parseImei("356938035643809"));
+try {
+  parsePlateNumber("ABC 123");
+} catch (e) {
+  console.log((e as Error).message);
 }
 ```
 
@@ -307,7 +316,7 @@ Narx qaysi birlikda? QQS natijasi qanday yaxlitlanadi? Agar ikki hisob-faktura q
 
 Yaxshi:
 
-```ts
+```ts run
 export type Currency = "UZS" | "USD";
 
 export class Money {
@@ -353,6 +362,19 @@ type InvoiceLine = { price: Money; qty: number };
 export function invoiceTotal(lines: readonly InvoiceLine[], currency: Currency): Money {
   const net = lines.reduce((sum, l) => sum.add(l.price.times(l.qty)), Money.zero(currency));
   return net.withPercent(VAT_PERCENT);
+}
+
+// Sinab ko'ring: narxlar tiyinda (1 so'm = 100 tiyin). Miqdor va narxlarni o'zgartiring.
+const lines: InvoiceLine[] = [
+  { price: Money.of(1_250_050n, "UZS"), qty: 3 },
+  { price: Money.of(9_999n, "UZS"), qty: 1 },
+];
+const total = invoiceTotal(lines, "UZS");
+console.log(`${total.minorUnits.toString()} tiyin ${total.currency}`);
+try {
+  Money.zero("UZS").add(Money.of(100n, "USD"));
+} catch (e) {
+  console.log((e as Error).message);
 }
 ```
 

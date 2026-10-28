@@ -224,7 +224,7 @@ export function depositRefund(r: Rental): number {
 
 Bug hisoboti: "kechikish jarimasi depozitdan oshsa, mijozga manfiy summa qaytarilmoqda". Avval tidying commit (xatti-harakat bir xil):
 
-```ts
+```ts run
 const MS_PER_DAY = 86_400_000;
 const LATE_FEE_PER_DAY_UZS = 50_000;
 
@@ -241,6 +241,18 @@ function lateDays(returnedAt: Date, dueAt: Date): number {
   if (returnedAt <= dueAt) return 0;
   return Math.ceil((returnedAt.getTime() - dueAt.getTime()) / MS_PER_DAY);
 }
+
+// Sinab ko'ring: qaytarish sanasini o'zgartiring. 12 kun kechikishda natija manfiy chiqadi -
+// aynan shu bug keyingi commit'da tuzatiladi.
+const rental: Rental = {
+  id: "r1",
+  dueAt: new Date("2026-10-01T10:00:00Z"),
+  returnedAt: new Date("2026-10-03T09:00:00Z"),
+  depositUzs: 500_000,
+  damageUzs: 100_000,
+};
+console.log(depositRefund(rental));
+console.log(depositRefund({ ...rental, returnedAt: new Date("2026-10-13T10:00:00Z") }));
 ```
 
 Endi bug ko'zga tashlanadi: `afterDamage - lateFee` manfiy bo'lishi mumkin. Keyingi commit faqat xatti-harakat o'zgarishi:

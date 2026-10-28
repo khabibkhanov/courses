@@ -183,7 +183,7 @@ Endi talab keldi: "QQS stavkasi 12% emas, 15% bo'ladi va arxivlangan mahsulotlar
 
 Xuddi shu xatti-harakat, o'quvchi uchun yozilgan:
 
-```ts
+```ts run
 type ProductStatus = "active" | "archived";
 
 type Product = {
@@ -207,6 +207,16 @@ export function listActiveProductsWithVat(
     .filter((p) => categoryId === ALL_CATEGORIES || p.categoryId === categoryId)
     .map((p) => ({ ...p, priceWithVat: p.price * (1 + VAT_RATE) }));
 }
+
+// Sinab ko'ring: mahsulotlarni yoki kategoriyani o'zgartiring va "Ishga tushirish"ni bosing.
+const products: Product[] = [
+  { id: "p1", status: "active", categoryId: 3, price: 150_000 },
+  { id: "p2", status: "archived", categoryId: 3, price: 50_000 },
+  { id: "p3", status: "active", categoryId: 5, price: 25_000 },
+];
+const show = (list: PricedProduct[]) => list.map((p) => `${p.id}: ${Math.round(p.priceWithVat)} so'm`);
+console.log(show(listActiveProductsWithVat(products)));
+console.log(show(listActiveProductsWithVat(products, 5)));
 ```
 
 Nima o'zgardi va nima uchun:

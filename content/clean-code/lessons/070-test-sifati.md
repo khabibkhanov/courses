@@ -272,7 +272,7 @@ Mutation testing qimmat: har bir mutant uchun testlar qaytadan ishga tushadi. Ki
 
 Mashina qaytarilganda depozitdan zarar summasi ushlab qolinadi, qolgani qaytariladi. Zarar depozitdan oshsa, qaytarish 0, farqi esa qarz sifatida yoziladi.
 
-```ts
+```ts run
 export type DepositSettlement = { refund: number; debt: number };
 
 export function settleDeposit(deposit: number, damage: number): DepositSettlement {
@@ -281,6 +281,11 @@ export function settleDeposit(deposit: number, damage: number): DepositSettlemen
     return { refund: 0, debt: damage - deposit };
   }
   return { refund: deposit - damage, debt: 0 };
+}
+
+// Sinab ko'ring: depozit va zarar summalarini o'zgartiring, chegaralarni tekshiring.
+for (const damage of [0, 300_000, 1_000_000, 1_500_000]) {
+  console.log(`zarar ${damage}:`, settleDeposit(1_000_000, damage));
 }
 ```
 

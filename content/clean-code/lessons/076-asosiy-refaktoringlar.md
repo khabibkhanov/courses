@@ -264,7 +264,7 @@ Kod ikki xil ishni ketma-ket qilayotgan bo'lsa, uni ikki alohida modul (bosqich)
 
 Ko'p dasturchilar Extract Function'ni "bloki belgilab, funksiyaga chiqarish" deb tushunadi. Lekin lokal holat bo'lganda bu xato beradi. Buyurtma narxini hisoblash:
 
-```ts
+```ts run
 type Line = { sku: string; unitPrice: number; quantity: number };
 
 export function invoiceTotal(lines: Line[], promoCode?: string): number {
@@ -278,6 +278,14 @@ export function invoiceTotal(lines: Line[], promoCode?: string): number {
   const vat = (subtotal - discount) * 0.12;
   return Math.round(subtotal - discount + vat);
 }
+
+// Sinab ko'ring: qatorlar yoki promokodni o'zgartiring.
+const lines: Line[] = [
+  { sku: "OIL-5W30", unitPrice: 85_000, quantity: 12 },
+  { sku: "FILTER", unitPrice: 40_000, quantity: 2 },
+];
+console.log("Promokodsiz:", invoiceTotal(lines));
+console.log("SPRING bilan:", invoiceTotal(lines, "SPRING"));
 ```
 
 Siklni `calculateSubtotal` ga chiqarishga urinsangiz, u ikki o'zgaruvchini (`subtotal`, `discount`) o'zgartiradi. Ikkalasini qaytaradigan funksiya yaratish (`return { subtotal, discount }`) ko'pincha noqulay nom va ma'nosiz tuzilma beradi. Fowler mexanikasi boshqa yo'lni ko'rsatadi: avval holatni soddalashtiring.
@@ -298,7 +306,7 @@ for (const line of lines) {
 
 3-qadam, **Extract Function** va **Replace Loop with Pipeline**: endi har bir sikl bitta o'zgaruvchini hisoblaydi va chiqarish oson.
 
-```ts
+```ts run
 const BULK_QUANTITY = 10;
 const BULK_DISCOUNT_RATE = 0.05;
 const PROMO_RATES: Record<string, number> = { SPRING: 0.1 };
@@ -329,6 +337,14 @@ export function invoiceTotal(lines: Line[], promoCode?: string): number {
   const taxable = subtotal - discount;
   return Math.round(taxable + taxable * VAT_RATE);
 }
+
+// Sinab ko'ring: natija refaktoringdan oldingi versiya bilan bir xil chiqishi kerak.
+const lines: Line[] = [
+  { sku: "OIL-5W30", unitPrice: 85_000, quantity: 12 },
+  { sku: "FILTER", unitPrice: 40_000, quantity: 2 },
+];
+console.log("Promokodsiz:", invoiceTotal(lines));
+console.log("SPRING bilan:", invoiceTotal(lines, "SPRING"));
 ```
 
 Har bir qadamdan keyin testlar ishga tushirildi. Diqqat: `(subtotal - discount) * 0.12` va `taxable * VAT_RATE` matematik jihatdan bir xil, lekin suzuvchi nuqta arifmetikasida qo'shish tartibi o'zgarsa, oxirgi xonada farq bo'lishi mumkin. Shu sababli pul hisobida yaxlitlash va tartib bo'yicha test bo'lishi shart. Pulni butun tiyinlarda saqlash (44-dars) bu muammoni butunlay yo'qotadi.

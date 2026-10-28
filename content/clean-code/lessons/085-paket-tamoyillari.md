@@ -271,7 +271,7 @@ Bu paket CRP'ni buzadi: `@fleet/ui` faqat `formatUzs` uchun uni import qiladi va
 
 Yaxshi variant. O'zgarish sababi va iste'molchi bo'yicha ajratish:
 
-```ts
+```ts run
 // packages/money/src/index.ts - barqaror, sof, kam o'zgaradi
 export function formatUzs(amount: number): string {
   return new Intl.NumberFormat("uz-UZ").format(amount) + " so'm";
@@ -291,6 +291,10 @@ export type TariffPlan = "basic" | "pro";
 export interface TariffLookup {
   planFor(companyId: string): TariffPlan;
 }
+
+// Sinab ko'ring: boshqa summa yoki koordinatalarni bering.
+console.log(formatUzs(1_250_000));
+console.log("Toshkent - Samarqand:", haversineKm(41.3111, 69.2797, 39.6542, 66.9597).toFixed(1), "km");
 ```
 
 Prisma servis va Telegram klienti ilovaning o'z infratuzilma qismiga ko'chdi: ular beqaror va konkret bo'lishi tabiiy, va ularga hech bir barqaror paket bog'lanmaydi.

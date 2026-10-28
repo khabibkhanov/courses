@@ -226,7 +226,7 @@ O'quvchi boshida ushlab turishi kerak bo'lgan narsalar: `r` nima (litr yoki foiz
 
 Xuddi shu xatti-harakat:
 
-```ts
+```ts run
 type FuelReading = { timestampMs: number; liters: number };
 
 type RefuelThresholds = {
@@ -259,6 +259,12 @@ export function findRefuelIndexes(
 
   return refuelIndexes;
 }
+
+// Sinab ko'ring: litr qiymatlarini yoki chegaralarni o'zgartiring.
+const liters = [30, 29, 60, 85, 84, 83, 120];
+const readings: FuelReading[] = liters.map((l, i) => ({ timestampMs: i * 60_000, liters: l }));
+console.log(findRefuelIndexes(readings));
+console.log(findRefuelIndexes(readings, { minRiseLiters: 20, minReadingsBetweenEvents: 2 }));
 ```
 
 Nima o'zgardi va nima uchun:
