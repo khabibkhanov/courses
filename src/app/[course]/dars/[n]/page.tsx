@@ -8,6 +8,7 @@ import { Quiz } from "@/components/quiz";
 import { AnswerBox } from "@/components/answer-box";
 import { TaskBlock } from "@/components/task-block";
 import { ReadingProgress } from "@/components/reading-progress";
+import { LessonRating } from "@/components/lesson-rating";
 
 export const dynamicParams = false;
 
@@ -50,10 +51,13 @@ export default async function LessonPage({ params }: PageProps<"/[course]/dars/[
     solutionNotesHtml: await markdownToHtml(lesson.task.solutionNotes),
   };
 
+  // Baza ulanmagan bo'lsa baho bloki ko'rsatilmaydi (env build vaqtida o'qiladi, sahifa statik).
+  const ratingEnabled = Boolean(process.env.DATABASE_URL);
   const extraToc = [
     ...(lesson.sources.length ? [{ id: "manbalar", text: "Manbalar" }] : []),
     ...(lesson.quiz ? [{ id: "test", text: "Test" }] : []),
     task ? { id: "topshiriq", text: "Amaliy topshiriq" } : { id: "javob", text: "Topshiriq javobi" },
+    ...(ratingEnabled ? [{ id: "baho", text: "Darsga baho" }] : []),
   ];
 
   return (
@@ -148,6 +152,7 @@ export default async function LessonPage({ params }: PageProps<"/[course]/dars/[
 
           {lesson.quiz && <Quiz course={course.slug} n={n} quiz={lesson.quiz} hasNext={next !== undefined} />}
           {task ? <TaskBlock course={course.slug} n={n} task={task} /> : <AnswerBox course={course.slug} n={n} title={lesson.title} />}
+          {ratingEnabled && <LessonRating course={course.slug} n={n} />}
 
           <nav aria-label="Darslar" className="mt-16 grid gap-4 border-t border-rule pt-6 sm:grid-cols-2">
             {prev ? (

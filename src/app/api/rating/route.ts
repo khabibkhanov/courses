@@ -1,0 +1,46 @@
+import { createHash } from "node:crypto";
+import { z } from "zod";
+import { db } from "@/lib/db";
+import { getCourse, publishedNumbers } from "@/lib/content";
+import { COMMENT_MAX, RATE_LIMIT_PER_HOUR, RATING_TAGS } from "@/lib/rating";
+
+const body = z.object({
+  course: z.string(),
+  lesson: z.number().int().positive(),
+  deviceId: z.uuid(),
+  stars: z.number().int().min(1).max(5),
+  tags: z.array(z.enum(RATING_TAGS)).max(RATING_TAGS.length),
+  comment: z.string().trim().max(COMMENT_MAX).optional(),
+});
+
+const fail = (status: number, error: string) => Response.json({ error }, { status });
+
+export async function POST(request: Request) {
+  const sql = db();
+  if (!sql) return fail(503, "Baho qabul qilish hali yoqilmagan.");
+
+  const parsed = body.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return fail(400, "Ma'lumot noto'g'ri.");
+  const { course, lesson, deviceId, stars, comment } = parsed.data;
+  const tags = [...new Set(parsed.data.tags)];
+
+  const c = getCourse(course);
+  if (!c || !publishedNumbers(c).includes(lesson)) return fail(404, "Bunday dars yo'q.");
+
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const ipHash = createHash("sha256").update(ip).digest("hex").slice(0, 32);
+
+  const [{ recent }] = await sql<{ recent: number }[]>`
+    select count(*)::int as recent from lesson_rating
+    where ip_hash = ${ipHash} and updated_at > now() - interval '1 hour'`;
+  if (recent >= RATE_LIMIT_PER_HOUR) return fail(429, "Juda ko'p so'rov. Birozdan keyin urinib ko'ring.");
+
+  await sql`
+    insert into lesson_rating (course, lesson, device_id, stars, tags, comment, ip_hash)
+    values (${course}, ${lesson}, ${deviceId}, ${stars}, ${tags}, ${comment || null}, ${ipHash})
+    on conflict (course, lesson, device_id) do update
+      set stars = excluded.stars, tags = excluded.tags, comment = excluded.comment,
+          ip_hash = excluded.ip_hash, updated_at = now()`;
+
+  return Response.json({ ok: true });
+}

@@ -6,7 +6,14 @@ import { useSyncExternalStore } from "react";
  * Dars progressi brauzerda (localStorage), kalit `progress:<kurs>`.
  * Keyin akkaunt qo'shilganda faqat shu modul almashadi.
  */
-export type LessonProgress = { passed: boolean; score: number; answer?: string; checklist?: number[] };
+export type LessonProgress = {
+  passed: boolean;
+  score: number;
+  answer?: string;
+  checklist?: number[];
+  /** Oxirgi yuborilgan baho (server ham saqlaydi, bu - formani to'ldirish uchun). */
+  rating?: { stars: number; tags: string[]; comment: string };
+};
 export type CourseProgress = Record<string, LessonProgress>;
 
 const EMPTY: CourseProgress = Object.freeze({}) as CourseProgress;
