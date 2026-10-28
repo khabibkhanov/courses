@@ -38,3 +38,26 @@ create table if not exists lesson_feedback (
 
 create index if not exists lesson_feedback_status on lesson_feedback (status, course, lesson);
 create index if not exists lesson_feedback_ip_recent on lesson_feedback (ip_hash, created_at);
+
+-- Admin: bitta foydalanuvchi. Birinchi kirishda "admin" + ADMIN_PASSWORD env bilan yaratiladi,
+-- keyin login va parol /admin/sozlamalar'da o'zgartiriladi.
+create table if not exists admin_user (
+  id             integer     primary key default 1 check (id = 1),
+  username       text        not null check (char_length(username) between 3 and 64),
+  password_hash  text        not null,
+  updated_at     timestamptz not null default now()
+);
+
+-- Sessiya: cookie'da tasodifiy token, bazada faqat uning sha256 hash'i.
+create table if not exists admin_session (
+  token_hash  text        primary key,
+  created_at  timestamptz not null default now(),
+  expires_at  timestamptz not null
+);
+
+-- Noto'g'ri kirish urinishlari: parolni terib topishni sekinlatish uchun.
+create table if not exists admin_login_attempt (
+  ip_hash  text        not null,
+  at       timestamptz not null default now()
+);
+create index if not exists admin_login_attempt_ip on admin_login_attempt (ip_hash, at);

@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   const c = getCourse(course);
   if (!c || !publishedNumbers(c).includes(lesson)) return fail(404, "Bunday dars yo'q.");
 
-  const hash = ipHash(request);
+  const hash = ipHash(request.headers);
   if (await overHourlyLimit(sql, "lesson_rating", hash, RATE_LIMIT_PER_HOUR))
     return fail(429, "Juda ko'p so'rov. Birozdan keyin urinib ko'ring.");
 

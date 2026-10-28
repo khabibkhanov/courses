@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth";
 import { getCourse, listCourses, syllabus } from "@/lib/content";
 import { CopyButton } from "@/components/copy-button";
 
@@ -17,6 +18,7 @@ type Row = {
 const fmt = (n: number) => n.toFixed(1).replace(".", ",");
 
 export default async function AdminPage() {
+  await requireAdmin();
   const sql = db();
   if (!sql) {
     return (

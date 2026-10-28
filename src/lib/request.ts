@@ -2,8 +2,8 @@ import { createHash } from "node:crypto";
 import type postgres from "postgres";
 
 /** Mijoz IP'si o'rniga uning qisqa hash'i saqlanadi: rate limit uchun yetarli, IP o'zi saqlanmaydi. */
-export function ipHash(request: Request): string {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+export function ipHash(headers: Headers): string {
+  const ip = headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
   return createHash("sha256").update(ip).digest("hex").slice(0, 32);
 }
 

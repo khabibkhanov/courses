@@ -6,12 +6,13 @@ import { usePathname } from "next/navigation";
 const LINKS = [
   { href: "/admin", label: "Baholar" },
   { href: "/admin/izohlar", label: "Matnga izohlar" },
+  { href: "/admin/sozlamalar", label: "Sozlamalar" },
 ];
 
 export function AdminNav() {
   const path = usePathname();
   return (
-    <nav aria-label="Admin" className="mb-10 flex gap-6 border-b border-rule">
+    <nav aria-label="Admin" className="flex gap-6">
       {LINKS.map((l) => (
         <Link
           key={l.href}

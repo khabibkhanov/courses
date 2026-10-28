@@ -1,11 +1,12 @@
 import { createHash } from "node:crypto";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth";
 import { getCourse, getLesson } from "@/lib/content";
 import { markdownToText } from "@/lib/markdown";
 import { FEEDBACK_KINDS, FEEDBACK_STATUSES, normalize, type FeedbackKind, type FeedbackStatus } from "@/lib/feedback";
 import { CopyButton } from "@/components/copy-button";
-import { setFeedbackStatus } from "../actions";
+import { setFeedbackStatus } from "../../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +64,7 @@ function exportText(title: string, items: Row[]) {
 }
 
 export default async function FeedbackAdmin({ searchParams }: PageProps<"/admin/izohlar">) {
+  await requireAdmin();
   const sql = db();
   if (!sql) return <p className="text-muted">Baza ulanmagan: DATABASE_URL yo&apos;q.</p>;
 
