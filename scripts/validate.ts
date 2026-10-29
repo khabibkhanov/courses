@@ -8,7 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { getCourse, getLesson, listCourses, publishedNumbers, syllabus, type Course, type Lesson } from "../src/lib/content";
-import { TESTABLE, runLang } from "../src/lib/playground";
+import { STDIN_LANGS, TESTABLE, runLang } from "../src/lib/playground";
 import { glossary, termMatcher } from "../src/lib/glossary";
 
 const [onlyCourse, fromArg, toArg] = process.argv.slice(2);
@@ -60,24 +60,30 @@ const RULES: Record<Course["format"], (l: Lesson, raw: string) => string[]> = {
   },
 };
 
-/** ```<til> run va undan keyin keladigan ```<til> test bloklari qoidalari. */
+/** ```<til> run va undan keyin keladigan ```<til> test / ```text stdin bloklari qoidalari. */
 function checkRunBlocks(body: string): string[] {
   const e: string[] = [];
   const blocks = [...body.matchAll(/^```(\w*)([^\n]*)\n[\s\S]*?^```[ \t]*$/gm)].map((m) => ({
     lang: m[1],
     run: /(^|\s)run(\s|$)/.test(m[2]),
     test: /(^|\s)test(\s|$)/.test(m[2]),
+    stdin: /(^|\s)stdin(\s|$)/.test(m[2]),
     start: m.index!,
     end: m.index! + m[0].length,
   }));
   blocks.forEach((b, i) => {
     if (b.run && !runLang(b.lang)) e.push(`"run" bloki uchun til qo'llab-quvvatlanmaydi: ${b.lang || "(yo'q)"}`);
-    if (!b.test) return;
-    const prev = blocks[i - 1];
-    if (!prev?.run || body.slice(prev.end, b.start).trim() !== "")
-      e.push(`"test" bloki darhol "run" blokidan keyin kelishi kerak (${b.lang})`);
-    else if (runLang(prev.lang) !== runLang(b.lang)) e.push(`"test" bloki tili "run" bloki tili bilan bir xil emas`);
-    else if (!TESTABLE.includes(runLang(b.lang)!)) e.push(`"test" bloki ${b.lang} uchun qo'llab-quvvatlanmaydi`);
+    if (!b.test && !b.stdin) return;
+    // Biriktiriladigan bloklar zanjiri: run, keyin test va/yoki stdin, orasida matn yo'q.
+    let k = i - 1;
+    while (k >= 0 && (blocks[k].test || blocks[k].stdin) && body.slice(blocks[k].end, blocks[k + 1].start).trim() === "") k--;
+    const run = blocks[k];
+    const tag = b.test ? "test" : "stdin";
+    if (!run?.run || body.slice(run.end, blocks[k + 1].start).trim() !== "")
+      e.push(`"${tag}" bloki darhol "run" blokidan keyin kelishi kerak (${b.lang})`);
+    else if (b.test && runLang(run.lang) !== runLang(b.lang)) e.push(`"test" bloki tili "run" bloki tili bilan bir xil emas`);
+    else if (b.test && !TESTABLE.includes(runLang(b.lang)!)) e.push(`"test" bloki ${b.lang} uchun qo'llab-quvvatlanmaydi`);
+    else if (b.stdin && !STDIN_LANGS.includes(runLang(run.lang)!)) e.push(`"stdin" bloki ${run.lang} uchun qo'llab-quvvatlanmaydi`);
   });
   return e;
 }

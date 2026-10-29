@@ -7,15 +7,28 @@ import type { RunLang } from "@/lib/playground";
 
 export type { RunLang };
 export type Output =
-  | { kind: "out" | "err" | "info"; text: string }
+  | { kind: "out" | "err" | "info" | "in"; text: string }
   | { kind: "table"; columns: string[]; rows: unknown[][] }
   | { kind: "test"; name: string; ok: boolean; error?: string };
 
 const PYODIDE = "https://cdn.jsdelivr.net/npm/pyodide@314.0.7/";
 const SQLJS = "https://cdn.jsdelivr.net/npm/sql.js@1.15.2/dist/";
 
-export const LANG_LABEL: Record<RunLang, string> = { python: "Python", sql: "SQL (SQLite)", js: "JavaScript", ts: "TypeScript" };
-const LIMIT_MS: Record<RunLang, number> = { python: 15000, sql: 5000, js: 5000, ts: 5000 };
+export const LANG_LABEL: Record<RunLang, string> = { python: "Python", sql: "SQL (SQLite)", js: "JavaScript", ts: "TypeScript", c: "C" };
+/** Til haqida qisqa eslatma (sarlavhada). */
+export const LANG_NOTE: Partial<Record<RunLang, string>> = {
+  c: "32-bit muhit: pointer va long 4 bayt (odatiy 64-bit kompyuterda 8 bayt)",
+};
+/** Birinchi yuklashdagi yozuv. */
+export const LOADING_LABEL: Record<RunLang, string> = {
+  python: "Python runtime",
+  sql: "SQLite",
+  js: "JavaScript",
+  ts: "TypeScript",
+  c: "C kompilyatori (clang, ~23 MB)",
+};
+// C: vaqt kompilyatsiyani ham o'z ichiga oladi.
+const LIMIT_MS: Record<RunLang, number> = { python: 15000, sql: 5000, js: 5000, ts: 5000, c: 10000 };
 
 const JS_WORKER = `
 const fmt = (v) => typeof v === "string" ? v : (() => { try { return JSON.stringify(v, null, 2) ?? String(v); } catch { return String(v); } })();
@@ -93,25 +106,29 @@ self.onmessage = async (e) => {
   postMessage({ type: "done" });
 };`;
 
-const SOURCES: Record<"js" | "python" | "sql", { src: string; module: boolean }> = {
+type Kind = "js" | "python" | "sql" | "c";
+// C worker'i alohida fayl (public/c/worker.js): runtime.c va cs50.h ni o'sha papkadan oladi.
+const SOURCES: Record<Kind, { src?: string; url?: string; module: boolean }> = {
   js: { src: JS_WORKER, module: false },
   python: { src: PY_WORKER, module: true },
   sql: { src: SQL_WORKER, module: false },
+  c: { url: "/c/worker.js", module: true },
 };
 
-// Python va SQL runtime'i og'ir: bitta worker qayta ishlatiladi. JS har safar yangi worker'da.
+// Python, SQL va C runtime'i og'ir: bitta worker qayta ishlatiladi. JS har safar yangi worker'da.
 type Runtime = { worker: Worker; ready: Promise<void>; loaded: boolean };
 const cached = new Map<string, Runtime>();
 
-function spawn(kind: "js" | "python" | "sql"): Runtime {
-  const { src, module } = SOURCES[kind];
-  const url = URL.createObjectURL(new Blob([src], { type: "text/javascript" }));
+function spawn(kind: Kind): Runtime {
+  const { src, url: file, module } = SOURCES[kind];
+  const url = file ?? URL.createObjectURL(new Blob([src!], { type: "text/javascript" }));
   const worker = new Worker(url, module ? { type: "module" } : undefined);
   const ready =
     kind === "js"
       ? Promise.resolve()
       : new Promise<void>((resolve, reject) => {
           const onMsg = (e: MessageEvent) => {
+            if (e.data?.type === "fail") reject(new Error(e.data.message));
             if (e.data?.type !== "ready") return;
             worker.removeEventListener("message", onMsg);
             resolve();
@@ -124,7 +141,7 @@ function spawn(kind: "js" | "python" | "sql"): Runtime {
   return rt;
 }
 
-function acquire(kind: "js" | "python" | "sql") {
+function acquire(kind: Kind) {
   if (kind === "js") return spawn("js");
   let w = cached.get(kind);
   if (!w) {
@@ -151,8 +168,9 @@ export function run(
   code: string,
   onOutput: (o: Output) => void,
   onLoading: (loading: boolean) => void,
-  tests?: string,
+  extra: { tests?: string; stdin?: string } = {},
 ): RunHandle {
+  const { tests, stdin } = extra;
   const kind = lang === "ts" ? "js" : lang;
   let stop = () => {};
   const done = (async () => {
@@ -199,7 +217,7 @@ export function run(
           resolve();
         }
       };
-      worker.postMessage({ code: source, tests: kind === "python" ? tests : undefined });
+      worker.postMessage({ code: source, tests: kind === "python" ? tests : undefined, stdin });
     });
   })();
   return { done, stop: () => stop() };

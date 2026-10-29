@@ -46,11 +46,37 @@ print("salom")
 ```
 ````
 
-- Tillar: `python`, `sql` (SQLite), `js`, `ts`. Boshqa til bilan `run` - validator xatosi.
+- Tillar: `python`, `sql` (SQLite), `js`, `ts`, `c`. Boshqa til bilan `run` - validator xatosi.
 - Blok o'zi yetarli bo'lishi kerak: SQL'da jadvallarni yaratish va ma'lumot qo'shish shu blok ichida; JS/TS'da natija `console.log` bilan chiqariladi. `import` ishlamaydi.
 - Kod yozishdan oldin lokal ishga tushirib, natijasini tekshiring. Matnda natijaga tayanilsa, u haqiqiy natija bilan bir xil bo'lsin.
 - Hamma blokni `run` qilmang: faqat o'quvchi o'zgartirib ko'rishidan foyda bo'ladigan, natija chiqaradigan misollar uchun.
 - Vaqt chegarasi: Python 15 soniya, qolganlari 5 soniya.
+
+### C bloklari
+
+```` ```c run ```` bloki brauzerda clang bilan kompilyatsiya qilinadi (birinchi ishga tushirishda ~23 MB yuklanadi, keyin kesh). `#include <cs50.h>` ishlaydi (get_string, get_int, get_long, get_float, get_double, get_char). Kirish kerak bo'lsa, darhol keyin ```` ```text stdin ```` bloki: o'quvchiga "Kirish" maydonida ko'rinadi, har qator - bitta javob.
+
+````
+```c run
+#include <cs50.h>
+#include <stdio.h>
+
+int main(void)
+{
+    string name = get_string("Ismingiz: ");
+    printf("salom, %s\n", name);
+}
+```
+
+```text stdin
+David
+```
+````
+
+- Xotira xatolari (heap/stack/global chegarasidan chiqish, use-after-free, double free, NULL), signed overflow va nolga bo'lish dasturni to'xtatadi va xato qatorini ko'rsatadi; dastur oxirida bo'shatilmagan xotira (leak) hisoboti chiqadi. Xotira darslarida shuni namoyish qiling.
+- Muhit 32-bit (wasm32): `sizeof(int *)`, `sizeof(long)`, `sizeof(size_t)` 4 bayt. Matnda 64-bit tizimdagi 8 baytga tayanilsa, farqni yozing.
+- Fayllar (`fopen`), `argv` va tarmoq yo'q.
+- `python3 scripts/run-blocks.py <fayl>` C bloklarini lokal clang bilan stdin bloki bilan ishga tushiradi (sanitizer'siz).
 
 ### Testli mashq (`test` bloki)
 

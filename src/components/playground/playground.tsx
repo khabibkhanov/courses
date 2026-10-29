@@ -3,8 +3,8 @@
 import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import { Check, FlaskConical, Play, RotateCcw, Square, X } from "lucide-react";
-import { LANG_LABEL, type Output, type RunHandle } from "./runners";
-import type { PlaygroundSpec } from "@/lib/playground";
+import { LANG_LABEL, LANG_NOTE, LOADING_LABEL, type Output, type RunHandle } from "./runners";
+import { STDIN_LANGS, type PlaygroundSpec } from "@/lib/playground";
 import { saveProgress, useProgress } from "@/lib/progress";
 
 // Muharrir va runtime'lar faqat brauzerda va kerak bo'lganda yuklanadi.
@@ -24,13 +24,15 @@ type Mode = "run" | "test";
 type TestOutput = Extract<Output, { kind: "test" }>;
 
 /** Darsdagi tahrirlanadigan va ishga tushiriladigan kod bloki; testlar bo'lsa - mashq. */
-export function Playground({ lang, code: initial, tests, course, n, index }: Props) {
+export function Playground({ lang, code: initial, tests, stdin, course, n, index }: Props) {
   const saved = useProgress(course)[n]?.exercises?.[index];
   const [draft, setDraft] = useState<string | null>(null);
   const code = draft ?? (tests ? saved?.code : undefined) ?? initial;
   const [output, setOutput] = useState<Output[] | null>(null);
   const [state, setState] = useState<"idle" | "loading" | "running">("idle");
   const [mode, setMode] = useState<Mode>("run");
+  const hasStdin = STDIN_LANGS.includes(lang);
+  const [input, setInput] = useState(stdin ?? "");
   const handle = useRef<RunHandle | null>(null);
 
   function edit(value: string) {
@@ -58,7 +60,7 @@ export function Playground({ lang, code: initial, tests, course, n, index }: Pro
         if (!loading) started = performance.now();
         setState(loading ? "loading" : "running");
       },
-      m === "test" ? tests : undefined,
+      { tests: m === "test" ? tests : undefined, stdin: hasStdin ? input : undefined },
     );
     await handle.current.done;
     const ms = Math.round(performance.now() - started);
@@ -80,7 +82,8 @@ export function Playground({ lang, code: initial, tests, course, n, index }: Pro
     <div className="my-6 overflow-hidden rounded-lg border border-rule bg-sheet" data-playground-root>
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-rule px-3 py-2">
         <span className="text-xs font-medium text-muted">
-          {LANG_LABEL[lang]}, {tests ? "mashq" : "tahrirlash mumkin"}
+          {LANG_LABEL[lang]}
+          {LANG_NOTE[lang] && <span title={LANG_NOTE[lang]}> (32-bit)</span>}, {tests ? "mashq" : "tahrirlash mumkin"}
           {tests && saved?.passed ? ", bajarilgan" : ""}
         </span>
         <div className="flex items-center gap-2">
@@ -135,9 +138,22 @@ export function Playground({ lang, code: initial, tests, course, n, index }: Pro
         </noscript>
       </div>
 
+      {hasStdin && (
+        <label className="block border-t border-rule px-3 py-2">
+          <span className="text-xs font-medium text-muted">Kirish (stdin): har qator - dastur o&apos;qiydigan bitta javob</span>
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            rows={Math.min(6, Math.max(2, input.split("\n").length))}
+            spellCheck={false}
+            className="mt-1 block w-full resize-y rounded-md border border-rule bg-paper px-2 py-1 font-mono text-[0.8rem] outline-none focus:border-muted"
+          />
+        </label>
+      )}
+
       {(output || state !== "idle") && (
         <div role="log" aria-live="polite" className="border-t border-rule bg-paper px-3 py-2.5 font-mono text-[0.8rem] leading-relaxed">
-          {state === "loading" && <p className="text-muted">{LANG_LABEL[lang]} runtime yuklanmoqda (faqat birinchi marta)...</p>}
+          {state === "loading" && <p className="text-muted">{LOADING_LABEL[lang]} yuklanmoqda (faqat birinchi marta)...</p>}
           {state === "running" && output?.length === 0 && <p className="text-muted">Ishlamoqda...</p>}
           {mode === "test" && state === "idle" && (
             <p
@@ -195,10 +211,30 @@ export function Playground({ lang, code: initial, tests, course, n, index }: Pro
                   <p className="text-muted">{o.rows.length} qator</p>
                 </div>
               );
+            // C terminal oqimi kabi keladi (o'z \n lari bilan): so'rov va kiritilgan javob bitta qatorda qoladi.
+            if (lang === "c" && o.kind !== "info") {
+              const prev = output[i - 1];
+              if (prev && prev.kind !== "info" && "text" in prev) return null;
+              const run: { kind: string; text: string }[] = [];
+              for (let k = i; k < output.length; k++) {
+                const x = output[k];
+                if (x.kind === "info" || !("text" in x)) break;
+                run.push(x);
+              }
+              return (
+                <pre key={i} className="m-0 overflow-x-auto whitespace-pre">
+                  {run.map((x, k) => (
+                    <span key={k} className={x.kind === "err" ? "text-warn" : x.kind === "in" ? "text-muted" : ""}>
+                      {x.text}
+                    </span>
+                  ))}
+                </pre>
+              );
+            }
             return (
               <pre
                 key={i}
-                className={`m-0 overflow-x-auto whitespace-pre ${o.kind === "err" ? "text-warn" : o.kind === "info" ? "text-muted" : ""}`}
+                className={`m-0 overflow-x-auto whitespace-pre ${o.kind === "err" ? "text-warn" : o.kind === "info" || o.kind === "in" ? "text-muted" : ""}`}
               >
                 {o.text}
               </pre>

@@ -1,5 +1,7 @@
 # Darslardagi ```<til> run bloklarini lokal runtime'larda ishga tushiradi (brauzerdagi natijaga yaqin).
-# python -> python3, sql -> sqlite3, js/ts -> node + sucrase (brauzerdagi kabi).
+# python -> python3, sql -> sqlite3, js/ts -> node + sucrase (brauzerdagi kabi), c -> lokal clang (sanitizer'siz: lokal ASan kutubxonasi bo'lmasligi mumkin).
+# C uchun keyingi ```text stdin bloki dasturga kirish sifatida beriladi; public/c/cs50.h o'rniga lokal libcs50 kerak emas:
+# cs50.h funksiyalari public/c/runtime.c da, u ham birga kompilyatsiya qilinadi.
 # Ortidan ```<til> test bloki kelsa, u ham brauzerdagi kabi check(nom, fn) bilan ishga tushiriladi.
 # Ishlatish: python3 scripts/run-blocks.py content/system-design/056.md [boshqa fayllar...]
 import json
@@ -11,7 +13,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FENCE = re.compile(r"^```(\w+)([^\n]*)\n(.*?)^```", re.S | re.M)
-LANG = {"python": "python", "py": "python", "sql": "sql", "js": "js", "javascript": "js", "ts": "ts", "typescript": "ts"}
+LANG = {"python": "python", "py": "python", "sql": "sql", "js": "js", "javascript": "js", "ts": "ts", "typescript": "ts", "c": "c"}
 
 NODE_RUNNER = r"""
 const { transform } = require("sucrase");
@@ -53,6 +55,51 @@ def run_js(code, ts):
     return p.returncode == 0, (p.stdout + p.stderr).strip()
 
 
+def run_c(code, stdin):
+    import tempfile
+    with tempfile.TemporaryDirectory() as d:
+        src = os.path.join(d, "main.c")
+        open(src, "w").write(code)
+        # cs50.h dagi funksiyalar: brauzer runtime'idagi kabi (malloc wrapper'larisiz).
+        cs50 = os.path.join(d, "cs50.c")
+        open(cs50, "w").write(CS50_C)
+        exe = os.path.join(d, "a.out")
+        c = subprocess.run(["clang", "-O0", "-g", "-Wall", "-I", os.path.join(ROOT, "public", "c"), src, cs50, "-lm", "-o", exe], capture_output=True, text=True)
+        if c.returncode:
+            return False, c.stderr.strip()
+        p = subprocess.run([exe], input=stdin or "", capture_output=True, text=True, timeout=10)
+        return p.returncode == 0, ((c.stderr + "\n") if c.stderr else "") + (p.stdout + p.stderr).strip()
+
+
+CS50_C = r"""
+#include <cs50.h>
+#include <ctype.h>
+#include <errno.h>
+#include <math.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
+static char *line(const char *f, va_list ap) {
+    if (f) { vprintf(f, ap); fflush(stdout); }
+    size_t cap = 64, n = 0; char *s = malloc(cap); int c;
+    while ((c = getchar()) != EOF && c != '\n') { if (n + 1 == cap) s = realloc(s, cap *= 2); s[n++] = (char)c; }
+    if (c == EOF && n == 0) { free(s); return NULL; }
+    s[n] = 0; return s;
+}
+#define READ va_list ap; va_start(ap, f); char *s = line(f, ap); va_end(ap)
+string get_string(const char *f, ...) { READ; return s; }
+int get_int(const char *f, ...) { for (;;) { READ; if (!s) return INT_MAX; char *e; errno = 0; long v = strtol(s, &e, 10);
+    int ok = *s && !*e && !errno && v >= INT_MIN && v < INT_MAX; free(s); if (ok) return (int)v; } }
+long get_long(const char *f, ...) { for (;;) { READ; if (!s) return LONG_MAX; char *e; errno = 0; long v = strtol(s, &e, 10);
+    int ok = *s && !*e && !errno && v < LONG_MAX; free(s); if (ok) return v; } }
+double get_double(const char *f, ...) { for (;;) { READ; if (!s) return DBL_MAX; char *e; double v = strtod(s, &e);
+    int ok = *s && !*e && isfinite(v); free(s); if (ok) return v; } }
+float get_float(const char *f, ...) { for (;;) { READ; if (!s) return FLT_MAX; char *e; float v = strtof(s, &e);
+    int ok = *s && !*e && isfinite(v); free(s); if (ok) return v; } }
+char get_char(const char *f, ...) { for (;;) { READ; if (!s) return CHAR_MAX; int ok = s[0] && !s[1]; char c = s[0]; free(s); if (ok) return c; } }
+"""
+
+
 def run_sql(code):
     db = sqlite3.connect(":memory:")
     out, buf = [], ""
@@ -81,13 +128,23 @@ def main(files):
             if not re.search(r"(^|\s)run(\s|$)", meta):
                 continue
             kind = LANG.get(lang)
-            tests = blocks[i + 1][2] if i + 1 < len(blocks) and re.search(r"(^|\s)test(\s|$)", blocks[i + 1][1]) else None
+            # Keyingi test va stdin bloklari (orasida matn bo'lmasligini validator tekshiradi).
+            tests = stdin = None
+            for _, m2, c2 in blocks[i + 1 : i + 3]:
+                if re.search(r"(^|\s)test(\s|$)", m2) and tests is None:
+                    tests = c2
+                elif re.search(r"(^|\s)stdin(\s|$)", m2) and stdin is None:
+                    stdin = c2
+                else:
+                    break
             if kind == "python" and tests is not None:
                 ok, out = run_python(PY_CHECK + code, tests + PY_EXIT)
             elif kind == "python":
                 ok, out = run_python(code)
             elif kind == "sql":
                 ok, out = run_sql(code)
+            elif kind == "c":
+                ok, out = run_c(code, stdin)
             elif kind in ("js", "ts"):
                 ok, out = run_js(code + ("\n;\n" + tests if tests is not None else ""), kind == "ts")
             else:

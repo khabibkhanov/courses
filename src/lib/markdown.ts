@@ -27,12 +27,14 @@ function rehypeMermaid() {
   };
 }
 
-function testBlockText(node: Element): string | undefined {
+/** ```<til> test yoki ```text stdin kabi biriktiriladigan blok: [belgi, matn]. */
+function attachedBlock(node: Element): ["test" | "stdin", string] | undefined {
   const code = node.tagName === "pre" ? node.children[0] : undefined;
   if (code?.type !== "element" || code.tagName !== "code") return undefined;
   const meta = (code.data as { meta?: string } | undefined)?.meta ?? "";
-  if (!/(^|\s)test(\s|$)/.test(meta)) return undefined;
-  return code.children.map((c) => (c.type === "text" ? c.value : "")).join("").replace(/\n$/, "");
+  const tag = /(^|\s)test(\s|$)/.test(meta) ? "test" : /(^|\s)stdin(\s|$)/.test(meta) ? "stdin" : undefined;
+  if (!tag) return undefined;
+  return [tag, code.children.map((c) => (c.type === "text" ? c.value : "")).join("").replace(/\n$/, "")];
 }
 
 /** ```python run kabi bloklar: o'rniga belgi qo'yiladi, kodi esa file.data.playgrounds ga yig'iladi. */
@@ -51,11 +53,13 @@ function rehypePlayground() {
       if (!lang) return;
       const text = code.children.map((c) => (c.type === "text" ? c.value : "")).join("");
       const spec: PlaygroundSpec = { lang, code: text.replace(/\n$/, "") };
-      // Darhol keyingi ```<til> test bloki - yashirin testlar: playground'ga biriktiriladi va matndan olib tashlanadi.
-      const next = parent.children.findIndex((c, k) => k > index && c.type === "element");
-      const testCode = next === -1 ? undefined : testBlockText(parent.children[next] as Element);
-      if (testCode !== undefined) {
-        spec.tests = testCode;
+      // Darhol keyingi ```<til> test (yashirin testlar) va ```text stdin (kirish) bloklari playground'ga
+      // biriktiriladi va matndan olib tashlanadi.
+      for (;;) {
+        const next = parent.children.findIndex((c, k) => k > index && c.type === "element");
+        const block = next === -1 ? undefined : attachedBlock(parent.children[next] as Element);
+        if (!block || spec[block[0] === "test" ? "tests" : "stdin"] !== undefined) break;
+        spec[block[0] === "test" ? "tests" : "stdin"] = block[1];
         parent.children.splice(next, 1);
       }
       specs.push(spec);

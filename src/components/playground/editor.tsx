@@ -9,6 +9,7 @@ import { tags as t } from "@lezer/highlight";
 import { python } from "@codemirror/lang-python";
 import { sql } from "@codemirror/lang-sql";
 import { javascript } from "@codemirror/lang-javascript";
+import { cpp } from "@codemirror/lang-cpp";
 import type { RunLang } from "./runners";
 
 // Ranglar CSS o'zgaruvchilaridan: yorug' va qorong'i mavzuga o'zi moslashadi (globals.css, --cm-*).
@@ -31,7 +32,13 @@ const theme = EditorView.theme({
   ".cm-scroller": { lineHeight: "1.6" },
 });
 
-const language = { python: () => python(), sql: () => sql(), js: () => javascript(), ts: () => javascript({ typescript: true }) };
+const language = {
+  python: () => python(),
+  sql: () => sql(),
+  js: () => javascript(),
+  ts: () => javascript({ typescript: true }),
+  c: () => cpp(),
+};
 
 type Props = { lang: RunLang; value: string; onChange: (v: string) => void; onRun: () => void };
 
