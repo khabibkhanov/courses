@@ -83,8 +83,7 @@ static void *alloc(size_t n, int library) {
   poison((uintptr_t)raw, REDZONE, HEAP_LEFT);
   unpoison((uintptr_t)raw + REDZONE, n);
   poison((uintptr_t)raw + REDZONE + body, REDZONE, HEAP_RIGHT);
-  allocs++;
-  if (!library) live_blocks++, live_bytes += n;
+  if (!library) allocs++, live_blocks++, live_bytes += n;
   return raw + REDZONE;
 }
 
@@ -111,8 +110,7 @@ void __wrap_free(void *p) {
   *h = v;
   *SHADOW(h) = keep, *SHADOW((char *)h + 8) = keep2;
   poison((uintptr_t)p, (v.size + 7) & ~7u, FREED);
-  frees++;
-  if (!v.library) live_blocks--, live_bytes -= v.size;
+  if (!v.library) frees++, live_blocks--, live_bytes -= v.size;
   /* Darhol qaytarilmaydi: use-after-free topilishi uchun karantinda turadi. */
   if (quarantine[qpos]) __real_free(quarantine[qpos]);
   quarantine[qpos] = h;
