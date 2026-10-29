@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
+import { BookOpen } from "lucide-react";
 import "@fontsource/ibm-plex-sans/400.css";
 import "@fontsource/ibm-plex-sans/400-italic.css";
 import "@fontsource/ibm-plex-sans/500.css";
@@ -7,11 +9,16 @@ import "@fontsource/ibm-plex-sans/600.css";
 import "@fontsource/ibm-plex-mono/400.css";
 import "./globals.css";
 import { ThemeProvider, ThemeToggle } from "@/components/theme";
+import { SiteSearch } from "@/components/search";
+import { ProgressImport } from "@/components/progress-import";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE.url),
   title: { default: SITE.name, template: `%s | ${SITE.name}` },
   description: SITE.description,
+  openGraph: { siteName: SITE.name, locale: "uz_UZ", type: "website" },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -20,14 +27,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="flex min-h-dvh flex-col">
         <ThemeProvider>
           <header className="sticky top-0 z-20 border-b border-rule bg-paper/90 backdrop-blur">
-            <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
-              <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
+            <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4">
+              <Link href="/" className="flex items-center gap-2 whitespace-nowrap font-semibold tracking-tight">
                 <Logo />
                 {SITE.name}
               </Link>
-              <div className="flex items-center gap-4">
-                <Link href="/lugat" className="text-sm text-muted hover:text-ink">
-                  Lug&apos;at
+              <div className="flex items-center gap-2 sm:gap-4">
+                <SiteSearch />
+                <Link href="/lugat" className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink" aria-label="Lug'at">
+                  <BookOpen size={16} className="sm:hidden" aria-hidden />
+                  <span className="hidden sm:inline">Lug&apos;at</span>
                 </Link>
                 <ThemeToggle />
               </div>
@@ -40,6 +49,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </footer>
         </ThemeProvider>
+        <ProgressImport />
+        {/* Vercel Web Analytics: cookie'siz, sahifa ko'rishlar soni (qaysi darsda to'xtashadi). */}
+        <Analytics />
       </body>
     </html>
   );

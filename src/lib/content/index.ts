@@ -70,3 +70,21 @@ export function getLesson(course: Course, n: number): Lesson | null {
   if (!loader.exists(dir, entry)) return null;
   return { course: course.slug, n, title: entry.title, ...loader.load(dir, course, entry) };
 }
+
+/** Qidiruv tizimlari va ulashish uchun qisqa tavsif: summary yoki matnning birinchi xatboshisi. */
+export function lessonDescription(lesson: Lesson, max = 200): string {
+  const para =
+    lesson.summary ??
+    lesson.body
+      .replace(/```[\s\S]*?```/g, "")
+      .split(/\n\s*\n/)
+      .map((p) => p.trim())
+      .find((p) => p && !/^(#|\||-|\*|>|\d+\.|!\[)/.test(p)) ??
+    "";
+  const text = para
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/[*_`]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return text.length <= max ? text : text.slice(0, text.lastIndexOf(" ", max)) + "...";
+}

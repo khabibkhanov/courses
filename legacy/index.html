@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Kurs ko'chdi - Enth Academy</title>
+<style>
+  body { font: 18px/1.5 system-ui, sans-serif; background: #f6f7f9; color: #161a20; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 16px; }
+  a { color: #2a5bd7; }
+</style>
+</head>
+<body>
+<main>
+  <p>Kurslar yangi saytga ko'chdi: <a id="to" href="https://courses-pi-six.vercel.app">Enth Academy</a>.</p>
+  <p><small>Bu sahifa sizni avtomatik o'tkazadi va shu brauzerdagi progressingizni ham olib o'tadi.</small></p>
+</main>
+<script>
+// Eski alohida saytlar (system-design-uz, cs50-uz, clean-code-khaki .vercel.app) uchun yo'naltirish.
+// Progress boshqa domenning localStorage'ida: uni #progress= bilan yangi saytga yuboramiz
+// (yangi saytda src/components/progress-import.tsx qabul qiladi). Manba: courses repo, legacy/.
+var NEW = "https://courses-pi-six.vercel.app";
+var host = location.hostname;
+var course = /cs50/.test(host) ? "cs50" : /clean-code/.test(host) ? "clean-code" : "system-design";
+var KEYS = { "system-design": "sd-uz-progress", cs50: "cs50-uz-progress", "clean-code": "progress:clean-code" };
+var SLUGS = {"clean-code-nima":1,"kod-oqish-narxi":2,"murakkablik":3,"texnik-qarz":4,"strategik-dasturlash":5,"boy-scout-qoidasi":6,"simple-design":7,"dry-togri-tushunish":8,"kiss-yagni":9,"tanqid-va-bahs":10,"niyatni-ochuvchi-nomlar":11,"disinformatsiya-va-shovqin":12,"qidiriladigan-nomlar":13,"encodingdan-qochish":14,"nom-uzunligi-va-scope":15,"so-z-turkumlari":16,"domen-tili":17,"izchillik":18,"typescriptda-nomlash":19,"nomlarni-refaktoring":20,"funksiya-olchami":21,"bitta-ish-abstraksiya-darajasi":22,"argumentlar":23,"side-effect-cqs":24,"sof-funksiyalar":25,"guard-clause":26,"switch-va-polimorfizm":27,"xato-qaytarish":28,"toza-async":29,"funksiya-refaktoring-amaliyoti":30,"komment-falsafasi":31,"yaxshi-kommentlar":32,"yomon-kommentlar":33,"interfeys-kommentlari":34,"vertikal-formatlash":35,"avtomatik-formatlash":36,"linting":37,"papka-tuzilishi":38,"readme-adr-commit":39,"tiplar-hujjat-sifatida":40,"obyekt-vs-struktura":41,"demeter-qonuni":42,"information-hiding":43,"primitive-obsession":44,"noqonuniy-holatlar":45,"null-bilan-ishlash":46,"exceptionlar":47,"xatolar-arxitekturasi":48,"xatolarni-yoq-qilish":49,"chegaralar":50,"cohesion-coupling":51,"chuqur-modullar":52,"srp":53,"ocp":54,"lsp":55,"isp":56,"dip-va-di":57,"kompozitsiya-merosdan-ustun":58,"klass-olchami":59,"patternlar-oqilona":60,"nega-testlar":61,"toza-test":62,"bir-test-bir-tushuncha":63,"tdd-sikli":64,"tdd-tanqidi":65,"test-doubles":66,"testlanadigan-dizayn":67,"integratsion-testlar":68,"frontend-testlari":69,"test-sifati":70,"refaktoring-nima":71,"smells-1":72,"smells-2":73,"smells-3":74,"smells-4":75,"asosiy-refaktoringlar":76,"shartli-mantiq":77,"tidy-first":78,"legacy-kod":79,"katta-refaktoring":80,"clean-architecture":81,"hexagonal":82,"modular-monolit":83,"ddd-taktik":84,"paket-tamoyillari":85,"konfiguratsiya":86,"concurrency":87,"logging":88,"api-dizayn":89,"ortiqcha-arxitektura":90,"toza-typescript":91,"toza-react":92,"toza-nextjs":93,"toza-nestjs":94,"toza-db-kodi":95,"code-review":96,"statik-tahlil":97,"ai-va-toza-kod":98,"performance-vs-oqilish":99,"yakuniy-loyiha":100};
+var rest = location.pathname.replace(new RegExp("^/" + course), "");
+var m = rest.match(/^\/dars\/(\d+)/);
+var n = m ? m[1] : course === "clean-code" ? SLUGS[rest.split("/")[1]] : null;
+var target = NEW + "/" + course + (n ? "/dars/" + n : "");
+try {
+  var raw = localStorage.getItem(KEYS[course]);
+  if (raw) {
+    var data = {};
+    data[KEYS[course]] = raw;
+    var b64 = btoa(unescape(encodeURIComponent(JSON.stringify(data)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    target += "#progress=" + b64;
+  }
+} catch (e) {}
+document.getElementById("to").href = target;
+location.replace(target);
+</script>
+</body>
+</html>

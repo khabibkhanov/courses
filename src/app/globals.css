@@ -122,6 +122,13 @@ body {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* Qidiruv natijasidagi topilgan so'z (Pagefind <mark> qo'yadi). */
+.search-excerpt mark {
+  background: color-mix(in srgb, var(--line, #2a5bd7) 22%, transparent);
+  color: var(--ink);
+  border-radius: 2px;
+}
+
 /* Lug'at atamasi: oddiy matn rangida, nuqtali chiziq bilan - matnni o'qishga xalaqit bermaydi. */
 .lesson a.term {
   color: inherit;

@@ -93,6 +93,39 @@ export function saveProgress(course: string, n: number, patch: Partial<LessonPro
   listeners.forEach((l) => l());
 }
 
+/**
+ * Eski saytdan (boshqa domendagi localStorage) kelgan progressni qo'shish: o'tilgan dars o'tilgan bo'lib qoladi,
+ * ball - kattasi. Eski saytlar yo'naltirishda `#progress=` bilan yuboradi (components/progress-import.tsx).
+ * Qaytaradi: yangi qo'shilgan o'tilgan darslar soni.
+ */
+export function importProgress(course: string, raw: string): number {
+  const incoming = parse(raw);
+  if (!incoming) return 0;
+  const store = { ...read(course) };
+  let added = 0;
+  for (const [n, p] of Object.entries(incoming)) {
+    const prev = store[n];
+    if (p.passed && !prev?.passed) added++;
+    store[n] = prev
+      ? { ...p, ...prev, passed: prev.passed || p.passed, score: Math.max(prev.score ?? 0, p.score ?? 0) }
+      : p;
+  }
+  try {
+    localStorage.setItem(key(course), JSON.stringify(store));
+  } catch {
+    return 0;
+  }
+  cache.set(course, store);
+  listeners.forEach((l) => l());
+  return added;
+}
+
+/** Eski saytlardagi kalitlar qaysi kursga tegishli. */
+export const LEGACY_KEYS: Record<string, string> = {
+  ...Object.fromEntries(Object.entries(LEGACY).map(([course, k]) => [k, course])),
+  "progress:clean-code": "clean-code",
+};
+
 export const passedCount = (p: CourseProgress) => Object.values(p).filter((x) => x.passed).length;
 
 /** Birinchi o'tilmagan ochiq dars. */

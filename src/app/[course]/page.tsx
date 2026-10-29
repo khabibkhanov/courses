@@ -12,7 +12,9 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/[course]">): Promise<Metadata> {
   const course = getCourse((await params).course);
-  return course ? { title: course.title, description: course.description } : {};
+  return course
+    ? { title: course.title, description: course.description, openGraph: { title: course.title, description: course.description } }
+    : {};
 }
 
 export default async function CoursePage({ params }: PageProps<"/[course]">) {

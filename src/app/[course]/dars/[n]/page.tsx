@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCourse, getLesson, listCourses, publishedNumbers, syllabus } from "@/lib/content";
+import { getCourse, getLesson, lessonDescription, listCourses, publishedNumbers, syllabus } from "@/lib/content";
 import { codeToMarkdown, extractToc, markdownToHtml, renderLesson } from "@/lib/markdown";
 import { LessonBody } from "@/components/lesson-body";
 import { Quiz } from "@/components/quiz";
@@ -27,7 +27,10 @@ async function load(params: PageProps<"/[course]/dars/[n]">["params"]) {
 
 export async function generateMetadata({ params }: PageProps<"/[course]/dars/[n]">): Promise<Metadata> {
   const data = await load(params);
-  return data ? { title: `${data.lesson.n}. ${data.lesson.title} - ${data.course.title}` } : {};
+  if (!data) return {};
+  const title = `${data.lesson.n}. ${data.lesson.title} - ${data.course.title}`;
+  const description = lessonDescription(data.lesson);
+  return { title, description, openGraph: { title, description, type: "article" } };
 }
 
 export default async function LessonPage({ params }: PageProps<"/[course]/dars/[n]">) {

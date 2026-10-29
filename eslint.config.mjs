@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Build paytida yaratiladigan qidiruv indeksi.
+    "public/pagefind/**",
   ]),
 ]);
 
