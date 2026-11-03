@@ -305,7 +305,7 @@ Uchta savol javobsiz: nega uchinchi argument `payment.id`, nega `sleep`, nega pa
 
 Yaxshi versiya:
 
-```ts
+```ts run
 type Payment = { id: string; amountTiyin: number };
 
 interface PaymentProvider {
@@ -335,6 +335,20 @@ export class RefundService {
     }
   }
 }
+// Sinab ko'ring: PROVIDER_REFUND_INTERVAL_MS ni 100 ga tushiring - kutish qisqaradi.
+const refunded: string[] = [];
+const provider: PaymentProvider = {
+  async refund(paymentId, _amountTiyin, idempotencyKey) {
+    refunded.push(`${paymentId}/${idempotencyKey}`);
+  },
+};
+const started = Date.now();
+await new RefundService(provider).refundAll([
+  { id: "pay_1", amountTiyin: 50_000 },
+  { id: "pay_2", amountTiyin: 120_000 },
+]);
+console.log(refunded);
+console.log("kamida 3 soniya o'tdi:", Date.now() - started >= 2900);
 ```
 
 Nima o'zgardi:

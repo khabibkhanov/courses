@@ -198,7 +198,7 @@ export class PaymentProviderImpl implements IPaymentProvider {
 
 Bu kodda uchta muammo bor. Prefikslar tipni takrorlaydi. `nAmount` eng muhim narsani aytmaydi: summa so'mdami yoki tiyindami? Va `Impl` qaysi provayder ekanini yashiradi, garchi ertaga ikkinchi provayder qo'shilishi aniq.
 
-```ts
+```ts run
 export type ChargeResult =
   | { status: "succeeded"; transactionId: string }
   | { status: "declined"; reason: string };
@@ -220,6 +220,11 @@ export class PaymeProvider implements PaymentProvider {
 }
 
 export const PAYMENT_PROVIDER = Symbol("PAYMENT_PROVIDER");
+// Sinab ko'ring: tokenni bo'sh qator qilib, "declined" natijasini ko'ring.
+const provider = new PaymeProvider("secret-key");
+const ok = await provider.charge(150_000, "card_tok_1");
+console.log(ok.status, ok.status === "succeeded" ? ok.transactionId.startsWith("tx_") : ok.reason);
+console.log(await provider.charge(150_000, ""));
 ```
 
 Nima o'zgardi:

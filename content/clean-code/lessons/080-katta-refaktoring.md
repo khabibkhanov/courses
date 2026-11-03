@@ -357,6 +357,68 @@ Staging'da flag yoqiladi, natijalar solishtiriladi. Keyin production'da. Muammo 
 
 Butun jarayon davomida `main` branch release qilinadigan holatda qoldi. Hech qanday uzoq yashaydigan branch, hech qanday "merge kuni" bo'lmadi.
 
+### Brauzerda sinab ko'ring
+
+Ikki implementatsiya bitta shartnomadan o'tadi, tanlov esa bitta flag orqali. Shu tufayli almashtirish va orqaga qaytarish deploy talab qilmaydi.
+
+```ts run
+// Sinab ko'ring: USE_PRISMA_TRIPS ni true qiling - shartnoma natijasi o'zgarmaydi, faqat faol implementatsiya almashadi.
+type TripSummary = { id: string; vehicleId: string; distanceKm: number; startedAt: Date };
+
+interface TripsRepository {
+  findByVehicle(vehicleId: string, from: Date, to: Date): Promise<TripSummary[]>;
+  totalDistance(vehicleId: string, from: Date, to: Date): Promise<number>;
+}
+
+const rows: TripSummary[] = [
+  { id: "t2", vehicleId: "V1", distanceKm: 40, startedAt: new Date("2026-01-12") },
+  { id: "t1", vehicleId: "V1", distanceKm: 25, startedAt: new Date("2026-01-03") },
+  { id: "t3", vehicleId: "V2", distanceKm: 99, startedAt: new Date("2026-01-05") },
+];
+
+class LegacyTripsRepository implements TripsRepository {
+  async findByVehicle(vehicleId: string, from: Date, to: Date) {
+    return rows
+      .filter((r) => r.vehicleId === vehicleId && r.startedAt >= from && r.startedAt <= to)
+      .sort((a, b) => a.startedAt.getTime() - b.startedAt.getTime());
+  }
+  async totalDistance(vehicleId: string, from: Date, to: Date) {
+    const trips = await this.findByVehicle(vehicleId, from, to);
+    return trips.reduce((sum, t) => sum + t.distanceKm, 0);
+  }
+}
+
+class NextTripsRepository implements TripsRepository {
+  async findByVehicle(vehicleId: string, from: Date, to: Date) {
+    return rows
+      .filter((r) => r.vehicleId === vehicleId && r.startedAt >= from && r.startedAt <= to)
+      .sort((a, b) => +a.startedAt - +b.startedAt);
+  }
+  async totalDistance(vehicleId: string, from: Date, to: Date) {
+    let sum = 0; // Prisma'da bu _sum bilan SQL ichida bajariladi
+    for (const t of await this.findByVehicle(vehicleId, from, to)) sum += t.distanceKm;
+    return sum;
+  }
+}
+
+async function contract(name: string, repo: TripsRepository) {
+  const from = new Date("2026-01-01");
+  const to = new Date("2026-01-31");
+  const trips = await repo.findByVehicle("V1", from, to);
+  const times = trips.map((t) => t.startedAt.getTime());
+  const sorted = times.every((t, i) => i === 0 || times[i - 1] <= t);
+  const total = await repo.totalDistance("V1", from, to);
+  console.log(name, "- tartiblangan:", sorted, "- jami km:", total);
+}
+
+await contract("legacy", new LegacyTripsRepository());
+await contract("next", new NextTripsRepository());
+
+const flags = { USE_PRISMA_TRIPS: false };
+const active: TripsRepository = flags.USE_PRISMA_TRIPS ? new NextTripsRepository() : new LegacyTripsRepository();
+console.log("faol:", active.constructor.name);
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Kichik tizimlar.** Agar eski modul 500 qator va bitta jamoa uni bir haftada qayta yoza olsa, Strangler Fig'ning transitional architecture'si (proksi, sinxronizatsiya) foydasidan qimmatroq. To'g'ridan-to'g'ri almashtirish va yaxshi testlar yetarli.

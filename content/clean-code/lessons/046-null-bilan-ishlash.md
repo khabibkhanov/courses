@@ -320,6 +320,59 @@ Nima o'zgardi va nega:
 - **`null` faqat ma'noli joyda.** `driverId: string | null` - DB'dagi nullable ustunning halol aksi. U darhol, bitta joyda qayta ishlanadi va tashqariga chiqmaydi.
 - **`getOrThrow` yordamchisi** "majburiy topilishi kerak" holatlarini bitta naqshga keltiradi. Uni repository'da bir marta yozasiz.
 
+### Mashq: jim natijani aniq natijaga almashtiring
+
+Quyidagi `dispatchMessage` uch xil holatda ham jim qaytadi. Uni shunday o'zgartiringki, mashina topilmasa `VehicleNotFoundError` otsin, aks holda `{ kind: "sent" }`, `{ kind: "no_driver_assigned" }` yoki `{ kind: "driver_has_no_phone", driverId }` qaytarsin.
+
+```ts run
+class VehicleNotFoundError extends Error {
+  constructor(readonly vehicleId: string) {
+    super(`Transport topilmadi: ${vehicleId}`);
+    this.name = "VehicleNotFoundError";
+  }
+}
+
+const drivers: Record<string, { id: string; phone: string | null }> = {
+  d1: { id: "d1", phone: "+998901112233" },
+  d2: { id: "d2", phone: null },
+};
+const vehicles: Record<string, { id: string; driverId: string | null }> = {
+  v1: { id: "v1", driverId: "d1" },
+  v2: { id: "v2", driverId: null },
+  v3: { id: "v3", driverId: "d2" },
+};
+
+function dispatchMessage(vehicleId: string, text: string, sms: string[]): any {
+  // Yechimingizni shu yerga yozing
+  const vehicle = vehicles[vehicleId];
+  const driver = vehicle && vehicle.driverId ? drivers[vehicle.driverId] : null;
+  if (driver && driver.phone) sms.push(text);
+}
+```
+
+```ts test
+check("mashina topilmasa VehicleNotFoundError otadi", () => {
+  try { dispatchMessage("yo'q", "salom", []); return false; }
+  catch (e) { return (e as Error).name === "VehicleNotFoundError"; }
+});
+check("haydovchi biriktirilmagan bo'lsa no_driver_assigned", () =>
+  dispatchMessage("v2", "salom", []).kind === "no_driver_assigned");
+check("telefon yo'q bo'lsa driver_has_no_phone va driverId", () => {
+  const r = dispatchMessage("v3", "salom", []);
+  return r.kind === "driver_has_no_phone" && r.driverId === "d2";
+});
+check("hammasi joyida bo'lsa sent qaytadi va SMS yuboriladi", () => {
+  const sms: string[] = [];
+  return dispatchMessage("v1", "salom", sms).kind === "sent" && sms.length === 1;
+});
+check("xato holatda SMS yuborilmaydi", () => {
+  const sms: string[] = [];
+  dispatchMessage("v2", "salom", sms);
+  dispatchMessage("v3", "salom", sms);
+  return sms.length === 0;
+});
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **"Hech qachon null qaytarmang" mutlaq qoida emas.** TS'da `findById(): Promise<T | null>` - halol va foydali imzo, ayniqsa repository darajasida. Unga xato tashlatish "yo'q bo'lishi normal" holatlarda (masalan, email bo'yicha foydalanuvchini qidirib, yo'q bo'lsa ro'yxatdan o'tkazish) exception'ni boshqaruv oqimi uchun ishlatishga olib keladi. Ikkala variantni ham bering: `find` (null) va `get` (throw).

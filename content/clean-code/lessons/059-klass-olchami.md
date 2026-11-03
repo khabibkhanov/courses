@@ -312,6 +312,44 @@ Nima o'zgardi va nima o'zgarmadi:
 - **`normalizePlate` funksiya bo'ldi.** U holatsiz va klass kerak emas.
 - **`insuranceExpiresSoon` haqida savol qoladi.** U reyestrga tegishlimi yoki alohida "eslatmalar" aktorigami? Bu texnik emas, tashkiliy savol va jamoa bilan hal qilinadi.
 
+### Brauzerda sinab ko'ring
+
+Ajratilgandan keyin `VehicleRegistry` ni testlash uchun bitta oddiy fake yetadi, God service uchun esa yettita mock kerak edi.
+
+```ts run
+type Vehicle = { id: string; plate: string };
+type VehicleStore = {
+  find(id: string): Vehicle | undefined;
+  update(id: string, data: Partial<Vehicle>): Vehicle;
+};
+
+function normalizePlate(plate: string): string {
+  return plate.toUpperCase().replace(/\s+/g, "");
+}
+
+class VehicleRegistry {
+  constructor(private readonly store: VehicleStore) {} // bitta bog'liqlik
+  findOne(id: string) { return this.store.find(id); }
+  updatePlate(id: string, plate: string) {
+    return this.store.update(id, { plate: normalizePlate(plate) });
+  }
+}
+
+const data = new Map<string, Vehicle>([["v1", { id: "v1", plate: "01A123BC" }]]);
+const registry = new VehicleRegistry({
+  find: (id) => data.get(id),
+  update: (id, patch) => {
+    const next = { ...data.get(id)!, ...patch };
+    data.set(id, next);
+    return next;
+  },
+});
+
+console.log(registry.updatePlate("v1", "01 b 777 cd"));
+console.log(registry.findOne("v1"));
+// Sinab ko'ring: updatePlate'ga boshqa raqam bering; hisobot yoki GPS mock'i kerak emasligiga e'tibor bering.
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Raqamlarga qarab bo'lish.** "Klass 200 qatordan oshmasin" degan qoida mexanik bo'lishga olib keladi. 400 qatorli, bitta aktorli, kichik interfeysli klass ko'pincha bo'lingan to'rtta klassdan yaxshiroq.

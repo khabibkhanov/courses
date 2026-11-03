@@ -233,7 +233,7 @@ export function canCancel(order: Order, user: User, now: Date): { ok: boolean; r
 
 Guard clause'lar bilan:
 
-```ts
+```ts run
 type CancelCheck = { ok: true } | { ok: false; reason: string };
 
 export function canCancel(order: Order, user: User, now: Date): CancelCheck {
@@ -253,6 +253,18 @@ function isPastRefundWindow(order: Order, now: Date): boolean {
   if (order.status !== "paid" || !order.paidAt) return false;
   return now.getTime() - order.paidAt.getTime() > REFUND_WINDOW_MS;
 }
+
+// Sinab ko'ring: foydalanuvchi rolini yoki buyurtma holatini o'zgartirib, har bir guard'ni tekshiring.
+const REFUND_WINDOW_MS = 24 * 60 * 60 * 1000;
+const now = new Date("2026-11-03T12:00:00Z");
+const customer = { id: "u1", role: "customer" };
+const admin = { id: "u9", role: "admin" };
+const paidLongAgo = { id: "o1", status: "paid", customerId: "u1", paidAt: new Date("2026-11-01T12:00:00Z") };
+console.log("mijoz, muddat o'tgan:", canCancel(paidLongAgo, customer, now));
+console.log("admin, muddat o'tgan:", canCancel(paidLongAgo, admin, now));
+console.log("yuborilgan:", canCancel({ ...paidLongAgo, status: "shipped" }, customer, now));
+console.log("begona mijoz:", canCancel(paidLongAgo, { id: "u2", role: "customer" }, now));
+
 ```
 
 Nima o'zgardi:
@@ -262,6 +274,46 @@ Nima o'zgardi:
 - **Murakkab shart nomlandi** (Decompose Conditional). `isPastRefundWindow` o'zi ham guard bilan boshlanadi.
 - **`isAdmin` bir marta hisoblanadi** va uning ma'nosi ikki joyda aniq: ruxsat va muddatdan ozodlik.
 - **Natija tipi union.** `ok: true` va `reason` birga kelishi mumkin emas.
+
+### Mashq: ichma-ich shartlarni guard clause'ga aylantiring
+
+`deliveryFee` hozir chuqur ichma-ich `if/else` bilan yozilgan. Uni guard clause'lar bilan qayta yozing: natija o'zgarmasin, funksiyada `else` so'zi qolmasin.
+
+```ts run
+// Yechimingizni shu yerga yozing
+function deliveryFee(order) {
+  let fee;
+  if (order) {
+    if (order.items > 0) {
+      if (!order.pickup) {
+        if (order.distanceKm <= 10) {
+          fee = 15000;
+        } else {
+          fee = 15000 + (order.distanceKm - 10) * 1000;
+        }
+      } else {
+        fee = 0;
+      }
+    } else {
+      fee = -1;
+    }
+  } else {
+    fee = -1;
+  }
+  return fee;
+}
+
+console.log(deliveryFee({ items: 2, pickup: false, distanceKm: 15 }));
+```
+
+```ts test
+check("order yo'q bo'lsa -1", () => deliveryFee(null) === -1);
+check("mahsulot yo'q bo'lsa -1", () => deliveryFee({ items: 0, pickup: false, distanceKm: 3 }) === -1);
+check("olib ketish bepul", () => deliveryFee({ items: 1, pickup: true, distanceKm: 30 }) === 0);
+check("10 km gacha 15000", () => deliveryFee({ items: 1, pickup: false, distanceKm: 10 }) === 15000);
+check("10 km dan keyin har km uchun 1000", () => deliveryFee({ items: 1, pickup: false, distanceKm: 15 }) === 20000);
+check("else ishlatilmagan (guard clause)", () => !/\belse\b/.test(deliveryFee.toString()));
+```
 
 ## Qachon qo'llamaslik kerak
 

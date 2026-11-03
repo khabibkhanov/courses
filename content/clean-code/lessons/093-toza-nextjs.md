@@ -345,6 +345,29 @@ export default async function FleetPage() {
 
 E'tibor bering: `fleet-map.tsx` DAL'dan faqat `import type` qiladi. Tip importi kompilyatsiyada o'chiriladi, shuning uchun `server-only` buzilmaydi va client bilan server bir xil DTO tipiga tayanadi. Sarlavha va soni server'da render bo'ladi, faqat xarita interaktiv.
 
+### Brauzerda sinab ko'ring
+
+Server/client chegarasidagi asosiy qoida: brauzerga faqat DTO ketadi. DTO'ga o'tkazish `driverPhone` kabi ortiqcha maydonlarni chegarada kesib tashlaydi.
+
+```ts run
+// Sinab ko'ring: toMarkerDto o'rniga `return v` yozing - telefon raqami brauzerga ketadi (oxirgi qator true bo'ladi).
+type VehicleRow = { id: string; plate: string; lat: number; lng: number; driverPhone: string };
+type VehicleMarkerDto = { id: string; plate: string; lat: number; lng: number };
+
+function toMarkerDto(v: VehicleRow): VehicleMarkerDto {
+  return { id: v.id, plate: v.plate, lat: v.lat, lng: v.lng };
+}
+
+const dbRows: VehicleRow[] = [
+  { id: "v1", plate: "01 A 123 BC", lat: 41.31, lng: 69.28, driverPhone: "+998901234567" },
+  { id: "v2", plate: "01 B 456 DE", lat: 41.33, lng: 69.25, driverPhone: "+998907654321" },
+];
+
+const payload = JSON.stringify(dbRows.map(toMarkerDto));
+console.log(payload);
+console.log("telefon brauzerga ketadimi:", payload.includes("driverPhone"));
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Juda interaktiv ilovalar.** Real vaqtdagi dispetcher paneli, xarita muharriri yoki chat kabi sahifalarda deyarli hamma narsa client state. Bu yerda server komponentlarni majburlash props zanjiri va noqulay chegaralar beradi. Sahifa qobig'ini server'da qoldirib, asosiy ilovani client qilish halol yechim.

@@ -233,6 +233,38 @@ Bu konfiguratsiyada nima bor va nima yo'q:
 - **Yo'q:** boolean prefikslari. Ular `types` opsiyasini va tip ma'lumotini talab qiladi. Agar loyiha allaqachon type-aware linting ishlatsa, qo'shish mumkin. Aks holda bu code review'da tekshiriladi.
 - **Yo'q:** ma'no tekshiruvi. Linter `Data`, `Info`, `Manager` so'zlarini regex bilan taqiqlashi mumkin, lekin `VehicleTable` va `VehicleRow` kabi oqlangan holatlarni ham ushlaydi. Ma'no - review'ning ishi.
 
+### Brauzerda sinab ko'ring
+
+Linter qoidasining g'oyasi oddiy: nom selektorga mos formatga solishtiriladi. Quyidagi kichik model shuni ko'rsatadi (haqiqiy `naming-convention` ancha ko'p imkoniyatga ega).
+
+```ts run
+const formats: Record<string, RegExp> = {
+  PascalCase: /^[A-Z][a-zA-Z0-9]*$/,
+  camelCase: /^[a-z][a-zA-Z0-9]*$/,
+  UPPER_CASE: /^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$/,
+};
+
+const rules = [
+  { selector: "interface", formats: ["PascalCase"], forbid: /^I[A-Z]/ },
+  { selector: "enumMember", formats: ["PascalCase"] },
+  { selector: "constGlobal", formats: ["camelCase", "UPPER_CASE", "PascalCase"] },
+];
+
+function validateName(selector: string, name: string): string {
+  const rule = rules.find((r) => r.selector === selector)!;
+  if (rule.forbid?.test(name)) return `XATO: ${name} - taqiqlangan prefiks`;
+  const ok = rule.formats.some((f) => formats[f].test(name));
+  return ok ? `OK: ${name}` : `XATO: ${name} - kutilgan format: ${rule.formats.join(" | ")}`;
+}
+
+// Sinab ko'ring: o'z nomlaringizni qo'shing.
+console.log(validateName("interface", "PaymentProvider"));
+console.log(validateName("interface", "IPaymentProvider"));
+console.log(validateName("enumMember", "in_transit"));
+console.log(validateName("constGlobal", "MAX_SPEED_KMH"));
+console.log(validateName("constGlobal", "Max_speed"));
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Generatsiya qilingan kod.** Prisma, OpenAPI, GraphQL codegen o'z nomlarini beradi. Ularni linter'dan chiqarib tashlang (`ignores`), aks holda yuzlab ma'nosiz xato.

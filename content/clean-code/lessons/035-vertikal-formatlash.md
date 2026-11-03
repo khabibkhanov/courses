@@ -329,6 +329,57 @@ Nima o'zgardi:
 - **Konstanta** ishlatilishidan oldin, fayl yuqorisida va "nega" izohi bilan. Asl versiyada u fayl oxirida edi. Bu holatda xato bermaydi (metod chaqirilganda u allaqachon initsializatsiya qilingan), lekin o'quvchi uni topish uchun faylni oxirigacha o'qishi kerak edi.
 - **Bo'sh qatorlar** ikki mantiqiy qadamni ajratadi: ma'lumotni olish va filtrlash, keyin hisoblash.
 
+### Brauzerda sinab ko'ring
+
+Quyida yuqoridagi "yaxshi" tartibning dekoratorsiz varianti: avval konstanta, keyin public metod, undan keyin u chaqiradigan private metodlar. Sinab ko'ring: private metodlarni yuqoriga ko'chiring - natija o'zgarmaydi, lekin fayl o'qilishi o'zgaradi.
+
+```ts run
+type Trip = { id: string; vehicleId: string; distanceMeters: number; fuelLiters: number };
+
+interface TripRepository {
+  findCompletedByVehicle(vehicleId: string, from: Date, to: Date): Promise<Trip[]>;
+}
+
+/** Qisqa reyslarda DUT xatosi nisbatan katta, ular o'rtachani buzadi. */
+const MIN_DISTANCE_METERS = 5_000;
+
+class FuelEfficiencyService {
+  constructor(private readonly trips: TripRepository) {}
+
+  async averageForVehicle(vehicleId: string, from: Date, to: Date): Promise<number | null> {
+    const trips = await this.trips.findCompletedByVehicle(vehicleId, from, to);
+    const measurable = trips.filter((trip) => this.isMeasurable(trip));
+    if (measurable.length === 0) return null;
+
+    const values = measurable.map((trip) => this.litersPer100Km(trip));
+    return values.reduce((sum, value) => sum + value, 0) / values.length;
+  }
+
+  private isMeasurable(trip: Trip): boolean {
+    return trip.distanceMeters >= MIN_DISTANCE_METERS;
+  }
+
+  private litersPer100Km(trip: Trip): number {
+    return (trip.fuelLiters / trip.distanceMeters) * 100_000;
+  }
+}
+
+const repo: TripRepository = {
+  async findCompletedByVehicle() {
+    return [
+      { id: "t1", vehicleId: "01A123BC", distanceMeters: 100_000, fuelLiters: 8 },
+      { id: "t2", vehicleId: "01A123BC", distanceMeters: 200_000, fuelLiters: 20 },
+      { id: "t3", vehicleId: "01A123BC", distanceMeters: 2_000, fuelLiters: 1 },
+    ];
+  },
+};
+const service = new FuelEfficiencyService(repo);
+const from = new Date("2026-10-01");
+const to = new Date("2026-11-01");
+console.log("o'rtacha l/100 km:", await service.averageForVehicle("01A123BC", from, to));
+console.log("reys yo'q:", await new FuelEfficiencyService({ async findCompletedByVehicle() { return []; } }).averageForVehicle("x", from, to));
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Gazeta tartibi har doim ham qulay emas.** Ba'zi jamoalar va tillar "pastdan yuqoriga" tartibni afzal ko'radi: avval yordamchilar, keyin ularni ishlatuvchi. Bu ayniqsa `const` arrow funksiyalar ko'p ishlatiladigan va TDZ muammosidan qochmoqchi bo'lgan kodda uchraydi. Ikkala tartib ham izchil bo'lsa o'qiladi. Eng yomoni - aralash tartib.

@@ -305,6 +305,52 @@ Nima o'zgardi:
 - **Ichki o'zgarish xavfsiz.** Telemetry jamoasi `TelemetryRepository`ni TimescaleDB'ga ko'chirsa, facade imzosi saqlansa, boshqa hech kim bilmaydi.
 - **Kelajakda ajratish oson.** Agar bir kun Telemetry'ni alohida servisga chiqarish kerak bo'lsa, `TelemetryFacade` HTTP yoki gRPC klientga almashtiriladi. Chegara allaqachon mavjud.
 
+### Brauzerda sinab ko'ring
+
+Facade modulning yagona ochiq yuzasi. Billing telemetriya ichki repository'sini ko'rmaydi, faqat `mileageForPeriod` ni biladi.
+
+```ts run
+// Sinab ko'ring: createTelemetryModule natijasiga repo qo'shib exports'ni kengaytirib ko'ring - chegara shu yerda sizib chiqadi.
+type DailyMileage = { vehicleId: string; date: string; km: number };
+
+class TelemetryRepository {
+  private readonly data: DailyMileage[] = [
+    { vehicleId: "V1", date: "2026-01-01", km: 120 },
+    { vehicleId: "V1", date: "2026-01-02", km: 80 },
+    { vehicleId: "V2", date: "2026-01-01", km: 50 },
+  ];
+  async sumDistanceByDay(vehicleIds: readonly string[], _from: Date, _to: Date) {
+    return this.data.filter((d) => vehicleIds.includes(d.vehicleId));
+  }
+}
+
+class TelemetryFacade {
+  constructor(private readonly repo: TelemetryRepository) {}
+  mileageForPeriod(vehicleIds: readonly string[], from: Date, to: Date): Promise<DailyMileage[]> {
+    return this.repo.sumDistanceByDay(vehicleIds, from, to);
+  }
+}
+
+// "Modul": ichki providerlar yashirin, faqat exports ochiladi
+function createTelemetryModule() {
+  const repo = new TelemetryRepository();
+  return { exports: { TelemetryFacade: new TelemetryFacade(repo) } };
+}
+
+class InvoiceService {
+  constructor(private readonly telemetry: TelemetryFacade) {}
+  async totalKm(vehicleIds: string[]) {
+    const days = await this.telemetry.mileageForPeriod(vehicleIds, new Date("2026-01-01"), new Date("2026-01-31"));
+    return days.reduce((sum, d) => sum + d.km, 0);
+  }
+}
+
+const telemetry = createTelemetryModule();
+console.log("modul nimani ochadi:", Object.keys(telemetry.exports));
+const billing = new InvoiceService(telemetry.exports.TelemetryFacade);
+console.log("V1 bo'yicha jami km:", await billing.totalKm(["V1"]));
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Juda kichik ilova.** Uch-to'rt endpoint'li ichki servisda modullarni facade bilan ajratish bilvosita chaqiruv qo'shadi xolos. Bitta `AppModule` yetarli bo'lishi mumkin.

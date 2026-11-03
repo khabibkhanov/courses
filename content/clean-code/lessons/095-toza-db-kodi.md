@@ -299,6 +299,57 @@ export class VehicleQueries {
 
 "Ishlayotgan mashina" ta'rifi bitta joyda va nomlangan (`operational`). Billing so'rovi relation filtri bilan bitta so'rov, sikl yo'q. Qaytariladigan tip - `VehicleSummary`, to'liq Prisma modeli emas.
 
+### Mashq: ta'rif bitta joyda
+
+"Ishlayotgan mashina" qoidasini (`status: "active"`, o'chirilmagan, shu kompaniya) bitta funksiyada belgilang va `listOperational` hamda `listBillable` ikkalasi ham uni ishlatsin. Billing uchun qo'shimcha: tracker onlayn bo'lsin. Natijada faqat `id` va `plate` qaytsin (`VehicleSummary`), to'liq yozuv emas.
+
+```ts run
+type Vehicle = {
+  id: string;
+  plate: string;
+  companyId: string;
+  status: "active" | "inactive";
+  deletedAt: Date | null;
+  tracker?: { isOnline: boolean };
+};
+type VehicleSummary = { id: string; plate: string };
+
+const vehicles: Vehicle[] = [
+  { id: "v1", plate: "01 A 111 AA", companyId: "c1", status: "active", deletedAt: null, tracker: { isOnline: true } },
+  { id: "v2", plate: "01 A 222 AA", companyId: "c1", status: "active", deletedAt: null, tracker: { isOnline: false } },
+  { id: "v3", plate: "01 A 333 AA", companyId: "c1", status: "active", deletedAt: new Date("2026-01-01"), tracker: { isOnline: true } },
+  { id: "v4", plate: "01 A 444 AA", companyId: "c1", status: "inactive", deletedAt: null, tracker: { isOnline: true } },
+  { id: "v5", plate: "01 A 555 AA", companyId: "c2", status: "active", deletedAt: null, tracker: { isOnline: true } },
+];
+
+function listOperational(companyId: string): VehicleSummary[] {
+  // Yechimingizni shu yerga yozing
+  return [];
+}
+
+function listBillable(companyId: string): VehicleSummary[] {
+  // Yechimingizni shu yerga yozing
+  return [];
+}
+
+console.log(listOperational("c1"), listBillable("c1"));
+```
+
+```ts test
+const ids = (list: VehicleSummary[]) => list.map((v) => v.id).sort().join(",");
+
+check("listOperational: o'chirilgan, nofaol va boshqa kompaniya mashinalari yo'q", () =>
+  ids(listOperational("c1")) === "v1,v2");
+check("listBillable: faqat tracker'i onlayn operatsion mashinalar", () =>
+  ids(listBillable("c1")) === "v1");
+check("boshqa kompaniya o'z mashinasini oladi", () =>
+  ids(listOperational("c2")) === "v5" && ids(listBillable("c2")) === "v5");
+check("natijada faqat id va plate (VehicleSummary)", () => {
+  const first = listOperational("c1")[0];
+  return !!first && Object.keys(first).sort().join(",") === "id,plate";
+});
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Kichik servis yoki prototip.** Ikki endpoint'li servis uchun alohida repository klassi ortiqcha. Prisma Client'ni to'g'ridan-to'g'ri servisda ishlatish maqbul, toki bir xil so'rov ikkinchi joyda paydo bo'lmaguncha. Ikkinchi takror - ajratish uchun signal (8-dars, uch marta qoidasi).
