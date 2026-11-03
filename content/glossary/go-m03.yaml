@@ -1,0 +1,80 @@
+- term: interface pollution
+  aliases: []
+  uz: "Haqiqiy ehtiyoj bo'lmasa, har bir tip uchun oldindan interface e'lon qilish va keraksiz katta interface'lar yaratish. Interface iste'molchi tomonda, kichik va kerak bo'lganda yoziladi."
+  course: go
+  lesson: 21
+- term: embedding
+  aliases: ["struct embedding"]
+  uz: "Struct ichiga boshqa tipni maydon nomisiz joylashtirish. Ichki tipning maydon va metodlari tashqi tipga ko'tariladi (promotion), lekin bu meros emas: virtual dispatch yo'q, faqat delegatsiya."
+  course: go
+  lesson: 22
+- term: ambiguous selector
+  aliases: []
+  uz: "Bir xil chuqurlikdagi ikki embedded tipda bir xil nomli maydon yoki metod bo'lganda kompilyator beradigan xato: tanlov noaniq, shuning uchun to'liq yo'l (a.X.Name) yozilishi kerak."
+  course: go
+  lesson: 22
+- term: type switch
+  aliases: []
+  uz: "Interface qiymatining dinamik tipi bo'yicha tarmoqlanadigan switch (switch v := x.(type)). Har case'da v shu case tipiga ega bo'ladi."
+  course: go
+  lesson: 23
+- term: type assertion
+  aliases: ["type assertions"]
+  uz: "x.(T) ifodasi: interface qiymatining dinamik tipi T ekanini tekshiradi va qiymatni qaytaradi. Muvaffaqiyatsiz bo'lsa panic beradi, v, ok := x.(T) shaklida esa ok false bo'ladi."
+  course: go
+  lesson: 23
+- term: type parameter
+  aliases: ["type parameters"]
+  uz: "Generic funksiya yoki tip e'lonida kvadrat qavs ichida berilgan tip nomi ([T any]). Tana ichida T haqiqiy tip kabi ishlatiladi, ruxsat etilgan amallar constraint bilan belgilanadi."
+  course: go
+  lesson: 24
+- term: type inference
+  aliases: []
+  uz: "Kompilyatorning type argument'larni funksiya argumentlari tiplaridan o'zi aniqlashi, shuning uchun chaqiruv joyida Max[int](a, b) o'rniga Max(a, b) yozish mumkin."
+  course: go
+  lesson: 24
+- term: instantiation
+  aliases: ["instantiate"]
+  uz: "Generic funksiya yoki tipga aniq type argument'lar berib, konkret funksiya yoki tip hosil qilish. Kompilyator argument'lar constraint'ni qanoatlantirishini tekshiradi."
+  course: go
+  lesson: 24
+- term: type set
+  aliases: ["type sets"]
+  uz: "Interface qabul qiladigan tiplar to'plami. Constraint sifatida ishlatilganda union (A | B), ~T va metod talablaridan hosil bo'ladi; type argument shu to'plamda bo'lishi kerak."
+  course: go
+  lesson: 25
+- term: core type
+  aliases: []
+  uz: "Go 1.24 spetsifikatsiyasidagi tushuncha: type parameter'ning type set'idagi barcha tiplar umumiy underlying tipga ega bo'lganda shu tip. Go 1.25 da spetsifikatsiyadan olib tashlangan, xatti-harakat o'zgarmagan."
+  course: go
+  lesson: 25
+- term: generic metod
+  aliases: ["generic metodlar", "generic metodni"]
+  uz: "O'z type parameter'larini e'lon qiladigan metod. Go 1.27 release notes'ga ko'ra qo'llab-quvvatlanadi; interface metodlari type parameter e'lon qila olmaydi."
+  course: go
+  lesson: 27
+- term: range-over-func
+  aliases: ["range over func"]
+  uz: "Go 1.23 dan for ... range ifodasiga funksiya (iterator) berish imkoniyati. Sikl tanasi sintezlangan yield funksiyasiga aylanadi."
+  course: go
+  lesson: 28
+- term: iter.Seq
+  aliases: ["iter.Seq2"]
+  uz: "iter paketidagi iterator funksiyasi tiplari: Seq[V] func(yield func(V) bool), Seq2[K, V] esa ikki qiymat beradi."
+  course: go
+  lesson: 28
+- term: single-use iterator
+  aliases: ["single-use iterators"]
+  uz: "Ketma-ketlikni faqat bir marta aylanib chiqa oladigan iterator (masalan, oqimdan o'qish). Bunday iterator hujjat izohida belgilanishi kerak."
+  course: go
+  lesson: 28
+- term: strict weak ordering
+  aliases: []
+  uz: "slices.SortFunc taqqoslash funksiyasi bajarishi kerak bo'lgan tartib qoidalari: teng elementlar uchun nol qaytariladi, tartib tranzitiv bo'ladi. Buzilsa saralash natijasi noto'g'ri bo'lishi mumkin."
+  course: go
+  lesson: 29
+- term: settable
+  aliases: ["CanSet"]
+  uz: "reflect.Value ni o'zgartirish mumkin bo'lgan holati: qiymat addressable bo'lishi va eksport qilinmagan maydondan olinmagan bo'lishi kerak. Pointer'ni Elem() bilan ochib olinadi."
+  course: go
+  lesson: 30

@@ -232,7 +232,7 @@ Boshqa tomondan, upstream'larga tarmoq darajasida faqat gateway'dan kirishni rux
 
 ### Rate limit: token bucket
 
-Namunadagi `Limiter` har klient uchun bucket saqlaydi: u `rate` token/soniya tezlikda to'ladi, `burst` bilan chegaralanadi va har so'rov bitta token sarflaydi. Soat tashqaridan beriladi (91-dars), shuning uchun sinov deterministik. Cheklovlar, halol aytganda: bucket'lar xotirada va hech qachon o'chirilmaydi (klientlar soni cheksiz o'ssa, xotira ham o'sadi; eskirgan yozuvlarni tozalash kerak); har gateway nusxasi o'z hisobini yuritadi, shuning uchun N nusxada umumiy limit taxminan N barobar bo'ladi. Aniq umumiy limit uchun markaziy saqlash kerak (Redis, 79-dars) yoki limitni nusxalar soniga bo'lib belgilash.
+Namunadagi `Limiter` har klient uchun bucket saqlaydi: u `rate` token/soniya tezlikda to'ladi, `burst` bilan chegaralanadi va har so'rov bitta token sarflaydi. Soat tashqaridan beriladi (91-dars), shuning uchun sinov deterministik. Cheklovlar, halol aytganda: bucket'lar xotirada va hech qachon o'chirilmaydi (klientlar soni cheksiz o'ssa, xotira ham o'sadi; eskirgan yozuvlarni tozalash kerak); har gateway nusxasi o'z hisobini yuritadi, shuning uchun N nusxada umumiy limit N barobargacha kattalashadi. Aniq umumiy limit uchun markaziy saqlash kerak (Redis, 79-dars) yoki limitni nusxalar soniga bo'lib belgilash.
 
 ## Misol: gateway
 

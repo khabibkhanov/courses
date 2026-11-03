@@ -284,6 +284,12 @@ Release notes bo'yicha:
 
 Bu ro'yxatdagi 1.25-1.27 xususiyatlari sandbox'da (Go 1.24) kompilyatsiya qilinmadi, matn release notes'ga tayanadi. Amaliy xulosa: toolchain yangilashda TLS bilan ishlaydigan servislar uchun integratsiya testini (haqiqiy peer'lar bilan) alohida o'tkazing, ayniqsa eski qurilmalar va korporativ firewall ortidagi peer'lar bilan.
 
+### ALPN va session resumption
+
+ALPN (Application-Layer Protocol Negotiation) qo'l siqish paytida ilova protokolini kelishadi: klient `tls.Config.NextProtos` da `h2`, `http/1.1` kabi ro'yxat beradi, server birini tanlaydi va natija `ConnectionState.NegotiatedProtocol` da ko'rinadi. Misolimizdagi chiqishda `ALPN ""` bo'sh, chunki `httptest` serveri HTTP/2 ni yoqmagan va hech qanday protokol kelishilmagan. `net/http` Transport va Server bu maydonni o'zi to'ldiradi, qo'lda faqat past darajadagi `tls.Server`/`tls.Dial` bilan ishlaganda tegasiz.
+
+Session resumption oldingi sessiya kalitlarini qayta ishlatib qo'l siqishni qisqartiradi. Xavfsizlik oqibati: tiklangan ulanishda server klient sertifikatini to'liq qayta tekshirmaydi. Go 1.21 dan tiklangan ulanishda tekshiruv faqat sertifikat muddatini ko'radi, shuning uchun revoke qilingan sertifikat tiklash oynasi (sessiya bilet muddati) davomida ishlashda davom etishi mumkin. Revoke tez kerak bo'lsa, sessiya biletlari muddatini qisqa qiling yoki `VerifyConnection` bilan ulanish darajasida o'z tekshiruvingizni qo'shing.
+
 ### Shifrlar va versiyalar sozlamasi
 
 TLS 1.3 shifrlari sozlanmaydi. `CipherSuites` faqat TLS 1.2 ga ta'sir qiladi. Ko'pchilik servis uchun to'g'ri tanlov: `MinVersion: tls.VersionTLS12` (yoki sizning peer'laringiz hammasi TLS 1.3 ni bilsa, 1.3), qolganini Go default'iga qoldirish. Default'lar xavfsizlik jamoasi tomonidan yangilab turiladi, qo'lda yozilgan ro'yxat esa eskiradi.

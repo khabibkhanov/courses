@@ -1,0 +1,105 @@
+- term: netpoller
+  aliases: []
+  uz: "Go runtime'ining tarmoq I/O ni kuzatuvchi qismi (Linux'da epoll): socket tayyor bo'lguncha goroutine to'xtatib turiladi, OS thread esa band bo'lmaydi. Shu tufayli minglab ulanish minglab thread talab qilmaydi."
+  course: go
+  lesson: 71
+- term: half-close
+  aliases: ["yarim yopish"]
+  uz: "TCP ulanishining faqat yozish tomonini yopish (CloseWrite): qarshi tomon EOF oladi, lekin javob yozishni davom ettira oladi."
+  course: go
+  lesson: 71
+- term: slowloris
+  aliases: []
+  uz: "Klient so'rov sarlavhasini yoki tanasini juda sekin, bo'lak-bo'lak yuborib serverning ulanishlarini band qilib qo'yadigan hujum; ReadHeaderTimeout va boshqa server timeout'lari shundan himoyalaydi."
+  course: go
+  lesson: 72
+- term: ServeMux
+  aliases: []
+  uz: "net/http ning so'rov marshrutizatori. Go 1.22 dan pattern'larda metod va yo'l o'zgaruvchilari (GET /orders/{id}) bor; mos kelgan pattern Request.Pattern'da ko'rinadi."
+  course: go
+  lesson: 72
+- term: keep-alive
+  aliases: ["keep alive"]
+  uz: "Bitta TCP ulanishni bir nechta HTTP so'rov uchun qayta ishlatish. Transport bo'sh ulanishlarni saqlaydi; javob tanasi to'liq o'qilib yopilmasa, ulanish qayta ishlatilmaydi."
+  course: go
+  lesson: 73
+- term: middleware
+  aliases: []
+  uz: "http.Handler ni o'rab, uning oldidan va keyinidan umumiy ish (loglash, autentifikatsiya, panic'dan tiklanish, timeout) bajaradigan funksiya: func(http.Handler) http.Handler."
+  course: go
+  lesson: 74
+- term: ResponseController
+  aliases: []
+  uz: "Go 1.20 dan http.NewResponseController: ResponseWriter ga Flush, SetReadDeadline, SetWriteDeadline kabi imkoniyatlarni tur o'zgartirmasdan beradigan o'ram."
+  course: go
+  lesson: 74
+- term: mTLS
+  aliases: ["mutual TLS"]
+  uz: "Ikki tomonlama TLS: server klientdan ham sertifikat talab qiladi va tekshiradi. Servislar va qurilmalarni parol o'rniga sertifikat bilan autentifikatsiya qilish uchun ishlatiladi."
+  course: go
+  lesson: 75
+- term: ALPN
+  aliases: []
+  uz: "TLS qo'l siqish paytida ilova protokolini kelishish kengaytmasi (masalan h2 yoki http/1.1). Go'da tls.Config.NextProtos orqali beriladi."
+  course: go
+  lesson: 75
+- term: session resumption
+  aliases: []
+  uz: "Oldingi TLS sessiyasi parametrlarini qayta ishlatib qo'l siqishni qisqartirish. Go 1.21 dan server qayta tiklangan ulanishda klient sertifikatini qayta tekshirmaydi."
+  course: go
+  lesson: 75
+- term: problem details
+  aliases: ["problem+json"]
+  uz: "RFC 9457 dagi HTTP API xato formati: application/problem+json tanasida type, title, status, detail va kengaytma maydonlari. Mijoz xatoni mashina o'qiy oladigan shaklda oladi."
+  course: go
+  lesson: 76
+- term: protobuf
+  aliases: ["protocol buffers"]
+  uz: "Google'ning .proto sxemasiga asoslangan ixcham binar serializatsiya formati. Maydonlar nomi bilan emas, raqami bilan kodlanadi, shuning uchun sxema orqaga mos holda kengaytiriladi."
+  course: go
+  lesson: 77
+- term: varint
+  aliases: []
+  uz: "O'zgaruvchan uzunlikdagi butun son kodlash: har baytning 7 biti ma'lumot, yuqori biti 'davomi bor' belgisi. Kichik sonlar bir baytga sig'adi."
+  course: go
+  lesson: 77
+- term: wire type
+  aliases: []
+  uz: "Protobuf tag'ining quyi 3 biti: maydon baytlari qanday joylashganini bildiradi (varint, 8 bayt, uzunlik-prefiksli va boshqalar). Noma'lum maydonni o'tkazib yuborishga imkon beradi."
+  course: go
+  lesson: 77
+- term: connection pool
+  aliases: ["connection pooling"]
+  uz: "Tayyor ulanishlarni qayta ishlatish uchun saqlaydigan havza. database/sql da sql.DB shunday havza; MaxOpenConns chegarasi to'lsa, chaqiruvlar bo'sh ulanishni kutadi."
+  course: go
+  lesson: 78
+- term: cache-aside
+  aliases: ["lazy loading"]
+  uz: "Keshlash naqshi: ilova avval keshdan o'qiydi, miss bo'lsa bazadan yuklab keshga yozadi. Kesh va baza orasidagi mantiq ilovada, baza haqiqat manbai."
+  course: go
+  lesson: 79
+- term: cache stampede
+  aliases: ["thundering herd"]
+  uz: "Mashhur kalit muddati tugaganda ko'p so'rov bir vaqtda miss ko'rib, hammasi bazaga borishi va uni bo'g'ishi. Singleflight va TTL jitter bilan kamaytiriladi."
+  course: go
+  lesson: 79
+- term: at-least-once
+  aliases: ["at least once"]
+  uz: "Xabar kamida bir marta yetkaziladigan kafolat: ack kelmasa xabar qayta yuboriladi, shuning uchun takror bo'lishi mumkin va iste'molchi idempotent bo'lishi kerak."
+  course: go
+  lesson: 80
+- term: idempotency key
+  aliases: ["idempotency kaliti"]
+  uz: "So'rov yoki xabarni noyob aniqlaydigan kalit. Server uni saqlab, takror kelganda ta'sirni qayta bajarmaydi va birinchi natijani qaytaradi."
+  course: go
+  lesson: 80
+- term: dual write
+  aliases: []
+  uz: "Ikki alohida tizimga (masalan baza va broker) ketma-ket yozish: atomik emas, biri o'tib ikkinchisi o'tmasligi mumkin. Transactional outbox shu muammoni hal qiladi."
+  course: go
+  lesson: 80
+- term: transactional outbox
+  aliases: ["outbox"]
+  uz: "Hodisani biznes ma'lumot bilan bir tranzaksiyada outbox jadvaliga yozish va alohida relay orqali brokerga yuborish naqshi. Yo'qotishni yo'q qiladi, takrorga yo'l qo'yadi."
+  course: go
+  lesson: 80

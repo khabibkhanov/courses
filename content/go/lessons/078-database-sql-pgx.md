@@ -253,6 +253,8 @@ Sandbox'da Postgres yo'q, shuning uchun mexanizm `database/sql/driver` interfeys
 
 ### sql.DB: havza, ulanish emas
 
+Connection pool (ulanishlar havzasi) tayyor ulanishlarni saqlab, har so'rovda yangi ulanish ochish xarajatidan qutqaradi: so'rov bo'sh ulanishni oladi va tugagach qaytaradi.
+
 `sql.Open` ulanish ochmaydi; u havzani yaratadi. Ulanishlar kerak bo'lganda ochiladi. `*sql.DB` ko'p goroutine'dan xavfsiz ishlatiladi va umr bo'yi bitta yaratiladi. Havza to'rtta sozlama bilan boshqariladi:
 
 - `SetMaxOpenConns(n)`: bir vaqtda ochiq ulanishlar chegarasi (default cheksiz);
