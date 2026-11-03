@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Caesar shifrida kalit k = 5. Kichik harf `y` qaysi harfga shifrlanadi?",
+      "options": ["`d`", "`D`", "`^`", "`c`"],
+      "answer": 0,
+      "why": "'y' - 'a' = 24, (24 + 5) mod 26 = 29 mod 26 = 3, 'a' + 3 = 'd'. Registr saqlanadi va alifbo oxiridan boshiga aylanadi."
+    },
+    {
+      "q": "C da deshifrlash `'a' + (c - k) % 26` bilan yozildi. Ciphertext harfi `b` (raqami 1), kalit k = 4. Nima chiqadi?",
+      "options": [
+        "`x`, chunki -3 mod 26 = 23",
+        "Harf bo'lmagan `^` belgisi, chunki C da -3 % 26 = -3",
+        "Kompilyatsiya xatosi: `%` manfiy son bilan ishlamaydi",
+        "Dastur nolga bo'lish xatosi bilan to'xtaydi"
+      ],
+      "answer": 1,
+      "why": "C da qoldiq ishorasi bo'linuvchidan olinadi: -3 % 26 = -3, 'a' - 3 = 94, bu '^'. To'g'ri natija uchun ((x % 26) + 26) % 26 yoki 26 - k ga o'ngga surish kerak."
+    },
+    {
+      "q": "Caesar dasturi `./caesar 1000` bilan ishga tushirildi. U qaysi kalit bilan aynan bir xil natija beradi?",
+      "options": ["0", "1000 alohida kalit, boshqa hech biri bilan mos kelmaydi", "12", "14"],
+      "answer": 2,
+      "why": "Surish 26 ta qadamdan keyin takrorlanadi: 1000 = 38 x 26 + 12, demak 1000 mod 26 = 12."
+    },
+    {
+      "q": "Vigenere shifrida kalit `AB`, plaintext `aa aa`. Kalit indeksi faqat harflarda siljiydi. Ciphertext qanday?",
+      "options": ["`ab ba`", "`ba ba`", "`aa bb`", "`ab ab`"],
+      "answer": 3,
+      "why": "Harflar ketma-ket A(0), B(1), A(0), B(1) bilan suriladi, bo'shliq kalitni sarflamaydi: a, b, bo'shliq, a, b."
+    },
+    {
+      "q": "Substitution dasturida kalit tekshiruvidan takror tekshiruvi olib tashlandi va `QQERTYUIOPASDFGHJKLZXCVBNM` kaliti qabul qilindi. Asosiy muammo nima?",
+      "options": [
+        "Dastur massiv chegarasidan chiqadi",
+        "Hech qanday muammo yo'q, faqat bitta harf takrorlangan",
+        "A va B ikkalasi `Q` ga shifrlanadi, ciphertext dagi `Q` ni qaysi biriga qaytarishni bilib bo'lmaydi",
+        "Kalit uzunligi 26 dan farq qiladi"
+      ],
+      "answer": 2,
+      "why": "Shifr o'zaro bir qiymatli bo'lishi kerak: D(K, E(K, P)) = P. Takror bo'lsa, ikki turli harf bitta harfga tushadi va deshifrlash imkonsiz."
+    },
+    {
+      "q": "Substitution shifrida 26! ≈ 4 x 10^26 ta kalit bor. Nega u baribir xavfsiz emas?",
+      "options": [
+        "Har bir plaintext harfi doim bir xil ciphertext harfiga aylanadi, shuning uchun harflar chastotasi saqlanadi va chastota tahlili kalitni harfma-harf ochadi",
+        "Zamonaviy kompyuter 4 x 10^26 kalitni bir necha soniyada sinaydi",
+        "Kalit 26 harfdan iborat bo'lgani uchun uni taxmin qilish oson",
+        "Substitution aslida Caesar bilan bir xil, kalitlari 26 ta"
+      ],
+      "answer": 0,
+      "why": "Brute force haqiqatan imkonsiz (10^9 kalit/s da ~1.28 x 10^10 yil), lekin chastota tahlili hamma kalitni sinamaydi: eng ko'p harflardan boshlab mosliklar topiladi."
+    },
+    {
+      "q": "Uzun o'zbekcha matn Caesar bilan shifrlangan, ciphertext da eng ko'p uchraydigan harf `h`. Eng ehtimolli kalit qaysi?",
+      "options": ["8", "18", "19", "7"],
+      "answer": 3,
+      "why": "O'zbekcha matnda eng ko'p harf `a` (raqami 0). 'h' - 'a' = 7, demak (0 + k) mod 26 = 7, k = 7."
+    },
+    {
+      "q": "Vigenere kaliti uzunligi L = 4 ekani aniqlandi. Shundan keyin hujumchi nima qiladi?",
+      "options": [
+        "26^4 ta kalitning hammasini sinaydi, boshqa yo'l yo'q",
+        "Harflarni 4 ta ustunga ajratadi; har bir ustun oddiy Caesar, uni chastota tahlili bilan alohida ochadi",
+        "Kalit uzunligi deshifrlash uchun yetarli, kalitning o'zi kerak emas",
+        "Matnni substitution deb faraz qilib, 26! kalitni sinaydi"
+      ],
+      "answer": 1,
+      "why": "0, L, 2L, ... pozitsiyalar bitta kalit harfi bilan surilgan, ya'ni har ustun Caesar. 4 x 26 ta tekshiruv 26^4 = 456 976 dan ancha kam."
+    },
+    {
+      "q": "Kerckhoffs tamoyiliga ko'ra shifr tizimi qachon to'g'ri loyihalangan hisoblanadi?",
+      "options": [
+        "Algoritm sir saqlansa va faqat ishonchli odamlarga ma'lum bo'lsa",
+        "Kalitlar soni 2^64 dan katta bo'lsa",
+        "Hujumchi algoritmni to'liq bilsa ham, kalitsiz plaintext ni ocha olmasa",
+        "Ciphertext uzunligi plaintext dan farq qilsa"
+      ],
+      "answer": 2,
+      "why": "Xavfsizlik faqat kalit maxfiyligiga tayanishi kerak: Shannon iborasida 'dushman tizimni biladi'. Kalitlar soni ko'p bo'lishi yetarli emas (substitution misoli)."
+    },
+    {
+      "q": "Caesar kaliti `./caesar 99999999999999999999` kabi juda uzun satr bo'lishi mumkin. Qaysi o'qish usuli to'g'ri va xavfsiz?",
+      "options": [
+        "`int k = atoi(argv[1]) % 26;`",
+        "Raqamma-raqam o'qib, har qadamda `k = (k * 10 + raqam) % 26`",
+        "`int k = argv[1][0] - '0';` - faqat birinchi raqam",
+        "`int k = strlen(argv[1]) % 26;`"
+      ],
+      "answer": 1,
+      "why": "Har qadamda mod olinsa, oraliq qiymat 26 x 10 + 9 = 269 dan oshmaydi va natija kalit mod 26 ga teng. atoi esa int ga sig'maydigan satrda undefined behavior beradi."
+    }
+  ]
+}

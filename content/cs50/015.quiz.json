@@ -1,0 +1,80 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Saralangan massivda 5000 ta element bor. Binary search eng yomon holatda nechta taqqoslash qiladi?",
+      "options": ["12", "2500", "13", "5000"],
+      "answer": 2,
+      "why": "2^12 = 4096 <= 5000 < 8192 = 2^13, demak floor(log2 5000) = 12 va eng yomon holat 12 + 1 = 13."
+    },
+    {
+      "q": "Saralanmagan 400 elementli massivda linear search ishlatiladi. Qiymat massivda bor va har bir pozitsiyada teng ehtimol bilan turadi. O'rtacha nechta taqqoslash bo'ladi?",
+      "options": ["200.5", "200", "400", "9"],
+      "answer": 0,
+      "why": "O'rtacha (1 + 2 + ... + n) / n = (n + 1) / 2 = 401 / 2 = 200.5. 9 ta binary search uchun bo'lardi, lekin massiv saralanmagan."
+    },
+    {
+      "q": "Linear search 1 000 000 elementli massivda mavjud bo'lmagan qiymatni qidirmoqda. Nechta taqqoslash qiladi?",
+      "options": ["Taxminan 500 000, o'rtacha holat", "20", "Massiv tartibiga bog'liq", "Har doim 1 000 000"],
+      "answer": 3,
+      "why": "\"Yo'q\" deyish uchun oxirgi elementgacha hammasini ko'rish kerak, shuning uchun topilmagan qiymat uchun linear search har doim n ta taqqoslash qiladi."
+    },
+    {
+      "q": "Massiv uzunligi 1000 dan 2000 ga oshdi. Binary search ning eng yomon holatdagi taqqoslashlari qanday o'zgaradi?",
+      "options": ["Ikki baravar oshadi: 10 dan 20 ga", "Bittaga oshadi: 10 dan 11 ga", "O'zgarmaydi", "Kvadrat marta oshadi"],
+      "answer": 1,
+      "why": "floor(log2 1000) + 1 = 10, floor(log2 2000) + 1 = 11 (1024 <= 2000 < 2048). Hajm ikki baravar oshsa, bitta qo'shimcha yarimga bo'lish kerak."
+    },
+    {
+      "q": "Kodda `lo = 0, hi = n - 1` va `while (lo < hi)` yozilgan, qolgani yopiq oraliq uslubida (`lo = mid + 1`, `hi = mid - 1`). {10, 20, 30, 40, 50} da 50 ni qidirsak nima bo'ladi?",
+      "options": ["4 qaytadi", "Cheksiz sikl", "a[5] o'qiladi, chegaradan chiqish", "-1 qaytadi: oraliqda bitta element qolganda sikl to'xtaydi"],
+      "answer": 3,
+      "why": "lo = hi = 4 bo'lganda oraliqda 50 bor, lekin lo < hi yolg'on. Yopiq oraliqda shart lo <= hi bo'lishi kerak."
+    },
+    {
+      "q": "Yarim ochiq oraliq [lo, hi) uslubida `a[mid] < x` tarmog'iga `lo = mid` yozildi. lo = 2, hi = 3 va a[2] < x bo'lsa nima bo'ladi?",
+      "options": [
+        "mid = 2, lo yana 2 bo'ladi, oraliq kichraymaydi va sikl cheksiz aylanadi",
+        "Sikl keyingi qadamda to'g'ri tugaydi",
+        "mid = 3 bo'ladi va a[3] o'qiladi",
+        "Kompilyator xato beradi"
+      ],
+      "answer": 0,
+      "why": "mid = 2 + (3 - 2) / 2 = 2. lo = mid = 2 hech narsani o'zgartirmaydi, hi - lo kamaymaydi. To'g'risi lo = mid + 1."
+    },
+    {
+      "q": "`size_t n = 0; size_t hi = n - 1;` dan keyin `hi` nimaga teng?",
+      "options": ["-1", "0", "SIZE_MAX, ya'ni size_t ning eng katta qiymati", "Undefined behavior, natija har xil"],
+      "answer": 2,
+      "why": "Unsigned arifmetika modul 2^N: 0 - 1 eng katta qiymatga aylanadi. Bu UB emas, lekin `lo <= hi` true bo'lib, bo'sh massivda sikl boshlanadi."
+    },
+    {
+      "q": "32-bitli `int` bilan `mid = (lo + hi) / 2` yozilgan binary search taxminan qaysi massiv uzunligidan boshlab overflow qilishi mumkin?",
+      "options": ["2^16 elementdan", "2^30 elementdan (taxminan milliard)", "2^31 elementdan", "Hech qachon: hi har doim INT_MAX dan kichik"],
+      "answer": 1,
+      "why": "lo + hi ikkalasi n - 1 ga yaqinlashganda 2(n - 1) > 2^31 - 1 bo'ladi, ya'ni n taxminan 2^30 dan oshganda. Bloch maqolasidagi chegara ham 2^30."
+    },
+    {
+      "q": "n = 10^6 elementli saralanmagan massivda 1000 ta topiladigan qiymat qidiriladi. Saralash n log2 n ≈ 2 x 10^7 taqqoslash turadi. Qaysi yo'l arzonroq?",
+      "options": [
+        "Saralab binary search: ≈ 2 x 10^7 + 1000 x 20, linear esa ≈ 1000 x 500 000 = 5 x 10^8",
+        "Linear search: saralash har doim qimmat",
+        "Farqi yo'q, ikkalasi ham n ga proporsional",
+        "Binary search saralamasdan ham ishlaydi, saralash shart emas"
+      ],
+      "answer": 0,
+      "why": "Tenglik nuqtasi k ≈ 2 x 10^7 / 500 000 ≈ 40 ta qidiruv. 1000 ta qidiruvda saralash taxminan 25 baravar arzon."
+    },
+    {
+      "q": "Saralangan massivda 7 soni 500 000 marta takrorlanadi. Uning nechta ekanini qanday topish to'g'ri?",
+      "options": [
+        "C dagi bsearch bilan topib, uning indeksidan chapga va o'ngga yurish",
+        "Binary search bitta 7 ni topadi, javob 1",
+        "Linear search bilan butun massivni sanash - boshqa yo'l yo'q",
+        "upper_bound(7) - lower_bound(7): ikkita binary search, har biri log2 n atrofida qadam"
+      ],
+      "answer": 3,
+      "why": "lower_bound birinchi 7 ni, upper_bound 7 dan katta birinchi elementni beradi; farqi - soni. Topgach yurish 500 000 qadamgacha cho'ziladi, bsearch esa takrorlardan istalganini qaytaradi."
+    }
+  ]
+}

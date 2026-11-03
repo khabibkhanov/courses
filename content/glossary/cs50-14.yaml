@@ -1,0 +1,62 @@
+# CS50 14-15-darslar atamalari.
+- term: plaintext
+  uz: "Shifrlanishi kerak bo'lgan asl, o'qiladigan xabar. Shifrlash uni kalit yordamida ciphertext ga aylantiradi."
+  course: cs50
+  lesson: 14
+- term: ciphertext
+  uz: "Shifrlash natijasi: kalitni bilmagan odam uchun ma'nosiz ko'rinadigan matn. Deshifrlash uni kalit bilan plaintext ga qaytaradi."
+  course: cs50
+  lesson: 14
+- term: Caesar shifri
+  aliases: [Caesar cipher]
+  uz: "Har bir harfni alifboda k ta o'ngga suradigan shifr: c = (p + k) mod 26. Farqli kalitlar atigi 26 ta, shuning uchun brute force bilan bir zumda buziladi."
+  course: cs50
+  lesson: 14
+- term: Vigenere shifri
+  aliases: [Vigenere cipher]
+  uz: "Har bir harfni kalit so'zning navbatdagi harfi miqdorida suradigan shifr; kalit indeksi faqat harflarda siljiydi. Kalit uzunligi topilsa, bir nechta Caesar ga bo'linib buziladi."
+  course: cs50
+  lesson: 14
+- term: substitution shifri
+  aliases: [substitution cipher]
+  uz: "Kaliti 26 harfning istalgan tartibi bo'lgan shifr: har bir harf kalitdagi mos harfga almashtiriladi. Kalitlar soni 26!, lekin chastota tahlili bilan buziladi."
+  course: cs50
+  lesson: 14
+- term: brute force
+  uz: "Barcha mumkin bo'lgan kalitlarni (yoki variantlarni) ketma-ket sinab ko'rish. Narxi kalitlar soniga proporsional."
+  course: cs50
+  lesson: 14
+- term: chastota tahlili
+  aliases: [frequency analysis]
+  uz: "Ciphertext dagi harflar chastotasini tilning odatiy chastotalari bilan solishtirib, kalitni topish usuli. Har bir harf doim bir xil harfga shifrlanadigan shifrlarni buzadi."
+  course: cs50
+  lesson: 14
+- term: Kerckhoffs tamoyili
+  aliases: [Kerckhoffs principle]
+  uz: "Shifr tizimi algoritm hujumchiga to'liq ma'lum bo'lsa ham xavfsiz qolishi kerak: maxfiylik faqat kalitda bo'lishi lozim (Kerckhoffs, 1883)."
+  course: cs50
+  lesson: 14
+- term: eng yomon holat
+  aliases: [worst case]
+  uz: "Berilgan hajmdagi kirishlar orasida algoritm eng ko'p qadam qiladigan holat. Linear search uchun n, binary search uchun floor(log2 n) + 1 taqqoslash."
+  course: cs50
+  lesson: 15
+- term: o'rtacha holat
+  aliases: [average case]
+  uz: "Kirishlar taqsimoti haqidagi faraz bo'yicha kutiladigan qadamlar soni. Linear search da qiymat bor va pozitsiyalar teng ehtimolli bo'lsa (n + 1) / 2."
+  course: cs50
+  lesson: 15
+- term: eng yaxshi holat
+  aliases: [best case]
+  uz: "Algoritm eng kam qadam qiladigan kirish, masalan linear search da qiymat birinchi o'rinda turishi. Algoritmni baholashda kam foydali."
+  course: cs50
+  lesson: 15
+- term: yarim ochiq oraliq
+  aliases: [half-open interval]
+  uz: "[lo, hi) ko'rinishidagi oraliq: lo kiradi, hi kirmaydi. Uzunligi hi - lo, bo'sh oraliq lo == hi; for (i = 0; i < n; i++) sikli shu uslubda."
+  course: cs50
+  lesson: 15
+- term: upper_bound
+  uz: "Saralangan massivda x dan katta bo'lgan birinchi elementning indeksi (bunday element bo'lmasa n). Python da bisect_right."
+  course: cs50
+  lesson: 15
