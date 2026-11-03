@@ -16,10 +16,11 @@ export type Output =
 const PYODIDE = "https://cdn.jsdelivr.net/npm/pyodide@314.0.7/";
 const SQLJS = "https://cdn.jsdelivr.net/npm/sql.js@1.15.2/dist/";
 
-export const LANG_LABEL: Record<RunLang, string> = { python: "Python", sql: "SQL (SQLite)", js: "JavaScript", ts: "TypeScript", c: "C" };
+export const LANG_LABEL: Record<RunLang, string> = { python: "Python", sql: "SQL (SQLite)", js: "JavaScript", ts: "TypeScript", c: "C", go: "Go" };
 /** Til haqida qisqa eslatma (sarlavhada). */
 export const LANG_NOTE: Partial<Record<RunLang, string>> = {
   c: "32-bit muhit: pointer va long 4 bayt (odatiy 64-bit kompyuterda 8 bayt)",
+  go: "Kod rasmiy Go Playground'ga (go.dev, Google) yuboriladi va u yerda ishlaydi",
 };
 /** Birinchi yuklashdagi yozuv. */
 export const LOADING_LABEL: Record<RunLang, string> = {
@@ -28,9 +29,10 @@ export const LOADING_LABEL: Record<RunLang, string> = {
   js: "JavaScript",
   ts: "TypeScript",
   c: "C kompilyatori (clang, ~23 MB)",
+  go: "Go Playground",
 };
 // C: vaqt kompilyatsiyani ham o'z ichiga oladi.
-const LIMIT_MS: Record<RunLang, number> = { python: 15000, sql: 5000, js: 5000, ts: 5000, c: 10000 };
+const LIMIT_MS: Record<RunLang, number> = { python: 15000, sql: 5000, js: 5000, ts: 5000, c: 10000, go: 20000 };
 
 const JS_WORKER = `
 const fmt = (v) => typeof v === "string" ? v : (() => { try { return JSON.stringify(v, null, 2) ?? String(v); } catch { return String(v); } })();
@@ -109,6 +111,7 @@ self.onmessage = async (e) => {
 };`;
 
 type Kind = "js" | "python" | "sql" | "c";
+type PlaygroundResponse = { Errors?: string; Events?: { Message: string; Kind: "stdout" | "stderr" }[] | null; VetErrors?: string; error?: string };
 // C worker'i alohida fayl (public/c/worker.js): runtime.c va cs50.h ni o'sha papkadan oladi.
 const SOURCES: Record<Kind, { src?: string; url?: string; module: boolean }> = {
   js: { src: JS_WORKER, module: false },
@@ -161,6 +164,40 @@ async function transpile(code: string, ts: boolean): Promise<string> {
 
 export type RunHandle = { done: Promise<void>; stop: () => void };
 
+/** Go: Web Worker emas, server route orqali rasmiy Go Playground (bufersiz stdin, testlar va argumentlar yo'q). */
+function runGo(code: string, onOutput: (o: Output) => void, onLoading: (loading: boolean) => void): RunHandle {
+  const ctrl = new AbortController();
+  let reason = "";
+  const abort = (why: string) => {
+    reason = why;
+    ctrl.abort();
+  };
+  const timer = setTimeout(() => abort(`To'xtatildi: ${LIMIT_MS.go / 1000} soniyadan ko'p kutildi.`), LIMIT_MS.go);
+  const done = (async () => {
+    onLoading(true);
+    try {
+      const res = await fetch("/api/go-run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+        signal: ctrl.signal,
+      });
+      onLoading(false);
+      const data: PlaygroundResponse = await res.json().catch(() => ({}));
+      if (!res.ok) return onOutput({ kind: "err", text: data.error ?? `Xato: ${res.status}` });
+      if (data.Errors) return onOutput({ kind: "err", text: data.Errors });
+      for (const e of data.Events ?? []) onOutput({ kind: e.Kind === "stderr" ? "err" : "out", text: e.Message });
+      if (data.VetErrors) onOutput({ kind: "info", text: `go vet:\n${data.VetErrors}` });
+    } catch {
+      onLoading(false);
+      onOutput({ kind: "err", text: reason || "Go Playground bilan aloqa bo'lmadi. Internet aloqasini tekshiring." });
+    } finally {
+      clearTimeout(timer);
+    }
+  })();
+  return { done, stop: () => abort("Foydalanuvchi to'xtatdi.") };
+}
+
 /**
  * Kodni ishga tushiradi. onOutput har bir chiqish bo'lagi uchun chaqiriladi,
  * onLoading - runtime birinchi marta yuklanayotganda.
@@ -173,6 +210,7 @@ export function run(
   extra: { tests?: string; stdin?: string; argv?: string[]; files?: { name: string; text: string }[] } = {},
 ): RunHandle {
   const { tests, stdin, argv, files } = extra;
+  if (lang === "go") return runGo(code, onOutput, onLoading);
   const kind = lang === "ts" ? "js" : lang;
   let stop = () => {};
   const done = (async () => {

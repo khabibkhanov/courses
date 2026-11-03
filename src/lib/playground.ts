@@ -8,6 +8,8 @@ export const RUN_LANGS = {
   ts: "ts",
   typescript: "ts",
   c: "c",
+  go: "go",
+  golang: "go",
 } as const;
 
 export type RunLang = (typeof RUN_LANGS)[keyof typeof RUN_LANGS];
