@@ -1,0 +1,86 @@
+# CS50 49-50-darslar atamalari.
+- term: MVC
+  aliases: [Model-View-Controller]
+  uz: "Kodni uch qismga ajratish naqshi: model (ma'lumot va qoidalar), view (ko'rinish) va controller (so'rovni qabul qilib, ikkalasini bog'laydi). Flask'da view - Jinja shablon, controller - route funksiyasi."
+  course: cs50
+  lesson: 49
+- term: REST
+  aliases: [RESTful]
+  uz: "URL resursni (nima), HTTP metod amalni (nima qilish) bildiradigan API uslubi: GET /books/7 o'qish, PUT /books/7 yangilash, DELETE /books/7 o'chirish."
+  course: cs50
+  lesson: 49
+- term: application context
+  aliases: [ilova konteksti]
+  uz: "Flask so'rov ishlanayotganda yoqadigan kontekst; g obyekti va current_app shu kontekst davomida yashaydi. Kontekst yopilganda teardown_appcontext funksiyalari chaqiriladi."
+  course: cs50
+  lesson: 49
+- term: N+1 so'rov
+  aliases: [N+1 muammosi]
+  uz: "Ro'yxat uchun bitta so'rovdan keyin har bir element uchun yana bittadan so'rov yuborish: N element - N+1 so'rov. Odatda bitta JOIN bilan bitta so'rovga tushiriladi."
+  course: cs50
+  lesson: 49
+- term: salt
+  aliases: []
+  uz: "Har bir parol uchun alohida yaratiladigan tasodifiy qiymat; parol bilan birga hashlanadi va hash yonida ochiq saqlanadi. Bir xil parollarni har xil hashga aylantiradi va rainbow table'ni yaroqsiz qiladi."
+  course: cs50
+  lesson: 50
+- term: rainbow table
+  aliases: []
+  uz: "Ko'p ehtimoliy parollarning hashlari oldindan hisoblangan ixcham jadval; salt'siz hashlarni bir qidiruv bilan tiklashga imkon beradi."
+  course: cs50
+  lesson: 50
+- term: pepper
+  aliases: []
+  uz: "Barcha parollar uchun umumiy, bazadan alohida saqlanadigan sir; faqat baza sizib chiqqanda hashlarni buzishni qo'shimcha qiyinlashtiradi. Salt va sekin hash o'rnini bosmaydi."
+  course: cs50
+  lesson: 50
+- term: key derivation function
+  aliases: [KDF]
+  uz: "Paroldan kalit yoki hash chiqaruvchi ataylab sekin funksiya (Argon2id, scrypt, bcrypt, PBKDF2): salt va sozlanadigan narxga ega."
+  course: cs50
+  lesson: 50
+- term: XSS
+  aliases: [Cross-Site Scripting]
+  uz: "Foydalanuvchi kiritgan matn sahifaga HTML yoki JavaScript sifatida tushib, boshqa foydalanuvchilarning brauzerida sayt nomidan bajarilishi. Asosiy himoya - chiqarishda escaping."
+  course: cs50
+  lesson: 50
+- term: stored XSS
+  aliases: []
+  uz: "Zararli matn bazaga saqlanib, uni ko'rgan har bir foydalanuvchining brauzerida bajariladigan XSS turi."
+  course: cs50
+  lesson: 50
+- term: reflected XSS
+  aliases: []
+  uz: "Zararli matn so'rovning o'zida (masalan, URL parametrida) kelib, javobga darhol qaytariladigan XSS turi; qurbon maxsus havolani ochishi kerak."
+  course: cs50
+  lesson: 50
+- term: DOM-based XSS
+  aliases: []
+  uz: "Server ishtirokisiz, sahifadagi JavaScript ishonchsiz matnni innerHTML kabi HTML tahlil qiluvchi joyga yozganda yuzaga keladigan XSS."
+  course: cs50
+  lesson: 50
+- term: CSP
+  aliases: [Content-Security-Policy, Content Security Policy]
+  uz: "Brauzerga sahifa qayerdan skript, uslub va boshqa resurslarni yuklashi mumkinligini aytadigan javob header'i; XSS'ga qarshi ikkinchi himoya qatlami."
+  course: cs50
+  lesson: 50
+- term: CSRF
+  aliases: [Cross-Site Request Forgery]
+  uz: "Boshqa sayt foydalanuvchi brauzeri orqali, uning cookie'si bilan ishonchli saytga holat o'zgartiruvchi so'rov yuborishi. Himoya - CSRF token va SameSite cookie."
+  course: cs50
+  lesson: 50
+- term: CSRF token
+  aliases: [synchronizer token]
+  uz: "Session uchun yaratilib, har bir formaga yashirin maydon sifatida qo'yiladigan tasodifiy qiymat; server POST'dagi tokenni session'dagisi bilan solishtiradi."
+  course: cs50
+  lesson: 50
+- term: timing attack
+  aliases: []
+  uz: "Javob vaqtidagi farqlarni o'lchab sir haqida ma'lumot olish. Sirlarni == o'rniga hmac.compare_digest bilan solishtirish bunga qarshi."
+  course: cs50
+  lesson: 50
+- term: OWASP Top 10
+  aliases: []
+  uz: "OWASP loyihasining web ilovalar uchun eng muhim xavflar ro'yxati; eng so'nggi nashri 2025-yilgi, unda 1-o'rinda Broken Access Control."
+  course: cs50
+  lesson: 50

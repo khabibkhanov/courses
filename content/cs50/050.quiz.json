@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Baza sizib chiqdi. Parollar SHA-256 bilan, har foydalanuvchiga alohida 16 baytli salt bilan saqlangan. Hujumchi uchun nima o'zgardi (salt'siz SHA-256 bilan solishtirganda)?",
+      "options": [
+        "Hech narsa: salt hash ichida ochiq turibdi, demak foydasi yo'q",
+        "Parollarni endi umuman tiklab bo'lmaydi",
+        "Rainbow table yaroqsiz va har foydalanuvchini alohida buzish kerak, lekin bitta foydalanuvchiga lug'at hujumi hali ham arzon, chunki SHA-256 tez",
+        "Hujumchi faqat salt'ni bilsa, parolni darhol oladi"
+      ],
+      "answer": 2,
+      "why": "Salt oldindan hisoblangan jadvallarni va bir xil parollarni ko'rishni yopadi, lekin taxmin narxini oshirmaydi. Narxni sekin funksiya (Argon2id, scrypt, bcrypt) oshiradi."
+    },
+    {
+      "q": "Bitta yadro sekundiga 2 million SHA-256 hisoblaydi. 10 million mashhur paroldan iborat ro'yxatni bitta salt'li hashga qarshi sinash qancha vaqt oladi? bcrypt (bitta hisob 0,3 s) bilan-chi?",
+      "options": [
+        "5 s va taxminan 35 kun",
+        "5 daqiqa va taxminan 3 kun",
+        "0,5 s va taxminan 1 soat",
+        "Ikkalasi ham bir xil, chunki salt bor"
+      ],
+      "answer": 0,
+      "why": "10^7 / (2 x 10^6) = 5 s. bcrypt bilan 10^7 x 0,3 s = 3 x 10^6 s, ya'ni 3 000 000 / 86 400 = taxminan 35 kun."
+    },
+    {
+      "q": "OWASP Password Storage Cheat Sheet bo'yicha yangi tizim uchun birinchi tavsiya qaysi?",
+      "options": [
+        "bcrypt, cost 10",
+        "PBKDF2-HMAC-SHA256, 600 000 iteratsiya",
+        "SHA-512, salt bilan",
+        "Argon2id, kamida 19 MiB xotira, t=2, p=1"
+      ],
+      "answer": 3,
+      "why": "Argon2id - birinchi tanlov; scrypt - u yo'q bo'lsa; bcrypt - faqat eski tizimlar; PBKDF2 - FIPS-140 talab qilinganda. Oddiy SHA oilasi parol uchun yaroqsiz."
+    },
+    {
+      "q": "`generate_password_hash(\"x\")` natijasi `scrypt:32768:8:1$...$...` bilan boshlanadi. Bir yildan keyin sukutni `scrypt:131072:8:1` ga oshirdingiz. Eski foydalanuvchilar bilan nima bo'ladi?",
+      "options": [
+        "Eski hashlar endi tekshirilmaydi, hamma parolni qayta o'rnatishi kerak",
+        "Eski hashlar o'z parametrlari bilan tekshirilaveradi, chunki parametrlar hash satrining ichida; kirish paytida ularni yangi parametrlar bilan qayta hashlash mumkin",
+        "`check_password_hash` eski hashlarni avtomatik yangilaydi va bazaga yozadi",
+        "Eski hashlar yangi parametrlar bilan tekshiriladi va hamma kirish muvaffaqiyatsiz bo'ladi"
+      ],
+      "answer": 1,
+      "why": "Format o'zini tavsiflaydi: `method$salt$hash`. Tekshiruv parametrlarni satrdan oladi. Qayta hashlashni ilova o'zi qiladi - to'g'ri parol aynan kirish paytida qo'lida bo'ladi."
+    },
+    {
+      "q": "Shablonda `<p>{{ comment }}</p>` yozilgan va izoh `<script>steal()</script>`. Flask `render_template(\"post.html\", ...)` bilan sahifa qaytaradi. Brauzerda nima bo'ladi?",
+      "options": [
+        "Skript bajariladi, chunki u bazada saqlangan",
+        "Flask izohni saqlashdan oldin o'chirib tashlagan bo'ladi",
+        "Sahifa umuman ko'rinmaydi, Jinja xato beradi",
+        "Matn `&lt;script&gt;...` ga escape qilingan, ekranda teglar oddiy matn bo'lib ko'rinadi, skript ishlamaydi"
+      ],
+      "answer": 3,
+      "why": "Flask `.html` shablonlar uchun avtomatik escaping'ni yoqadi. Himoya saqlashda emas, chiqarishda ishlaydi; `{{ comment|safe }}` yozilganda esa skript bajarilardi."
+    },
+    {
+      "q": "Qaysi Jinja kodi escaping bo'lsa ham XSS'ga ochiq qoladi?",
+      "options": [
+        "`<input value=\"{{ name }}\">`",
+        "`<p>{{ name }}</p>`",
+        "`<input value={{ name }}>` - qo'shtirnoqsiz atribut",
+        "`<title>{{ name }}</title>`"
+      ],
+      "answer": 2,
+      "why": "`x onfocus=steal() autofocus` da escape qilinadigan belgi yo'q, lekin qo'shtirnoq bo'lmagani uchun bo'shliq atributni yopadi va yangi hodisa atributlari paydo bo'ladi. Atributni doim qo'shtirnoqqa oling."
+    },
+    {
+      "q": "JavaScript'da `div.innerHTML = '<img src=x onerror=\"...\">'` va `div.textContent = '<img src=x onerror=\"...\">'` farqi nima?",
+      "options": [
+        "Birinchisi `<img>` element yaratadi va `onerror` kodi ishlaydi; ikkinchisi matnni harfma-harf ko'rsatadi, element yaratmaydi",
+        "Ikkalasi ham xavfsiz, chunki brauzer `innerHTML` orqali kiritilgan kodni bajarmaydi",
+        "Ikkalasi ham kodni bajaradi",
+        "`textContent` faqat `<script>` ni olib tashlaydi, qolgan teglarni qoldiradi"
+      ],
+      "answer": 0,
+      "why": "`innerHTML` orqali qo'shilgan `<script>` bajarilmaydi, lekin hodisa atributlari (onerror) ishlaydi. `textContent` HTML tahlil qilmaydi - foydalanuvchi matni uchun to'g'ri tanlov."
+    },
+    {
+      "q": "Sayt session cookie'siga `SameSite=Lax` qo'ydi, lekin o'chirish amali `GET /posts/7/delete` orqali ishlaydi. Hujumchi sahifasidagi `<a href=\"https://site/posts/7/delete\">` havolasini foydalanuvchi bosdi. Natija?",
+      "options": [
+        "Cookie yuborilmaydi, chunki so'rov boshqa saytdan",
+        "Cookie yuboriladi, chunki bu yuqori darajadagi GET navigatsiya - post o'chadi",
+        "Brauzer havolani bloklaydi",
+        "Cookie yuboriladi, lekin server 403 qaytaradi"
+      ],
+      "answer": 1,
+      "why": "`Lax` cookie'ni cross-site POST'larda to'xtatadi, lekin xavfsiz metodli yuqori darajadagi navigatsiyada (havola bosilganda GET) yuboradi. Shuning uchun holat o'zgartiruvchi amal GET bo'lmasligi kerak."
+    },
+    {
+      "q": "Synchronizer CSRF token nima uchun hujumchi sahifasidagi yashirin formani to'xtatadi?",
+      "options": [
+        "Token cookie'ni shifrlaydi",
+        "Token so'rov IP manzilini tekshiradi",
+        "Brauzer cookie'ni avtomatik qo'shadi, lekin tokenni emas; hujumchi esa same-origin qoidasi tufayli sahifangizni o'qib tokenni bila olmaydi",
+        "Token so'rovni GET ga aylantiradi"
+      ],
+      "answer": 2,
+      "why": "Token session'da saqlanadi va formaga yashirin maydon sifatida qo'yiladi. Soxta so'rovda cookie bor, token yo'q yoki noto'g'ri - server 403 qaytaradi. XSS bo'lsa esa hujumchi tokenni o'qiy oladi, shuning uchun ikkala himoya birga kerak."
+    },
+    {
+      "q": "OWASP Top 10:2025 da XSS (CWE-79) va SQL injection (CWE-89) qaysi toifada, CSRF (CWE-352) qaysisida?",
+      "options": [
+        "Ikkalasi A05:2025 Injection'da, CSRF esa A01:2025 Broken Access Control'da",
+        "XSS A03 da, SQL injection A05 da, CSRF A07 da",
+        "Uchalasi ham A05:2025 Injection'da",
+        "XSS va CSRF A04:2025 Cryptographic Failures'da"
+      ],
+      "answer": 0,
+      "why": "2025-yilgi ro'yxatda Injection 5-o'rinda va XSS'ni ham o'z ichiga oladi; CSRF kirish nazorati muammosi sifatida A01'ga kiritilgan."
+    }
+  ]
+}

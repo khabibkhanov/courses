@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "HTML sahifada kitobni o'chirish uchun `<form method=\"delete\" action=\"/books/7\">` yozildi. Tugma bosilganda nima bo'ladi?",
+      "options": [
+        "Brauzer DELETE so'rovini yuboradi va kitob o'chadi",
+        "Brauzer `delete` ni noto'g'ri qiymat deb hisoblaydi va GET /books/7 yuboradi - kitob ko'rsatiladi, o'chmaydi",
+        "Brauzer formani umuman yubormaydi va konsolga xato chiqaradi",
+        "Brauzer POST yuboradi, Flask uni avtomatik DELETE ga aylantiradi"
+      ],
+      "answer": 1,
+      "why": "Forma `method` atributi faqat get, post va dialog ni qabul qiladi; boshqa qiymat sukutdagi GET ga tushadi. Shuning uchun HTML ilovada o'chirish `POST /books/7/delete` ko'rinishida quriladi."
+    },
+    {
+      "q": "Flask hujjatlarida route funksiyasi \"view function\" deb ataladi. MVC nuqtai nazaridan u qaysi qism?",
+      "options": [
+        "View - chunki HTML qaytaradi",
+        "Model - chunki bazaga murojaat qiladi",
+        "Controller - so'rovni qabul qilib, modelni chaqiradi va qaysi view yoki redirect qaytarishni hal qiladi",
+        "MVC'ning hech bir qismiga to'g'ri kelmaydi"
+      ],
+      "answer": 2,
+      "why": "MVC'dagi view - Jinja shablon (yoki `jsonify`), model - SQL va qoidalar. Route funksiyasi ularni bog'laydi, ya'ni controller vazifasini bajaradi."
+    },
+    {
+      "q": "Bitta so'rov ichida `get_db()` uch marta chaqirildi, keyin ikkinchi so'rov keldi va unda ham bir marta chaqirildi. Jami nechta ulanish ochiladi?",
+      "options": ["4", "1", "3", "2"],
+      "answer": 3,
+      "why": "Birinchi so'rovda ulanish `g.db` da saqlanadi va qayta ishlatiladi (1 ta). `g` so'rov tugaganda tozalanadi va teardown ulanishni yopadi, shuning uchun ikkinchi so'rov yangisini ochadi (yana 1 ta)."
+    },
+    {
+      "q": "Dasturchi testlarda `app.config[\"DATABASE\"] = \":memory:\"` qo'ydi. Birinchi so'rov jadval yaratib kitob qo'shdi, ikkinchi so'rov esa `no such table: books` berdi. Sababi?",
+      "options": [
+        "`get_db()` har so'rovda yangi ulanish ochadi, `:memory:` esa har ulanishga alohida bo'sh baza beradi",
+        "`commit()` chaqirilmagan",
+        "SQLite xotiradagi bazada jadval yaratishga ruxsat bermaydi",
+        "`teardown_appcontext` jadvallarni o'chiradi"
+      ],
+      "answer": 0,
+      "why": "Har `:memory:` ulanishi mustaqil baza. Bir nechta ulanish bitta xotira bazasini ko'rishi uchun `file:nom?mode=memory&cache=shared` URI va `uri=True` kerak."
+    },
+    {
+      "q": "`create_book()` `INSERT` bajaradi, lekin `commit()` chaqirmaydi. Route 303 bilan kitob sahifasiga redirect qiladi. Keyingi `GET /books/1` nima qaytaradi va nega?",
+      "options": [
+        "200, chunki `INSERT` darhol diskka yoziladi",
+        "500, chunki tranzaksiya ochiq qolgan",
+        "404, chunki commit qilinmagan tranzaksiya ulanish teardown'da yopilganda bekor bo'ladi",
+        "303, chunki Flask redirect'ni takrorlaydi"
+      ],
+      "answer": 2,
+      "why": "Python `sqlite3` INSERT oldidan tranzaksiya ochadi. Commit'siz `close()` o'zgarishni saqlamaydi, shuning uchun keyingi so'rov kitobni topmaydi va controller 404 qaytaradi."
+    },
+    {
+      "q": "Nega muvaffaqiyatli `POST /books` dan keyin sahifa to'g'ridan-to'g'ri emas, 303 redirect bilan qaytariladi?",
+      "options": [
+        "303 javob 200 dan tezroq yuboriladi",
+        "Aks holda foydalanuvchi sahifani yangilasa brauzer POST ni qayta yuboradi va kitob ikki marta yaratiladi",
+        "Jinja shablonlari POST so'roviga javob bera olmaydi",
+        "HTTP standarti POST'ga 200 qaytarishni taqiqlaydi"
+      ],
+      "answer": 1,
+      "why": "Post/Redirect/Get: redirect'dan keyin brauzerning oxirgi so'rovi GET bo'ladi va uni yangilash xavfsiz. Validatsiya xatosida esa forma 400 bilan qaytariladi, redirect qilinmaydi."
+    },
+    {
+      "q": "Route `@app.get(\"/books/<int:book_id>\")`. `GET /books/abc` va `GET /books/99` (bunday kitob yo'q) uchun javoblar qanday farq qiladi?",
+      "options": [
+        "Ikkalasi 404, lekin `/books/abc` da route umuman mos kelmaydi (konverter rad etadi), `/books/99` da esa route ishlaydi va `abort(404)` chaqiradi",
+        "`/books/abc` 400, `/books/99` 404",
+        "`/books/abc` 500 (int() xatosi), `/books/99` 404",
+        "Ikkalasi ham 200 bo'sh sahifa bilan"
+      ],
+      "answer": 0,
+      "why": "`int` konverteri faqat raqamli segmentni qabul qiladi, shuning uchun `abc` hech qaysi route'ga mos kelmaydi. `99` esa funksiyaga yetadi, model `None` qaytaradi va controller 404 beradi."
+    },
+    {
+      "q": "Kitoblar ro'yxati sahifasi 50 ta kitobni oladi, keyin sikl ichida har kitob uchun muallif nomini alohida `SELECT` bilan so'raydi. Bitta sahifaga nechta SQL so'rov ketadi va qanday tuzatiladi?",
+      "options": [
+        "50; indeks qo'shish kerak",
+        "1; SQLite so'rovlarni avtomatik birlashtiradi",
+        "100; `LIMIT` qo'shish kerak",
+        "51; bitta `JOIN` bilan 1 ta so'rovga tushiriladi"
+      ],
+      "answer": 3,
+      "why": "1 ta ro'yxat so'rovi + 50 ta muallif so'rovi = 51 (N+1 muammosi). `books` va `authors` ni `JOIN` qilib, hammasini bitta so'rovda olish mumkin."
+    },
+    {
+      "q": "JSON API'da muvaffaqiyatli `DELETE /api/books/7` uchun eng mos javob qaysi?",
+      "options": [
+        "303 va `Location: /api/books`",
+        "204 No Content, tanasiz",
+        "200 va HTML sahifa \"O'chirildi\"",
+        "201 Created"
+      ],
+      "answer": 1,
+      "why": "API mijozi redirect'ga muhtoj emas. 204 \"bajarildi, qaytaradigan tana yo'q\" degani; 201 esa yangi resurs yaratilganda va `Location` bilan qaytariladi."
+    },
+    {
+      "q": "Tahrirlash route'ida `db.execute(\"UPDATE books SET title = ?, author = ?, year = ?\", (t, a, y))` yozildi. Natija qanday bo'ladi?",
+      "options": [
+        "Xato: `UPDATE` uchun `WHERE` majburiy",
+        "Faqat birinchi kitob yangilanadi",
+        "Jadvaldagi barcha kitoblar bir xil nom, muallif va yilga ega bo'ladi",
+        "Hech narsa o'zgarmaydi, chunki `id` berilmagan"
+      ],
+      "answer": 2,
+      "why": "`WHERE` siz `UPDATE` barcha qatorlarga qo'llanadi. To'g'risi - `... WHERE id = ?` va `book_id` parametr sifatida; `cursor.rowcount == 1` tekshiruvi xatoni ko'rsatadi."
+    }
+  ]
+}
