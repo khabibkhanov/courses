@@ -8,7 +8,7 @@ sources:
   - id: blog-error-handling
     note: "Xato qiymat sifatida, maxsus xato tiplari va HTTP handler'dagi takroriy xato qayta ishlashni soddalashtirish bo'limi"
   - id: 100go
-    note: "Xatolarni o'rash, errors.Is/As va 'errors are values' bilan bog'liq xatolar"
+    note: "100go.co bo'yicha tekshirilgan bandlar: #49 xatoni qachon o'rash, #50 xato tipini noto'g'ri solishtirish, #51 xato qiymatini noto'g'ri solishtirish, #52 xatoni ikki marta qayta ishlash"
   - id: code-review-comments
     note: "Error strings va Handle Errors bo'limlari: xatoni e'tiborsiz qoldirmaslik, xabar formati"
 quiz:

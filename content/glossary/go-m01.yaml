@@ -15,7 +15,7 @@
   lesson: 1
 - term: GOTOOLCHAIN
   aliases: []
-  uz: "go buyrug'i qaysi toolchain bilan ishlashini boshqaradigan muhit o'zgaruvchisi (local, auto, aniq versiya yoki +path); go.mod dagi go/toolchain qatorlari bilan birga ishlaydi."
+  uz: "go buyrug'i qaysi toolchain bilan ishlashini boshqaradigan muhit o'zgaruvchisi (local, auto, aniq versiya; `+auto` va `+path` qo'shimchalari bilan); go.mod dagi go/toolchain qatorlari bilan birga ishlaydi."
   course: go
   lesson: 2
 - term: language version

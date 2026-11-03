@@ -6,7 +6,7 @@ summary: "Kursning yakuniy servisi: config, domen, service, store, HTTP chegaras
 duration: 60
 sources:
   - id: 100go
-    note: "Xatolarni qayta ishlash, context, HTTP va testlash bilan bog'liq keng tarqalgan xatolar; servis tuzilmasi qarorlari shu mavzularga mos"
+    note: "100go.co bo'yicha tekshirilgan bandlar: #53 xatoni qayta ishlamaslik, #61 kontekst, #81 standart HTTP client va server, #83-#85 testlash"
   - id: diagnostics
     note: "Profiling va tracing asboblari: servisning admin portida pprof endpoint'lari shu hujjatdagi asboblar uchun ochiladi"
   - id: vuln-mgmt

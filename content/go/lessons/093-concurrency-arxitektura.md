@@ -10,7 +10,7 @@ sources:
   - id: x-errgroup
     note: "Group, WithContext, Go, SetLimit, TryGo va Wait: birinchi xatoda kontekst bekor qilinishi"
   - id: 100go
-    note: "Goroutine qachon to'xtashini bilmay ishga tushirish va kontekstni noto'g'ri uzatish xatolari"
+    note: "100go.co bo'yicha tekshirilgan bandlar: #62 goroutine'ni qachon to'xtashini bilmay ishga tushirish, #61 kontekstni noto'g'ri uzatish, #56 concurrency har doim tezroq deb o'ylash"
 quiz:
   - q: "Pipeline'ning parse bosqichida 3 ta worker goroutine bitta `out` kanaliga yozadi. `out` ni kim yopishi kerak?"
     options:

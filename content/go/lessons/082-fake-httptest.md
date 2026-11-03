@@ -10,7 +10,7 @@ sources:
   - id: pkg-testing
     note: "T.Cleanup, T.Context va testing.Short tavsifi"
   - id: 100go
-    note: "Testing mavzusidagi tavsiyalar: httptest va iotest kabi yordamchi paketlar, vaqtga bog'liq testlar. Aniq band raqamlari tekshirilmagan"
+    note: "Testing bandlari (100go.co ro'yxati bo'yicha tekshirilgan): #88 httptest va iotest yordamchi paketlari, #86 testda sleep, #87 vaqt API, #82 testlarni kategoriyalash"
 quiz:
   - q: "Handler `Store` interface'ini oladi va test uchun `fakeStore` yozildi. Interface qaysi paketda e'lon qilingani nega muhim?"
     options:

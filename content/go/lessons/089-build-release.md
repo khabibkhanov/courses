@@ -296,7 +296,7 @@ USER nonroot:nonroot
 ENTRYPOINT ["/ingest"]
 ```
 
-Qarorlar: (1) `go.mod` va `go.sum` alohida nusxalanadi, shunda `go mod download` qatlami kod o'zgarganda qayta ishlamaydi; (2) `CGO_ENABLED=0` statik binary beradi (yuqorida ldd bilan tekshirilgan mexanizm), shuning uchun runtime image'da libc yo'q; (3) `-trimpath` va `-s -w`; (4) `.git` kontekstga kirmasa, `-buildvcs=false` bilan commit `ARG` orqali uzatiladi; (5) `nonroot` foydalanuvchi: servis ildiz huquqisiz ishlaydi; (6) builder'da Go versiyasi teg bilan qotiriladi, `go.mod` dagi `toolchain` qatori va `GOTOOLCHAIN` sozlamasi (toolchain-doc) build ichida kutilmagan toolchain yuklanishining oldini olishga yordam beradi.
+Qarorlar: (1) `go.mod` va `go.sum` alohida nusxalanadi, shunda `go mod download` qatlami kod o'zgarganda qayta ishlamaydi; (2) `CGO_ENABLED=0` statik binary beradi (yuqorida ldd bilan tekshirilgan mexanizm), shuning uchun runtime image'da libc yo'q; (3) `-trimpath` va `-s -w`; (4) `.git` kontekstga kirmasa, `-buildvcs=false` bilan commit `ARG` orqali uzatiladi; (5) `nonroot` foydalanuvchi: servis ildiz huquqisiz ishlaydi; (6) builder'da Go versiyasi teg bilan qotiriladi. Toolchain-doc'ga ko'ra `go` buyrug'i `go.mod` dagi `go` yoki `toolchain` qatori o'zining toolchain'idan yangiroq bo'lsa, yangi toolchain'ni yuklab ishlatadi; build ichida shunday yuklanish kerak bo'lmasa, `GOTOOLCHAIN=local` bilan faqat o'rnatilgan toolchain ishlatiladi (hujjat: `GOTOOLCHAIN=local` bo'lsa `go` doim o'rnatilgan toolchain'ni ishlatadi; Dockerfile'da sinalmagan).
 
 ## Qachon qo'llamaslik kerak
 

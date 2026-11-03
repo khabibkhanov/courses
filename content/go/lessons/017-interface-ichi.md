@@ -240,7 +240,7 @@ Stringer va any, 1-so'z bir xilmi: false
 Stringer va any, 2-so'z bir xilmi: true
 ```
 
-Xulosalar: (1) bir xil dinamik tipli ikki `any` birinchi so'zi bir xil, boshqa tipniki farq qiladi, ya'ni birinchi so'z tipga bog'liq; (2) pointer saqlanganda ikkinchi so'z pointerning o'zi; (3) xuddi shu qiymat `fmt.Stringer` ga solinganda ikkinchi so'z o'sha, birinchisi esa `any` dagidan farq qiladi. Runtime manba kodida bo'sh bo'lmagan interface'ning birinchi so'zi itab deb ataluvchi jadvalga ishora qiladi: unda tip va shu interface uchun metodlar manzillari bor. Jadvalning nomi va tarkibi tajribamizdan emas, runtime manba kodi haqidagi bilimimizdan olingan va rasmiy hujjatlarda tekshirilmagan; dastur kodida unga tayanmang. Spetsifikatsiya tuzilmani belgilamaydi, shuning uchun bu bo'limdagi tafsilotlar bizning kuzatuvimiz bilan cheklanadi.
+Xulosalar: (1) bir xil dinamik tipli ikki `any` birinchi so'zi bir xil, boshqa tipniki farq qiladi, ya'ni birinchi so'z tipga bog'liq; (2) pointer saqlanganda ikkinchi so'z pointerning o'zi; (3) xuddi shu qiymat `fmt.Stringer` ga solinganda ikkinchi so'z o'sha, birinchisi esa `any` dagidan farq qiladi. Runtime manba kodida bo'sh bo'lmagan interface'ning birinchi so'zi itab deb ataluvchi jadvalga ishora qiladi: unda tip va shu interface uchun metodlar manzillari bor. Buni Go 1.24.7 manba kodida tekshirdik: `runtime.iface` ikki maydondan iborat (`tab *itab` va `data`), `internal/abi.ITab` esa interface tipi, dinamik tip va metodlar manzillarini saqlaydi. Bu rasmiy hujjat emas, faqat manba kodi; dastur kodida unga tayanmang. Spetsifikatsiya tuzilmani belgilamaydi, shuning uchun bu bo'limdagi tafsilotlar bizning kuzatuvimiz bilan cheklanadi.
 
 ### Boxing: qiymat qayerga qo'yiladi
 

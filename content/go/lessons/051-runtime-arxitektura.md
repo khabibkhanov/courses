@@ -344,7 +344,7 @@ func main() {
 }
 ```
 
-Go 1.24.7, linux/amd64, 2 vCPU mashinada (GOMAXPROCS aniq 2 ga qo'yilgan) ikki marta ishga tushirganda chiqish bir xil bo'ldi:
+Go 1.24.7, linux/amd64, 2 vCPU mashinada (GOMAXPROCS aniq 2 ga qo'yilgan) birinchi ishga tushirishda chiqish quyidagicha bo'ldi (qayta ishga tushirishda boshlang'ich thread soni 6, ikkinchi qator 45 chiqdi, ya'ni ayirma o'zgarmadi, absolyut sonlar esa o'zgardi):
 
 ```text
 boshlanish: P=2 goroutine=1 thread(M)=4

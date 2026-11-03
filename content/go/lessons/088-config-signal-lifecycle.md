@@ -10,7 +10,7 @@ sources:
   - id: pkg-context
     note: "WithTimeout va bekor qilish: shutdown muddati uchun mustaqil context"
   - id: 100go
-    note: "Goroutine'ni qachon to'xtashini bilmay ishga tushirish (#62) va kontekstni noto'g'ri uzatish (#61) haqidagi bandlar. Graceful shutdown tartibi 100go.co ro'yxatida alohida band emas"
+    note: "Bandlar (100go.co bo'yicha tekshirilgan): #62 goroutine'ni qachon to'xtashini bilmay ishga tushirish, #61 kontekstni noto'g'ri uzatish. Graceful shutdown tartibi 100go.co ro'yxatida alohida band emas"
 quiz:
   - q: "Orkestrator konteynerni to'xtatish uchun SIGTERM yuboradi. Dastur `signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)` ishlatgan, lekin to'xtash muddati o'tib ketdi. Qaysi signal kod ichida ushlab bo'lmaydi va oxirgi chora sifatida ishlatiladi?"
     options:

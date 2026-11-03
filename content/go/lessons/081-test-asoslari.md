@@ -8,7 +8,7 @@ sources:
   - id: pkg-testing
     note: "T tipi metodlari (Run, Parallel, Helper, Cleanup, TempDir, Setenv, Context, Chdir), TestMain va testing paketining umumiy tavsifi"
   - id: 100go
-    note: "Testing mavzusidagi umumiy tavsiyalar: test rejimlari (-race, -shuffle, -parallel), table-driven testlar, vaqtga bog'liq testlar. Aniq band raqamlari tekshirilmagan"
+    note: "Testing bandlari (100go.co ro'yxati bo'yicha tekshirilgan): #83 -race bayrog'i, #84 test rejimlari (parallel, shuffle), #85 table-driven testlar, #86 testda sleep, #87 vaqt API"
   - id: code-review-comments
     note: "Useful Test Failures bo'limi: test xabarida nima chaqirilgani, nima olingani va nima kutilgani yozilishi kerak"
 quiz:

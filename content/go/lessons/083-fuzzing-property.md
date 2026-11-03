@@ -8,9 +8,9 @@ sources:
   - id: fuzzing
     note: "Go Fuzzing hujjati: fuzz test yozish, -fuzz va -fuzztime bayroqlari, corpus va testdata/fuzz katalogi, qo'llab-quvvatlanadigan tiplar"
   - id: pkg-testing
-    note: "testing.F tipi: Add, Fuzz, cheklovlar (F metodlarini fuzz funksiyasi ichida chaqirmaslik)"
+    note: "testing.F tipi: Add, Fuzz, ruxsat etilgan argument tiplari, cheklovlar (F metodlarini fuzz funksiyasi ichida chaqirmaslik, argument xotirasini saqlamaslik va o'zgartirmaslik)"
   - id: 100go
-    note: "Testing mavzusidagi tavsiyalar: testlarni kategoriyalash va test rejimlaridan to'liq foydalanish. Aniq band raqamlari tekshirilmagan"
+    note: "Testing bandlari (100go.co ro'yxati bo'yicha tekshirilgan): #82 testlarni kategoriyalash, #84 test rejimlari, #90 testing imkoniyatlarini to'liq o'rganmaslik"
 quiz:
   - q: "`FuzzDecode` testi mavjud, `testdata/fuzz/FuzzDecode/` ichida yiqilgan kirish saqlangan. Dasturchi `go test ./...` (hech qanday -fuzz bayrog'isiz) ishga tushirdi. Nima bo'ladi?"
     options:
@@ -216,7 +216,7 @@ Hujjat: fuzz funksiyasi tez, deterministik va umumiy holatdan mustaqil bo'lishi 
 
 ### Corpus fayl formati
 
-Yiqilgan kirish matn fayli sifatida yoziladi: birinchi qatorda versiya sarlavhasi `go test fuzz v1`, keyin har argument uchun bitta qator Go literal shaklida (yuqoridagi misolda `[]byte("000")`). Fayl nomi xesh ko'rinishida (16 ta o'n oltilik raqam). Shu formatda siz qo'lda ham seed fayl yozishingiz mumkin, masalan prod logidan olingan buzuq paketni qo'shish uchun. Bitta kirishni takrorlash uchun `go test -run=FuzzDecode/<fayl nomi>` buyrug'i yetadi: engine kerak emas, shuning uchun debugger bilan ham ishga tushirish oson.
+Yiqilgan kirish matn fayli sifatida yoziladi: birinchi qatorda versiya sarlavhasi `go test fuzz v1`, keyin har argument uchun bitta qator Go literal shaklida (yuqoridagi misolda `[]byte("000")`). Fayl nomi xesh ko'rinishida: Go 1.24.7 da bizda 16 ta o'n oltilik raqam chiqdi, hujjatdagi misolda esa 64 belgili xesh ko'rsatilgan, ya'ni uzunlik versiyaga bog'liq va unga tayanmang. Shu formatda siz qo'lda ham seed fayl yozishingiz mumkin, masalan prod logidan olingan buzuq paketni qo'shish uchun. Bitta kirishni takrorlash uchun `go test -run=FuzzDecode/<fayl nomi>` buyrug'i yetadi: engine kerak emas, shuning uchun debugger bilan ham ishga tushirish oson.
 
 ### Cheklovlar
 

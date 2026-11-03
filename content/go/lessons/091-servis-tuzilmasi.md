@@ -10,7 +10,7 @@ sources:
   - id: code-review-comments
     note: "Interface'lar va paket nomlari bo'limlari: interface qiymatni ishlatadigan paketda e'lon qilinadi"
   - id: 100go
-    note: "Interface'ni ishlab chiqaruvchi tomonda e'lon qilish, ortiqcha interface'lar va utility paketlar haqidagi xatolar"
+    note: "100go.co bo'yicha tekshirilgan bandlar: #5 interface pollution, #6 interface producer tomonda, #7 interface qaytarish, #13 utility paketlar"
 quiz:
   - q: "FuelService saqlash uchun ReadingStore interface'iga tayanadi, MemStore va SQLStore esa uni bajaradi. Interface'ni qayerda e'lon qilish to'g'ri?"
     options:

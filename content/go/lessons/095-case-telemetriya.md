@@ -6,7 +6,7 @@ summary: "GPS nuqtalarini HTTP orqali qabul qilib, chegaralangan navbat va batch
 duration: 55
 sources:
   - id: 100go
-    note: "HTTP server timeout'lari, kontekst va goroutine hayoti, xatolarni qayta ishlash bilan bog'liq xatolar"
+    note: "100go.co bo'yicha tekshirilgan bandlar: #81 standart HTTP client va server (timeout'lar yo'q), #61 kontekst, #62 goroutine hayoti, #53 xatoni qayta ishlamaslik"
   - id: pkg-net-http
     note: "Server, Shutdown, MaxBytesReader va MaxBytesError, ServeMux naqshlari, Request.PathValue"
   - id: pgx

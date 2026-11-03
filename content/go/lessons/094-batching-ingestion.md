@@ -6,7 +6,7 @@ summary: "Yuqori hajmli yozuvlarni hajm, vaqt va yopilish triggerlari bilan batc
 duration: 45
 sources:
   - id: 100go
-    note: "Kontekstni noto'g'ri uzatish, goroutine hayoti va database/sql bilan ishlashdagi xatolar"
+    note: "100go.co bo'yicha tekshirilgan bandlar: #61 kontekstni noto'g'ri uzatish, #62 goroutine hayoti, #78 SQL bilan ishlashdagi keng tarqalgan xatolar"
   - id: pkg-database-sql
     note: "DB (ulanishlar puli, bir nechta goroutine uchun xavfsiz), BeginTx, Tx.Rollback va ErrTxDone, SetMaxOpenConns"
   - id: blog-pipelines

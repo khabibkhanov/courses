@@ -10,7 +10,7 @@ sources:
   - id: pkg-database-sql
     note: "QueryRowContext, ExecContext, Result.RowsAffected, sql.ErrNoRows va DB'ning bir nechta goroutine uchun xavfsizligi"
   - id: 100go
-    note: "Kontekstni noto'g'ri uzatish va goroutine hayoti bilan bog'liq xatolar: worker'ning to'xtashi va natijani yozish"
+    note: "100go.co bo'yicha tekshirilgan bandlar: #61 kontekstni noto'g'ri uzatish, #62 goroutine hayoti (worker'ning to'xtashi va natijani yozish)"
 quiz:
   - q: "Nega claim bitta `UPDATE jobs SET ... WHERE id = (SELECT id ... FOR UPDATE SKIP LOCKED LIMIT 1) RETURNING ...` bilan qilinadi, `SELECT` va keyin alohida `UPDATE` bilan emas?"
     options:
