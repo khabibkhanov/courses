@@ -1,0 +1,65 @@
+# CS50 10-11-darslar atamalari.
+- term: correctness
+  uz: "Kod sifatining birinchi o'qi: dastur har qanday ruxsat etilgan kirishda talab qilingan natijani beradimi. Test holatlari va chegaraviy kirishlar bilan tekshiriladi."
+  course: cs50
+  lesson: 10
+- term: printf debugging
+  uz: "Shubhali joyga o'zgaruvchilar qiymatini chiqaradigan vaqtinchalik printf qo'yib, dastur aslida nima qilayotganini kuzatish usuli."
+  course: cs50
+  lesson: 10
+- term: debugger
+  uz: "Dasturni o'zgartirmasdan, istalgan joyda to'xtatib, o'zgaruvchilarni ko'rish va qadam-baqadam bajarishga imkon beradigan vosita (gdb, lldb, debug50). Dastur -g bilan kompilyatsiya qilinishi kerak."
+  course: cs50
+  lesson: 10
+- term: breakpoint
+  uz: "Debugger da belgilangan qator: dastur unga yetganda, qatorni bajarishdan oldin to'xtaydi."
+  course: cs50
+  lesson: 10
+- term: step over
+  uz: "Debugger buyrug'i (gdb: next): joriy qatorni, undagi funksiya chaqiruvlari bilan birga, to'liq bajarib keyingi qatorda to'xtaydi."
+  course: cs50
+  lesson: 10
+- term: step into
+  uz: "Debugger buyrug'i (gdb: step): qatorda chaqirilgan funksiya ichiga kirib, uning birinchi qatorida to'xtaydi."
+  course: cs50
+  lesson: 10
+- term: watchpoint
+  uz: "Debugger da qator emas, o'zgaruvchi kuzatiladi: uning qiymati o'zgargan zahoti dastur to'xtaydi va eski hamda yangi qiymatni ko'rsatadi."
+  course: cs50
+  lesson: 10
+- term: sanitizer
+  uz: "Kompilyator dasturga qo'shadigan ish vaqtidagi tekshiruv: massiv chegarasidan chiqish, overflow kabi xatolarni sodir bo'lgan qatorda to'xtatib ko'rsatadi."
+  course: cs50
+  lesson: 10
+- term: rubber duck debugging
+  aliases: [rubber ducking]
+  uz: "Kodni qatorma-qator ovoz chiqarib, hatto o'yinchoq o'rdakka tushuntirish orqali kutilgan va haqiqiy xatti-harakat orasidagi farqni topish usuli."
+  course: cs50
+  lesson: 10
+- term: massiv
+  aliases: [array]
+  uz: "Bir xil tipdagi elementlarning xotirada yonma-yon, bo'shliqsiz joylashgan, o'lchami o'zgarmaydigan ketma-ketligi. i-element manzili base + i * sizeof(element)."
+  course: cs50
+  lesson: 11
+- term: zero-indexing
+  uz: "Indekslarning 0 dan boshlanishi. Indeks massiv boshidan elementlar sonida o'lchangan siljish bo'lgani uchun birinchi element indeksi 0, oxirgisi n - 1."
+  course: cs50
+  lesson: 11
+- term: random access
+  aliases: [to'g'ridan-to'g'ri murojaat]
+  uz: "Istalgan elementga uning indeksi bo'yicha bir xil vaqtda murojaat qilish imkoni: manzil bitta ko'paytirish va qo'shish bilan hisoblanadi."
+  course: cs50
+  lesson: 11
+- term: array decay
+  uz: "Massiv tipidagi ifodaning birinchi elementiga ko'rsatkichga avtomatik aylanishi. Shu sababli funksiyaga massiv uzunligi yetib bormaydi va alohida parametr sifatida beriladi."
+  course: cs50
+  lesson: 11
+- term: ko'p o'lchovli massiv
+  aliases: [multidimensional array]
+  uz: "Elementlari o'zi massiv bo'lgan massiv, masalan int grid[3][4]. Xotirada bitta uzun qator sifatida, row-major tartibda saqlanadi."
+  course: cs50
+  lesson: 11
+- term: row-major
+  uz: "Ko'p o'lchovli massivning xotirada qatorma-qator joylashuvi: grid[r][c] siljishi (r * C + c) * sizeof(element), C - ustunlar soni."
+  course: cs50
+  lesson: 11

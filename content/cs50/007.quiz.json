@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "unsigned char c = 200; c = c + 100; dan keyin c ning qiymati qanday?",
+      "options": ["300", "44", "255", "Undefined behavior"],
+      "answer": 1,
+      "why": "unsigned char 8 bit, natija modul 2⁸ = 256 bo'yicha: 300 mod 256 = 44. Unsigned uchun bu aniqlangan xatti-harakat, UB emas."
+    },
+    {
+      "q": "int x = INT_MAX; x = x + 1; qatori haqida qaysi gap to'g'ri?",
+      "options": [
+        "C standarti bo'yicha natija doim INT_MIN",
+        "Kompilyator bu qatorni kompilyatsiya qilmaydi",
+        "Bu undefined behavior: odatda aylanadi, lekin to'xtash yoki kodning optimizatsiya bilan o'zgarishi ham mumkin",
+        "x avtomatik ravishda long ga kengayadi"
+      ],
+      "answer": 2,
+      "why": "Signed overflow standartda undefined. Apparat odatda two's complement bo'yicha aylantiradi, lekin -ftrapv, UBSan yoki optimizatsiya boshqacha natija berishi mumkin."
+    },
+    {
+      "q": "int bigger(int x) { return x + 1 > x; } funksiyasi clang -O2 bilan kompilyatsiya qilinganda bigger(INT_MAX) nima qaytaradi va nega?",
+      "options": [
+        "0, chunki INT_MAX + 1 manfiy",
+        "Dastur overflow xatosi bilan to'xtaydi",
+        "Har safar tasodifiy qiymat",
+        "1, chunki kompilyator signed overflow bo'lmaydi deb hisoblab ifodani doim rost deb almashtiradi"
+      ],
+      "answer": 3,
+      "why": "UB hech qachon sodir bo'lmaydi degan farazga tayanib, kompilyator x + 1 > x ni 1 ga soddalashtiradi. -O0 da esa qo'shish bajarilib 0 chiqadi."
+    },
+    {
+      "q": "a + b signed int yig'indisi overflow bo'lishini (b > 0 holatida) qaysi shart to'g'ri va xavfsiz aniqlaydi?",
+      "options": ["a + b > INT_MAX", "a > INT_MAX - b", "a + b < a", "(long) a + b > INT_MAX"],
+      "answer": 1,
+      "why": "INT_MAX - b b > 0 da overflow bermaydi. a + b > INT_MAX va a + b < a overflow ning o'ziga tayanadi, (long) esa wasm32 va Windows 64 da 32 bit bo'lib, yordam bermaydi."
+    },
+    {
+      "q": "Brauzerdagi muharrirda bitta dastur avval unsigned int ni UINT_MAX + 1 ga, keyin int ni INT_MAX + 1 ga oshiradi. Nima ko'rinadi?",
+      "options": [
+        "Unsigned qism 0 ni chiqaradi, keyin dastur signed overflow da UNDEFINED BEHAVIOR xabari bilan to'xtaydi",
+        "Dastur unsigned overflow da darhol to'xtaydi",
+        "Ikkala qiymat ham aylanadi va dastur xabarsiz tugaydi",
+        "Kompilyatsiya xatosi"
+      ],
+      "answer": 0,
+      "why": "Muharrir -fsanitize=undefined va -fno-sanitize-recover bilan kompilyatsiya qiladi. Unsigned aylanish UB emas va bu guruhga kirmaydi, signed overflow esa ushlanadi va dastur to'xtaydi."
+    },
+    {
+      "q": "Millisekundlarni 32-bitli unsigned int da sanaydigan hisoblagich taxminan qancha vaqtda 0 ga qaytadi?",
+      "options": ["24.9 kun", "136 yil", "49.7 kun", "4.3 soniya"],
+      "answer": 2,
+      "why": "2³² - 1 = 4 294 967 295 ms; 4 294 967 295 / 1000 / 86 400 ≈ 49.71 kun. 24.9 kun - signed int (2³¹ - 1) uchun javob."
+    },
+    {
+      "q": "Nega double da 0.1 + 0.2 == 0.3 yolg'on?",
+      "options": [
+        "C kompilyatori kasr sonlarni noto'g'ri qo'shadi",
+        "0.1, 0.2 va 0.3 ikkilikda cheksiz kasr, har biri 53 bitda yaxlitlanadi va yig'indining yaxlitlangani 0.3 ning yaxlitlanganiga to'g'ri kelmaydi",
+        "double faqat 6 ta o'nlik raqamni saqlaydi",
+        "== operatori kasr sonlar uchun ishlamaydi"
+      ],
+      "answer": 1,
+      "why": "1/10 ning maxrajida 5 omili bor, shuning uchun ikkilikda u takrorlanuvchi kasr. Yaxlitlash xatolari tufayli yig'indi 0.3 ga eng yaqin double dan bir ulp farq qiladi."
+    },
+    {
+      "q": "Kasr sonlarni nisbiy tolerance (k * DBL_EPSILON * max(|a|, |b|)) bilan solishtirish qachon ishlamaydi?",
+      "options": [
+        "Sonlar juda katta bo'lsa, masalan 10¹⁵ atrofida",
+        "Sonlar manfiy bo'lsa",
+        "Sonlar float emas, double bo'lsa",
+        "Ikkala son ham nolga juda yaqin bo'lsa, chunki tolerance ham nolga intiladi"
+      ],
+      "answer": 3,
+      "why": "Nisbiy chegara sonlar kattaligiga proporsional. 1e-20 va 0.0 uchun u deyarli nol bo'ladi va bu juftlik teng emas deb topiladi, shuning uchun nol atrofida absolyut tolerance qo'shiladi."
+    },
+    {
+      "q": "Ariane 5 raketasining 1996 yildagi birinchi parvozidagi halokatga tergov komissiyasi qaysi texnik sababni ko'rsatgan?",
+      "options": [
+        "64-bitli floating-point qiymatni 16-bitli signed butun songa himoyasiz o'tkazishda qiymat sig'magani va Operand Error",
+        "0.1 soniyani ikkilikda saqlashdagi yig'ilgan xato",
+        "Unsigned hisoblagichning nolga aylanishi",
+        "Nolga bo'lish"
+      ],
+      "answer": 0,
+      "why": "Lions komissiyasi hisobotiga ko'ra konversiya qilinayotgan qiymat 16-bitli signed son chegarasidan (32 767) katta bo'lgan va himoya qo'yilmagan edi. 0.1 soniyadagi yig'ilgan xato Patriot hodisasiga tegishli."
+    },
+    {
+      "q": "Do'kon hisob tizimida narxlarni qanday saqlash eng ishonchli?",
+      "options": [
+        "float da so'mlarda",
+        "double da so'mlarda, solishtirishda epsilon bilan",
+        "long long da tiyinlarda (butun son)",
+        "int da so'mlarda, kasr qismni tashlab"
+      ],
+      "answer": 2,
+      "why": "Butun son arifmetikasi aniq: qo'shish va ayirishda yaxlitlash xatosi yo'q. long long ≈ 9.2·10¹⁸ tiyingacha saqlaydi. Kasr tiplar tiyinni aniq ifodalamaydi, int esa ham kasrni, ham katta summani yo'qotadi."
+    }
+  ]
+}

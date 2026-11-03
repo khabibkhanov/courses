@@ -1,0 +1,62 @@
+# CS50 6-7-darslar: C tiplari, integer overflow va floating-point.
+- term: two's complement
+  uz: "Manfiy butun sonlarni ikkilikda ifodalash usuli: eng chap bitning og'irligi -2ᴺ⁻¹. N bitli oraliq -2ᴺ⁻¹ ... 2ᴺ⁻¹ - 1; sonni manfiyga aylantirish uchun bitlar teskari qilinib 1 qo'shiladi."
+  course: cs50
+  lesson: 6
+- term: unsigned
+  uz: "Faqat manfiy bo'lmagan qiymatlarni saqlaydigan butun son tipi: barcha N bit sonning og'irligi, oraliq 0 ... 2ᴺ - 1. Arifmetikasi modul 2ᴺ bo'yicha bajariladi."
+  course: cs50
+  lesson: 6
+- term: data model
+  aliases: [LP64, ILP32, LLP64]
+  uz: "Platformadagi asosiy C tiplari o'lchamlarining to'plami. LP64 (64-bit Linux, macOS) da long va pointer 64 bit, LLP64 (Windows 64) va ILP32 (shu jumladan wasm32) da long 32 bit."
+  course: cs50
+  lesson: 6
+- term: IEEE 754
+  uz: "Floating-point sonlar standarti. C dagi float odatda binary32 (1 + 8 + 23 bit), double binary64 (1 + 11 + 52 bit) formatiga mos keladi."
+  course: cs50
+  lesson: 6
+- term: mantissa
+  uz: "Floating-point sonning aniqlikni belgilaydigan qismi (son = mantissa × 2^daraja). float da 24 bit, double da 53 bit, birinchi bit yashirin saqlanadi."
+  course: cs50
+  lesson: 6
+- term: type casting
+  aliases: [cast]
+  uz: "Qiymatni boshqa tipga aniq o'tkazish, masalan (float) a. Qavslar joyi muhim: (float) a / b kasr bo'lish, (float) (a / b) esa avval butun bo'ladi."
+  course: cs50
+  lesson: 6
+- term: implicit conversion
+  uz: "Kompilyator tiplarni o'zi o'tkazishi: aralash ifodada int double ga ko'tariladi, double ni int ga yozganda esa kasr qism jimgina qirqiladi."
+  course: cs50
+  lesson: 6
+- term: truncation
+  uz: "Kasr qismni tashlab yuborish. C da butun bo'lish va kasrdan butunga o'tkazish nol tomonga qirqadi: 7 / 2 = 3, (int) -3.99 = -3."
+  course: cs50
+  lesson: 6
+- term: undefined behavior
+  aliases: [UB]
+  uz: "C standarti hech qanday natija talab qilmaydigan holat, masalan signed integer overflow. Natija aylanish, dasturning to'xtashi yoki kompilyator kodni boshqacha qurishi bo'lishi mumkin."
+  course: cs50
+  lesson: 7
+- term: UBSan
+  aliases: [UndefinedBehaviorSanitizer]
+  uz: "Clang va GCC dagi -fsanitize=undefined tekshiruvi: signed overflow kabi undefined behavior ni ish vaqtida ushlab, fayl va qatorni ko'rsatadi."
+  course: cs50
+  lesson: 7
+- term: floating-point imprecision
+  uz: "Kasr sonlar cheklangan bitlarda yaxlitlanib saqlanishi tufayli paydo bo'ladigan xato, masalan 0.1 + 0.2 != 0.3. Xatolar har amalda yig'iladi."
+  course: cs50
+  lesson: 7
+- term: machine epsilon
+  uz: "Eng yaqin qiymatga yaxlitlashdagi nisbiy xatoning yuqori chegarasi: double uchun 2⁻⁵³. C dagi DBL_EPSILON (2⁻⁵²) esa 1.0 dan keyingi qo'shni double gacha masofa."
+  course: cs50
+  lesson: 7
+- term: ulp
+  aliases: [units in the last place]
+  uz: "Oxirgi o'rindagi birlik: berilgan son atrofida qo'shni floating-point qiymatlar orasidagi masofa. Eng yaqin qiymatga yaxlitlash ko'pi bilan 0.5 ulp xato beradi."
+  course: cs50
+  lesson: 7
+- term: catastrophic cancellation
+  uz: "Ikki yaqin sonni ayirishda operandlardagi oldingi yaxlitlash xatolari natijaning asosiy qismiga aylanishi. Ayirishning o'zi aniq, lekin natijadagi nisbiy xato keskin oshadi."
+  course: cs50
+  lesson: 7

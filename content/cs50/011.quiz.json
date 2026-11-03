@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`double prices[10]` massivi 2000-baytdan boshlanadi. `prices[7]` qaysi baytdan boshlanadi? (sizeof(double) = 8)",
+      "options": ["2007", "2028", "2056", "2064"],
+      "answer": 2,
+      "why": "Manzil = base + i x sizeof(element) = 2000 + 7 x 8 = 2056."
+    },
+    {
+      "q": "Nega C da massiv indeksi 0 dan boshlanadi?",
+      "options": [
+        "Indeks - massiv boshidan elementlar sonida o'lchangan siljish; birinchi element boshidan 0 element uzoqda",
+        "Kompilyator 1-elementni ichki maqsadlar uchun saqlaydi",
+        "Bu faqat an'ana, xotiradagi joylashuvga aloqasi yo'q",
+        "0-element massiv uzunligini saqlaydi"
+      ],
+      "answer": 0,
+      "why": "Formula base + i x sizeof(element): i = 0 da massiv boshi. 1 dan boshlansa, har murojaatda qo'shimcha ayirish kerak bo'lardi."
+    },
+    {
+      "q": "Funksiya ichida `int a[6] = {4, 8};` e'lon qilindi. `a[3]` nimaga teng?",
+      "options": ["Noma'lum (garbage) qiymat", "8", "Kompilyatsiya xatosi", "0"],
+      "answer": 3,
+      "why": "Initsializator berilgan bo'lsa, ko'rsatilmagan elementlar 0 bilan to'ldiriladi. Garbage qiymat faqat umuman initsializatorsiz lokal massivda bo'ladi."
+    },
+    {
+      "q": "`void f(int arr[])` ichida `sizeof(arr) / sizeof(arr[0])` brauzer muhitida (wasm32) qanday natija beradi? Chaqiruvchida `int data[10]` berilgan.",
+      "options": ["10", "1", "40", "2"],
+      "answer": 1,
+      "why": "Parametr manzilga aylangan (array decay): sizeof(arr) - manzil o'lchami, wasm32 da 4. 4 / 4 = 1. x86-64 da 8 / 4 = 2 bo'lardi; ikkalasi ham noto'g'ri."
+    },
+    {
+      "q": "`double_all(prices, 3)` funksiyasi `values[i] *= 2` qiladi, `double_one(single)` esa `x *= 2`. Chaqiruvlardan keyin nima o'zgaradi?",
+      "options": [
+        "Ikkalasi ham o'zgarmaydi: C hamma narsani nusxa bilan uzatadi",
+        "Ikkalasi ham ikki baravar bo'ladi",
+        "Faqat `prices` elementlari o'zgaradi; `single` o'zgarmaydi",
+        "Faqat `single` o'zgaradi"
+      ],
+      "answer": 2,
+      "why": "Massiv birinchi element manzili sifatida uzatiladi, funksiya asl elementlarga yozadi. Oddiy int esa nusxa sifatida keladi."
+    },
+    {
+      "q": "`int grid[5][8]` (row-major). `grid[3][2]` massiv boshidan necha bayt uzoqda? (sizeof(int) = 4)",
+      "options": ["104", "56", "68", "80"],
+      "answer": 0,
+      "why": "Siljish (r x C + c) x sizeof = (3 x 8 + 2) x 4 = 26 x 4 = 104 bayt."
+    },
+    {
+      "q": "`int grid[3][4]` da `grid[0][4]` yozildi. Oddiy kompilyatsiyada bu ko'pincha qaysi elementning joyiga tushadi va nega?",
+      "options": [
+        "`grid[0][0]`: indeks aylanib boshiga qaytadi",
+        "Hech qayerga: kompilyator bunday indeksni har doim rad etadi",
+        "`grid[4][0]`: indekslar almashadi",
+        "`grid[1][0]`: row-major tartibda 0-qator oxiridan keyin darhol 1-qator boshlanadi"
+      ],
+      "answer": 3,
+      "why": "Siljish (0 x 4 + 4) x 4 = 16 bayt - bu `grid[1][0]` ning siljishi. Shuning uchun bunday xato ko'pincha jim qoladi, garchi standart bo'yicha u chegaradan chiqish bo'lsa ham."
+    },
+    {
+      "q": "Global `int limits[3]` ustida `for (int i = 0; i <= 3; i++)` sikli ishlaydi. Brauzer muhiti qanday xato beradi?",
+      "options": [
+        "stack-buffer-overflow",
+        "global-buffer-overflow, massivdan keyingi 4 baytni o'qishda",
+        "heap-buffer-overflow",
+        "Hech qanday: global massivlar tekshirilmaydi"
+      ],
+      "answer": 1,
+      "why": "Massiv funksiyadan tashqarida e'lon qilingan, shuning uchun global. i = 3 da 3 x 4 = 12-bayt - massiv (0-11) tugagan joy."
+    },
+    {
+      "q": "Haroratlar orasida eng kattasini topish funksiyasida `int max = 0;` bilan boshlash qachon xato natija beradi?",
+      "options": [
+        "Massivda 0 bo'lsa",
+        "Massiv juda katta bo'lsa",
+        "Barcha haroratlar manfiy bo'lsa: javob 0 chiqadi, u massivda yo'q",
+        "Hech qachon, 0 xavfsiz boshlang'ich qiymat"
+      ],
+      "answer": 2,
+      "why": "Agar hamma qiymat 0 dan kichik bo'lsa, hech biri max ni yangilamaydi. Boshlang'ich qiymatni massivning o'zidan (`values[0]`) olish kerak."
+    },
+    {
+      "q": "Ballar 70, 85 va 90. `int sum = 245; int n = 3;` bo'lsa, `printf(\"%.2f\", (float) sum / n)` va `sum / n` qanday natija beradi?",
+      "options": [
+        "81.67 va 81",
+        "81.67 va 81.67",
+        "81.00 va 81",
+        "82.00 va 82"
+      ],
+      "answer": 0,
+      "why": "245 / 3 = 81.666..., float bo'lishda 81.67 chiqadi. Ikki int bo'lishida kasr qismi tashlanadi: 81."
+    }
+  ]
+}

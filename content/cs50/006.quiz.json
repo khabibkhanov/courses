@@ -1,0 +1,85 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "12 bitli signed (two's complement) butun sonning oralig'i qanday?",
+      "options": ["0 ... 4095", "-2047 ... 2047", "-2048 ... 2047", "-4096 ... 4095"],
+      "answer": 2,
+      "why": "Formula -2ᴺ⁻¹ ... 2ᴺ⁻¹ - 1: N = 12 da 2¹¹ = 2048, demak -2048 ... 2047. 0 ... 4095 - unsigned oraliq, simmetrik variant esa eski ones' complement ga xos."
+    },
+    {
+      "q": "8 bitli two's complement da 11111010 bit qatori qaysi sonni ifodalaydi?",
+      "options": ["-6", "250", "-122", "-5"],
+      "answer": 0,
+      "why": "Eng chap bit og'irligi -128: -128 + 64 + 32 + 16 + 8 + 2 = -6. 250 - xuddi shu bitlarning unsigned talqini."
+    },
+    {
+      "q": "Bitta C dasturi 64-bitli Linux da sizeof(long) uchun 8, brauzerdagi muharrirda esa 4 chiqardi. Buning sababi nima?",
+      "options": [
+        "Brauzerdagi kompilyator C standartini buzadi",
+        "Brauzerda optimizatsiya o'chirilgan",
+        "long ning o'lchami brauzer xotirasiga qarab dinamik tanlanadi",
+        "Platformalar turli data model ishlatadi: Linux x86-64 da LP64, wasm32 da ILP32"
+      ],
+      "answer": 3,
+      "why": "Standart long uchun faqat kamida 32 bitni kafolatlaydi. Aniq o'lcham data model ga bog'liq: LP64 da 64 bit, ILP32 (wasm32) da 32 bit. Ikkalasi ham standartga mos."
+    },
+    {
+      "q": "Dastur Windows 64, 64-bit Linux va brauzerda bir xil ishlashi va 5 milliardgacha butun sonni saqlashi kerak. Qaysi tip to'g'ri tanlov?",
+      "options": ["long", "long long", "unsigned int", "float"],
+      "answer": 1,
+      "why": "long long standart bo'yicha kamida 64 bit. long Windows 64 (LLP64) va wasm32 da 32 bit, unsigned int ning maksimumi 4 294 967 295, float esa 2²⁴ dan katta butun sonlarni aniq saqlamaydi."
+    },
+    {
+      "q": "int a = 7, b = 2; bo'lsa, (float) (a / b) ifodasining qiymati qanday?",
+      "options": ["3.5", "3.0", "4.0", "Kompilyatsiya xatosi"],
+      "answer": 1,
+      "why": "Qavs ichida avval butun bo'lish bajariladi: 7 / 2 = 3, kasr qism tashlanadi. Keyin 3 float ga aylanadi. 3.5 olish uchun (float) a / b yozish kerak."
+    },
+    {
+      "q": "int n = -3.99; qatoridan keyin n nimaga teng?",
+      "options": ["-4", "Kompilyatsiya xatosi", "4", "-3"],
+      "answer": 3,
+      "why": "Kasrdan butunga o'tkazish nol tomonga qirqadi, yaxlitlamaydi va pastga ham yaxlitlamaydi. Natija -3, xato yoki ogohlantirishsiz."
+    },
+    {
+      "q": "FLT_EPSILON nimani bildiradi va float uchun u qanday hisoblanadi?",
+      "options": [
+        "1.0 bilan undan keyingi eng yaqin float orasidagi farq: 2⁻²³, chunki kasr maydoni 23 bit",
+        "Eng kichik musbat float: 2⁻¹²⁶",
+        "Har qanday ikki qo'shni float orasidagi doimiy masofa: 2⁻²⁴",
+        "float ga sig'adigan ma'noli o'nlik raqamlar soni: 7"
+      ],
+      "answer": 0,
+      "why": "1.0 dan keyingi float mantissaning oxirgi bitini o'zgartiradi: 1 + 2⁻²³. Qo'shni float lar orasidagi masofa doimiy emas, son kattalashgani sari oshadi."
+    },
+    {
+      "q": "16 777 217 butun sonini float o'zgaruvchiga yozsak nima bo'ladi?",
+      "options": [
+        "Aniq saqlanadi, chunki float 3.4·10³⁸ gacha sonlarni saqlaydi",
+        "Dastur overflow bilan to'xtaydi",
+        "Eng yaqin ifodalanadigan qiymatga yaxlitlanadi, chunki 2²⁴ dan keyin qo'shni float lar orasidagi masofa 2",
+        "Manfiy songa aylanadi"
+      ],
+      "answer": 2,
+      "why": "float aniqligi 24 bit. 2²⁴ = 16 777 216 dan keyin faqat juft sonlar ifodalanadi, toq 16 777 217 yaqin qo'shniga yaxlitlanadi. Katta diapazon katta aniqlikni anglatmaydi."
+    },
+    {
+      "q": "5.75 sonining IEEE 754 binary32 ko'rinishida daraja (exponent) maydoniga qanday qiymat yoziladi?",
+      "options": ["2", "127", "128", "129"],
+      "answer": 3,
+      "why": "5.75 = 101.11₂ = 1.0111₂ × 2². Haqiqiy daraja 2, unga bias 127 qo'shiladi: 129 = 10000001."
+    },
+    {
+      "q": "Rasm fayli baytlarini 0 ... 255 qiymatlar sifatida qayta ishlamoqchisiz. Nega oddiy char o'rniga unsigned char tavsiya qilinadi?",
+      "options": [
+        "Oddiy char ning signedness i implementation ga bog'liq va x86-64 hamda wasm32 da u signed, ya'ni 200 qiymat -56 bo'lib o'qiladi",
+        "unsigned char 2 bayt, shuning uchun ko'proq qiymat sig'adi",
+        "Oddiy char faqat ASCII harflarni saqlay oladi",
+        "unsigned char tezroq ishlaydi"
+      ],
+      "answer": 0,
+      "why": "sizeof(char) doim 1, lekin oddiy char signed yoki unsigned ekanini platforma tanlaydi. Signed bo'lsa 128 dan katta baytlar manfiy son sifatida o'qiladi."
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Dastur barcha testlardan o'tadi, lekin bir xil 15 qatorlik hisob uch joyda nusxalangan. Bu kod qaysi o'q bo'yicha eng ko'p yo'qotadi?",
+      "options": ["Correctness", "Design", "Style", "Hech qaysi: testlar o'tgan bo'lsa, kod sifatli"],
+      "answer": 1,
+      "why": "Natija to'g'ri, demak correctness joyida. Takrorlangan kod - dizayn muammosi: bitta o'zgarish uch joyda tahrirni talab qiladi va xato ulardan birida qolib ketishi oson."
+    },
+    {
+      "q": "clang `warn.c:11:30: warning: format specifies type 'int' but the argument has type 'double' [-Wformat]` chiqardi. Qaysi gap to'g'ri?",
+      "options": [
+        "Bajariladigan fayl yaratilmadi, chunki xabar bor",
+        "11-qator, 30-ustun; fayl yaratiladi, lekin printf double ni int deb o'qiydi va bu undefined behavior",
+        "Bu faqat uslub haqidagi eslatma, natijaga ta'sir qilmaydi",
+        "30-qator, 11-ustunda xato bor"
+      ],
+      "answer": 1,
+      "why": "Format fayl:qator:ustun. Warning bo'lganda fayl yaratiladi, lekin format va argument tipi mos kelmasligi undefined behavior va ma'nosiz son chiqaradi."
+    },
+    {
+      "q": "Kompilyator 25 ta xato chiqardi. Eng samarali birinchi qadam qaysi?",
+      "options": [
+        "Oxirgi xatodan boshlash, chunki u eng yangi",
+        "Barcha xatolarni bir vaqtda tuzatishga urinish",
+        "Birinchi xatoni tuzatib, qayta kompilyatsiya qilish",
+        "-Wall ni olib tashlab, xatolar sonini kamaytirish"
+      ],
+      "answer": 2,
+      "why": "Bitta tushib qolgan qavs yoki nuqta-vergul keyingi o'nlab xatolarni keltirib chiqarishi mumkin. Birinchisini tuzatgach, qolganlarining ko'pi yo'qoladi."
+    },
+    {
+      "q": "`int sum;` boshlang'ich qiymatsiz e'lon qilinib, siklda `sum += i;` ishlatilgan. clang 18 da qaysi buyruq bu haqda ogohlantiradi?",
+      "options": [
+        "`clang -o prog prog.c` - bu ogohlantirish sukut bo'yicha yoqilgan",
+        "Hech biri: kompilyator buni ko'ra olmaydi",
+        "Faqat dastur ishga tushganda ma'lum bo'ladi",
+        "`clang -Wall -o prog prog.c` - `-Wuninitialized` orqali"
+      ],
+      "answer": 3,
+      "why": "Darsdagi tajribada `-Wall` siz clang jim qoldi, `-Wall` bilan esa `variable 'sum' is uninitialized when used here [-Wuninitialized]` chiqardi."
+    },
+    {
+      "q": "`for (int i = 3; i <= 10; i++)` sikli necha marta aylanadi?",
+      "options": ["8", "7", "10", "11"],
+      "answer": 0,
+      "why": "`<=` bilan aylanishlar soni b - a + 1 = 10 - 3 + 1 = 8. `<` bo'lganda b - a = 7 bo'lardi."
+    },
+    {
+      "q": "Debugger da 16-qatorda `int s = sum_to(n);` turibdi. `sum_to` ning ichidagi birinchi qatorda to'xtash uchun qaysi buyruq kerak?",
+      "options": ["`next` (step over)", "`step` (step into)", "`finish` (step out)", "`continue`"],
+      "answer": 1,
+      "why": "`step` chaqirilgan funksiya ichiga kiradi (agar unda debug ma'lumoti bo'lsa). `next` funksiyani to'liq bajarib, keyingi qatorda to'xtaydi."
+    },
+    {
+      "q": "O'zgaruvchi `total` dasturning qayeridadir kutilmagan qiymat olmoqda, lekin qaysi qatorda ekanini bilmaysiz. Qaysi debugger vositasi bu joyni eng tez topadi?",
+      "options": [
+        "Har bir qatorga breakpoint qo'yish",
+        "`bt` (backtrace)",
+        "`watch total` (watchpoint)",
+        "`info locals` ni har qatorda chaqirish"
+      ],
+      "answer": 2,
+      "why": "Watchpoint qatorni emas, o'zgaruvchini kuzatadi: `total` o'zgargan zahoti dastur to'xtaydi va eski hamda yangi qiymatni ko'rsatadi."
+    },
+    {
+      "q": "Brauzer muhiti `XOTIRA XATOSI: stack-buffer-overflow`, `O'qish: 4 bayt` va `main.c:11:16` ko'rsatdi. Kodda `int temps[5]` va `for (int i = 0; i <= 5; i++) sum += temps[i];` bor. Xato murojaat massiv boshidan nechanchi baytdan boshlanadi?",
+      "options": ["16", "24", "5", "20"],
+      "answer": 3,
+      "why": "Oxirgi aylanishda i = 5, siljish 5 x 4 = 20 bayt. Massiv 5 x 4 = 20 bayt (0-19), demak 20-bayt massiv tugagan joy."
+    },
+    {
+      "q": "Yuqoridagi `temps[5]` xatosi bor dastur o'z kompyuteringizda oddiy `clang -Wall` bilan kompilyatsiya qilinib, xatosiz ishladi va son chiqardi. To'g'ri xulosa qaysi?",
+      "options": [
+        "Chegaradan chiqish undefined behavior; sanitizer'siz u jim o'tishi va tasodifiy qiymat o'qishi mumkin",
+        "Lokal kompyuterda xato yo'q, faqat brauzer muhiti noto'g'ri ishlaydi",
+        "-Wall xato bo'lsa albatta ogohlantirgan bo'lardi",
+        "C massivlari chegarani o'zi tekshiradi, shuning uchun bu xavfsiz"
+      ],
+      "answer": 0,
+      "why": "C indeksni tekshirmaydi va o'zgaruvchi indeksli xatoni -Wall ko'rmaydi. Undefined behavior to'g'ri ko'ringan natija ham berishi mumkin; sanitizer uni aniq qatorda ushlaydi."
+    },
+    {
+      "q": "2000 qatorlik dasturda natija oxirida noto'g'ri. Har bir kuzatish nuqtasi qidiruv maydonini ikkiga bo'lsa, eng yomon holatda nechta kuzatish kerak?",
+      "options": ["2000", "11", "1000", "20"],
+      "answer": 1,
+      "why": "Kerakli kuzatishlar ⌈log₂ L⌉. log₂ 2000 ≈ 10.97, yuqoriga yaxlitlansa 11."
+    }
+  ]
+}
