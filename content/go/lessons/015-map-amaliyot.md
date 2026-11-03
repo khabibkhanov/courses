@@ -193,6 +193,8 @@ Kalit turi taqqoslanuvchi bo'lishi kerak (14-dars). Amaliy tanlov uch toifaga bo
 
 **Boshqa kalitlar:** pointer kalit manzil bo'yicha taqqoslanadi (qiymat bo'yicha emas), interface kalit esa dinamik tipi taqqoslanmasa panic beradi, `float` kalit NaN bilan muammo tug'diradi. Bularni istisno holatlarda ishlating.
 
+UUID kabi 16 baytli identifikatorni 36 belgili matn o'rniga `[16]byte` massiv sifatida saqlash mumkin: massiv taqqoslanuvchi va qiymat semantikasiga ega, va map kaliti sifatida o'lchami qat'iy 16 bayt (satr esa header va matn baytlaridan iborat). Evaziga matn ko'rinishiga o'tkazish (log, API) uchun alohida kod kerak, shuning uchun bunday almashtirish ko'p millionli kalitlar yoki qat'iy ichki format bor joyda foydali, oddiy servisda esa string yetarli.
+
 ### Set naqshi
 
 Go'da to'plam tipi yo'q. Standart usul: `map[T]struct{}`. Bo'sh struct nol bayt egallaydi (quyida o'lchaymiz), shuning uchun qiymat saqlanmaydi, faqat kalit. `map[T]bool` ham ishlaydi, lekin ikkita holat paydo bo'ladi: kalit yo'q va kalit bor-lekin `false`. Mavjudlikni har doim `_, ok := m[k]` bilan tekshiring. Qiymatda `false` bo'lmasligi kerakligiga kelishilgan bo'lsa, `bool` ham ma'qul: `if seen[k]` qisqaroq o'qiladi. `struct{}` varianti tipni `Set` deb nomlab, `Add` va `Has` metodlarini berishga qulay.
@@ -365,7 +367,7 @@ normallashtirilgan kalit topildimi: true
 UnixNano kalit topildimi: true
 ```
 
-Xato jimgina: `Equal` rost, lekin map yozuvni topmaydi, va test faqat UTC qiymatlar bilan o'tgani uchun noto'g'ri xotirjamlik beradi. Ikki to'g'ri yo'l bor: `t.UTC().Round(0)` bilan normallashtirilgan `time.Time` yoki `UnixNano()` (int64). Ikkinchisi sodda va tez, lekin vaqt zonasini yo'qotadi va `time.Time` ning diapazonidan tor: u 1678 dan 2262 yilgacha bo'lgan lahzalarni ifodalaydi (UnixNano hujjatiga qarang, bu dars uni tekshirmagan). Bu bo'lim Go 1.24.7 da ishga tushirildi.
+Xato jimgina: `Equal` rost, lekin map yozuvni topmaydi, va test faqat UTC qiymatlar bilan o'tgani uchun noto'g'ri xotirjamlik beradi. Ikki to'g'ri yo'l bor: `t.UTC().Round(0)` bilan normallashtirilgan `time.Time` yoki `UnixNano()` (int64). Ikkinchisi sodda, lekin `UnixNano` hujjatiga ko'ra natija int64 ga sig'maydigan sanalar (1678 yildan oldin yoki 2262 yildan keyin) uchun aniqlanmagan, va nol `Time` uchun ham aniqlanmagan; natija `Location` ga bog'liq emas. Telemetriya vaqtlari uchun bu diapazon yetarli, lekin kiruvchi ma'lumotdagi nol yoki bo'sh vaqtni avval tekshiring. Misol Go 1.24.7 da ishga tushirildi.
 
 ### Uzun satr kalitlar: unique.Handle
 
@@ -400,7 +402,7 @@ map uzunligi: 1 | qiymat: 40.9
 qiymat satri uzunligi: 700
 ```
 
-Ikki alohida yaratilgan 700 baytli satr bitta handle'ga aylandi va map'da bitta kalit bo'ldi. Savdosi: `Make` o'zi ham kalitni ichki jadvalda qidiradi, shuning uchun u foyda beradi faqat bir handle ko'p marta qayta ishlatilganda (kalitni bir marta intern qilib, ko'p marta qidirganda). Bir martalik qidiruv uchun oddiy satr kaliti yetarli. Tezlik haqida raqam bermaymiz: biz uni o'lchamadik, o'z yukingizda o'lchang (61-dars).
+Ikki alohida yaratilgan 700 baytli satr bitta handle'ga aylandi va map'da bitta kalit bo'ldi. `Make` har chaqiruvda qiymat uchun kanonik nusxani topishi kerak, shuning uchun handle'ni bir marta yarating va saqlang (masalan, qurilmani ro'yxatdan o'tkazishda), har so'rovda qayta yaratmang. Bir martalik qidiruv uchun oddiy satr kaliti yetarli. Tezlik haqida raqam bermaymiz: biz uni o'lchamadik, o'z yukingizda o'lchang (61-dars).
 
 ## Misol: struct kalit, set va guruhlash
 
@@ -518,6 +520,8 @@ ikkalasida: [T-1 T-3]
 - Tartib muhim bo'lsa, map bilan faqat saralashga tayanmang: har chaqiruvda saralash qimmat. Saralangan slice yoki daraxtni alohida saqlang.
 - `maps.Clone` ni "mustaqil nusxa" deb ishlatmang, agar qiymatlar slice, map yoki pointer bo'lsa.
 - `map[K]*V` ni "qulay" deb tanlayverish ortiqcha allokatsiya beradi: qiymat kichik bo'lsa, `map[K]V` bilan olish-o'zgartir-yoz tezroq bo'lishi mumkin (o'lchang, 70-dars).
+- `time.Time` ni normallashtirmasdan kalit qilmang: `==` `Location` va monotonic ko'rsatkichni ham taqqoslaydi, shu sababli bir lahzaning ikki yozuvi turli kalit bo'ladi. Vaqt kerak bo'lmasa, int64 (`UnixNano`) yoki sana satri kalit bo'lsin.
+- `unique.Handle` ni har kalitga qo'llamang: u uzun, ko'p takrorlanadigan va uzoq yashaydigan kalitlar uchun; qisqa ID satrida intern qilishning o'zi ortiqcha murakkablik.
 - Kalitni string birlashtirish bilan yasamang (`region + ":" + day`): har so'rovda allokatsiya va to'qnashuv xavfi. Struct kalit tipli va allokatsiyasiz.
 
 ## Stack'da: Node.js/TypeScript bilan solishtirish

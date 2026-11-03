@@ -637,6 +637,113 @@ func getVehicle(ctx context.Context, rdb *redis.Client, id string) (string, erro
 
 `singleflight` ning ikkita nozik nuqtasi bor. Birinchi: u faqat **bir vaqtdagi** chaqiruvlarni birlashtiradi, natijani saqlamaydi, shuning uchun keshga yozishni o'zingiz qilasiz. Ikkinchi: kutayotganlar birinchi chaqiruvchining natijasini (xatosini ham) oladi. Agar yuklash birinchi so'rovning `context`iga bog'langan bo'lsa va u bekor bo'lsa, hamma xato oladi. Yuqoridagi kodda shuning uchun `context.WithoutCancel(ctx)` ishlatilgan va yuklashga alohida muddat qo'yish tavsiya etiladi (pkg-context hujjati bo'yicha `WithoutCancel` ota-ona bekor qilinishidan ajratadi, lekin qiymatlarni saqlaydi).
 
+### singleflight va context: kim kimni bekor qiladi
+
+Mini guruhimiz (va haqiqiy `Group.Do`) yuklash funksiyasini birinchi chaqiruvchining goroutine'ida ishga tushiradi, qolganlar natijani kutadi. Agar funksiya birinchi chaqiruvchining `ctx`iga bog'langan bo'lsa, uning muddati tugashi hammaning xatosiga aylanadi. Quyidagi dastur uch chaqiruvchini ko'rsatadi: nolinchisi 20 ms muddat bilan keladi, qolgan ikkitasi muddatsiz. Yuklash 100 ms davom etadi.
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"sync"
+	"time"
+)
+
+type call struct {
+	wg  sync.WaitGroup
+	val string
+	err error
+}
+
+type group struct {
+	mu    sync.Mutex
+	calls map[string]*call
+}
+
+func (g *group) do(key string, fn func() (string, error)) (string, error) {
+	g.mu.Lock()
+	if c, ok := g.calls[key]; ok {
+		g.mu.Unlock()
+		c.wg.Wait()
+		return c.val, c.err
+	}
+	c := new(call)
+	c.wg.Add(1)
+	g.calls[key] = c
+	g.mu.Unlock()
+	c.val, c.err = fn()
+	c.wg.Done()
+	g.mu.Lock()
+	delete(g.calls, key)
+	g.mu.Unlock()
+	return c.val, c.err
+}
+
+// slowLoad bazadan 100 ms da yuklaydi; ctx bekor bo'lsa xato qaytaradi.
+func slowLoad(ctx context.Context) (string, error) {
+	select {
+	case <-time.After(100 * time.Millisecond):
+		return "position-of-truck-7", nil
+	case <-ctx.Done():
+		return "", ctx.Err()
+	}
+}
+
+func run(detach bool) {
+	g := &group{calls: map[string]*call{}}
+	var wg sync.WaitGroup
+	results := make([]string, 3)
+	// 0-chaqiruvchi birinchi keladi va 20 ms muddat bilan; 1 va 2 keyin, muddatsiz.
+	for i := 0; i < 3; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			time.Sleep(time.Duration(i) * 5 * time.Millisecond)
+			ctx := context.Background()
+			if i == 0 {
+				var cancel context.CancelFunc
+				ctx, cancel = context.WithTimeout(ctx, 20*time.Millisecond)
+				defer cancel()
+			}
+			v, err := g.do("k", func() (string, error) {
+				lctx := ctx
+				if detach {
+					lctx = context.WithoutCancel(ctx)
+				}
+				return slowLoad(lctx)
+			})
+			results[i] = fmt.Sprintf("v=%q err=%v", v, err)
+		}()
+	}
+	wg.Wait()
+	for i, r := range results {
+		fmt.Printf("  chaqiruvchi %d: %s\n", i, r)
+	}
+}
+
+func main() {
+	fmt.Println("yuklash birinchi chaqiruvchining ctx'iga bog'langan:")
+	run(false)
+	fmt.Println("yuklash context.WithoutCancel bilan:")
+	run(true)
+}
+```
+
+```text
+yuklash birinchi chaqiruvchining ctx'iga bog'langan:
+  chaqiruvchi 0: v="" err=context deadline exceeded
+  chaqiruvchi 1: v="" err=context deadline exceeded
+  chaqiruvchi 2: v="" err=context deadline exceeded
+yuklash context.WithoutCancel bilan:
+  chaqiruvchi 0: v="position-of-truck-7" err=<nil>
+  chaqiruvchi 1: v="position-of-truck-7" err=<nil>
+  chaqiruvchi 2: v="position-of-truck-7" err=<nil>
+```
+
+Birinchi rejimda muddatsiz kutayotgan ikki chaqiruvchi ham birovning muddati tufayli xato oldi. `context.WithoutCancel` bilan hammasi natija oldi, lekin ikkinchi rejimda nolinchi chaqiruvchi ham o'z 20 ms muddatidan keyin emas, yuklash tugagach qaytdi: `Do` bloklanadi va chaqiruvchining contexti kutishni to'xtatmaydi. Kutishni ham bekor qilish kerak bo'lsa, `x/sync/singleflight` hujjatidagi `DoChan` kerak: u natija tayyor bo'lganda qiymat oladigan kanal qaytaradi (kanal yopilmaydi), chaqiruvchi esa `select` bilan kanal va o'z `ctx.Done()` ini kutadi. Uchinchi metod `Forget(key)`: hujjatga ko'ra shu kalit uchun keyingi `Do` chaqiruvlari oldingi chaqiruvni kutmasdan funksiyani qaytadan ishga tushiradi. Bu juda sekin yuklash osilib qolgan paytda yangi urinish boshlash uchun foydali; narxi: bir kalitga bir vaqtda ikkita yuklash ketadi. `Do` ning uchinchi qaytish qiymati `shared` natija bir necha chaqiruvchiga berilganini bildiradi, uni metrikaga chiqarish stampede qanchalik tez-tez bo'layotganini ko'rsatadi.
+
 ### Jitter
 
 Ko'p kalit bir vaqtda yozilsa (ishga tushirish, ommaviy yuklash) va hammasida bir xil TTL bo'lsa, ular bir vaqtda tugaydi va bazaga ommaviy miss to'lqini keladi. `jitterTTL` TTL'ni tasodifiy ±20% ga tarqatadi: 60 soniyalik TTL 48 dan 72 soniyagacha bo'ladi (sinovda 10000 chaqiruvda diapazon ichida qoldi). Tugashlar vaqt bo'yicha yoyiladi.
@@ -644,6 +751,145 @@ Ko'p kalit bir vaqtda yozilsa (ishga tushirish, ommaviy yuklash) va hammasida bi
 ### Negative caching va boshqa naqshlar
 
 Mavjud bo'lmagan kalitlarni ko'p so'rash (xato ID, hujum) har safar bazaga boradi. Davo: "topilmadi" natijasini ham qisqa TTL (masalan 30 soniya) bilan keshlash. Boshqa usullar: keshni oldindan isitish, "stale-while-revalidate" (eski qiymatni berib, fonda yangilash) va Bloom filtri. Har biri murakkablik qo'shadi; avval oddiy singleflight + jitter ko'pincha yetadi.
+
+### Qulfni xavfsiz bo'shatish va xotira siyosati
+
+Darsning "Qachon qo'llamaslik" qismida `SET NX PX` qulfi ishchi sekinlashganda tugab qolishi aytilgan. Bundan keyingi nozik xato: sekin ishchi o'z ishini tugatib oddiy `DEL` chaqiradi va **boshqa ishchining** yangi qulfini o'chirib yuboradi. Redis hujjati (distributed locks sahifasi) buni aynan shunday tasvirlaydi: qulf qiymati noyob tasodifiy qiymat bo'lishi kerak, bo'shatish esa "kalit mavjud va qiymati men kutgan qiymat bo'lsagina o'chir" shaklida bajariladi. Hujjatga ko'ra Redis 8.4 da buning uchun `DELEX key IFEQ qiymat` buyrug'i qo'shilgan; eski versiyalarda Lua skripti ishlatiladi. Quyidagi dastur bilan lokal `redis-server` 7.0.15 da ikkala variant sinaldi (bu versiyada `DELEX` yo'q, shuning uchun skript ishlatildi). Ikkinchi qismda `maxmemory` va ikki siyosat solishtirilgan. Dastur oldingi mini mijoz g'oyasining qisqartirilgan ko'rinishi:
+
+```go
+package main
+
+import (
+	"bufio"
+	"errors"
+	"fmt"
+	"io"
+	"net"
+	"strconv"
+	"strings"
+	"time"
+)
+
+type client struct {
+	c net.Conn
+	r *bufio.Reader
+}
+
+func dial(addr string) *client {
+	c, err := net.DialTimeout("tcp", addr, time.Second)
+	if err != nil {
+		panic(err)
+	}
+	return &client{c, bufio.NewReader(c)}
+}
+
+// do buyruq yuboradi va bitta javobni o'qiydi; nil javob uchun errNil.
+var errNil = errors.New("nil")
+
+func (c *client) do(args ...string) (any, error) {
+	var sb strings.Builder
+	fmt.Fprintf(&sb, "*%d\r\n", len(args))
+	for _, a := range args {
+		fmt.Fprintf(&sb, "$%d\r\n%s\r\n", len(a), a)
+	}
+	c.c.SetDeadline(time.Now().Add(time.Second))
+	io.WriteString(c.c, sb.String())
+	line, err := c.r.ReadString('\n')
+	if err != nil {
+		return nil, err
+	}
+	line = strings.TrimSuffix(line, "\r\n")
+	switch line[0] {
+	case '+':
+		return line[1:], nil
+	case '-':
+		return nil, errors.New(line[1:])
+	case ':':
+		return strconv.ParseInt(line[1:], 10, 64)
+	case '$':
+		n, _ := strconv.Atoi(line[1:])
+		if n < 0 {
+			return nil, errNil
+		}
+		buf := make([]byte, n+2)
+		io.ReadFull(c.r, buf)
+		return string(buf[:n]), nil
+	}
+	return nil, fmt.Errorf("javob: %q", line)
+}
+
+const unlock = `if redis.call("get",KEYS[1]) == ARGV[1] then return redis.call("del",KEYS[1]) else return 0 end`
+
+func main() {
+	c := dial("127.0.0.1:6391")
+	defer c.c.Close()
+	c.do("FLUSHALL")
+
+	// 1. Oddiy DEL boshqa ishchining qulfini o'chiradi.
+	c.do("SET", "lock:job", "worker-1", "NX", "PX", "100")
+	time.Sleep(150 * time.Millisecond) // worker-1 sekinlashdi, qulf muddati tugadi
+	r, _ := c.do("SET", "lock:job", "worker-2", "NX", "PX", "5000")
+	fmt.Println("worker-2 qulfni oldi:", r)
+	n, _ := c.do("DEL", "lock:job") // worker-1 o'z ishini tugatib, qulfni "bo'shatadi"
+	fmt.Println("worker-1 DEL, o'chirilgan kalitlar:", n)
+	r, _ = c.do("SET", "lock:job", "worker-3", "NX", "PX", "5000")
+	fmt.Println("worker-3 ham qulfni oldi:", r)
+
+	// 2. Qiymatni tekshiradigan skript bilan bo'shatish.
+	c.do("DEL", "lock:job")
+	c.do("SET", "lock:job", "worker-1", "NX", "PX", "100")
+	time.Sleep(150 * time.Millisecond)
+	c.do("SET", "lock:job", "worker-2", "NX", "PX", "5000")
+	n, _ = c.do("EVAL", unlock, "1", "lock:job", "worker-1")
+	fmt.Println("worker-1 skript bilan bo'shatdi:", n)
+	n, _ = c.do("EVAL", unlock, "1", "lock:job", "worker-2")
+	fmt.Println("worker-2 skript bilan bo'shatdi:", n)
+
+	// 3. maxmemory va siyosat.
+	c.do("FLUSHALL")
+	c.do("CONFIG", "SET", "maxmemory", "2mb")
+	val := strings.Repeat("x", 1024)
+	for _, policy := range []string{"noeviction", "allkeys-lru"} {
+		c.do("CONFIG", "SET", "maxmemory-policy", policy)
+		c.do("FLUSHALL")
+		var firstErr error
+		ok := 0
+		for i := 0; i < 5000; i++ {
+			if _, err := c.do("SET", "k:"+strconv.Itoa(i), val); err != nil {
+				if firstErr == nil {
+					firstErr = err
+				}
+				continue
+			}
+			ok++
+		}
+		size, _ := c.do("DBSIZE")
+		msg := "xato yo'q"
+		if firstErr != nil {
+			msg = firstErr.Error()
+			if len(msg) > 40 {
+				msg = msg[:40] + "..."
+			}
+		}
+		fmt.Printf("%-12s hamma SET o'tdi=%v, DBSIZE 5000 dan kam=%v, birinchi xato: %s\n", policy, ok == 5000, size.(int64) < 5000, msg)
+	}
+	c.do("CONFIG", "SET", "maxmemory", "0")
+}
+```
+
+```text
+worker-2 qulfni oldi: OK
+worker-1 DEL, o'chirilgan kalitlar: 1
+worker-3 ham qulfni oldi: OK
+worker-1 skript bilan bo'shatdi: 0
+worker-2 skript bilan bo'shatdi: 1
+noeviction   hamma SET o'tdi=false, DBSIZE 5000 dan kam=true, birinchi xato: OOM command not allowed when used memory...
+allkeys-lru  hamma SET o'tdi=true, DBSIZE 5000 dan kam=true, birinchi xato: xato yo'q
+```
+
+Birinchi uch qator: worker-1 ning qulfi muddati tugadi, worker-2 uni oldi, so'ng worker-1 ning `DEL` i worker-2 ning qulfini o'chirdi va worker-3 ham qulfni oldi, ya'ni ikki ishchi bir vaqtda "qulfga ega". Skript bilan worker-1 ning bo'shatishi `0` qaytardi (qiymat mos emas), worker-2 niki `1`. Bu hali to'liq xavfsiz qulf emas: worker-1 hali ishlayotgan bo'lishi mumkin, shuning uchun yaxlitlik kerak bo'lsa fencing token yoki bazadagi cheklov kerak (pastdagi "Qachon qo'llamaslik" qismida aytilganidek).
+
+Oxirgi ikki qator xotira siyosati haqida. Redis hujjati (eviction sahifasi): 64-bitli tizimlarda `maxmemory` default nolga teng, ya'ni xotira cheklanmagan; chegara qo'yilganda tanlangan siyosat ishlaydi. `noeviction` siyosatida yangi ma'lumot yozadigan buyruqlar xato qaytaradi (o'qish buyruqlari ishlayveradi), `allkeys-lru` esa eng uzoq ishlatilmagan kalitlarni chiqarib tashlaydi; hujjat boshqa sabab bo'lmasa `allkeys-lru` ni yaxshi boshlang'ich tanlov deb ataydi. Sinovda 2 MB chegara bilan `noeviction` birinchi to'lishdan keyin `OOM command not allowed...` xatosini berdi, `allkeys-lru` esa barcha 5000 yozuvni qabul qildi va eski kalitlarni chiqarib tashladi. Qancha kalit sig'ishi mashinaga va Redis versiyasiga bog'liq, shuning uchun son keltirmadik. Xulosa: kesh sifatida ishlatiladigan Redis'da eviction siyosati ongli tanlanadi; `noeviction` ostida TTL'siz kalit to'plansa, bir kuni servisning keshga yozishi xato bera boshlaydi va bu xato `redis.Nil` dan farqli, infratuzilma xatosi.
 
 ## Misol: go-redis bilan o'qish va yozish
 
@@ -676,7 +922,7 @@ default:
 ok, err := rdb.SetNX(ctx, "lock:vehicle:7", "worker-1", 5*time.Second).Result()
 ```
 
-Eslatmalar: har chaqiruv `ctx` oladi, shuning uchun muddat har chaqiruvda belgilanadi; `redis.Nil` ni `errors.Is` bilan ajrating; `Options` dagi vaqt chegaralarini (`DialTimeout`, `ReadTimeout`, `WriteTimeout`, `PoolSize`) aniq qo'ying, default qiymatlarga ishonmang (ularni bu darsda tekshirmadik).
+Eslatmalar: har chaqiruv `ctx` oladi, shuning uchun muddat har chaqiruvda belgilanadi; `redis.Nil` ni `errors.Is` bilan ajrating; `Options` dagi vaqt chegaralarini (`DialTimeout`, `ReadTimeout`, `WriteTimeout`, `PoolSize`) aniq qo'ying, default qiymatlarga ishonmang: ular versiyaga bog'liq bo'lishi mumkin, shuning uchun o'zingiz ishlatadigan versiya hujjatini o'qing. pkg.go.dev'da ko'rilgan v9.23.0 `Options` hujjatida: `PoolSize` default `10 * runtime.GOMAXPROCS(0)`, `DialTimeout` 5 soniya, `ReadTimeout` 5 soniya, `WriteTimeout` 5 soniya (o'rnatilmasa `ReadTimeout` ga ergashadi), `PoolTimeout` default `ReadTimeout + 1 soniya` (havzada bo'sh ulanish yo'q bo'lsa kutish chegarasi, 78-darsdagi `MaxOpenConns` kutishining o'xshashi), `ConnMaxIdleTime` 30 daqiqa. Alohida e'tibor: `Options` da `ContextTimeoutEnabled` bayrog'i bor, hujjatga ko'ra u klient context muddatlarini hisobga olishini boshqaradi. Bool bo'lgani uchun nol qiymati `false`; shu sabab context muddatiga tayanadigan kod uchun bu bayroqning ma'nosini o'z versiyangiz hujjatidan tekshiring va sinab ko'ring (bu qismni biz ishga tushirib tekshirmadik, go-redis kompilyatsiya qilinmagan).
 
 ## Qachon qo'llamaslik kerak
 
@@ -685,6 +931,7 @@ Eslatmalar: har chaqiruv `ctx` oladi, shuning uchun muddat har chaqiruvda belgil
 - **Tez-tez o'zgaradigan va aniq bo'lishi shart ma'lumot** (balans, ombor qoldig'i): kesh eskirgan qiymatni ko'rsatadi. Bunday joyda keshlamang yoki invalidatsiyani yozish bilan bir tranzaksiyaga bog'lang.
 - **Kichik, tez so'rovlar**: indekslangan primary-key so'rovi 1 ms bo'lsa, Redis'ga tarmoq chaqiruvi foyda bermaydi, faqat murakkablik qo'shadi.
 - **Katta qiymatlar va ko'p kalit**: bir megabaytlik qiymatlar tarmoq va serializatsiyani bo'g'adi; kalit soni cheksiz o'sishi (TTL'siz) xotirani to'ldiradi.
+- **Eviction siyosatini tekshirmasdan**: `noeviction` ostida xotira to'lsa kesh yozuvlari xato bera boshlaydi; `allkeys-lru` esa kerakli kalitlarni ham chiqarib yuborishi mumkin. Kesh va boshqa ma'lumot (navbat, sessiya) bitta Redis'da aralashsa, siyosat birini buzadi: ularni alohida instance'larga ajrating.
 - **Redis uzilganda hamma narsa to'xtashi**: Redis xatosida bazaga qaytish (fail-open) bazani stampede'ga duchor qiladi, xatoni ko'rsatish (fail-closed) servisni to'xtatadi. Strategiyani oldindan tanlang va circuit breaker bilan himoyalang.
 
 ## Stack'da: Node.js/TypeScript bilan solishtirish

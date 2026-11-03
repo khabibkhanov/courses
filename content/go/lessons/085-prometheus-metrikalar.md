@@ -232,6 +232,110 @@ Kvantil bahosi bucket ichida chiziqli interpolyatsiya bilan hisoblanadi, shuning
 
 Metrikalarni global o'zgaruvchi sifatida e'lon qilish (`promauto` yoki `init`) qulay, lekin testlarda bir xil nomli metrikani ikki marta ro'yxatdan o'tkazish panic beradi. Toza yo'l: `Metrics` struct, `NewMetrics(reg prometheus.Registerer)` konstruktori va har test uchun `prometheus.NewRegistry()`. Misol quyida.
 
+### Kvantil qanday hisoblanadi va bucket xatosi qanchalik katta
+
+`histogram_quantile` saqlangan har kuzatuvni emas, faqat bucket sonlarini ko'radi. Prometheus hujjatiga ko'ra klassik histogram uchun u kvantil tushgan bucket ichida kuzatuvlar tekis taqsimlangan deb chiziqli interpolyatsiya qiladi. Maxsus holatlar ham hujjatda yozilgan: kvantil eng yuqori (`+Inf`) bucket'ga tushsa, ikkinchi eng yuqori bucket'ning yuqori chegarasi qaytariladi; eng quyi bucket'ning quyi chegarasi, uning yuqori chegarasi noldan katta bo'lsa, 0 deb olinadi; kuzatuv bo'lmasa natija `NaN`. Quyidagi dastur shu algoritmni stdlib bilan takrorlaydi va ikki bucket to'plamini solishtiradi. Servis 1-3 ms oralig'ida javob beradi (har 50-so'rov 8 ms), jami 10000 kuzatuv, tasodifiy generator qat'iy seed bilan:
+
+```go
+package main
+
+import (
+	"fmt"
+	"math"
+	"math/rand/v2"
+	"sort"
+)
+
+// quantile Prometheus histogram_quantile algoritmini takrorlaydi:
+// bucket ichida kuzatuvlar tekis taqsimlangan deb chiziqli interpolyatsiya.
+// bounds - bucket yuqori chegaralari (+Inf siz), cum - kumulyativ sonlar (+Inf bucket oxirida).
+func quantile(q float64, bounds []float64, cum []float64) float64 {
+	total := cum[len(cum)-1]
+	rank := q * total
+	i := sort.Search(len(cum), func(i int) bool { return cum[i] >= rank })
+	if i == len(bounds) {
+		return bounds[len(bounds)-1] // +Inf bucket: eng yuqori chekli chegara qaytadi
+	}
+	lo, prev := 0.0, 0.0
+	if i > 0 {
+		lo, prev = bounds[i-1], cum[i-1]
+	}
+	return lo + (bounds[i]-lo)*(rank-prev)/(cum[i]-prev)
+}
+
+func build(obs []float64, bounds []float64) []float64 {
+	cum := make([]float64, len(bounds)+1)
+	for _, o := range obs {
+		for i, ub := range bounds {
+			if o <= ub {
+				for j := i; j < len(cum); j++ {
+					cum[j]++
+				}
+				goto next
+			}
+		}
+		cum[len(cum)-1]++
+	next:
+	}
+	return cum
+}
+
+func main() {
+	rng := rand.New(rand.NewPCG(1, 2))
+	// Servis 1-3 ms oralig'ida javob beradi (sekundlarda), ba'zan 8 ms.
+	obs := make([]float64, 10000)
+	for i := range obs {
+		obs[i] = 0.001 + rng.Float64()*0.002
+		if i%50 == 0 {
+			obs[i] = 0.008
+		}
+	}
+	sorted := append([]float64(nil), obs...)
+	sort.Float64s(sorted)
+	exact := sorted[int(math.Ceil(0.99*float64(len(sorted))))-1]
+
+	def := []float64{.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10}
+	fine := []float64{.001, .0015, .002, .0025, .003, .004, .006, .008, .01}
+
+	fmt.Printf("aniq p50 = %.4f, p99 = %.4f\n", sorted[len(sorted)/2-1], exact)
+	fmt.Printf("DefBuckets:   p50 = %.4f, p99 = %.4f\n", quantile(.5, def, build(obs, def)), quantile(.99, def, build(obs, def)))
+	fmt.Printf("zich bucket:  p50 = %.4f, p99 = %.4f\n", quantile(.5, fine, build(obs, fine)), quantile(.99, fine, build(obs, fine)))
+
+	// Hamma kuzatuv eng yuqori chekli chegaradan katta bo'lsa.
+	slow := []float64{12, 15, 20}
+	fmt.Printf("+Inf bucket:  p99 = %.1f\n", quantile(.99, def, build(slow, def)))
+}
+```
+
+```text
+aniq p50 = 0.0020, p99 = 0.0080
+DefBuckets:   p50 = 0.0026, p99 = 0.0075
+zich bucket:  p50 = 0.0020, p99 = 0.0070
++Inf bucket:  p99 = 10.0
+```
+
+Xulosalar:
+
+- `DefBuckets` bilan medianada 2.0 ms o'rniga 2.6 ms chiqdi (30% xato): hamma kuzatuv 0 dan 5 ms gacha bo'lgan bitta bucket'ga tushadi va interpolyatsiya uni tekis deb hisoblaydi. Aniq qiymat bucket kengligi bilan chegaralanadi, so'rovdagi `rate`/`sum` bu xatoni tuzata olmaydi.
+- Zich bucket'lar (1 dan 10 ms gacha 9 ta chegara) medianani aniq berdi, p99 esa 7.0 ms chiqdi, aniq qiymat 8.0 ms edi: 8 ms qiymatlar aynan chegara ustida turibdi va eng yuqori bucket'dagi interpolyatsiya ularni kamaytirib baholadi. Bucket zichligi muhim chegaralar (SLO) atrofida kerak, hamma joyda emas.
+- Hamma kuzatuv eng yuqori chekli chegaradan (10 s) oshsa, p99 `10.0` chiqdi: haqiqiy qiymat 12-20 s bo'lsa ham. Bu hujjatdagi `+Inf` qoidasining natijasi: kvantil tepaga to'g'ri kelsa, jadval haqiqiy kechikishni ko'rsatmaydi. SLO chegarasidan balandroq bucket qo'ying yoki bu metrikani alert'da `rate(_count)` bilan to'ldiring.
+
+Mini-registry bilan farqi: bu dastur bucket'larni oldindan belgilaydi, client_golang esa `LinearBuckets` va `ExponentialBuckets` yordamchilarini beradi (ikkinchisi `count` nol yoki manfiy bo'lsa panic qiladi). `DefBuckets` hujjatda aniq yozilgan: `.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10` (client_golang v1.25.0, pkg.go.dev). Hujjat ularni "javob vaqtini (soniyada) keng o'lchash uchun moslangan" deydi, ya'ni servisingiz shu diapazonda bo'lmasa o'zingiznikini bering.
+
+### Prometheus hujjatidagi nomlash va kardinallik qoidalari
+
+Rasmiy "Metric and label naming" va "Instrumentation" sahifalaridan:
+
+- Metrika nomi bitta birlik va bitta kattalikni bildirishi kerak; asosiy birliklar ishlatiladi (soniya, bayt, millisekund emas). Birlik qo'shimchasi ko'plikda (`_seconds`, `_bytes`), yig'iluvchi hisoblagich uchun qo'shimcha `_total`. Bu darsdagi `http_request_duration_seconds` va `http_requests_total` shu qoidaga mos. Millisekundda o'lchagan Go kodida `d.Seconds()` ga o'tkazing, aks holda bir panelga turli birlikdagi seriyalar aralashadi.
+- Kardinallik bo'yicha hujjat aniq: foydalanuvchi ID, email kabi cheksiz to'plamlarni label qilmang. Umumiy yo'riqnoma: metrikalaringiz kardinalligini 10 dan past tutishga harakat qiling, undan oshadiganlarni butun tizim bo'yicha bir necha donaga cheklang; metrikalarning katta qismida label bo'lmasligi kerak. Agar metrikada 100 dan ortiq kardinallik bo'lsa yoki shu darajaga o'sishi mumkin bo'lsa, hujjat boshqa yechim izlashni (o'lchamlarni kamaytirish yoki tahlilni monitoringdan umumiy maqsadli tizimga ko'chirish) tavsiya qiladi. Bu bitta metrikaning label qiymatlari haqida; yuqorida hisoblagan 800 seriyali misol shu yo'riqnomadan ancha oshadi, shuning uchun route soni va kodlarni haqiqatan kerakligicha cheklang (masalan `code` o'rniga `2xx`/`4xx`/`5xx` sinfi).
+- "Avoid missing metrics": hodisa bo'lgunga qadar mavjud bo'lmagan seriyalar bilan ishlash qiyin (`rate` va `absent` ishlamay qoladi). Hujjat oldindan ma'lum seriyalar uchun 0 qiymat eksport qilishni aytadi va Go, Java, Python klientlari label'siz metrikalar uchun 0 ni o'zi eksport qilishini yozadi. Label'li `CounterVec` da seriya birinchi `WithLabelValues(...)` chaqiruvigacha mavjud emas: ma'lum label to'plamlarini ishga tushirishda bir marta `WithLabelValues("GET /devices/{id}", "GET", "500")` bilan yaratib qo'ying, shunda "xato yo'q" va "metrika yo'q" farqlanadi (bu qadam client_golang kodiga tayanadi va biz uni kompilyatsiya qilmadik).
+
+### client_golang: panic'li va panic'siz API
+
+pkg.go.dev'dagi client_golang v1.25.0 hujjatidan: `WithLabelValues` `GetMetricWithLabelValues` bilan bir xil ishlaydi, faqat u xato qaytaradigan joyda panic qiladi (masalan label qiymatlari soni e'lon qilingan label'lar soniga teng bo'lmasa). Bu qulay qisqa yozuvga imkon beradi, lekin handler ichida yanglishgan label soni production'da panic degani. Label to'plamini test bilan yoping (sinov registry'sida har yo'lni bir marta chaqiring). `promauto` konstruktorlari metrikani qaytarishdan oldin registry'ga ro'yxatdan o'tkazadi va ro'yxatdan o'tish muvaffaqiyatsiz bo'lsa panic qiladi; top-level funksiyalar global `prometheus.DefaultRegisterer` ga, `Factory` tipining metodlari esa fabrika yaratilgan registry'ga yozadi. Shuning uchun "metrikalar `Metrics` struct'da va `Registerer` bilan" qoidasi bilan fabrika ham mos keladi. Tayyor o'rovchi: `promhttp.InstrumentHandlerDuration(obs prometheus.ObserverVec, next http.Handler, opts ...Option)`, `InstrumentHandlerCounter`, `InstrumentHandlerInFlight` (pkg.go.dev'dagi imzolar); ular bilan `route` label qiymatini `Request.Pattern` dan olish yo'lini ularning hujjatidan tekshirib ko'ring, bu yerda biz buni tekshirmadik.
+
+Native histogram'lar (client_golang `HistogramOpts` dagi `NativeHistogramBucketFactor` va hamkasb maydonlar) hujjatga ko'ra Prometheus serveri v2.40+ va tegishli feature flag talab qiladi. Bu dars klassik (bucket'li) histogram haqida; native histogram'ga o'tish bucket tanlash muammosini boshqacha hal qiladi (hujjatdagi `histogram_quantile` tavsifida eksponensial interpolyatsiya), lekin server sozlamasi va saqlash tizimi qo'llab-quvvatlashiga bog'liq.
+
 ### runtime/metrics
 
 Go runtime holati `runtime/metrics` paketida: `metrics.Read([]metrics.Sample)` tanlangan metrikalarni o'qiydi, `metrics.All()` barcha metrikalar tavsifini beradi. Nomlar `/sched/goroutines:goroutines` shaklida (yo'l:birlik). `Description.Cumulative` metrika faqat o'sadimi, shuni bildiradi (counter yoki gauge tanlash uchun foydali). 56-darsda GC bilan bog'liq metrikalar, 60-darsda `GODEBUG` hisoblagichlari ko'rilgan edi; Tashqi ko'rinishda alert uchun odatda goroutine soni, heap hajmi va GC pauzasi kuzatiladi.
@@ -561,6 +665,7 @@ Goroutine soni, heap maqsadi va GC sikllari soni oddiy `uint64`; scheduling kech
 - Metrikaga cheksiz qiymatli label qo'shish. Qurilma, foydalanuvchi, buyurtma kesimi kerak bo'lsa, log yoki trace ishlating.
 - Metrika "nima bo'ldi?" savoliga javob bermaydi: u agregat. Alohida so'rov bilan nima sodir bo'lganini log va trace ko'rsatadi.
 - Har funksiya uchun metrika yaratish: bu shovqin va xarajat. Avval 4 ta "oltin signal" ni qo'ying (bu Google SRE kitobidagi tasnif, kurs manbalarida yo'q): latency, trafik, xatolar va to'yinish (resurs bandligi), keyin kerak bo'lganda kengaytiring.
+- Bucket'larni tekshirmasdan histogram'dan p99 olish: yuqorida 10 s dan oshgan kechikishlar `10.0` ko'rinishida chiqdi, 1-3 ms servisda `DefBuckets` mediana xatosini 30% ga yetkazdi. Persentil bahosi bucket chegaralari bilan chegaralangan.
 - Histogram o'rniga o'rtacha (average) latency'ni alert qilish. O'rtacha dumni yashiradi; persentil kerak.
 - Ichki servislarda juda tez-tez chaqiriladigan funksiyada metrika yangilash: `WithLabelValues` map qidiruvi va atomik amallarni talab qiladi. Issiq yo'lda label'li metrika qiymatini oldindan olib qo'yish (`With(...)` natijasini saqlash) yaxshiroq. Aniq narxni o'lchang (61-dars).
 - `/metrics` ni autentifikatsiyasiz ommaviy portda ochish. Ichki tafsilot oshkor bo'ladi.

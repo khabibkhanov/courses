@@ -217,6 +217,104 @@ Log chaqiruvining argumentlari daraja o'chirilgan bo'lsa ham hisoblanadi. `Debug
 
 `slog.SetDefault(l)` ikki ish qiladi: yuqori darajali `slog.Info` funksiyalari shu logger'ga yozadi, va eski `log.Print` chaqiruvlari ham shu logger'ning handler'i orqali o'tadi (daraja `SetLogLoggerLevel` bilan boshqariladi, standart Info). Bu kutubxonalar ichidagi `log.Printf` chiqishini ham structured log oqimiga olib kiradi.
 
+### Handler shartnomasi: guruhlar, bo'sh atributlar, vaqt birliklari
+
+Standart handler'larning nozik xatti-harakatlari `Handler.Handle` hujjatidagi qoidalardan kelib chiqadi: vaqti nol bo'lgan yozuvda `time` yozilmaydi; atributning kaliti ham, qiymati ham nol bo'lsa u tashlab yuboriladi; kaliti bo'sh guruhning atributlari tashqariga ochiladi (inline); bitta ham atributi yo'q guruh, kaliti bo'lsa ham, yozilmaydi; atribut qiymatlari yozishdan oldin resolve qilinadi (shu sabab `LogValuer` ishlaydi). Quyidagi dastur bu qoidalarni, shuningdek `AddSource` va `time.Duration` ning JSON'dagi ko'rinishini real handler'larda ko'rsatadi:
+
+```go
+package main
+
+import (
+	"context"
+	"errors"
+	"log/slog"
+	"os"
+	"time"
+)
+
+type vehicle struct {
+	ID   int
+	Name string
+}
+
+func (v vehicle) LogValue() slog.Value {
+	return slog.GroupValue(slog.Int("id", v.ID), slog.String("name", v.Name))
+}
+
+func main() {
+	opts := &slog.HandlerOptions{
+		AddSource: true,
+		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+			switch {
+			case a.Key == slog.TimeKey && len(groups) == 0:
+				return slog.Attr{}
+			case a.Key == slog.SourceKey:
+				s := a.Value.Any().(*slog.Source)
+				s.File = "main.go"
+				return a
+			}
+			return a
+		},
+	}
+	j := slog.New(slog.NewJSONHandler(os.Stdout, opts))
+	t := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+			if a.Key == slog.TimeKey && len(groups) == 0 {
+				return slog.Attr{}
+			}
+			return a
+		},
+	}))
+
+	j.Info("davomiylik", "took", 1500*time.Millisecond)
+	t.Info("davomiylik", "took", 1500*time.Millisecond)
+
+	// Bo'sh guruh tashlab yuboriladi; kalitsiz guruh inline bo'ladi.
+	t.Info("guruhlar", slog.Group("bosh"), slog.Group("", slog.Int("a", 1)), slog.Group("g", slog.Int("b", 2)))
+
+	// LogValuer guruh qaytarsa u ichma-ich yoziladi.
+	t.Info("transport", "v", vehicle{7, "Isuzu"})
+
+	// nil xato va oddiy qiymatlar.
+	var err error
+	t.Info("nil xato", "err", err, "e2", errors.New("boom"))
+
+	// WithGroup'dan keyin atribut yo'q bo'lsa, guruh umuman chiqmaydi.
+	t.WithGroup("db").Info("guruhsiz yozuv")
+
+	// Context bilan Enabled.
+	t.Log(context.Background(), slog.LevelDebug, "chiqmaydi")
+}
+```
+
+```text
+{"level":"INFO","source":{"function":"main.main","file":"main.go","line":45},"msg":"davomiylik","took":1500000000}
+level=INFO msg=davomiylik took=1.5s
+level=INFO msg=guruhlar a=1 g.b=2
+level=INFO msg=transport v.id=7 v.name=Isuzu
+level=INFO msg="nil xato" err=<nil> e2=boom
+level=INFO msg="guruhsiz yozuv"
+```
+
+Natijalar:
+
+- **Duration JSON'da nanosekund**: `"took":1500000000`. Text handler uni odam o'qiydigan `1.5s` qilib yozdi. Log agregatorida `took` maydonini sekund yoki millisekund deb o'ylagan odam 10^6 yoki 10^9 marta adashadi. Jamoa kelishuvi kerak: `ReplaceAttr` da `time.Duration` ni `float64` sekundga yoki `"1.5s"` matniga aylantiring, yoki maydonni doim `duration_ms` deb nomlab millisekund yozing.
+- **`AddSource: true`** yozuvga `source` obyektini (`function`, `file`, `line`) qo'shadi. `file` mutlaq yo'l bo'ladi (alohida sinovda `/tmp/.../src_test.go` chiqdi), shuning uchun misolda `ReplaceAttr` bilan `main.go` ga qisqartirdik: aks holda log build mashinasining katalog tuzilishini oshkor qiladi va chiqishni solishtirib bo'lmaydi.
+- **Bo'sh guruh tashlandi, kalitsiz guruh ochildi**: `slog.Group("bosh")` hech narsa chiqarmadi, `slog.Group("", slog.Int("a", 1))` esa `a=1` bo'ldi, `slog.Group("g", ...)` Text'da `g.b=2`.
+- **`LogValuer` guruh qaytarishi mumkin**: `vehicle.LogValue()` `slog.GroupValue(...)` qaytardi va u `v.id=7 v.name=Isuzu` bo'lib yozildi. Ob'ektni bitta `String()` ga qisqartirmasdan tuzilmali yozishning yo'li shu.
+- **`WithGroup("db")` dan keyin atribut bo'lmasa, guruh chiqmaydi**: oxirgi qatorda `db` yo'q.
+- **nil xato** Text'da `err=<nil>` bo'ldi. Xato yo'q holatda `err` kalitini umuman yozmaslik uchun chaqiruvdan oldin tekshiring.
+
+`ReplaceAttr` haqida hujjat qoidasi: u hech qachon guruh atributining o'ziga chaqirilmaydi, faqat uning ichidagi oddiy atributlarga, birinchi argument sifatida ochiq guruhlar ro'yxati bilan. Demak kalit nomi bo'yicha maxfiylikni tozalayotganda (`password`, `authorization`) `a.Key` ni guruh yo'li bilan birga tekshiring: `db.password` va yuqori darajadagi `password` ikki xil chaqiruv bo'ladi (`groups` = `["db"]` va `nil`). Guruh kalitini (`"auth"`) tozalab bo'lmaydi, chunki ReplaceAttr unga chaqirilmaydi.
+
+### Record nusxalari va o'z handler'ingiz
+
+`slog.Record` nusxalari umumiy holatni ulashadi, `Record` hujjati nusxa berib yuborilgandan keyin uni o'zgartirmaslikni talab qiladi, mustaqil nusxa uchun `Record.Clone` bor. Qoida o'z handler'ingiz yozilganda ahamiyatli: `Handle` ichida yozuvni boshqa goroutine'ga (buferli yozuvchi, batch yuboruvchi) uzatsangiz, `r.Clone()` dan foydalaning; aks holda asl yozuv va nusxa bir xil ichki holatni ulashadi. `Handle` ga uzatilgan context faqat qiymatlarni o'qish uchun: hujjatga ko'ra uni bekor qilish yozuvni qayta ishlashga ta'sir qilmasligi kerak (bekor qilish bilan bog'liq muammoni tuzatishda aynan o'sha log kerak bo'ladi).
+
+### Versiyalar: 1.25 va 1.26 da nima qo'shilgan
+
+Go release notes'dan (kompilyatsiya qilinmagan, lokal toolchain 1.24.7): Go 1.25 da `slog.GroupAttrs` (`Attr` slice'idan guruh yaratadi) va `Record.Source` metodi (yozuvning joyini yoki mavjud bo'lmasa `nil` qaytaradi) qo'shilgan. Go 1.26 da `slog.NewMultiHandler` paydo bo'lgan: u berilgan handler'larning hammasiga yozuvni uzatadi, `Enabled` esa kamida bittasi yoqilgan bo'lsa `true` qaytaradi. Shu paytgacha bir vaqtda ham stdout'ga, ham fayl yoki tashqi tizimga yozish uchun o'z "fan-out" handler'ingizni yozishga to'g'ri kelardi, bu esa yuqoridagi `WithAttrs`/`WithGroup` nozikligini qaytadan to'g'ri bajarishni talab qiladi. Go 1.24 da qolgan loyiha uchun bunday handler'ni `slogtest` bilan tekshiring.
+
 ## Misol: ingest servis logi
 
 Quyidagi dastur yuqoridagilarni birlashtiradi: context orqali `request_id`, `LevelVar` bilan dinamik daraja, `LogValuer` bilan yashirilgan token, guruh va eski `log` paketi ko'prigi.
@@ -359,6 +457,7 @@ func TestProcessQuiet(t *testing.T) {
 - Maxfiy ma'lumotni log'ga umuman yozmaslik yaxshiroq. `LogValuer` ikkinchi qatlam, birinchisi - maxfiy qiymatni log chaqiruviga uzatmaslik.
 - `slog.Default()` ni global holda hamma joyda ishlatish testlarni murakkablashtiradi. Logger'ni konstruktor orqali bering (91-dars).
 - Custom Handler yozish oson ko'rinadi, lekin `WithAttrs`/`WithGroup` semantikasini to'g'ri bajarish nozik. Standart kutubxonadagi `testing/slogtest` paketi handler'ni tekshiradi (Go 1.21 dan `TestHandler`, 1.22 dan `Run`). Tayyor handler'ni o'rash (embed) yo'li xavfsizroq.
+- `time.Duration` ni to'g'ridan-to'g'ri JSON log'ga yozish: nanosekund son chiqadi (yuqorida ko'rsatildi). Birlikni kelishmasdan maydon qo'shish agregatordagi grafiklarni buzadi.
 - Log darajalarini aralashtirish: xato holati `Error` ga, kutilgan biznes rad etishlar (masalan, noto'g'ri parol) esa jamoa kelishuviga ko'ra `Info`/`Warn` ga tushishi kerak, aks holda alert shovqin beradi.
 
 ## Stack'da: pino va winston bilan farq

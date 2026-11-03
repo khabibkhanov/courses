@@ -255,7 +255,7 @@ init runtime @0.049 ms, 0.082 ms clock, 0 bytes, 0 allocs
 init internal/godebug @0.74 ms, 0.049 ms clock, 312 bytes, 7 allocs
 ```
 
-Raqamlar mashinaga bog'liq, ular faqat format namunasi. Ishlatish: servis ishga tushishi sekin bo'lsa (masalan, katta regexp yoki jadval yaratadigan paket `init` da), `inittrace` aybdor paketni bir ishga tushirishda ko'rsatadi; keyin `init` ni lazy initsializatsiyaga (`sync.OnceValue`, 45-dars) ko'chirish mumkin. Hujjat plugin yuklashdagi init'lar va init ishi bo'lmagan paketlar chiqmasligini ham aytadi.
+Raqamlar mashinaga bog'liq, ular faqat format namunasi. Ishlatish: servis ishga tushishi sekin bo'lsa (masalan, katta regexp yoki jadval yaratadigan paket `init` da), `inittrace` aybdor paketni bir ishga tushirishda ko'rsatadi; keyin `init` ni lazy initsializatsiyaga (`sync.OnceValue`, Go 1.21 dan; 45-dars) ko'chirish mumkin. Hujjat plugin yuklashdagi init'lar va init ishi bo'lmagan paketlar chiqmasligini ham aytadi.
 
 ## Misol: init tartibi va ko'rinish
 

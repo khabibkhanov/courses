@@ -211,13 +211,132 @@ Terminlar ko'p aralashtiriladi. Bu kursda shunday ishlatamiz: stub qat'iy javob 
 
 Recorder handler'ni bevosita chaqirgani uchun u server darajasidagi narsalarni o'tkazib yuboradi: `http.Server` timeout'lari, keep-alive, header'larni kanonik shaklga keltirish (server tomonidan), `Content-Length`ni o'rnatish, haqiqiy `Hijack`. Shuning uchun handler mantig'ini recorder bilan, middleware zanjiri va to'liq yo'lni (router, middleware, handler) esa `NewServer` bilan tekshirish ma'qul. Middleware'lar 74-darsda.
 
+### Recorder va haqiqiy server: o'lchangan farq
+
+"Recorder server darajasidagi narsalarni o'tkazib yuboradi" degan gap mavhum. Quyidagi dastur bir xil handler'ni recorder va `NewServer` orqali chaqiradi va javob sarlavhalarini solishtiradi. U ikki narsani ham tekshiradi: `NewRequest` bergan standart qiymatlar va mijoz uzilganda handler `r.Context()` ning bekor bo'lishi.
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"time"
+)
+
+func main() {
+	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, `{"ok":true}`)
+	})
+
+	// 1. Recorder: server qo'shadigan sarlavhalar yo'q.
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/ping", nil)
+	fmt.Println("NewRequest: Host =", req.Host, "| RemoteAddr =", req.RemoteAddr)
+	h.ServeHTTP(rec, req)
+	res := rec.Result()
+	fmt.Println("recorder: status =", res.StatusCode, "| Content-Length =", res.Header.Get("Content-Length"), "| Content-Type =", res.Header.Get("Content-Type"))
+
+	// 2. Haqiqiy server: Content-Length va Content-Type server tomonidan qo'yiladi.
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+	resp, err := srv.Client().Get(srv.URL)
+	if err != nil {
+		panic(err)
+	}
+	io.Copy(io.Discard, resp.Body)
+	resp.Body.Close()
+	fmt.Println("server:   status =", resp.StatusCode, "| Content-Length =", resp.Header.Get("Content-Length"), "| Content-Type =", resp.Header.Get("Content-Type"))
+
+	// 3. Mijoz ketganda handler konteksti bekor bo'ladi.
+	done := make(chan error, 1)
+	slow := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case <-r.Context().Done():
+			done <- r.Context().Err()
+		case <-time.After(5 * time.Second):
+			done <- nil
+		}
+	}))
+	defer slow.Close()
+	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+	defer cancel()
+	creq, _ := http.NewRequestWithContext(ctx, http.MethodGet, slow.URL, nil)
+	_, err = slow.Client().Do(creq)
+	fmt.Println("mijoz xatosi:", err)
+	fmt.Println("handler konteksti:", <-done)
+}
+```
+
+```text
+NewRequest: Host = example.com | RemoteAddr = 192.0.2.1:1234
+recorder: status = 200 | Content-Length =  | Content-Type = text/plain; charset=utf-8
+server:   status = 200 | Content-Length = 11 | Content-Type = text/plain; charset=utf-8
+mijoz xatosi: Get "http://127.0.0.1:40699": context deadline exceeded
+handler konteksti: context canceled
+```
+
+(Port raqami har ishga tushirishda boshqacha.) Chiqishdan:
+
+- `httptest.NewRequest` hujjatiga ko'ra nisbiy manzil berilsa host `example.com` bo'ladi, `Request.Proto` doim `HTTP/1.1`; sinovda `RemoteAddr` `192.0.2.1:1234` chiqdi. Handler `r.Host` yoki `r.RemoteAddr` ga tayansa (masalan IP bo'yicha limit), testda bu soxta qiymatlar bilan ishlaydi.
+- Recorder `Content-Type` ni handler yozgan baytlardan aniqladi (`Write` chaqirilganda), lekin `Content-Length` ni qo'ymadi. Haqiqiy server esa ikkalasini qo'ydi (`11` bayt). Klient yoki proksi `Content-Length` ga tayansa, buni faqat `NewServer` ushlaydi.
+- Recorder'da natijani `rec.Result()` bilan oling: bu `http.Response` qaytaradi va handler `WriteHeader` chaqirmagan hollarda ham to'g'ri status beradi. `rec.Code` maydoni hujjatga ko'ra handler hech narsa yozmagan holatda 0 bo'lib qolishi mumkin bo'lgan xom maydon (`NewRecorder` uni 200 qilib boshlaydi).
+- Mijoz muddati tugab uzilganda server handler'ning `r.Context()` i `context canceled` bilan bekor bo'ldi. Handler ichidagi sekin ish (baza so'rovi, 78-dars) shu contextga bog'langan bo'lsa to'xtaydi. Buni recorder bilan tekshirib bo'lmaydi: u uchun contextni `NewRequestWithContext` bilan o'zingiz bekor qilasiz va bu "mijoz uzildi" holatini emas, faqat handler contextga javob berishini sinaydi.
+
+Go 1.26 release notes'ida `httptest` uchun o'zgarish bor: `Server.Client` qaytargan HTTP klient `example.com` va uning pastki domenlariga yuborilgan so'rovlarni test serveriga yo'naltiradi. Bu kodni Go 1.24.7 da ishga tushira olmadik (kompilyatsiya qilinmagan, faqat release notes'ga tayanadi); 1.26 ga o'tganda `example.com` ga qattiq bog'langan test URL'lari xatti-harakatini tekshirib oling.
+
 ### Server goroutine'lari va data race
 
 `httptest.Server` so'rovlarni o'z goroutine'larida bajaradi. Handler ichida testning o'zgaruvchilarini yozsangiz va test ularni o'qisa, race detector buni topishi mumkin. Misolimizda chaqiruvlar hisoblagichi `atomic.Int32`. Bitta so'rovdan keyin javobni olgan client uchun handler yozuvi bilan test o'qishi orasida happens-before bor, lekin bir nechta so'rov yoki fon goroutine bo'lsa, buni o'ylab o'tirmaslik uchun atomic yoki mutex ishlating. Ikkinchi tuzoq: `srv.Close()` hamma bajarilayotgan so'rovlar tugashini kutadi, shuning uchun handler'da cheksiz bloklanish testni osib qo'yadi. `t.Cleanup(srv.Close)` yozing (defer emas, chunki parallel subtestlar bilan ishlaganda defer ertaroq ishlashi mumkin, 81-dars).
 
+### Jadvalli test, t.Parallel va tsikl o'zgaruvchisi
+
+Yuqoridagi `TestIngestHandler` ichida `t.Run` ichida `t.Parallel()` chaqiriladi va closure `tt` ni ishlatadi. Bu faqat go.mod'dagi `go` qatori 1.22 yoki undan yuqori bo'lganda to'g'ri: shundan boshlab `for` tsiklining har iteratsiyasi o'z o'zgaruvchisiga ega. Eski qatorda (1.21) hamma parallel subtest tsiklning oxirgi qiymatini ko'radi. Aynan shu narsani ikki versiyada sinadik (Go 1.24.7 toolchain, faqat go.mod'dagi qator farq qiladi):
+
+```go
+package e
+
+import (
+	"fmt"
+	"sort"
+	"sync"
+	"testing"
+)
+
+var (
+	mu   sync.Mutex
+	seen []string
+)
+
+func TestLoopVar(t *testing.T) {
+	for _, name := range []string{"A", "B", "C"} {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			mu.Lock()
+			seen = append(seen, name)
+			mu.Unlock()
+		})
+	}
+	t.Cleanup(func() {
+		sort.Strings(seen)
+		fmt.Println("ishlagan:", seen)
+	})
+}
+```
+
+```text
+go.mod: go 1.21  ->  ishlagan: [C C C]
+go.mod: go 1.22  ->  ishlagan: [A B C]
+```
+
+`go 1.21` bilan `go vet` ham `loop variable name captured by func literal` deb ogohlantirdi. Parallel subtest oxirgi qiymatni ko'rishi eng xavfli tomoni: testlar "o'tadi", lekin hamma holat bitta qiymat bilan tekshiriladi, ya'ni jadvaldagi boshqa qatorlar aslida sinalmaydi. Eski go.mod'li kutubxonada `tt := tt` yozing yoki versiyani ko'taring (1-dars: go qatori GODEBUG kabi til xatti-harakatini ham belgilaydi). Cleanup funksiyalar teskari tartibda (oxirgi qo'shilgan birinchi) chaqiriladi, shuning uchun `t.Cleanup(srv.Close)` va undan keyin ro'yxatdan o'tgan tozalashlar ketma-ketligini shunga qarab loyihalang.
+
 ### Vaqtni inject qilish
 
-`time.Sleep` bilan kutadigan test sekin va flaky. Retry kodi kutish vaqtini parametr qilib oladi (`Backoff`), testda u millisekund bo'ladi. Soatga bog'liq mantiq (muddat tugashi, TTL) uchun `func() time.Time` ni maydon sifatida inject qiling, testda qat'iy vaqt qaytaring. Parallel mantiq uchun maxsus vosita `testing/synctest` bor, lekin Go 1.24 da u faqat `GOEXPERIMENT=synctest` bilan yoqiladi (paket manbasida shu build tag bor), shu sabab bu darsda ishlatmaymiz.
+`time.Sleep` bilan kutadigan test sekin va flaky. Retry kodi kutish vaqtini parametr qilib oladi (`Backoff`), testda u millisekund bo'ladi. Soatga bog'liq mantiq (muddat tugashi, TTL) uchun `func() time.Time` ni maydon sifatida inject qiling, testda qat'iy vaqt qaytaring. Parallel mantiq uchun maxsus vosita `testing/synctest` bor, lekin Go 1.24 da u faqat `GOEXPERIMENT=synctest` bilan yoqiladi (paket manbasida shu build tag bor), shu sabab bu darsda ishlatmaymiz. Go 1.25 release notes'ga ko'ra `testing/synctest` paketi endi umumiy mavjud: u testni izolyatsiyalangan "bubble" ichida ishga tushiradi, ichida `time` paketi soxta soat bilan ishlaydi va barcha goroutine'lar bloklansa soat bir zumda oldinga suriladi, `Wait` esa bubble'dagi goroutine'lar bloklanishini kutadi. Go 1.25+ xususiyati bo'lgani uchun uni bu yerda kompilyatsiya qilmadik; retry va TTL testlarida `Backoff` parametri o'rniga u yaxshiroq variant bo'lishi mumkin.
 
 ### Port ochmasdan: http.RoundTripper
 
