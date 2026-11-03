@@ -1,0 +1,56 @@
+# CS50 4-5-dars atamalari.
+- term: abstraction
+  uz: "Murakkab narsaga nom berib, uni ichini o'ylamasdan bir butun sifatida ishlatish: nimani qilishni qanday qilishdan ajratish. Takror sikl va funksiya ortiga yashiriladi."
+  course: cs50
+  lesson: 4
+- term: return value
+  uz: "Funksiya ishini tugatib, chaqiruvchiga qaytaradigan qiymat. Uni o'zgaruvchiga saqlash yoki boshqa funksiyaga input sifatida berish mumkin; ekranga chiqarish return value emas."
+  course: cs50
+  lesson: 4
+- term: side effect
+  uz: "Funksiyaning qiymat qaytarishdan tashqari tashqi dunyoda qoldiradigan o'zgarishi: ekranga yozish, ovoz chalish, faylni o'zgartirish."
+  course: cs50
+  lesson: 4
+- term: boolean expression
+  aliases: [mantiqiy ifoda]
+  uz: "Natijasi faqat rost yoki yolg'on bo'lgan ifoda: taqqoslash (x < y), savol-funksiya yoki and, or, not bilan birlashtirilgan ifodalar."
+  course: cs50
+  lesson: 4
+- term: truth table
+  uz: "Mantiqiy ifodaning barcha kirish kombinatsiyalari uchun natijalar jadvali. k ta boolean kirishda 2 ning k-darajasi qator bo'ladi."
+  course: cs50
+  lesson: 4
+- term: trace table
+  uz: "Dasturning har qadamidan keyin o'zgaruvchilar qiymatini yozib boriladigan jadval. Holatni qo'lda kuzatish va xatoni topish usuli."
+  course: cs50
+  lesson: 4
+- term: source code
+  uz: "Dasturning inson o'qishi uchun yozilgan matni, masalan hello.c. Protsessor uni to'g'ridan-to'g'ri bajarmaydi, avval compiler uni machine code ga aylantiradi."
+  course: cs50
+  lesson: 5
+- term: machine code
+  uz: "Protsessor bevosita bajaradigan, bitlar bilan ifodalangan ko'rsatmalar. Muayyan protsessor turiga bog'liq, shuning uchun binary fayl boshqa arxitekturada ishlamaydi."
+  course: cs50
+  lesson: 5
+- term: compiler
+  aliases: [kompilyator]
+  uz: "Source code ni machine code ga aylantiradigan dastur. CS50 da clang ishlatiladi; xatolarni fayl:qator:ustun formatida xabar qiladi."
+  course: cs50
+  lesson: 5
+- term: header file
+  uz: "Funksiyalar e'lonlari turgan .h fayl (stdio.h, cs50.h), #include bilan qo'shiladi. Funksiyaning o'zi kutubxonada bo'ladi va linking bosqichida ulanadi."
+  course: cs50
+  lesson: 5
+- term: format specifier
+  uz: "printf format satridagi % bilan boshlanadigan qism (%i, %s, %c, %f): keyingi argument qaysi tip deb o'qilishi va qanday ko'rinishda chiqishini belgilaydi."
+  course: cs50
+  lesson: 5
+- term: escape sequence
+  uz: "Teskari chiziq bilan boshlanadigan maxsus belgi yozuvi: \\n yangi qator, \\t tab, \\\" qo'shtirnoq, \\\\ teskari chiziqning o'zi."
+  course: cs50
+  lesson: 5
+- term: joriy papka
+  aliases: [working directory]
+  uz: "Terminal ayni paytda turgan papka. Fayl nomlari shu papkaga nisbatan qidiriladi; pwd uni ko'rsatadi, cd o'zgartiradi."
+  course: cs50
+  lesson: 5

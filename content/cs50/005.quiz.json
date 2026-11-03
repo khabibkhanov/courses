@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "hello.c ni tahrirlab saqladingiz va darhol ./hello ni ishga tushirdingiz. Nima bo'ladi?",
+      "options": [
+        "Yangi kod ishlaydi, chunki fayl saqlangan",
+        "Eski binary ishlaydi va o'zgarish ko'rinmaydi",
+        "Terminal avtomatik qayta kompilyatsiya qiladi",
+        "Dastur ishga tushmaydi"
+      ],
+      "answer": 1,
+      "why": "./hello mashina kodi faylini ishga tushiradi, u faqat kompilyatsiyada yangilanadi. Avval make hello yoki clang qilish kerak."
+    },
+    {
+      "q": "Source code da printf(\"hi\\n\") yozilgan. Qo'shtirnoq ichidagi matn source faylda necha bayt va printf necha belgi chiqaradi?",
+      "options": [
+        "3 bayt va 3 belgi",
+        "4 bayt va 4 belgi",
+        "3 bayt va 4 belgi",
+        "4 bayt va 3 belgi"
+      ],
+      "answer": 3,
+      "why": "Source da \\n ikki belgi (teskari chiziq va n): h, i, \\, n = 4 bayt. Kompilyatsiyadan keyin u bitta yangi qator belgisi, printf h, i va yangi qatorni, jami 3 belgi chiqaradi."
+    },
+    {
+      "q": "clang xabari: bad.c:5:29: error: expected ';' after expression. Bu nima degani?",
+      "options": [
+        "bad.c faylining 5-qator, 29-ustunida ; yetishmaydi",
+        "Faylda 5 ta xato va 29 ta ogohlantirish bor",
+        "29-qator, 5-ustunda xato",
+        "Linker 5-funksiyani topa olmadi"
+      ],
+      "answer": 0,
+      "why": "Diagnostika formati fayl:qator:ustun: turi: matn. Pastdagi ^ belgisi aynan shu joyni, fix-it qatori esa taklif qilingan ; ni ko'rsatadi."
+    },
+    {
+      "q": "#include <cs50.h> bor, lekin -lcs50 berilmagan va kutubxona boshqa yo'l bilan ulanmagan. Qanday xato chiqadi?",
+      "options": [
+        "use of undeclared identifier 'string'",
+        "expected ';' after expression",
+        "undefined reference to `get_string' (linker xatosi)",
+        "Xato bo'lmaydi, header yetarli"
+      ],
+      "answer": 2,
+      "why": "Header faqat e'lon beradi, shuning uchun compiler bosqichi o'tadi. Funksiyaning machine code i kutubxonada, u ulanmasa linker undefined reference beradi."
+    },
+    {
+      "q": "printf(\"[%5d]\", 42) nima chiqaradi?",
+      "options": ["[42]", "[42   ]", "[00042]", "[   42]"],
+      "answer": 3,
+      "why": "Kenglik 5, son 2 belgi, standart tekislash o'ngdan: chapda 5 - 2 = 3 ta bo'sh joy. [42   ] uchun %-5d, [00042] uchun %05d kerak."
+    },
+    {
+      "q": "int n = printf(\"Toshkent\\n\"); dan keyin n nechaga teng?",
+      "options": ["8", "10", "9", "0"],
+      "answer": 2,
+      "why": "printf chiqarilgan belgilar sonini qaytaradi: Toshkent 8 harf + 1 yangi qator belgisi = 9."
+    },
+    {
+      "q": "int age = 21; printf(\"%s\\n\", age); kodi -Werror siz kompilyatsiya qilindi. To'g'ri da'vo qaysi?",
+      "options": [
+        "Kompilyatsiya xato bilan to'xtaydi va binary yaratilmaydi",
+        "Dastur 21 chiqaradi, chunki printf tipni o'zi aniqlaydi",
+        "Dastur \"21\" ni matn sifatida chiqaradi",
+        "clang warning beradi, binary yaratiladi, lekin natija undefined behavior"
+      ],
+      "answer": 3,
+      "why": "Specifier va argument tipi mos kelmasa, C standarti bo'yicha undefined behavior. clang buni -Wformat warning i bilan ko'rsatadi, lekin -Werror bo'lmasa binary baribir yaratiladi."
+    },
+    {
+      "q": "Joriy papkada hello nomli tayyor dastur bor. Terminalda faqat hello deb yozdingiz. Nima bo'ladi?",
+      "options": [
+        "Dastur ishga tushadi",
+        "command not found, chunki terminal joriy papkani standart holatda qidirmaydi",
+        "make avtomatik chaqiriladi",
+        "hello.c ochiladi"
+      ],
+      "answer": 1,
+      "why": "Buyruq nomi PATH dagi papkalarda qidiriladi, joriy papka standart holatda unda yo'q. ./hello joriy papkadagi faylni aniq ko'rsatadi."
+    },
+    {
+      "q": "Papkada notes.txt va eski.txt bor. mv eski.txt notes.txt buyrug'i standart sozlamalarda nima qiladi?",
+      "options": [
+        "Ogohlantirmasdan notes.txt ni eski.txt mazmuni bilan almashtiradi",
+        "Xato beradi, chunki notes.txt mavjud",
+        "Ikkala faylni birlashtiradi",
+        "notes.txt ni korzinaga tashlaydi"
+      ],
+      "answer": 0,
+      "why": "GNU mv standart holatda mavjud manzil faylini so'ramasdan almashtiradi. So'rash uchun -i, ustidan yozmaslik uchun -n kerak; terminalda korzina yo'q."
+    },
+    {
+      "q": "Nega hello.c ni boshqa protsessorli mashinada qayta kompilyatsiya qilish kerak, x86-64 uchun yig'ilgan hello faylini esa shunchaki ko'chirib bo'lmaydi?",
+      "options": [
+        "Chunki source code faqat bitta mashinada ishlaydi",
+        "Chunki binary fayl ichida source code saqlanadi",
+        "Chunki header fayllar har mashinada boshqacha nomlanadi",
+        "Chunki machine code muayyan protsessor ko'rsatmalaridan iborat, source code esa ko'chma"
+      ],
+      "answer": 3,
+      "why": "Compiler source code ni aniq bir protsessor turi uchun ko'rsatmalarga aylantiradi. Ko'chma - source code, binary emas."
+    }
+  ]
+}

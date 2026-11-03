@@ -1,0 +1,90 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Scratch'dagi \"Hello, You\" zanjirida (ask, join, say) qaysi biri return value, qaysi biri side effect?",
+      "options": [
+        "say qiymat qaytaradi, join ekranga chiqaradi",
+        "ikkalasi ham faqat side effect",
+        "join birlashtirilgan matnni qaytaradi, say uni ekranga chiqaradi (side effect)",
+        "ask ham, join ham faqat ekranga yozadi"
+      ],
+      "answer": 2,
+      "why": "join qiymat qaytaradi va u say ning input iga aylanadi. say hech narsa qaytarmaydi, uning ishi tashqi dunyoda: ekranda matn paydo bo'ladi."
+    },
+    {
+      "q": "Python'da f(x) natijani print qiladi, lekin return yozilmagan. y = f(3) dan keyin y nimaga teng?",
+      "options": [
+        "None",
+        "Ekranga chiqarilgan matn",
+        "3",
+        "Dastur xato bilan to'xtaydi"
+      ],
+      "answer": 0,
+      "why": "Ekranga chiqarish side effect, qaytarish emas. return bo'lmagan Python funksiyasi None qaytaradi, shuning uchun natijani keyin ishlatib bo'lmaydi."
+    },
+    {
+      "q": "Shart 5 ta mustaqil boolean kirishga bog'liq. Uni to'liq tekshiradigan truth table da nechta qator bo'ladi?",
+      "options": ["5", "10", "25", "32"],
+      "answer": 3,
+      "why": "Har bir kirish 2 qiymat oladi, kombinatsiyalar soni 2⁵ = 32. Har yangi kirish qatorlar sonini ikki baravar oshiradi."
+    },
+    {
+      "q": "i == n bo'lganda ikki ifodadan qaysi biri massiv chegarasidan tashqaridagi elementni o'qimaydi?",
+      "options": [
+        "a[i] == x and i < n",
+        "i < n and a[i] == x",
+        "Ikkalasi ham o'qimaydi, tartib ahamiyatsiz",
+        "Ikkalasi ham o'qiydi"
+      ],
+      "answer": 1,
+      "why": "and short-circuit bilan chapdan hisoblanadi: i < n yolg'on bo'lsa, o'ng tomon umuman hisoblanmaydi. Teskari tartibda a[n] avval o'qiladi."
+    },
+    {
+      "q": "for i in range(3, 10) sikli tanasi necha marta bajariladi?",
+      "options": ["10", "7", "8", "6"],
+      "answer": 1,
+      "why": "range(a, b) a dan b - 1 gacha, ya'ni b - a = 10 - 3 = 7 marta."
+    },
+    {
+      "q": "Tashqi sikl i = 1 dan 100 gacha, ichki sikl i-qadamda i marta aylanadi. Ichki tana jami necha marta bajariladi?",
+      "options": ["100", "10 000", "200", "5050"],
+      "answer": 3,
+      "why": "1 + 2 + ... + n = n(n + 1) / 2 = 100 · 101 / 2 = 5050. 10 000 ichki sikl har doim 100 marta aylanganda bo'lardi."
+    },
+    {
+      "q": "Uchta holat bitta zanjirda yozilgan: agar x < y ..., aks holda agar x > y ..., aks holda .... Eng yomon holatda nechta taqqoslash bajariladi?",
+      "options": ["2", "3", "1", "Har doim 3"],
+      "answer": 0,
+      "why": "x < y va x > y yolg'on bo'lsa, faqat x == y qoladi va oxirgi aks holda uni tekshirmasdan ushlaydi. Uchta alohida agar esa har doim 3 taqqoslash qiladi."
+    },
+    {
+      "q": "total = 0, keyin for i in range(1, 5): total = total + i. Sikldan keyin total nechaga teng?",
+      "options": ["15", "5", "10", "4"],
+      "answer": 2,
+      "why": "range(1, 5) 1, 2, 3, 4 ni beradi: 1 + 2 + 3 + 4 = 10 = 4 · 5 / 2. 15 range(1, 6) uchun bo'lardi."
+    },
+    {
+      "q": "Mushuk 50 marta miyovlashi kerak, har miyovlash 2 blokdan iborat (ovoz chal, kut). Siklsiz va repeat sikli bilan yozilganda bloklar soni qancha?",
+      "options": [
+        "50 va 50",
+        "100 va 50",
+        "100 va 100",
+        "100 va 3"
+      ],
+      "answer": 3,
+      "why": "Siklsiz 2n = 2 · 50 = 100 blok. Sikl bilan esa repeat bloki va ichidagi 2 blok, jami 3 ta, n ga bog'liq emas."
+    },
+    {
+      "q": "Funksiyani qora quti sifatida ko'rishning amaliy foydasi qaysi?",
+      "options": [
+        "Funksiya har doim tezroq ishlaydi",
+        "Ichki yechimni (masalan, linear search o'rniga binary search) chaqiruvchi kodni o'zgartirmasdan almashtirish mumkin",
+        "Funksiyaning ish hajmini bilish shart bo'lmay qoladi",
+        "Funksiya side effect ga ega bo'la olmaydi"
+      ],
+      "answer": 1,
+      "why": "Chaqiruvchi faqat nima qilinishiga tayanadi, qanday qilinishiga emas. Ish hajmi esa yashirilgan narx bo'lib qoladi va uni baribir bilish kerak."
+    }
+  ]
+}
