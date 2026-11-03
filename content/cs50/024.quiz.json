@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Dasturda `int limit = 100;` (global), `int cache[500];` (global, qiymatsiz), `malloc(64)` bloki va `main` ichidagi `int i;` bor. Ular qaysi qismlarga tushadi?",
+      "options": [
+        "limit - data, cache - bss, blok - heap, i - stack",
+        "limit - bss, cache - data, blok - stack, i - heap",
+        "Hammasi stack'da, chunki main ichida ishlatiladi",
+        "limit va cache - text, blok - heap, i - stack"
+      ],
+      "answer": 0,
+      "why": "Qiymat berilgan global - data, qiymatsiz global - bss (nol), malloc - heap, lokal o'zgaruvchi - stack frame."
+    },
+    {
+      "q": "Rekursiv funksiyada lokal o'zgaruvchi manzili depth(1) da 0x7ffc...a4f8, depth(2) da 0x7ffc...a4d8. Bundan nima kelib chiqadi?",
+      "options": [
+        "Stack yuqoriga o'sadi, frame 32 bayt",
+        "Ikkinchi chaqiruv heap'da joylashgan",
+        "Stack pastga o'sadi, har chaqiruv frame'i 0x20 = 32 bayt",
+        "Manzillar ASLR tufayli tasodifiy, xulosa chiqarib bo'lmaydi"
+      ],
+      "answer": 2,
+      "why": "Chuqurroq chaqiruv kichikroq manzilda: 0x...a4f8 - 0x...a4d8 = 0x20 = 32 bayt. ASLR faqat butun stack boshini siljitadi, ichidagi tartibni emas."
+    },
+    {
+      "q": "`int *make(void) { int a[3] = {1, 2, 3}; return a; }` funksiyasi qaytargan pointerdan `main` darhol `p[0]` ni o'qib 1 ni oldi. Qaysi xulosa to'g'ri?",
+      "options": [
+        "Kod to'g'ri: massiv qiymatlari main'ga nusxalanadi",
+        "Kod to'g'ri, chunki o'qish darhol bo'ldi",
+        "Kompilyatsiya xatosi bo'lishi kerak edi",
+        "Bu dangling pointer: frame baytlari hali o'chmagani uchun tasodifan 1 chiqdi, keyingi chaqiruv ularni buzishi mumkin"
+      ],
+      "answer": 3,
+      "why": "return frame'ni o'chirmaydi, faqat stack ko'rsatkichini suradi. a ning umri tugagan, unga murojaat undefined behavior; clang -Wreturn-stack-address bilan ogohlantiradi."
+    },
+    {
+      "q": "Nega brauzer muhiti lokal massivga qaytarilgan pointer orqali o'qishni xato deb ushlamasligi mumkin?",
+      "options": [
+        "Brauzer muhitida stack yo'q",
+        "Brauzer muhiti AddressSanitizer'ning stack-use-after-return tekshiruvini o'chirgan holda ishlaydi (-asan-use-after-return=never)",
+        "WebAssembly lokal massivlarni avtomatik heap'ga ko'chiradi",
+        "Bu xato C da ruxsat etilgan"
+      ],
+      "answer": 1,
+      "why": "Qaytgan frame'ni taqiqlangan holda ushlab turadigan rejim o'chirilgan, shuning uchun yagona signal - kompilyator ogohlantirishi."
+    },
+    {
+      "q": "Qaysi xotira qiymat berilmasa ham 0 bilan boshlanishi kafolatlangan?",
+      "options": [
+        "Funksiya ichidagi `int a[10];`",
+        "`malloc(10 * sizeof(int))` bloki",
+        "Funksiya ichidagi `static int a[10];` va `calloc(10, sizeof(int))` bloki",
+        "Hech biri: C da hech qanday xotira nolga tenglanmaydi"
+      ],
+      "answer": 2,
+      "why": "static va global obyektlar 0 bilan boshlanadi, calloc baytlarni nolga tenglaydi. Lokal va malloc xotirasi noaniq."
+    },
+    {
+      "q": "`char name[8]; fgets(name, sizeof(name), stdin);` ga foydalanuvchi `Ali` va Enter kiritdi. `strlen(name)` va `strcmp(name, \"Ali\")` nima beradi?",
+      "options": [
+        "4 va 0 emas: buferda \"Ali\\n\" turadi",
+        "3 va 0",
+        "8 va 0 emas",
+        "3 va 0 emas, chunki fgets NUL qo'ymaydi"
+      ],
+      "answer": 0,
+      "why": "Qator sig'sa, fgets '\\n' ni ham saqlaydi: \"Ali\\n\" - 4 belgi. Taqqoslashdan oldin '\\n' ni NUL bilan almashtirish kerak."
+    },
+    {
+      "q": "`char buf[10]; int n = snprintf(buf, sizeof(buf), \"ID-%d\", 12345678);` dan keyin n va buf nimaga teng?",
+      "options": [
+        "n = 9, buf = \"ID-123456\"",
+        "n = 11, buf = \"ID-123456\" (9 belgi va NUL), natija qisqartirilgan",
+        "n = 10, buf = \"ID-1234567\"",
+        "Undefined behavior: bufer to'lib ketadi"
+      ],
+      "answer": 1,
+      "why": "To'liq natija \"ID-12345678\" 11 belgi; snprintf shu uzunlikni qaytaradi, lekin ko'pi bilan 10 - 1 = 9 belgi va NUL yozadi. 11 >= 10, demak qisqartirilgan."
+    },
+    {
+      "q": "Morris qurti (1988) fingerd orqali qanday tarqalgan?",
+      "options": [
+        "fingerd paroli taxmin qilingan",
+        "fingerd heap'dagi blokni ikki marta free qilgan",
+        "fingerd ga ulkan fayl yuborilib, disk to'ldirilgan",
+        "fingerd so'rovni gets bilan stack buferiga o'qigan; 536 baytlik satr buferni to'ldirib, qaytish manzilini buferdagi kodga yo'naltirgan"
+      ],
+      "answer": 3,
+      "why": "Spafford tahliliga ko'ra, gets chegarani tekshirmagan va VAX dagi 4 BSD da main ning qaytish manzili stack'dagi buferga yo'naltirilgan."
+    },
+    {
+      "q": "Lokal `char user[8]` dan keyin turgan `int is_admin` ni overflow buzdi, lekin qaytish manziligacha yetmadi. Stack canary nima qiladi?",
+      "options": [
+        "Hech narsa: canary faqat return paytida qaytish manzili oldidagi qiymatni tekshiradi, is_admin buzilishi sezilmaydi",
+        "Dasturni darhol, strcpy paytida to'xtatadi",
+        "is_admin ni avtomatik tiklaydi",
+        "Kompilyatsiya xatosi beradi"
+      ],
+      "answer": 0,
+      "why": "Canary qaytish manzilini himoya qiladi va faqat funksiya qaytayotganda tekshiriladi. Qo'shni lokal o'zgaruvchi buzilishini faqat to'g'ri kod yoki sanitizer ushlaydi."
+    },
+    {
+      "q": "randomize_va_space = 2 bo'lgan Linux'da bir dastur ikki marta ishga tushirildi. Qaysi kuzatuv kutiladi?",
+      "options": [
+        "Barcha manzillar ikki safar ham bir xil",
+        "Faqat heap manzili o'zgaradi",
+        "Stack, heap va (PIE dasturda) kod manzillari har safar boshqacha, lekin qismlar orasidagi tartib saqlanadi",
+        "Stack heap'dan pastga ko'chadi"
+      ],
+      "answer": 2,
+      "why": "Kernel hujjatiga ko'ra 2 qiymati stack, mmap, VDSO, PIE kod va heap'ni tasodifiy joylashtiradi. Bu hujumchi oldindan manzilni bilishini qiyinlashtiradi."
+    }
+  ]
+}

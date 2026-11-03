@@ -1,0 +1,55 @@
+# CS50 23-24-darslar atamalari.
+- term: dinamik xotira
+  aliases: [dynamic memory]
+  uz: "Dastur ish vaqtida malloc, calloc yoki realloc bilan so'raydigan va free bilan qaytaradigan xotira. O'lchami ish vaqtida aniqlanadi va blok uni yaratgan funksiyadan keyin ham yashaydi."
+  course: cs50
+  lesson: 23
+- term: heap
+  uz: "Jarayon xotirasining malloc bloklari joylashadigan qismi. Blok malloc dan free gacha yashaydi va uni bo'shatish dasturchining vazifasi."
+  course: cs50
+  lesson: 23
+- term: memory leak
+  aliases: [leak]
+  uz: "Ajratilgan, lekin endi hech qachon bo'shatilmaydigan heap bloki, odatda unga qaragan yagona pointer yo'qolgani uchun. Uzoq ishlaydigan dasturda xotira asta-sekin tugaydi."
+  course: cs50
+  lesson: 23
+- term: use-after-free
+  uz: "free qilingan blokka pointer orqali o'qish yoki yozish. Undefined behavior: blok boshqa maqsadga qayta berilgan bo'lishi mumkin; brauzer muhiti uni heap-use-after-free deb ushlaydi."
+  course: cs50
+  lesson: 23
+- term: double free
+  aliases: [double-free]
+  uz: "Bitta heap blokini ikki marta free qilish. Undefined behavior: heap ichki tuzilmalarini buzadi; free dan keyin pointerga NULL berish oldini oladi."
+  course: cs50
+  lesson: 23
+- term: Valgrind
+  aliases: [Memcheck]
+  uz: "Linux uchun dasturni qayta kompilyatsiyasiz o'z virtual protsessorida bajaradigan asboblar to'plami. Uning Memcheck asbobi heap xatolari, initsializatsiya qilinmagan qiymatlar va leaklarni qator raqami bilan ko'rsatadi."
+  course: cs50
+  lesson: 23
+- term: bss
+  uz: "Jarayon xotirasining initsializatsiyasiz global va static o'zgaruvchilar uchun qismi. Yuklanganda nol bilan to'ldiriladi, executable faylda faqat uning o'lchami saqlanadi."
+  course: cs50
+  lesson: 24
+- term: dangling pointer
+  uz: "Umri tugagan obyektga, masalan qaytgan funksiyaning lokal o'zgaruvchisiga yoki free qilingan blokka, hali ham qaraydigan pointer. Undan foydalanish undefined behavior."
+  course: cs50
+  lesson: 24
+- term: garbage values
+  aliases: [garbage value]
+  uz: "Initsializatsiya qilinmagan lokal o'zgaruvchi yoki malloc blokidagi, xotirada oldindan qolgan tasodifiy qiymatlar. Global, static va calloc xotirasida bo'lmaydi."
+  course: cs50
+  lesson: 24
+- term: stack smashing
+  uz: "Stack'dagi buferdan tashqariga yozib, frame'dagi saqlangan registrlar va qaytish manzilini buzish. Hujumchi shu orqali funksiya qaytganda o'z kodiga sakrashga erishadi."
+  course: cs50
+  lesson: 24
+- term: stack canary
+  uz: "Kompilyator frame'da lokal buferlar va qaytish manzili orasiga qo'yadigan qo'riqchi qiymat. Funksiya qaytishidan oldin tekshiriladi; o'zgargan bo'lsa, dastur to'xtatiladi."
+  course: cs50
+  lesson: 24
+- term: ASLR
+  aliases: [address space layout randomization]
+  uz: "Operatsion tizim har ishga tushirishda stack, heap, kutubxonalar va kodni tasodifiy manzillarga joylashtirishi. Hujumchi kerakli manzilni oldindan bila olmaydi."
+  course: cs50
+  lesson: 24

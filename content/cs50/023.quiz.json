@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Foydalanuvchi 250 ta `double` kiritadi (sizeof(double) = 8). `malloc` ga qaysi argument to'g'ri?",
+      "options": ["250", "250 * sizeof(double), ya'ni 2000 bayt", "sizeof(double), ya'ni 8 bayt", "250 * sizeof(double *), ya'ni brauzerda 1000 bayt"],
+      "answer": 1,
+      "why": "malloc elementlarni emas, baytlarni so'raydi: n x sizeof(element) = 250 x 8 = 2000. sizeof(double *) pointer o'lchami, element o'lchami emas."
+    },
+    {
+      "q": "`char *copy = malloc(strlen(s));` va keyin `strcpy(copy, s);` yozildi, s = \"Nukus\". Nima bo'ladi?",
+      "options": [
+        "Hech narsa: strcpy uzunlikni o'zi tekshiradi",
+        "Kompilyatsiya xatosi",
+        "strcpy NUL ni blokdan 1 bayt tashqariga yozadi: heap-buffer-overflow",
+        "copy oxirgi harfsiz \"Nuku\" bo'lib qoladi"
+      ],
+      "answer": 2,
+      "why": "strlen(\"Nukus\") = 5 NUL ni sanamaydi, strcpy esa 6 bayt yozadi. To'g'risi malloc(strlen(s) + 1)."
+    },
+    {
+      "q": "Brauzer muhitida dastur 3 marta `malloc(12)`, 1 marta `malloc(40)` chaqirdi va faqat 40 baytlik blokni `free` qildi. Dastur oxirida qanday hisobot chiqadi?",
+      "options": [
+        "XOTIRA: 36 bayt bo'shatilmagan, 3 ta blokda (4 ta malloc, 1 ta free)",
+        "XOTIRA: 76 bayt bo'shatilmagan, 4 ta blokda (4 ta malloc, 1 ta free)",
+        "XOTIRA: 12 bayt bo'shatilmagan, 1 ta blokda (4 ta malloc, 1 ta free)",
+        "Hisobot chiqmaydi, chunki dastur tugaganda OT xotirani qaytarib oladi"
+      ],
+      "answer": 0,
+      "why": "Bo'shatilmagan uchta 12 baytlik blok: 3 x 12 = 36 bayt, 3 blok; jami 4 ta malloc va 1 ta free."
+    },
+    {
+      "q": "`values = realloc(values, 2 * cap * sizeof(int));` yozuvining xavfi nimada?",
+      "options": [
+        "realloc eski ma'lumotni hech qachon ko'chirmaydi",
+        "realloc faqat calloc bilan ajratilgan blok uchun ishlaydi",
+        "Muvaffaqiyatli bo'lsa ham eski blok leak bo'lib qoladi",
+        "realloc NULL qaytarsa, eski blok tirik qoladi, lekin uning yagona manzili values'dan o'chadi - leak va ma'lumot yo'qoladi"
+      ],
+      "answer": 3,
+      "why": "Xatoda realloc eski blokni bo'shatmaydi va NULL qaytaradi. Natijani avval vaqtinchalik pointerga olish kerak."
+    },
+    {
+      "q": "Sikl ichida `row = make_range(n);` har aylanishda chaqiriladi, `free(row)` esa faqat sikldan keyin. Eng to'g'ri tuzatish qaysi?",
+      "options": [
+        "Sikl ichida, yangi qiymat yozishdan oldin free(row) chaqirish (birinchi aylanishda row NULL bo'lishi zararsiz)",
+        "make_range ichida return dan oldin free(values) chaqirish",
+        "row ni global o'zgaruvchi qilish",
+        "malloc o'rniga calloc ishlatish"
+      ],
+      "answer": 0,
+      "why": "Leak sababi - eski blokning yagona manzili ustiga yozilishi. free(NULL) hech narsa qilmaydi. make_range ichida free qilish esa chaqiruvchiga yaroqsiz manzil qaytaradi."
+    },
+    {
+      "q": "`free(p);` dan keyin `printf(\"%d\", p[0]);` bajarildi. Oddiy kompilyatsiyada u ko'pincha eski qiymatni chiqaradi. Bu nimani anglatadi?",
+      "options": [
+        "free faqat keyingi malloc paytida kuchga kiradi, shuning uchun kod to'g'ri",
+        "Bu use-after-free, undefined behavior: natija tasodifan to'g'ri ko'rinadi, blok esa boshqa maqsadga qayta berilishi mumkin",
+        "Bu memory leak",
+        "Bu double free"
+      ],
+      "answer": 1,
+      "why": "cppreference bo'yicha free dan keyingi murojaat undefined behavior. Brauzer muhiti uni heap-use-after-free deb ushlaydi."
+    },
+    {
+      "q": "Brauzer muhitida (32-bit size_t) n = 1 100 000 000 bo'lganda `malloc(n * sizeof(int))` nima so'raydi?",
+      "options": [
+        "4 400 000 000 bayt va NULL qaytaradi",
+        "Kompilyator xato beradi",
+        "105 032 704 bayt: ko'paytma modul 2^32 bo'yicha toshib ketadi va malloc muvaffaqiyatli qaytishi mumkin",
+        "Manfiy son so'raydi va NULL qaytaradi"
+      ],
+      "answer": 2,
+      "why": "4 400 000 000 - 4 294 967 296 = 105 032 704. Keyingi sikl esa blokdan tashqariga yozadi; calloc yoki n ni tekshirish himoya qiladi."
+    },
+    {
+      "q": "Sig'im 1 dan boshlab har to'lganda ikki baravar oshiriladigan massivga 1024 ta element qo'shildi. realloc ko'chirishi kerak bo'lgan elementlar soni eng ko'pi bilan qancha?",
+      "options": ["1024 x 1023 / 2 = 523 776", "10", "1024 x 10 = 10 240", "1 + 2 + 4 + ... + 512 = 1023"],
+      "answer": 3,
+      "why": "Ko'chirish faqat sig'im to'lganda, eski elementlar soni bilan: 1, 2, 4, ..., 512, jami 1023 < 2n. Har qo'shishning o'rtacha narxi O(1)."
+    },
+    {
+      "q": "Valgrind hisobotida \"24 bytes in 3 blocks are indirectly lost\" va \"8 bytes in 1 blocks are definitely lost\" chiqdi (linked list). Qayerdan boshlash kerak?",
+      "options": [
+        "Indirectly lost bloklardan: ular soni ko'proq",
+        "Definitely lost blokdan: unga hech qanday pointer yo'q, qolgan uchtasiga esa faqat shu yo'qolgan blok orqali yetiladi",
+        "Hech narsa: indirectly lost zararsiz",
+        "Valgrind'ni -O2 bilan qayta ishga tushirishdan"
+      ],
+      "answer": 1,
+      "why": "Memcheck ta'rifi: indirectly lost bloklarga faqat yo'qolgan bloklar qaraydi. Asosiy definitely lost ni tuzatsangiz, ular ham yo'qoladi."
+    },
+    {
+      "q": "Nega CS50 dasturlarida `get_string` natijasini `free` qilmaymiz?",
+      "options": [
+        "get_string satrni stack'da saqlaydi",
+        "Satr literal sifatida qaytadi, uni o'zgartirib bo'lmaydi",
+        "Satr heap'da, lekin CS50 kutubxonasi uni dastur tugaganda o'zi bo'shatadi; qo'lda free qilish double free'ga olib keladi",
+        "free faqat calloc bilan ajratilgan xotira uchun"
+      ],
+      "answer": 2,
+      "why": "CS50 kutubxonasi hujjatiga ko'ra get_string satri heap'da saqlanadi va kutubxona destruktori uni dastur oxirida bo'shatadi."
+    }
+  ]
+}
