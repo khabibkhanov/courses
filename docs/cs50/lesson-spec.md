@@ -75,7 +75,7 @@ David
 
 - Xotira xatolari (heap/stack/global chegarasidan chiqish, use-after-free, double free, NULL), signed overflow va nolga bo'lish dasturni to'xtatadi va xato qatorini ko'rsatadi; dastur oxirida bo'shatilmagan xotira (leak) hisoboti chiqadi. Xotira darslarida shuni namoyish qiling.
 - Muhit 32-bit (wasm32): `sizeof(int *)`, `sizeof(long)`, `sizeof(size_t)` 4 bayt. Matnda 64-bit tizimdagi 8 baytga tayanilsa, farqni yozing.
-- Buyruq qatori: ```` ```text args ```` bloki - bitta qator, terminaldagi kabi (`./caesar 13`), birinchi so'z `argv[0]`. Qo'shtirnoq ichidagi bo'shliq so'zni bo'lmaydi. O'quvchiga "Buyruq qatori" maydonida ko'rinadi. `args` bloki bo'lsa, "Kirish" maydoni faqat `stdin` bloki ham berilganda chiqadi.
+- Buyruq qatori: ```` ```text args ```` bloki - bitta qator, terminaldagi kabi (`./caesar 13`), birinchi so'z `argv[0]`. Qo'shtirnoq ichidagi bo'shliq so'zni bo'lmaydi. O'quvchiga "Buyruq qatori" maydonida ko'rinadi. `args` yoki `file` bloki bo'lsa, "Kirish" maydoni faqat `stdin` bloki ham berilganda chiqadi.
 - Fayllar: ```` ```text file ism.txt ```` bloki - dastur papkasidagi fayl (`fopen("ism.txt", "r")`), bir nechta bo'lishi mumkin, nomi papkasiz. O'quvchi matnini o'zgartira oladi. Dastur yaratgan yoki o'zgartirgan fayllar natija ostida ko'rsatiladi (matn yoki binary bo'lsa boshidagi 64 bayt hex'da); `fclose` qilinmagan fayl alohida aytiladi. Faqat matnli kirish fayllari; binary fayl (BMP) kerak bo'lsa, uni dasturning o'zi yaratsin. Papkalar va tarmoq yo'q.
 - Bloklar tartibi: `run`, keyin `stdin` / `args` / `file` istalgan tartibda, orasida matn yo'q.
 - `python3 scripts/run-blocks.py <fayl>` C bloklarini lokal clang bilan stdin, args va file bloklari bilan ishga tushiradi (sanitizer'siz) va yozilgan fayllarni ko'rsatadi.

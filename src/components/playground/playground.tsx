@@ -176,7 +176,7 @@ export function Playground({ lang, code: initial, tests, stdin, args, files, cou
         </label>
       ))}
 
-      {hasStdin && (stdin !== undefined || args === undefined) && (
+      {hasStdin && (stdin !== undefined || (args === undefined && !files?.length)) && (
         <label className="block border-t border-rule px-3 py-2">
           <span className="text-xs font-medium text-muted">Kirish (stdin): har qator - dastur o&apos;qiydigan bitta javob</span>
           <textarea
