@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Bo'sh BST ga 40, 20, 60, 10, 30, 50 kalitlari shu tartibda qo'shildi. Daraxt balandligi (qirralar soni bilan) va barglar soni qancha?",
+      "options": [
+        "Balandlik 3, barglar 2 ta",
+        "Balandlik 2, barglar 3 ta",
+        "Balandlik 2, barglar 4 ta",
+        "Balandlik 5, barglar 1 ta"
+      ],
+      "answer": 1,
+      "why": "40 ildiz, 20 va 60 uning bolalari, 10 va 30 - 20 ning, 50 - 60 ning bolasi. Eng uzun yo'l 40-20-10: 2 qirra. Barglar: 10, 30, 50."
+    },
+    {
+      "q": "Tugunlarda `left.key < key < right.key` sharti har bir tugunda bajariladi. Bu daraxt albatta BST bo'ladimi?",
+      "options": [
+        "Ha, chunki shart har tugunda tekshirilgan",
+        "Ha, agar daraxt muvozanatli bo'lsa",
+        "Yo'q: chuqurroqdagi tugun ajdodining chegarasini buzishi mumkin, masalan 50 ning chap qism daraxtida 55",
+        "Yo'q, chunki BST da teng kalitlar bo'lishi shart"
+      ],
+      "answer": 2,
+      "why": "BST xossasi butun qism daraxt haqida. 30 ning o'ng bolasi 55 o'z parent'idan katta, lekin 50 ning chap tomonida turibdi - xossa buzilgan."
+    },
+    {
+      "q": "BST ning qaysi aylanishi kalitlarni o'sish tartibida beradi va nima uchun?",
+      "options": [
+        "In-order, chunki chap qism daraxtdagi hamma kalit tugundan kichik, o'ngdagisi katta va bu har sathda takrorlanadi",
+        "Pre-order, chunki ildiz eng kichik kalit",
+        "Post-order, chunki barglar avval chiqadi",
+        "Hech biri, avval saralash kerak"
+      ],
+      "answer": 0,
+      "why": "In-order: chap, tugun, o'ng. Induksiya bo'yicha chap va o'ng qismlar saralangan chiqadi, BST xossasi esa ular orasida tugun kaliti to'g'ri joyda turishini kafolatlaydi."
+    },
+    {
+      "q": "Ikki bolali tugunni o'chirishda in-order vorisdan foydalaniladi. Nega vorisning o'zini o'chirish doim oson (barg yoki bitta bola holati)?",
+      "options": [
+        "Voris har doim barg",
+        "Voris har doim ildiz",
+        "Vorisning o'ng bolasi bo'lishi mumkin emas",
+        "Vorisning chap bolasi bo'lishi mumkin emas: u o'ng qism daraxtdagi eng kichik kalit, chap bola bo'lsa undan ham kichikroq bo'lardi"
+      ],
+      "answer": 3,
+      "why": "Voris o'ng bolaga o'tib chapga NULL gacha yurib topiladi, demak uning chap bolasi yo'q. O'ng bolasi bo'lishi mumkin - bu bitta bola holati."
+    },
+    {
+      "q": "`free(t); free_tree(t->left); free_tree(t->right);` ko'rinishidagi funksiyaning muammosi nima?",
+      "options": [
+        "Muammo yo'q, tartib ahamiyatsiz",
+        "free(t) dan keyin t->left o'qiladi - bo'shatilgan xotiraga murojaat (use-after-free); to'g'risi post-order",
+        "Faqat leak: bolalar bo'shatilmaydi",
+        "Kompilyatsiya xatosi beradi"
+      ],
+      "answer": 1,
+      "why": "Tugun bo'shatilgach, uning maydonlarini o'qish undefined behavior. Avval bolalar, keyin tugunning o'zi bo'shatilishi kerak."
+    },
+    {
+      "q": "Bo'sh oddiy BST ga 1, 2, 3, ..., 2000 kalitlari shu tartibda qo'shildi. Jami nechta taqqoslash (o'tilgan tugun) bo'ladi?",
+      "options": [
+        "1 999 000",
+        "Taxminan 2000 · 11 = 22 000",
+        "2000",
+        "4 000 000"
+      ],
+      "answer": 0,
+      "why": "Daraxt zanjirga aylanadi: i-kalit (0 dan) i ta tugundan o'tadi. Jami 0 + 1 + ... + 1999 = 2000 · 1999 / 2 = 1 999 000."
+    },
+    {
+      "q": "Darsdagi o'lchovda tasodifiy kirishli BST balandligi n = 100 da 15, n = 10 000 da 28 chiqdi. Bu qanday o'sishni ko'rsatadi?",
+      "options": [
+        "Chiziqli: n 100 baravar oshdi, balandlik ham shuncha oshishi kerak edi",
+        "Kvadratik",
+        "O'zgarmas: balandlik n ga bog'liq emas",
+        "Logarifmik: n 100 baravar oshganda balandlik ikki baravarga ham yetmadi"
+      ],
+      "answer": 3,
+      "why": "100 baravar ko'p kalitga atigi 13 qavat qo'shildi. Tasodifiy BST ning balandligi O(log n), saralangan kirishda esa n - 1 = 9999 bo'lardi."
+    },
+    {
+      "q": "Kalitlar odatda vaqt bo'yicha o'sib boruvchi ID'lar ko'rinishida keladi va eng yomon holatda ham tez qidiruv kafolati kerak. Nima to'g'ri tanlov?",
+      "options": [
+        "Oddiy BST - o'rtacha holatda O(log n)",
+        "Kalitlarni qo'shishdan oldin aralashtirish mumkin emas, shuning uchun linked list",
+        "Red-black tree yoki AVL kabi o'z-o'zini balanslovchi BST - balandlik eng yomon holatda ham O(log n)",
+        "BST ni har qo'shishdan keyin in-order aylanib chiqish"
+      ],
+      "answer": 2,
+      "why": "O'suvchi kalitlar oddiy BST ni degenerate qiladi. Balanslovchi daraxtlar rotatsiyalar bilan balandlikni log n tartibida ushlab turadi."
+    },
+    {
+      "q": "n = 1 000 000 tugunli red-black tree balandligining kafolatlangan yuqori chegarasi taxminan qancha? (log₂ 1 000 001 ≈ 19.93)",
+      "options": [
+        "20",
+        "39",
+        "1 000 000",
+        "1000"
+      ],
+      "answer": 1,
+      "why": "Red-black tree uchun balandlik ≤ 2 · log₂(n + 1) ≈ 2 · 19.93 ≈ 39.9, butun son bo'lgani uchun 39 dan oshmaydi. Minimal mumkin balandlik esa ⌊log₂ n⌋ = 19."
+    },
+    {
+      "q": "Degenerate daraxtda 10 000 tugun bor. Nega darsdagi o'lchov dasturi `insert` ni rekursiv emas, iterativ yozgan?",
+      "options": [
+        "Rekursiya chuqurligi balandlikka teng: 10 000 ta stack frame stack'ni to'ldirishi mumkin",
+        "Rekursiv insert noto'g'ri natija beradi",
+        "Iterativ variant asimptotik jihatdan tezroq: O(log n) o'rniga O(1)",
+        "C da rekursiv funksiya malloc chaqira olmaydi"
+      ],
+      "answer": 0,
+      "why": "Ikkala variant ham O(h) qadam qiladi, lekin rekursiv variant har qavat uchun stack frame ochadi. Zanjir daraxtda h = 9999, bu esa stack overflow xavfi."
+    }
+  ]
+}

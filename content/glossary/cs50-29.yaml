@@ -1,0 +1,95 @@
+# CS50 29-30-darslar atamalari.
+- term: binary tree
+  aliases: [ikkilik daraxt]
+  uz: "Har tugunning eng ko'pi bilan ikkita, chap va o'ng deb nomlangan bolasi bor daraxt."
+  course: cs50
+  lesson: 29
+- term: binary search tree
+  aliases: [BST]
+  uz: "Har tugunda chap qism daraxtdagi barcha kalitlar kichik, o'ngdagilari katta bo'lgan binary tree. Qidirish, qo'shish va o'chirish daraxt balandligiga teng O(h) vaqt oladi."
+  course: cs50
+  lesson: 29
+- term: in-order
+  aliases: [in-order traversal]
+  uz: "Daraxtni chap qism daraxt, tugun, o'ng qism daraxt tartibida aylanish. BST da kalitlarni o'sish tartibida beradi."
+  course: cs50
+  lesson: 29
+- term: pre-order
+  aliases: [pre-order traversal]
+  uz: "Daraxtni tugun, chap, o'ng tartibida aylanish. Birinchi element ildiz; daraxt shaklini saqlash va nusxalash uchun qulay."
+  course: cs50
+  lesson: 29
+- term: post-order
+  aliases: [post-order traversal]
+  uz: "Daraxtni chap, o'ng, tugun tartibida aylanish. Tugun bolalaridan keyin qayta ishlanadi, shuning uchun daraxtni free qilish aynan shu tartibda bajariladi."
+  course: cs50
+  lesson: 29
+- term: in-order voris
+  aliases: [in-order successor]
+  uz: "Tugun kalitidan keyingi eng kichik kalit; ikki bolali tugunda o'ng qism daraxtning eng chap tuguni. BST dan ikki bolali tugunni o'chirishda ishlatiladi."
+  course: cs50
+  lesson: 29
+- term: degenerate daraxt
+  aliases: [degenerate tree]
+  uz: "Har tugunda bittadan bola bo'lgan, shakli linked list'ga aylangan daraxt. Balandligi n - 1, shuning uchun BST amallari O(n) bo'ladi; saralangan kirish shunday daraxt beradi."
+  course: cs50
+  lesson: 29
+- term: AVL daraxti
+  aliases: [AVL tree]
+  uz: "Har tugunda chap va o'ng qism daraxt balandliklari farqi 1 dan oshmaydigan o'z-o'zini balanslovchi BST (1962). Balandligi taxminan 1.44 · log₂ n dan oshmaydi."
+  course: cs50
+  lesson: 29
+- term: red-black tree
+  uz: "Tugunlari qizil yoki qora rangli, rang qoidalari orqali muvozanat saqlanadigan o'z-o'zini balanslovchi BST. Balandligi 2 · log₂(n + 1) dan oshmaydi."
+  course: cs50
+  lesson: 29
+- term: LCG
+  aliases: [linear congruential generator]
+  uz: "Psevdotasodifiy sonlar generatori: x(k+1) = (a · x(k) + c) mod m. Bir xil boshlang'ich qiymatdan har doim bir xil ketma-ketlik beradi."
+  course: cs50
+  lesson: 29
+- term: hash funksiya
+  aliases: [hash function]
+  uz: "Kalitni butun songa aylantiradigan funksiya; son bucket'lar soniga qoldiq bilan keltirilib, massiv indeksiga aylanadi. Deterministik, tez va bir tekis bo'lishi kerak."
+  course: cs50
+  lesson: 30
+- term: hash table
+  uz: "Kalitning hash'i bo'yicha massiv katagiga (bucket'ga) to'g'ridan-to'g'ri murojaat qiladigan lug'at tuzilmasi. Qidirish o'rtacha O(1), eng yomon holatda O(n)."
+  course: cs50
+  lesson: 30
+- term: collision
+  aliases: [to'qnashuv]
+  uz: "Ikki xil kalitning bir xil indeksga tushishi. Bucket'lar soni chekli bo'lgani uchun muqarrar va separate chaining yoki open addressing bilan hal qilinadi."
+  course: cs50
+  lesson: 30
+- term: separate chaining
+  uz: "Collision'ni hal qilish usuli: har bucket - linked list boshi, bir xil indeksli kalitlar shu ro'yxatda saqlanadi."
+  course: cs50
+  lesson: 30
+- term: open addressing
+  uz: "Collision'ni hal qilish usuli: hamma element massivning o'zida, band katak uchrasa ma'lum qoida bo'yicha boshqa bo'sh katak qidiriladi."
+  course: cs50
+  lesson: 30
+- term: linear probing
+  uz: "Open addressing'ning eng sodda turi: band katakdan keyin navbatdagi katakka (i + 1, i + 2, ...) o'tish. Primary clustering'ga moyil."
+  course: cs50
+  lesson: 30
+- term: load factor
+  aliases: [to'lish koeffitsiyenti]
+  uz: "Hash table'dagi elementlar sonining bucket'lar soniga nisbati: α = n / m. Separate chaining'da o'rtacha zanjir uzunligi."
+  course: cs50
+  lesson: 30
+- term: rehashing
+  aliases: [qayta hashlash]
+  uz: "Bucket'lar soni o'zgarganda har bir elementning indeksini yangi m bo'yicha qayta hisoblab, yangi joyiga ko'chirish."
+  course: cs50
+  lesson: 30
+- term: trie
+  aliases: [prefiks daraxt]
+  uz: "Satr kalitlarni harfma-harf saqlaydigan daraxt: har tugun bitta prefiks, bolasi keyingi harf. Qidirish O(k), k - so'z uzunligi."
+  course: cs50
+  lesson: 30
+- term: FNV-1a
+  uz: "Fowler-Noll-Vo hash funksiyasining varianti: har bayt uchun avval xor, keyin FNV prime'ga ko'paytirish. 32-bitli varianti 2166136261 dan boshlanadi."
+  course: cs50
+  lesson: 30

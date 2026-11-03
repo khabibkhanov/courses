@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Hash funksiya `hash(s) = s[0] + (vaqt soniyalarda)` ko'rinishida yozildi. Asosiy muammo nima?",
+      "options": [
+        "Juda sekin ishlaydi",
+        "Deterministik emas: qo'shilgan kalit keyinroq boshqa bucket'da qidiriladi va topilmaydi",
+        "Faqat 26 ta bucket ishlatadi",
+        "Muammo yo'q, tasodiflik taqsimotni yaxshilaydi"
+      ],
+      "answer": 1,
+      "why": "Bir xil kalit har doim bir xil indeks berishi shart. Vaqtga bog'liq hash qo'shish va qidirish paytida turli bucket'ni ko'rsatadi."
+    },
+    {
+      "q": "djb2 bo'yicha bitta harfli \"a\" satrining hash'i qancha? ('a' = 97, h0 = 5381, h = h · 33 + c)",
+      "options": ["5478", "177 670", "177 573", "5381"],
+      "answer": 1,
+      "why": "5381 · 33 = 177 573, plyus 97 = 177 670."
+    },
+    {
+      "q": "Separate chaining jadvalida 2000 element va 500 bucket bor, hash bir tekis. Mavjud kalitni topish uchun o'rtacha taxminan nechta taqqoslash kerak?",
+      "options": ["1", "4", "3", "2000"],
+      "answer": 2,
+      "why": "α = 2000 / 500 = 4. Mavjud kalit uchun ≈ 1 + α/2 = 3 taqqoslash, mavjud bo'lmagani uchun ≈ α = 4."
+    },
+    {
+      "q": "Jadval 8 dan 16 bucket'ga kattalashtirildi. Nega elementlarni eski bucket raqamlarida qoldirib bo'lmaydi?",
+      "options": [
+        "Eski bucket'lar xotiradan o'chirilgan",
+        "Indeks hash mod m bo'yicha hisoblanadi; m o'zgargach, kalit boshqa bucket'da qidiriladi, shuning uchun har element qayta hashlanadi",
+        "Yangi bucket'lar bo'sh qolsa, xotira isrof bo'ladi",
+        "Faqat open addressing'da qayta hashlash kerak"
+      ],
+      "answer": 1,
+      "why": "Masalan hash = 13: 13 mod 8 = 5, lekin 13 mod 16 = 13. Qayta joylanmasa, qidiruv 13-bucket'ga qaraydi va kalitni topmaydi."
+    },
+    {
+      "q": "Jadval load factor 0.75 dan oshganda ikki baravar kattalashadi. n ta qo'shishda qayta hashlashdagi jami ko'chirishlar qanday o'sadi?",
+      "options": [
+        "O(n log n): har resize n ta elementni ko'chiradi",
+        "O(n^2)",
+        "O(n): ko'chirishlar geometrik qator, yig'indisi 2n dan oshmaydi, ya'ni har qo'shishga amortized O(1)",
+        "O(1): resize hech narsa ko'chirmaydi"
+      ],
+      "answer": 2,
+      "why": "Har resize oldingisidan ikki baravar ko'p ko'chiradi; 4 + 7 + 13 + ... + 769 = 1542 < 2 · 1000. Umumiy narx chiziqli."
+    },
+    {
+      "q": "Linear probing, m = 7, hash(x) = x mod 7. Bo'sh jadvalga 5, 12, 19 qo'shildi. 19 qaysi katakka tushadi?",
+      "options": ["5", "6", "1", "0"],
+      "answer": 3,
+      "why": "5 -> 5-katak. 12 mod 7 = 5 band, 6-katakka. 19 mod 7 = 5 band, 6 band, (6 + 1) mod 7 = 0 - bo'sh."
+    },
+    {
+      "q": "Linear probing jadvalida klaster ichidagi kalitni o'chirish uchun katakni shunchaki bo'sh qilib qo'yish nimaga olib keladi?",
+      "options": [
+        "Klasterdan keyingi kalitlarni qidirish shu bo'shliqda to'xtaydi va ular \"yo'q\" deb topiladi",
+        "Hech narsa, jadval to'g'ri ishlayveradi",
+        "Load factor oshadi",
+        "Hash funksiya o'zgaradi"
+      ],
+      "answer": 0,
+      "why": "Qidiruv birinchi bo'sh katakda to'xtaydi. Shuning uchun o'chirilgan katak tombstone bilan belgilanadi yoki klaster qayta joylanadi."
+    },
+    {
+      "q": "26 bolali trie'da 1 000 000 so'z bor. 7 harfli so'zni qidirish nechta tugun o'tishini talab qiladi (eng ko'pi bilan)?",
+      "options": ["log₂ 1 000 000 ≈ 20", "26 · 7 = 182", "1 000 000", "7"],
+      "answer": 3,
+      "why": "Trie'da har harf uchun bitta qadam: O(k), k = 7. So'zlar soni n qidiruv narxiga ta'sir qilmaydi."
+    },
+    {
+      "q": "Trie tuguni `bool is_word; struct trie *children[26];`. x86-64 da `sizeof` qancha va nega?",
+      "options": [
+        "105: 1 + 26 · 4",
+        "209: 1 + 26 · 8",
+        "216: 1 bayt bool, 7 bayt padding (pointer 8 ga tekislanadi), 26 · 8 = 208",
+        "108: 4 + 26 · 4"
+      ],
+      "answer": 2,
+      "why": "x86-64 da pointer 8 bayt va 8 ga tekislanadi, shuning uchun bool'dan keyin 7 bayt padding. wasm32 da esa 1 + 3 + 104 = 108."
+    },
+    {
+      "q": "Kalitlarni alifbo tartibida chiqarish va berilgan oraliqdagi kalitlarni topish tez-tez kerak. Qaysi tuzilma eng kam mos keladi?",
+      "options": [
+        "Hash table: kalitlar bucket'lar bo'ylab tartibsiz sochilgan",
+        "Muvozanatli BST",
+        "Saralangan massiv",
+        "Trie"
+      ],
+      "answer": 0,
+      "why": "Hash table tartibni saqlamaydi: tartibda chiqarish uchun hamma kalitni saralash kerak. BST (in-order), saralangan massiv va trie (alifbo pre-order) tartibni tabiiy beradi."
+    }
+  ]
+}
