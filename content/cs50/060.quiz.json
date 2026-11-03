@@ -46,7 +46,7 @@
       "why": "dict ichida hash table, B-tree indeks esa tartiblangan kalitlar bo'yicha qidiruvni log vaqtga tushiradi - binary search g'oyasining diskka moslashgan ko'rinishi."
     },
     {
-      "q": "Saralangan 1 000 000 elementli massivda yarim ochiq oraliq bilan yozilgan binary search (har doim ⌈log₂ n⌉ qadam) nechta qadam qiladi?",
+      "q": "Saralangan 1 000 000 elementli massivda yarim ochiq oraliq bilan yozilgan binary search (ko'pi bilan ⌈log₂ n⌉ qadam) eng ko'pi bilan nechta qadam qiladi?",
       "options": [
         "10",
         "1000",
@@ -54,7 +54,7 @@
         "500 000"
       ],
       "answer": 2,
-      "why": "2^19 = 524 288 < 1 000 000 ≤ 2^20 = 1 048 576, demak ⌈log₂ 1 000 000⌉ = 20."
+      "why": "2^19 = 524 288 < 1 000 000 ≤ 2^20 = 1 048 576, demak ⌈log₂ 1 000 000⌉ = 20. Yarim ochiq yozuv har x uchun 19 yoki 20 qadam qiladi, eng ko'pi 20."
     },
     {
       "q": "Talabalar ballari bo'yicha ikki so'rov kerak: ism bo'yicha aniq qidiruv va '80 dan 90 gacha ball olganlar soni'. Qaysi tuzilmalar juftligi mos?",
