@@ -267,7 +267,7 @@ export interface FuelConsumptionService {
 
 Tiplar shaklni aytadi, lekin ma'noni emas. Endi comments-first usulida, implementatsiyadan oldin interfeys kommentini yozamiz:
 
-```ts
+```ts run
 export interface FuelConsumptionQuery {
   vehicleId: string;
   /** Oraliq boshlanishi, kiradi. */
@@ -292,6 +292,27 @@ export interface FuelConsumptionService {
    * @throws RangeError - `to` `from`dan oldin bo'lsa yoki oraliq 31 kundan uzun bo'lsa
    */
   getConsumption(query: FuelConsumptionQuery): Promise<number | null>;
+}
+// Sinab ko'ring: `to` ni birinchi o'lchov vaqtiga tenglang - oxiri kirmasligini ko'rasiz.
+const readings = [
+  { at: new Date("2026-10-02T08:00:00Z"), liters: 12.5 },
+  { at: new Date("2026-10-05T08:00:00Z"), liters: 20 },
+];
+const service: FuelConsumptionService = {
+  async getConsumption({ from, to }) {
+    if (to <= from) throw new RangeError("`to` `from`dan keyin bo'lishi kerak");
+    const inRange = readings.filter((r) => r.at >= from && r.at < to);
+    return inRange.length === 0 ? null : inRange.reduce((sum, r) => sum + r.liters, 0);
+  },
+};
+const q = (from: string, to: string) => ({ vehicleId: "01A123BC", from: new Date(from), to: new Date(to) });
+console.log("oktyabr:", await service.getConsumption(q("2026-10-01T00:00:00Z", "2026-11-01T00:00:00Z")));
+console.log("oxiri kirmaydi:", await service.getConsumption(q("2026-10-02T08:00:00Z", "2026-10-05T08:00:00Z")));
+console.log("o'lchov yo'q (0 emas):", await service.getConsumption(q("2026-12-01T00:00:00Z", "2027-01-01T00:00:00Z")));
+try {
+  await service.getConsumption(q("2026-11-01T00:00:00Z", "2026-10-01T00:00:00Z"));
+} catch (e) {
+  console.log("xato turi:", (e as Error).name);
 }
 ```
 

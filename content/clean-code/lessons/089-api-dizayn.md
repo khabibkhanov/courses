@@ -387,6 +387,50 @@ Nima o'zgardi:
 - **Ichki ma'lumot yo'q.** Kim bloklagani klientga kerak emas, u faqat nima qilish kerakligini biladi.
 - **Shartnoma tiplangan.** `VehicleResponse` API hujjati vazifasini bajaradi va OpenAPI generatsiyasi uchun asos.
 
+### Mashq: bitta xato formati
+
+Ikki xil xato shaklini bitta Problem formatiga keltiring. `toProblem(err)`: `NotFoundError` - 404, `VehicleBlockedError` - 403 (`vehicleId` bilan, lekin `blockedBy` klientga chiqmasin), boshqa har qanday xato - umumiy 500, ichki xabarsiz.
+
+```ts run
+class NotFoundError extends Error {
+  constructor(readonly entity: string, readonly id: string) {
+    super(`${entity} ${id} not found`);
+  }
+}
+class VehicleBlockedError extends Error {
+  constructor(readonly vehicleId: string, readonly blockedBy: string) {
+    super(`Vehicle ${vehicleId} blocked by ${blockedBy}`);
+  }
+}
+
+type Problem = { type: string; title: string; status: number; detail: string; vehicleId?: string };
+
+function toProblem(err: unknown): Problem {
+  // Yechimingizni shu yerga yozing
+  return { type: "about:blank", title: "Error", status: 200, detail: "" };
+}
+
+console.log(toProblem(new VehicleBlockedError("v1", "karimov-admin")));
+```
+
+```ts test
+check("NotFoundError - 404 Not Found", () => {
+  const p = toProblem(new NotFoundError("vehicle", "v1"));
+  return p.status === 404 && p.title === "Not Found";
+});
+check("VehicleBlockedError - 403 va maxsus type", () => {
+  const p = toProblem(new VehicleBlockedError("v1", "karimov-admin"));
+  return p.status === 403 && p.type === "https://api.fleet.uz/problems/vehicle-blocked";
+});
+check("bloklangan mashina javobida vehicleId bor", () =>
+  toProblem(new VehicleBlockedError("v1", "karimov-admin")).vehicleId === "v1");
+check("blockedBy (admin ismi) klientga chiqmaydi", () =>
+  !JSON.stringify(toProblem(new VehicleBlockedError("v1", "karimov-admin"))).includes("karimov"));
+check("noma'lum xato - 500", () => toProblem(new Error("boom")).status === 500);
+check("noma'lum xatoning ichki xabari chiqmaydi", () =>
+  !JSON.stringify(toProblem(new Error("db password=secret"))).includes("secret"));
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Ichki, bitta iste'molchili API.** Agar backend va frontend bitta jamoada, bitta monorepo'da va birga deploy qilinsa (masalan, Next.js server action'lari yoki tRPC), har bir endpoint uchun alohida request/response DTO va `type` URI hujjatlari ortiqcha bo'lishi mumkin. Umumiy tiplar va inferensiya ko'pincha yetarli. Lekin validatsiya baribir kerak: kirish baribir ishonchsiz.

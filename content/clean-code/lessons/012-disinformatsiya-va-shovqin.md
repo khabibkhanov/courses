@@ -219,7 +219,7 @@ export class DriversService {
 
 To'rtta metod, to'rtta muammo. Birinchi uchtasi o'quvchiga qaysi birini chaqirish kerakligini aytmaydi. To'rtinchisi `is` bilan boshlanadi, lekin boolean emas, obyekt qaytaradi. Chaqiruvchi `if (await service.isActive(id))` yozadi va bu tasodifan ishlaydi (obyekt truthy), lekin ertaga kimdir natijani `=== true` bilan solishtiradi va xato paydo bo'ladi.
 
-```ts
+```ts run
 type DriverId = string;
 
 type Driver = { id: DriverId; fullName: string; employmentStatus: "employed" | "dismissed" };
@@ -258,6 +258,25 @@ export class DriversService {
     return driver?.employmentStatus === "employed";
   }
 }
+// Sinab ko'ring: "employed" ni "dismissed" ga almashtirib, isEmployed natijasini kuzating.
+const driversRepo: DriversRepository = {
+  async findById(id) {
+    return id === "d1" ? { id, fullName: "Karimov A.", employmentStatus: "employed" } : null;
+  },
+  async findWithLicense() {
+    return null;
+  },
+};
+const statsClient: DriverStatsClient = {
+  async fetchMonthlyStats(id, month) {
+    return { driverId: id, month, distanceKm: 4200, harshBrakingCount: 3 };
+  },
+};
+const service = new DriversService(driversRepo, statsClient);
+console.log("findDriver:", await service.findDriver("d1"));
+console.log("findDriver (yo'q):", await service.findDriver("d2"));
+console.log("isEmployed:", await service.isEmployed("d1"));
+console.log("stats:", await service.fetchMonthlyStats("d1", "2026-10"));
 ```
 
 Nima o'zgardi:

@@ -342,6 +342,38 @@ export function FuelEventsTable({ events }: { events: FuelEvent[] }) {
 
 Nima o'zgardi: to'rtta state o'rniga bitta (`kind`), chunki Thinking in React'ning uchinchi savoliga ko'ra qolganlari hisoblanadi. Uchta effekt yo'qoldi, demak "bu qiymat qachon yangilanadi" degan savol ham yo'qoldi: u har doim joriy props va state'ga mos. Magic number nomlandi. `as` o'rniga kichik type predicate. Kod qisqardi, lekin bu maqsad emas edi, natija edi.
 
+### Brauzerda sinab ko'ring
+
+Effektlarsiz variantning mantiqi oddiy funksiyaga aylanadi: kirish (`events`, `kind`) har doim mos chiqishni beradi, oraliq holat yo'q.
+
+```ts run
+// Sinab ko'ring: SUSPICIOUS_DRAIN_LITERS ni 10 ga tushiring yoki events'ga yana bitta "drain" qo'shing.
+type FuelEvent = { id: string; vehicleId: string; liters: number; kind: "refuel" | "drain" };
+type KindFilter = FuelEvent["kind"] | "all";
+
+const SUSPICIOUS_DRAIN_LITERS = 50;
+
+function viewOf(events: FuelEvent[], kind: KindFilter) {
+  const rows = kind === "all" ? events : events.filter((e) => e.kind === kind);
+  const drainTotal = rows
+    .filter((r) => r.kind === "drain")
+    .reduce((sum, r) => sum + r.liters, 0);
+  const hasSuspiciousDrain = drainTotal > SUSPICIOUS_DRAIN_LITERS;
+  return { rows, drainTotal, hasSuspiciousDrain };
+}
+
+const events: FuelEvent[] = [
+  { id: "e1", vehicleId: "V1", liters: 60, kind: "refuel" },
+  { id: "e2", vehicleId: "V1", liters: 35, kind: "drain" },
+  { id: "e3", vehicleId: "V2", liters: 30, kind: "drain" },
+];
+
+for (const kind of ["all", "refuel", "drain"] as KindFilter[]) {
+  const v = viewOf(events, kind);
+  console.log(kind, "- qatorlar:", v.rows.length, "- to'kilgan:", v.drainTotal, "- shubhali:", v.hasSuspiciousDrain);
+}
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Haqiqatan qimmat hisoblash.** Agar `rows` o'n minglab GPS nuqtalari bo'lsa va har bir klaviatura bosishida qayta hisoblansa, `useMemo` (yoki React Compiler) kerak. Lekin avval o'lchang: hujjat ham shuni aytadi.

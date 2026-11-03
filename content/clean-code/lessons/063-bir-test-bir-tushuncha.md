@@ -309,6 +309,54 @@ Nima o'zgardi va nima uchun:
 - **Bloklash testi yangi sababni ochdi.** Starter faqat `approved: false` ni tekshirardi. Endi sabab ham aniq, shuning uchun karta blokirovka emas, limit sababli rad etilsa test yiqiladi.
 - **Arrange'dagi `authorize` Act emas.** `aCardWithDailyLimit(100, 90)` ichidagi chaqiruv - holatni tayyorlash. U yordamchiga chiqarilgani uchun testda Act bitta va aniq.
 
+### Brauzerda sinab ko'ring
+
+Har test bitta tushunchani tekshiradi, shuning uchun yiqilgan test nomi aynan nima buzilganini aytadi.
+
+```ts run
+class FuelCard {
+  private used = 0;
+  private blocked = false;
+  constructor(private readonly opts: { dailyLimitLiters: number }) {}
+  block() { this.blocked = true; }
+  authorize(liters: number): { approved: boolean; reason?: string } {
+    if (this.blocked) return { approved: false, reason: "card_blocked" };
+    if (this.used + liters > this.opts.dailyLimitLiters) return { approved: false, reason: "daily_limit" };
+    this.used += liters;
+    return { approved: true };
+  }
+}
+
+function aCardWithDailyLimit(liters: number, alreadyUsedToday = 0): FuelCard {
+  const card = new FuelCard({ dailyLimitLiters: liters });
+  if (alreadyUsedToday > 0) card.authorize(alreadyUsedToday);
+  return card;
+}
+
+function it(name: string, body: () => void) {
+  try { body(); console.log("OK    ", name); }
+  catch (e) { console.log("YIQILDI", name, "-", (e as Error).message); }
+}
+function expectEqual(actual: unknown, expected: unknown) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+    throw new Error(`kutilgan ${JSON.stringify(expected)}, kelgan ${JSON.stringify(actual)}`);
+  }
+}
+
+it("limit doirasida tasdiqlaydi", () => {
+  expectEqual(aCardWithDailyLimit(100, 60).authorize(40), { approved: true });
+});
+it("limitdan oshsa daily_limit bilan rad etadi", () => {
+  expectEqual(aCardWithDailyLimit(100, 90).authorize(20), { approved: false, reason: "daily_limit" });
+});
+it("bloklangan karta card_blocked bilan rad etadi", () => {
+  const card = aCardWithDailyLimit(100);
+  card.block();
+  expectEqual(card.authorize(1), { approved: false, reason: "card_blocked" });
+});
+// Sinab ko'ring: block() qatorini o'chiring - faqat blokirovka testi yiqiladi, qolganlari emas.
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Assert sonini sanash.** "Bitta expect" qoidasini metrika sifatida qo'llash testlarni maydalaydi va tayyorgarlikni takrorlaydi. Martinning o'zi ham asosiy qoida tushuncha ekanini aytadi.

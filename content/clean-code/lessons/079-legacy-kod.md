@@ -372,6 +372,53 @@ Xuddi shunday: aniq 3 kun (chegara), 0 kun, bo'sh ro'yxat va bir nechta shartnom
 
 Testlarni yozish paytida bir narsa ko'rinadi: `days` hisobi vaqt zonasiga bog'liq va yarim tunga yaqin ishga tushirilsa, natija o'zgarishi mumkin. Bu characterization test topgan potentsial xato. Uni hozir tuzatmaymiz, qayd qilamiz.
 
+### Brauzerda sinab ko'ring
+
+Seam'lar qo'yilgach servisni Nest'siz, oddiy fake'lar bilan ishga tushirish mumkin. Bu yerda dekoratorlar olib tashlangan, mantiq esa o'zgarmagan.
+
+```ts run
+// Sinab ko'ring: now() ni "2026-03-02" ga o'zgartiring - matn "To'lov kuni keldi" ga o'tadi (chegara: aniq 3 kun).
+interface DueContracts {
+  findDue(asOf: Date): Promise<{ tenantPhone: string; nextPaymentAt: Date }[]>;
+}
+interface SmsSender {
+  send(phone: string, text: string): Promise<void>;
+}
+interface Clock {
+  now(): Date;
+}
+
+class RentReminderService {
+  constructor(
+    private readonly contracts: DueContracts,
+    private readonly sms: SmsSender,
+    private readonly clock: Clock,
+  ) {}
+
+  async sendReminders(): Promise<number> {
+    const today = this.clock.now();
+    const due = await this.contracts.findDue(today);
+    let sent = 0;
+    for (const c of due) {
+      const days = Math.floor((today.getTime() - c.nextPaymentAt.getTime()) / 86_400_000);
+      const text = days > 3 ? `Qarzdorlik: ${days} kun` : "To'lov kuni keldi";
+      await this.sms.send(c.tenantPhone, text);
+      sent++;
+    }
+    return sent;
+  }
+}
+
+const sent: string[] = [];
+const service = new RentReminderService(
+  { findDue: async () => [{ tenantPhone: "+998901234567", nextPaymentAt: new Date("2026-03-01") }] },
+  { send: async (_phone, text) => { sent.push(text); } },
+  { now: () => new Date("2026-03-05T10:00:00Z") },
+);
+const count = await service.sendReminders();
+console.log(count, sent);
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Faqat test uchun interfeys.** Har bir klass uchun interfeys yaratish Speculative Generality'ga (75-dars) aylanishi mumkin. Feathers texnikalari tashqi tizimlar, vaqt, tasodif va global holat kabi haqiqiy seam'lar uchun. Ichki, sof hisob klasslari uchun interfeys kerak emas.

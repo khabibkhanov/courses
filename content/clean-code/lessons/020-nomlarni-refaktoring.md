@@ -234,7 +234,7 @@ Har bir qadam alohida deploy va ularning har biridan keyin orqaga qaytish mumkin
 
 Telemetriya xizmati `fuel.drop` nomli event chiqaradi. 17-darsdagi suhbatdan keyin jamoa uni `fuel.suspected-drain` ga o'zgartirishga qaror qildi, chunki "drop" har qanday pasayishni, jumladan oddiy sarfni ham bildirishi mumkin. Eventni uch xizmat tinglaydi: bildirishnomalar, hisobotlar va hamkorning webhook'i.
 
-```ts
+```ts run
 export type SuspectedFuelDrainPayload = {
   vehicleId: string;
   dropLiters: number;
@@ -264,6 +264,19 @@ export class FuelEventsPublisher {
     }
   }
 }
+// Sinab ko'ring: () => true ni () => false qiling, eski hodisa yuborilmasligini ko'ring.
+const sent: string[] = [];
+const bus: EventBus = {
+  async publish(name) {
+    sent.push(name);
+  },
+};
+const payload = { vehicleId: "01A123BC", dropLiters: 42, detectedAtMs: 1760000000000 };
+await new FuelEventsPublisher(bus, () => true).publishSuspectedDrain(payload);
+console.log("migratsiya davrida:", sent);
+sent.length = 0;
+await new FuelEventsPublisher(bus, () => false).publishSuspectedDrain(payload);
+console.log("eski consumer'lar ko'chgach:", sent);
 ```
 
 Bu kod parallel change'ning expand bosqichi:

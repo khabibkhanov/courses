@@ -271,6 +271,39 @@ Nima o'zgardi:
 
 Bu yerda `PaymentGateway` interfeysi foydali, chunki haqiqatan bir nechta provayder bor va testda fake kerak. Bu "har bir klassga interfeys" emas (56 va 57-darslar).
 
+### Brauzerda sinab ko'ring
+
+Chuqur modul: chaqiruvchi faqat `charge` ni biladi, imzo, tiyin va xato kodlari ichkarida qoladi.
+
+```ts run
+type Money = { amount: bigint; currency: "UZS" };
+type ChargeResult =
+  | { status: "succeeded"; providerTxId: string }
+  | { status: "declined"; reason: "insufficient_funds" | "card_blocked" | "unknown" };
+
+class FakePaymeGateway {
+  async charge(orderId: string, money: Money): Promise<ChargeResult> {
+    const tiyin = money.amount * 100n; // so'm -> tiyin shu yerda
+    const res = this.send({ method: "receipts.create", orderId, tiyin });
+    return this.toChargeResult(res);
+  }
+  private send(body: { orderId: string; tiyin: bigint }) {
+    if (body.tiyin > 500_000_00n) return { error: { code: -31001 } };
+    return { result: { receipt: { _id: "tx-" + body.orderId } } };
+  }
+  private toChargeResult(res: any): ChargeResult {
+    if (res.error?.code === -31001) return { status: "declined", reason: "insufficient_funds" };
+    if (res.error) return { status: "declined", reason: "unknown" };
+    return { status: "succeeded", providerTxId: res.result.receipt._id };
+  }
+}
+
+const gateway = new FakePaymeGateway();
+console.log(await gateway.charge("A-1", { amount: 120_000n, currency: "UZS" }));
+console.log(await gateway.charge("A-2", { amount: 9_000_000n, currency: "UZS" }));
+// Sinab ko'ring: summani o'zgartiring - chaqiruvchi -31001 kodini hech qachon ko'rmaydi.
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Chuqurlikni "katta funksiya" uchun bahona qilish.** Chuqurlik interfeys haqida, implementatsiya ichi esa baribir o'qiladigan bo'lishi kerak. 400 qatorli bitta metod chuqur emas, u shunchaki o'qib bo'lmaydi.

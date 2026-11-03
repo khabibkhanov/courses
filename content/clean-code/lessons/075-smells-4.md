@@ -304,7 +304,18 @@ Zanjir yashirildi, lekin endi `Listing` va `Owner` da "faqat uzatuvchi" getter'l
 
 Yaxshiroq yo'l - kitob tavsiyasi: natija bilan nima qilinishini ko'ring va bu xatti-harakatni ko'chiring. Komissiya - e'lonning xususiyati, demak hisobni `Listing` ga ko'chiramiz (Move Function), stavka manbasini esa bitta joyda yashiramiz:
 
-```ts
+```ts run
+// Sinab ko'ring: commissionRate ni 0.05 dan 0.08 ga o'zgartiring - faqat Owner/Region ma'lumoti o'zgaradi, mijoz kodi (oxirgi qator) emas.
+type Region = { code: string; commissionRate: number };
+type Address = { city: string; region: Region };
+
+class Owner {
+  constructor(readonly id: string, private readonly address: Address) {}
+  get commissionRate(): number {
+    return this.address.region.commissionRate;
+  }
+}
+
 class Listing {
   constructor(
     readonly id: string,
@@ -316,6 +327,10 @@ class Listing {
     return Math.round(this.priceTiyin * this.owner.commissionRate);
   }
 }
+
+const owner = new Owner("o1", { city: "Toshkent", region: { code: "TAS", commissionRate: 0.05 } });
+const listing = new Listing("l1", 1_000_000, owner);
+console.log(listing.commission());
 ```
 
 Endi mijoz `listing.commission()` ni chaqiradi va ichki tuzilmani bilmaydi. Stavka manbasi o'zgarsa, faqat `Owner.commissionRate` o'zgaradi. Bitta delegatsiya getter qoldi, lekin u ma'noli: "egasining stavkasi" domen tushunchasi.

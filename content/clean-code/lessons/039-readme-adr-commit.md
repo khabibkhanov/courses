@@ -308,6 +308,38 @@ Closes: FLEET-388
 
 Yana bir foydasi: bunday tarixdan changelog va versiya raqami avtomatik hosil qilinadi (`semantic-release`, `release-please`, `changesets` kabi vositalar har biri o'z yondashuviga ega). Tanlov jamoa jarayoniga bog'liq.
 
+### Brauzerda sinab ko'ring
+
+`commitlint` qoidalarining mini-versiyasi: type, scope va sarlavha uzunligini tekshiradi.
+
+```ts run
+const TYPES = ["feat", "fix", "docs", "refactor", "test", "chore", "ci"];
+const SCOPES = ["web", "api", "db", "billing", "fuel", "trips", "deps", "ci"];
+
+function lint(msg: string): string[] {
+  const errors: string[] = [];
+  const m = msg.match(/^(\w+)(?:\(([^)]+)\))?: (.+)$/);
+  if (!m) return ["type: yo'q yoki format noto'g'ri"];
+  const [, type, scope, subject] = m;
+  if (!TYPES.includes(type)) errors.push(`type "${type}" ruxsat etilmagan`);
+  if (scope && !SCOPES.includes(scope)) errors.push(`scope "${scope}" ruxsat etilmagan`);
+  if (msg.split("\n")[0].length > 72) errors.push("sarlavha 72 belgidan uzun");
+  if (subject.endsWith(".")) errors.push("sarlavha nuqta bilan tugamasin");
+  return errors;
+}
+
+for (const msg of [
+  "update",
+  "fix(misc): stuff",
+  "Feat(api): Add endpoint",
+  "feat(api): add fuel theft endpoint",
+]) {
+  const errs = lint(msg);
+  console.log(errs.length ? "RAD  " : "OK   ", JSON.stringify(msg), errs.join("; "));
+}
+// Sinab ko'ring: SCOPES ro'yxatiga "misc" qo'shib, ikkinchi xabar natijasini ko'ring.
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Har bir mayda qaror uchun ADR.** "Lodash o'rniga native metodlar" yoki "bu komponent nomi" uchun ADR - ortiqcha byurokratiya. ADR faqat qaytarish qimmat bo'lgan, arxitekturaga ta'sir qiluvchi qarorlar uchun: ma'lumotlar bazasi, autentifikatsiya, modul chegaralari, xabar navbati, deploy modeli.

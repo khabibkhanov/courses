@@ -272,6 +272,33 @@ await assignmentRepo.create({ vehicleId, driverId, startedAt: new Date() });
 
 Bu misol vazifalar taqsimotini ko'rsatadi: Prettier shovqinni olib tashlaydi, ESLint bug'ni topadi, odam esa dizayn haqida o'ylaydi. Shuningdek, bu yerda race condition ham bor (ikki parallel so'rov bitta haydovchini ikki mashinaga tayinlashi mumkin), uni hech qanday formatter yoki linter topmaydi (87-dars).
 
+### Brauzerda sinab ko'ring
+
+`await` unutilgan holatning ta'siri: funksiya "muvaffaqiyatli" tugaydi, lekin yozuv hali saqlanmagan.
+
+```ts run
+const db: string[] = [];
+async function create(row: string) {
+  await new Promise((r) => setTimeout(r, 20)); // bazaga yozish kechikadi
+  db.push(row);
+}
+
+async function assignWrong() {
+  create("tayinlash"); // await yo'q - floating promise
+  return "ok";
+}
+async function assignFixed() {
+  await create("tayinlash");
+  return "ok";
+}
+
+console.log("wrong:", await assignWrong(), "-> bazada:", db.length);
+await new Promise((r) => setTimeout(r, 50));
+db.length = 0;
+console.log("fixed:", await assignFixed(), "-> bazada:", db.length);
+// Sinab ko'ring: assignWrong ichiga await qo'shing va natijani solishtiring.
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Ma'noli qo'lda formatlash buziladigan joylar.** Matritsalar, jadval ko'rinishidagi test ma'lumotlari, ASCII diagrammalar. Bunday joylarda `// prettier-ignore` kommenti ishlatiladi. Lekin uni kam ishlating va sababini yozing, aks holda u formatlash bahslariga orqa eshik bo'ladi.

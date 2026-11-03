@@ -224,7 +224,7 @@ export function buildSafetyReport(month: string): { csv: string } { return { csv
 
 To'rt funksiya, to'rt fe'l, to'rt xil qaytarish turi. `create` va `make` orasida farq bormi? `createIdleReport` nima uchun `void` qaytaradi, ya'ni u hisobotni qayerdadir saqlaydimi yoki yuboradimi? O'quvchi bu savollarga nomdan javob topa olmaydi.
 
-```ts
+```ts run
 export type ReportMonth = `${number}-${number}`;
 export type Report = { kind: ReportKind; month: ReportMonth; csv: string };
 export type ReportKind = "fuel" | "mileage" | "idle" | "safety";
@@ -250,6 +250,14 @@ export async function publishReport(
 ): Promise<void> {
   await upload(`${report.kind}-${report.month}.csv`, report.csv);
 }
+// Sinab ko'ring: build* yon ta'sirsiz, faqat publishReport yuklaydi.
+const report = buildFuelReport("2026-10");
+console.log("qurildi:", report);
+const uploaded: string[] = [];
+await publishReport(report, async (fileName) => {
+  uploaded.push(fileName);
+});
+console.log("yuklandi:", uploaded);
 ```
 
 Nima o'zgardi:

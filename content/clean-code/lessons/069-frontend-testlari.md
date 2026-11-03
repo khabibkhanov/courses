@@ -405,6 +405,31 @@ Nima o'zgardi va nima uchun:
 - **`aria-expanded` tekshirildi.** Bu implementatsiya emas: ekran o'quvchi foydalanuvchisi uchun aynan shu atribut tugma holatini aytadi.
 - **Asinxronlik `findBy` bilan.** Qat'iy `setTimeout` yoki `act` bilan qo'lda o'rash yo'q.
 
+### Brauzerda sinab ko'ring
+
+Accordion'ni ikki usulda tekshiramiz: ichki state bo'yicha va foydalanuvchi ko'radigan natija bo'yicha. Ichki o'zgaruvchini `openIndex`dan massivga almashtirsangiz, birinchi tekshiruv buziladi, ikkinchisi esa o'tadi.
+
+```ts run
+// Sinab ko'ring: openIndex o'rniga openIndexes massivini ishlating (state() ni ham moslang) - xatti-harakat tekshiruvi o'zgarmay o'tadi.
+function createAccordion() {
+  let openIndex = -1;
+  return {
+    state: () => ({ openIndex }),
+    toggle(i: number) {
+      openIndex = openIndex === i ? -1 : i;
+    },
+    isOpen: (i: number) => openIndex === i,
+  };
+}
+
+const acc = createAccordion();
+acc.toggle(1);
+console.log("implementatsiyaga bog'langan (openIndex === 1):", acc.state().openIndex === 1);
+console.log("xatti-harakat (1-panel ochiq, 0-panel yopiq):", acc.isOpen(1) && !acc.isOpen(0));
+acc.toggle(1);
+console.log("qayta bosilgandan keyin 1-panel ochiqmi:", acc.isOpen(1));
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Vizual ko'rinish.** Ranglar, joylashuv, responsive tartib DOM testlarida tekshirilmaydi. Buning uchun vizual regressiya vositalari yoki qo'lda ko'rib chiqish kerak. Vocke ham layout'ni test qilishni alohida, qiyinroq vazifa deb ataydi.
