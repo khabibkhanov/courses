@@ -10,7 +10,7 @@ sources:
   - id: gopl
     note: "Kitobning package va import boblari (umumiy tayanch; aniq qoidalar spetsifikatsiya va go buyrug'idan olingan)"
   - id: code-review-comments
-    note: "Imports va Package Names bo'limlari (blank import faqat main yoki testlarda, nomlash qoidalari)"
+    note: "Umumiy tayanch (kod uslubi); bu darsdagi aniq qoidalar spetsifikatsiya va go buyrug'idan olingan"
 quiz:
   - q: "Paketda ikki fayl: a_first.go va telemetry.go, ikkalasida init() bor. Qaysi biri avval ishlaydi?"
     options:
@@ -163,6 +163,8 @@ Node.js'da modul bir marta, birinchi `require` da baholanadi, tartibi import gra
 
 Har fayl `package name` bilan boshlanadi; bir katalogdagi fayllar bitta paket. Modul (`go.mod`, 2-dars) paketlar to'plami. Eksport qoidasi spetsifikatsiyada: identifikator eksport qilinadi, agar uning birinchi harfi Unicode bosh harf (Lu kategoriyasi) bo'lsa va u paket blokida e'lon qilingan yoki maydon yoki metod nomi bo'lsa. Qolganlari paketga yopiq. Bu yagona mexanizm: `public`/`private` kalit so'zi yo'q.
 
+Import yo'li va paket nomi ikki alohida narsa. Yo'l (`example.com/l10/a/telemetry`) go buyrug'iga paketni topishda xizmat qiladi, nom esa fayldagi `package` qatoridan olinadi va kodda `telemetry.Version` shaklida ishlatiladi. Odatda ular mos keladi, lekin spetsifikatsiya buni talab qilmaydi. Bitta katalogdagi barcha fayllarda nom bir xil bo'lishi shart, aks holda kompilyatsiya bo'lmaydi. Dastur `main` nomli paketdan boshlanadi va unda argumentsiz `main` funksiyasi bo'lishi kerak. Import qilingan, lekin ishlatilmagan paket ham xato: shu sababli `_` kerak bo'ladi.
+
 Eksport qilinmagan nomga paket tashqarisidan murojaat qilish kompilyatsiya xatosi: `name secret not exported by package telemetry`.
 
 `internal` katalogi go buyrug'ining qoidasi, til spetsifikatsiyasida emas: `a/internal/cfg` paketini faqat `a` ning daraxti ichidagi kod import qila oladi. Boshqa modul urinsa, `use of internal package ... not allowed`. Bu eksport qilingan, lekin ommaviy API bo'lmasligi kerak bo'lgan kod uchun to'g'ri vosita.
@@ -190,7 +192,7 @@ Blank identifier `_` bog'lanish yaratmaydi. Undan foydalaniladi:
 - **Compile-time interface tekshiruvi**: `var _ Sensor = (*Fuel)(nil)`. Metod imzosi o'zgarsa, xato tipning o'z paketida chiqadi.
 - **Blank import**: `import _ "lib/math"`. Paket faqat initsializatsiya uchun bog'lanadi, yon ta'sirlari (`init`) bajariladi, nomlari kiritilmaydi.
 
-Blank import `database/sql`, tasvir formatlari va shunga o'xshash "plugin" modelida keng tarqalgan: driver paketi `init()` da o'zini markaziy registry'ga yozadi, asosiy dastur esa `_` bilan import qiladi. Code Review Comments blank import'ni faqat `main` paketi yoki testlarda ishlatishni tavsiya qiladi: kutubxona uchun bu yashirin bog'liqlik.
+Blank import `database/sql`, tasvir formatlari va shunga o'xshash "plugin" modelida keng tarqalgan: driver paketi `init()` da o'zini markaziy registry'ga yozadi, asosiy dastur esa `_` bilan import qiladi. Muallifning tavsiyasi (manbada tekshirilmagan): blank import'ni `main` paketi yoki testlarda qiling. Kutubxona paketida u foydalanuvchi ko'rmaydigan yashirin bog'liqlik bo'ladi.
 
 ### Nega init'dan qochish kerak
 
@@ -360,8 +362,8 @@ cannot use (*Fuel)(nil) (value of type *Fuel) as Sensor value in variable declar
 - Kutubxona paketida blank import orqali yon ta'sirni yashirmang. Foydalanuvchi bog'liqlikni ko'rmaydi. `main` ichida aniq `_` import qiling.
 - Init tartibiga fayl nomi orqali tayanmang. `a_first.go` qayta nomlansa, tartib o'zgaradi. Bog'liqlik kerak bo'lsa, uni o'zgaruvchi bog'liqligi yoki funksiya argumenti sifatida ifodalang.
 - Hamma narsani eksport qilmang. Har eksport qilingan nom keyinchalik API sifatida qoladi. Dastlab yopiq qiling, `internal` bilan chegaralang.
-- Paket nomini `util`, `common`, `helpers` deb qo'ymang: Code Review Comments qisqa, mazmunli, kichik harfli nomlarni tavsiya qiladi. Nom import qiluvchi kodda `package.Name` ko'rinishida o'qiladi.
-- Global o'zgaruvchilarga tayanmang. Concurrent kodda ular data race manbai, testda esa holatni tozalash qiyin (47-dars).
+- Paket nomini `util`, `common`, `helpers` deb qo'ymang (muallifning tavsiyasi). Nom import qiluvchi kodda `package.Name` ko'rinishida o'qiladi, shuning uchun `util.Parse` hech narsa demaydi, `telemetry.Parse` aytadi.
+- Global o'zgaruvchilarga tayanmang. Concurrent kodda ular data race manbai, testda esa holatni tozalash qiyin. Zero value ishlaydigan, qiymat sifatida uzatiladigan tiplar (8-dars) global holatdan yaxshiroq.
 
 ## Stack'da: Node.js/TypeScript bilan solishtirish
 

@@ -13,3 +13,103 @@
   uz: "Struct qiymatini maydon nomlari bilan yozish (Point{Lat: 1}). Nomsiz (unkeyed) yozuv maydon qo'shilganda kompilyatsiyadan chiqib qoladi."
   course: go
   lesson: 1
+- term: GOTOOLCHAIN
+  aliases: []
+  uz: "go buyrug'i qaysi toolchain bilan ishlashini boshqaradigan muhit o'zgaruvchisi (local, auto, aniq versiya yoki +path); go.mod dagi go/toolchain qatorlari bilan birga ishlaydi."
+  course: go
+  lesson: 2
+- term: language version
+  aliases: []
+  uz: "go.mod dagi go qatori belgilaydigan til versiyasi; kompilyator shu versiyadagi til semantikasi bilan ishlaydi (masalan, Go 1.22 tsikl o'zgaruvchisi qoidasi)."
+  course: go
+  lesson: 2
+- term: untyped constant
+  aliases: ["untyped constants"]
+  uz: "Tipi yo'q konstanta: ixtiyoriy aniqlikda saqlanadi va ifodada kerakli tipga moslashadi; faqat qiymat tipga sig'masa xato."
+  course: go
+  lesson: 3
+- term: iota
+  aliases: []
+  uz: "Konstanta deklaratsiyasi blokida 0 dan boshlanib har ConstSpec da bittaga oshadigan oldindan e'lon qilingan identifikator; enum yasashda ishlatiladi."
+  course: go
+  lesson: 3
+- term: assignability
+  aliases: []
+  uz: "Qiymatni o'zgaruvchiga, argumentga yoki return'ga berish mumkinligini belgilaydigan spetsifikatsiya qoidasi (bir xil tip, bir xil underlying type va kamida biri nomsiz, interface'ni qondirish va h.k.)."
+  course: go
+  lesson: 4
+- term: defined type
+  aliases: []
+  uz: "type T U bilan yaratilgan yangi tip: U ning underlying type'ini oladi, lekin U dan farqli tip va o'z metodlarini oladi."
+  course: go
+  lesson: 4
+- term: underlying type
+  aliases: []
+  uz: "Tipning asosiy tuzilmasi: predeclared tip yoki tip literal bo'lsa o'zi, aks holda tip deklaratsiyasida ko'rsatilgan tipning underlying type'i."
+  course: go
+  lesson: 4
+- term: type alias
+  aliases: []
+  uz: "type A = T shaklidagi e'lon: yangi tip emas, mavjud tipning ikkinchi nomi; A va T bir xil tip."
+  course: go
+  lesson: 4
+- term: fallthrough
+  aliases: []
+  uz: "switch case oxirida keyingi case tanasiga shartsiz o'tishni majburlaydigan operator; Go'da case lar odatda avtomatik to'xtaydi."
+  course: go
+  lesson: 5
+- term: closure
+  aliases: ["closures"]
+  uz: "O'zining tashqi scope'idagi o'zgaruvchilarga murojaat qiladigan funksiya qiymati; o'zgaruvchi nusxalanmaydi, ulashiladi."
+  course: go
+  lesson: 6
+- term: variadic
+  aliases: []
+  uz: "Oxirgi parametri ...T bo'lgan funksiya: ichkarida []T, argument berilmasa nil slice, s... bilan slice'ni berish uni nusxalamaydi."
+  course: go
+  lesson: 6
+- term: zero value
+  aliases: ["zero values"]
+  uz: "Aniq qiymat berilmagan o'zgaruvchi oladigan standart qiymat: 0, \"\", false yoki nil; struct va massivlarda rekursiv qo'llanadi."
+  course: go
+  lesson: 8
+- term: composite literal
+  aliases: ["composite literals"]
+  uz: "Struct, massiv, slice yoki map qiymatini yaratuvchi T{...} ifodasi; har baholanganda yangi qiymat hosil qiladi."
+  course: go
+  lesson: 8
+- term: struct tag
+  aliases: ["struct tags"]
+  uz: "Struct maydoni oldidagi string literal; reflection orqali o'qiladi (masalan json:\"id\"), kompilyator mazmunini tekshirmaydi."
+  course: go
+  lesson: 8
+- term: method set
+  aliases: ["method sets"]
+  uz: "Tip qiymati bilan chaqirish mumkin bo'lgan metodlar to'plami: T uchun faqat T receiver'lilar, *T uchun T va *T receiver'lilar; interface'ga moslik shu bilan aniqlanadi."
+  course: go
+  lesson: 9
+- term: addressable
+  aliases: ["addressability"]
+  uz: "Manzilini (&x) olish mumkin bo'lgan ifoda: o'zgaruvchi, pointer indirection, slice elementi, adreslanadigan struct maydoni yoki massiv elementi. Map elementi adreslanmaydi."
+  course: go
+  lesson: 9
+- term: method value
+  aliases: ["method values"]
+  uz: "x.M ifodasi: receiver bog'lash paytida baholanib saqlanadigan funksiya qiymati; value receiver uchun bu nusxa."
+  course: go
+  lesson: 9
+- term: method expression
+  aliases: ["method expressions"]
+  uz: "T.M yoki (*T).M shaklidagi ifoda: receiver birinchi argument bo'lgan oddiy funksiya beradi."
+  course: go
+  lesson: 9
+- term: blank identifier
+  aliases: []
+  uz: "_ identifikatori: bog'lanish yaratmaydi; qiymatni tashlash, 'not used' xatosini yopish, compile-time tekshiruv va blank import uchun ishlatiladi."
+  course: go
+  lesson: 10
+- term: blank import
+  aliases: ["blank imports"]
+  uz: "import _ \"pkg\": paket faqat initsializatsiyasi (o'zgaruvchilar va init funksiyalari) uchun bog'lanadi, nomlari kiritilmaydi."
+  course: go
+  lesson: 10
