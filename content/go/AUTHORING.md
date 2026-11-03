@@ -50,7 +50,7 @@ Bu fayl Go kursidagi har bir darsni yozish uchun yagona standart. Format Clean C
   - Uchinchi tomon modullari (pgx, go-redis, grpc, otel, prometheus, x/sync) sandbox'da yuklanmaydi. Ularning kodi hujjatdagi API'ga tayanadi, hisobotda "kompilyatsiya qilinmagan" deb belgilanadi. Imkon bo'lsa, mexanizmni standart kutubxona bilan ko'rsating va tashqi kutubxonani faqat bog'lash uchun ishlating.
 - Bir dars ichidagi to'liq dastur `package main` bilan boshlansin va o'z-o'zidan ishlasin; parcha ko'rsatilsa, to'liq dastur ham bo'lishi shart emas, lekin sintaksis to'g'ri bo'lsin.
 - Kod `gofmt`dan o'tgan bo'lsin (`gofmt -l` bo'sh).
-- Brauzerda Go ishga tushirilmaydi (`go run` bloki yo'q; validator "run" bloki uchun Go'ni qabul qilmaydi). Natijani kod blokidan keyin oddiy ` ```text ` blokida bering.
+- Go kodi rasmiy Go Playground'da (go.dev, `/api/go-run` orqali) ishlaydi: `package main` bilan boshlanuvchi, faqat standart kutubxona ishlatadigan va lokal `go run` bilan xatosiz tugagan blok ` ```go run ` bilan belgilanadi. Tarmoq, fayl, stdin, argument, haqiqiy vaqt va tashqi modulga bog'liq kod run bloki bo'lmaydi. Natijani kod blokidan keyin oddiy ` ```text ` blokida bering.
 - Xato yoki race ko'rsatadigan kod bo'lsa, buni matnda aniq yozing ("bu kod data race'ga ega").
 
 ## Mashqlar
