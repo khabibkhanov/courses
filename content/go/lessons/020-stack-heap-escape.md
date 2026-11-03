@@ -428,6 +428,100 @@ Hajm va o'zgaruvchanlik hal qiladi. Quyidagi jadval qarorni qisqa ifodalaydi:
 
 Bu jadval qoida emas, boshlang'ich nuqta. Pointer qaytarish ko'pincha ma'noli: obyekt identifikatsiyasi, mutatsiya, nil. Faqat "tezroq bo'lsin" deb pointer qo'shish yoki olib tashlash noto'g'ri; o'lchov hal qiladi.
 
+### Interface orqali chaqiruv: kompilyator chaqiriladigan kodni ko'rmaydi
+
+Escape analysis chaqirilayotgan funksiyaning tanasiga qaraydi: parametr tashqariga oqmasa, argument stack'da qoladi. Interface metodi chaqirilganda esa kompilyator qaysi konkret metod ishlashini bilmaydi, shuning uchun interface parametriga berilgan pointer'ni xavfsiz tomonda ushlaydi va uni heap'ga chiqaradi. Bir xil `String()` metodini konkret tip va `fmt.Stringer` orqali chaqirib solishtiramiz:
+
+```go
+package main
+
+import (
+	"fmt"
+	"testing"
+)
+
+type Reading struct {
+	Device string
+	Value  float64
+}
+
+func (r *Reading) String() string { return r.Device }
+
+// direct: konkret tip, kompilyator chaqiriladigan metodni ko'radi.
+//
+//go:noinline
+func direct(r *Reading) int { return len(r.String()) }
+
+// viaIface: interface orqali dinamik chaqiruv, kompilyator chaqiriladigan kodni bilmaydi.
+//
+//go:noinline
+func viaIface(s fmt.Stringer) int { return len(s.String()) }
+
+func main() {
+	fmt.Println("konkret tip:", testing.AllocsPerRun(1000, func() {
+		r := Reading{Device: "T-1", Value: 1}
+		_ = direct(&r)
+	}))
+	fmt.Println("interface orqali:", testing.AllocsPerRun(1000, func() {
+		r := Reading{Device: "T-1", Value: 1}
+		_ = viaIface(&r)
+	}))
+}
+```
+
+Go 1.24.7 da chiqish:
+
+```text
+konkret tip: 0
+interface orqali: 1
+```
+
+`go build -gcflags=-m` konkret variantda `r does not escape` dedi, interface variantida esa `leaking param: s` va chaqiruvchida `moved to heap: r`. Bu interface'dan voz kechish uchun sabab emas, faqat narx: issiq yo'lda kichik qiymatni interface parametriga uzatish o'rniga konkret tip yoki generic funksiya (24-dars) bitta allokatsiyani yo'qotishi mumkin. Shuningdek, chiqishni to'liq ko'rish uchun `-gcflags='-m -l'` ishlating: `-l` inline qilishni o'chiradi, shunda `can inline` va `inlining call to` qatorlari yo'qoladi (biz bu qatorlar sonini 6 dan 0 gacha tushganini ko'rdik) va tahlil har funksiya uchun alohida ko'rinadi. Bu faqat o'rganish uchun; production build'ni `-l` bilan yig'masligingiz kerak.
+
+### Stack o'sadi, lekin cheksiz emas
+
+Go FAQ ("Why goroutines instead of threads?") yozadi: yangi goroutine bir necha kilobayt stack oladi, yetmasa run-time stack xotirasini avtomatik kattalashtiradi (va kichraytiradi). Shu sababli stack'dagi katta massiv yoki chuqur rekursiya xatoga olib kelmaydi: quyidagi dastur 1 000 000 darajali rekursiyani muammosiz bajaradi. Lekin o'sish bo'sagasiz emas. `runtime/debug.SetMaxStack` hujjati: bitta goroutine stack'i uchun limit bor, limit oshsa dastur crash bo'ladi; boshlang'ich qiymat 64-bitli tizimda 1 GB, 32-bitlida 250 MB. Tugamaydigan rekursiya shu limitga uradi:
+
+```go
+package main
+
+import "fmt"
+
+func depth(n int) int {
+	var pad [128]byte
+	pad[n%128] = byte(n)
+	if n == 0 {
+		return int(pad[0])
+	}
+	return depth(n-1) + int(pad[n%128]&1)
+}
+
+func forever(n int) int {
+	var pad [128]byte
+	pad[n%128] = byte(n)
+	return forever(n+1) + int(pad[0])
+}
+
+func main() {
+	fmt.Println("1 000 000 daraja rekursiya:", depth(1_000_000))
+	defer func() { fmt.Println("recover:", recover()) }()
+	fmt.Println(forever(0))
+}
+```
+
+```text
+1 000 000 daraja rekursiya: 500000
+runtime: goroutine stack exceeds 1000000000-byte limit
+runtime: sp=0xc0200e0408 stack=[0xc0200e0000, 0xc0400e0000]
+fatal error: stack overflow
+```
+
+Nozik joy: `defer` ichidagi `recover()` bu holatni ushlamadi, `recover:` qatori chiqmadi va jarayon 1 kod bilan tugadi. Stack overflow `panic` emas, fatal error: uni `recover` bilan tiklab bo'lmaydi. Node.js'da esa `RangeError: Maximum call stack size exceeded` oddiy exception sifatida `try/catch` ga tushadi. Go'da chuqur rekursiya (daraxt, graf, tashqaridan kelgan ichma-ich JSON) uchun chuqurlik chegarasini o'zingiz qo'ying yoki iterativ yechim yozing; `SetMaxStack` faqat zarar doirasini cheklaydi (hujjat: u cheksiz rekursiyadan zararni kamaytirish uchun foydali).
+
+### Versiyalar farqi: Go 1.25 o'zgaruvchan hajmli slice
+
+Yuqorida `make([]byte, n)` (n o'zgaruvchi) Go 1.24.7 da heap'ga ketishini o'lchadik. Go 1.25 release notes ("Faster slices"): kompilyator slice'ning backing store'ini stack'da ajratishni ko'proq holatda qo'llaydi. Notes shuningdek aytadi: bu o'zgarish noto'g'ri `unsafe.Pointer` ishlatilgan kodning ta'sirini kuchaytirishi mumkin, muammoli ajratishni topish uchun `bisect` vositasi (`-compile=variablemake`) va hammasini o'chirish uchun `-gcflags=all=-d=variablemakehash=n` bayrog'i bor. Biz Go 1.25 ni sinay olmadik (sandbox'da 1.24.7), shuning uchun `make([]byte, n)` qatorining 1.25 da aniq nechta allokatsiya berishi bu darsda o'lchanmagan. Amaliy xulosa: Go 1.24 da o'lchangan allokatsiya soni yangi toolchain'ga o'tganda kamayishi mumkin, shuning uchun optimizatsiya qarorini versiya bilan birga yozib qo'ying va yangilashdan keyin `AllocsPerRun` ni qayta yuriting.
+
 ## Misol: issiq yo'ldagi allokatsiyani yo'qotish
 
 Vazifadagi `Hottest` funksiyasi `best` nusxasiga pointer qaytaradi. `-m` `moved to heap: best` deydi, `AllocsPerRun` 1 ko'rsatadi. Qiymat qaytarilsa, 0. Bu odatiy tuzatish: kichik struct'larni qiymat sifatida qaytarish va qabul qilish. Uning natijasi dastur xatti-harakatini o'zgartirmaydi, faqat GC yukini kamaytiradi.

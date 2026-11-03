@@ -322,6 +322,124 @@ boshida struct{} bor: 8
 
 `Marker` oxirida `_ struct{}` bor va hajmi 16: oxirgi maydon ofseti struct hajmiga teng bo'lmasligi uchun gc kompilyatori padding qo'shadi (bu implementatsiya tafsiloti, spetsifikatsiyada yo'q). Boshida bo'lsa 8. `struct{}` ni "bepul" deb oxirga qo'ymang. 386 da xuddi shu tajriba 12 va 8 berdi.
 
+### Ichma-ich struct va massiv: padding ichkarida qoladi
+
+Struct maydoni sifatida boshqa struct kelsa, ichki struct o'zining hajmi va alignment'ini saqlaydi: kompilyator uni "yoyib" tashqi struct maydonlari bilan qayta aralashtirmaydi. Ichki struct'dagi padding tashqi struct'ga o'tadi va u yerda bo'sh joy sifatida qoladi. Bir xil to'rt maydon (`int64`, uchta `bool`) ichma-ich yozilsa 32 bayt, yassi yozilsa 16 bayt chiqadi: farq `Outer` ichidagi `Inner` ning 7 baytli padding'i va uning ikki tomonidagi `bool` larning o'z padding'idan keladi. Massivda esa element qadami aynan `Sizeof` ga teng: `[3]Reading40` 120 bayt, ikkinchi element birinchisidan 40 bayt narida. Demak, struct hajmidagi har bir ortiqcha bayt slice va massivdagi har elementga ko'payib boradi.
+
+### Sizeof sayoz, new esa size class bo'yicha ajratadi
+
+`unsafe.Sizeof` hujjati aniq aytadi: hajmga `x` ishora qilayotgan xotira kirmaydi. Slice uchun slice descriptor hajmi, interface uchun interface qiymatining o'zi qaytadi. Bu tipik xatoga olib keladi: "`[]byte` 24 bayt ekan" yoki "`string` 16 bayt ekan" degan xulosa ma'lumot hajmi haqida emas, faqat header hajmi haqida. Struct ichidagi `string` va slice maydonlari uchun ham shunday: ular `Sizeof` da 16 va 24 bayt (amd64), ma'lumotning o'zi alohida heap bloki.
+
+Ikkinchi nozik joy: bitta-bitta heap'ga ajratilgan obyektlar (`new(T)`, `&T{}` natijasi escape qilsa, 20-dars) aynan `Sizeof` bayt egallamaydi. Quyidagi o'lchovda `runtime.MemStats.TotalAlloc` farqi har obyektga qancha bayt ajratilganini ko'rsatdi. Dastur 56 baytli va 40 baytli variantni, ichma-ich struct'ni, massiv qadamini va `Sizeof` sayozligini birga tekshiradi:
+
+```go
+package main
+
+import (
+	"fmt"
+	"runtime"
+	"unsafe"
+)
+
+// Reading56 - topshiriqdagi boshlang'ich tartib (56 bayt).
+type Reading56 struct {
+	Valid bool
+	Time  int64
+	Sats  uint8
+	Lat   float64
+	Fuel  uint16
+	Lon   float64
+	Flags uint8
+	Speed float32
+}
+
+// Reading40 - kamayish tartibida (40 bayt).
+type Reading40 struct {
+	Time  int64
+	Lat   float64
+	Lon   float64
+	Speed float32
+	Fuel  uint16
+	Valid bool
+	Sats  uint8
+	Flags uint8
+}
+
+type Inner struct {
+	A int64
+	B bool
+}
+
+type Outer struct {
+	X  bool
+	In Inner
+	Y  bool
+}
+
+type Flat struct {
+	A int64
+	B bool
+	X bool
+	Y bool
+}
+
+var sink56 []*Reading56
+var sink40 []*Reading40
+
+func heapPerObject[T any](n int, keep func(*T)) float64 {
+	runtime.GC()
+	var a, b runtime.MemStats
+	runtime.ReadMemStats(&a)
+	for i := 0; i < n; i++ {
+		keep(new(T))
+	}
+	runtime.ReadMemStats(&b)
+	return float64(b.TotalAlloc-a.TotalAlloc) / float64(n)
+}
+
+func main() {
+	fmt.Println("Reading56:", unsafe.Sizeof(Reading56{}), "Reading40:", unsafe.Sizeof(Reading40{}))
+	var o Outer
+	fmt.Println("Inner:", unsafe.Sizeof(Inner{}), "Outer:", unsafe.Sizeof(o), "Flat:", unsafe.Sizeof(Flat{}))
+	fmt.Println("Outer offsets: X", unsafe.Offsetof(o.X), "In", unsafe.Offsetof(o.In), "Y", unsafe.Offsetof(o.Y))
+
+	// massiv: har element Sizeof qadamida
+	var arr [3]Reading40
+	fmt.Println("[3]Reading40:", unsafe.Sizeof(arr), "elem 1 offset:", uintptr(unsafe.Pointer(&arr[1]))-uintptr(unsafe.Pointer(&arr[0])))
+
+	// Sizeof sayoz: satr va slice ichidagi ma'lumotni hisoblamaydi
+	long := string(make([]byte, 1000))
+	fmt.Println("Sizeof(\"\"):", unsafe.Sizeof(""), "Sizeof(1000 baytli string):", unsafe.Sizeof(long), "Sizeof(slice 1000):", unsafe.Sizeof(make([]byte, 1000)))
+
+	// Alohida heap'ga ajratilgan obyektlar: haqiqiy ajratilgan bayt
+	const n = 100000
+	p56 := heapPerObject[Reading56](n, func(p *Reading56) { sink56 = append(sink56[:0], p) })
+	p40 := heapPerObject[Reading40](n, func(p *Reading40) { sink40 = append(sink40[:0], p) })
+	fmt.Printf("new(Reading56): %.0f bayt/obyekt, new(Reading40): %.0f bayt/obyekt\n", p56, p40)
+}
+```
+
+Go 1.24.7, linux/amd64 da chiqish:
+
+```text
+Reading56: 56 Reading40: 40
+Inner: 16 Outer: 32 Flat: 16
+Outer offsets: X 0 In 8 Y 24
+[3]Reading40: 120 elem 1 offset: 40
+Sizeof(""): 16 Sizeof(1000 baytli string): 16 Sizeof(slice 1000): 24
+new(Reading56): 64 bayt/obyekt, new(Reading40): 48 bayt/obyekt
+```
+
+56 baytli struct uchun obyekt boshiga 64 bayt, 40 baytli uchun 48 bayt ajratildi. Ya'ni heap'dagi alohida obyektlar uchun hajm allocator qabul qiladigan sinflarga yaxlitlanadi; biz aniq jadvalni manbadan tekshirmadik va faqat shu ikki o'lchovga tayanamiz. Amaliy xulosa ikki yo'nalishli. Birinchidan, million pointer'li obyekt saqlasangiz, `Sizeof` ko'paytmasi haqiqiy sarfni kam ko'rsatadi; haqiqiy sarfni `runtime.MemStats` yoki heap profil bilan o'lchang (63-dars). Ikkinchidan, tartibni o'zgartirish foydasi slice ichidagi qiymatlarda aniq (`[]Reading`: 56 dan 40 gacha), pointer'larda esa yaxlitlash tufayli kichikroq yoki bir xil bo'lishi mumkin. Shu sababli 386 da bu ikki struct (44 va 36 bayt) ham bir xil, 48 bayt ajratilishini ko'rdik.
+
+### Tipik xatolar
+
+- `Sizeof(x)` ni ma'lumot hajmi deb o'qish: satr, slice, map va interface uchun u faqat header hajmi.
+- Hajmni qo'lda yig'indi bilan hisoblash: padding va oxirgi yaxlitlash unutiladi.
+- Ichki struct'ni "yoyilgan" deb o'ylash: ichki padding qoladi, ixchamlik uchun maydonlarni tashqi struct'ga ko'chirish yoki ichki struct'ning o'zini ham tartiblash kerak.
+- Tartibni o'zgartirib, tashqi formatga (fayl, tarmoq, `unsafe` orqali baytlar) bog'liq kodni buzish. Bunday kodda joylashuvga umuman tayanmaslik kerak.
+- Faqat bitta platformada o'lchash: yuqorida 386 da ham natija farq qildi, shuning uchun hajm qo'riqchisi (`const _ = N - unsafe.Sizeof(T{})`) qaysi `GOARCH` uchun yozilganini izohda ko'rsating.
+
 ## Misol: Reading struct'i va konstanta qo'riqchi
 
 Topshiriqdagi `Reading` 56 bayt edi, maydonlar yig'indisi 33. Kamayish tartibi (8, 4, 2, 1 baytlilar) bilan 40 bayt chiqadi: faqat oxirida 7 bayt padding, 33 ni 8 ga yaxlitlash natijasi. Tartibni saqlab qolish uchun kompilyatsiya vaqtidagi qo'riqchi yoziladi:

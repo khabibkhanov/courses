@@ -220,6 +220,43 @@ Shablon chiqishi `go/format.Source` dan o'tadi: u kodni canonical gofmt uslubiga
 
 `gen` natijani to'g'ridan-to'g'ri maqsad faylga yozmaydi: avval shu katalogdagi vaqtinchalik faylga yozadi, so'ng `os.Rename` bilan almashtiradi. Generator yarim yo'lda yiqilsa, buzilgan yarim fayl qolmaydi. Bu 35-dars resurslar qoidalarining kichik qo'llanilishi.
 
+### go generate: o'zgaruvchilar, alias va tartib
+
+`go help generate` hujjati (pkg.go.dev/cmd/go) generatorga uzatiladigan o'zgaruvchilarni sanaydi: `$GOARCH`, `$GOOS`, `$GOFILE` (fayl nomi), `$GOLINE` (direktiva satri), `$GOPACKAGE`, `$GOROOT`, `$DOLLAR` (dollar belgisi) va `$PATH` (boshiga `$GOROOT/bin` qo'yilgan, shu tufayli generator ichidagi `go` buyrug'i ota `go generate` bilan bir xil versiyada ishlaydi). Generator paket katalogida ishga tushadi. Ikkita muhim detal: o'zgaruvchilar qo'shtirnoq ichida ham kengaytiriladi, o'rnatilmagan o'zgaruvchi esa bo'sh satrga aylanadi (xato bermaydi); globbing yo'q. `$GOFILE`/`$GOPACKAGE` generatorga qaysi paketni to'ldirishni bildiradi, shuning uchun `-pkg` kabi flaglarni qo'lda takrorlash shart emas.
+
+Ikkinchisi: `//go:generate -command nom args...` shu faylning qolgan qismi uchun ko'p so'zli generatorga alias beradi; hujjat misoli `go tool foo`. Bizning `go tool fleetgen` uchun ham qulay: `//go:generate -command fleetgen go tool fleetgen`. Tartib: paketlar buyruq qatorida berilgan tartibda, paket ichida fayllar nomi bo'yicha, fayl ichida direktivalar paydo bo'lish tartibida, bittadan. Birorta generator nolga teng bo'lmagan kod bilan chiqsa, shu paket uchun qolgan hamma ishlov o'tkazib yuboriladi. Generate yana `generate` build tegini o'rnatadi, shuning uchun fayllarni faqat generate ko'rsin, build esa ko'rmasin deb belgilash mumkin. Hammasini sinadik (Go 1.24.7, linux/amd64, generator o'rniga `echo` va `false`):
+
+```go
+package telemetry
+
+//go:generate -command show echo
+//go:generate show paket=$GOPACKAGE fayl=$GOFILE satr=$GOLINE
+//go:generate show "narx: $DOLLAR 5, uy: $UNSET_BIZDA_YO'Q"
+//go:generate show birinchi-xato-oldidan
+//go:generate false
+//go:generate show bu-qator-ishlamaydi
+```
+
+```text
+$ go generate ./...
+paket=telemetry fayl=doc.go satr=5
+narx: $ 5, uy: 'Q
+birinchi-xato-oldidan
+doc.go:8: running "false": exit status 1
+$ go generate -run 'paket' ./...
+doc.go:5: running "show": exec: "show": executable file not found in $PATH
+$ go generate -skip 'false|bu-qator' ./...
+paket=telemetry fayl=doc.go satr=5
+narx: $ 5, uy: 'Q
+birinchi-xato-oldidan
+```
+
+Birinchi ishga tushirishda `false` dan keyingi qator bajarilmadi, ya'ni hujjatdagi "xatodan keyin paket to'xtaydi" qoidasi tasdiqlandi. Ikkinchi natija kutilmagan, lekin mantiqli: `-run` regexp direktivaning to'liq matniga qo'llanadi va `-command show echo` qatori shu regexpga mos kelmagani uchun ishlamadi, alias aniqlanmay qoldi. Xulosa: alias ishlatsangiz, `-run` va `-skip` ni alias aniqlovchi qatorni ham qamrab oladigan regexp bilan bering yoki aliassiz yozing. Bu xatti-harakatni biz Go 1.24.7 da kuzatdik; hujjatda alohida aytilmagan.
+
+### tool direktivasi bilan ishlash buyruqlari
+
+Go 1.24 release notes'iga ko'ra `go get -tool` paketni `tool` direktivasi sifatida qo'shadi (va `require` ni ham), yangi `tool` meta-pattern joriy moduldagi barcha asboblarni bildiradi: `go get tool` hammasini yangilaydi, `go install tool` ularni `GOBIN` ga o'rnatadi. `go run` va yangi `go tool` xatti-harakati bilan yaratilgan bajariladigan fayllar build cache'da saqlanadi, bu takroriy chaqiruvlarni tezlashtiradi, lekin cache'ni kattalashtiradi. Amaliy xulosa: CI'da `go generate` har safar generatorni qayta kompilyatsiya qilmaydi, agar build cache saqlansa; cache saqlanmaydigan toza konteynerda esa birinchi chaqiruv generatorni kompilyatsiya qiladi va bu vaqtni CI hisobiga qo'shish kerak. Asbobni global o'rnatish (`go install pkg@version`) va `PATH` ga tayanish esa jamoada versiya tarqalib ketishiga olib keladi, `tool` direktivasi aynan shuni oldini oladi.
+
 ## Misol: fleetgen
 
 Tuzilma:

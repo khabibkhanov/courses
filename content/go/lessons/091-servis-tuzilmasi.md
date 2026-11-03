@@ -232,6 +232,45 @@ Paket darajasidagi `var db = connect()` yoki `init()` ichidagi ulanish uchta mua
 
 Handler servisni `FuelAPI` orqali ko'radi (2 metod), servis esa saqlashni `ReadingStore` orqali (2 metod). Interface qancha kichik bo'lsa, fake shuncha qisqa yoziladi va shuncha kam sabab bilan o'zgaradi. Agar interface'da ettita metod bo'lsa, bu odatda iste'molchi bir nechta vazifani bajarayotganini ko'rsatadi (21-dars: interface dizayni).
 
+### internal qoidasi aynan nimani tekshiradi
+
+Go 1.4 release notes'ida mexanizm shunday ta'riflangan: `internal` nomli katalog yoki uning ichidagi har qanday katalogdagi paket faqat `internal` ning ota katalogi daraxtidagi kod tomonidan import qilinadi. Ularning misoli: `.../a/b/c/internal/d/e/f` ni faqat `.../a/b/c` daraxtidagi kod import qila oladi. Tekshiruvni kompilyator emas, `go` buyrug'i bajaradi. Ikkita modul ko'rinishida sinadik: `example.com/other` moduli `replace` orqali `example.com/l91x` ni ulab, uning `internal/service` paketini import qilsa, build to'xtaydi:
+
+```text
+main.go:2:8: use of internal package example.com/l91x/internal/service not allowed
+```
+
+Bu aynan "API'ni buzmasdan qayta tashkil qilish erkinligi"ning texnik asosi. Tuzilma hujjati (go.dev/doc/modules/layout) yana bir aniq tavsiya beradi: server repozitoriyasida ulashishga yaroqli paketlar paydo bo'lsa, ularni alohida modullarga ajratish yaxshiroq, ya'ni `internal` ni "keyin ochamiz" degan vaqtinchalik joy qilib ishlatmang.
+
+### Interface qoidalarining ikki kompilyator-darajasidagi oqibati
+
+**Moslikni kompilyatorga tekshirtirish.** Structural interface'larda adapter servisni tilga olmaydi, shuning uchun metod nomi o'zgarsa, xato adapter paketida emas, uni ulagan joyda chiqadi. Yaxshi odat: `var _ service.ReadingStore = (*store.MemStore)(nil)` qatorini adapter paketiga emas, composition root'ga (yoki testga) qo'yish. Adapter paketiga qo'ysangiz, u `service` ni import qilishi kerak bo'ladi va bog'liqlik yo'nalishi buziladi. Tajriba: `MemStore.Last` ni `Latest` deb o'zgartirdik (Go 1.24.7):
+
+```text
+cmd/api/main.go:11:30: cannot use (*store.MemStore)(nil) (value of type *store.MemStore) as service.ReadingStore value in variable declaration: *store.MemStore does not implement service.ReadingStore (missing method Last)
+cmd/api/main.go:15:21: cannot use m (variable of type *store.MemStore) as service.ReadingStore value in argument to service.New: *store.MemStore does not implement service.ReadingStore (missing method Last)
+```
+
+Xabar nima yetishmayotganini aniq aytadi. Bu NestJS'dagi ishga tushishdagi "provider topilmadi" xatosidan erta: dastur umuman kompilyatsiya bo'lmaydi.
+
+**Typed nil tuzog'i.** Interface qiymati ikki qismdan iborat: tip va qiymat. Konkret tipdagi nil ko'rsatkichni interface parametriga bersangiz, interface o'zi nil bo'lmaydi. Konstruktorga "ixtiyoriy" bog'liqlik sifatida o'zgaruvchi ulansa, `if s.store == nil` tekshiruvi ishlamaydi:
+
+```go
+var m *store.MemStore // nil ko'rsatkich
+svc := service.New(m)
+fmt.Println("nil *MemStore berildi:", svc.Describe())
+
+svc2 := service.New(nil)
+fmt.Println("toza nil berildi     :", svc2.Describe())
+```
+
+```text
+nil *MemStore berildi: store bor
+toza nil berildi     : store yo'q
+```
+
+Birinchi holatda `Describe` "store bor" deydi, holbuki ichidagi ko'rsatkich nil: metod chaqirilsa nil ko'rsatkichli adapterda panic bo'lishi mumkin. Shuning uchun konstruktorlarda majburiy bog'liqlikni qabul qilishda nil tekshiruviga tayanmang: composition root da bog'liqlikni hamisha haqiqiy qiymat bilan yarating, ixtiyoriy bog'liqlik kerak bo'lsa, no-op realizatsiya (masalan hech narsa yozmaydigan store) bering. Typed nil mexanikasi 18-darsda batafsil ko'rilgan.
+
 ## Misol: qatlamli servis va xato yo'li
 
 Quyidagi dastur bir faylda, lekin qatlamlar alohida bloklar sifatida ajratilgan: domen, servis (o'z `ReadingStore` interface'i bilan), xotira adapteri, HTTP handler va composition root. Haqiqiy loyihada har blok yuqoridagi daraxtdagi o'z paketiga o'tadi.

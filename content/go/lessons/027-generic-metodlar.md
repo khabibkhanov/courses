@@ -8,7 +8,7 @@ sources:
   - id: go127
     note: "Changes to the language: generic metodlar qo'llab-quvvatlanishi, math/rand/v2 dagi (*Rand) N[Int intType](Int) Int misoli, interface metodlari type parameter e'lon qila olmasligi va generic metod bilan implement qilinmasligi; math/rand/v2 bo'limi: Rand.N"
   - id: go-spec
-    note: "Method declarations: generic tipning receiver'i mos type parameter'larni e'lon qilishi kerak; Type parameter declarations: type parameter ro'yxati generic funksiya, metod yoki tip e'lonini belgilaydi"
+    note: "Method declarations: generic tipning receiver'i mos type parameter'larni e'lon qilishi kerak, MethodDecl grammatikasi va generic metod ta'rifi; Type parameter declarations: type parameter ro'yxati generic funksiya, metod yoki tip e'lonini belgilaydi; Instantiations; Interface types (interface metodlari type parameter e'lon qila olmaydi); Struct literals va Assignability (Go 1.27 belgilari)"
 quiz:
   - q: "Go 1.24 da `func (l List[E]) Map[F any](f func(E) F) List[F]` yozilsa nima bo'ladi?"
     options:
@@ -193,6 +193,22 @@ Spetsifikatsiyaning "Method declarations" bo'limi generic tip uchun receiver qoi
 - Generic tipning receiver type parameter'lari (`func (l List[E]) Filter(...)`) avvalgidek ishlaydi.
 - Interface metodlari type parameter olmaydi. Demak, generic metod orqali polimorfizm (`interface { N[T any](T) }` kabi shartnoma) mumkin emas.
 - Generic metod interface'ni qanoatlantirishda ishtirok etmaydi: interface metodi uni implement qila olmaydi.
+
+### Spetsifikatsiya: grammatika va instantiation qoidalari
+
+Go 1.27 spetsifikatsiyasining "Method declarations" bo'limidagi grammatika: `MethodDecl = "func" Receiver MethodName [ TypeParameters ] Signature [ FunctionBody ]`. Metod nomidan keyingi `TypeParameters` ixtiyoriy qism, aynan shu yangilik. Boshqa qoidalar o'zgarmagan: receiver bitta, variadic bo'lmagan parametr; receiver base type nomlangan (defined) tip, pointer yoki interface bo'la olmaydi va metod bilan bir paketda e'lon qilinishi shart; generic tip uchun receiver mos type parameter'larni e'lon qiladi. Receiver alias orqali berilsa, alias generic bo'lmasligi va instantiatsiya qilingan generic tipni ko'rsatmasligi kerak (spetsifikatsiya bu uchun alohida noto'g'ri misollar keltiradi). Demak, generic metodni faqat o'zingiz e'lon qilgan nomlangan tipga bog'lash mumkin, `int` yoki boshqa paketning tipiga emas.
+
+Spetsifikatsiyaning o'z misoli ushbu darsning `List[E]` bilan bir xil: `func (l List[E]) Apply[F any](f func(E) F) List[F]`, tanasi esa oldingi bo'limdagi paket funksiyasi `Apply` bilan bir xil sikl. Ya'ni Go 1.24 da funksiya sifatida yozilgan kodni metodga ko'chirish mexanik: birinchi parametr receiver'ga aylanadi, qolgan type parameter'lar metod nomidan keyin qoladi.
+
+"Instantiations" bo'limi endi "generic funksiya, metod yoki tip" deb yozadi (Go 1.18 va Go 1.27 belgilari bilan). Qoidalar: har type argument constraint'ini qanoatlantirishi kerak; instantiation natijasi generic bo'lmagan funksiya, metod yoki tip; generic metod chaqirilishidan yoki qiymat sifatida ishlatilishidan oldin instantiatsiya qilinishi shart. Type argument'lar aniq berilishi yoki qisman yoki to'liq xulosa qilinishi mumkin. Spetsifikatsiya ro'yxat beradi: argumentlar tushirilishi mumkin, agar funksiya (bu yerda "funksiya yoki metod" ma'nosida o'qiladi, chunki bo'lim shu birlashtirilgan atamani ishlatadi) oddiy argumentlar bilan chaqirilsa, ma'lum tipli o'zgaruvchiga tayinlansa, boshqa funksiyaga argument sifatida berilsa yoki natija sifatida qaytarilsa. Qolgan hollarda (masalan, `x := sum`) to'liq yoki qisman ro'yxat shart; qisman ro'yxat bo'sh bo'la olmaydi va o'ngdan chap tomonga tushiriladi. Bu qoidalar generic funksiyalar uchun misollar bilan berilgan; metod chaqiruvining aniq yozuvi (`l.Apply(...)` ko'rinishida tip argumentlarisiz yoki `l.Apply[string](...)`) uchun spetsifikatsiyada alohida misol topmadik, shuning uchun bu darsda u kodda ko'rsatilmaydi.
+
+### Interface va generic metod: spetsifikatsiya nima deydi
+
+Interface qismi ikki joyda tasdiqlanadi. Grammatikada `MethodElem = MethodName Signature`: interface metod elementida type parameter ro'yxati uchun joy yo'q. "Interface types" bo'limi esa aniq aytadi: interface metodlari type parameter e'lon qila olmaydi, lekin interface e'lonidagi type parameter'larni ishlatishi mumkin. Release notes bilan birga o'qilsa: `interface { Convert[T any](x int) T }` kabi shartnoma yozib bo'lmaydi. Oqibatda generic metod interface bo'yicha polimorfizm qurilmasi emas, faqat konkret tipning nom maydonidagi qulaylik.
+
+### Shu release'dagi qo'shni o'zgarishlar
+
+Go 1.27 release notes bir bo'limda yana ikki til o'zgarishini yozadi, ular generic metodlar bilan birga ko'chish rejasida uchraydi. Birinchisi: struct literal'dagi kalit endi struct tipi uchun har qanday to'g'ri maydon selektori bo'la oladi, faqat yuqori darajadagi maydon nomi emas (spetsifikatsiya shunga mos ravishda promoted maydonlarni nomlaydi va ular orasidagi pointer bo'lmagan embedded tiplarni talab qiladi). Ikkinchisi: funksiya tipi xulosasi umumlashtirildi, ya'ni generic funksiya mos funksiya tipidagi o'zgaruvchiga tayinlansa yoki shu tipga o'girilsa, yetishmayotgan type argument'lar xulosa qilinadi; spetsifikatsiyaning assignability qoidasida bu "(possibly partially instantiated) generic function" uchun yozilgan. Ikkalasini ham biz kompilyatsiya qilmadik. Ularning ahamiyati amaliy: ikkinchisi `var f func(string) string = Convert` kabi yozuvlarda tip argumentini yozishni qisqartiradi, birinchisi esa embedded struct'lar bilan ishlaydigan kodni. Spetsifikatsiyaning "Language versions" ilovasi qoidasi bu uch o'zgarishning hammasiga tegishli: belgilangan xususiyat ishlatilgan manba, kompilyatorning implied yoki required til versiyasi eski bo'lsa rad etiladi. Shu sababli go.mod'dagi `go` qatori 1.27 ga ko'tarilmaguncha ularni ishlatmang (2-dars). Bu ilovaning jadvalini Go 1.27 satri uchun alohida o'qimadik; qoida umumiy ta'rifdan olindi.
 
 ## Chuqurroq: Go 1.24 da muqobil yo'l
 

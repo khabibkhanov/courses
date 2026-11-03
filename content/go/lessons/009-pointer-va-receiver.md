@@ -278,11 +278,11 @@ func main() {
 ./main.go:13:9: Value passes lock by value: p2.Counter contains sync.Mutex
 ```
 
-Dastur o'zi `1` chiqaradi (Go 1.24.7), ya'ni xato ishlash vaqtida ko'rinmaydi: `Value` qulfni olmay o'qiydi va concurrent chaqiruvda data race bo'ladi. Shuning uchun Code Review Comments qoidasi (mutex bo'lsa pointer receiver) vet bilan mustahkamlanadi, vet'ni CI'ga qo'shing (60-dars). Qoida transitiv: struct mutex'ni to'g'ridan-to'g'ri emas, ichki maydon yoki embedding orqali saqlasa ham nusxalash xavfli.
+Dastur o'zi `1` chiqaradi (Go 1.24.7), ya'ni xato ishlash vaqtida ko'rinmaydi: `Value` qulfni olmay o'qiydi va concurrent chaqiruvda data race bo'ladi. Shuning uchun Code Review Comments qoidasi (mutex bo'lsa pointer receiver) vet bilan mustahkamlanadi, vet'ni CI'ga qo'shing (40-dars), data race'ni esa 43-darsdagi xotira modeli bilan tushuning. Tekshiruv ichma-ich ham ishlaydi: `Outer` mutex'ni embedded `Inner` orqali saqlasa ham, `func (o Outer) N()` uchun vet `Outer contains Inner contains sync.Mutex` deb xabar berdi (Go 1.24.7).
 
 ### nil pointer va metod chaqiruvi: panic qachon bo'ladi
 
-Spetsifikatsiyaga ko'ra value receiver'li metodga pointer orqali murojaat pointer'ni avtomatik dereference qiladi: `pt.Mv` bu `(*pt).Mv`. Method value esa receiver'ni baholash paytida saqlaydi. Demak `pt` nil bo'lsa va metod value receiver'li bo'lsa, panic metod chaqirilganda emas, **method value yaratilganda** yuz beradi, chunki `*pt` shu yerda baholanadi. Pointer receiver'li metod bilan esa nil bog'lash o'zi xatosiz (nil manzil saqlanadi), panic faqat metod tanasi nil'ni dereference qilganda. Method expression `(*Vehicle).Total` nil pointer bilan chaqirilganda ham panic beradi, lekin matni boshqacha:
+Spetsifikatsiyaga ko'ra value receiver'li metodga pointer orqali murojaat pointer'ni avtomatik dereference qiladi: `pt.Mv` bu `(*pt).Mv`. Method value esa receiver'ni baholash paytida saqlaydi. Demak `pt` nil bo'lsa va metod value receiver'li bo'lsa, panic metod chaqirilganda emas, **method value yaratilganda** yuz beradi, chunki `*pt` shu yerda baholanadi. Pointer receiver'li metod bilan esa nil bog'lash o'zi xatosiz (nil manzil saqlanadi; shu holatda `p.Km` bog'landi va tana nil'ni tekshirgani uchun `g()` panicsiz ishladi), panic faqat metod tanasi nil'ni dereference qilganda. Method expression `(*Vehicle).Total` nil pointer bilan chaqirilganda ham panic beradi, lekin matni boshqacha:
 
 ```go
 package main

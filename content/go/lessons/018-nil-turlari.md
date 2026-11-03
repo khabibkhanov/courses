@@ -327,6 +327,148 @@ bo'sh:   {"alerts":[],"tags":{}}
 
 Nil slice va nil map `null` bo'ladi, bo'sh ko'rinishlari `[]` va `{}`. `json.Unmarshal` esa `[]` ni nil bo'lmagan bo'sh slice'ga, `null` ni nil ga aylantiradi. Frontend uchun ro'yxat maydonlari doim massiv bo'lishi kerak bo'lsa, javob qurishda nil'ni bo'shga aylantiring.
 
+### Qiymat receiver, nil pointer va interface
+
+Nil receiver xavfsizligi faqat pointer receiver'ga tegishli. Qiymat receiver'li metod (`func (g Gauge) String() string`) `*Gauge` orqali chaqirilganda kompilyator `*g` ni nusxalashi kerak, nil uchun bu nil pointer dereference. Interface orqali chaqirilganda ham natija shu: `var s fmt.Stringer = gp` (`gp` nil `*Gauge`) dan keyin `s.String()` Go 1.24.7 da `invalid memory address or nil pointer dereference` panic'ini berdi. `fmt.Println(s)` esa panic'ni ichkarida ushlab `<nil>` chop etdi (yuqorida keltirilgan `fmt` hujjati qoidasi). Pointer receiver'li `Alert` metodi typed nil bilan to'liq ishladi va `nasos yo'q` qaytardi, garchi `al == nil` `false` bo'lsa ham. Nil interface'ning o'zidan (dinamik tipi yo'q) metod chaqirish esa har doim panic: chaqiriladigan metodni topish uchun dinamik tip kerak.
+
+Taqqoslash qoidasi ham tipga bog'liq. Spetsifikatsiya: slice, map va funksiya tiplari taqqoslanmaydi, faqat predeklaratsiya qilingan `nil` bilan solishtirish mumkin; pointer, kanal va interface'ni `nil` bilan solishtirish umumiy qoidalardan kelib chiqadi. Shu sababli ikki `func` yoki ikki map'ni `==` bilan solishtirish kompilyatsiya xatosi, slice'lar uchun esa `slices.Equal` kerak (29-dars).
+
+### omitempty va omitzero
+
+JSON chegarasida nil va bo'sh qiymatni boshqarish uchun Go 1.24 `encoding/json` ga `omitzero` tag opsiyasini qo'shdi. Release notes: `omitzero` maydonni qiymati zero bo'lsa tushirib qoldiradi (tipda `IsZero() bool` metodi bo'lsa shu ishlatiladi), `omitempty` va `omitzero` birga berilsa maydon ulardan biri bajarilsa tushiriladi. Slice va map uchun farq muhim: nil slice zero qiymat, bo'sh (`[]string{}`) esa zero emas. Quyidagi dastur ikkala opsiyani nil va bo'sh qiymatda solishtiradi:
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"reflect"
+)
+
+type Gauge struct{ Level float64 }
+
+// Value receiver: nil *Gauge orqali interface'dan chaqirilsa panic.
+func (g Gauge) String() string { return fmt.Sprintf("%.1f L", g.Level) }
+
+type Alerter interface{ Alert() string }
+
+type Pump struct{ ID int }
+
+// Pointer receiver: nil receiver bilan xavfsiz.
+func (p *Pump) Alert() string {
+	if p == nil {
+		return "nasos yo'q"
+	}
+	return fmt.Sprint("nasos-", p.ID)
+}
+
+type Report struct {
+	A []string          `json:"a,omitempty"`
+	B []string          `json:"b,omitzero"`
+	C map[string]string `json:"c,omitempty"`
+	D map[string]string `json:"d,omitzero"`
+}
+
+func try(name string, f func() any) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("%-30s panic: %v\n", name, r)
+		}
+	}()
+	fmt.Printf("%-30s %v\n", name, f())
+}
+
+// merge: manba tugagach kanal o'zgaruvchisi nil qilinadi.
+func merge(a, b <-chan int) []int {
+	var out []int
+	for a != nil || b != nil {
+		select {
+		case v, ok := <-a:
+			if !ok {
+				a = nil
+				continue
+			}
+			out = append(out, v)
+		case v, ok := <-b:
+			if !ok {
+				b = nil
+				continue
+			}
+			out = append(out, v)
+		}
+	}
+	return out
+}
+
+func gen(vals ...int) <-chan int {
+	ch := make(chan int)
+	go func() {
+		defer close(ch)
+		for _, v := range vals {
+			ch <- v
+		}
+	}()
+	return ch
+}
+
+func main() {
+	// 1. Value receiver + nil pointer interface orqali
+	var gp *Gauge
+	var s fmt.Stringer = gp
+	try("nil *Gauge -> Stringer", func() any { return s.String() })
+	fmt.Println("fmt chiqishi:", s) // fmt panic'ni ushlaydi
+	fmt.Printf("%v | %s\n", gp, gp)
+
+	// 2. Pointer receiver typed nil interface orqali ishlaydi
+	var pp *Pump
+	var al Alerter = pp
+	fmt.Println("typed nil, pointer receiver:", al.Alert(), "| al == nil:", al == nil)
+
+	// 3. Nil interface'dan metod chaqirish
+	var nilAl Alerter
+	try("nil interface metodi", func() any { return nilAl.Alert() })
+
+	// 4. omitempty va omitzero (Go 1.24)
+	for _, r := range []Report{
+		{},
+		{A: []string{}, B: []string{}, C: map[string]string{}, D: map[string]string{}},
+	} {
+		b, _ := json.Marshal(r)
+		fmt.Println(string(b))
+	}
+
+	// 5. reflect va nil
+	try("reflect.ValueOf(5).IsNil()", func() any { return reflect.ValueOf(5).IsNil() })
+	var e error
+	fmt.Println("reflect.ValueOf(nil interface).IsValid():", reflect.ValueOf(e).IsValid())
+	fmt.Println("reflect.ValueOf(gp).IsNil():", reflect.ValueOf(gp).IsNil())
+
+	// 6. Nil kanal bilan merge
+	fmt.Println("merge:", len(merge(gen(1, 2, 3), gen(10, 20))))
+}
+```
+
+Go 1.24.7 da chiqish:
+
+```text
+nil *Gauge -> Stringer         panic: runtime error: invalid memory address or nil pointer dereference
+fmt chiqishi: <nil>
+<nil> | <nil>
+typed nil, pointer receiver: nasos yo'q | al == nil: false
+nil interface metodi           panic: runtime error: invalid memory address or nil pointer dereference
+{}
+{"b":[],"d":{}}
+reflect.ValueOf(5).IsNil()     panic: reflect: call of reflect.Value.IsNil on int Value
+reflect.ValueOf(nil interface).IsValid(): false
+reflect.ValueOf(gp).IsNil(): true
+merge: 5
+```
+
+`omitempty` ham nil, ham bo'sh slice va map'ni tushirdi (`A`, `C` ikkala holatda yo'q). `omitzero` faqat nil'ni tushirdi, bo'sh qiymat `[]` va `{}` bo'lib chiqdi (`B`, `D`). Demak API shartnomasi "ro'yxat maydoni har doim bor, lekin bo'sh bo'lishi mumkin" bo'lsa, `omitzero` va javob qurishda nil'ni bo'shga aylantirish birga ishlaydi; "bo'sh bo'lsa maydon umuman yo'q" bo'lsa `omitempty`. Bu tanlovni 68-darsda API dizayni nuqtai nazaridan ko'ramiz.
+
+Dasturning qolgan qismi tekshirilgan nozik holatlarni qamrab oladi. `reflect.ValueOf(5).IsNil()` panic beradi, chunki `IsNil` faqat nil bo'la oladigan kindlar uchun; nil interface'ni `reflect.ValueOf` ga bersangiz `IsValid()` `false` qaytaradi (zero `Value`), typed nil pointer uchun esa `IsValid()` `true` va `IsNil()` `true`. Bu `reflect` bilan yozilgan umumiy kodda (serializer, validator) ikki bosqichli tekshiruv kerakligini bildiradi. Oxirgi qism `merge` funksiyasi: ikki manbadan o'qiyotganda manba yopilgach, kanal o'zgaruvchisini nil qilish `select` ning shu case'ni qayta tanlashini to'xtatadi va sikl ikkala manba tugaganda (`a != nil || b != nil` yolg'on) chiqadi. Natija `merge: 5`, ya'ni uchta va ikkita qiymat ham olindi, goroutine qolmadi va busy-loop bo'lmadi (42-dars).
+
 ## Misol: nil bilan amallar to'plami
 
 Ushbu dastur har tipdagi nil bilan nima mumkinligini bir joyda ko'rsatadi:

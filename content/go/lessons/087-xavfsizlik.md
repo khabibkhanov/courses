@@ -297,6 +297,92 @@ link.txt       naive="MAXFIY" (xato: <nil>)
 
 Naive variant ikkala hujumda ham `MAXFIY` mazmunini qaytardi. `os.OpenInRoot` ikkalasini ham `path escapes from parent` xatosi bilan rad etdi, oddiy fayl esa o'qildi.
 
+### Kirish tekshiruvidagi uchta tuzoq
+
+**1. `DisallowUnknownFields` faqat birinchi JSON qiymatini ko'radi.** `json.Decoder` oqim bilan ishlaydi: `Decode` bitta qiymatni o'qiydi va to'xtaydi. Tana `{...}{...}` ko'rinishida bo'lsa, ikkinchi qiymat o'qilmaydi va hech qanday xato chiqmaydi. Ikkinchi qiymat jimgina tashlab yuboriladi, tananing yarmi tekshirilmay qolgani esa audit logida ko'rinmaydi: loglangan tana va ishlov berilgan tana bir-biridan farq qiladi. Bu muallifning xulosasi, hujjatda bunday ogohlantirish yo'q. Qat'iy qabul qilishda birinchi `Decode` dan keyin ikkinchisini chaqirib, `io.EOF` kutish kerak. Hujjat `DisallowUnknownFields` ni faqat struct maydonlari uchun ta'riflaydi, ortiqcha ma'lumot haqida hech narsa demaydi, shuning uchun bu tekshiruvni o'zingiz yozasiz.
+
+**2. `ConstantTimeCompare` uzunlik farqida darhol qaytadi.** `crypto/subtle` hujjati: vaqt qiymatlar mazmuniga emas, uzunlikka bog'liq, uzunliklar mos kelmasa funksiya darhol 0 qaytaradi. Demak, token uzunligi tashqariga oshkor bo'lishi mumkin. Odatiy yechim: ikkala tomonning xeshini (masalan `sha256.Sum256`) olib, xeshlarni solishtirish; xeshlar doim bir xil uzunlikda. Token xeshini saqlash baribir yaxshi amaliyot: ma'lumotlar bazasi sizib chiqsa ham xom token ochilmaydi.
+
+**3. Tasodifiy token.** `math/rand` bashorat qilinadi, token uchun `crypto/rand`. Go 1.24 release notes'iga ko'ra `crypto/rand.Read` endi xato qaytarmaydi (xato bo'lsa dastur crash qiladi, bu faqat `Reader` o'zgaruvchisini almashtirgan dasturlarga ta'sir qiladi) va yangi `rand.Text` kriptografik xavfsiz matnli qator beradi. Eslatma: `Read` xatosini tekshirish Go 1.24 dan oldingi kodda hamon kerak.
+
+Uchala holatni bitta dasturda tekshirdik (Go 1.24.7, tashqi modulsiz):
+
+```go
+package main
+
+import (
+	"crypto/rand"
+	"crypto/sha256"
+	"crypto/subtle"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"strings"
+)
+
+type point struct {
+	Device string  `json:"device"`
+	Lat    float64 `json:"lat"`
+}
+
+// decodeLoose faqat birinchi JSON qiymatini o'qiydi.
+func decodeLoose(body string) (point, error) {
+	var p point
+	dec := json.NewDecoder(strings.NewReader(body))
+	dec.DisallowUnknownFields()
+	err := dec.Decode(&p)
+	return p, err
+}
+
+// decodeStrict birinchi qiymatdan keyin ortiqcha ma'lumot yo'qligini ham tekshiradi.
+func decodeStrict(body string) (point, error) {
+	var p point
+	dec := json.NewDecoder(strings.NewReader(body))
+	dec.DisallowUnknownFields()
+	if err := dec.Decode(&p); err != nil {
+		return p, err
+	}
+	if err := dec.Decode(&struct{}{}); !errors.Is(err, io.EOF) {
+		return p, errors.New("tanadan keyin ortiqcha ma'lumot bor")
+	}
+	return p, nil
+}
+
+// tokenEqual ikkala tomonni sha256 bilan bir xil uzunlikka keltirib solishtiradi.
+func tokenEqual(got, want string) bool {
+	a := sha256.Sum256([]byte(got))
+	b := sha256.Sum256([]byte(want))
+	return subtle.ConstantTimeCompare(a[:], b[:]) == 1
+}
+
+func main() {
+	body := `{"device":"gps-7","lat":41.3}{"device":"gps-8","lat":999}`
+	p, err := decodeLoose(body)
+	fmt.Printf("loose : %+v err=%v\n", p, err)
+	p, err = decodeStrict(body)
+	fmt.Printf("strict: %+v err=%v\n", p, err)
+
+	fmt.Println("uzunlik farqi:", subtle.ConstantTimeCompare([]byte("abc"), []byte("abcd")))
+	fmt.Println("hash bilan   :", tokenEqual("abc", "abcd"), tokenEqual("abcd", "abcd"))
+
+	tok := rand.Text()
+	fmt.Println("rand.Text uzunligi:", len(tok))
+}
+```
+
+```text
+loose : {Device:gps-7 Lat:41.3} err=<nil>
+strict: {Device:gps-7 Lat:41.3} err=tanadan keyin ortiqcha ma'lumot bor
+uzunlik farqi: 0
+hash bilan   : false true
+rand.Text uzunligi: 26
+```
+
+`rand.Text` uzunligi 26 belgi bu mashinadagi kuzatuv; hujjatdagi aniq kafolatni (entropiya miqdorini) bu darsda tekshirmadik, shuning uchun token uzunligiga tayanadigan kodda hujjatni o'qing.
+
+`http.MaxBytesReader` hujjati yana bir narsani aytadi: imkon bo'lsa, u `ResponseWriter`ga chegaradan oshgandan keyin ulanishni yopishni buyuradi. Shuning uchun 413 javobidan keyin keep-alive ulanishida tana qoldig'ini o'qishga urinmang.
+
 ## Misol: ishonchsiz kirishni qabul qilish
 
 Quyidagi handler yuqoridagi to'plamni birlashtiradi: token solishtirish, tana hajmi chegarasi, qat'iy JSON parse va diapazon tekshiruvi. Uni `httptest` bilan beshta holatda sinadik:

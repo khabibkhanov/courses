@@ -316,6 +316,92 @@ hint bilan, ajratishlar: 6
 - `map[K]*V`: qiymatni joyida o'zgartirish mumkin (`m[k].Count++`), lekin har yozuv alohida heap ob'ekt (GC yuki, cache yomonlashadi: 66-dars) va nil pointer xavfi bor.
 - `map[K][]V`: guruhlash uchun qulay: yo'q kalit uchun `nil` slice, unga `append` ishlaydi (`m[k] = append(m[k], v)`). Slice'larni tashqariga bermang (12-dars).
 
+### Vaqt kalit sifatida: time.Time tuzog'i
+
+Telemetriyada "vaqt bo'yicha oxirgi pozitsiya" kabi map tabiiy ko'rinadi: `map[time.Time]Position`. `time.Time` taqqoslanuvchi struct, shuning uchun kompilyator ruxsat beradi, lekin pkg.go.dev/time hujjati ogohlantiradi: `==` operatori vaqt lahzasidan tashqari `Location` va monotonic soat ko'rsatkichini ham taqqoslaydi, shu sababli `Time` qiymatlarini map yoki ma'lumotlar bazasi kaliti qilishdan oldin hamma qiymatda bir xil `Location` o'rnatilgani (`UTC` yoki `Local` metodi bilan) va monotonic ko'rsatkich `t = t.Round(0)` bilan olib tashlangani kafolatlanishi kerak. Bir lahzaning ikki yozuvi:
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	// Bir xil lahza, ikki xil Location.
+	utc := time.Date(2026, 11, 3, 7, 0, 0, 0, time.UTC)
+	tashkent := utc.In(time.FixedZone("UZT", 5*3600))
+
+	fmt.Println("Equal:", utc.Equal(tashkent), "| ==:", utc == tashkent)
+
+	m := map[time.Time]string{utc: "pozitsiya-1"}
+	_, found := m[tashkent]
+	fmt.Println("map'da topildimi:", found)
+
+	// Monotonic reading ham == natijasiga ta'sir qiladi.
+	now := time.Now()
+	stripped := now.Round(0)
+	fmt.Println("now == now.Round(0):", now == stripped, "| Equal:", now.Equal(stripped))
+
+	// Xavfsiz kalit: UTC va monotonic'siz.
+	key := func(t time.Time) time.Time { return t.UTC().Round(0) }
+	m2 := map[time.Time]string{key(utc): "pozitsiya-1"}
+	_, found = m2[key(tashkent)]
+	fmt.Println("normallashtirilgan kalit topildimi:", found)
+
+	// Unix nanosekund (int64) kalit sifatida: eng sodda.
+	m3 := map[int64]string{utc.UnixNano(): "pozitsiya-1"}
+	_, found = m3[tashkent.UnixNano()]
+	fmt.Println("UnixNano kalit topildimi:", found)
+}
+```
+
+```text
+Equal: true | ==: false
+map'da topildimi: false
+now == now.Round(0): false | Equal: true
+normallashtirilgan kalit topildimi: true
+UnixNano kalit topildimi: true
+```
+
+Xato jimgina: `Equal` rost, lekin map yozuvni topmaydi, va test faqat UTC qiymatlar bilan o'tgani uchun noto'g'ri xotirjamlik beradi. Ikki to'g'ri yo'l bor: `t.UTC().Round(0)` bilan normallashtirilgan `time.Time` yoki `UnixNano()` (int64). Ikkinchisi sodda va tez, lekin vaqt zonasini yo'qotadi va `time.Time` ning diapazonidan tor: u 1678 dan 2262 yilgacha bo'lgan lahzalarni ifodalaydi (UnixNano hujjatiga qarang, bu dars uni tekshirmagan). Bu bo'lim Go 1.24.7 da ishga tushirildi.
+
+### Uzun satr kalitlar: unique.Handle
+
+Kalit uzun satr bo'lsa (masalan, to'liq marshrut tavsifi), har qidirishda hash va tenglik tekshiruvi butun satr bo'yicha ishlaydi, va bir xil satrning ko'p nusxasi xotirada turadi. Go 1.23 release notes yangi `unique` paketini qo'shgan: `unique.Make(value)` har qanday taqqoslanuvchi qiymatning kanonik nusxasiga `Handle[T]` beradi. pkg.go.dev hujjatiga ko'ra ikki handle faqat va faqat ular yaratilgan qiymatlar teng bo'lsa teng, handle'larni taqqoslash esa qiymatlarni taqqoslashdan odatda ancha samarali. Ya'ni handle'ni map kaliti qilib, satrni bir marta intern qilsangiz, keyingi qidirishlar qisqa taqqoslashga tayanadi:
+
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+	"unique"
+)
+
+func main() {
+	a := unique.Make(strings.Repeat("T-1042/", 100))
+	b := unique.Make(strings.Repeat("T-1042/", 100))
+	c := unique.Make("T-9")
+	fmt.Println("a == b:", a == b, "| a == c:", a == c)
+
+	last := map[unique.Handle[string]]float64{}
+	last[a] = 41.5
+	last[b] = 40.9 // bir xil kalit: ustidan yozilgan
+	fmt.Println("map uzunligi:", len(last), "| qiymat:", last[a])
+	fmt.Println("qiymat satri uzunligi:", len(a.Value()))
+}
+```
+
+```text
+a == b: true | a == c: false
+map uzunligi: 1 | qiymat: 40.9
+qiymat satri uzunligi: 700
+```
+
+Ikki alohida yaratilgan 700 baytli satr bitta handle'ga aylandi va map'da bitta kalit bo'ldi. Savdosi: `Make` o'zi ham kalitni ichki jadvalda qidiradi, shuning uchun u foyda beradi faqat bir handle ko'p marta qayta ishlatilganda (kalitni bir marta intern qilib, ko'p marta qidirganda). Bir martalik qidiruv uchun oddiy satr kaliti yetarli. Tezlik haqida raqam bermaymiz: biz uni o'lchamadik, o'z yukingizda o'lchang (61-dars).
+
 ## Misol: struct kalit, set va guruhlash
 
 Birinchi dastur ikki o'lchov bo'yicha jami, massiv kalit va guruhlashni ko'rsatadi:

@@ -240,6 +240,126 @@ Chiqish Go 1.24.7 dan. `Compact` uchinchi `a`ni olib tashlamadi, chunki u birinc
 
 `slices.Sorted(maps.Keys(m))`, `maps.Collect(slices.All(xs))`, `slices.Collect(...)` iterator va slice/map o'rtasidagi ko'prik. Cheksiz iteratorga `Collect` berilsa dastur tugamaydi (28-dars), shuning uchun avval uzunlikni cheklang.
 
+### Go 1.22 o'zgarishlari va ular nimani o'zgartirdi
+
+`Delete`, `DeleteFunc`, `Compact`, `CompactFunc` va `Replace` slice'ni qisqartiradi. Go 1.22 release notes ("slices" bo'limi): bu funksiyalar endi yangi uzunlik bilan eski uzunlik orasidagi elementlarni nolga tenglaydi. Go 1.21 da bu qadam yo'q edi, shuning uchun pointer saqlovchi slice'dan element o'chirilganda chiqib ketgan pointer massivda qolib, GC'dan obyektni ushlab turishi mumkin edi (bu mantiqiy oqibat, notes'da yozilmagan). Bu darsdagi "oxirgi elementlar nolga tenglanadi" qoidasi Go 1.22 va undan keyingi toolchain uchun to'g'ri. Shu release'da yana ikki o'zgarish: `slices.Concat` qo'shildi (bir nechta slice'ni yangi slice'ga birlashtiradi) va `Insert` endi `i` chegaradan tashqarida bo'lsa har doim panic beradi (oldin qo'shiladigan element bo'lmasa panic bermasdi). Bizning tajribada `slices.Insert([]int{1, 2}, 5)` `slice bounds out of range [5:2]` panic'ini berdi.
+
+### Natijani tashlab yuborish
+
+Eng keng tarqalgan xato: `slices.Delete(s, 1, 2)` ni yozib, qaytgan slice'ni `s` ga tayinlamaslik. `s` ning uzunligi eskicha qoladi, oxirida esa nol qiymat paydo bo'ladi, chunki elementlar siljigan va oxirgi katak nolga tenglangan. Go 1.24.7 da bu kod kompilyatsiya bo'lib ishlaydi va `[10 30 40 0]` chiqaradi, `go vet` esa uni ushlaydi:
+
+```text
+# e029v
+# [e029v]
+./main.go:10:15: result of slices.Delete call not used
+```
+
+Shu sababli CI da `go vet` majburiy bo'lishi kerak (40-dars). Telemetriya ma'lumotida bu xato ayniqsa xavfli: oxiridagi `0` yoqilg'i darajasi sifatida o'qilib, jimgina noto'g'ri statistika beradi. Xuddi shu qoida `Insert`, `Compact`, `Replace` va boshqa slice qaytaruvchi funksiyalarga tegishli.
+
+### Nomlangan tip, nil va NaN
+
+Funksiya imzolari `func Clone[S ~[]E, E any](s S) S` shaklida, ya'ni natija tipi argument tipi bilan bir xil: `type Route []Point` ni `Clone` qilsangiz `Route` qaytadi, `[]Point` emas. Shuning uchun nomlangan slice tipi o'z metodlarini yo'qotmaydi. Quyidagi dastur bundan tashqari bir nechta kam ma'lum nozikliklarni tekshiradi:
+
+```go
+package main
+
+import (
+	"cmp"
+	"fmt"
+	"maps"
+	"math"
+	"slices"
+)
+
+type Point struct {
+	Lat, Lon float64
+}
+
+// Route nomlangan slice tipi: Clone, Insert va boshqalar tipni saqlaydi.
+type Route []Point
+
+type Device struct {
+	ID   string
+	Fuel float64
+}
+
+func main() {
+	// 1. Natijani tashlab yuborish: asl slice'da nol qiymat qoladi
+	s := []int{10, 20, 30, 40}
+	_ = slices.Delete(s, 1, 2) // natija bilan nima qilinishini ko'rsatish uchun tashlanadi
+	fmt.Println("natija tashlangan:", s, "| len:", len(s))
+	s = []int{10, 20, 30, 40}
+	s = slices.Delete(s, 1, 2)
+	fmt.Println("natija olingan:   ", s, "| len:", len(s))
+
+	// 2. Nomlangan tip saqlanadi
+	r := Route{{41.3, 69.2}, {41.4, 69.3}}
+	c := slices.Clone(r)
+	fmt.Printf("Clone tipi: %T | Insert tipi: %T\n", c, slices.Insert(r, 0, Point{}))
+
+	// 3. nil va bo'sh slice/map
+	var ns []int
+	fmt.Println("Clone(nil) == nil:", slices.Clone(ns) == nil, "| Clone(bo'sh) == nil:", slices.Clone([]int{}) == nil)
+	var nm map[string]int
+	fmt.Println("maps.Clone(nil) == nil:", maps.Clone(nm) == nil)
+
+	// 4. Equal va NaN
+	nan := math.NaN()
+	fmt.Println("slices.Equal NaN:", slices.Equal([]float64{nan}, []float64{nan}), "| Compare:", slices.Compare([]float64{nan}, []float64{nan}))
+
+	// 5. BinarySearchFunc: struct slice'da kalit bo'yicha qidirish
+	ds := []Device{{"T-1", 54.5}, {"T-3", 12}, {"T-5", 80}}
+	i, ok := slices.BinarySearchFunc(ds, "T-3", func(d Device, id string) int { return cmp.Compare(d.ID, id) })
+	j, ok2 := slices.BinarySearchFunc(ds, "T-4", func(d Device, id string) int { return cmp.Compare(d.ID, id) })
+	fmt.Println(i, ok, j, ok2)
+
+	// 6. Concat, Grow, Clip
+	all := slices.Concat([]int{1, 2}, nil, []int{3})
+	fmt.Println(all, len(all), cap(all))
+	g := slices.Grow([]int{1}, 10)
+	fmt.Println("Grow:", len(g), cap(g) >= 11)
+	cl := slices.Clip(g)
+	fmt.Println("Clip:", len(cl), cap(cl))
+
+	// 7. SortStableFunc: teng kalitlarda asl tartib saqlanadi
+	byFuel := []Device{{"A", 40}, {"B", 40}, {"C", 10}, {"D", 40}}
+	slices.SortStableFunc(byFuel, func(a, b Device) int { return cmp.Compare(a.Fuel, b.Fuel) })
+	fmt.Println(byFuel)
+
+	// 8. MaxFunc / MinFunc
+	top := slices.MaxFunc(ds, func(a, b Device) int { return cmp.Compare(a.Fuel, b.Fuel) })
+	fmt.Println("eng ko'p yoqilg'i:", top.ID)
+
+	// 9. Insert panic
+	func() {
+		defer func() { fmt.Println("Insert recover:", recover()) }()
+		_ = slices.Insert([]int{1, 2}, 5)
+	}()
+}
+```
+
+Go 1.24.7 da chiqish:
+
+```text
+natija tashlangan: [10 30 40 0] | len: 4
+natija olingan:    [10 30 40] | len: 3
+Clone tipi: main.Route | Insert tipi: main.Route
+Clone(nil) == nil: true | Clone(bo'sh) == nil: false
+maps.Clone(nil) == nil: true
+slices.Equal NaN: false | Compare: 0
+1 true 2 false
+[1 2 3] 3 3
+Grow: 1 true
+Clip: 1 1
+[{C 10} {A 40} {B 40} {D 40}]
+eng ko'p yoqilg'i: T-5
+Insert recover: runtime error: slice bounds out of range [5:2]
+```
+
+Kuzatuvlar. `Clone(nil)` nil, `Clone([]int{})` esa nil emas: nil'lik saqlanadi. JSON'ga chiqarishda bu muhim (18-dars), shuning uchun nusxalash ma'noni o'zgartirmaydi. `maps.Clone(nil)` ham nil. `slices.Equal` elementlarni `==` bilan solishtiradi, NaN o'ziga teng emas, shuning uchun `Equal([]float64{NaN}, []float64{NaN})` `false` berdi; `slices.Compare` esa `cmp.Compare` qoidasi bilan `0` qaytardi (NaN NaN'ga teng). Ikki funksiya NaN'ni turlicha ko'radi, bu kuzatuv va telemetriya ma'lumotini solishtirishda ahamiyatli: NaN'ni oldindan tozalang yoki `EqualFunc` bilan aniq qoidani yozing.
+
+`BinarySearchFunc` imzosi `(x S, target T, cmp func(E, T) int)`: elementlar tipi `E` va qidirilayotgan kalit tipi `T` har xil bo'lishi mumkin. Shu sababli struct slice'ida butun struct yasamasdan, faqat kalit bilan qidirish mumkin (`1 true` va `2 false` natijalari: `T-3` indeks 1 da topildi, `T-4` indeks 2 da turishi kerak). `cmp` funksiyasi slice saralangan tartib bilan mos bo'lishi shart. `SortStableFunc` teng kalitli (`40`) elementlar tartibini saqladi: `A`, `B`, `D`. `Grow` sig'imni oldindan oshiradi (biz aniq sig'imni emas, faqat `cap(g) >= 11` ni tekshirdik), `Clip` esa sig'imni uzunlikka tenglaydi, shunda unga `append` qilish asl massivni yozmaydi (12-dars). `Concat` nil argumentni e'tiborsiz qoldirdi va `[1 2 3]` yasadi. `Insert` chegaradan tashqari indeksda panic beradi, shuning uchun foydalanuvchi kiritgan indeksni oldindan tekshiring.
+
 ## Misol: ko'p kalitli saralash, qidirish, nusxalash, map'lar
 
 ```go

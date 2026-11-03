@@ -11,6 +11,8 @@ sources:
     note: "Profiling Go Programs: pprof bilan issiq joyni topish va o'zgartirishdan keyin qayta o'lchash yondashuvi"
   - id: pgo-doc
     note: "PGO hujjati: optimallashtirish tsiklida kompilyator darajasidagi qadam sifatida, unrepresentativ profil haqidagi ogohlantirish"
+  - id: pkg-testing
+    note: "Go 1.24 release notes (go.dev/doc/go1.24) bo'yicha testing.B.Loop: benchmark funksiyasi har -count uchun bir marta bajariladi, chaqiruv parametrlari va natijalari tirik saqlanadi"
 quiz:
   - q: "CPU profilda `fmt.Sprintf` kumulativ 66% chiqdi (u har nuqtada map kaliti yasaydi). Eng to'g'ri keyingi qadam qaysi?"
     options:
@@ -183,6 +185,66 @@ Virtual mashinada, boshqa jarayonlar bilan birga, bitta o'lchov hech narsani isb
 
 Alloc ko'rsatkichlari (B/op, allocs/op) kamdan-kam shovqinli: pastdagi jadvalda B/op bir xil benchmark'ning o'n o'lchovida bir necha baytga farq qildi. Shuning uchun alloc bo'yicha farq ns/op'ga qaraganda ishonchliroq, lekin alloc kamaygani vaqt kamaygani degani emas.
 
+### A/A testi: shovqin chegarasini o'zingiz o'lchang
+
+"Median farqi shovqin ichida" degan hukm uchun shovqin qanchaligini bilish kerak. Buning eng oddiy usuli A/A testi: bir xil kodni ikki marta, xuddi shu sharoitda o'lchab, "farq"ni ko'rish. Quyidagi benchmark `fmt.Sprintf` bilan kalit yasaydi (V0 dagi kabi, lekin alohida ixcham funksiya). Uni `-count=10` bilan uch marta ketma-ket yurgizdim, kod hech o'zgarmadi. Sharoit shu darsdagi o'sha mashina: Go 1.24.7, linux/amd64, Intel Xeon 2.10 GHz, 2 vCPU virtual mashina.
+
+| Yurgizish | Median ns/op | min..max ns/op |
+|---|---|---|
+| 1 | 105.4 | 92.1 .. 125.2 |
+| 2 | 100.2 | 91.9 .. 119.1 |
+| 3 | 95.0 | 90.2 .. 109.0 |
+
+Bir xil kod uchun medianlar orasidagi farq 9.9% gacha chiqdi (105.4 va 95.0), min..max oraliqlari esa to'liq kesishadi. Boshqa ikki yurgizishda (alohida o'lchov, jadvalga kirmagan) medianlar 99.3 va 107.3 edi, ya'ni yana 8% farq. Bu mashinada, shu benchmark uchun shovqin chegarasi 10% atrofida (bu o'z mashinam uchun o'lchov, boshqa muhitda boshqacha bo'ladi). Xulosa: 1-qadamdagi -4.3% (V1 dan V2 ga) A/A shovqinidan kichik, shuning uchun "shovqin" hukmi bu o'lchovga ham asoslangan. Aksincha, 6.9 baravar farq (V0 dan V1 ga) shovqin chegarasidan o'nlab marta katta. Qoida: o'zgartirish natijasini A/A farqi bilan solishtiring; A/A farqidan kichik farqni mikrobenchmarkda isbotlab bo'lmaydi, uni ko'rish uchun ko'proq `-count`, boshqa jarayonlar band qilmagan mashina yoki `benchstat` kerak.
+
+### Benchmark yolg'on gapirganda: natija ishlatilmasa
+
+Ikkinchi tuzoq: kompilyator natijasi hech qayerda ishlatilmaydigan sof funksiya chaqiruvini olib tashlashi mumkin, va benchmark "tezlik"ni emas, bo'sh tsiklni o'lchaydi. Shu sababli benchmark natijasi odatda paket darajasidagi `sink` o'zgaruvchisiga yoziladi (benchmark asoslari 61-darsda). Go 1.24 release notes `testing.B.Loop` ni kiritdi: `for b.Loop() { ... }` benchmark funksiyasini har `-count` uchun aynan bir marta bajaradi (qimmat setup va cleanup bir marta ishlaydi) va chaqiruv parametrlari hamda natijalarini tirik saqlab, tsikl tanasi to'liq optimallashtirib tashlanishining oldini oladi. Uch variantni solishtirdim (bir xil `bucket(v float64) int` funksiyasi, `-count=3`, o'sha mashina):
+
+```go
+// bucket sof va kichik funksiya: kompilyator uni inline qilishi mumkin.
+func bucket(v float64) int { return int(v / 10) }
+
+var sink int
+
+// Natija ishlatilmaydi.
+func BenchmarkDiscarded(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		bucket(float64(i))
+	}
+}
+
+// Natija paket darajasidagi o'zgaruvchiga yoziladi.
+func BenchmarkSink(b *testing.B) {
+	var s int
+	for i := 0; i < b.N; i++ {
+		s += bucket(float64(i))
+	}
+	sink = s
+}
+
+// Go 1.24: b.Loop.
+func BenchmarkLoop(b *testing.B) {
+	for b.Loop() {
+		bucket(41.5)
+	}
+}
+```
+
+```text
+BenchmarkDiscarded-2   	1000000000	         0.1772 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDiscarded-2   	1000000000	         0.1963 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDiscarded-2   	1000000000	         0.1710 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSink-2        	957079521	         1.302 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSink-2        	838891848	         1.360 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSink-2        	941118895	         1.289 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLoop-2        	928672158	         1.359 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLoop-2        	929775980	         1.341 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLoop-2        	936716970	         1.316 ns/op	       0 B/op	       0 allocs/op
+```
+
+Natijani tashlab yuborgan variant 0.17-0.20 ns/op berdi, qolgan ikkisi 1.29-1.36 ns/op. 2.10 GHz protsessorda bitta takt 1/2.10 GHz, ya'ni 0.48 ns, ya'ni 0.17 ns bitta iteratsiyada ishlov berishga ham yetmaydi: ko'rinishidan funksiya tanasi umuman bajarilmagan (assembly'ni tekshirmadim, bu xulosa ns/op ning fizik chegarasidan kelib chiqadi). `Sink` va `Loop` esa bir-biriga yaqin. Qoida: mikrobenchmarkda o'lchanayotgan ish natijasi ishlatilishi shart, va ns/op bitta takt vaqtidan past chiqsa, o'lchovga ishonmang. Go 1.24 dan `b.Loop` bu xavfni kamaytiradi; Go 1.23 va eskida `sink` o'zgaruvchisi usuli qoladi.
+
 ### Profil nimani ko'rsatadi va nimani ko'rsatmaydi
 
 CPU profil (62-dars) namuna olish bilan ishlaydi: u issiq joyni ko'rsatadi, sababini emas. `fmt.Sprintf` 66% bo'lsa, bu "Sprintf qimmat" degani emas, "bu yerda ko'p chaqirilyapti" degani. Gipoteza shu yerdan chiqadi: "har nuqtada kalit yasash ortiqcha". Gipotezani benchmark tekshiradi.
@@ -293,3 +355,4 @@ TypeScript'da JIT va GC o'lchovga ko'proq ta'sir qiladi ("isinish" fazalari); Go
 - B/op va allocs/op ns/op'dan barqarorroq, lekin alloc kamayishi tezlashish kafolati emas.
 - Amdahl qonuni va production profili: benchmark'dagi katta farq production'da ko'rinmasligi mumkin, agar funksiyaning umumiy ulushi kichik bo'lsa.
 - PGO va boshqa kompilyator vositalari tsiklning oxirida, A/B o'lchov bilan; maqsadga yetilganda yoki keyingi o'zgartirish foyda bermaganda to'xtang.
+- Shovqin chegarasini A/A testi bilan o'lchang (bu mashinada bir xil kod uchun medianlar 10% gacha farq qildi) va benchmark natijasini `sink` yoki Go 1.24 dan `b.Loop` bilan ishlatib turing, aks holda kompilyator ishni olib tashlashi mumkin.

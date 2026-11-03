@@ -11,6 +11,16 @@ sources:
     note: "#35 (Using defer inside a loop), #54 (Not handling defer errors), #79 (Not closing transient resources: HTTP body, sql.Rows, os.File)"
   - id: go125
     note: "Minor changes to the library, os bo'limi: Root'ga qo'shilgan metodlar ro'yxati"
+  - id: pkg-os
+    note: "File.Sync: faylning joriy tarkibini barqaror xotiraga topshirish"
+  - id: pkg-bufio
+    note: "Writer: xato yuz bersa keyingi yozuvlar va Flush shu xatoni qaytaradi; Flush chaqirish shart"
+  - id: pkg-io
+    note: "Closer: birinchi chaqiruvdan keyin Close xulqi aniqlanmagan"
+  - id: pkg-net-http
+    note: "Response.Body: ulanishni qayta ishlatish va Body'ni yopish; Client.Do: CheckRedirect xatosida Response va xato birga qaytishi"
+  - id: pkg-database-sql
+    note: "Rows.Close idempotent, Next false qaytarsa Rows avtomatik yopiladi; Conn pool'ga Close bilan qaytariladi"
 quiz:
   - q: "1000 iteratsiyali tsiklda har safar `r := pool.Open(); defer r.Close()` yozilgan (bitta funksiya ichida). Resurslar qachon yopiladi?"
     options:
@@ -246,11 +256,154 @@ func save(w io.WriteCloser, data []byte) (err error) {
 
 ### HTTP Body
 
-`http.Get` xatosiz qaytganda `resp.Body` yopilishi shart; 100 Go Mistakes #79 buni resurs oqishining klassik joyi sifatida keltiradi. Ikkita nozik joy: (1) `err != nil` bo'lsa `resp` `nil`, shuning uchun `defer resp.Body.Close()` xatodan oldin yozilsa panic (go vet buni `using resp before checking for errors` bilan ushlaydi); (2) javob 2xx bo'lmaganda ham `Body` mavjud va yopilishi kerak, shuning uchun status tekshiruvi `defer`dan keyin turadi. Body'ni to'liq o'qimay yopish bilan bog'liq ulanishni qayta ishlatish masalasi 73-darsda.
+`http.Get` xatosiz qaytganda `resp.Body` yopilishi shart; 100 Go Mistakes #79 buni resurs oqishining klassik joyi sifatida keltiradi. Ikkita nozik joy: (1) `err != nil` bo'lsa `resp` deyarli har doim `nil` (hujjatdagi yagona istisno pastda), shuning uchun `defer resp.Body.Close()` xatodan oldin yozilsa panic (go vet buni `using resp before checking for errors` bilan ushlaydi); (2) javob 2xx bo'lmaganda ham `Body` mavjud va yopilishi kerak, shuning uchun status tekshiruvi `defer`dan keyin turadi. Body'ni to'liq o'qimay yopish bilan bog'liq ulanishni qayta ishlatish masalasi 73-darsda.
+
+Istisno: `http.Client` hujjatiga ko'ra `err` ham, `resp` ham nil bo'lmagan holat faqat `CheckRedirect` xato qaytarganda bo'ladi va u holda `resp.Body` allaqachon yopilgan, ya'ni qo'shimcha `Close` kerak emas. `Response.Body` hujjati ulanishni qayta ishlatish haqida shuni aytadi: Body oxirigacha o'qilmay yopilsa, standart `Transport` HTTP/1.x "keep-alive" ulanishini qayta ishlatmasligi mumkin; ammo Body'ni qo'lda oxirigacha o'qish ko'p holatda kerak emas, chunki `Close` uni konservativ limit doirasida asinxron o'qib tugatadi. Katta, kerak bo'lmagan tana kelsa, bu limitdan keyin ulanish yopiladi va yangi ulanish ochiladi.
+
+### Deskriptor chegarasi: oqish qanday ko'rinadi
+
+Muammo bo'limidagi `too many open files` operatsion tizim chegarasi (Linux'da jarayon uchun `RLIMIT_NOFILE`, shell'da `ulimit -n`). Production'da u odatda katta (bu sandbox'da 20000), shuning uchun oqish soatlab sezilmaydi. Mexanizmni tez ko'rish uchun chegarani vaqtincha pasaytirish mumkin. Quyidagi dastur 200 ta kichik fayl yaratadi va ularni ikki usulda ochadi: tsikl ichida `defer f.Close()` bilan va har fayl uchun alohida funksiyada.
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
+	"syscall"
+)
+
+func readHeader(path string) error {
+	f, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	var b [4]byte
+	_, err = f.Read(b[:])
+	return err
+}
+
+// readAll tsiklda defer ishlatadi: fayllar funksiya tugaguncha ochiq turadi.
+func readAllDeferInLoop(paths []string) (int, error) {
+	n := 0
+	for _, p := range paths {
+		f, err := os.Open(p)
+		if err != nil {
+			return n, fmt.Errorf("%d-fayl: %w", n+1, err)
+		}
+		defer f.Close()
+		n++
+	}
+	return n, nil
+}
+
+func readAllPerItem(paths []string) (int, error) {
+	n := 0
+	for _, p := range paths {
+		if err := readHeader(p); err != nil {
+			return n, fmt.Errorf("%d-fayl: %w", n+1, err)
+		}
+		n++
+	}
+	return n, nil
+}
+
+func main() {
+	dir, err := os.MkdirTemp("", "fd-demo")
+	if err != nil {
+		panic(err)
+	}
+	defer os.RemoveAll(dir)
+	var paths []string
+	for i := 0; i < 200; i++ {
+		p := filepath.Join(dir, fmt.Sprintf("p%03d.log", i))
+		if err := os.WriteFile(p, []byte("gps:"), 0o600); err != nil {
+			panic(err)
+		}
+		paths = append(paths, p)
+	}
+	n, err := readAllDeferInLoop(paths)
+	fmt.Println("tsiklda defer:", n, err, errors.Is(err, syscall.EMFILE))
+	n, err = readAllPerItem(paths)
+	fmt.Println("iteratsiya funksiyasi:", n, err)
+}
+```
+
+Shell'da `ulimit -n 64` qilib, dasturni kompilyatsiya qilib ishga tushirdik (Go 1.24.7, linux/amd64):
+
+```text
+tsiklda defer: 59 60-fayl: open /tmp/fd-demo882091046/p059.log: too many open files true
+iteratsiya funksiyasi: 200 <nil>
+```
+
+Birinchi usul 59 ta faylni ochgach 60-sida `too many open files` xatosi berdi: hech biri yopilmagan, chunki `defer` funksiya tugaguncha kutadi. Chegara 64 edi; qolgan deskriptorlarni dastur va runtime band qilgan (aniq ro'yxatini bu yerda tekshirmadik), vaqtinchalik katalog nomi esa har ishga tushirishda boshqacha bo'ladi. Ikkinchi usul 200 ta faylni ham ochdi, chunki har biri iteratsiya oxirida yopildi. Xato `%w` bilan o'ralgani uchun `errors.Is(err, syscall.EMFILE)` `true` qaytardi (chiqishdagi oxirgi qiymat), lekin bunday xatoga javob dasturni qayta ishga tushirish emas, oqishni topishdir: servis ichida `/proc/<pid>/fd` ni sanash (Linux) yoki deskriptor sonini metrika sifatida chiqarish oqishni chegaraga yetmasdan oldin ko'rsatadi.
+
+### Yopish tartibi: bufio.Writer, Flush va Sync
+
+Resurslar qatlamlanganda yopish tartibi teskari bo'lishi kerak: avval tashqi qatlam (`bufio.Writer`), keyin fayl. `defer` LIFO bo'lgani uchun fayl ochilgandan keyin darhol `defer f.Close()` yozib, bufer yaratgandan keyin `defer w.Flush()` yozsangiz tartib to'g'ri chiqadi (7-dars). Lekin `bufio.Writer` ning `Close` metodi yo'q, shuning uchun uni `io.Closer` kutadigan joyda ishlatib bo'lmaydi, va `Flush` xatosi `defer` ichida osongina yo'qoladi. `bufio` hujjati: yozuv vaqtida xato bo'lsa, keyingi yozuvlar va `Flush` shu xatoni qaytaradi; hamma ma'lumot yozilgach `Flush` chaqirish shart. `Flush` unutilsa, na xato, na ogohlantirish bo'ladi:
+
+```go
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"path/filepath"
+)
+
+func write(path string, flush bool) (int64, error) {
+	f, err := os.Create(path)
+	if err != nil {
+		return 0, err
+	}
+	w := bufio.NewWriter(f)
+	fmt.Fprint(w, "fuel=41.5\n")
+	if flush {
+		if err := w.Flush(); err != nil {
+			f.Close()
+			return 0, err
+		}
+	}
+	if err := f.Close(); err != nil {
+		return 0, err
+	}
+	st, err := os.Stat(path)
+	if err != nil {
+		return 0, err
+	}
+	return st.Size(), nil
+}
+
+func main() {
+	dir, _ := os.MkdirTemp("", "bufio-demo")
+	defer os.RemoveAll(dir)
+	n, err := write(filepath.Join(dir, "a.log"), false)
+	fmt.Println("Flush'siz:", n, "bayt, xato:", err)
+	n, err = write(filepath.Join(dir, "b.log"), true)
+	fmt.Println("Flush bilan:", n, "bayt, xato:", err)
+}
+```
+
+```text
+Flush'siz: 0 bayt, xato: <nil>
+Flush bilan: 10 bayt, xato: <nil>
+```
+
+`Flush`siz variantda `Close` ham, `Stat` ham xatosiz o'tdi, lekin fayl bo'sh qoldi: 10 baytlik yozuv `bufio.Writer` buferida qolib ketdi. Qoida: `Flush` natijasini tekshiring (yozuvchi uchun `Close` bilan bir xil), keyin `Close`.
+
+`Close` ma'lumot diskka yetganini kafolatlamaydi. `os.File.Sync` hujjatiga ko'ra faylning joriy tarkibini barqaror xotiraga topshiradi (odatda fayl tizimining operativ xotiradagi nusxasini diskka yuboradi). Konfiguratsiya yoki hisob-kitob natijasi kabi yo'qolmasligi kerak bo'lgan fayl uchun tartib: yozish, `Flush`, `Sync`, `Close`; ko'pincha vaqtinchalik faylga yozib, `os.Rename` bilan almashtiriladi (bu amaliy naqsh, Go hujjatidagi qoida emas). `Sync` sekin amal, uni har kichik yozuvdan keyin chaqirmang. Bu dasturda `Sync` ishga tushirilmadi va diskka tushish vaqtini o'lchamadik.
+
+### sql.Rows va tranzitor resurslar
+
+100 Go Mistakes #79 sanagan uchinchi tur, `sql.Rows`, ham xuddi shunday. `database/sql` hujjati: `Rows.Next` `false` qaytarsa va boshqa natija to'plami bo'lmasa, `Rows` avtomatik yopiladi va faqat `Rows.Err` ni tekshirish yetarli; `Close` idempotent (bir necha marta chaqirish xavfsiz) va `Err` natijasiga ta'sir qilmaydi. Demak, `defer rows.Close()` barcha yo'llarni (erta `return`, `Scan` xatosi) yopadi, siklni oxirigacha o'tish esa uni o'zi yopadi. Xavfli joy: `Next` tsikli erta `break` yoki `return` bilan tugasa va `Close` yozilmagan bo'lsa, `Rows` yopilmay qoladi. `database/sql` hujjatida `Tx` va `Conn` uchun ulanish pool'ga qaytishi aniq yozilgan (`Conn` uchun: har `Conn` foydalanishdan keyin `Close` bilan pool'ga qaytarilishi shart); yopilmagan `Rows` pool ulanishini ushlab turishi haqida alohida jumlani hujjatdan topa olmadik, shuning uchun buni 100 Go Mistakes #79 ning resurs oqishi haqidagi umumiy ogohlantirishi sifatida o'qing va o'z drayveringizda tekshiring. Ikki marta `Close` bo'yicha `*os.File`dan farq bor: `Rows.Close` idempotent, `*os.File.Close` esa ikkinchi chaqiruvda xato qaytaradi (quyida). Tashqi modul (pgx) pool'ining xulq-atvori o'z hujjatiga bog'liq va bu darsda tekshirilmagan.
 
 ### Ikki marta Close
 
-`Close`ni ikki marta chaqirish xavfsizligi tipga bog'liq. `*os.File` ikkinchi chaqiruvda xato qaytaradi va `errors.Is(err, os.ErrClosed)` `true` (quyida tekshirilgan, Go 1.24.7, linux). O'z `Close()` metodingizni yozsangiz, ikki marta chaqirilishi mumkinligini hujjatlang va xulqini tanlang (idempotent yoki xato). `defer` va aniq `Close` aralashganda ikki marta chaqirish tasodifan ro'y beradi.
+`io.Closer` hujjati: birinchi chaqiruvdan keyin `Close` xulqi aniqlanmagan, aniq tip o'z xulqini hujjatlashi mumkin. Shuning uchun `Close`ni ikki marta chaqirish xavfsizligi tipga bog'liq. `*os.File` ikkinchi chaqiruvda xato qaytaradi va `errors.Is(err, os.ErrClosed)` `true` (quyida tekshirilgan, Go 1.24.7, linux). O'z `Close()` metodingizni yozsangiz, ikki marta chaqirilishi mumkinligini hujjatlang va xulqini tanlang (idempotent yoki xato). `defer` va aniq `Close` aralashganda ikki marta chaqirish tasodifan ro'y beradi.
 
 ### os.Root (Go 1.24)
 

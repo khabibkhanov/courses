@@ -296,6 +296,84 @@ Builder+Grow, ajratishlar: 1
 
 `strings.TrimLeft/TrimRight` ikkinchi argumentni belgilar to'plami sifatida oladi, prefiks/suffix sifatida emas (100 Go Mistakes #38). `strings.TrimSuffix("123oxo", "xo")` `"123o"`, `TrimRight("123oxo", "xo")` esa `"123"` qaytaradi: bu xato ham bilinmay, faqat kirishda `x` yoki `o` bilan tugaydigan qiymat kelganda chiqadi.
 
+### Rune chegarasida kesish va yaroqsiz baytlarni tozalash
+
+Muammo bo'limidagi `name[:20]` xatosining to'g'ri varianti: rune sonini sanab, kesish nuqtasini `range` indeksidan olish. `range` indeksi doim rune boshining bayt o'rni, shuning uchun `s[:pos]` hech qachon rune'ni o'rtasidan kesmaydi. Tashqaridan kelgan yaroqsiz baytlar uchun `strings.ToValidUTF8(s, replacement)` bor: pkg.go.dev hujjatiga ko'ra u yaroqsiz UTF-8 baytlarning har bir ketma-ketligini (run) bitta `replacement` bilan almashtirilgan nusxani qaytaradi, `replacement` bo'sh bo'lishi ham mumkin. Ikkalasi bitta dasturda (Go 1.24.7):
+
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+	"unicode/utf8"
+)
+
+// truncate s'ni ko'pi bilan n ta rune'ga qisqartiradi va rune ichidan kesmaydi.
+func truncate(s string, n int) string {
+	if utf8.RuneCountInString(s) <= n {
+		return s
+	}
+	i := 0
+	for pos := range s {
+		if i == n {
+			return s[:pos]
+		}
+		i++
+	}
+	return s
+}
+
+func main() {
+	name := "Қашқадарё-12"
+	fmt.Printf("baytlar bilan: %q\n", name[:5])
+	fmt.Printf("rune bilan:    %q\n", truncate(name, 5))
+
+	dirty := "ok\xffok\xc0"
+	fmt.Printf("tozalangan:    %q\n", strings.ToValidUTF8(dirty, "?"))
+}
+```
+
+```text
+baytlar bilan: "Қа\xd1"
+rune bilan:    "Қашқа"
+tozalangan:    "ok?ok?"
+```
+
+`name[:5]` ikki rune va uchinchisining birinchi baytini oldi (`\xd1`), `truncate` esa besh to'liq rune. Bu funksiya hamon rune'ni "belgi" deb oladi: birlashtiruvchi diakritik yoki emoji ketma-ketligi bo'lsa, grafema ikkiga bo'linishi mumkin (yuqorida "Qachon qo'llamaslik" da). Tozalashni xato yo'lida emas, ma'lumot tizimga kirgan chegarada (HTTP handler, xabar iste'molchisi) bajaring: shunda ichkaridagi kod satr yaroqli deb hisoblashi mumkin.
+
+### Katta-kichik harf va solishtirish: ToUpper, EqualFold, turkcha i
+
+Go satrlarini `==` bilan solishtirish bayt-baytga, ya'ni katta-kichik harfga sezgir. Harf registrini hisobga olmaydigan solishtirish uchun `strings.EqualFold` kerak: hujjatiga ko'ra u ikki satrni UTF-8 deb talqin qilib, "simple Unicode case-folding" bo'yicha tenglikni tekshiradi; hujjat misolida `"ß"` va `"ss"` teng emas, chunki to'liq (full) case-folding ishlatilmaydi. `strings.ToLower(a) == strings.ToLower(b)` yozish ham ko'p holatda ishlaydi, lekin u ikkala satrni to'liq aylantiradi (o'lchanmagan), EqualFold esa solishtirishning o'zi. Turk tili uchun `strings.ToUpper("istanbul")` standart xaritalash bilan `ISTANBUL` beradi, `strings.ToUpperSpecial(unicode.TurkishCase, ...)` esa `İSTANBUL` beradi (hujjat misoli ham `"iş"` ni `"İŞ"` ga aylantiradi). `ToUpper` joriy tilga qarab o'zgarmaydi (bu darsda shunday ishladi): maxsus til qoidasini siz aniq tanlaysiz.
+
+```text
+ToUpper:         ISTANBUL
+TurkishCase:     İSTANBUL
+EqualFold:       false true      ("Straße" va "STRASSE"; "Go" va "GO")
+```
+
+Amaliy ma'no: ID, email domeni, HTTP sarlavhasi kabi mashina uchun mo'ljallangan kalitlarni solishtirishda `EqualFold` yetarli; foydalanuvchi ko'radigan matnni locale bo'yicha saralash va katta harfga o'tkazish uchun `golang.org/x/text` kabi paketlar kerak (bu dars uni tekshirmadi).
+
+### Go 1.24: satrni qismlarga bo'lish iteratorlari
+
+`strings.Split` har chaqiruvda `[]string` ajratadi. Go 1.24 release notes'ga ko'ra `strings` paketiga iterator qaytaradigan funksiyalar qo'shilgan: `Lines`, `SplitSeq`, `SplitAfterSeq`, `FieldsSeq` va `FieldsFuncSeq` (`bytes` paketiga ham xuddi shunday). Katta log faylini qatorma-qator yoki vergul bilan ajratilgan maydonlarni birma-bir qayta ishlaganda oraliq slice kerak emas (28-dars):
+
+```go
+for part := range strings.SplitSeq("T-1042,T-1043,T-1044", ",") {
+	fmt.Print(part, " ")
+}
+for line := range strings.Lines("a=1\nb=2\n") {
+	fmt.Printf("%q ", line)
+}
+```
+
+```text
+T-1042 T-1043 T-1044 
+"a=1\n" "b=2\n"
+```
+
+Ikki tafsilot: `Lines` har qatorning oxiridagi `\n` ni saqlaydi (chiqishda `"a=1\n"`), ya'ni `TrimSuffix` kerak bo'lishi mumkin; Go 1.23 va undan eski toolchain'da bu funksiyalar yo'q, shuning uchun go.mod'da `go 1.24` talab qilinadi (1-dars).
+
 ## Misol: substring xotirani ushlab turadi
 
 Substring nusxalanmasligini manzillar orqali tekshiramiz. `unsafe.StringData` satrning birinchi baytiga pointer beradi (Go 1.20 dan):
