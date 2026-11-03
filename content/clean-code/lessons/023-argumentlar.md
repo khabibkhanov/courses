@@ -236,7 +236,7 @@ Chaqiruvdagi `false, true` hech narsa aytmaydi, `vehicleId` va `driverId` almash
 
 Qayta loyihalangan:
 
-```ts
+```ts run
 type VehicleId = string & { readonly __brand: "VehicleId" };
 type DriverId = string & { readonly __brand: "DriverId" };
 
@@ -251,11 +251,19 @@ type AssignDriverCommand = {
 
 export async function assignDriver(cmd: AssignDriverCommand): Promise<void> {
   // oddiy tayinlash: band haydovchi bo'lsa xato
+  console.log("assignDriver:", cmd.vehicleId, cmd.driverId, "bildirishnoma:", cmd.notifyDriver);
 }
 
 export async function reassignDriver(cmd: AssignDriverCommand): Promise<void> {
   // majburiy: avvalgi tayinlovni bekor qiladi
+  console.log("reassignDriver:", cmd.vehicleId, cmd.driverId);
 }
+
+// Sinab ko'ring: notifyDriver ni false qiling yoki assignDriver o'rniga reassignDriver chaqiring.
+const vehicle = { id: "01A123BC" as VehicleId };
+const driver = { id: "drv_42" as DriverId };
+const start = new Date("2026-11-03T08:00:00Z");
+const end = new Date("2026-11-03T16:00:00Z");
 
 await assignDriver({
   vehicleId: vehicle.id,
@@ -263,6 +271,7 @@ await assignDriver({
   shift: { start, end },
   notifyDriver: true,
 });
+
 ```
 
 Nima o'zgardi:
@@ -271,6 +280,27 @@ Nima o'zgardi:
 - **`notifyDriver` boolean qoldi.** U rejim emas, buyruqning oddiy ma'lumoti va chaqiruvda nomi ko'rinadi.
 - **`Shift` tushunchasi paydo bo'ldi.** Keyin unga `durationHours()` yoki `overlaps(other)` kabi xatti-harakat qo'shiladi.
 - **Branded ID'lar.** `vehicleId` va `driverId`ni almashtirish endi kompilyatsiya xatosi.
+
+### Mashq: pozitsion argumentlardan obyektga
+
+`scheduleTrip` to'rtta pozitsion argument oladi, chaqiruvda `true, false` nimani anglatishi ko'rinmaydi. Uni bitta obyekt argumentga o'tkazing: `scheduleTrip({ vehicleId, driverId, urgent, notifyDriver })`. `urgent` berilmasa, `false` deb hisoblansin.
+
+```ts run
+// Yechimingizni shu yerga yozing
+function scheduleTrip(vehicleId, driverId, urgent, notifyDriver) {
+  const priority = urgent ? "HIGH" : "NORMAL";
+  const notice = notifyDriver ? "xabar yuboriladi" : "xabarsiz";
+  return `${vehicleId}/${driverId}: ${priority}, ${notice}`;
+}
+
+console.log(scheduleTrip({ vehicleId: "01A123BC", driverId: "drv_42", urgent: true, notifyDriver: false }));
+```
+
+```ts test
+check("obyekt argument bilan ishlaydi", () => scheduleTrip({ vehicleId: "01A123BC", driverId: "drv_42", urgent: true, notifyDriver: false }) === "01A123BC/drv_42: HIGH, xabarsiz");
+check("argumentlar tartibi ahamiyatsiz", () => scheduleTrip({ notifyDriver: true, urgent: false, driverId: "d1", vehicleId: "v1" }) === "v1/d1: NORMAL, xabar yuboriladi");
+check("urgent berilmasa NORMAL", () => scheduleTrip({ vehicleId: "v1", driverId: "d1", notifyDriver: false }) === "v1/d1: NORMAL, xabarsiz");
+```
 
 ## Qachon qo'llamaslik kerak
 

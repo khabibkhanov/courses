@@ -379,6 +379,60 @@ export class VehicleDriverController {
 
 Nima yutdik: controller faqat HTTP (marshrut, `ParseUUIDPipe`, 204 status). Service domen tilida (`assignDriver`), `now` parametri bilan vaqtga bog'liq qoida testda boshqariladi (67-dars), ikkala so'rov parallel. Xatolar ma'lumot tashiydi va ularni filter HTTP'ga tarjima qiladi. Cron job endi xuddi shu service'ni chaqiradi.
 
+### Brauzerda sinab ko'ring
+
+Service domen tilida gapiradi va xatolarni ma'lumot bilan otadi, HTTP'ga tarjima esa chegarada bitta joyda. Bu yerda baza va SMS oddiy fake'lar.
+
+```ts run
+// Sinab ko'ring: driver2 ning guvohnoma muddatini kelajakka o'zgartiring yoki noma'lum vehicleId bering.
+class DriverLicenseExpiredError extends Error {
+  constructor(readonly driverId: string, readonly expiredAt: Date) {
+    super(`Driver ${driverId} license expired at ${expiredAt.toISOString()}`);
+  }
+}
+class EntityNotFoundError extends Error {
+  constructor(readonly entity: "vehicle" | "driver", readonly id: string) {
+    super(`${entity} ${id} not found`);
+  }
+}
+
+const vehicles: Record<string, { plate: string }> = { v1: { plate: "01 A 123 BC" } };
+const drivers: Record<string, { phone: string; licenseExpiresAt: Date }> = {
+  driver1: { phone: "+998901111111", licenseExpiresAt: new Date("2030-01-01") },
+  driver2: { phone: "+998902222222", licenseExpiresAt: new Date("2020-01-01") },
+};
+const outbox: string[] = [];
+
+class DriverAssignmentService {
+  async assignDriver(vehicleId: string, driverId: string, now: Date = new Date()): Promise<void> {
+    const vehicle = vehicles[vehicleId];
+    const driver = drivers[driverId];
+    if (!vehicle) throw new EntityNotFoundError("vehicle", vehicleId);
+    if (!driver) throw new EntityNotFoundError("driver", driverId);
+    if (driver.licenseExpiresAt < now) throw new DriverLicenseExpiredError(driverId, driver.licenseExpiresAt);
+    outbox.push(`${driver.phone}: Sizga ${vehicle.plate} biriktirildi`);
+  }
+}
+
+// controller / exception filter qatlami: faqat HTTP tarjimasi
+function httpStatusFor(e: unknown): number {
+  if (e instanceof EntityNotFoundError) return 404;
+  if (e instanceof DriverLicenseExpiredError) return 422;
+  return 500;
+}
+
+const service = new DriverAssignmentService();
+for (const [vehicleId, driverId] of [["v1", "driver1"], ["v1", "driver2"], ["v9", "driver1"]]) {
+  try {
+    await service.assignDriver(vehicleId, driverId);
+    console.log(vehicleId, driverId, "-> 204");
+  } catch (e) {
+    console.log(vehicleId, driverId, "->", httpStatusFor(e), (e as Error).message);
+  }
+}
+console.log(outbox);
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Oddiy CRUD.** Agar endpoint shunchaki yozuvni o'qib qaytarsa va hech qanday biznes qoidasi bo'lmasa, controller, service, repository, mapper, domen entity va uchta DTO - bu sayoz qatlamlar zanjiri (52-dars). Bir qatorli "o'tkazgich" service'lar ham murakkablik. Qoida bo'lmasa, qatlam ham kam bo'lishi mumkin.

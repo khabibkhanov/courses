@@ -334,6 +334,32 @@ Nima o'zgardi va nega:
 - `features/vehicles/index.ts` - aniq nomlangan eksportlar. Ichidagi fayllarni ko'chirish tashqi import'larni buzmaydi.
 - `queries.ts` server-only. Agar `index.ts`dan client komponent ham, server funksiya ham eksport qilinsa, client tomonda import qilishda ehtiyot bo'lish kerak. Kattaroq loyihalarda `server.ts` va `client.ts` kabi alohida kirish nuqtalari xavfsizroq.
 
+### Brauzerda sinab ko'ring
+
+Barrel (`index.ts`) ochiq API vazifasini bajaradi: boshqa feature faqat unga murojaat qilishi kerak. Mini-tekshiruv ichki faylga to'g'ridan-to'g'ri importni topadi.
+
+```ts run
+const imports = [
+  { from: "features/trips/TripList.tsx", to: "features/vehicles" },
+  { from: "features/trips/TripMap.tsx", to: "features/vehicles/components/VehicleCard" },
+  { from: "features/vehicles/queries.ts", to: "features/vehicles/types" },
+  { from: "app/page.tsx", to: "features/vehicles/queries" },
+];
+
+function featureOf(path: string): string | null {
+  const m = path.match(/^features\/([^/]+)/);
+  return m ? m[1] : null;
+}
+
+for (const { from, to } of imports) {
+  const sameFeature = featureOf(from) === featureOf(to);
+  const viaIndex = to.split("/").length <= 2; // features/<nom> - faqat index
+  const ok = sameFeature || viaIndex;
+  console.log(ok ? "OK    " : "XATO  ", from, "->", to);
+}
+// Sinab ko'ring: ikkinchi importni "features/vehicles" ga o'zgartiring.
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Kichik loyihada feature tuzilmasi.** 5 ta endpoint'li ichki servis yoki 3 sahifali admin panelda har bir feature uchun alohida papka va modul ochish - ortiqcha ceremony. Layer bo'yicha oddiy tuzilma bilan boshlash va loyiha o'sganda ko'chirish oqilona (9-dars, YAGNI).

@@ -337,6 +337,61 @@ Trade-off: qulay va kam shovqinli, lekin abstrakt klassda tasodifan implementats
 
 Testda esa DIP'ning foydasi darhol ko'rinadi: `new CheckoutService(inMemoryOrders)` - konteynersiz, mock kutubxonasiz.
 
+### Mashq: bog'liqlikni tashqaridan bering
+
+`CheckoutService` konkret repozitoriyni o'zi yaratadi, shuning uchun uni testlab bo'lmaydi. Uni konstruktor orqali `OrderRepository` qabul qiladigan qiling (composition root'da esa `InMemoryOrderRepository` ni uzating).
+
+```ts run
+type Order = { id: string; status: "new" | "paid" };
+interface OrderRepository {
+  findById(id: string): Order | null;
+  save(order: Order): void;
+}
+
+class InMemoryOrderRepository implements OrderRepository {
+  readonly saved: Order[] = [];
+  constructor(private readonly orders: Order[] = []) {}
+  findById(id: string) { return this.orders.find((o) => o.id === id) ?? null; }
+  save(order: Order) { this.saved.push(order); }
+}
+
+class CheckoutService {
+  // Yechimingizni shu yerga yozing
+  private readonly orders = new InMemoryOrderRepository([{ id: "o1", status: "new" }]);
+
+  markPaid(orderId: string): void {
+    const order = this.orders.findById(orderId);
+    if (!order) throw new Error(`Order not found: ${orderId}`);
+    this.orders.save({ ...order, status: "paid" });
+  }
+}
+
+// composition root
+const repo = new InMemoryOrderRepository([{ id: "o1", status: "new" }]);
+const service = new CheckoutService(repo as any);
+service.markPaid("o1");
+console.log(repo.saved);
+```
+
+```ts test
+check("berilgan repozitoriydan foydalanadi", () => {
+  const repo = new InMemoryOrderRepository([{ id: "o7", status: "new" }]);
+  new CheckoutService(repo as any).markPaid("o7");
+  return repo.saved.length === 1 && repo.saved[0].status === "paid";
+});
+check("repozitoriyda yo'q buyurtma uchun xato otadi", () => {
+  const repo = new InMemoryOrderRepository([]);
+  try { new CheckoutService(repo as any).markPaid("o1"); return false; }
+  catch { return true; }
+});
+check("ichki yashirin repozitoriyga yozmaydi", () => {
+  const a = new InMemoryOrderRepository([{ id: "o1", status: "new" }]);
+  const b = new InMemoryOrderRepository([{ id: "o1", status: "new" }]);
+  new CheckoutService(a as any).markPaid("o1");
+  return a.saved.length === 1 && b.saved.length === 0;
+});
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Har bir servis uchun interfeys va token.** `PriceCalculator` sof funksiyalardan iborat, DB yoki tarmoqqa chiqmaydi va bitta implementatsiyaga ega. Uni abstraksiya ortiga yashirish faqat "Go to definition" ni buzadi. Martin ham barqaror konkret narsalarga bog'lanishni muammo demaydi.

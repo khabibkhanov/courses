@@ -388,6 +388,50 @@ Bu test nimani tekshiradi va nimani tekshirmaydi:
 - **Uchinchi test natijani ham, yon ta'sir yo'qligini ham tekshiradi.** "404 qaytdi" yetarli emas: xato oldin buyurtma yarim saqlangan bo'lishi mumkin edi.
 - **`ValidationPipe` testda ham ulangan.** Agar u `main.ts`da ulangan bo'lsa, testda ham xuddi shunday qilish kerak. Yaxshiroq yo'l - pipe'ni `APP_PIPE` provider orqali modulda ro'yxatdan o'tkazish, shunda test va production avtomatik bir xil bo'ladi.
 
+### Brauzerda sinab ko'ring
+
+Integratsion testning mohiyati: marshrut, validatsiya, saqlash va yon ta'sir birgalikda tekshiriladi. Bu yerda baza o'rnida xotiradagi jadval, SMS o'rnida spy.
+
+```ts run
+type Order = { id: number; customerId: string; items: { sku: string; qty: number }[] };
+const customers = new Set(["c-1"]);
+const orders: Order[] = [];
+const sms: string[] = [];
+
+function postOrders(body: any): { status: number; body?: unknown } {
+  if (body.discount !== undefined) return { status: 400 }; // noma'lum maydon
+  if (!customers.has(body.customerId)) return { status: 404 };
+  const order = { id: orders.length + 1, customerId: body.customerId, items: body.items };
+  orders.push(order);
+  sms.push(`Buyurtma #${order.id} qabul qilindi`);
+  return { status: 201, body: order };
+}
+
+function it(name: string, body: () => void) {
+  orders.length = 0;
+  sms.length = 0; // har testdan oldin tozalash
+  try { body(); console.log("OK    ", name); }
+  catch (e) { console.log("YIQILDI", name, "-", (e as Error).message); }
+}
+function assert(cond: boolean, msg: string) { if (!cond) throw new Error(msg); }
+
+it("mavjud mijoz uchun 201 qaytaradi, saqlaydi va SMS yuboradi", () => {
+  const res = postOrders({ customerId: "c-1", items: [{ sku: "OIL-5W30", qty: 2 }] });
+  assert(res.status === 201, "status 201 emas");
+  assert(orders.length === 1, "buyurtma saqlanmadi");
+  assert(sms.length === 1, "SMS yuborilmadi");
+});
+it("noma'lum maydonli so'rovni 400 bilan rad etadi", () => {
+  assert(postOrders({ customerId: "c-1", items: [], discount: 100 }).status === 400, "status 400 emas");
+});
+it("mavjud bo'lmagan mijoz uchun 404 qaytaradi va hech narsa saqlamaydi", () => {
+  const res = postOrders({ customerId: "yo'q", items: [] });
+  assert(res.status === 404, "status 404 emas");
+  assert(orders.length === 0 && sms.length === 0, "yon ta'sir qoldi");
+});
+// Sinab ko'ring: postOrders'da orders.push dan keyin 404 tekshiruvini qo'yib, uchinchi testning yiqilishini ko'ring.
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Logika testlari uchun.** Chegaraviy holatlari ko'p bo'lgan biznes qoidasini HTTP + DB orqali tekshirish qimmat va sekin. Logikani core'ga ajrating va unit test qiling (61 va 67-darslar). Integratsion test faqat ulanishni tekshirsin.

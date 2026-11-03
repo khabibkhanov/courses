@@ -335,6 +335,54 @@ Nima o'zgardi:
 - **Bog'liq sozlamalar birga tekshiriladi.** "Yoqilgan bo'lsa, webhook majburiy" qoidasi start paytida. Discriminated union tip buni servisda ham kafolatlaydi: `enabled: true` bo'lsa `webhookUrl` albatta `string`.
 - **Servis manbani bilmaydi.** U `FuelAlertSettings` oladi. Testda `new FuelAlertService({ enabled: true, thresholdPercent: 15, webhookUrl: "https://..." })`.
 
+### Mashq: zod'siz parse
+
+`zod` o'rniga oddiy TypeScript bilan `parseFuelAlertSettings` ni yozing: env'ni bir joyda o'qing va noto'g'ri qiymatda start paytida xato bering. Qoidalar: `FUEL_ALERTS_ENABLED` ("true" yoki "1") yoqmasa `{ enabled: false }`; `FUEL_ALERT_THRESHOLD_PERCENT` 1 dan 50 gacha son (berilmasa 15); yoqilgan bo'lsa `ALERT_WEBHOOK_URL` majburiy va `https://` bilan boshlanishi shart.
+
+```ts run
+type FuelAlertSettings =
+  | { enabled: false }
+  | { enabled: true; thresholdPercent: number; webhookUrl: string };
+
+function parseFuelAlertSettings(env: Record<string, string | undefined>): FuelAlertSettings {
+  // Yechimingizni shu yerga yozing
+  return { enabled: false };
+}
+
+console.log(parseFuelAlertSettings({
+  FUEL_ALERTS_ENABLED: "true",
+  ALERT_WEBHOOK_URL: "https://hooks.example.uz/alert",
+}));
+```
+
+```ts test
+const throws = (fn: () => unknown) => {
+  try { fn(); return false; } catch { return true; }
+};
+const url = "https://hooks.example.uz/alert";
+
+check("yoqilmagan bo'lsa enabled: false", () => {
+  const s = parseFuelAlertSettings({});
+  return s.enabled === false;
+});
+check("standart chegara 15 foiz", () => {
+  const s = parseFuelAlertSettings({ FUEL_ALERTS_ENABLED: "true", ALERT_WEBHOOK_URL: url });
+  return s.enabled === true && s.thresholdPercent === 15 && s.webhookUrl === url;
+});
+check("chegara satrdan songa o'giriladi", () => {
+  const s = parseFuelAlertSettings({ FUEL_ALERTS_ENABLED: "1", FUEL_ALERT_THRESHOLD_PERCENT: "20", ALERT_WEBHOOK_URL: url });
+  return s.enabled === true && s.thresholdPercent === 20;
+});
+check("son bo'lmagan chegara xato beradi", () =>
+  throws(() => parseFuelAlertSettings({ FUEL_ALERTS_ENABLED: "true", FUEL_ALERT_THRESHOLD_PERCENT: "abc", ALERT_WEBHOOK_URL: url })));
+check("50 dan katta chegara xato beradi", () =>
+  throws(() => parseFuelAlertSettings({ FUEL_ALERTS_ENABLED: "true", FUEL_ALERT_THRESHOLD_PERCENT: "80", ALERT_WEBHOOK_URL: url })));
+check("yoqilgan, lekin webhook yo'q - xato", () =>
+  throws(() => parseFuelAlertSettings({ FUEL_ALERTS_ENABLED: "true" })));
+check("https bo'lmagan webhook xato beradi", () =>
+  throws(() => parseFuelAlertSettings({ FUEL_ALERTS_ENABLED: "true", ALERT_WEBHOOK_URL: "http://x.uz" })));
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **Hamma narsani config qilish.** Har bir konstantani env'ga chiqarish ("ehtimol kerak bo'lar") config yuzasini kattalashtiradi va har bir deploy'ni sozlashni qiyinlashtiradi. Deploy'lar orasida haqiqatan o'zgaradigan narsalargina config. Biznes qoidasi (masalan, VIP chegarasi) ko'pincha kodda yoki bazada, admin boshqaradigan sozlama sifatida yaxshiroq.

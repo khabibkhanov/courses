@@ -199,7 +199,7 @@ export async function isSessionValid(store: SessionStore, token: string): Promis
 
 Monitoring servisi har daqiqada `isSessionValid` ni chaqirib faol sessiyalarni sanasa, birorta sessiya hech qachon tugamaydi. Ajratilgan versiya:
 
-```ts
+```ts run
 export async function findActiveSession(
   store: SessionStore,
   token: string,
@@ -224,6 +224,26 @@ export async function authenticate(store: SessionStore, token: string): Promise<
   const session = await findActiveSession(store, token);
   return session ? extendSession(store, session) : null;
 }
+
+// Sinab ko'ring: findActiveSession muddatni o'zgartirmaydi, authenticate esa uzaytiradi.
+const SLIDING_WINDOW_MS = 30 * 60 * 1000;
+const sessions = new Map<string, Session>();
+sessions.set("tok", { userId: "u1", token: "tok", expiresAt: new Date(Date.now() + 60_000) });
+const store: SessionStore = {
+  async find(token) {
+    return sessions.get(token) ?? null;
+  },
+  async save(session) {
+    sessions.set(session.token, session);
+  },
+};
+const before = sessions.get("tok")!.expiresAt.getTime();
+await findActiveSession(store, "tok");
+console.log("findActiveSession muddatni o'zgartirmadi:", sessions.get("tok")!.expiresAt.getTime() === before);
+await authenticate(store, "tok");
+console.log("authenticate muddatni uzaytirdi:", sessions.get("tok")!.expiresAt.getTime() > before);
+console.log("noma'lum token:", await authenticate(store, "yo'q"));
+
 ```
 
 Nima o'zgardi:
@@ -233,6 +253,37 @@ Nima o'zgardi:
 - `extendSession` argumentni o'zgartirmaydi, yangi obyekt qaytaradi.
 - `authenticate` ikkalasini birlashtiradi va nomi "autentifikatsiya" jarayonini bildiradi, bunda sessiyani uzaytirish kutilgan xatti-harakat.
 - `now` parametri vaqtga bog'liq mantiqni test qilinadigan qiladi.
+
+### Mashq: query va command'ni ajrating
+
+`nextTicketNumber` bir vaqtda hisoblagichni oshiradi va qiymatni qaytaradi. Uni ikkiga bo'ling: `currentTicket(counter)` - faqat o'qiydi, holatni o'zgartirmaydi; `issueTicket(counter)` - hisoblagichni 1 ga oshiradi va hech narsa qaytarmaydi.
+
+```ts run
+// Yechimingizni shu yerga yozing
+function nextTicketNumber(counter) {
+  counter.value += 1;
+  return counter.value;
+}
+
+const counter = { value: 0 };
+console.log(nextTicketNumber(counter));
+```
+
+```ts test
+check("currentTicket holatni o'zgartirmaydi", () => {
+  const c = { value: 5 };
+  currentTicket(c);
+  currentTicket(c);
+  return c.value === 5 && currentTicket(c) === 5;
+});
+check("issueTicket hech narsa qaytarmaydi", () => issueTicket({ value: 0 }) === undefined);
+check("issueTicket qiymatni 1 ga oshiradi", () => {
+  const c = { value: 0 };
+  issueTicket(c);
+  issueTicket(c);
+  return c.value === 2 && currentTicket(c) === 2;
+});
+```
 
 ## Qachon qo'llamaslik kerak
 

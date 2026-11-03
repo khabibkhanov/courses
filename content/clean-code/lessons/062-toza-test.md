@@ -309,6 +309,39 @@ Nima o'zgardi:
 
 Starter'dagi `ignitionOn = false` qatoriga ham e'tibor bering: u natijaga ta'sir qiladimi yoki yo'qmi, testdan bilib bo'lmasdi. Agar u muhim bo'lsa, unga alohida, nomlangan test kerak.
 
+### Mashq: vaqtni parametrga aylantiring
+
+`trackerStatus` hozirgi vaqtni o'zi oladi, shuning uchun test har safar boshqacha natija beradi. Unga ikkinchi parametr `now` qo'shing: signal 5 daqiqagacha bo'lsa `online`, 60 daqiqagacha `idle`, undan ko'p bo'lsa `offline`.
+
+```ts run
+type Tracker = { imei: string; lastSignalAt: string };
+
+function trackerStatus(tracker: Tracker): "online" | "idle" | "offline" {
+  // Yechimingizni shu yerga yozing
+  const minutes = (Date.now() - new Date(tracker.lastSignalAt).getTime()) / 60_000;
+  if (minutes <= 5) return "online";
+  if (minutes <= 60) return "idle";
+  return "offline";
+}
+
+const NOW = new Date("2026-10-20T09:00:00Z");
+const minutesAgo = (m: number) => new Date(NOW.getTime() - m * 60_000).toISOString();
+console.log(trackerStatus({ imei: "1", lastSignalAt: minutesAgo(4) }, NOW));
+```
+
+```ts test
+const T_NOW = new Date("2026-10-20T09:00:00Z");
+const tracker = (m: number) => ({
+  imei: "356938035643809",
+  lastSignalAt: new Date(T_NOW.getTime() - m * 60_000).toISOString(),
+});
+const status = (m: number) => (trackerStatus as any)(tracker(m), T_NOW);
+check("4 daqiqa oldingi signal - online", () => status(4) === "online");
+check("5 daqiqa aniq - hali online", () => status(5) === "online");
+check("20 daqiqa - idle", () => status(20) === "idle");
+check("180 daqiqa - offline", () => status(180) === "offline");
+```
+
 ## Qachon qo'llamaslik kerak
 
 - **AAA'ni ko'r-ko'rona qo'llash.** Ba'zi testlarda Arrange bo'sh yoki Act va Assert birga (`expect(() => parse("")).toThrow()`). Uchta bo'limni majburan yaratish uchun sun'iy o'zgaruvchilar kiritmang.
