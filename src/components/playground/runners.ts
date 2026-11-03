@@ -86,6 +86,8 @@ const ready = (async () => {
 self.onmessage = async (e) => {
   await ready;
   const ns = py.globals.get("dict")();
+  // Blok - asosiy dastur: if __name__ == "__main__" ishlashi uchun.
+  ns.set("__name__", "__main__");
   try {
     await py.loadPackagesFromImports(e.data.code);
     // Pyodide tarkibida yo'q, lekin sof Python paketlar PyPI'dan micropip bilan o'rnatiladi (Flask darslari uchun).

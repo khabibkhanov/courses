@@ -21,7 +21,7 @@
   lesson: 37
 - term: bare column
   aliases: []
-  uz: "GROUP BY li so'rovda na guruhlash ustuni, na aggregat ichida bo'lgan ustun. SQLite unga guruhdagi biror qator qiymatini beradi, standart SQL va PostgreSQL esa xato deydi."
+  uz: "GROUP BY li so'rovda na guruhlash ustuni, na aggregat ichida bo'lgan ustun. SQLite unga guruhdagi biror qator qiymatini beradi, standart SQL va PostgreSQL esa odatda xato deydi (PostgreSQL guruhlash ustuni primary key bo'lgan holatda ruxsat beradi)."
   course: cs50
   lesson: 37
 - term: primary key
