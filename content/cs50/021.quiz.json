@@ -1,0 +1,75 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`int n = 7; int *p = &n; *p = *p + 3;` dan keyin `n` nimaga teng?",
+      "options": ["7", "Kompilyatsiya xatosi", "10", "n ning manzili 3 ga oshadi"],
+      "answer": 2,
+      "why": "`*p` - p ko'rsatgan joydagi int, ya'ni n ning o'zi. Unga 7 + 3 = 10 yoziladi."
+    },
+    {
+      "q": "Brauzer muhitida (wasm32) `sizeof(double *)` nechaga teng?",
+      "options": ["4", "8", "16", "sizeof(double) bilan bir xil bo'lgani uchun 8"],
+      "answer": 0,
+      "why": "Pointer o'lchami ko'rsatilgan tipga emas, manzil kengligiga bog'liq. wasm32 da manzil 32 bit = 4 bayt; x86-64 da 8 bayt bo'lardi."
+    },
+    {
+      "q": "Little-endian kompyuterda `int n = 0x0A0B0C0D;` 1000-manzildan boshlanadi. 1000-manzildagi bayt qaysi?",
+      "options": ["0x0A", "0x0B", "0x00", "0x0D"],
+      "answer": 3,
+      "why": "Little-endian tartibda sonning eng kichik bayti (0x0D) eng kichik manzilda turadi; 1003-manzilda 0x0A bo'ladi."
+    },
+    {
+      "q": "Funksiya ichida `int *p;` e'lon qilinib, darhol `*p = 5;` yozildi. Nima bo'ladi?",
+      "options": [
+        "p avtomatik NULL bo'lgani uchun dastur doim aniq xato bilan to'xtaydi",
+        "Noma'lum manzilga yoziladi: segfault, boshqa o'zgaruvchining jim buzilishi yoki NULL murojaati - undefined behavior",
+        "Kompilyator p uchun avtomatik int ajratadi va 5 ni yozadi",
+        "Kompilyatsiya xatosi: p initsializatsiya qilinmagan"
+      ],
+      "answer": 1,
+      "why": "Lokal pointer tozalanmaydi, unda tasodifiy qiymat (wild pointer). clang faqat -Wuninitialized ogohlantirishini beradi, dastur esa kompilyatsiya bo'ladi."
+    },
+    {
+      "q": "`int a[10]; int *p = a;` brauzer muhitida `sizeof(a)` va `sizeof(p)` qanday?",
+      "options": ["40 va 40", "4 va 4", "40 va 4", "10 va 4"],
+      "answer": 2,
+      "why": "sizeof operandi array decay istisnosi: sizeof(a) butun massiv, 10 x 4 = 40. sizeof(p) - pointer o'lchami, wasm32 da 4."
+    },
+    {
+      "q": "`int *p = NULL;` dan keyin quyidagilardan qaysi biri xavfsiz?",
+      "options": ["printf(\"%d\", *p);", "*p = 0;", "if (p != NULL) { printf(\"%d\", *p); }", "printf(\"%d\", p[0]);"],
+      "answer": 2,
+      "why": "NULL ni dereference qilish (*p, p[0]) undefined behavior. Tekshiruv dereference dan oldin turgan variantdagina murojaat bajarilmaydi."
+    },
+    {
+      "q": "`string s = \"HI!\";` dan keyin `printf(\"%s\", &s[1]);` nima chiqaradi?",
+      "options": ["I!", "HI!", "Manzil hex ko'rinishda", "I"],
+      "answer": 0,
+      "why": "&s[1] - ikkinchi harfning manzili. %s shu manzildan NUL gacha chiqaradi: I va !."
+    },
+    {
+      "q": "Nima uchun `int *` va `char *` alohida tiplar, agar ikkalasi ham shunchaki manzil bo'lsa?",
+      "options": [
+        "int * katta xotirani ko'rsata oladi, char * esa faqat birinchi 256 baytni",
+        "Tip *p da nechta bayt o'qilishini va ularni qanday talqin qilishni belgilaydi",
+        "char * uchun NULL bo'lmaydi",
+        "Farq faqat nomda, kompilyator ularni bir xil ishlatadi"
+      ],
+      "answer": 1,
+      "why": "Manzil faqat boshlanish joyini beradi. int * uchun *p 4 baytni butun son sifatida, char * uchun 1 baytni o'qiydi."
+    },
+    {
+      "q": "`int a[3]; int b[3];` dan keyin qaysi qator kompilyatsiya bo'lmaydi?",
+      "options": ["int *p = a;", "a = b;", "int *p = &a[2];", "p = b; (p - int *)"],
+      "answer": 1,
+      "why": "Massiv nomi pointer o'zgaruvchi emas, uni boshqa joyga burib bo'lmaydi. Pointer esa istalgan int manzilini olishi mumkin."
+    },
+    {
+      "q": "64-bit Linux da 100 ta elementli `string words[100]` massivi `sizeof` bo'yicha necha bayt?",
+      "options": ["100", "400", "Harflar soniga bog'liq", "800"],
+      "answer": 3,
+      "why": "Har element - char * pointer, x86-64 da 8 bayt: 100 x 8 = 800. So'zlarning o'zi boshqa joyda va sizeof ga kirmaydi."
+    }
+  ]
+}

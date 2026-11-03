@@ -1,0 +1,75 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`double *p` 2000-manzilga ko'rsatadi. `p + 3` qaysi manzilga ko'rsatadi?",
+      "options": ["2003", "2012", "2024", "2032"],
+      "answer": 2,
+      "why": "p + n = manzil + n x sizeof(*p) = 2000 + 3 x 8 = 2024."
+    },
+    {
+      "q": "`int a[4] = {5, 6, 7, 8}; int *p = a + 2;` dan keyin `p[-1]` nimaga teng?",
+      "options": ["6", "7", "Undefined behavior", "5"],
+      "answer": 0,
+      "why": "Indeks pointerga nisbatan: p[-1] = *(p - 1) = a[1] = 6. p - 1 massiv ichida, shuning uchun to'g'ri."
+    },
+    {
+      "q": "`int a[5];` uchun qaysi amal undefined behavior?",
+      "options": ["int *end = a + 5;", "ptrdiff_t n = (a + 5) - a;", "int x = *(a + 5);", "if (p < a + 5) (p massiv ichida)"],
+      "answer": 2,
+      "why": "One-past-the-end pointerni yaratish, ayirish va solishtirish mumkin, lekin uni dereference qilish UB."
+    },
+    {
+      "q": "`char s[] = \"Toshkent\";` va `char *k = s + 4;`. `k - s` va `printf(\"%s\", k)` natijasi?",
+      "options": ["4 va k", "4 va kent", "4 bayt x sizeof(char *) va kent", "Toshkent va kent"],
+      "answer": 1,
+      "why": "Ayirma elementlarda: 4. Satr o'rtasidagi pointer ham satr: %s k dan NUL gacha 'kent' ni chiqaradi."
+    },
+    {
+      "q": "`int a[3] = {1, 2, 3}; int *p = a;` dan keyin `int x = *p++;` bajarildi. `x` va `*p` qanday?",
+      "options": ["x = 2, *p = 2", "x = 1, *p = 1 (a[0] 2 bo'ldi)", "x = 2, *p = 3", "x = 1, *p = 2"],
+      "answer": 3,
+      "why": "Postfiks ++ * dan kuchliroq: *(p++). Eski p dagi 1 o'qiladi, keyin p a[1] ga o'tadi."
+    },
+    {
+      "q": "`char a[] = \"olma\"; char *b = a; b[0] = 'O';` dan keyin `printf(\"%s\", a)` nima chiqaradi?",
+      "options": ["olma", "Olma", "Undefined behavior: literal o'zgartirildi", "Kompilyatsiya xatosi"],
+      "answer": 1,
+      "why": "b = a faqat manzilni nusxalaydi (shallow copy), b va a bitta massivga ko'rsatadi. a esa literalning nusxasi, uni o'zgartirish mumkin."
+    },
+    {
+      "q": "`char *p = \"olma\"; p[0] = 'O';` haqida qaysi gap to'g'ri?",
+      "options": [
+        "Kompilyatsiya xatosi, chunki C da literal tipi const char[5]",
+        "To'g'ri kod: p massivga ko'rsatadi",
+        "Undefined behavior: Linux da odatda segfault, boshqa muhitda jim o'tishi mumkin",
+        "Har doim 'Olma' chiqadi"
+      ],
+      "answer": 2,
+      "why": "C da literal tipi char[N], shuning uchun kompilyator to'xtatmaydi, lekin literalni o'zgartirish UB. Uni const char * bilan e'lon qilish xatoni kompilyatsiyaga ko'chiradi."
+    },
+    {
+      "q": "`const char *p = \"olma\";` uchun qaysi qator kompilyatsiya bo'ladi?",
+      "options": ["p[0] = 'O';", "*p = 'O';", "*(p + 1) = 'L';", "p = \"nok\";"],
+      "answer": 3,
+      "why": "const char * - o'zgarmas char ga pointer: ma'lumotni o'zgartirib bo'lmaydi, pointerning o'zini esa boshqa joyga burish mumkin."
+    },
+    {
+      "q": "Brauzer muhitida `char buf[32] = \"salom\"; char *p = buf;` uchun `sizeof(buf)`, `sizeof(p)`, `strlen(p)` qanday?",
+      "options": ["32, 4, 5", "6, 4, 5", "32, 32, 5", "32, 8, 6"],
+      "answer": 0,
+      "why": "sizeof(buf) - massiv sig'imi 32, sizeof(p) - wasm32 pointeri 4, strlen - NUL gacha 5 harf."
+    },
+    {
+      "q": "`get_string` bilan olingan `s` ning haqiqiy nusxasi uchun qancha xotira va nima kerak?",
+      "options": [
+        "sizeof(s) bayt va char *t = s;",
+        "strlen(s) bayt va strcpy",
+        "strlen(s) + 1 bayt yangi xotira va NUL ham ko'chiriladigan sikl yoki strcpy",
+        "Hech narsa: string t = s; nusxa oladi"
+      ],
+      "answer": 2,
+      "why": "t = s faqat manzilni nusxalaydi. Deep copy uchun harflar va NUL ga joy (strlen + 1) va ko'chirish kerak; sizeof(s) - pointer o'lchami."
+    }
+  ]
+}

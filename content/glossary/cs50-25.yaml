@@ -1,0 +1,62 @@
+# CS50 25-26-darslar atamalari.
+- term: pass by reference
+  uz: "Parametr argumentning nusxasi emas, o'zi bo'lib qoladigan uzatish usuli. C da yo'q: uning o'rniga manzil qiymat sifatida uzatiladi va funksiya *p orqali yozadi."
+  course: cs50
+  lesson: 25
+- term: out-parametr
+  aliases: [out-parametrlar]
+  uz: "Funksiyaga natija yozilishi uchun berilgan pointer parametr. Holat return orqali, natijalar out-parametrlar orqali qaytadi (scanf, strtol shunday)."
+  course: cs50
+  lesson: 25
+- term: arrow operatori
+  aliases: [arrow operator]
+  uz: "Struct'ga pointer orqali maydonga murojaat operatori ->. p->m yozuvi (*p).m bilan bir xil."
+  course: cs50
+  lesson: 25
+- term: const correctness
+  uz: "Faqat o'qiladigan har bir pointer parametrni const bilan e'lon qilish qoidasi. Imzo nimani o'zgartirishini aytadi, tasodifiy yozuvni kompilyator topadi."
+  course: cs50
+  lesson: 25
+- term: matching failure
+  uz: "scanf kutilgan formatga mos kelmaydigan belgiga urilgan holat. Belgi o'qilmay kirishda qoladi, scanf shu paytgacha o'zlashtirilgan qiymatlar sonini qaytaradi."
+  course: cs50
+  lesson: 25
+- term: field width
+  uz: "Formatdagi maksimal belgilar soni, masalan %9s. 10 baytli bufer uchun kenglik 9, chunki oxiriga NUL yoziladi; sig'magan qism kirishda qoladi."
+  course: cs50
+  lesson: 25
+- term: stream
+  uz: "Baytlar manbai yoki qabul qiluvchisi ustidagi abstraction; holati (pozitsiya, bufer, xato va oxir belgilari) FILE obyektida. stdin, stdout, stderr ham stream."
+  course: cs50
+  lesson: 26
+- term: EOF
+  uz: "stdio.h dagi manfiy int konstanta (odatda -1): o'qish funksiyalari fayl oxiri yoki xatoni shu bilan bildiradi. Shuning uchun fgetc natijasi int ga saqlanadi."
+  course: cs50
+  lesson: 26
+- term: binary fayl
+  aliases: [binary fayllar]
+  uz: "Ma'lumot xotiradagi ko'rinishida, matnga aylantirilmasdan yozilgan fayl. Ixcham va tez o'qiladi, lekin endianness, tip o'lchami va padding kelishuvini talab qiladi."
+  course: cs50
+  lesson: 26
+- term: endianness
+  aliases: [little-endian, big-endian]
+  uz: "Ko'p baytli sonning baytlari xotirada qaysi tartibda turishi. Little-endian da eng kichik bayt birinchi (x86, WebAssembly, BMP), big-endian da eng kattasi (tarmoq protokollari, JPEG maydonlari)."
+  course: cs50
+  lesson: 26
+- term: fixed-width integer
+  uz: "stdint.h dagi aniq bit sonli tiplar: uint8_t, uint16_t, uint32_t, int32_t va boshqalar. Binary formatlarda maydon o'lchami platformaga bog'liq bo'lmasligi uchun ishlatiladi."
+  course: cs50
+  lesson: 26
+- term: BMP
+  uz: "Windows'ning siqilmagan rasm formati: 14 baytli fayl sarlavhasi (BM imzosi), 40 baytli info sarlavha va BGR piksellar; qatorlar pastdan yuqoriga, har biri 4 baytga to'ldirilgan."
+  course: cs50
+  lesson: 26
+- term: magic number
+  aliases: [fayl imzosi]
+  uz: "Fayl boshidagi qat'iy baytlar, ular orqali format kengaytmasiz taniladi: BMP 42 4D, JPEG FF D8 FF, PNG 89 50 4E 47."
+  course: cs50
+  lesson: 26
+- term: file carving
+  uz: "Fayl tizimi ma'lumotlarisiz, xom baytlar ichidan formatlar imzosini qidirib, fayllarni tiklash usuli. Fayl bo'laklari ketma-ket joylashganiga tayanadi."
+  course: cs50
+  lesson: 26

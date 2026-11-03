@@ -1,0 +1,59 @@
+# CS50 21-22-darslar atamalari.
+- term: pointer
+  aliases: [ko'rsatkich]
+  uz: "Boshqa obyektning xotiradagi manzilini saqlaydigan o'zgaruvchi. int *p - int ga pointer; uning o'lchami platformaga bog'liq (wasm32 da 4, x86-64 da 8 bayt)."
+  course: cs50
+  lesson: 21
+- term: address-of
+  aliases: [manzil operatori]
+  uz: "& operatori: o'zgaruvchining xotiradagi manzilini beradi. &n ning tipi - n tipiga pointer."
+  course: cs50
+  lesson: 21
+- term: dereference
+  uz: "Pointer ko'rsatgan joydagi qiymatga * operatori bilan murojaat qilish: *p ni o'qish yoki unga yozish."
+  course: cs50
+  lesson: 21
+- term: wild pointer
+  uz: "Initsializatsiya qilinmagan pointer: unda noma'lum manzil turadi va uni dereference qilish undefined behavior. Uni NULL bilan ham ajratib bo'lmaydi."
+  course: cs50
+  lesson: 21
+- term: segmentation fault
+  aliases: [segfault]
+  uz: "Dastur o'ziga tegishli bo'lmagan yoki ruxsat etilmagan xotiraga murojaat qilganda operatsion tizim uni to'xtatishi (Linux da SIGSEGV, exit status 139)."
+  course: cs50
+  lesson: 21
+- term: little-endian
+  uz: "Ko'p baytli sonning eng kichik bayti eng kichik manzilda saqlanadigan tartib. x86-64 va WebAssembly little-endian."
+  course: cs50
+  lesson: 21
+- term: void pointer
+  uz: "void * - tipi aytilmagan manzil. Uni to'g'ridan-to'g'ri dereference qilib bo'lmaydi; printf dagi %p va malloc shu tip bilan ishlaydi."
+  course: cs50
+  lesson: 21
+- term: pointer arifmetikasi
+  aliases: [pointer arithmetic]
+  uz: "Pointerga son qo'shish yoki pointerlarni ayirish: p + n manzilni n x sizeof(*p) baytga siljitadi. a[i] aslida *(a + i)."
+  course: cs50
+  lesson: 22
+- term: ptrdiff_t
+  uz: "Ikki pointer ayirmasining ishorali butun son tipi (stddef.h), printf da %td. Faqat bitta massiv elementlari orasidagi ayirma uchun aniqlangan."
+  course: cs50
+  lesson: 22
+- term: one-past-the-end
+  uz: "Massiv oxiridan keyingi bitta pozitsiyaga pointer (a + n). Uni yaratish, solishtirish va ayirish mumkin, dereference qilish esa undefined behavior."
+  course: cs50
+  lesson: 22
+- term: shallow copy
+  aliases: [sayoz nusxa]
+  uz: "Faqat pointer (manzil) nusxalanadi: s = t dan keyin ikki nom bitta xotiraga ko'rsatadi va birini o'zgartirish ikkinchisida ko'rinadi."
+  course: cs50
+  lesson: 22
+- term: deep copy
+  aliases: [to'liq nusxa]
+  uz: "Ma'lumotning o'zini yangi xotiraga ko'chirish: satr uchun strlen + 1 baytlik joy ajratib, harflar va NUL ni nusxalash."
+  course: cs50
+  lesson: 22
+- term: pointer to const
+  uz: "const char *p kabi pointer: u orqali ma'lumotni o'zgartirib bo'lmaydi, pointerning o'zini esa boshqa joyga burish mumkin. String literallar uchun shunday pointer ishlatiladi."
+  course: cs50
+  lesson: 22

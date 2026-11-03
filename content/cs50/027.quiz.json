@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Bo'sh stack'ga ketma-ket push(1), push(2), pop(), push(3), push(4), pop(), pop() bajarildi. Oxirgi pop() qaysi qiymatni qaytardi va stack'da nima qoldi?",
+      "options": ["4 qaytardi, stack'da [1, 3]", "3 qaytardi, stack'da [1]", "1 qaytardi, stack'da [3]", "2 qaytardi, stack'da [1, 3]"],
+      "answer": 1,
+      "why": "pop() 2 ni oladi: [1]. Keyin [1, 3, 4], pop() 4 ni, keyingi pop() 3 ni oladi. Stack'da [1] qoladi."
+    },
+    {
+      "q": "Abstract data type (ADT) ning asosiy g'oyasi nima?",
+      "options": [
+        "Ma'lumot tuzilmasini faqat heap'da saqlash",
+        "Struct maydonlarini har doim public qilish",
+        "Amallar va ularning xulq-atvorini (interfeys) ularni qanday amalga oshirishdan (implementatsiya) ajratish",
+        "Har bir amal O(1) bo'lishini kafolatlash"
+      ],
+      "answer": 2,
+      "why": "ADT nima qilinishini va'da qiladi, qanday qilinishini yashiradi. Shuning uchun massivli stack'ni linked list'li stack bilan foydalanuvchi kodini o'zgartirmasdan almashtirish mumkin."
+    },
+    {
+      "q": "CAPACITY = 5 bo'lgan aylanma buffer queue'da head = 3, tail = 1, count = 3. Navbatdagi elementlar qaysi indekslarda va keyingi enqueue qaysi indeksga yozadi?",
+      "options": [
+        "Indekslar 1, 2, 3; keyingi yozish 4 ga",
+        "Indekslar 3, 4, 0; keyingi yozish 1 ga",
+        "Indekslar 3, 4, 5; keyingi yozish 6 ga",
+        "Indekslar 0, 1, 2; keyingi yozish 3 ga"
+      ],
+      "answer": 1,
+      "why": "Elementlar head dan boshlab (head + i) % 5: 3, 4, (3 + 2) % 5 = 0. tail = 1 - keyingi yoziladigan katak."
+    },
+    {
+      "q": "Aylanma buffer queue faqat head va tail indekslari bilan yozilgan (count yo'q). head == tail bo'lganda qanday muammo bor?",
+      "options": [
+        "Muammo yo'q: head == tail har doim bo'sh navbatni bildiradi",
+        "head == tail faqat massiv chegarasidan chiqilganda bo'ladi",
+        "Bu holat faqat CAPACITY toq bo'lganda uchraydi",
+        "Navbat bo'sh bo'lganda ham, to'liq to'lganda ham head == tail bo'ladi, ikkalasini ajratib bo'lmaydi"
+      ],
+      "answer": 3,
+      "why": "To'lganda tail aylanib head ga yetadi. Yechim: count maydoni, bitta katakni bo'sh qoldirish yoki o'suvchi hisoblagichlar."
+    },
+    {
+      "q": "Dinamik massivli stack bo'sh holatdan (sig'im 0) boshlanib, har to'lganda sig'imi ikki barobar oshiriladi (0 -> 1 -> 2 -> 4 ...). 100 ta push qilinganda eng yomon holatda jami nechta element ko'chiriladi?",
+      "options": ["100", "4950", "127", "64"],
+      "answer": 2,
+      "why": "O'sish hajm 1, 2, 4, 8, 16, 32, 64 bo'lganda bo'ladi: 1 + 2 + 4 + 8 + 16 + 32 + 64 = 127 < 2 x 100. 4950 esa +1 bilan o'stirishdagi 0 + 1 + ... + 99."
+    },
+    {
+      "q": "Ikki barobar o'sadigan massivda bitta push ba'zan n ta elementni ko'chiradi. Nega baribir push 'amortized O(1)' deyiladi?",
+      "options": [
+        "Har qanday n ta push ketma-ketligining jami narxi O(n), ya'ni har biriga o'rtacha doimiy ish to'g'ri keladi",
+        "Chunki realloc har doim blokni joyida kengaytiradi va hech narsa ko'chirmaydi",
+        "Chunki tasodifiy kirish ma'lumotida qimmat push ehtimoli kichik",
+        "Chunki ko'chirish vaqti push vaqtiga kirmaydi"
+      ],
+      "answer": 0,
+      "why": "Ko'chirishlar yig'indisi geometrik qator: 1 + 2 + ... + 2^k < 2n. Bu kafolat ehtimolga emas, har qanday ketma-ketlikka tegishli."
+    },
+    {
+      "q": "Quyidagi qatorning xavfi nimada? `s->items = realloc(s->items, new_cap * sizeof(int));`",
+      "options": [
+        "realloc eski tarkibni nusxalamaydi",
+        "realloc NULL qaytarsa, eski blok manzili yo'qoladi: uni na ishlatib, na free qilib bo'ladi",
+        "realloc faqat kichraytirish uchun ishlatiladi",
+        "sizeof(int) brauzer muhitida noma'lum"
+      ],
+      "answer": 1,
+      "why": "Muvaffaqiyatsizlikda realloc NULL qaytaradi va eski blok o'zgarmay qoladi. Natija avval vaqtinchalik o'zgaruvchiga olinib tekshirilishi kerak, aks holda leak."
+    },
+    {
+      "q": "Qavslar balansini tekshirishda stack o'rniga faqat hisoblagich (ochiq qavslar soni) ishlatilsa, qaysi satr noto'g'ri baholanadi?",
+      "options": ["(()", "())(", "([)]", "()"],
+      "answer": 2,
+      "why": "([)] da har turdagi qavslar soni teng va hisoblagich hech qachon manfiy bo'lmaydi, lekin ] eng oxirgi ochilgan ( ga mos kelmaydi. Buni faqat LIFO tartibni eslab qoladigan stack aniqlaydi."
+    },
+    {
+      "q": "BFS (kenglik bo'yicha qidiruv) da queue o'rniga stack ishlatilsa nima o'zgaradi?",
+      "options": [
+        "Hech narsa: tugunlar xuddi shu tartibda ko'riladi",
+        "Dastur cheksiz siklga tushadi",
+        "Faqat xotira sarfi ikki barobar oshadi",
+        "Qidiruv chuqurlik bo'yicha yuradi va topilgan masofalar endi eng qisqa bo'lishi kafolatlanmaydi"
+      ],
+      "answer": 3,
+      "why": "FIFO masofasi d bo'lgan tugunlarni d + 1 bo'lganlardan oldin ko'rishni kafolatlaydi. LIFO esa eng oxirgi topilgan tugunga chuqurlashadi - bu depth-first search."
+    },
+    {
+      "q": "Oddiy massivli queue'da dequeue hamma elementni bitta chapga suradi. 1000 elementli navbatni to'liq bo'shatish uchun jami nechta element ko'chiriladi?",
+      "options": ["499 500", "1000", "999", "1 000 000"],
+      "answer": 0,
+      "why": "Har dequeue qolgan elementlarni suradi: 999 + 998 + ... + 0 = 999 x 1000 / 2 = 499 500, ya'ni O(n^2). Aylanma buffer bu surishni yo'q qiladi."
+    }
+  ]
+}

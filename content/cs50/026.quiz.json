@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Dastur `results.txt` dagi eski natijalarni o'qib, yangilarini oxiriga qo'shmoqchi. Dasturchi faylni `fopen(\"results.txt\", \"w\")` bilan ochdi. Nima bo'ladi?",
+      "options": [
+        "Fayl tarkibi fopen paytidayoq o'chiriladi; oxiriga qo'shish uchun \"a\" (o'qish ham kerak bo'lsa \"a+\") kerak edi",
+        "Yozuvlar avtomatik ravishda fayl oxiriga tushadi",
+        "fopen NULL qaytaradi, chunki fayl allaqachon bor",
+        "Faqat birinchi qator ustiga yoziladi, qolgani saqlanadi"
+      ],
+      "answer": 0,
+      "why": "\"w\" mavjud faylni uzunligi 0 ga qisqartiradi. \"a\" har bir yozuvni fayl oxiriga yo'naltiradi, tarkibni o'chirmaydi."
+    },
+    {
+      "q": "`data.txt` da `5\\n7\\n` (oxirida yangi qator). `while (!feof(f)) { fscanf(f, \"%d\", &x); sum += x; }` dan keyin `sum` nechaga teng (boshida 0)?",
+      "options": ["12", "5", "19", "Cheksiz sikl"],
+      "answer": 2,
+      "why": "7 o'qilgandan keyin '\\n' qoladi va feof hali 0. Uchinchi fscanf EOF qaytaradi, x eski 7 qoladi va yana qo'shiladi: 5 + 7 + 7 = 19."
+    },
+    {
+      "q": "`fread(buf, 4, 100, f)` 60 qaytardi. Bu nimani anglatadi?",
+      "options": [
+        "60 bayt o'qildi",
+        "60 ta 4 baytli element (240 bayt) to'liq o'qildi; fayl oxiri yoki xato bo'lgan, sababni feof/ferror aytadi",
+        "Fayl 60-baytda buzilgan",
+        "Xato kodi 60"
+      ],
+      "answer": 1,
+      "why": "fread to'liq o'qilgan elementlar sonini qaytaradi. count dan kichik bo'lsa, fayl oxiri yoki xato: feof va ferror bilan farqlanadi."
+    },
+    {
+      "q": "32 bitli `int` 300 little-endian mashinada `fwrite` bilan yozildi. Fayldagi baytlar (hex) qanday?",
+      "options": ["00 00 01 2c", "33 30 30", "2c 01 00 00", "01 2c 00 00"],
+      "answer": 2,
+      "why": "300 = 0x0000012C. Little-endian tartibda eng kichik bayt birinchi: 2c 01 00 00. '33 30 30' esa matnli fayldagi \"300\"."
+    },
+    {
+      "q": "24 bitli BMP kengligi 6 piksel. Har qator faylda necha bayt va padding necha bayt?",
+      "options": [
+        "18 bayt, padding 0",
+        "24 bayt, padding 6",
+        "18 bayt, padding 2",
+        "20 bayt, padding 2"
+      ],
+      "answer": 3,
+      "why": "Piksellar 6 x 3 = 18 bayt. (6 x 24 + 31) / 32 = 175 / 32 = 5, 5 x 4 = 20 bayt; padding 20 - 18 = 2."
+    },
+    {
+      "q": "Sarlavha uchun `struct { uint16_t type; uint32_t size; uint16_t r1, r2; uint32_t offset; }` e'lon qilinib, bitta `fread(&h, sizeof h, 1, f)` bilan o'qildi. `h.size` nega noto'g'ri chiqadi?",
+      "options": [
+        "uint32_t BMP da big-endian",
+        "Alignment tufayli type dan keyin 2 bayt padding qo'shiladi: sizeof 16 bo'ladi va size fayldagi 2-baytdan emas, 4-baytdan o'qiladi",
+        "fread struct'larni o'qiy olmaydi",
+        "size maydoni signed bo'lishi kerak"
+      ],
+      "answer": 1,
+      "why": "uint32_t 4 ga karrali siljishda turadi, shuning uchun kompilyator padding qo'yadi. #pragma pack(1) yoki maydonma-maydon o'qish kerak."
+    },
+    {
+      "q": "BMP da `biHeight = 2`, `bfOffBits = 54`, kenglik 3, 24 bit. Fayldagi 54-baytdan boshlanadigan birinchi uch bayt `00 00 ff`. Bu qaysi piksel va qanday rang?",
+      "options": [
+        "Yuqori chap piksel, ko'k",
+        "Pastki chap piksel, ko'k",
+        "Yuqori chap piksel, qizil",
+        "Pastki chap piksel, qizil"
+      ],
+      "answer": 3,
+      "why": "biHeight musbat: fayldagi birinchi qator rasmning pastki qatori. Rang tartibi BGR: B = 0, G = 0, R = 255 - qizil."
+    },
+    {
+      "q": "`char c; while ((c = fgetc(f)) != EOF) ...` sikli binary faylda 0xFF baytga yetganda to'xtab qoldi. Sabab?",
+      "options": [
+        "c char bo'lgani uchun 0xFF -1 ga aylanadi va EOF dan farqlanmaydi; c int bo'lishi kerak",
+        "fgetc binary fayllarni o'qiy olmaydi",
+        "0xFF - fayl oxiri markeri",
+        "Fayl \"r\" da ochilgan, \"rb\" kerak edi - asosiy sabab shu"
+      ],
+      "answer": 0,
+      "why": "fgetc bayt qiymatini 0-255 oralig'ida int sifatida yoki EOF (-1) ni qaytaradi. Signed char ga saqlansa, 255 ham -1 bo'lib qoladi."
+    },
+    {
+      "q": "Xom karta tasvirida fayl boshini topish uchun qaysi belgi JPEG ni bildiradi?",
+      "options": [
+        "Baytlar 42 4D",
+        "Baytlar FF D9",
+        "Baytlar FF D8 FF",
+        "Fayl kengaytmasi .jpg"
+      ],
+      "answer": 2,
+      "why": "JPEG SOI markeri FF D8 bilan boshlanadi, undan keyin keyingi markerning FF bayti keladi. FF D9 - fayl oxiri (EOI), 42 4D - BMP. Xom tasvirda kengaytma yo'q."
+    },
+    {
+      "q": "1 000 000 ta 16 baytli yozuv binary faylda ketma-ket saqlangan. 750 000-yozuvni (0 dan sanaganda) o'qish uchun eng yaxshi yo'l qaysi?",
+      "options": [
+        "fgets bilan 750 000 qatorni o'tkazib yuborish",
+        "fseek(f, 750000L * 16, SEEK_SET), keyin fread(&rec, 16, 1, f)",
+        "Butun faylni o'qib, oxiridan sanash",
+        "fseek(f, 750000, SEEK_SET), keyin fread(&rec, 16, 1, f)"
+      ],
+      "answer": 1,
+      "why": "Yozuvlar o'lchami qat'iy, shuning uchun siljish = indeks x o'lcham = 12 000 000 bayt. fseek ga baytlardagi siljish beriladi, yozuvlar soni emas."
+    }
+  ]
+}

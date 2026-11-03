@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Nega tugun `typedef struct node { int number; struct node *next; } node;` deb yoziladi, `typedef struct { int number; node *next; } node;` emas?",
+      "options": [
+        "Ikkinchi variant ham ishlaydi, faqat uslubga zid",
+        "next maydoni e'lon qilinayotganda `node` typedef nomi hali mavjud emas, `struct node` teg nomi esa birinchi qatordan ma'lum",
+        "Teg nomi bo'lmasa, struct heap'da saqlanmaydi",
+        "Teg nomi sizeof(node) ni kichraytiradi"
+      ],
+      "answer": 1,
+      "why": "typedef nomi yopuvchi } dan keyin paydo bo'ladi. Struct o'z tipiga ko'rsatkichni faqat teg nomi orqali e'lon qila oladi."
+    },
+    {
+      "q": "Brauzer muhitida (wasm32) `struct node { int number; struct node *next; }` 8 bayt. x86-64 da sizeof(node) qancha va nega?",
+      "options": [
+        "12: 4 + 8",
+        "8: o'lcham platformaga bog'liq emas",
+        "16: 4 bayt int, 4 bayt padding, 8 bayt ko'rsatkich (8 ga karrali manzilda)",
+        "24: malloc xizmat ma'lumoti sizeof ga kiradi"
+      ],
+      "answer": 2,
+      "why": "x86-64 da ko'rsatkich 8 bayt va 8 ga tekislanadi, shuning uchun int dan keyin 4 bayt padding. malloc xizmat ma'lumoti sizeof ga kirmaydi."
+    },
+    {
+      "q": "Boshiga qo'shishda quyidagi tartib yozildi: `list = n; n->next = list;`. Natija nima?",
+      "options": [
+        "Yangi tugun o'ziga ko'rsatadi va eski ro'yxatning manzili yo'qoladi (leak, sikl)",
+        "To'g'ri ishlaydi, tartib muhim emas",
+        "Kompilyatsiya xatosi",
+        "Yangi tugun ro'yxat oxiriga tushadi"
+      ],
+      "answer": 0,
+      "why": "list = n dan keyin list ham n ga ko'rsatadi, shuning uchun n->next = list tugunni o'ziga ulaydi. Eski boshning manzili hech qayerda qolmaydi."
+    },
+    {
+      "q": "Quyidagi sikl nima uchun xato? `for (node *p = list; p != NULL; p = p->next) free(p);`",
+      "options": [
+        "free(NULL) chaqiriladi va dastur to'xtaydi",
+        "Sikl oxirgi tugunni bo'shatmaydi",
+        "Xato yo'q, bu ro'yxatni bo'shatishning standart usuli",
+        "p = p->next free(p) dan keyin bajariladi: bo'shatilgan tugundan o'qish (use-after-free)"
+      ],
+      "answer": 3,
+      "why": "for ning uchinchi qismi tanadan keyin ishlaydi. next free dan oldin tmp ga olinishi kerak."
+    },
+    {
+      "q": "3 tugunli ro'yxatda (wasm32, tugun 8 bayt) faqat `free(list);` chaqirildi. Brauzer muhitining leak hisoboti nima deydi?",
+      "options": [
+        "Leak yo'q: free butun ro'yxatni bo'shatadi",
+        "16 bayt bo'shatilmagan, 2 ta blokda (3 ta malloc, 1 ta free)",
+        "24 bayt bo'shatilmagan, 3 ta blokda",
+        "8 bayt bo'shatilmagan, 1 ta blokda"
+      ],
+      "answer": 1,
+      "why": "free blok ichidagi ko'rsatkichlar haqida bilmaydi va faqat bitta tugunni bo'shatadi. Qolgan 2 x 8 = 16 bayt yo'qoladi."
+    },
+    {
+      "q": "Faqat head saqlanadigan ro'yxat oxiriga 1000 ta element ketma-ket qo'shildi (har safar oxirini boshidan qidirib). Oxirini qidirishda jami nechta qadam qilinadi?",
+      "options": ["999", "1000", "1 000 000", "498 501"],
+      "answer": 3,
+      "why": "k tugunli ro'yxatda oxirini topish k - 1 qadam: 0 + 0 + 1 + ... + 998 = 998 x 999 / 2 = 498 501, ya'ni O(n^2). Tail pointer bilan bu 0 qadam."
+    },
+    {
+      "q": "Pointer-to-pointer usulida o'chirish (`node **link`) prev/cur usulidan nimasi bilan qulay?",
+      "options": [
+        "Bosh tugunni o'chirish uchun alohida if kerak bo'lmaydi: link list o'zgaruvchisining ham, biror next maydonining ham manzili bo'la oladi",
+        "Qidirish O(log n) ga tushadi",
+        "free chaqirish shart bo'lmaydi",
+        "Ro'yxat avtomatik ravishda saralanadi"
+      ],
+      "answer": 0,
+      "why": "O'chirish har doim qandaydir ko'rsatkichni o'zgartirish. link shu ko'rsatkichning manzilini saqlaydi, shuning uchun *link = victim->next bosh, o'rta va oxir uchun bir xil."
+    },
+    {
+      "q": "Saralangan linked list'da qidirishni binary search bilan tezlashtirish mumkinmi?",
+      "options": [
+        "Ha, O(log n) bo'ladi, xuddi massivdagidek",
+        "Ha, lekin faqat doubly linked list'da",
+        "Yo'q: o'rtadagi tugunga sakrab bo'lmaydi, unga yetishning o'zi O(n) qadam",
+        "Yo'q, chunki saralangan ro'yxatda qidirish O(1)"
+      ],
+      "answer": 2,
+      "why": "Binary search random access'ga tayanadi. Ro'yxatda i-tugunga faqat boshdan i qadam bilan yetiladi, doubly linked list ham buni o'zgartirmaydi."
+    },
+    {
+      "q": "Massiv va linked list bo'ylab yurish ikkalasi ham O(n). Nega amalda massiv ko'pincha bir necha marta tezroq?",
+      "options": [
+        "Kompilyator linked list sikllarini optimizatsiya qila olmaydi",
+        "Massiv elementlari yonma-yon: protsessor xotirani bloklar (cache line) bilan o'qiydi va qo'shni elementlar cache'da bo'ladi, tugunlar esa heap bo'ylab sochilgan",
+        "Linked list'da har qadamda malloc chaqiriladi",
+        "Massiv elementlari kichikroq tipda saqlanadi"
+      ],
+      "answer": 1,
+      "why": "Bu cache locality. Big O konstantalarni yashiradi, xotiraga murojaat narxi esa aynan shu konstantada."
+    },
+    {
+      "q": "Doubly linked list bir yo'nalishli ro'yxatga nisbatan qaysi amalni yaxshilaydi?",
+      "options": [
+        "i-elementga murojaatni O(1) qiladi",
+        "Tugunlar xotirasini kamaytiradi",
+        "Ro'yxatni free qilishni keraksiz qiladi",
+        "Ko'rsatkichi ma'lum tugunni oldingisini qidirmasdan O(1) da o'chirish va ikki yo'nalishda yurish"
+      ],
+      "answer": 3,
+      "why": "prev ko'rsatkichi oldingi tugunni beradi. Evaziga har tugun bitta ko'rsatkichga kattalashadi va har o'zgarishda ikki baravar ko'p ko'rsatkich yangilanadi."
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+# CS50 27-28-darslar atamalari.
+- term: abstract data type
+  aliases: [ADT]
+  uz: "Faqat amallari va ularning xulq-atvori bilan ta'riflangan ma'lumot tipi: nima qilinishi va'da qilinadi, qanday saqlanishi esa implementatsiyada yashirinadi."
+  course: cs50
+  lesson: 27
+- term: LIFO
+  uz: "Last in, first out: oxirgi qo'yilgan element birinchi olinadi. Stack shu tartib bilan ishlaydi."
+  course: cs50
+  lesson: 27
+- term: FIFO
+  uz: "First in, first out: birinchi kirgan element birinchi chiqadi. Queue shu tartib bilan ishlaydi."
+  course: cs50
+  lesson: 27
+- term: queue
+  uz: "Elementlar bir uchdan (tail) qo'shilib, boshqa uchdan (head) olinadigan FIFO tartibli ADT: enqueue va dequeue amallari."
+  course: cs50
+  lesson: 27
+- term: circular buffer
+  aliases: [aylanma buffer, aylanma bufer, ring buffer]
+  uz: "Oxirgi katakdan keyin yana 0-katak keladigan massiv: head va tail indekslari (i + 1) % CAPACITY bilan yuradi, shuning uchun queue amallarida hech narsa surilmaydi."
+  course: cs50
+  lesson: 27
+- term: amortized O(1)
+  aliases: [amortized]
+  uz: "Alohida amal qimmat bo'lishi mumkin, lekin har qanday n ta amal ketma-ketligining jami narxi O(n), ya'ni har biri o'rtacha doimiy. Masalan, ikki barobar o'sadigan massivga qo'shish."
+  course: cs50
+  lesson: 27
+- term: linked list
+  uz: "Har biri keyingi tugunning manzilini saqlaydigan, xotirada alohida ajratilgan tugunlar zanjiri. Qo'shish va o'chirish surishsiz, lekin i-elementga yetish O(i)."
+  course: cs50
+  lesson: 28
+- term: tugun
+  aliases: [node]
+  uz: "Linked list yoki daraxtning bitta elementi: ma'lumot va boshqa tugun(lar)ga ko'rsatkich(lar)dan iborat struct."
+  course: cs50
+  lesson: 28
+- term: tail pointer
+  uz: "Linked list'ning oxirgi tuguniga saqlanadigan ikkinchi ko'rsatkich: u bilan oxiriga qo'shish O(n) o'rniga O(1)."
+  course: cs50
+  lesson: 28
+- term: pointer-to-pointer
+  uz: "Ko'rsatkichning manzilini saqlaydigan ko'rsatkich (node **). Funksiyaga chaqiruvchining ko'rsatkich o'zgaruvchisini, masalan ro'yxat boshini, o'zgartirish imkonini beradi."
+  course: cs50
+  lesson: 28
+- term: doubly linked list
+  uz: "Har tugunida keyingisiga ham, oldingisiga ham (prev) ko'rsatkich bo'lgan linked list: ma'lum tugunni O(1) da o'chirish va ikki yo'nalishda yurish mumkin."
+  course: cs50
+  lesson: 28
+- term: cache locality
+  uz: "Yaqin manzillardagi ma'lumotlarga ketma-ket murojaat qilinishi: protsessor xotirani bloklar bilan cache'ga olgani uchun bunday murojaat tez. Massivda yaxshi, linked list'da yomon."
+  course: cs50
+  lesson: 28

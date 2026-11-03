@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`void swap(int a, int b)` funksiyasi ichida `tmp = a; a = b; b = tmp;` bajariladi va `main` da `swap(x, y)` chaqiriladi (`x = 1, y = 2`). Chaqiruvdan keyin nima bo'ladi va nega?",
+      "options": [
+        "x = 2, y = 1: almashtirish to'g'ri yozilgan",
+        "x = 1, y = 2: swap o'z stack frame'idagi nusxalarni almashtirdi, frame return bilan yo'qoldi",
+        "Kompilyatsiya xatosi: int parametrni o'zgartirib bo'lmaydi",
+        "x = 2, y = 2: tmp o'zgaruvchisi qaytarilmagan"
+      ],
+      "answer": 1,
+      "why": "C da argument qiymat bo'yicha uzatiladi: a va b - x va y ning alohida nusxalari. Ular almashadi, lekin main frame'idagi kataklarga hech narsa yozilmaydi."
+    },
+    {
+      "q": "To'g'ri `swap(int *a, int *b)` ishlaganda `a` va `b` parametrlarining o'zi (manzil qiymatlari) funksiya davomida qanday o'zgaradi?",
+      "options": [
+        "Ular almashadi: a endi y ning manzilini saqlaydi",
+        "Ular NULL ga aylanadi",
+        "Ular o'zgarmaydi; o'zgargani ular ko'rsatgan main dagi kataklar",
+        "Ular chaqiruvchidagi &x va &y ning o'zi, nusxa emas"
+      ],
+      "answer": 2,
+      "why": "a va b ham qiymat bo'yicha olingan nusxalar, ular o'zgarmaydi. Funksiya *a = ... va *b = ... orqali manzil bo'yicha yozadi."
+    },
+    {
+      "q": "`void f(int values[100])` ichida `sizeof(values)` brauzer muhitida (wasm32) nimaga teng?",
+      "options": ["400", "100", "4", "Kompilyatsiya xatosi"],
+      "answer": 2,
+      "why": "Parametrdagi massiv e'loni pointerga almashtiriladi, 100 e'tiborga olinmaydi. sizeof manzil o'lchamini beradi: wasm32 da 4, x86-64 da 8."
+    },
+    {
+      "q": "`candidate *c` parametrida `*c.votes = 0;` yozildi. Nima bo'ladi?",
+      "options": [
+        "Kompilyatsiya xatosi: nuqta * dan oldin bajariladi, c esa struct emas pointer; c->votes yoki (*c).votes kerak",
+        "Ishlaydi, (*c).votes bilan bir xil",
+        "Ishlaydi, lekin faqat struct nusxasi o'zgaradi",
+        "Runtime xatosi: NULL pointer"
+      ],
+      "answer": 0,
+      "why": "Nuqta operatorining ustuvorligi * dan yuqori, shuning uchun bu *(c.votes) deb o'qiladi. clang to'g'ridan-to'g'ri '->' ni taklif qiladi."
+    },
+    {
+      "q": "struct ichida `int readings[1000]` va `int count` bor. Funksiya uni 1 000 000 marta nusxa bilan qabul qilsa, jami necha bayt ko'chiriladi? Pointer bilan (wasm32) qancha?",
+      "options": [
+        "4 000 000 bayt va 4 000 000 bayt",
+        "4 004 000 000 bayt va 4 000 000 bayt",
+        "1 001 000 000 bayt va 1 000 000 bayt",
+        "4 004 000 bayt va 4 bayt"
+      ],
+      "answer": 1,
+      "why": "sizeof = 1000 x 4 + 4 = 4004 bayt, million chaqiruvda 4 004 000 000 bayt (taxminan 4 GB). Pointer 4 bayt, million marta 4 000 000 bayt."
+    },
+    {
+      "q": "Qaysi e'londa funksiya `*p = 5` yoza olmaydi, lekin `p = &other` qila oladi?",
+      "options": ["int *const p", "int *p", "const int *const p", "const int *p"],
+      "answer": 3,
+      "why": "const int *p - o'zgarmas int ga pointer: ko'rsatilgan qiymat o'zgarmaydi, pointerning o'zi esa boshqa joyga burilishi mumkin. int *const p - aksincha."
+    },
+    {
+      "q": "Kirish `10 abc 30` bo'lganda `scanf(\"%d %d %d\", &a, &b, &c)` nimani qaytaradi va `abc` qayerda qoladi?",
+      "options": [
+        "2 qaytaradi, abc tashlab yuboriladi",
+        "1 qaytaradi, abc kirishda qoladi va keyingi o'qishga tushadi",
+        "EOF qaytaradi, kirish tozalanadi",
+        "0 qaytaradi, chunki hamma qiymat o'qilmadi"
+      ],
+      "answer": 1,
+      "why": "scanf muvaffaqiyatli o'zlashtirilgan qiymatlar sonini qaytaradi: faqat a. Mos kelmagan belgi o'qilmaydi va kirishda qoladi; EOF faqat birinchi qiymatdan oldin kirish tugasa."
+    },
+    {
+      "q": "`while (scanf(\"%d\", &x) != 1) printf(\"Qayta kiriting: \");` sikliga `abc` kiritildi. Nima bo'ladi?",
+      "options": [
+        "Foydalanuvchidan yangi qator so'raladi va hammasi joyida",
+        "scanf abc ni tashlab, 0 ni x ga yozadi",
+        "Sikl cheksiz aylanadi: abc kirishda turib qoladi va har safar yana 0 qaytadi",
+        "Dastur darhol EOF bilan tugaydi"
+      ],
+      "answer": 2,
+      "why": "Matching failure da noto'g'ri belgi o'qilmaydi. Qatorning qolganini (masalan, getchar sikli bilan) tashlamasdan qayta urinish har safar o'sha a ga uriladi."
+    },
+    {
+      "q": "`char city[16]` ga so'z xavfsiz o'qish uchun qaysi chaqiruv to'g'ri?",
+      "options": [
+        "scanf(\"%15s\", city)",
+        "scanf(\"%16s\", city)",
+        "scanf(\"%s\", &city)",
+        "scanf(\"%15s\", &city[16])"
+      ],
+      "answer": 0,
+      "why": "Kenglik NUL ni hisobga olmaydi: 15 belgi + NUL = 16 bayt. city o'zi birinchi element manzili, & kerak emas; %16s 17 bayt yozishi mumkin."
+    },
+    {
+      "q": "`bool stats(const int *v, int n, int *min, int *max)` imzosidan chaqiruvchi nimani bilib oladi?",
+      "options": [
+        "Funksiya v massivini saralaydi va min, max ni qaytaradi",
+        "v faqat o'qiladi; min va max - natija yoziladigan out-parametrlar; bool esa muvaffaqiyat belgisi",
+        "min va max funksiyaga boshlang'ich qiymat beradi, funksiya ularni o'qiydi",
+        "Funksiya natijalarni global o'zgaruvchilarga yozadi"
+      ],
+      "answer": 1,
+      "why": "const pointer - faqat o'qish va'dasi, const siz pointer parametr - yozish joyi. Holat return orqali, natijalar out-parametrlar orqali qaytadi."
+    }
+  ]
+}
