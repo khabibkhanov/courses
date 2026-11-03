@@ -89,7 +89,7 @@
         "`int k = strlen(argv[1]) % 26;`"
       ],
       "answer": 1,
-      "why": "Har qadamda mod olinsa, oraliq qiymat 26 x 10 + 9 = 269 dan oshmaydi va natija kalit mod 26 ga teng. atoi esa int ga sig'maydigan satrda undefined behavior beradi."
+      "why": "Har qadamda mod olinsa, oraliq qiymat 25 x 10 + 9 = 259 dan oshmaydi va natija kalit mod 26 ga teng. atoi esa int ga sig'maydigan satrda undefined behavior beradi."
     }
   ]
 }
