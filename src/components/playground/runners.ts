@@ -13,7 +13,8 @@ export type Output =
   /** C dasturi yaratgan/o'zgartirgan fayl: matn yoki boshidagi baytlar (hex); size -1 - o'chirildi. */
   | { kind: "file"; name: string; size: number; text: string | null; hex?: string | null };
 
-const PYODIDE = "https://cdn.jsdelivr.net/npm/pyodide@314.0.7/";
+// "full" tarqatma: npm paketida qo'shimcha paketlar (micropip, sqlite3, numpy...) wheel fayllari yo'q.
+const PYODIDE = "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/";
 const SQLJS = "https://cdn.jsdelivr.net/npm/sql.js@1.15.2/dist/";
 
 export const LANG_LABEL: Record<RunLang, string> = {
