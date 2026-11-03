@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Bir xil qidiruv kodida frontier'dan tugun olish `frontier.popleft()` dan `frontier.pop()` ga almashtirildi (deque). Nima o'zgaradi?",
+      "options": [
+        "Hech narsa: ikkalasi ham eng qisqa yo'lni topadi",
+        "Algoritm BFS dan DFS ga aylanadi: yechim topiladi, lekin eng qisqa bo'lishi kafolatlanmaydi",
+        "Algoritm A* ga aylanadi, chunki oxirgi qo'shilgan tugun maqsadga yaqinroq",
+        "Algoritm cheksiz tsiklga tushadi, chunki stack ko'rilgan tugunlarni eslamaydi"
+      ],
+      "answer": 1,
+      "why": "popleft - queue (FIFO, BFS), pop - stack (LIFO, DFS). DFS chuqurga ketadi va optimal yo'lni kafolatlamaydi; ko'rilganlarni eslash esa frontier turidan mustaqil."
+    },
+    {
+      "q": "Labirint jadvalida greedy best-first 24 ta tugun kengaytirib 22 qadamlik yo'l, A* esa 44 ta tugun kengaytirib 20 qadamlik yo'l topdi. Greedy'ning yo'li nega uzunroq?",
+      "options": [
+        "Manhattan masofasi greedy uchun admissible emas",
+        "Greedy priority queue o'rniga stack ishlatadi",
+        "Greedy faqat h(n) ga qaraydi va allaqachon yurilgan narx g(n) ni hisobga olmaydi",
+        "Greedy maqsadni frontier'ga qo'shilganda tekshiradi"
+      ],
+      "answer": 2,
+      "why": "Greedy \"maqsadga yaqin ko'ringan\" tugunni tanlaydi, aylanib o'tish narxi uning qarorida aks etmaydi. A* f = g + h bilan ikkalasini hisobga oladi."
+    },
+    {
+      "q": "Panjarada endi diagonal yurish ham bitta qadam (narx 1) deb ruxsat etildi. (0, 0) dan (4, 4) gacha devorsiz. Manhattan masofasi haqida qaysi gap to'g'ri?",
+      "options": [
+        "U 8 deydi, haqiqiy eng kichik narx 4: evristika narxni oshirib baholaydi va admissible emas",
+        "U 4 deydi, demak admissible va consistent",
+        "U 8 deydi, haqiqiy narx ham 8: evristika aniq",
+        "Diagonal yurishda har qanday evristika admissible bo'ladi"
+      ],
+      "answer": 0,
+      "why": "|4| + |4| = 8, lekin 4 ta diagonal qadam yetadi. h(n) > h*(n) - admissible shart buzilgan, A* optimallik kafolatini yo'qotadi."
+    },
+    {
+      "q": "Evristikaning admissible bo'lishi ta'rifi qaysi?",
+      "options": [
+        "h(n) har doim musbat va maqsadga yaqinlashganda kamayadi",
+        "h(n) har bir qo'shni uchun bir xil miqdorda o'zgaradi",
+        "h(n) haqiqiy qolgan narxga aynan teng",
+        "Har bir n uchun h(n) ≤ h*(n): maqsadgacha haqiqiy eng kichik narxdan hech qachon katta emas"
+      ],
+      "answer": 3,
+      "why": "Admissible evristika - qolgan narxning quyi chegarasi. Aniq tenglik shart emas (h = 0 ham admissible)."
+    },
+    {
+      "q": "A* da h(n) = 0 deb olinsa (barcha qadamlar narxi 1), algoritm o'zini qanday tutadi?",
+      "options": [
+        "Greedy best-first kabi, chunki faqat bitta had qoladi",
+        "Optimal yo'l topadi, lekin BFS/Dijkstra kabi ko'p tugun kengaytiradi",
+        "Optimal bo'lmagan yo'l qaytarishi mumkin, chunki evristika noto'g'ri",
+        "DFS kabi chuqurga ketadi"
+      ],
+      "answer": 1,
+      "why": "h = 0 admissible, shuning uchun optimallik saqlanadi, lekin f = g bo'lib, A* Dijkstra'ga (bir xil narxda BFS ga) aylanadi va yo'nalishsiz qidiradi."
+    },
+    {
+      "q": "Tic-tac-toe uchun 9! = 362 880, sanalgan tugallangan o'yinlar esa 255 168. Farqning asosiy sababi nima?",
+      "options": [
+        "9! simmetrik o'yinlarni ikki marta sanaydi",
+        "255 168 faqat X yutgan o'yinlar",
+        "Ko'p o'yinlar kimdir uchtani terganda 9-yurishdan oldin tugaydi, 9! esa har doim 9 ta yurish deb sanaydi",
+        "9! ga qonuniy bo'lmagan yurishlar ham kiradi, masalan band katakka yurish"
+      ],
+      "answer": 2,
+      "why": "9! - erta tugashni hisobga olmagan ketma-ketliklar. Erta tugagan o'yinda qolgan yurishlarning barcha tartiblari bitta o'yinga birlashadi, shuning uchun haqiqiy son kam."
+    },
+    {
+      "q": "MAX tugunining birinchi bolasi qiymati 6 bo'ldi. Ikkinchi bola - MIN tuguni; uning birinchi bolasi 4 qaytardi. Alpha-beta MIN tugunining qolgan bolalari bilan nima qiladi va nima uchun?",
+      "options": [
+        "Kesadi: MIN tugun qiymati ko'pi bilan 4, MAX esa allaqachon 6 ga ega",
+        "Hammasini ko'radi: qolgan bolalarda 10 bo'lishi mumkin",
+        "Kesadi, lekin natija minimaxdan farq qilishi mumkin",
+        "Faqat oxirgi bolani ko'radi"
+      ],
+      "answer": 0,
+      "why": "MIN ≤ 4 < 6 = alpha, ya'ni alpha ≥ beta. MAX bu tarmoqni hech qachon tanlamaydi, natija minimax bilan bir xil qoladi."
+    },
+    {
+      "q": "Tarmoqlanish koeffitsienti b = 36, chuqurlik d = 6. Ideal yurish tartibida alpha-beta taxminan nechta barg ko'radi?",
+      "options": [
+        "36^6 ≈ 2,2 · 10^9 - minimax bilan bir xil",
+        "36^3 = 46 656",
+        "36 · 6 = 216",
+        "6^36"
+      ],
+      "answer": 1,
+      "why": "Ideal tartibda O(b^(d/2)): 36^3 = 46 656. Tarmoqlanish amalda √36 = 6 ga tushadi."
+    },
+    {
+      "q": "Shannon soni 10^120 qanday olingan?",
+      "options": [
+        "Shaxmatdagi qonuniy pozitsiyalarni kompyuterda sanab",
+        "64 katakka 32 figurani joylashtirish usullari soni",
+        "Har yurishda 120 ta tanlov borligidan",
+        "Bir juft yurishga taxminan 10^3 variant va o'yin ~40 juft yurish: (10^3)^40"
+      ],
+      "answer": 3,
+      "why": "Shannon 1950 maqolasida o'yin daraxti hajmini qo'pol baholagan: (10^3)^40 = 10^120. Pozitsiyalar soni (~4,8 · 10^44) boshqa, ancha kichik kattalik."
+    },
+    {
+      "q": "Depth-limited minimax 4 yarim yurish chuqurlikda ishlaydi. 5-yarim yurishda farzin yo'qotiladigan yurishni u \"yaxshi\" deb tanladi. Bu qanday hodisa va nima yordam beradi?",
+      "options": [
+        "Alpha-beta xatosi; pruning'ni o'chirish kerak",
+        "Ufq effekti: xavf chuqurlik chegarasidan narida. Chuqurroq qidirish yoki aniqroq baholash funksiyasi yordam beradi",
+        "Evristika admissible emas; A* ga o'tish kerak",
+        "Minimax raqibni noto'g'ri modellashtirgan; utility'ni teskari qilish kerak"
+      ],
+      "answer": 1,
+      "why": "Baholash funksiyasi chegara tugunida faqat taxmin; chegaradan keyingi oqibatni ko'rmaydi (horizon effect). Chuqurlik yoki baholash sifati bu trade-off'ni hal qiladi."
+    }
+  ]
+}

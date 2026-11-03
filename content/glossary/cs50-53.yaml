@@ -1,0 +1,101 @@
+# CS50 53-54-darslar atamalari.
+- term: BFS
+  aliases: [breadth-first search]
+  uz: "Kenglik bo'yicha qidiruv: frontier queue (FIFO), tugunlar boshlang'ichdan qatlam-qatlam ko'riladi. Har qadam narxi bir xil bo'lsa, eng qisqa yo'lni topadi."
+  course: cs50
+  lesson: 53
+- term: DFS
+  aliases: [depth-first search]
+  uz: "Chuqurlik bo'yicha qidiruv: frontier stack (LIFO), bitta yo'nalishda iloji boricha chuqur boriladi. Yechim topadi, lekin eng qisqasi bo'lishi kafolatlanmaydi."
+  course: cs50
+  lesson: 53
+- term: frontier
+  aliases: []
+  uz: "Qidiruvda hali kengaytirilmagan, keyin ko'riladigan tugunlar to'plami. Uning turi (stack, queue, priority queue) algoritmni belgilaydi."
+  course: cs50
+  lesson: 53
+- term: evristika
+  aliases: [heuristic]
+  uz: "Holatdan maqsadgacha qolgan narxni tez taxmin qiladigan funksiya h(n), masalan panjarada Manhattan masofasi."
+  course: cs50
+  lesson: 53
+- term: greedy best-first search
+  aliases: []
+  uz: "Frontier'dan evristikasi h(n) eng kichik tugunni oladigan qidiruv. Ko'pincha kam tugun ko'radi, lekin yurilgan narxni hisobga olmagani uchun optimal emas."
+  course: cs50
+  lesson: 53
+- term: A*
+  aliases: [A-star]
+  uz: "Frontier'dan f(n) = g(n) + h(n) eng kichik tugunni oladigan qidiruv: yurilgan narx plus qolgan taxmin. Evristika admissible bo'lsa, optimal yo'l topadi."
+  course: cs50
+  lesson: 53
+- term: admissible evristika
+  aliases: [admissible heuristic]
+  uz: "Maqsadgacha haqiqiy eng kichik narxni hech qachon oshirib baholamaydigan evristika: har n uchun h(n) ≤ h*(n). A* optimalligining sharti."
+  course: cs50
+  lesson: 53
+- term: minimax
+  aliases: []
+  uz: "Ikki o'yinchili o'yinda holat qiymatini rekursiv hisoblash: MAX navbatida bolalar maksimumi, MIN navbatida minimumi, terminal holatda utility."
+  course: cs50
+  lesson: 53
+- term: alpha-beta pruning
+  aliases: [alpha-beta]
+  uz: "Minimax'ning optimallashtirilishi: alpha va beta chegaralari bo'yicha natijaga ta'sir qilmaydigan tarmoqlar kesiladi. Qiymat minimax bilan bir xil, tugunlar kamroq."
+  course: cs50
+  lesson: 53
+- term: evaluation function
+  aliases: []
+  uz: "Depth-limited minimax'da tugamagan pozitsiya qanchalik yaxshi ekanini taxmin qiladigan funksiya, masalan shaxmatda material hisobi."
+  course: cs50
+  lesson: 53
+- term: supervised learning
+  aliases: [nazoratli o'rganish]
+  uz: "Har bir misolda to'g'ri javob (label) berilgan ma'lumotdan kirishni javobga o'tkazadigan funksiyani o'rganish: classification yoki regression."
+  course: cs50
+  lesson: 54
+- term: reinforcement learning
+  aliases: []
+  uz: "Agent muhitda harakat qilib, har harakatdan keyin mukofot yoki jazo oladi va mukofotni ko'paytiradigan xatti-harakatni o'rganadi."
+  course: cs50
+  lesson: 54
+- term: k-NN
+  aliases: [k-nearest neighbors]
+  uz: "Yangi nuqtani eng yaqin k ta o'qitish misolining ko'pchilik ovozi bilan tasniflaydigan algoritm. O'qitish yo'q, butun ish bashorat paytida."
+  course: cs50
+  lesson: 54
+- term: gradient descent
+  aliases: []
+  uz: "Loss funksiyasini kamaytirish uchun parametrlarni gradientga qarshi yo'nalishda learning rate o'lchamidagi qadamlar bilan takroriy yangilash."
+  course: cs50
+  lesson: 54
+- term: learning rate
+  aliases: []
+  uz: "Gradient descent qadamining o'lchami. Juda kichik bo'lsa o'qitish sekin, juda katta bo'lsa jarayon minimum ustidan sakrab uzoqlashadi."
+  course: cs50
+  lesson: 54
+- term: overfitting
+  aliases: []
+  uz: "Model o'qitish ma'lumotiga, uning shovqiniga ham ortiqcha moslashib, yangi ma'lumotda yomon ishlashi. Train va test natijalari farqi bilan aniqlanadi."
+  course: cs50
+  lesson: 54
+- term: perceptron
+  aliases: []
+  uz: "Bitta sun'iy neyron: kirishlarning og'irlikli yig'indisi plus bias, chegara funksiyasidan o'tkaziladi. Faqat chiziqli ajraladigan ma'lumotni o'rgana oladi."
+  course: cs50
+  lesson: 54
+- term: ReLU
+  aliases: []
+  uz: "Aktivatsiya funksiyasi max(0, z): manfiy qiymatni 0 ga aylantiradi, musbatni o'zgartirmaydi. Yashirin qatlamlarda eng keng tarqalgan."
+  course: cs50
+  lesson: 54
+- term: backpropagation
+  aliases: []
+  uz: "Neyron tarmoqda zanjir qoidasi yordamida loss'ning har bir og'irlik bo'yicha gradientini chiqishdan kirishga qarab qatlamma-qatlam hisoblash usuli."
+  course: cs50
+  lesson: 54
+- term: confusion matrix
+  aliases: []
+  uz: "Classification natijalari jadvali: TP, FP, FN, TN. Undan accuracy, precision = TP / (TP + FP) va recall = TP / (TP + FN) hisoblanadi."
+  course: cs50
+  lesson: 54

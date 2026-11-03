@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Do'kon xaridorlarni xarid tarixiga ko'ra guruhlarga ajratmoqchi, lekin qanday guruhlar borligini oldindan bilmaydi va hech qanday label yo'q. Bu qaysi turdagi vazifa?",
+      "options": [
+        "Supervised classification",
+        "Supervised regression",
+        "Unsupervised learning (clustering)",
+        "Reinforcement learning"
+      ],
+      "answer": 2,
+      "why": "Label yo'q, maqsad ma'lumotdagi tuzilmani (guruhlarni) topish - bu unsupervised learning. Supervised uchun har misolda to'g'ri javob kerak."
+    },
+    {
+      "q": "k-NN da k = 1 bilan train aniqligi 1,00, test aniqligi 0,60; k = 15 da train 0,77, test 0,90. Bu nimani ko'rsatadi?",
+      "options": [
+        "k = 1 eng yaxshi, chunki train aniqligi eng yuqori",
+        "k = 1 shovqinni yodlab overfitting qiladi; k = 15 yaxshiroq umumlashtiradi",
+        "k = 15 underfitting qiladi, chunki train aniqligi pasaygan",
+        "Test to'plami noto'g'ri tanlangan, chunki natijalar teskari"
+      ],
+      "answer": 1,
+      "why": "k = 1 da har train nuqtasi o'zining eng yaqin qo'shnisi, shuning uchun train'da 100%. Yangi ma'lumotdagi pastroq natija overfitting belgisi; baho test ma'lumotida qilinadi."
+    },
+    {
+      "q": "x = [1, 2], y = [2, 4], model ŷ = w · x (b yo'q), w = 0. MSE = (1/n) · Σ (ŷ - y)². ∂MSE/∂w = (2/n) · Σ (ŷ - y) · x. Learning rate 0,1 bilan bir qadamdan keyin w nechaga teng?",
+      "options": [
+        "0,5",
+        "-1,0",
+        "1,4",
+        "1,0"
+      ],
+      "answer": 3,
+      "why": "Xatolar -2 va -4; gradient = (2/2) · (-2 · 1 - 4 · 2) = -10. w = 0 - 0,1 · (-10) = 1,0."
+    },
+    {
+      "q": "Gradient descent bilan o'qitishda loss har qadamda kattalashib, parametrlar ishorasini almashtirib o'smoqda. Eng ehtimoliy sabab va yechim?",
+      "options": [
+        "Learning rate juda katta: minimum ustidan sakrab o'tilmoqda, uni kamaytirish kerak",
+        "Learning rate juda kichik: uni oshirish kerak",
+        "Ma'lumot juda ko'p: test qismini kattalashtirish kerak",
+        "Model underfitting qilmoqda: qatlam qo'shish kerak"
+      ],
+      "answer": 0,
+      "why": "Darsdagi α = 0,2 holati: har qadam qarama-qarshi tomonga kattaroq sakraydi va loss portlaydi (divergence). Kichikroq α kerak."
+    },
+    {
+      "q": "Nega bitta perceptron XOR ni o'rgana olmaydi?",
+      "options": [
+        "Perceptron faqat butun sonlar bilan ishlaydi",
+        "Learning rate juda kichik bo'lgani uchun, ko'proq epoxa kerak",
+        "XOR da 1 lar va 0 lar kvadratning qarama-qarshi burchaklarida; ularni bitta to'g'ri chiziq ajrata olmaydi",
+        "XOR uchun ikkitadan ko'p kirish kerak"
+      ],
+      "answer": 2,
+      "why": "Perceptron qaror chegarasi - to'g'ri chiziq. XOR chiziqli ajralmaydi, shuning uchun hech qanday epoxa soni yordam bermaydi; yashirin qatlam kerak."
+    },
+    {
+      "q": "Neyron tarmoqning barcha qatlamlarida aktivatsiya funksiyasi o'rniga identik funksiya f(z) = z ishlatildi. Natija?",
+      "options": [
+        "Tarmoq tezroq o'rganadi, chunki hosila doim 1",
+        "Tarmoq har qanday chuqurlikda ham bitta chiziqli modelga teng bo'ladi va XOR ni o'rgana olmaydi",
+        "Tarmoq faqat regression qila oladi, lekin XOR ni o'rganadi",
+        "Backpropagation ishlamaydi, chunki hosila 0"
+      ],
+      "answer": 1,
+      "why": "Chiziqli funksiyalar kompozitsiyasi yana chiziqli. Nochiziqli aktivatsiya (ReLU, sigmoid) bo'lmasa, qatlamlar foyda bermaydi."
+    },
+    {
+      "q": "ReLU(-3), ReLU(2) va sigmoid(0) qiymatlari qaysi qatorda to'g'ri berilgan?",
+      "options": [
+        "-3, 2, 0",
+        "0, 1, 1",
+        "0, 2, 0,5",
+        "0, 2, 0"
+      ],
+      "answer": 2,
+      "why": "ReLU = max(0, z): manfiy 0 ga, musbat o'zgarmaydi. sigmoid(0) = 1 / (1 + e^0) = 1/2."
+    },
+    {
+      "q": "Backpropagation'ning asosiy g'oyasi qaysi?",
+      "options": [
+        "Og'irliklarni tasodifiy o'zgartirib, loss kamaygan variantni saqlash",
+        "Kirishdan chiqishga hisoblab, bashorat olish",
+        "Eng yaqin o'qitish misolining label'ini nusxalash",
+        "Chiqishdan kirishga qarab zanjir qoidasi bilan har bir og'irlik bo'yicha loss gradientini qatlamma-qatlam hisoblash"
+      ],
+      "answer": 3,
+      "why": "Forward pass bashorat beradi; backpropagation esa xatoni orqaga tarqatib, zanjir qoidasi bilan gradientlarni samarali hisoblaydi, keyin gradient descent og'irliklarni yangilaydi."
+    },
+    {
+      "q": "Kasallik testi: 50 ta kasaldan 45 tasini topdi, 950 ta sog'dan 95 tasini adashib kasal dedi. Precision va recall?",
+      "options": [
+        "Precision 0,90, recall 0,32",
+        "Precision 0,32, recall 0,90",
+        "Precision 0,90, recall 0,90",
+        "Precision 0,86, recall 0,90"
+      ],
+      "answer": 1,
+      "why": "TP = 45, FN = 5, FP = 95. Recall = 45 / 50 = 0,90; precision = 45 / (45 + 95) = 45 / 140 ≈ 0,32."
+    },
+    {
+      "q": "Firibgarlik tranzaksiyalari 0,5% ni tashkil qiladi. Model har doim \"firibgarlik emas\" deydi. Qaysi gap to'g'ri?",
+      "options": [
+        "Accuracy 0,5%, shuning uchun model yomonligi darhol ko'rinadi",
+        "Recall 1,0, chunki model hech qachon xato signal bermaydi",
+        "Precision 1,0, chunki FP = 0",
+        "Accuracy 99,5%, lekin recall 0: model bitta ham firibgarlikni topmaydi"
+      ],
+      "answer": 3,
+      "why": "Notekis sinflarda accuracy aldaydi: 99,5% to'g'ri, lekin TP = 0, shuning uchun recall = 0. Precision esa aniqlanmagan (0 / 0)."
+    }
+  ]
+}
