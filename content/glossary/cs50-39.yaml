@@ -1,0 +1,86 @@
+# CS50 39-40-darslar atamalari.
+- term: full table scan
+  aliases: []
+  uz: "So'rovni bajarish uchun jadvalning barcha qatorlarini (barcha sahifalarini) ko'rib chiqish. EXPLAIN QUERY PLAN da SCAN deb ko'rinadi, narxi O(n)."
+  course: cs50
+  lesson: 39
+- term: B-tree
+  aliases: [B+tree]
+  uz: "Har bir tuguni bitta disk sahifasi bo'lgan va yuzlab kalit hamda bolani saqlaydigan doim muvozanatli qidiruv daraxti. Fan-out katta bo'lgani uchun million kalitda ham balandligi 3-4."
+  course: cs50
+  lesson: 39
+- term: fan-out
+  aliases: []
+  uz: "Daraxtdagi bitta tugunning bolalari soni. BST da 2, B-tree da yuzlab; balandlik taxminan log asosi fan-out (n)."
+  course: cs50
+  lesson: 39
+- term: query planner
+  aliases: [so'rov rejalashtiruvchisi]
+  uz: "Bazaning SQL so'rovini qanday bajarishni (qaysi indeks, qaysi tartib) tanlaydigan qismi. Uning qarorini EXPLAIN QUERY PLAN ko'rsatadi."
+  course: cs50
+  lesson: 39
+- term: covering index
+  aliases: [qoplovchi indeks]
+  uz: "So'rovga kerak bo'lgan barcha ustunlarni o'z ichiga olgan indeks: baza jadvalning o'ziga murojaat qilmasdan javob beradi."
+  course: cs50
+  lesson: 39
+- term: composite indeks
+  aliases: [composite index]
+  uz: "Bir nechta ustun bo'yicha tuzilgan indeks: qiymatlar avval birinchi ustun, u teng bo'lganda ikkinchi ustun bo'yicha saralanadi."
+  course: cs50
+  lesson: 39
+- term: leftmost prefix
+  aliases: [chap prefiks]
+  uz: "Composite indeks faqat chapdagi ustundan boshlab uzluksiz ishlatilgan ustunlar uchun ishlaydi degan qoida: (a, b) indeksi a va a+b bo'yicha qidiruvga yordam beradi, faqat b ga emas."
+  course: cs50
+  lesson: 39
+- term: tranzaksiya
+  aliases: [transaction, tranzaksiyalar]
+  uz: "Bir nechta buyruqni yo hammasi, yo hech biri bajariladigan bitta birlikka birlashtirish: BEGIN bilan boshlanadi, COMMIT bilan saqlanadi, ROLLBACK bilan bekor qilinadi."
+  course: cs50
+  lesson: 39
+- term: ACID
+  aliases: []
+  uz: "Tranzaksiya kafolatlari: atomicity (bo'linmaslik), consistency (yaxlitlik), isolation (ajratilganlik), durability (chidamlilik)."
+  course: cs50
+  lesson: 39
+- term: race condition
+  aliases: [poyga holati]
+  uz: "Natija bir vaqtda bajarilayotgan amallarning qaysi tartibda kelishiga bog'liq bo'lgan xato. Ko'pincha o'qish va yozish orasiga boshqa yozuv kirib qolganda yuzaga keladi."
+  course: cs50
+  lesson: 39
+- term: read-modify-write
+  aliases: []
+  uz: "Qiymatni o'qib, dasturda o'zgartirib, qaytadan yozish naqshi. Parallel so'rovlarda lost update ga olib keladi; yechim - atomik UPDATE yoki tranzaksiya."
+  course: cs50
+  lesson: 39
+- term: SQL injection
+  aliases: []
+  uz: "Foydalanuvchi kiritgan matn SQL so'rovi ichiga matn sifatida qo'shilib, kod sifatida tahlil qilinadigan zaiflik. Parametrlangan so'rov bilan to'liq yopiladi."
+  course: cs50
+  lesson: 39
+- term: parametrlangan so'rov
+  aliases: [parameterized query, parametrlangan so'rovlar]
+  uz: "Qiymatlar o'rnida placeholder turadigan va qiymatlar SQL matnidan alohida uzatiladigan so'rov: avval tahlil qilinadi, keyin qiymatlar faqat ma'lumot sifatida bog'lanadi."
+  course: cs50
+  lesson: 39
+- term: placeholder
+  aliases: [placeholder'lar]
+  uz: "SQL matnida qiymat o'rnini egallovchi belgi: sqlite3 da ? yoki :nom. Faqat qiymat o'rnida ishlaydi, jadval yoki ustun nomi uchun emas."
+  course: cs50
+  lesson: 39
+- term: DB-API
+  aliases: [PEP 249]
+  uz: "Python baza kutubxonalari uchun umumiy interfeys standarti (PEP 249): connect, cursor, execute, fetchone, fetchall, commit, rollback."
+  course: cs50
+  lesson: 40
+- term: cursor
+  aliases: []
+  uz: "Bitta SQL so'rovini bajaradigan va uning natija qatorlari bo'ylab yuradigan obyekt; qatorlarni fetchone, fetchmany, fetchall yoki for bilan beradi."
+  course: cs50
+  lesson: 40
+- term: N+1 so'rov muammosi
+  aliases: [N+1 query problem]
+  uz: "Ro'yxatni bitta so'rov bilan olib, keyin har bir element uchun alohida so'rov yuborish: N element uchun N + 1 so'rov. JOIN, IN yoki GROUP BY bilan 1-2 so'rovga tushiriladi."
+  course: cs50
+  lesson: 40

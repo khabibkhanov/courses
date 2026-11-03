@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Dastur `conn = sqlite3.connect(\"app.db\")`, `conn.execute(\"INSERT INTO logs VALUES (?)\", (\"start\",))`, `conn.close()` ni bajardi (sukut bo'yicha sozlamalar). Bazani qayta ochsangiz, yozuv bormi?",
+      "options": [
+        "Ha, execute har bir buyruqni darhol saqlaydi",
+        "Yo'q: modul INSERT oldidan tranzaksiya ochdi, commit chaqirilmadi, close esa commit qilmaydi",
+        "Ha, close() avtomatik commit qiladi",
+        "Yo'q, chunki INSERT uchun avval cursor() yaratish shart"
+      ],
+      "answer": 1,
+      "why": "Legacy rejimda sqlite3 INSERT/UPDATE/DELETE oldidan BEGIN qo'yadi, lekin yopmaydi. commit() siz close() o'zgarishlarni yo'qotadi."
+    },
+    {
+      "q": "`with conn:` bloki xatosiz tugadi. Shundan keyin qaysi gap to'g'ri?",
+      "options": [
+        "Tranzaksiya commit qilindi va ulanish yopildi",
+        "Tranzaksiya commit qilinmadi, faqat ulanish yopildi",
+        "Tranzaksiya commit qilindi, ulanish esa ochiq qoldi va undan foydalanish mumkin",
+        "Hech narsa bo'lmaydi: with conn faqat xato bo'lganda ishlaydi"
+      ],
+      "answer": 2,
+      "why": "Connection context manager faqat commit yoki rollback qiladi; hujjatga ko'ra u ulanishni yopmaydi. Yopish uchun close() yoki contextlib.closing kerak."
+    },
+    {
+      "q": "`conn.execute(\"SELECT * FROM users WHERE id = ?\", (42))` ishlamaydi. Sababi nima?",
+      "options": [
+        "SELECT da placeholder ishlatib bo'lmaydi",
+        "id ustuni matn bo'lishi kerak",
+        "? o'rniga :id yozish shart",
+        "(42) - tuple emas, oddiy son; bitta elementli tuple (42,) bo'lishi kerak"
+      ],
+      "answer": 3,
+      "why": "Qavs tuple yaratmaydi, vergul yaratadi. Parametrlar ketma-ketlik bo'lishi kerak: (42,) yoki [42]."
+    },
+    {
+      "q": "Python 3.14 da `conn.execute(\"SELECT * FROM t WHERE a = :a\", (5,))` chaqirildi. Nima bo'ladi?",
+      "options": [
+        "ProgrammingError: named placeholder'larga lug'at kerak, tuple berildi",
+        "So'rov ishlaydi, 5 qiymati :a ga bog'lanadi",
+        "Faqat DeprecationWarning chiqadi",
+        "IntegrityError"
+      ],
+      "answer": 0,
+      "why": "3.14 dan boshlab named uslubda ketma-ketlik berilsa ProgrammingError chiqadi. To'g'risi: {\"a\": 5}."
+    },
+    {
+      "q": "1000 qatorli CSV `with conn: conn.executemany(sql, rows)` bilan yozilmoqda. 700-qator CHECK cheklovini buzadi. Jadvalda nechta yangi qator qoladi?",
+      "options": ["699", "999", "0", "700"],
+      "answer": 2,
+      "why": "IntegrityError executemany ni to'xtatadi, with conn esa butun tranzaksiyani rollback qiladi: oldingi 699 qator ham bekor bo'ladi."
+    },
+    {
+      "q": "Sahifa 100 ta buyurtmani chiqaradi va har biri uchun sikl ichida `SELECT name FROM customers WHERE id = ?` bajaradi. Server bazaga bitta so'rovning borib-kelishi 1 ms. Faqat kutishga qancha vaqt ketadi va eng yaxshi tuzatish qaysi?",
+      "options": [
+        "1 ms; tuzatish kerak emas",
+        "101 ms; orders va customers ni JOIN bilan bitta so'rovda olish",
+        "100 ms; customers jadvaliga indeks qo'shish",
+        "2 ms; fetchall o'rniga fetchone ishlatish"
+      ],
+      "answer": 1,
+      "why": "N+1: 1 + 100 = 101 so'rov, har biri 1 ms. Indeks har bir so'rovni tezlashtiradi, lekin so'rovlar sonini kamaytirmaydi; JOIN ularni 1 taga tushiradi."
+    },
+    {
+      "q": "`conn.execute(\"PRAGMA foreign_keys = ON\")` yozilmagan. `students.class_id REFERENCES classes(id)` bo'lsa ham mavjud bo'lmagan class_id = 7 bilan INSERT bajarildi. Natija?",
+      "options": [
+        "IntegrityError: FOREIGN KEY constraint failed",
+        "OperationalError: no such row",
+        "SQLite avtomatik 7-sinfni yaratadi",
+        "Qator jim saqlanadi: SQLite foreign key'larni sukut bo'yicha tekshirmaydi"
+      ],
+      "answer": 3,
+      "why": "SQLite da foreign key tekshiruvi orqaga moslik uchun sukut bo'yicha o'chiq va har bir ulanishda PRAGMA bilan yoqiladi."
+    },
+    {
+      "q": "Import kodi `except Exception: pass` bilan barcha xatolarni yutadi. Nima uchun bu yomon?",
+      "options": [
+        "OperationalError (masalan, jadval nomi xato) kabi dastur xatolari ham yashirinadi va import jim hech narsa yozmasligi mumkin",
+        "Exception sinfi sqlite3 xatolarini ushlamaydi",
+        "pass dan keyin Python tranzaksiyani avtomatik commit qiladi",
+        "Bu sintaksis xatosi"
+      ],
+      "answer": 0,
+      "why": "IntegrityError - kutilgan ma'lumot xatosi, uni ushlash to'g'ri. OperationalError va ProgrammingError esa koddagi xato; ularni yutish muammoni yashiradi."
+    },
+    {
+      "q": "`ids` ro'yxatidagi id'lar bo'yicha kitoblarni olish kerak. Qaysi kod xavfsiz va to'g'ri?",
+      "options": [
+        "conn.execute(\"SELECT * FROM books WHERE id IN (?)\", (ids,))",
+        "conn.execute(f\"SELECT * FROM books WHERE id IN ({ids})\")",
+        "conn.execute(f\"SELECT * FROM books WHERE id IN ({', '.join('?' * len(ids))})\", ids)",
+        "conn.execute(\"SELECT * FROM books WHERE id IN :ids\", {\"ids\": ids})"
+      ],
+      "answer": 2,
+      "why": "Bitta ? bitta qiymatni bog'laydi. To'g'ri yo'l - kerakli sondagi ? ni yasash (SQL ga faqat ? belgilari qo'shiladi) va qiymatlarni parametr sifatida berish."
+    },
+    {
+      "q": "CLI dasturi `main(argv)` funksiyasi va alohida `add_note`, `list_notes` funksiyalariga ajratilgan, terminalda `main(sys.argv[1:])` chaqiriladi. Bu tuzilmaning asosiy foydasi nima?",
+      "options": [
+        "argparse faqat shu tuzilma bilan ishlaydi",
+        "Dastur tezroq ishlaydi",
+        "sys.argv dagi parollar yashiriladi",
+        "main ga istalgan argumentlar ro'yxatini berish mumkin: dastur testda va buyruq qatori yo'q muhitda (brauzer) ham sinovdan o'tadi"
+      ],
+      "answer": 3,
+      "why": "Argumentlar manbai (sys.argv) mantiqdan ajratilgan: testlar va brauzer main([...]) ni to'g'ridan-to'g'ri chaqiradi, funksiyalarni esa alohida tekshirish mumkin."
+    }
+  ]
+}

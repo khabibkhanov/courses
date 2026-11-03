@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Indeks B-tree ko'rinishida, har bir sahifada taxminan 100 ta bola (fan-out 100). 100 million qatorli jadvalda bitta qiymatni topish uchun taxminan nechta sahifa darajasidan o'tiladi?",
+      "options": ["27", "4", "100", "8"],
+      "answer": 1,
+      "why": "Balandlik log_100(10^8) = 8 / 2 = 4. Muvozanatli BST da esa log2(10^8) ≈ 27 daraja bo'lardi."
+    },
+    {
+      "q": "29-darsdagi muvozanatli BST ham O(log n) qidiradi. Nega bazalar indeks uchun BST emas, B-tree ishlatadi?",
+      "options": [
+        "B-tree asimptotik jihatdan tezroq: O(1) qidiradi",
+        "BST saralangan tartibni saqlamaydi",
+        "B-tree bitta tugunga sahifa to'la kalit sig'diradi, shuning uchun daraxt past va qidiruv kam disk sahifasi o'qiydi",
+        "BST faqat butun son kalitlar bilan ishlaydi"
+      ],
+      "answer": 2,
+      "why": "Ikkalasi ham O(log n), lekin logarifm asosi farq qiladi: fan-out yuzlab bo'lgani uchun B-tree balandligi 3-4, BST niki 20+. Har daraja - alohida sahifa o'qishi."
+    },
+    {
+      "q": "`posts(author)` ustunida indeks bor. Qaysi so'rov uchun `EXPLAIN QUERY PLAN` baribir `SCAN posts` ko'rsatadi?",
+      "options": [
+        "SELECT * FROM posts WHERE author = 'user7'",
+        "SELECT COUNT(*) FROM posts WHERE author = 'user7'",
+        "SELECT * FROM posts WHERE author > 'user7'",
+        "SELECT * FROM posts WHERE lower(author) = 'user7'"
+      ],
+      "answer": 3,
+      "why": "Indeks author qiymatlari bo'yicha saralangan, lower(author) bo'yicha emas. Ustunga funksiya qo'llansa, indeks ishlatilmaydi va jadval to'liq ko'riladi."
+    },
+    {
+      "q": "Jadvalda `(driver, day)` composite indeksi bor. Qaysi so'rov bu indeksdan foydalana olmaydi?",
+      "options": [
+        "WHERE day = '2026-03-01'",
+        "WHERE driver = 'D7'",
+        "WHERE driver = 'D7' AND day >= '2026-03-01'",
+        "WHERE driver = 'D7' AND day = '2026-03-01'"
+      ],
+      "answer": 0,
+      "why": "Leftmost prefix qoidasi: indeks avval driver bo'yicha saralangan, kunlar har bir haydovchi bloki ichida sochilgan. Faqat day bo'yicha qidiruv chap ustunni o'tkazib yuboradi."
+    },
+    {
+      "q": "Telemetriya jadvaliga soniyasiga minglab qator yoziladi, o'qish kuniga bir necha marta. Dasturchi har bir ustunga indeks qo'shmoqchi. Asosiy xavf nima?",
+      "options": [
+        "Indekslar o'qish so'rovlarini sekinlashtiradi",
+        "Har bir INSERT har bir indeksga ham yozadi: yozish sekinlashadi va baza hajmi bir necha baravar o'sadi",
+        "SQLite bitta jadvalga ikkitadan ortiq indeks qo'yishga ruxsat bermaydi",
+        "Indeks qo'shilgach, so'rovlarni qayta yozish kerak bo'ladi"
+      ],
+      "answer": 1,
+      "why": "Indeks o'qishni tezlashtiradi, lekin har bir yozuv uni ham yangilaydi va u alohida sahifalarda joy oladi. Yozish ko'p bo'lgan jadvalda bu narx ustun keladi."
+    },
+    {
+      "q": "Ikki so'rov bir vaqtda ishlaydi: ikkalasi `SELECT likes` bilan 10 ni o'qiydi, keyin har biri `UPDATE posts SET likes = ?` bilan o'qigan qiymatiga 1 qo'shib yozadi. Natija va hodisa nomi?",
+      "options": [
+        "12, xato yo'q",
+        "Baza ikkinchi UPDATE ni avtomatik rad etadi",
+        "11 - lost update: ikkinchi yozuv birinchisini ustidan yozdi",
+        "10 - ikkala yozuv ham bekor qilinadi"
+      ],
+      "answer": 2,
+      "why": "Read-modify-write: ikkala so'rov eskirgan 10 asosida hisoblaydi va 11 yozadi. Autocommit rejimida baza buni xato deb bilmaydi."
+    },
+    {
+      "q": "Yuqoridagi \"like\" muammosini eng sodda va to'g'ri tuzatish qaysi?",
+      "options": [
+        "Python'da time.sleep() bilan so'rovlar orasiga kechikish qo'shish",
+        "likes ustuniga indeks qo'yish",
+        "SELECT dan keyin qiymatni Python'da ikki marta tekshirish",
+        "UPDATE posts SET likes = likes + 1 WHERE id = ? - o'qish va yozishni bitta atomik buyruqqa birlashtirish"
+      ],
+      "answer": 3,
+      "why": "Hisob baza ichida bitta buyruqda bajariladi; SQLite bir vaqtda bitta yozuvchiga ruxsat bergani uchun ikkinchi UPDATE birinchisining natijasini ko'radi."
+    },
+    {
+      "q": "O'tkazma tranzaksiyasi: `BEGIN; UPDATE ... balance - 50 ...; UPDATE ... balance + 50 WHERE name = 'yo''q';` ikkinchi UPDATE hech qaysi qatorga ta'sir qilmadi va dastur `ROLLBACK` qildi. Bu ACID ning qaysi xossasini namoyish qiladi?",
+      "options": ["Atomicity", "Durability", "Isolation", "Faqat Consistency, chunki CHECK cheklovi ishladi"],
+      "answer": 0,
+      "why": "Atomicity: tranzaksiyadagi o'zgarishlar yo hammasi, yo hech biri. ROLLBACK birinchi UPDATE ni ham bekor qildi, pul yo'qolmadi."
+    },
+    {
+      "q": "Kod: `f\"SELECT id FROM users WHERE username = '{u}' AND password = '{p}'\"`. Hujumchi p = `' OR '1'='1` kiritdi. Nima bo'ladi?",
+      "options": [
+        "Sintaksis xatosi, so'rov bajarilmaydi",
+        "Shart `... AND password = '' OR '1'='1'` ga aylanadi va har bir qator uchun rost bo'ladi: barcha foydalanuvchilar qaytadi",
+        "Hech kim topilmaydi, chunki bunday parol yo'q",
+        "Faqat parolsiz foydalanuvchilar qaytadi"
+      ],
+      "answer": 1,
+      "why": "Birinchi qo'shtirnoq satrni yopadi va OR SQL kodi sifatida tahlil qilinadi. AND OR dan oldin bajarilgani uchun '1'='1' butun shartni rost qiladi."
+    },
+    {
+      "q": "Nega parametrlangan so'rov (`WHERE username = ?`) SQL injection ni to'liq yopadi?",
+      "options": [
+        "sqlite3 moduli qiymatdagi barcha qo'shtirnoqlarni o'chirib tashlaydi",
+        "Placeholder faqat raqamli qiymatlarni qabul qiladi",
+        "SQL matni qiymatlardan oldin tahlil qilinadi; qiymat keyin bog'lanadi va hech qachon kod sifatida o'qilmaydi",
+        "Baza foydalanuvchi matnini shifrlab saqlaydi"
+      ],
+      "answer": 2,
+      "why": "Prepared statement: avval so'rov tuzilmasi aniqlanadi, keyin qiymat faqat ma'lumot sifatida bog'lanadi. Tozalash kerak emas, chunki kod va ma'lumot aralashmaydi."
+    }
+  ]
+}
