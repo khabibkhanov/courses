@@ -50,6 +50,6 @@
   lesson: 24
 - term: ASLR
   aliases: [address space layout randomization]
-  uz: "Operatsion tizim har ishga tushirishda stack, heap, kutubxonalar va kodni tasodifiy manzillarga joylashtirishi. Hujumchi kerakli manzilni oldindan bila olmaydi."
+  uz: "Operatsion tizim har ishga tushirishda stack, heap, kutubxonalar va (PIE dasturlarda) kodni tasodifiy manzillarga joylashtirishi. Hujumchi kerakli manzilni oldindan bila olmaydi."
   course: cs50
   lesson: 24
