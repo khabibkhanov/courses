@@ -1,0 +1,161 @@
+slug: go
+title: Go (advanced)
+subtitle: Go tili, runtime va production servislar - 100 darslik to'liq kurs
+description: >-
+  Go'ni spetsifikatsiya darajasidan production'gacha o'rgatuvchi chuqur kurs: til semantikasi,
+  slice/map/interface ichki tuzilishi, generics va iterator'lar, concurrency va xotira modeli,
+  scheduler va garbage collector, profiling, net/http va gRPC, PostgreSQL va Redis bilan ishlash,
+  observability, xavfsizlik va servis arxitekturasi. Asosiy manbalar: rasmiy spetsifikatsiya,
+  Go xotira modeli, runtime hujjatlari, Go Blog va release notes (Go 1.27 gacha).
+audience: "Backend tajribasi bor dasturchilar uchun (masalan, Node.js/TypeScript'dan Go'ga o'tayotganlar yoki Go'ni sirtdan biladiganlar). Go sintaksisini o'qiy olish kifoya; til asoslari ham spetsifikatsiya darajasida, tuzoqlari bilan qayta ko'riladi. Misollar real servislar atrofida: telemetriya, buyurtmalar, to'lovlar."
+order: 4
+color: "#00a7c7"
+format: clean-code
+passScore: 1
+library:
+  - { title: "The Go Programming Language Specification", by: "Go team", href: "https://go.dev/ref/spec" }
+  - { title: "The Go Memory Model", by: "Go team", href: "https://go.dev/ref/mem" }
+  - { title: "A Guide to the Go Garbage Collector", by: "Go team", href: "https://go.dev/doc/gc-guide" }
+  - { title: "100 Go Mistakes and How to Avoid Them", by: "Teiva Harsanyi", href: "https://100go.co/" }
+  - { title: "The Go Programming Language", by: "Donovan, Kernighan", href: "https://www.gopl.io/" }
+modules:
+  - n: 1
+    title: Til semantikasi
+    goal: "Spetsifikatsiya darajasida: tiplar, assignability, defer, pointer, method set, package va init tartibi"
+    lessons:
+      - { n: 1, slug: go-falsafa-va-versiyalar, title: "Go falsafasi, versiyalar va Go 1 compatibility", sources: [go1compat, go-releases, go-faq, godebug-doc] }
+      - { n: 2, slug: toolchain-va-go-mod, title: "Toolchain: go command, GOTOOLCHAIN va go.mod'dagi go/toolchain qatorlari", sources: [toolchain-doc, gomod-ref, go-mod-ref] }
+      - { n: 3, slug: tiplar-konstantalar-iota, title: "Tiplar, o'zgaruvchilar, untyped constant va iota", sources: [go-spec, gopl] }
+      - { n: 4, slug: assignability-va-konversiya, title: "Type identity, assignability va konversiyalar", sources: [go-spec, gopl] }
+      - { n: 5, slug: boshqaruv-oqimi, title: "for, switch, label va loop o'zgaruvchisi semantikasi", sources: [go-spec, gopl, 100go] }
+      - { n: 6, slug: funksiyalar-closure, title: "Funksiyalar, closure, method value va variadic", sources: [go-spec, gopl, 100go] }
+      - { n: 7, slug: defer-semantikasi, title: "defer: baholash tartibi, xarajat va tuzoqlar", sources: [go-spec, blog-defer-panic, 100go] }
+      - { n: 8, slug: zero-value-struct, title: "Zero value, struct, composite literal va struct tag", sources: [go-spec, gopl, code-review-comments] }
+      - { n: 9, slug: pointer-va-receiver, title: "Pointer, addressability, method set va receiver tanlash", sources: [go-spec, code-review-comments, 100go] }
+      - { n: 10, slug: package-va-init, title: "Package, ko'rinish, init tartibi va blank identifier", sources: [go-spec, gopl, code-review-comments] }
+  - n: 2
+    title: Ma'lumotlar tuzilmalari ichi
+    goal: "Slice, string, map, struct va interface xotirada qanday turishi; stack/heap va escape analysis"
+    lessons:
+      - { n: 11, slug: slice-header-append, title: "Slice: header, len/cap va append mexanikasi", sources: [blog-slices-intro, blog-slices, go-spec] }
+      - { n: 12, slug: slice-tuzoqlari, title: "Slice tuzoqlari: aliasing, to'liq slice ifodasi, xotirani ushlab turish", sources: [blog-slices-intro, 100go, pkg-slices] }
+      - { n: 13, slug: string-rune-utf8, title: "string, byte, rune va UTF-8", sources: [go-spec, gopl, 100go] }
+      - { n: 14, slug: map-ichi, title: "Map: semantika, iteratsiya tartibi va Swiss table", sources: [blog-maps, blog-swisstable, go-spec] }
+      - { n: 15, slug: map-amaliyot, title: "Map amaliyotda: kalit tanlash, set, maps paketi", sources: [pkg-maps, blog-maps, 100go] }
+      - { n: 16, slug: struct-layout, title: "Struct xotira joylashuvi: alignment, padding va maydonlar tartibi", sources: [go-spec, pkg-unsafe, 100go] }
+      - { n: 17, slug: interface-ichi, title: "Interface qanday ishlaydi: dinamik tip va qiymat", sources: [go-spec, gopl, 100go] }
+      - { n: 18, slug: nil-turlari, title: "nil: pointer, interface, slice, map, channel va klassik tuzoq", sources: [go-spec, go-faq, 100go] }
+      - { n: 19, slug: comparable-va-hash, title: "Taqqoslash, comparable, hash/maphash va unique", sources: [go-spec, pkg-unique, blog-unique] }
+      - { n: 20, slug: stack-heap-escape, title: "Stack va heap: escape analysis va -gcflags=-m", sources: [gc-guide, go-faq, diagnostics] }
+  - n: 3
+    title: "Tiplar tizimi: interface, generics, iterator"
+    goal: "Interface dizayni, embedding, generics (1.27 gacha), iterator'lar, slices/maps/cmp va reflect"
+    lessons:
+      - { n: 21, slug: interface-dizayn, title: "Interface dizayni: kichik interface'lar, qabul qil interface, qaytar struct", sources: [code-review-comments, gopl, 100go] }
+      - { n: 22, slug: embedding, title: "Embedding va kompozitsiya", sources: [go-spec, gopl, 100go] }
+      - { n: 23, slug: type-assertion-switch, title: "Type assertion, type switch va yopiq interface'lar", sources: [go-spec, gopl, 100go] }
+      - { n: 24, slug: generics-asoslari, title: "Generics: type parameter, constraint va type inference", sources: [go-spec, blog-intro-generics, pkg-cmp] }
+      - { n: 25, slug: generics-type-set, title: "Constraint chuqur: type set, core type va o'ziga murojaat qiluvchi constraint", sources: [go-spec, go126, blog-intro-generics] }
+      - { n: 26, slug: generics-qachon, title: "Generics qachon kerak va qachon zarar", sources: [blog-when-generics, 100go, code-review-comments] }
+      - { n: 27, slug: generic-metodlar, title: "Generic metodlar (Go 1.27) va ularning cheklovlari", sources: [go127, go-spec] }
+      - { n: 28, slug: iteratorlar, title: "Iterator'lar: iter.Seq va range-over-func", sources: [pkg-iter, blog-range-functions, go-spec] }
+      - { n: 29, slug: slices-maps-cmp, title: "slices, maps va cmp paketlari chuqur", sources: [pkg-slices, pkg-maps, pkg-cmp] }
+      - { n: 30, slug: reflect-chuqur, title: "reflect: qonunlari, narxi va xavfsiz ishlatish", sources: [blog-laws-reflection, pkg-reflect, go126] }
+  - n: 4
+    title: Xatolar, resurslar va API dizayni
+    goal: "Error'lar, context, resurslar, API va modul dizayni, hujjat va statik tahlil"
+    lessons:
+      - { n: 31, slug: error-qiymatlari, title: "Error qiymatlari: wrapping, Is/As/Join va errors.AsType", sources: [pkg-errors, blog-errors-go113, go126] }
+      - { n: 32, slug: error-dizayni, title: "Error dizayni: sentinel, typed va opaque error'lar", sources: [blog-error-handling, 100go, code-review-comments] }
+      - { n: 33, slug: panic-recover, title: "panic va recover: qachon va qayerda", sources: [blog-defer-panic, go-spec, 100go] }
+      - { n: 34, slug: context-chuqur, title: "context: bekor qilish, deadline, cause va value qoidalari", sources: [pkg-context, blog-context, 100go] }
+      - { n: 35, slug: resurslar-close, title: "Resurslarni boshqarish: Close, defer, leak va os.Root", sources: [blog-osroot, 100go, gopl] }
+      - { n: 36, slug: io-bufio, title: "io, bufio va oqimli ishlash", sources: [gopl, 100go] }
+      - { n: 37, slug: api-dizayn, title: "API dizayni: functional options, foydali zero value va buzilmaydigan API", sources: [code-review-comments, 100go, go1compat] }
+      - { n: 38, slug: modul-tuzilmasi, title: "Modul va paket tuzilmasi: internal, cmd, pkg", sources: [mod-layout, code-review-comments, go-mod-ref] }
+      - { n: 39, slug: modullar-mvs, title: "Modullar: semver, MVS, replace, workspace va GOPROXY", sources: [go-mod-ref, mod-deps, workspaces-tutorial] }
+      - { n: 40, slug: hujjat-lint-modernize, title: "Hujjat, gofmt, vet, linter va go fix modernizer'lari", sources: [doc-comment, go126, code-review-comments] }
+  - n: 5
+    title: Concurrency
+    goal: "Goroutine, channel, sync, atomic, xotira modeli, patternlar va concurrent kodni sinash"
+    lessons:
+      - { n: 41, slug: goroutine-hayoti, title: "Goroutine hayoti va leak: goroutineleak profili", sources: [go-spec, go127, 100go] }
+      - { n: 42, slug: channel-semantikasi, title: "Channel: buferli/buferlanmagan, close, nil channel va select", sources: [go-spec, gopl, 100go] }
+      - { n: 43, slug: xotira-modeli, title: "Go xotira modeli: happens-before va data race", sources: [go-mem, race-detector, 100go] }
+      - { n: 44, slug: mutex-rwmutex, title: "Mutex, RWMutex va contention", sources: [pkg-sync, 100go, gopl] }
+      - { n: 45, slug: sync-primitivlar, title: "WaitGroup (WaitGroup.Go), Once, Cond va Pool", sources: [pkg-sync, go125, 100go] }
+      - { n: 46, slug: atomic-operatsiyalar, title: "sync/atomic: typed atomic, CAS va lock-free chegaralari", sources: [pkg-atomic, go-mem, 100go] }
+      - { n: 47, slug: pipeline-fanout, title: "Pipeline, fan-out/fan-in va bekor qilish", sources: [blog-pipelines, blog-context, gopl] }
+      - { n: 48, slug: errgroup-singleflight, title: "errgroup, semaphore va singleflight", sources: [x-errgroup, x-semaphore, x-singleflight] }
+      - { n: 49, slug: worker-backpressure, title: "Worker pool, backpressure va rate limiting", sources: [100go, blog-pipelines, pkg-context] }
+      - { n: 50, slug: concurrency-test, title: "Concurrent kodni sinash: race detector va testing/synctest", sources: [race-detector, blog-synctest, pkg-synctest] }
+  - n: 6
+    title: Runtime ichi
+    goal: "Scheduler, allocator, garbage collector, stack, finalizer/cleanup va runtime kuzatuvi"
+    lessons:
+      - { n: 51, slug: runtime-arxitektura, title: "Runtime arxitekturasi: G, M va P", sources: [runtime-hacking, pkg-runtime, go-faq] }
+      - { n: 52, slug: scheduler, title: "Scheduler: work stealing, preemption va netpoller", sources: [runtime-hacking, pkg-runtime, diagnostics] }
+      - { n: 53, slug: gomaxprocs-container, title: "GOMAXPROCS va konteynerlar", sources: [go125, pkg-runtime, diagnostics] }
+      - { n: 54, slug: allocator, title: "Xotira allocator'i: size class va keshlar", sources: [runtime-hacking, gc-guide, pkg-runtime] }
+      - { n: 55, slug: gc-mexanika, title: "Garbage collector: tri-color, write barrier va pacing", sources: [gc-guide, runtime-hacking, pkg-runtime] }
+      - { n: 56, slug: gogc-gomemlimit, title: "GOGC va GOMEMLIMIT: sozlash qoidalari", sources: [gc-guide, pkg-runtime-metrics, diagnostics] }
+      - { n: 57, slug: green-tea-gc, title: "Green Tea GC", sources: [blog-greenteagc, go125, go126] }
+      - { n: 58, slug: stack-inlining, title: "Stack o'sishi, inlining va compiler optimizatsiyalari", sources: [runtime-hacking, diagnostics, go126] }
+      - { n: 59, slug: finalizer-cleanup-weak, title: "Finalizer, cleanup va weak pointer", sources: [blog-cleanups-weak, pkg-weak, gc-guide] }
+      - { n: 60, slug: runtime-metrics-godebug, title: "runtime/metrics, GODEBUG va crash tahlili", sources: [pkg-runtime-metrics, godebug-doc, diagnostics] }
+  - n: 7
+    title: Performance va diagnostika
+    goal: "O'lchash: benchmark, pprof, trace, PGO; allocation, cache va JSON"
+    lessons:
+      - { n: 61, slug: benchmark, title: "Benchmark: testing.B, B.Loop va benchstat", sources: [pkg-testing, go126, diagnostics] }
+      - { n: 62, slug: cpu-profiling, title: "CPU profiling: pprof", sources: [blog-pprof, diagnostics, pkg-http-pprof] }
+      - { n: 63, slug: heap-block-mutex-profil, title: "Heap, allocs, block va mutex profillari", sources: [diagnostics, pkg-runtime, blog-pprof] }
+      - { n: 64, slug: execution-trace, title: "Execution tracer va flight recorder", sources: [blog-traces-2024, blog-flight-recorder, pkg-runtime-trace] }
+      - { n: 65, slug: allocation-kamaytirish, title: "Allocation kamaytirish: preallocation, sync.Pool va escape", sources: [gc-guide, 100go, pkg-sync] }
+      - { n: 66, slug: data-layout-cache, title: "Ma'lumot joylashuvi: cache, false sharing va SoA", sources: [100go, pkg-unsafe, gc-guide] }
+      - { n: 67, slug: pgo, title: "Profile-guided optimization (PGO)", sources: [pgo-doc, blog-pgo, diagnostics] }
+      - { n: 68, slug: json-performance, title: "JSON: encoding/json tuzoqlari va json/v2", sources: [pkg-json-v2, go127, 100go] }
+      - { n: 69, slug: unsafe-cgo, title: "unsafe va cgo: narx va xavf", sources: [pkg-unsafe, go126, 100go] }
+      - { n: 70, slug: optimizatsiya-amaliyoti, title: "Optimizatsiya amaliyoti: o'lchash, gipoteza, takrorlash", sources: [diagnostics, blog-pprof, pgo-doc] }
+  - n: 8
+    title: Tarmoq va servislar
+    goal: "net/http, TLS, JSON API, gRPC, PostgreSQL, Redis va messaging"
+    lessons:
+      - { n: 71, slug: net-tcp, title: "net: TCP, deadline va netpoller", sources: [100go, gopl, runtime-hacking] }
+      - { n: 72, slug: http-server, title: "net/http server: ServeMux, timeout'lar va graceful shutdown", sources: [pkg-net-http, 100go, pkg-os-signal] }
+      - { n: 73, slug: http-client, title: "net/http client: Transport, pooling, timeout va retry", sources: [pkg-net-http, 100go, go126] }
+      - { n: 74, slug: handler-middleware, title: "Handler, middleware va request hayot sikli", sources: [pkg-net-http, pkg-context, code-review-comments] }
+      - { n: 75, slug: tls-mtls, title: "TLS va mTLS: crypto/tls", sources: [pkg-tls, go126, go127] }
+      - { n: 76, slug: json-api, title: "JSON API: validatsiya, xatolar va versiyalash", sources: [pkg-json-v2, 100go, pkg-net-http] }
+      - { n: 77, slug: grpc-protobuf, title: "gRPC va protobuf", sources: [grpc-go, grpc-go-basics, go-faq] }
+      - { n: 78, slug: database-sql-pgx, title: "database/sql va pgx: pooling, tranzaksiya va context", sources: [pkg-database-sql, pgx, 100go] }
+      - { n: 79, slug: redis-cache, title: "Redis, cache va cache stampede", sources: [go-redis, x-singleflight, pkg-context] }
+      - { n: 80, slug: messaging-idempotency, title: "Messaging: at-least-once, idempotency va outbox", sources: [100go, pkg-context, x-errgroup] }
+  - n: 9
+    title: Production muhandisligi
+    goal: "Test, fuzzing, logging, metrika, tracing, xavfsizlik, build va production'da debug"
+    lessons:
+      - { n: 81, slug: test-asoslari, title: "Testlar: table-driven, subtest, fixture va testing paketi", sources: [pkg-testing, 100go, code-review-comments] }
+      - { n: 82, slug: fake-httptest, title: "Fake'lar, httptest va integratsiya testlari", sources: [pkg-net-http, pkg-testing, 100go] }
+      - { n: 83, slug: fuzzing-property, title: "Fuzzing va property testlar", sources: [fuzzing, pkg-testing, 100go] }
+      - { n: 84, slug: slog-logging, title: "Structured logging: log/slog", sources: [pkg-slog, blog-slog, go126] }
+      - { n: 85, slug: prometheus-metrikalar, title: "Metrikalar: Prometheus", sources: [prometheus-client, pkg-runtime-metrics, diagnostics] }
+      - { n: 86, slug: opentelemetry-tracing, title: "Distributed tracing: OpenTelemetry", sources: [otel-go, otel-go-docs, pkg-context] }
+      - { n: 87, slug: xavfsizlik, title: "Xavfsizlik: govulncheck, supply chain va kirish tekshiruvi", sources: [vuln-mgmt, govulncheck-tutorial, blog-osroot] }
+      - { n: 88, slug: config-signal-lifecycle, title: "Konfiguratsiya, signal va ilova hayot sikli", sources: [pkg-os-signal, pkg-context, 100go] }
+      - { n: 89, slug: build-release, title: "Build va release: cross-compile, ldflags, embed va Docker", sources: [pkg-embed, toolchain-doc, go-mod-ref] }
+      - { n: 90, slug: production-debug, title: "Production'da debug: pprof endpoint, crash va flight recorder", sources: [pkg-http-pprof, blog-flight-recorder, diagnostics] }
+  - n: 10
+    title: Arxitektura va amaliyot
+    goal: "Servis arxitekturasi, case study'lar, Node.js bilan solishtirish va capstone"
+    lessons:
+      - { n: 91, slug: servis-tuzilmasi, title: "Servis tuzilmasi: qatlamlar va dependency injection", sources: [mod-layout, code-review-comments, 100go] }
+      - { n: 92, slug: domen-va-chegaralar, title: "Domen modeli va chegaralarda xato/tip konvertatsiyasi", sources: [blog-error-handling, 100go, code-review-comments] }
+      - { n: 93, slug: concurrency-arxitektura, title: "Concurrency arxitekturasi: pipeline, supervisor va degradatsiya", sources: [blog-pipelines, x-errgroup, 100go] }
+      - { n: 94, slug: batching-ingestion, title: "Batching va ingestion pipeline'lari", sources: [100go, pkg-database-sql, blog-pipelines] }
+      - { n: 95, slug: case-telemetriya, title: "Case study: telemetriya qabul qilish servisi", sources: [100go, pkg-net-http, pgx] }
+      - { n: 96, slug: case-gateway, title: "Case study: API gateway va reverse proxy", sources: [pkg-net-http, go126, pkg-tls] }
+      - { n: 97, slug: case-job-queue, title: "Case study: Postgres asosidagi job queue", sources: [pgx, pkg-database-sql, 100go] }
+      - { n: 98, slug: case-cli-codegen, title: "Case study: CLI va kod generatsiyasi", sources: [go-mod-ref, 100go, gopl] }
+      - { n: 99, slug: go-vs-node, title: "Go va Node.js/TypeScript: qachon nimani tanlash", sources: [go-faq, gc-guide, diagnostics] }
+      - { n: 100, slug: capstone, title: "Capstone: production-darajadagi servis", sources: [100go, diagnostics, vuln-mgmt] }
