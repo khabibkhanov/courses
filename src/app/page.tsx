@@ -85,13 +85,12 @@ export default function HomePage() {
 
         <section className="-mx-2 mb-20 sm:mx-0">
           <MetroHero
-            lines={courses.map(({ course, total, published }) => ({
+            lines={courses.map(({ course, published }) => ({
               slug: course.slug,
               title: course.title,
               color: course.color,
-              lessons: total,
-              published: published.length,
-              modules: course.modules.length,
+              published,
+              modules: course.modules.map((m) => ({ n: m.n, title: m.title, lessons: m.lessons.map((l) => l.n) })),
             }))}
           />
         </section>
