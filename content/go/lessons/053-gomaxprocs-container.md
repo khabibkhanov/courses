@@ -201,7 +201,7 @@ Implementatsiya tafsilotlari bo'limida: cgroup v2 da quota va period `cpu.max` f
 
 Hujjat o'zi ogohlantiradi: default xatti-harakat scheduler yaxshilangani sari o'zgarishi mumkin, ayniqsa implementatsiya tafsilotlari. Ya'ni "ikkidan kam bo'lmaydi" kabi qoidalarga ilova mantig'ini bog'lamang.
 
-`runtime.SetDefaultGOMAXPROCS()` funksiyasi (runtime paketining joriy hujjatida bor; qaysi versiyada qo'shilgani bu darsda tekshirilmagan) GOMAXPROCS'ni runtime default'iga qaytaradi va GOMAXPROCS muhit o'zgaruvchisini e'tiborsiz qoldiradi. Hujjatga ko'ra uni avtomatik yangilanishni qayta yoqish uchun yoki o'zgarishni bilgan holda darhol yangilashni majburlash uchun ishlatish mumkin.
+`runtime.SetDefaultGOMAXPROCS()` funksiyasi (runtime paketi hujjatida "added in go1.25.0" deb belgilangan) GOMAXPROCS'ni runtime default'iga qaytaradi va GOMAXPROCS muhit o'zgaruvchisini e'tiborsiz qoldiradi. Hujjatga ko'ra uni avtomatik yangilanishni qayta yoqish uchun yoki o'zgarishni bilgan holda darhol yangilashni majburlash uchun ishlatish mumkin.
 
 ## Chuqurroq: go.mod, GODEBUG va throttling
 

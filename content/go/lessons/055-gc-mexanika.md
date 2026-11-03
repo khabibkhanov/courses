@@ -233,7 +233,7 @@ Ogohlik: bu dars Go 1.24.7 (darslardagi hamma o'lchov shu versiyada, linux/amd64
 
 ## Asosiy g'oya
 
-### GC'ning to'rt bosqichi
+### GC sikli bosqichlari
 
 `mgc.go` fayli boshidagi izoh GC'ni qisqa aytadi: u dastur bilan bir vaqtda ishlaydi (concurrent), turni aniq biladi (type accurate, ya'ni konservativ emas), bir necha GC thread'i parallel ishlay oladi, mark-and-sweep, write barrier ishlatadi, avlodlarga bo'linmagan (non-generational) va xotirani zichlamaydi (non-compacting). Xuddi shu xususiyatni gc-guide ham ta'riflaydi: Go GC obyektlarni ko'chirmaydi. 54-darsda ko'rdik: shu sababli xotira boshqaruvining og'irligi allocator zimmasida.
 
@@ -251,7 +251,7 @@ Muhim natija: faqat 1 va 3 to'xtatadi. Mark (2) va sweep (4) dastur bilan birga 
 
 Mark fazasi graf yurish masalasi. Ildizlardan (global o'zgaruvchilar, goroutine stack'lari) boshlab erishish mumkin bo'lgan hamma obyekt tirik. Algoritm obyektlarni uch rangga bo'ladi. Oq (white): hali ko'rilmagan, mark oxirida oq qolgan obyekt axlat. Kulrang (grey): ko'rilgan, lekin ichidagi ko'rsatkichlar hali skanerlanmagan, ular ish navbatida. Qora (black): ko'rilgan va ichidagi hamma ko'rsatkich skanerlangan. Worker kulrang obyektni olib skanerlaydi, topgan oq obyektlarni kulrang qiladi, o'zini qora qiladi. Kulrang obyekt qolmaganda mark tugaydi.
 
-Mark fazasidan keyin yangi ajratilgan obyektlar darhol qora qilinadi (izoh: newly allocated objects are immediately marked black), shuning uchun ajratish GC'ning ishini ko'paytirmaydi, lekin sikl uzaygan sayin tirik qolgan "vaqtinchalik" obyektlar xotirada qoladi: ular keyingi siklda tozalanadi.
+Mark fazasi boshlangandan keyin yangi ajratilgan obyektlar darhol qora qilinadi (izoh: newly allocated objects are immediately marked black), shuning uchun ajratish GC'ning ishini ko'paytirmaydi, lekin sikl uzaygan sayin tirik qolgan "vaqtinchalik" obyektlar xotirada qoladi: ular keyingi siklda tozalanadi.
 
 Tri-color invariantining asosiy sharti: qora obyekt oq obyektga to'g'ridan-to'g'ri ishora qilmasligi kerak. Agar dastur mark paytida shunday ko'rsatkich yaratsa va oq obyektga boshqa yo'l qolmasa, GC uni axlat deb o'chiradi, dastur esa o'chirilgan xotiraga murojaat qiladi. Buni oldini olish uchun write barrier kerak.
 

@@ -323,7 +323,7 @@ mspan inuse: 24960 bayt
 heap objects: 8064 bayt
 ```
 
-Chegaralar 1, 9, 17, 25, 33, 49 ... 8 baytlik qadam bilan boshlanadi va 16 lik qadamga o'tadi; 69 chegara 68 oraliq beradi, bu malloc.go izohidagi "70 ga yaqin" size class bilan mos. Oxirgi chegara 32769 bo'lib, undan katta ajratishlar katta obyektlar. Faqat boshlang'ich holatdagi (kichik) dastur uchun metadata hajmlari: mcache 2.4 KB, mspan 25 KB.
+Chegaralar 1, 9, 17, 25, 33, 49 ... 8 baytlik qadam bilan boshlanadi va 16 lik qadamga o'tadi; 69 chegara 68 oraliq beradi, bu malloc.go izohidagi "70 ga yaqin" size class bilan mos. Oxirgi chegara 32769 bo'lib, undan katta ajratishlar katta obyektlar. Faqat boshlang'ich holatdagi (kichik) dastur uchun metadata hajmlari: mcache 2.4 KB, mspan 25 KB (qayta ishga tushirishda mspan 14.7 KB chiqdi, ya'ni bu son ishga tushirishlar orasida o'zgaradi).
 
 ## Qachon qo'llamaslik kerak
 

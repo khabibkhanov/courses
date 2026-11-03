@@ -234,7 +234,7 @@ Paket darajasida bitta sozlash kerak bo'lsa (masalan, test ma'lumotlar bazasini 
 
 ### go test bayroqlari
 
-100 Go Mistakes testing rejimlariga e'tibor beradi: ko'p jamoa `-race` va `-shuffle` ni umuman ishlatmaydi. Amaliy to'plam:
+100 Go Mistakes `-race` bayrog'ini yoqmaslikni (#83) va test rejimlaridan (`-parallel`, `-shuffle`) foydalanmaslikni (#84) alohida xato sifatida sanaydi. Amaliy to'plam:
 
 | Bayroq | Nima qiladi |
 |---|---|
