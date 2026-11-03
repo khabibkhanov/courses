@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`.box { width: 300px; padding: 15px; border: 3px solid; }` va `box-sizing` sukut bo'yicha. Quti ekranda (ramka bilan) qancha kenglik egallaydi?",
+      "options": ["300px", "318px", "336px", "330px"],
+      "answer": 2,
+      "why": "content-box da kenglik = width + 2 x padding + 2 x border = 300 + 30 + 6 = 336px."
+    },
+    {
+      "q": "Xuddi shu qutiga `box-sizing: border-box` qo'shildi. Content (mazmun) qismining kengligi qancha?",
+      "options": ["264px", "300px", "282px", "270px"],
+      "answer": 0,
+      "why": "border-box da width ramka bilan to'liq kenglik: content = 300 - 2 x 15 - 2 x 3 = 264px."
+    },
+    {
+      "q": "Qaysi selektorning specificity si eng katta?",
+      "options": [
+        "`body main article p.note span` (0,1,5)",
+        "`.a.b.c.d.e.f.g.h.i.j.k` (11 ta class)",
+        "`#menu a`",
+        "`:where(#menu) a.active:hover`"
+      ],
+      "answer": 2,
+      "why": "`#menu a` = (1,0,1). Bitta id istalgan sondagi class dan katta: (1,0,1) > (0,11,0). `:where()` specificity ga hech narsa qo'shmaydi: (0,2,1)."
+    },
+    {
+      "q": "CSS faylda avval `.warn { color: orange; }`, keyin `.error { color: red; }` yozilgan. HTML: `<p class=\"error warn\">`. Matn qanday rangda?",
+      "options": [
+        "To'q sariq, chunki HTML da `warn` oxirgi",
+        "Qizil, chunki specificity teng va CSS faylda `.error` keyin yozilgan",
+        "Qizil, chunki HTML da `error` birinchi",
+        "Brauzerga bog'liq"
+      ],
+      "answer": 1,
+      "why": "Ikkala selektor (0,1,0). Teng bo'lganda CSS dagi yozilish tartibi hal qiladi; `class` atributidagi tartib ahamiyatsiz."
+    },
+    {
+      "q": "`div { border: 1px solid; color: navy; }` berilgan, ichidagi `span` ga hech qanday qoida yo'q. `span` da nima bo'ladi?",
+      "options": [
+        "Ham ramka, ham navy rang meros bo'ladi",
+        "Hech biri meros bo'lmaydi",
+        "Faqat ramka meros bo'ladi",
+        "Rang meros bo'ladi, ramka bo'lmaydi"
+      ],
+      "answer": 3,
+      "why": "Matn xususiyatlari (`color`, `font-*`) meros bo'ladi, quti xususiyatlari (`border`, `padding`, `margin`) yo'q."
+    },
+    {
+      "q": "Root `font-size` 16px. `.card { font-size: 20px; }` ichidagi `.card .title { font-size: 1.5em; padding: 1rem; }` uchun shrift o'lchami va padding qancha?",
+      "options": [
+        "30px va 16px",
+        "24px va 16px",
+        "30px va 30px",
+        "24px va 20px"
+      ],
+      "answer": 0,
+      "why": "`font-size` dagi `em` ota-onaning shriftiga nisbatan: 1.5 x 20 = 30px. `rem` har doim root ga nisbatan: 1 x 16 = 16px."
+    },
+    {
+      "q": "Flex konteyner 600px, ichida uchta 100px li element, `justify-content: space-between`. Ikkinchi elementning chap chekkasi qayerda?",
+      "options": ["100px", "150px", "250px", "200px"],
+      "answer": 2,
+      "why": "Bo'sh joy 600 - 300 = 300px, ikki oraliqqa 150px dan. Ikkinchi element 100 + 150 = 250px dan boshlanadi."
+    },
+    {
+      "q": "`.row { display: flex; flex-direction: column; justify-content: center; }`. Elementlar qaysi yo'nalishda markazlashadi?",
+      "options": [
+        "Gorizontal",
+        "Vertikal, chunki `column` da asosiy o'q vertikal va `justify-content` asosiy o'q bo'ylab ishlaydi",
+        "Ikkala yo'nalishda",
+        "Hech qaysi: `justify-content` faqat `row` da ishlaydi"
+      ],
+      "answer": 1,
+      "why": "`justify-content` doim asosiy o'q bo'ylab ishlaydi; `flex-direction: column` asosiy o'qni vertikal qiladi."
+    },
+    {
+      "q": "Grid konteyner 620px: `grid-template-columns: 100px 1fr 1fr 2fr; gap: 20px;`. `2fr` ustun kengligi qancha?",
+      "options": ["260px", "230px", "220px", "240px"],
+      "answer": 1,
+      "why": "Qat'iy qism 100 + 3 x 20 = 160px, qolgan 620 - 160 = 460px 4 ta fr ga bo'linadi: 1fr = 115px, 2fr = 230px."
+    },
+    {
+      "q": "Oq fonda `#777777` matnning kontrasti 4.48:1. WCAG 2.2 AA bo'yicha bu rang qaysi matn uchun yaroqli?",
+      "options": [
+        "Faqat katta matn uchun (18pt yoki 14pt qalin): talab 3:1",
+        "Har qanday matn uchun, chunki 4.48 yaxlitlansa 4.5",
+        "Hech qanday matn uchun",
+        "Faqat havolalar uchun"
+      ],
+      "answer": 0,
+      "why": "Oddiy matnga kamida 4.5:1 kerak, yaxlitlash qilinmaydi. 4.48 >= 3, shuning uchun faqat katta matn uchun yetarli."
+    }
+  ]
+}

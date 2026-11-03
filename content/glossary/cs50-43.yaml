@@ -1,0 +1,81 @@
+# CS50 43-44-darslar atamalari.
+- term: DOM
+  aliases: [Document Object Model]
+  uz: "Brauzer HTML matndan xotirada quradigan tugunlar daraxti. CSS va JavaScript HTML matn bilan emas, shu daraxt bilan ishlaydi."
+  course: cs50
+  lesson: 43
+- term: quirks mode
+  aliases: []
+  uz: "Doctype bo'lmaganda brauzer o'tadigan, eski brauzerlarning xatti-harakatini taqlid qiladigan rejim. Standart rejimda document.compatMode CSS1Compat, quirks mode da BackCompat."
+  course: cs50
+  lesson: 43
+- term: semantik element
+  aliases: [semantik elementlar, semantik teglar]
+  uz: "Ko'rinish emas, ma'no tashiydigan HTML element: header, nav, main, article, section, footer. div va span esa ma'nosiz konteynerlar."
+  course: cs50
+  lesson: 43
+- term: landmark
+  aliases: [landmarklar]
+  uz: "Ekran o'quvchi to'g'ridan-to'g'ri o'tishi mumkin bo'lgan sahifa hududi: banner, navigation, main, contentinfo. Semantik elementlar ularni avtomatik beradi."
+  course: cs50
+  lesson: 43
+- term: accessibility
+  aliases: [a11y]
+  uz: "Sahifadan har kim foydalana olishi: ekran o'quvchi, faqat klaviatura yoki kattalashtirish bilan ishlaydiganlar ham. Asosiy standart - W3C WCAG."
+  course: cs50
+  lesson: 43
+- term: ekran o'quvchi
+  aliases: [screen reader]
+  uz: "Sahifa matni va tuzilmasini ovoz yoki Braille orqali yetkazadigan dastur. Sarlavhalar, landmarklar, label va alt atributlariga tayanadi."
+  course: cs50
+  lesson: 43
+- term: nisbiy URL
+  aliases: [relative URL]
+  uz: "Joriy sahifa manziliga nisbatan yozilgan URL: brauzer uni absolyut URL ga aylantiradi. / bilan boshlansa hostning ildizidan, ../ bir papka yuqoridan hisoblanadi."
+  course: cs50
+  lesson: 43
+- term: cascade
+  aliases: [kaskad]
+  uz: "Bitta xususiyatga bir nechta CSS e'lon mos kelganda g'olibni tanlash algoritmi: kelib chiqish va !important, inline style, specificity, keyin yozilish tartibi."
+  course: cs50
+  lesson: 44
+- term: specificity
+  aliases: []
+  uz: "Selektorning aniqlik darajasi (a, b, c): id lar, class/atribut/pseudo-class lar va tag/pseudo-element lar soni. Xonalar chapdan o'ngga solishtiriladi."
+  course: cs50
+  lesson: 44
+- term: pseudo-class
+  aliases: [pseudo-classlar]
+  uz: "Elementni holati yoki daraxtdagi o'rni bo'yicha tanlaydigan selektor qismi: :hover, :focus, :invalid, :nth-child(2n+1)."
+  course: cs50
+  lesson: 44
+- term: box model
+  aliases: []
+  uz: "Har bir element content, padding, border va margin qatlamli to'rtburchak quti sifatida joylashadi. box-sizing width qaysi qatlamgacha o'lchanishini belgilaydi."
+  course: cs50
+  lesson: 44
+- term: margin collapse
+  aliases: []
+  uz: "Oddiy blok oqimidagi qo'shni elementlarning vertikal marginlari qo'shilmasdan, kattasi olinishi: 20px va 30px dan 30px oraliq qoladi."
+  course: cs50
+  lesson: 44
+- term: flexbox
+  aliases: []
+  uz: "Elementlarni bitta o'q (qator yoki ustun) bo'ylab joylashtiradigan CSS modeli: justify-content asosiy o'qda, align-items ko'ndalang o'qda ishlaydi."
+  course: cs50
+  lesson: 44
+- term: CSS Grid
+  aliases: []
+  uz: "Qator va ustunlarni birga boshqaradigan ikki o'qli CSS joylashuv modeli. fr birligi qat'iy ustunlar va gap dan qolgan joyning ulushi."
+  course: cs50
+  lesson: 44
+- term: media query
+  aliases: [media querylar]
+  uz: "Shart bajarilgandagina qo'llanadigan CSS bloki, masalan @media (min-width: 600px). Responsive dizaynning asosi."
+  course: cs50
+  lesson: 44
+- term: mobile-first
+  aliases: []
+  uz: "Avval tor ekran uchun oddiy uslub yozib, keyin min-width media query lar bilan kengroq ekranlar uchun murakkablik qo'shish yondashuvi."
+  course: cs50
+  lesson: 44

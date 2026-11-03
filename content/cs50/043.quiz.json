@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Sahifada `<!doctype html>` qatori unutilgan. Nima bo'ladi?",
+      "options": [
+        "Brauzer sahifani ko'rsatmaydi va xato chiqaradi",
+        "Brauzer quirks mode ga o'tadi: eski brauzerlarning xatti-harakati taqlid qilinadi va CSS ba'zi joylarda boshqacha ishlaydi",
+        "Faqat `<title>` ko'rinmay qoladi",
+        "Sahifa UTF-8 o'rniga ASCII da o'qiladi"
+      ],
+      "answer": 1,
+      "why": "Doctype brauzerga standart rejimni yoqishni aytadi. Usiz `document.compatMode` `BackCompat` bo'ladi, ya'ni quirks mode."
+    },
+    {
+      "q": "Joriy sahifa `https://example.com/a/b/page.html`. Undagi `<a href=\"../c/d.html\">` qaysi manzilga olib boradi?",
+      "options": [
+        "https://example.com/a/b/c/d.html",
+        "https://example.com/c/d.html",
+        "https://example.com/a/c/d.html",
+        "https://example.com/a/b/../c/d.html"
+      ],
+      "answer": 2,
+      "why": "Joriy papka `/a/b/`, `../` bir papka yuqoriga - `/a/`, keyin `c/d.html` qo'shiladi."
+    },
+    {
+      "q": "`<form action=\"/search\" method=\"get\">` ichida `name=\"q\"` maydoniga `Ali Vali` yozilib yuborildi. So'rov qanday ko'rinadi?",
+      "options": [
+        "GET /search, body: q=Ali Vali",
+        "POST /search?q=Ali+Vali",
+        "GET /search?q=Ali+Vali, tanasiz",
+        "GET /search?Ali Vali"
+      ],
+      "answer": 2,
+      "why": "GET da juftliklar URL dagi query string ga urlencoded ko'rinishda qo'shiladi, bo'shliq `+` ga aylanadi, tana bo'lmaydi."
+    },
+    {
+      "q": "Formada `<input value=\"5\">` bor, lekin unda `name` atributi yo'q. Forma yuborilganda nima bo'ladi?",
+      "options": [
+        "Maydon so'rovga umuman kirmaydi",
+        "Maydon `input=5` ko'rinishida yuboriladi",
+        "Maydon `=5` ko'rinishida yuboriladi",
+        "Brauzer formani yubormaydi"
+      ],
+      "answer": 0,
+      "why": "Faqat `name` li maydonlar forma ma'lumotlariga kiradi: `name` kalit vazifasini bajaradi."
+    },
+    {
+      "q": "Ro'yxatdan o'tish formasida `age` maydoni `type=\"number\" min=\"16\" required` bilan himoyalangan. Server kodi `age` ni tekshirmasdan bazaga yozadi. Bu nega xavfli?",
+      "options": [
+        "Xavfli emas: brauzer 16 dan kichik qiymatni yubormaydi",
+        "Faqat eski brauzerlarda xavfli, zamonaviylari validatsiyani majburiy bajaradi",
+        "Xavfli, chunki `type=\"number\"` kasr sonlarni o'tkazib yuboradi, boshqa holatlar esa xavfsiz",
+        "So'rovni curl bilan yoki `novalidate` bilan yuborish mumkin, brauzer tekshiruvi butunlay chetlab o'tiladi"
+      ],
+      "answer": 3,
+      "why": "Brauzer validatsiyasi foydalanuvchi nazoratidagi qulaylik. Server har bir qiymatni qaytadan tekshirishi shart."
+    },
+    {
+      "q": "`<label for=\"mail\">Email</label><input name=\"mail\" type=\"email\">` - nima noto'g'ri?",
+      "options": [
+        "Hech narsa: `for` maydonning `name` iga bog'lanadi",
+        "`for` maydonning `id` siga ishora qiladi, `input` da esa `id=\"mail\"` yo'q, shuning uchun label bog'lanmagan",
+        "`label` maydondan keyin yozilishi kerak",
+        "`type=\"email\"` bilan `label` ishlatib bo'lmaydi"
+      ],
+      "answer": 1,
+      "why": "`label for` qiymati `id` bilan solishtiriladi. Bog'lanmagan label ekran o'quvchiga maydon nomini bermaydi va bosilganda maydonni tanlamaydi."
+    },
+    {
+      "q": "Forma ichida \"Parolni ko'rsatish\" tugmasi `<button>Ko'rsatish</button>` deb yozilgan. Unga bosilganda forma yuborilib ketyapti. Sabab?",
+      "options": [
+        "JavaScript xatosi",
+        "Brauzer har qanday tugmani submit deb hisoblaydi va buni o'zgartirib bo'lmaydi",
+        "Forma ichidagi `type` siz `button` sukut bo'yicha `type=\"submit\"`; `type=\"button\"` yozish kerak",
+        "Tugma `form` dan tashqarida bo'lishi kerak"
+      ],
+      "answer": 2,
+      "why": "Forma bilan bog'langan `button` ning sukut bo'yicha turi `submit`. Yordamchi tugmalar `type=\"button\"` bo'lishi kerak."
+    },
+    {
+      "q": "Maqola sahifasida sarlavhalar tartibi: h1, h2, h4, h2, h3. Accessibility nuqtai nazaridan qaysi joy muammoli?",
+      "options": [
+        "h2 dan keyin h4: bir daraja tashlab ketilgan, mundarija buziladi",
+        "Ikkinchi h2: bitta sahifada faqat bitta h2 bo'lishi kerak",
+        "h3 oxirida kelgani: h3 doim h2 dan oldin bo'lishi kerak",
+        "Muammo yo'q: sarlavha darajasi faqat shrift o'lchamini belgilaydi"
+      ],
+      "answer": 0,
+      "why": "Sarlavhalar mundarija bo'lib, pastga faqat bir pog'onadan tushiladi. Yuqoriga (h4 dan h2 ga) qaytish mumkin."
+    },
+    {
+      "q": "Saytdagi logotip rasmi bosh sahifaga havola ichida yagona element: `<a href=\"/\"><img src=\"logo.png\" alt=\"?\"></a>`. `alt` ga nima yozish to'g'ri?",
+      "options": [
+        "Bo'sh `alt=\"\"`, chunki logotip bezak",
+        "\"logo.png\"",
+        "\"Ko'k fondagi oq harfli logotip\"",
+        "\"Bosh sahifa\" - havola qayerga olib borishi"
+      ],
+      "answer": 3,
+      "why": "Havola ichidagi yagona rasmning `alt` i havolaning nomi bo'ladi. Bo'sh `alt` bilan havola nomsiz qoladi."
+    },
+    {
+      "q": "`<input pattern=\"[0-9]{4}\" value=\"12345\">` maydoni uchun `validity.patternMismatch` qanday?",
+      "options": [
+        "false, chunki qiymat ichida 4 ta raqam bor",
+        "true, chunki pattern butun qiymatga mos kelishi kerak (`^` va `$` avtomatik qo'shiladi)",
+        "false, chunki pattern faqat `required` bilan birga ishlaydi",
+        "true, chunki `pattern` faqat harflar uchun"
+      ],
+      "answer": 1,
+      "why": "`pattern` qiymatning bir qismini emas, butun qiymatni tekshiradi. 5 ta raqam `[0-9]{4}` ga butunlay mos kelmaydi."
+    }
+  ]
+}
