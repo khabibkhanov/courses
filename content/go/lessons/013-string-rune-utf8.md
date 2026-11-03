@@ -178,7 +178,7 @@ Shuning uchun uch tushuncha aralashmasligi kerak:
 
 ### Satr header'i va substring
 
-Slice kabi satr ham kichik header: baytlarga pointer va uzunlik. Bu 16 bayt (64-bitli platformada), slice'dan 8 bayt kam, chunki sig'im yo'q: o'zgarmas satr o'sa olmaydi. Substring `s[i:j]` yangi header yaratadi va nusxalamaydi: bo'lak asl satr baytlariga qaraydi. Bu arzon, lekin xotira uchun xavfli: kichik bo'lak butun asl satrni tirik ushlab turadi (100 Go Mistakes #41; yechim `strings.Clone`).
+Slice kabi satr ham kichik header (string header): baytlarga pointer va uzunlik. Bu 16 bayt (64-bitli platformada), slice'dan 8 bayt kam, chunki sig'im yo'q: o'zgarmas satr o'sa olmaydi. Substring `s[i:j]` yangi header yaratadi va nusxalamaydi: bo'lak asl satr baytlariga qaraydi. Bu arzon, lekin xotira uchun xavfli: kichik bo'lak butun asl satrni tirik ushlab turadi (100 Go Mistakes #41; yechim `strings.Clone`).
 
 ## Chuqurroq: baytlar, rune'lar va narxlar
 
