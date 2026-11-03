@@ -230,6 +230,96 @@ Barcha trace'larni saqlash qimmat. `TraceIDRatioBased(0.1)` root span'larning 10
 
 Trace va log bir xil trace_id bilan bog'lanadi. 84-darsdagi `ctxHandler` g'oyasi shu yerda: handler `Handle(ctx, r)` ichida context'dan span context'ni o'qib, `trace_id` va `span_id` atributlarini qo'shadi. OpenTelemetry'da `trace.SpanContextFromContext(ctx)` shu vazifani bajaradi; quyidagi mini-misolda xuddi shuni o'zimiz yozdik.
 
+### traceparent validatsiyasi: spetsifikatsiya nimani talab qiladi
+
+W3C Trace Context matni (w3.org/TR/trace-context) bir nechta nozik joyni aniq yozadi. Header nomi: qabul qiluvchi uni istalgan registrda kutishi shart (MUST), yuboruvchi esa kichik harfda yozishi tavsiya etiladi. Go'ning `net/http` paketi nomni kanonik ko'rinishga keltiradi, shuning uchun `r.Header.Get("traceparent")` har ikki holatda ishlaydi. Qiymatdagi hex raqamlar esa faqat kichik harfli bo'lishi kerak (ABNF'dagi `HEXDIGLC`): `0AF7...` yaroqsiz qiymat. Versiya `ff` yaroqsiz, hammasi nol trace id yoki parent id ham yaroqsiz.
+
+Versiya `00` dan yuqori bo'lsa, spetsifikatsiya trace id va parent id'ni baribir `00` formatida o'qishni, o'zi tushunadigan flags bitlarini olib, qolganini tashlab yuborishni buyuradi. O'qib bo'lmasa, yangi `traceparent` yaratiladi va kelgan `tracestate` o'chiriladi. Ikkinchi sarlavha, `tracestate`, vendorga xos key-value juftliklarini tashiydi: kamida 512 belgini uzatish tavsiya etiladi, qisqartirish kerak bo'lsa butun yozuvlar olib tashlanadi, 128 belgidan uzun yozuvlar birinchi navbatda. Pastdagi kichik tekshiruv shu qoidalarni ko'rsatadi (Go 1.24.7, tashqi modulsiz):
+
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+// isLowerHex W3C HEXDIGLC: faqat 0-9 va kichik a-f.
+func isLowerHex(s string) bool {
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if !(c >= '0' && c <= '9' || c >= 'a' && c <= 'f') {
+			return false
+		}
+	}
+	return true
+}
+
+func allZero(s string) bool { return strings.Trim(s, "0") == "" }
+
+// check traceparent qiymatini tekshiradi va natijani matn bilan qaytaradi.
+func check(h string) string {
+	parts := strings.Split(h, "-")
+	if len(parts) < 4 {
+		return "maydonlar yetarli emas"
+	}
+	ver, tid, sid, flags := parts[0], parts[1], parts[2], parts[3]
+	switch {
+	case len(ver) != 2 || !isLowerHex(ver):
+		return "versiya yaroqsiz"
+	case ver == "ff":
+		return "versiya ff taqiqlangan"
+	case len(tid) != 32 || !isLowerHex(tid):
+		return "trace-id 32 ta kichik hex emas"
+	case len(sid) != 16 || !isLowerHex(sid):
+		return "parent-id 16 ta kichik hex emas"
+	case len(flags) != 2 || !isLowerHex(flags):
+		return "flags 2 ta kichik hex emas"
+	case allZero(tid) || allZero(sid):
+		return "hammasi nol id taqiqlangan"
+	case ver == "00" && len(parts) != 4:
+		return "00 versiyada ortiqcha maydon bor"
+	}
+	if ver != "00" {
+		return "qabul: noma'lum yuqori versiya, 00 formatida o'qildi"
+	}
+	return "qabul"
+}
+
+func main() {
+	cases := []string{
+		"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01",
+		"00-0AF7651916CD43DD8448EB211C80319C-b7ad6b7169203331-01",
+		"ff-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01",
+		"00-00000000000000000000000000000000-b7ad6b7169203331-01",
+		"00-0af7651916cd43dd8448eb211c80319c-0000000000000000-01",
+		"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01-extra",
+		"01-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01-extra",
+	}
+	for _, c := range cases {
+		fmt.Printf("%-64s %s\n", c, check(c))
+	}
+}
+```
+
+```text
+00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01          qabul
+00-0AF7651916CD43DD8448EB211C80319C-b7ad6b7169203331-01          trace-id 32 ta kichik hex emas
+ff-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01          versiya ff taqiqlangan
+00-00000000000000000000000000000000-b7ad6b7169203331-01          hammasi nol id taqiqlangan
+00-0af7651916cd43dd8448eb211c80319c-0000000000000000-01          hammasi nol id taqiqlangan
+00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01-extra    00 versiyada ortiqcha maydon bor
+01-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01-extra    qabul: noma'lum yuqori versiya, 00 formatida o'qildi
+```
+
+Bu tekshiruv spetsifikatsiyaning faqat shu darsda sanalgan qoidalarini qoplaydi; `tracestate` sintaksisini (kalit va qiymat alfavitlari, 32 ta yozuv chegarasi) ko'rsatmaydi. Amalda buni o'zingiz yozmaysiz: SDK'ning `propagation.TraceContext` propagatori shu ishni bajaradi, kod esa propagator nimaga rad javobi berishini tushunish uchun kerak. Yaroqsiz sarlavha kelganda to'g'ri xatti-harakat xato qaytarish emas, yangi trace boshlash: kuzatuvchanlik tizimi biznes so'rovni to'xtatmasligi kerak.
+
+### Sampler va batch processor: default'lar nimani anglatadi
+
+`ParentBased` pkg.go.dev hujjatiga ko'ra ota-span bo'lmasa o'ramdagi sampler (bizda `TraceIDRatioBased`) qaror qiladi. Ota-span bor bo'lsa, to'rtta holatdan biri ishlaydi va ularning default'lari: masofadagi ota sampled bo'lsa `AlwaysOn`, sampled bo'lmasa `AlwaysOff`, lokal ota uchun ham xuddi shunday. `TraceIDRatioBased` hujjati esa ota trace'ning sampled bayrog'ini hurmat qilish uchun uni `ParentBased` ichiga delegat qilib berishni aytadi. Amaliy oqibat: ichki servislarda sampler'ni oddiy `TraceIDRatioBased(0.1)` qilib qo'ysangiz, u ota qarorini e'tiborsiz qoldiradi va servislar turli ulushlar bilan sozlangan bo'lsa, trace'ning bir qismi yo'qoladi. Bu xulosa hujjatdagi qoidalardan mantiqan chiqadi, alohida o'lchab tekshirilmagan.
+
+`WithBatcher` ostidagi `BatchSpanProcessor` default'lari (SDK hujjatidagi konstantalar): navbat 2048 span, eksport oralig'i 5000 ms, bir paketda 512 span, eksport timeout'i 30000 ms. Shundan ikki amaliy xulosa: (1) qisqa umrli jarayon (cron job, CLI, migratsiya) 5 soniyadan oldin tugasa, `Shutdown` yoki `ForceFlush` chaqirilmasa span'lari yo'qoladi; (2) `NewSimpleSpanProcessor` har span'ni sinxron eksport qiladi va hujjat uni production uchun tavsiya etmaydi, u test va namuna uchun.
+
 ## Misol: mini-propagator va ikki servis
 
 Quyidagi dastur ikkita `httptest` serveri (A va B) o'rtasida `traceparent` uzatilishini, har yozuvga `trace_id` qo'shilishini ko'rsatadi. Bu o'quv kodi: id generatsiyasi qat'iy seed bilan (chiqish takrorlansin), haqiqiy loyihada tasodifiy kriptografik bo'lmagan, lekin noyob id'lar SDK tomonidan beriladi. Parse soddalashtirilgan (hex.Decode katta harflarni ham qabul qiladi, W3C esa kichik harfni talab qiladi: topshiriqda buni to'g'rilaysiz).

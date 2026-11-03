@@ -307,6 +307,86 @@ Dastur chiqish kodi 2 bilan tugadi, `main recover:` qatori va oxirgi `Println` c
 
 `defer` funksiya darajasida ishlaydi, blok darajasida emas. Tsiklda `defer` yozilsa, har iteratsiya navbatga yangi chaqiruv qo'shadi va ular funksiya tugaguncha ishlamaydi. Natijada resurslar (fayl, ulanish, mutex) to'planadi (100 Go Mistakes #35). Yechim: tsikl tanasini alohida funksiyaga chiqarish yoki aniq yopish (lekin aniq yopishda xato yo'llari uchun ehtiyot bo'ling).
 
+### Go 1.22 va tsikl o'zgaruvchisi: closure shakli o'zgargan joy
+
+Yuqoridagi "closure oxirgi qiymatni ko'radi" qoidasi tsikl o'zgaruvchisiga qo'llanganda versiyaga bog'liq. Go 1.22 release notes'iga ko'ra, 1.22 gacha `for` tsiklida e'lon qilingan o'zgaruvchilar bir marta yaratilib, har iteratsiyada yangilangan; 1.22 dan boshlab har iteratsiya yangi o'zgaruvchilar yaratadi. Qaysi qoida amal qilishi go.mod'dagi `go` qatoriga bog'liq (1-dars), shuning uchun eski modulda yangi toolchain bilan ham eski xatti-harakat saqlanadi. Bir xil manba kodini ikki xil go.mod bilan ishga tushirdik (Go 1.24.7, linux/amd64):
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	for i := 0; i < 3; i++ {
+		defer func() { fmt.Println("closure i =", i) }()
+	}
+	for i := 0; i < 3; i++ {
+		defer fmt.Println("argument i =", i)
+	}
+}
+```
+
+```text
+go.mod: go 1.21                    go.mod: go 1.22
+argument i = 2                     argument i = 2
+argument i = 1                     argument i = 1
+argument i = 0                     argument i = 0
+closure i = 3                      closure i = 2
+closure i = 3                      closure i = 1
+closure i = 3                      closure i = 0
+```
+
+Argumentli shakl ikkala holatda bir xil: qiymat defer paytida saqlanadi. Closure shakli esa `go 1.21` da uchala chaqiruvda ham `3` ni ko'rsatdi (tsikl tugagandan keyingi qiymat), `go 1.22` da har iteratsiyaning o'z `i`sini. `go vet` `go 1.21` fayli uchun `loop variable i captured by func literal` ogohlantirishini berdi; Go 1.22 release notes'ga ko'ra vet go.mod yoki fayl darajasida Go 1.22 talab qiladigan kodda bunday havolalar haqida endi xabar bermaydi. Amaliy xulosa: eski go.mod'li kodni o'qiyotganda closure ichidagi tsikl o'zgaruvchisiga shubha bilan qarang; yangi kodda bu xato klassi yo'q, lekin tsiklda `defer`ning resurs to'plash muammosi (yuqorida) o'zgarmaydi.
+
+### runtime.Goexit: panic emas, lekin defer ishlaydi
+
+`runtime.Goexit` chaqirgan goroutine'ni tugatadi. pkg.go.dev/runtime hujjatiga ko'ra u tugatishdan oldin barcha deferred chaqiruvlarni bajaradi, lekin Goexit panic emas, shuning uchun o'sha deferred funksiyalardagi `recover` `nil` qaytaradi. Ya'ni "recover() nil bo'lsa, panic bo'lmagan" degan xulosa noto'g'ri: goroutine Goexit bilan chiqayotgan bo'lishi ham mumkin. Test kutubxonalari (`t.FailNow` va `t.Fatal` shu mexanizmdan foydalanadi) shunga tayanadi. Natija sifatida `wg.Done()` kabi tozalash defer'da yozilgan bo'lsa, Goexit'da ham ishlaydi:
+
+```go
+package main
+
+import (
+	"fmt"
+	"runtime"
+	"sync"
+)
+
+func worker(wg *sync.WaitGroup) {
+	defer wg.Done()
+	defer func() { fmt.Println("recover:", recover()) }()
+	defer fmt.Println("deferred ishladi")
+	runtime.Goexit()
+	fmt.Println("bu qator chop etilmaydi")
+}
+
+func main() {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go worker(&wg)
+	wg.Wait()
+	fmt.Println("main davom etdi")
+}
+```
+
+```text
+deferred ishladi
+recover: <nil>
+main davom etdi
+```
+
+### Panic ichida panic va qayta panic
+
+Deferred funksiya o'zi panic qilsa, yangi panic oldingisini almashtiradi: keyingi `recover` faqat oxirgi panic qiymatini qaytaradi, birinchisi yo'qoladi. Misolda `defer func() { panic("ikkinchi") }()` `"birinchi"` ni bosib ketdi va tashqi deferred funksiya `recover()` dan `ikkinchi` oldi. Shu sababli deferred tozalash kodi panic qilmasligi kerak: u asl sababni yashiradi.
+
+Ikkinchi holat: `recover` qilib, qiymatni `panic(r)` bilan qayta uzatish (masalan, log yozib, keyin tashlash). Go 1.24.7 da `main` oxirida shunday qilsak, chiqish quyidagicha boshlanadi:
+
+```text
+panic: asl panic [recovered]
+	panic: asl panic
+```
+
+Go 1.25 release notes'ga ko'ra bu xabar o'zgargan: qayta panic qilingan va asl qiymat bilan bir xil bo'lsa, matn takrorlanmaydi va `panic: asl panic [recovered, repanicked]` chiqadi. Bu o'zgarish faqat chiqish matniga tegishli (log parser yozgan bo'lsangiz, bu qatorga tayanmang); biz 1.25 ni lokal ishga tushira olmadik, shuning uchun yangi format release notes'dan olingan. Go 1.23 dan boshlab panic xabarining ikkinchi va undan keyingi qatorlari bitta tab bilan suriladi, shunda ular birinchi goroutine stack trace'idan aniq ajraladi.
+
 ### Close xatolarini yo'qotmaslik
 
 `defer f.Close()` Close qaytargan xatoni tashlab yuboradi. Yozuv operatsiyasi uchun bu xavfli: ko'p tizimlarda ma'lumot Close paytida diskka flush qilinadi va xato shu yerda chiqadi (100 Go Mistakes #54 defer xatolarini qayta ishlamaslik haqida). Pattern: nomli natija va defer ichida `errors.Join(err, c.Close())` yoki birinchi xatoni saqlab qolish.
@@ -322,7 +402,7 @@ BenchmarkLoopDefer100-2  ~2200 ns/op     (tsiklda 100 ta defer noop())
 BenchmarkLoopDirect100-2 ~70-85 ns/op    (tsiklda 100 ta noop() to'g'ridan-to'g'ri)
 ```
 
-Ya'ni funksiya boshida bitta `defer mu.Unlock()` bu o'lchovda to'g'ridan-to'g'ri chaqiruvdan farq qilmadi, tsiklda yig'ilgan `defer`lar esa har biri taxminan 20 ns qimmatga tushdi (2200 ns / 100). Bu raqamlarni boshqa protsessor yoki Go versiyasiga ko'chirmang: o'zingiz o'lchang (61-dars). Bu o'lchovlar defer ichki mexanizmi haqida xulosa qilmaydi, faqat shu mikrobenchmark natijasi.
+Ya'ni funksiya boshida bitta `defer mu.Unlock()` bu o'lchovda to'g'ridan-to'g'ri chaqiruvdan farq qilmadi, tsiklda yig'ilgan `defer`lar esa har biri taxminan 20 ns qimmatga tushdi (2200 ns / 100). Bu raqamlarni boshqa protsessor yoki Go versiyasiga ko'chirmang: o'zingiz o'lchang (61-dars). Bu o'lchovlar defer ichki mexanizmi haqida xulosa qilmaydi, faqat shu mikrobenchmark natijasi. Versiya tarixi uchun: Go 1.14 release notes'ga ko'ra shu versiyada defer'ning ko'p ishlatilishlari deyarli nol qo'shimcha xarajat bilan bajariladigan bo'ldi, shuning uchun eski maqolalardagi "defer sekin" maslahati Go 1.14 dan oldingi davrga tegishli. "Ko'p" so'zi muhim: release notes istisnolarni sanamaydi, tsikldagi defer'ning yuqoridagi o'lchovi esa baribir qimmat chiqdi.
 
 ## Misol: baholash, recover va resurslar
 

@@ -239,6 +239,104 @@ Value receiver tanlashni "garbage kamayadi" deb asoslash mumkin, lekin manba bun
 
 Pointer receiver'li metod nil receiver bilan chaqirilishi mumkin; metod ichida `n == nil` tekshirilsa, bu xavfsiz va ba'zan yaxshi dizayn (bog'langan ro'yxat uzunligi). Lekin nil `*Node` ni interface'ga berish nil interface hosil qilmaydi: dinamik tip bor, qiymat nil (17-18-darslar).
 
+### Mutex va nusxalash: value receiver jim xato
+
+`sync.Mutex` saqlaydigan struct uchun value receiver yozish xato: har chaqiruvda mutex holati bilan birga nusxalanadi va nusxadagi qulf asl qulfni himoya qilmaydi. Kompilyator buni to'xtatmaydi, lekin `go vet` ning `copylocks` tekshiruvi (cmd/vet ro'yxatida "check for locks erroneously passed by value" deb ta'riflangan) ushlaydi. Quyidagi kodda `Value` value receiver, `Inc` pointer receiver:
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+type Counter struct {
+	mu sync.Mutex
+	n  int
+}
+
+func (c Counter) Value() int { // value receiver: Mutex nusxalanadi
+	return c.n
+}
+
+func (c *Counter) Inc() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.n++
+}
+
+func main() {
+	var c Counter
+	c.Inc()
+	fmt.Println(c.Value())
+}
+```
+
+```text
+# p2
+./main.go:13:9: Value passes lock by value: p2.Counter contains sync.Mutex
+```
+
+Dastur o'zi `1` chiqaradi (Go 1.24.7), ya'ni xato ishlash vaqtida ko'rinmaydi: `Value` qulfni olmay o'qiydi va concurrent chaqiruvda data race bo'ladi. Shuning uchun Code Review Comments qoidasi (mutex bo'lsa pointer receiver) vet bilan mustahkamlanadi, vet'ni CI'ga qo'shing (60-dars). Qoida transitiv: struct mutex'ni to'g'ridan-to'g'ri emas, ichki maydon yoki embedding orqali saqlasa ham nusxalash xavfli.
+
+### nil pointer va metod chaqiruvi: panic qachon bo'ladi
+
+Spetsifikatsiyaga ko'ra value receiver'li metodga pointer orqali murojaat pointer'ni avtomatik dereference qiladi: `pt.Mv` bu `(*pt).Mv`. Method value esa receiver'ni baholash paytida saqlaydi. Demak `pt` nil bo'lsa va metod value receiver'li bo'lsa, panic metod chaqirilganda emas, **method value yaratilganda** yuz beradi, chunki `*pt` shu yerda baholanadi. Pointer receiver'li metod bilan esa nil bog'lash o'zi xatosiz (nil manzil saqlanadi), panic faqat metod tanasi nil'ni dereference qilganda. Method expression `(*Vehicle).Total` nil pointer bilan chaqirilganda ham panic beradi, lekin matni boshqacha:
+
+```go
+package main
+
+import "fmt"
+
+type Vehicle struct {
+	ID string
+	km int
+}
+
+func (v Vehicle) Total() int { return v.km }
+
+func main() {
+	var p *Vehicle // nil
+
+	defer func() { fmt.Println("recover:", recover()) }()
+
+	f := func() {
+		defer func() { fmt.Println("method value baholanganda:", recover()) }()
+		g := p.Total // value receiver: *p shu yerda baholanadi
+		fmt.Println("bu qator chop etilmaydi", g != nil)
+	}
+	f()
+
+	h := (*Vehicle).Total // method expression: hali chaqirilmagan
+	fmt.Println("expression yaratildi")
+	h(p) // panic chaqiruv paytida
+}
+```
+
+```text
+method value baholanganda: runtime error: invalid memory address or nil pointer dereference
+expression yaratildi
+recover: value method main.Vehicle.Total called using nil *Vehicle pointer
+```
+
+Amaliy ma'no: callback sifatida `handler.Process` uzatayotganda `handler` nil bo'lishi mumkin bo'lsa va `Process` value receiver'li bo'lsa, xato callback ro'yxatdan o'tkazilayotgan joyda chiqadi, keyinroq chaqirilganda emas. Bu aslida foydali: xato manbaga yaqin. Pointer receiver'li metodda esa xato chaqiruv paytiga kechikadi va stack trace ro'yxatdan o'tkazish joyini ko'rsatmaydi.
+
+### Pointer va tsikl o'zgaruvchisi (Go 1.22 gacha va undan keyin)
+
+7-darsdagi tsikl o'zgaruvchisi qoidasi pointer'larga ham tegishli. `for i := 0; i < 3; i++ { ptrs = append(ptrs, &i) }` Go 1.22 release notes'dagi o'zgarishdan oldin (go.mod'da `go 1.21`) uchala pointer bitta `i` ga ko'rsatadi, tsikl tugaganda esa `3`; `go 1.22` da har iteratsiya o'z `i`sini beradi. Bir xil manba kodi ikki go.mod bilan (Go 1.24.7) chiqardi:
+
+```text
+go 1.21: 3 3 3
+go 1.22: 0 1 2
+```
+
+`for _, v := range items { out = append(out, &v) }` kabi "elementga pointer yig'ish" kodi shu sababli eski modullarda bir elementni N marta takrorlaydi. Yangi modulda bu ishlaydi, lekin baribir nusxa: `&v` ko'rsatayotgan o'zgaruvchi slice elementi emas, uning nusxasi, shuning uchun uning o'zgarishi `items` ga yozilmaydi. Asl elementga pointer kerak bo'lsa, `&items[i]` yozing.
+
+### Massivga pointer
+
+Spetsifikatsiya: pointer-to-array tipidagi `a` uchun `a[x]` bu `(*a)[x]` ning qisqartmasi. Shu sababli `*[N]T` bilan indekslash va `range` pointer'ni ochmasdan ishlaydi, lekin pointer arifmetikasi bo'lmagani kabi, `*[]T` (slice'ga pointer) bunday qisqartmaga ega emas: `(*s)[i]` deb yozish kerak. Slice'ga pointer faqat funksiya slice'ning o'zini (uzunlik, sig'imni) o'zgartirishi kerak bo'lganda mantiqli, bunday holatda odatda yangi slice qaytarish (`append` kabi) soddaroq (11-dars).
+
 ## Misol: adreslanish, method set va nusxa
 
 ### 1. Addressability va pointer
