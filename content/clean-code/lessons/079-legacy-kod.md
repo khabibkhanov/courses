@@ -7,6 +7,10 @@ duration: 45
 sources:
   - id: welc
     note: "Kitob 2004-yilda chiqqan. Web orqali tasdiqlangan: legacy kod ta'rifi (testsiz kod; Feathers 2002-yilgi maqolasi), 4-bob \"The Seam Model\" (seam ta'rifi, enabling point, object/link/preprocessing seam'lar), characterization test jarayoni (Feathers blogi), 25-bob sarlavhasi \"Dependency Breaking Techniques\". Aniq tekshirilmadi: Edit and Pray / Cover and Modify, legacy code dilemma so'zlanishi, o'zgartirish algoritmining aniq qadamlari, Sprout/Wrap tafsilotlari va katalogdagi texnikalar ro'yxati"
+  - id: feathers-2002
+    note: "Feathers, 2002-yil 9-aprel: legacy kod ta'rifi (testlar yo'qligi), test covering tushunchasi va strategiya (o'zgarish nuqtalari, inflection point, qoplash, o'zgartirish, refaktoring)"
+  - id: welc-key-points
+    note: "Kitobning ikkilamchi xulosasi: legacy code dilemma, seam, characterization test, Sprout va Wrap texnikalari, o'zgartirish tartibi"
 quiz:
   - q: "Feathers bo'yicha seam nima?"
     options:
@@ -205,7 +209,7 @@ Kitob buni **legacy kodni o'zgartirish algoritmi**ga aylantiradi:
 4. Testlarni yozish.
 5. O'zgarish kiritish va refaktoring qilish.
 
-Eslatma: Edit and Pray / Cover and Modify atamalari, dilemma va yuqoridagi besh qadamli algoritm kitobning mazmuniga tayanadi, lekin ularning aniq so'zlanishi bu kurs yozilganda birlamchi matn bilan solishtirilmadi. Feathers 2002-yilgi maqolasida strategiyani biroz boshqacha qadamlar bilan beradi (o'zgarish nuqtalari, inflection point, qoplash, o'zgartirish, refaktoring).
+Eslatma: Edit and Pray / Cover and Modify atamalari, dilemma va yuqoridagi besh qadamli algoritm kitobning mazmuniga tayanadi, lekin ularning aniq so'zlanishi bu kurs yozilganda birlamchi matn bilan solishtirilmadi. Qisman tekshirilgan: legacy code dilemma, Sprout/Wrap texnikalari va "o'zgarish nuqtalarini aniqlash, dependency'larni uzish, testlarni yozish, o'zgartirish, refaktoring" tartibi Nicolas Carlo'ning kitob xulosasida shu nomlar bilan uchraydi; "test nuqtalarini topish" qadami, Edit and Pray / Cover and Modify atamalari va 25-bobdagi alohida texnikalar nomlari (Extract and Override Call, Introduce Instance Delegator va boshqalar) ochiq manbada tasdiqlanmadi. Feathers 2002-yilgi maqolasida strategiyani biroz boshqacha qadamlar bilan beradi (o'zgarish nuqtalari, inflection point, qoplash, o'zgartirish, refaktoring).
 
 Bu algoritmning markazida ikki tushuncha turadi: **seam** va **characterization test**.
 

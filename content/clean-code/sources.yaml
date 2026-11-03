@@ -488,3 +488,20 @@ sonar-cognitive:
   year: 2018
   kind: paper
   url: https://www.sonarsource.com/resources/cognitive-complexity/
+feathers-2002:
+  title: "Working Effectively With Legacy Code (original article)"
+  author: Michael Feathers
+  year: 2002
+  kind: article
+  url: https://web.archive.org/web/2012/http://www.objectmentor.com/resources/articles/WorkingEffectivelyWithLegacyCode.pdf
+welc-key-points:
+  title: "The key points of Working Effectively with Legacy Code"
+  author: Nicolas Carlo
+  kind: article
+  url: https://understandlegacycode.com/blog/key-points-of-working-effectively-with-legacy-code/
+wiki-solid:
+  title: "SOLID (Wikipedia)"
+  author: Wikipedia
+  year: 2026
+  kind: web
+  url: https://en.wikipedia.org/wiki/SOLID

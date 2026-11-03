@@ -193,7 +193,7 @@ Ikkala variant ham ishlaydi va hatto bir xil kodga ega bo'lishi mumkin. Farq o'z
 
 Parnas xulosasi: ikkinchi variantda har bir modul boshqa modullardan yashiradigan **bitta dizayn qarori** bo'yicha ajratilgan. Modullarga bo'lishni flowchart (ish bosqichlari) asosida boshlash deyarli har doim xato. To'g'ri yo'l - avval qiyin yoki o'zgarishi ehtimoli bor qarorlar ro'yxatini tuzish va har bir modulni shunday qarorni boshqalardan yashiradigan qilib loyihalash. Interfeys esa modulning ichki ishlashi haqida iloji boricha kam narsani ochishi kerak.
 
-Parnas bu maqolada "information hiding" atamasini mezon sifatida ishlatadi va uni o'zining 1971-yilgi texnik hisobotiga havola qiladi; atamaning keng tarqalishi shu maqola bilan bog'liq. E'tibor bering: gap `private` kalit so'zi haqida emas. Parnas davrida bunday til imkoniyatlari keng tarqalmagan edi. Gap **bilim** haqida: qaysi modul nimani biladi.
+Parnas bu maqolada "information hiding" atamasini mezon sifatida ishlatadi va uni o'zining 1971-yilgi texnik hisobotiga ("Information distribution aspects of design methodology", Carnegie Mellon, IFIP Congress 1971) havola qiladi. E'tibor bering: gap `private` kalit so'zi haqida emas. Maqolada til konstruksiyalari haqida gap yo'q: tajribalar Fortran va assembler tizimlarida o'tkazilgan, Parnas esa modulni "bir yoki bir nechta subroutine" deb tushunish farazidan voz kechishni taklif qiladi. Gap **bilim** haqida: qaysi modul nimani biladi.
 
 ## Chuqurroq: Ousterhout va leakage
 
