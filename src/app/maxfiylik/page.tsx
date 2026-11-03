@@ -26,9 +26,10 @@ const SECTIONS = [
     ],
   },
   {
-    title: "Kod brauzerda ishlaydi",
+    title: "Kod qayerda bajariladi",
     body: [
       "Darslardagi kodni ishga tushirganingizda u serverimizga yuborilmaydi: Python, SQL, JavaScript, TypeScript va C brauzerning o'zida bajariladi. Python, SQL va C ishga tushirish komponentlari jsDelivr CDN'dan yuklanadi, shuning uchun bu so'rovlar CDN'ga ko'rinadi.",
+      "Go istisno: Go kodini ishga tushirsangiz, u saytimiz orqali rasmiy Go Playground'ga (go.dev) yuboriladi va u yerda bajariladi. Kod saqlanmaydi, lekin go.dev uni ko'radi. Soatiga so'rovlar soni cheklangan.",
     ],
   },
   {

@@ -12,8 +12,8 @@ const PRINCIPLES = [
     text: "Har darsning oxirida haqiqiy manbalar: rasmiy hujjat, RFC, original maqola, kitob. Yozilgan darsni uni yozmagan tekshiruvchi birlamchi manbalar bilan solishtiradi.",
   },
   {
-    title: "Kod brauzerning o'zida ishlaydi",
-    text: `${RUNNABLE_LANGUAGES.join(", ")} misollarini o'rnatishsiz, darsning ichida o'zgartirib ishga tushirasiz. Ba'zi mashqlar yashirin testlar bilan tekshiriladi.`,
+    title: "Kod darsning ichida ishlaydi",
+    text: `${RUNNABLE_LANGUAGES.join(", ")} brauzerning o'zida, Go rasmiy Go Playground orqali ishlaydi. O'rnatish shart emas, misolni darsning ichida o'zgartirib ishga tushirasiz. Ba'zi mashqlar yashirin testlar bilan tekshiriladi.`,
   },
   {
     title: "Tushunganingiz tekshiriladi",
@@ -72,7 +72,7 @@ export default function HomePage() {
               [stats.courses, "kurs"],
               [stats.lessons, "dars"],
               [stats.terms, "atama lug'atda"],
-              [RUNNABLE_LANGUAGES.length, "til brauzerda ishlaydi"],
+              [RUNNABLE_LANGUAGES.length + 1, "til darsda ishlaydi"],
             ].map(([n, label]) => (
               <div key={label} className="border-l-2 border-ink pl-3">
                 <dt className="sr-only">{label}</dt>

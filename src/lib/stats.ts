@@ -10,4 +10,5 @@ export function siteStats() {
 }
 
 /** Darsdagi kodni brauzerning o'zida ishga tushirish mumkin bo'lgan tillar (src/components/playground). */
+/** Brauzerning o'zida bajariladigan tillar. Go bunga kirmaydi: u go.dev orqali ishlaydi. */
 export const RUNNABLE_LANGUAGES = ["Python", "SQL", "JavaScript", "TypeScript", "C"] as const;

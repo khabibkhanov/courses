@@ -34,7 +34,7 @@ export function faqItems(): FaqItem[] {
     },
     {
       q: "Kodni qayerda ishga tushirish mumkin?",
-      a: `Darslardagi "run" belgili kod bloklari brauzerning o'zida ishlaydi: ${RUNNABLE_LANGUAGES.join(", ")}. Kod serverga yuborilmaydi. Python va C birinchi marta ishga tushirilganda kerakli komponent yuklanadi (C uchun 23 MB), keyin brauzer keshidan ishlaydi. Go kodi hozircha faqat ko'rsatiladi, brauzerda ishga tushmaydi.`,
+      a: `Darslardagi "run" belgili kod bloklari brauzerning o'zida ishlaydi: ${RUNNABLE_LANGUAGES.join(", ")}. Bu kod serverga yuborilmaydi. Python va C birinchi marta ishga tushirilganda kerakli komponent yuklanadi (C uchun 23 MB), keyin brauzer keshidan ishlaydi. Go kodi brauzerda bajarilmaydi: u saytimiz orqali rasmiy Go Playground'ga (go.dev) yuboriladi va natija qaytadi.`,
     },
     {
       q: "Progressim qayerda saqlanadi?",
