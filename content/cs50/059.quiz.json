@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Loyihada 8 ta talab bor, har biri o'rtacha 1,5 kun oladi. 7-kuni muddat to'satdan tugadi. Vertikal bo'laklar bilan va gorizontal (avval barcha jadval, keyin barcha route, keyin barcha shablon) qurishda nechta funksiya to'liq ishlaydi?",
+      "options": [
+        "Ikkalasida ham 4 ta: ish hajmi bir xil",
+        "Vertikalda 4 ta, gorizontalda hech biri yoki deyarli hech biri",
+        "Vertikalda 0 ta, gorizontalda 4 ta: qatlamlar tayyor",
+        "Vertikalda 8 ta, chunki bo'laklar tezroq yoziladi"
+      ],
+      "answer": 1,
+      "why": "Vertikalda har 1,5 kunda bitta funksiya to'liq tugaydi: 7 kunda 4 ta. Gorizontalda barcha qatlamlar faqat 12-kuni birlashadi, shuning uchun 7-kuni birorta funksiya boshidan oxirigacha ishlamaydi."
+    },
+    {
+      "q": "Kodda `DEBUG = bool(os.environ.get(\"APP_DEBUG\"))` yozilgan. Serverda administrator `APP_DEBUG=0` o'rnatdi. Nima bo'ladi?",
+      "options": [
+        "DEBUG False bo'ladi, chunki 0 - yolg'on",
+        "Python xato beradi: satrni bool ga aylantirib bo'lmaydi",
+        "DEBUG True bo'ladi: \"0\" bo'sh bo'lmagan satr, bool() uni rost deb hisoblaydi",
+        "DEBUG None bo'ladi"
+      ],
+      "answer": 2,
+      "why": "Muhit o'zgaruvchilari doim satr. bool(\"0\") va bool(\"false\") ham True. Satrni aniq qiymatlar to'plami bilan solishtirish kerak."
+    },
+    {
+      "q": "Dasturchi SECRET_KEY'ni app.py ga yozib, ochiq repo'ga push qildi, keyingi commit'da uni o'chirdi. Endi to'g'ri chora qaysi?",
+      "options": [
+        "Kalitni almashtirish (yangi tasodifiy kalit) va uni muhit o'zgaruvchisiga o'tkazish: eski kalit git tarixida qoldi",
+        "Hech narsa: kalit o'chirildi",
+        "Repo'ni private qilish yetarli",
+        "Kalitni base64 bilan kodlab qayta yozish"
+      ],
+      "answer": 0,
+      "why": "Git tarixi eski commit'larni saqlaydi, kalitni allaqachon kimdir olgan bo'lishi mumkin. Kalitni bilgan odam istalgan session'ni soxtalashtiradi, shuning uchun uni almashtirish kerak."
+    },
+    {
+      "q": "Nima uchun `.venv` papkasi git'ga qo'shilmaydi, `requirements.txt` esa qo'shiladi?",
+      "options": [
+        "`.venv` juda kichik, saqlashga arzimaydi",
+        "`.venv` maxfiy kalitlarni saqlaydi",
+        "git virtual muhitdagi fayllarni o'qiy olmaydi",
+        "Virtual muhit bir martalik va ko'chirilmaydi (interpretator yo'llari, OS'ga bog'liq fayllar); uni requirements.txt dan har kompyuterda qayta yaratish kerak"
+      ],
+      "answer": 3,
+      "why": "Python hujjati virtual muhitni ko'chirilmaydigan narsa deb hisoblaydi. requirements.txt aniq versiyalar ro'yxati sifatida istalgan joyda bir xil muhitni qayta yaratishga imkon beradi."
+    },
+    {
+      "q": "Logger darajasi WARNING ga o'rnatilgan. Quyidagi chaqiruvlardan qaysilari chiqadi: log.debug, log.info, log.warning, log.error, log.critical?",
+      "options": [
+        "Faqat warning",
+        "warning, error va critical",
+        "Hammasi: daraja faqat formatni o'zgartiradi",
+        "Faqat error va critical"
+      ],
+      "answer": 1,
+      "why": "WARNING = 30. Logger 30 va undan yuqori darajalarni o'tkazadi: WARNING (30), ERROR (40), CRITICAL (50). DEBUG (10) va INFO (20) tashlanadi."
+    },
+    {
+      "q": "Flask ilova productionda (DEBUG va TESTING o'chiq) route ichida ZeroDivisionError bo'ldi, `@app.errorhandler(500)` yozilgan. Foydalanuvchi va dasturchi nimani ko'radi?",
+      "options": [
+        "Foydalanuvchi traceback'ni ko'radi, log'da hech narsa yo'q",
+        "Ilova to'xtaydi va keyingi so'rovlarga javob bermaydi",
+        "Foydalanuvchi o'z 500 sahifangizni ko'radi, traceback esa app.logger orqali ERROR sifatida log'ga yoziladi",
+        "Exception test kabi yuqoriga uzatiladi va foydalanuvchi bo'sh sahifa oladi"
+      ],
+      "answer": 2,
+      "why": "Productionda Flask tutilmagan exception'ni 500 javobga aylantiradi va 'Exception on ...' xabarini traceback bilan log'ga yozadi. Exception'ni yuqoriga uzatish faqat TESTING yoki DEBUG yoqilganda."
+    },
+    {
+      "q": "Sahifa o'rtacha 200 ms da tayyorlanadi, server 2 yadroli va Gunicorn `2 × yadro + 1` formula bo'yicha sinxron worker'lar bilan ishlaydi. Nazariy maksimal throughput qancha?",
+      "options": [
+        "25 so'rov/s",
+        "5 so'rov/s",
+        "100 so'rov/s",
+        "10 so'rov/s"
+      ],
+      "answer": 0,
+      "why": "Worker'lar soni 2 × 2 + 1 = 5. Bitta sinxron worker 1 / 0,2 = 5 so'rov/s bajaradi, 5 worker - 25 so'rov/s."
+    },
+    {
+      "q": "Ilova PaaS'da ishlaydi, baza - konteyner diskidagi SQLite fayli. Har deploydan keyin barcha yozuvlar yo'qoladi. Eng ehtimolli sabab va yechim?",
+      "options": [
+        "SQLite bir vaqtda faqat bitta yozuvchiga ruxsat beradi; yechim - WAL rejimi",
+        "Platformaning fayl tizimi vaqtinchalik: konteyner qayta yaratilganda fayl o'chadi; yechim - doimiy disk yoki boshqariladigan PostgreSQL",
+        "schema.sql da COMMIT yo'q; yechim - har so'rovdan keyin commit",
+        "SECRET_KEY o'zgargani uchun baza shifrlanib qoldi"
+      ],
+      "answer": 1,
+      "why": "Ko'p PaaS'larda konteyner diski ephemeral: qayta ishga tushganda o'zgarishlar yo'qoladi. Bitta yozuvchi cheklovi ma'lumot yo'qolishiga emas, navbatga olib keladi."
+    },
+    {
+      "q": "Yakuniy loyiha kuniga 10 000 so'rov oladi, ulardan 20% yozish, har yozish 2 ms. Bitta serverda SQLite bilan qolish to'g'rimi?",
+      "options": [
+        "Yo'q: SQLite kuniga 1000 dan ortiq yozishni ko'tarmaydi",
+        "Yo'q: istalgan web ilova uchun PostgreSQL majburiy",
+        "Faqat barcha so'rovlar o'qish bo'lsa",
+        "Ha: 2000 yozish/kun ≈ 0,02 yozish/s, bitta yozuvchi esa ~500 yozish/s ko'tara oladi; o'tish sharti - bir nechta server yoki ko'p parallel yozish"
+      ],
+      "answer": 3,
+      "why": "2 000 / 86 400 ≈ 0,02 yozish/s, nazariy maksimum 1 / 0,002 = 500 yozish/s. Zaxira juda katta. PostgreSQL bir nechta server, ko'p parallel yozish yoki vaqtinchalik disk holatida kerak bo'ladi."
+    },
+    {
+      "q": "Loyihangiz faqat HTML, CSS va JavaScript'dan iborat: brauzerda ishlaydigan o'yin, server kodi va baza yo'q. Qaysi deploy varianti eng mos?",
+      "options": [
+        "Statik hosting: tayyor fayllar CDN orqali beriladi, server ishga tushirish kerak emas",
+        "VPS: Gunicorn va nginx o'rnatish kerak",
+        "PaaS'da Flask ilova sifatida, chunki HTML Flask'siz ishlamaydi",
+        "Faqat lokal: JavaScript loyihalarini deploy qilib bo'lmaydi"
+      ],
+      "answer": 0,
+      "why": "Server tomonda bajariladigan kod bo'lmasa, statik hosting eng sodda va arzon yo'l. Flask ilova esa aksincha statik hostingda ishlamaydi."
+    }
+  ]
+}

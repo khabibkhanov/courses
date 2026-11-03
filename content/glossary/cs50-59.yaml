@@ -1,0 +1,76 @@
+# CS50 59-60-darslar atamalari.
+- term: vertikal bo'lak
+  aliases: [vertical slice]
+  uz: "Bitta foydalanuvchi amalini barcha qatlamlar orqali - sxemadan route, shablon va testgacha - to'liq amalga oshirish. Har bo'lak oxirida ilova ishlaydi va commit qilinadi."
+  course: cs50
+  lesson: 59
+- term: environment variable
+  aliases: [muhit o'zgaruvchi]
+  uz: "Operatsion tizim har bir jarayonga beradigan NOM=qiymat juftligi; Python'da os.environ orqali o'qiladi. Sozlama va maxfiy kalitlarni koddan ajratib saqlash uchun ishlatiladi."
+  course: cs50
+  lesson: 59
+- term: virtual muhit
+  aliases: [virtual environment]
+  uz: "Loyiha uchun alohida papka (venv): o'z site-packages'i bilan, pip install paketlarni faqat shu yerga o'rnatadi. Git'ga qo'shilmaydi, requirements.txt dan qayta yaratiladi."
+  course: cs50
+  lesson: 59
+- term: application factory
+  aliases: []
+  uz: "Flask ilovasini modul darajasida emas, create_app(config) funksiyasi ichida yaratish naqshi; test va production uchun turli sozlamali ilova yasash imkonini beradi."
+  course: cs50
+  lesson: 59
+- term: log darajasi
+  aliases: [log level]
+  uz: "Log xabarining muhimligi: DEBUG 10, INFO 20, WARNING 30, ERROR 40, CRITICAL 50. Logger faqat o'z darajasidan past bo'lmagan xabarlarni o'tkazadi."
+  course: cs50
+  lesson: 59
+- term: reverse proxy
+  aliases: []
+  uz: "Internetdan kelgan so'rovlarni qabul qilib, ichkaridagi ilova serveriga uzatadigan server (masalan, nginx); odatda HTTPS va statik fayllarni o'zi bajaradi."
+  course: cs50
+  lesson: 59
+- term: PaaS
+  aliases: [Platform as a Service]
+  uz: "Kodni (odatda git repo) berib, build, ishga tushirish, HTTPS va log'ni platformaga topshiradigan hosting turi."
+  course: cs50
+  lesson: 59
+- term: VPS
+  aliases: [Virtual Private Server]
+  uz: "Sizga ajratilgan virtual Linux mashina: OS, web server, xavfsizlik yangilanishlari va zaxira nusxa sizning zimmangizda."
+  course: cs50
+  lesson: 59
+- term: smoke test
+  aliases: []
+  uz: "Deploydan keyingi qisqa tekshiruv: asosiy sahifa, login va bitta yozish amali ishlayaptimi. Chuqur testlar o'rnini bosmaydi, faqat aniq buzilishni tez ushlaydi."
+  course: cs50
+  lesson: 59
+- term: fail fast
+  aliases: [tez yiqilish]
+  uz: "Noto'g'ri sozlama yoki holat aniqlanganda dasturni darhol to'xtatish tamoyili: xato ishga tushishda chiqadi, kunlar o'tib foydalanuvchi oldida emas."
+  course: cs50
+  lesson: 59
+- term: self-review
+  aliases: [o'z-o'zini review]
+  uz: "O'z kodingizni ro'yxat bo'yicha, vaqt o'tkazib va boshqa formatda (diff, ovoz chiqarib) review qilish: to'g'rilik, xavfsizlik, dizayn, stil, testlar."
+  course: cs50
+  lesson: 60
+- term: faol eslash
+  aliases: [active recall]
+  uz: "Materialni qayta o'qish o'rniga uni xotiradan tiklab o'zingizni tekshirish usuli; testlar va yopiq kitob bilan savollarga javob berish."
+  course: cs50
+  lesson: 60
+- term: oraliqli takrorlash
+  aliases: [spaced repetition]
+  uz: "Mavzuni ortib boruvchi oraliqlarda (1 kun, 3 kun, 1 hafta, 1 oy) takrorlash; bir kunda ko'p marta takrorlashdan ko'ra uzoqroq esda qoladi."
+  course: cs50
+  lesson: 60
+- term: ongli mashq
+  aliases: [deliberate practice]
+  uz: "Oson va yoqqan narsani emas, hali chiqmaydigan ko'nikmani maqsadli mashq qilish va har urinishdan keyin xatoni tahlil qilish."
+  course: cs50
+  lesson: 60
+- term: tizim dasturlash
+  aliases: [systems programming]
+  uz: "Boshqa dasturlar ustida ishlaydigan dasturlarni yozish: operatsion tizim, kompilyator, ma'lumotlar bazasi, brauzer dvigateli. Xotira va past darajadagi bilimni ko'p talab qiladi."
+  course: cs50
+  lesson: 60

@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Kodni yozib bo'lgan zahoti o'zingiz review qilsangiz, nega ko'p xatolarni ko'rmaysiz va bunga qarshi eng samarali usul qaysi?",
+      "options": [
+        "Charchoq tufayli; yechim - qahva",
+        "Muallif niyatni o'qiydi, yozilgan matnni emas; yechim - vaqt o'tkazish, aniq ro'yxat va boshqa format (diff, ovoz chiqarib)",
+        "Muharrir xatolarni yashiradi; yechim - boshqa muharrir",
+        "Review faqat boshqa odam qilganda ma'noga ega, o'zi qilishi foydasiz"
+      ],
+      "answer": 1,
+      "why": "Miya kodni yozilgan niyat bilan to'ldiradi. Masofa, ro'yxat va boshqa format niyatni emas, haqiqiy matnni ko'rishga yordam beradi."
+    },
+    {
+      "q": "Review'da 3 muammo topildi: (A) bitta SQL so'rov f-string bilan yasalgan, tuzatish 10 daqiqa; (B) o'zgaruvchi nomlari noaniq, 2 soat; (C) butun loyihani blueprint'larga bo'lish, 1 kun. Muddat ertaga. Qaysi tartib to'g'ri?",
+      "options": [
+        "C, B, A: avval arxitektura",
+        "B, A, C: avval o'qiladigan kod",
+        "A birinchi (ta'siri yuqori - SQL injection, narxi past), keyin B; C ni README'dagi cheklovlarga yozish",
+        "Hech birini tuzatmaslik, chunki ilova ishlayapti"
+      ],
+      "answer": 2,
+      "why": "Ta'sir yuqori va narx past muammo birinchi. SQL injection xavfsizlik teshigi, 10 daqiqada yopiladi. Katta, kam ta'sirli refaktoring muddatdan keyinga va cheklovlar ro'yxatiga."
+    },
+    {
+      "q": "3 daqiqalik videoga ssenariy yozyapsiz. Nutq tezligi daqiqasiga taxminan 140 so'z. Ssenariy 700 so'z chiqdi. Nima qilish kerak?",
+      "options": [
+        "Tezroq gapirish: 700 / 3 ≈ 233 so'z/daqiqa normal",
+        "Videoni 3 daqiqadan uzunroq qilish",
+        "Demoni olib tashlab, faqat gapirish",
+        "Ssenariyni taxminan 420 so'zgacha qisqartirish (140 × 3), demoni emas, kirish va tafsilotlarni"
+      ],
+      "answer": 3,
+      "why": "140 × 3 = 420 so'z. Demo eng qimmatli qism, shuning uchun kirish, ortiqcha tafsilot va funksiyalar ro'yxati qisqartiriladi."
+    },
+    {
+      "q": "Python dict (32-dars) va SQL indekslar (39-dars) qaysi oldingi darslardagi g'oyalarga tayanadi?",
+      "options": [
+        "dict - hash table (30-dars), indeks - saralangan tuzilmada binary search g'oyasi (15-dars, B-tree)",
+        "Ikkalasi ham linked list (28-dars)",
+        "dict - binary search, indeks - hash table",
+        "Ikkalasi ham faqat Python'ga xos, oldingi darslar bilan bog'liq emas"
+      ],
+      "answer": 0,
+      "why": "dict ichida hash table, B-tree indeks esa tartiblangan kalitlar bo'yicha qidiruvni log vaqtga tushiradi - binary search g'oyasining diskka moslashgan ko'rinishi."
+    },
+    {
+      "q": "Saralangan 1 000 000 elementli massivda yarim ochiq oraliq bilan yozilgan binary search (har doim ⌈log₂ n⌉ qadam) nechta qadam qiladi?",
+      "options": [
+        "10",
+        "1000",
+        "20",
+        "500 000"
+      ],
+      "answer": 2,
+      "why": "2^19 = 524 288 < 1 000 000 ≤ 2^20 = 1 048 576, demak ⌈log₂ 1 000 000⌉ = 20."
+    },
+    {
+      "q": "Talabalar ballari bo'yicha ikki so'rov kerak: ism bo'yicha aniq qidiruv va '80 dan 90 gacha ball olganlar soni'. Qaysi tuzilmalar juftligi mos?",
+      "options": [
+        "Ikkalasiga ham hash table: u har doim O(1)",
+        "Ism uchun hash table, oraliq uchun saralangan massiv va ikkita lower_bound: hash tartibni saqlamaydi",
+        "Ikkalasiga ham saralanmagan massiv va linear search",
+        "Ism uchun binary search, oraliq uchun hash table"
+      ],
+      "answer": 1,
+      "why": "Hash funksiya qo'shni kalitlarni turli bucket'larga sochadi, shuning uchun oraliq so'rovi butun jadvalni ko'rishni talab qiladi. Saralangan massivda oraliq ikkita O(log n) qidiruv bilan topiladi."
+    },
+    {
+      "q": "C'dagi buffer overflow (24-dars), SQL injection (39-dars) va XSS (50-dars) ning umumiy ildizi nima?",
+      "options": [
+        "Uchalasi ham faqat eski tillarda bo'ladi",
+        "Uchalasi ham sekin algoritm tufayli",
+        "Uchalasi ham parolni ochiq saqlashdan kelib chiqadi",
+        "Ishonchsiz kirish ma'lumot sifatida qolmay, kod yoki boshqaruv ma'lumotiga aylanadi; yechim - chegarani tekshirish, parametrlash, escaping"
+      ],
+      "answer": 3,
+      "why": "Har uchala holatda foydalanuvchi bergan ma'lumot dastur kodi yoki boshqaruv tuzilmasi (qaytish manzili, SQL, HTML/JS) sifatida talqin qilinadi."
+    },
+    {
+      "q": "Kursni tugatgan o'quvchi konspektlarini har hafta qayta o'qiydi va 'hammasi tanish' deb o'ylaydi, lekin masala yechishda qiynaladi. Qaysi o'zgarish eng ko'p foyda beradi?",
+      "options": [
+        "Yopiq kitob bilan o'zini tekshirish (faol eslash) va mavzularni ortib boruvchi oraliqlarda takrorlash",
+        "Konspektlarni ikki marta ko'proq o'qish",
+        "Konspektlarni rangli marker bilan belgilash",
+        "Yangi kursni boshlash va eskisini qoldirish"
+      ],
+      "answer": 0,
+      "why": "Qayta o'qish tanishlik tuyg'usini beradi, lekin eslashni mashq qildirmaydi. Practice testing va distributed practice o'rganish tadqiqotlarida eng yuqori baholangan usullar."
+    },
+    {
+      "q": "Haftasiga 5 soat ajratasiz, bitta dars va mashqi o'rtacha 2 soat oladi. 100 darslik kurs taxminan qancha vaqt oladi?",
+      "options": [
+        "10 hafta",
+        "20 hafta",
+        "40 hafta (100 / 2,5)",
+        "200 hafta"
+      ],
+      "answer": 2,
+      "why": "Haftasiga 5 / 2 = 2,5 dars, 100 / 2,5 = 40 hafta, ya'ni taxminan 9-10 oy."
+    },
+    {
+      "q": "Operatsion tizim, kompilyator yoki ma'lumotlar bazasi dvigatelini yozishni xohlaysiz. Kursning qaysi qismlari eng muhim poydevor va keyingi qadam qaysi?",
+      "options": [
+        "43-46 (HTML, CSS, JS); keyingi qadam - UI framework",
+        "53-55 (AI); keyingi qadam - LLM API'lari",
+        "36-38 (SQL); keyingi qadam - ma'lumot tahlili",
+        "1 va 3-modullar (C, xotira, pointer, kompilyatsiya, 56-darsdagi assembly); keyingi qadam - operatsion tizimlar va Go yoki Rust kabi tizim tili"
+      ],
+      "answer": 3,
+      "why": "Tizim dasturlash xotira, pointer, kompilyatsiya va mashina darajasidagi bilimga eng ko'p tayanadi."
+    }
+  ]
+}
