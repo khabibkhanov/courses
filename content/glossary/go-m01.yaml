@@ -1,0 +1,15 @@
+- term: GODEBUG
+  aliases: []
+  uz: "Runtime va standart kutubxonaning ayrim xatti-harakatlarini key=value juftliklari bilan boshqaradigan sozlama; compatibility uchun eski xatti-harakatni qaytarishga ham xizmat qiladi."
+  course: go
+  lesson: 1
+- term: Go 1 compatibility
+  aliases: []
+  uz: "Go 1 spetsifikatsiyasiga mos yozilgan manba kodi keyingi 1.x release'larda ham kompilyatsiya bo'lishi va to'g'ri ishlashi haqidagi va'da; binary, performance va toolchain uchun kafolat emas."
+  course: go
+  lesson: 1
+- term: keyed literal
+  aliases: ["unkeyed literal"]
+  uz: "Struct qiymatini maydon nomlari bilan yozish (Point{Lat: 1}). Nomsiz (unkeyed) yozuv maydon qo'shilganda kompilyatsiyadan chiqib qoladi."
+  course: go
+  lesson: 1

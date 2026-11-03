@@ -1,0 +1,524 @@
+# Kursda ishlatiladigan manbalar ro'yxati (2026-11-03 da URL'lari tekshirilgan).
+# Darslar `sources` maydonida shu kalitlarga (id) murojaat qiladi.
+# Bob/bo'lim aniqligi dars faylida `note` orqali beriladi.
+# "joriy versiya" deb belgilangan hujjatlar doimiy yangilanadi: yil - tekshirilgan yil.
+
+# --- Til va rasmiy hujjatlar ---
+go-spec:
+  title: "The Go Programming Language Specification (go1.27 versiyasi)"
+  author: Go team
+  year: 2026
+  kind: spec
+  url: https://go.dev/ref/spec
+go-mem:
+  title: "The Go Memory Model (2022-yil 6-iyun versiyasi)"
+  author: Go team
+  year: 2022
+  kind: spec
+  url: https://go.dev/ref/mem
+go-mod-ref:
+  title: "Go Modules Reference"
+  author: Go team
+  year: 2026
+  kind: spec
+  url: https://go.dev/ref/mod
+go1compat:
+  title: "Go 1 and the Future of Go Programs"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/go1compat
+go-releases:
+  title: "Release History"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/devel/release
+go125:
+  title: "Go 1.25 Release Notes"
+  author: Go team
+  year: 2025
+  kind: docs
+  url: https://go.dev/doc/go1.25
+go126:
+  title: "Go 1.26 Release Notes"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/go1.26
+go127:
+  title: "Go 1.27 Release Notes"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/go1.27
+gc-guide:
+  title: "A Guide to the Go Garbage Collector"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/gc-guide
+diagnostics:
+  title: "Diagnostics"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/diagnostics
+godebug-doc:
+  title: "Go, Backwards Compatibility, and GODEBUG"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/godebug
+toolchain-doc:
+  title: "Go Toolchains"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/toolchain
+gomod-ref:
+  title: "go.mod file reference"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/modules/gomod-ref
+mod-layout:
+  title: "Organizing a Go module"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/modules/layout
+mod-deps:
+  title: "Managing dependencies"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/modules/managing-dependencies
+workspaces-tutorial:
+  title: "Tutorial: Getting started with multi-module workspaces"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/tutorial/workspaces
+race-detector:
+  title: "Data Race Detector"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/articles/race_detector
+fuzzing:
+  title: "Go Fuzzing"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/fuzz/
+pgo-doc:
+  title: "Profile-guided optimization"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/pgo
+doc-comment:
+  title: "Go Doc Comments"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/comment
+code-review-comments:
+  title: "Go Wiki: Go Code Review Comments"
+  author: Go team
+  year: 2026
+  kind: web
+  url: https://go.dev/wiki/CodeReviewComments
+go-faq:
+  title: "Frequently Asked Questions (FAQ)"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/faq
+vuln-mgmt:
+  title: "Go Vulnerability Management"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/security/vuln/
+govulncheck-tutorial:
+  title: "Tutorial: Find and fix vulnerable dependencies with govulncheck"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.dev/doc/tutorial/govulncheck
+runtime-hacking:
+  title: "Getting to know the Go runtime (runtime/HACKING.md)"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://go.googlesource.com/go/+/refs/heads/master/src/runtime/HACKING.md
+
+# --- Kitoblar ---
+gopl:
+  title: "The Go Programming Language"
+  author: Alan A. A. Donovan, Brian W. Kernighan
+  year: 2015
+  kind: book
+  url: https://www.gopl.io/
+100go:
+  title: "100 Go Mistakes and How to Avoid Them"
+  author: Teiva Harsanyi
+  year: 2022
+  kind: book
+  url: https://100go.co/
+
+# --- Standart kutubxona (pkg.go.dev) ---
+pkg-runtime:
+  title: "Package runtime"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/runtime
+pkg-runtime-metrics:
+  title: "Package runtime/metrics"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/runtime/metrics
+pkg-runtime-trace:
+  title: "Package runtime/trace"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/runtime/trace
+pkg-sync:
+  title: "Package sync"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/sync
+pkg-atomic:
+  title: "Package sync/atomic"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/sync/atomic
+pkg-context:
+  title: "Package context"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/context
+pkg-net-http:
+  title: "Package net/http"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/net/http
+pkg-http-pprof:
+  title: "Package net/http/pprof"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/net/http/pprof
+pkg-database-sql:
+  title: "Package database/sql"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/database/sql
+pkg-slog:
+  title: "Package log/slog"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/log/slog
+pkg-errors:
+  title: "Package errors"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/errors
+pkg-iter:
+  title: "Package iter"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/iter
+pkg-slices:
+  title: "Package slices"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/slices
+pkg-maps:
+  title: "Package maps"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/maps
+pkg-cmp:
+  title: "Package cmp"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/cmp
+pkg-unique:
+  title: "Package unique"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/unique
+pkg-weak:
+  title: "Package weak"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/weak
+pkg-unsafe:
+  title: "Package unsafe"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/unsafe
+pkg-reflect:
+  title: "Package reflect"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/reflect
+pkg-testing:
+  title: "Package testing"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/testing
+pkg-synctest:
+  title: "Package testing/synctest"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/testing/synctest
+pkg-json-v2:
+  title: "Package encoding/json/v2"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/encoding/json/v2
+pkg-embed:
+  title: "Package embed"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/embed
+pkg-os-signal:
+  title: "Package os/signal"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/os/signal
+pkg-tls:
+  title: "Package crypto/tls"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/crypto/tls
+
+# --- Tashqi kutubxonalar ---
+x-errgroup:
+  title: "Package golang.org/x/sync/errgroup"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/golang.org/x/sync/errgroup
+x-singleflight:
+  title: "Package golang.org/x/sync/singleflight"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/golang.org/x/sync/singleflight
+x-semaphore:
+  title: "Package golang.org/x/sync/semaphore"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/golang.org/x/sync/semaphore
+pgx:
+  title: "Package github.com/jackc/pgx/v5"
+  author: Jack Christensen va hissadorlar
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/github.com/jackc/pgx/v5
+go-redis:
+  title: "Package github.com/redis/go-redis/v9"
+  author: Redis hissadorlari
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/github.com/redis/go-redis/v9
+grpc-go:
+  title: "Package google.golang.org/grpc"
+  author: gRPC authors
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/google.golang.org/grpc
+grpc-go-basics:
+  title: "gRPC Go: Basics tutorial"
+  author: gRPC authors
+  year: 2026
+  kind: docs
+  url: https://grpc.io/docs/languages/go/basics/
+otel-go:
+  title: "Package go.opentelemetry.io/otel"
+  author: OpenTelemetry authors
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/go.opentelemetry.io/otel
+otel-go-docs:
+  title: "OpenTelemetry: Go"
+  author: OpenTelemetry authors
+  year: 2026
+  kind: docs
+  url: https://opentelemetry.io/docs/languages/go/
+prometheus-client:
+  title: "Package github.com/prometheus/client_golang/prometheus"
+  author: Prometheus authors
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/github.com/prometheus/client_golang/prometheus
+
+# --- Go Blog (sana - nashr etilgan yil) ---
+blog-slices-intro:
+  title: "Go Slices: usage and internals"
+  author: The Go Blog
+  year: 2011
+  kind: article
+  url: https://go.dev/blog/slices-intro
+blog-slices:
+  title: "Arrays, slices (and strings): The mechanics of 'append'"
+  author: The Go Blog
+  year: 2013
+  kind: article
+  url: https://go.dev/blog/slices
+blog-maps:
+  title: "Go maps in action"
+  author: The Go Blog
+  year: 2013
+  kind: article
+  url: https://go.dev/blog/maps
+blog-swisstable:
+  title: "Faster Go maps with Swiss Tables"
+  author: The Go Blog
+  year: 2025
+  kind: article
+  url: https://go.dev/blog/swisstable
+blog-greenteagc:
+  title: "The Green Tea Garbage Collector"
+  author: The Go Blog
+  year: 2025
+  kind: article
+  url: https://go.dev/blog/greenteagc
+blog-errors-go113:
+  title: "Working with Errors in Go 1.13"
+  author: The Go Blog
+  year: 2019
+  kind: article
+  url: https://go.dev/blog/go1.13-errors
+blog-error-handling:
+  title: "Error handling and Go"
+  author: The Go Blog
+  year: 2011
+  kind: article
+  url: https://go.dev/blog/error-handling-and-go
+blog-defer-panic:
+  title: "Defer, Panic, and Recover"
+  author: The Go Blog
+  year: 2010
+  kind: article
+  url: https://go.dev/blog/defer-panic-and-recover
+blog-pprof:
+  title: "Profiling Go Programs"
+  author: The Go Blog
+  year: 2011
+  kind: article
+  url: https://go.dev/blog/pprof
+blog-intro-generics:
+  title: "An Introduction To Generics"
+  author: The Go Blog
+  year: 2022
+  kind: article
+  url: https://go.dev/blog/intro-generics
+blog-when-generics:
+  title: "When To Use Generics"
+  author: The Go Blog
+  year: 2022
+  kind: article
+  url: https://go.dev/blog/when-generics
+blog-laws-reflection:
+  title: "The Laws of Reflection"
+  author: The Go Blog
+  year: 2011
+  kind: article
+  url: https://go.dev/blog/laws-of-reflection
+blog-pgo:
+  title: "Profile-guided optimization in Go 1.21"
+  author: The Go Blog
+  year: 2023
+  kind: article
+  url: https://go.dev/blog/pgo
+blog-traces-2024:
+  title: "More powerful Go execution traces"
+  author: The Go Blog
+  year: 2024
+  kind: article
+  url: https://go.dev/blog/execution-traces-2024
+blog-flight-recorder:
+  title: "Flight Recorder in Go 1.25"
+  author: The Go Blog
+  year: 2025
+  kind: article
+  url: https://go.dev/blog/flight-recorder
+blog-osroot:
+  title: "Traversal-resistant file APIs"
+  author: The Go Blog
+  year: 2025
+  kind: article
+  url: https://go.dev/blog/osroot
+blog-cleanups-weak:
+  title: "From unique to cleanups and weak: new low-level tools for efficient memory use"
+  author: The Go Blog
+  year: 2025
+  kind: article
+  url: https://go.dev/blog/cleanups-and-weak
+blog-unique:
+  title: "New unique package"
+  author: The Go Blog
+  year: 2024
+  kind: article
+  url: https://go.dev/blog/unique
+blog-context:
+  title: "Go Concurrency Patterns: Context"
+  author: The Go Blog
+  year: 2014
+  kind: article
+  url: https://go.dev/blog/context
+blog-pipelines:
+  title: "Go Concurrency Patterns: Pipelines and cancellation"
+  author: The Go Blog
+  year: 2014
+  kind: article
+  url: https://go.dev/blog/pipelines
+blog-range-functions:
+  title: "Range Over Function Types"
+  author: The Go Blog
+  year: 2024
+  kind: article
+  url: https://go.dev/blog/range-functions
+blog-slog:
+  title: "Structured Logging with slog"
+  author: The Go Blog
+  year: 2023
+  kind: article
+  url: https://go.dev/blog/slog
+blog-synctest:
+  title: "Testing concurrent code with testing/synctest"
+  author: The Go Blog
+  year: 2025
+  kind: article
+  url: https://go.dev/blog/synctest

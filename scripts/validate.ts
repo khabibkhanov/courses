@@ -55,7 +55,7 @@ const RULES: Record<Course["format"], (l: Lesson, raw: string) => string[]> = {
     for (const s of ["Muammo", "Asosiy g'oya", "Chuqurroq", "Misol", "Qachon qo'llamaslik kerak", "Xulosa"])
       if (!hs.some((h) => h.startsWith(s))) e.push(`"## ${s}" bo'limi yo'q`);
     if (words(l.body) < 1100) e.push(`qisqa: ${words(l.body)} so'z`);
-    if (!/```(ts|tsx|js|typescript)[ \t\n]/.test(l.body)) e.push("ts/tsx kod bloki yo'q");
+    if (!/```(ts|tsx|js|typescript|go)[ \t\n]/.test(l.body)) e.push("ts/tsx/go kod bloki yo'q");
     return e;
   },
 };
