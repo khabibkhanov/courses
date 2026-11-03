@@ -1,0 +1,150 @@
+- term: G, M va P
+  aliases: []
+  uz: "Go scheduler'ning uch ob'ekti: G goroutine, M OS thread, P esa Go kodini ishga tushirish huquqi va mahalliy navbat egasi (GOMAXPROCS ta)."
+  course: go
+  lesson: 51
+- term: system stack
+  aliases: ["g0 stack"]
+  uz: "Runtime'ning o'z ishlari (scheduler, GC) uchun thread'ga bog'langan alohida stack; goroutine stack'i o'sishi mumkin bo'lgan joyda ishlamaydigan kod shu yerda bajariladi."
+  course: go
+  lesson: 51
+- term: work stealing
+  aliases: []
+  uz: "Bo'sh qolgan P boshqa P'ning mahalliy navbatidan goroutine'larning bir qismini o'zi uchun olib qo'yishi."
+  course: go
+  lesson: 52
+- term: preemption
+  aliases: ["asynchronous preemption"]
+  uz: "Scheduler uzoq ishlayotgan goroutine'ni to'xtatib, boshqasiga navbat berishi; Go 1.14 dan signalga asoslangan tarzda ham ishlaydi."
+  course: go
+  lesson: 52
+- term: sysmon
+  aliases: []
+  uz: "P talab qilmaydigan maxsus runtime thread'i: uzoq ishlayotgan goroutine'larni va tizim chaqiruvlarida band P'larni payqab, scheduler'ga aralashadi."
+  course: go
+  lesson: 52
+- term: cgroup CPU quota
+  aliases: []
+  uz: "Konteynerga cgroup orqali berilgan CPU vaqti chegarasi; u host'dagi yadrolar sonini o'zgartirmaydi, shuning uchun GOMAXPROCS'ni alohida moslash kerak bo'lishi mumkin."
+  course: go
+  lesson: 53
+- term: CPU throttling
+  aliases: []
+  uz: "Konteyner kvotasini sarflab bo'lgach, OS jarayonni keyingi davr boshigacha to'xtatib qo'yishi; kechikishning tasodifiy sakrashlariga olib keladi."
+  course: go
+  lesson: 53
+- term: size class
+  aliases: ["size class'lar"]
+  uz: "Allocator obyekt hajmini yaxlitlaydigan oldindan belgilangan o'lchamlar qatori; har bir sinf uchun o'z mspan'lari bor."
+  course: go
+  lesson: 54
+- term: mspan
+  aliases: []
+  uz: "Bir xil size class'dagi obyektlar uchun ajratilgan bir yoki bir necha sahifadan iborat xotira bo'lagi."
+  course: go
+  lesson: 54
+- term: mcache
+  aliases: []
+  uz: "Har bir P'ga biriktirilgan va qulfsiz ishlaydigan mspan keshi; kichik obyektlar odatda shu yerdan ajratiladi."
+  course: go
+  lesson: 54
+- term: tiny allocator
+  aliases: []
+  uz: "Ko'rsatkichsiz juda kichik obyektlarni bitta blokka birlashtirib ajratadigan mexanizm; bitta obyektni bo'shatish butun blok tirik qolishiga bog'liq."
+  course: go
+  lesson: 54
+- term: tri-color belgilash
+  aliases: ["Tri-color belgilash", "tri-color"]
+  uz: "GC obyektlarni oq (ko'rilmagan), kulrang (ko'rilgan, lekin ichi skanerlanmagan) va qora (to'liq skanerlangan) deb belgilab, tirik obyektlar to'plamini topishi."
+  course: go
+  lesson: 55
+- term: write barrier
+  aliases: []
+  uz: "GC belgilash fazasida ko'rsatkich yozilganda kompilyator qo'shadigan qo'shimcha kod; concurrent belgilash tirik obyektni yo'qotmasligini ta'minlaydi."
+  course: go
+  lesson: 55
+- term: mutator assist
+  aliases: []
+  uz: "Tez ajratayotgan goroutine'ning GC ishining bir qismini o'zi bajarishga majburlanishi, shunda belgilash heap maqsadiga yetmasdan tugaydi."
+  course: go
+  lesson: 55
+- term: stop-the-world
+  aliases: ["STW"]
+  uz: "Hamma goroutine'lar qisqa muddatga to'xtatiladigan GC lahzasi; har siklda ikkita: sweep termination va mark termination."
+  course: go
+  lesson: 55
+- term: GOGC
+  aliases: []
+  uz: "GC chastotasini boshqaruvchi foiz: keyingi sikl tirik heap shuncha foizga o'sganda boshlanadi (default 100); off GC'ni o'chiradi."
+  course: go
+  lesson: 56
+- term: GOMEMLIMIT
+  aliases: []
+  uz: "Runtime boshqaradigan umumiy xotira uchun yumshoq chegara; unga yaqinlashganda GC chastotasi oshadi, lekin dastur majburan to'xtatilmaydi."
+  course: go
+  lesson: 56
+- term: GC CPU limiter
+  aliases: []
+  uz: "Xotira limiti tufayli GC CPU'ning haddan tashqari katta qismini egallamasligi uchun uni cheklaydigan runtime mexanizmi."
+  course: go
+  lesson: 56
+- term: thrashing
+  aliases: []
+  uz: "Tirik heap limitga yetganda GC deyarli doim ishlab, dastur deyarli ish qila olmaydigan holat."
+  course: go
+  lesson: 56
+- term: Green Tea GC
+  aliases: []
+  uz: "Obyektlar o'rniga sahifalar bilan ishlaydigan yangi GC belgilash algoritmi: xotira lokalligini yaxshilaydi; Go 1.25 da tajriba, Go 1.26 da default."
+  course: go
+  lesson: 57
+- term: GOEXPERIMENT
+  aliases: []
+  uz: "Dastur qurilayotganda (go build) tajribaviy xususiyatlarni yoqish yoki o'chirish o'zgaruvchisi (masalan greenteagc, nogreenteagc)."
+  course: go
+  lesson: 57
+- term: inlining
+  aliases: []
+  uz: "Kompilyator chaqiriladigan funksiya tanasini chaqiruv joyiga ko'chirishi; byudjet doirasidagi kichik funksiyalar uchun ishlaydi."
+  course: go
+  lesson: 58
+- term: stack o'sishi
+  aliases: ["stack o'sishini", "stack o'sishida"]
+  uz: "Goroutine stack'i yetmaganda runtime uni ikki baravar katta yangi bo'lakka ko'chirishi; stack uchun maksimal chegara bor."
+  course: go
+  lesson: 58
+- term: finalizer
+  aliases: ["finalizer'lar"]
+  uz: "Obyekt chiqindiga aylanganda chaqiriladigan funksiya (SetFinalizer); obyektni qayta tiriltirishi mumkin, shuning uchun yangi kodda cleanup afzal."
+  course: go
+  lesson: 59
+- term: weak pointer
+  aliases: ["weak.Pointer"]
+  uz: "Obyektni tirik ushlab turmaydigan ko'rsatkich; obyekt yig'ilgach Value nil qaytaradi."
+  course: go
+  lesson: 59
+- term: KeepAlive
+  aliases: ["runtime.KeepAlive"]
+  uz: "Obyekt shu nuqtagacha tirik hisoblanishini kafolatlaydigan chaqiruv; finalizer yoki cleanup erta ishlab ketmasligi uchun kerak."
+  course: go
+  lesson: 59
+- term: resurrection
+  aliases: ["qayta tiriltirish"]
+  uz: "Finalizer obyektga yana havola saqlashi tufayli u yig'ilmay qolishi; shu sababli finalizer'li obyekt kamida ikki GC siklini talab qiladi."
+  course: go
+  lesson: 59
+- term: runtime/metrics
+  aliases: []
+  uz: "Runtime ichki o'lchovlarini yo'l:birlik kalitlari bilan beradigan paket; metrikaning turi (kind) o'zgarmaydi."
+  course: go
+  lesson: 60
+- term: schedtrace
+  aliases: []
+  uz: "GODEBUG o'zgaruvchisi: har X millisekundda scheduler holatini (P, M, G navbatlari) chop etadi."
+  course: go
+  lesson: 52
+- term: gctrace
+  aliases: []
+  uz: "GODEBUG o'zgaruvchisi: har GC siklida bitta qator (fazalar, CPU, heap hajmi) chop etadi; formati o'zgarishi mumkin."
+  course: go
+  lesson: 55

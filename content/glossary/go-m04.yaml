@@ -1,0 +1,170 @@
+- term: errors.Is
+  aliases: []
+  uz: "Xatolar daraxtida (Unwrap zanjirida) berilgan xatoga teng yoki Is metodi orqali mos keluvchi xatoni qidiradi; sentinel xatolarni o'ralganidan keyin ham taniydi."
+  course: go
+  lesson: 31
+- term: errors.As
+  aliases: []
+  uz: "Xatolar daraxtida berilgan turdagi birinchi xatoni topib, o'zgaruvchiga yozadi; ikkinchi argument bo'sh bo'lmagan ko'rsatkich bo'lishi shart, aks holda panic."
+  course: go
+  lesson: 31
+- term: errors.Join
+  aliases: []
+  uz: "Bir nechta xatoni bitta xatoga birlashtiradi; natija Unwrap() []error beradi va errors.Is hamda errors.As uni daraxt sifatida kezib chiqadi."
+  course: go
+  lesson: 31
+- term: errors.AsType
+  aliases: []
+  uz: "Go 1.26 da qo'shilgan generik errors.As varianti: nishon o'zgaruvchi o'rniga tur parametri beriladi va (qiymat, topildi) qaytadi."
+  course: go
+  lesson: 31
+- term: sentinel
+  aliases: ["sentinel error"]
+  uz: "Paket darajasida e'lon qilingan, ma'lum holatni bildiruvchi xato qiymati (masalan io.EOF); chaqiruvchi uni errors.Is bilan solishtiradi."
+  course: go
+  lesson: 32
+- term: recover
+  aliases: []
+  uz: "Faqat deferred funksiya ichida to'g'ridan-to'g'ri chaqirilganda panic'ni to'xtatib, uning qiymatini qaytaradigan o'rnatilgan funksiya."
+  course: go
+  lesson: 33
+- term: runtime.Error
+  aliases: []
+  uz: "Runtime panic'lari (nil dereference, indeks chegarasidan chiqish va boshqalar) bajaradigan interfeys; recover qilingan qiymatni xatodan ajratish uchun ishlatiladi."
+  course: go
+  lesson: 33
+- term: PanicNilError
+  aliases: []
+  uz: "Go 1.21 dan panic(nil) chaqirilganda recover qaytaradigan *runtime.PanicNilError xatosi; avval recover nil qaytarardi va panic yashirinib qolardi."
+  course: go
+  lesson: 33
+- term: WithoutCancel
+  aliases: []
+  uz: "context.WithoutCancel ota context'ning qiymatlarini saqlaydi, lekin uning bekor qilinishi va deadline'ini meros qilmaydi; so'rov tugagandan keyin ham davom etishi kerak bo'lgan ish uchun."
+  course: go
+  lesson: 34
+- term: WithCancelCause
+  aliases: ["context.Cause"]
+  uz: "Bekor qilish sababini xato sifatida saqlaydigan context; ctx.Err() doim Canceled qaytaradi, sabab esa context.Cause(ctx) bilan olinadi."
+  course: go
+  lesson: 34
+- term: lostcancel
+  aliases: []
+  uz: "go vet tekshiruvi: WithCancel, WithTimeout yoki WithDeadline qaytargan cancel funksiyasi chaqirilmasa yoki ishlatilmasa ogohlantiradi, chunki context resurslari bo'shatilmay qoladi."
+  course: go
+  lesson: 34
+- term: os.Root
+  aliases: ["os.OpenRoot"]
+  uz: "Go 1.24 dagi, fayl amallarini bitta katalog ichida cheklaydigan tip: .. va symlink orqali katalogdan chiqishga urinish xato bilan tugaydi."
+  course: go
+  lesson: 35
+- term: TOCTOU
+  aliases: []
+  uz: "Time-of-check to time-of-use poygasi: yo'l tekshirilgandan keyin, undan foydalanishdan oldin fayl tizimi o'zgarib qoladi (masalan symlink almashtiriladi) va tekshiruv eskirgan bo'ladi."
+  course: go
+  lesson: 35
+- term: zip slip
+  aliases: []
+  uz: "Arxiv ichidagi ../ bilan boshlanuvchi fayl nomi orqali chiqish katalogidan tashqariga yozish hujumi; ishonchsiz nomlarni to'g'ridan-to'g'ri yo'lga qo'shish bundan himoyalanmaydi."
+  course: go
+  lesson: 35
+- term: io.Reader
+  aliases: []
+  uz: "Bitta Read(p []byte) (n int, err error) metodli interfeys: n > 0 bilan birga xato ham qaytishi mumkin, shuning uchun avval n bayt ishlanadi, keyin xato tekshiriladi."
+  course: go
+  lesson: 36
+- term: io.Writer
+  aliases: []
+  uz: "Bitta Write(p []byte) (n int, err error) metodli interfeys; n < len(p) bo'lsa nil bo'lmagan xato qaytarishi shart."
+  course: go
+  lesson: 36
+- term: io.EOF
+  aliases: []
+  uz: "Oqim tugaganini bildiruvchi sentinel xato; Read uni o'ramasdan qaytarishi kerak, chunki chaqiruvchilar uni == bilan solishtiradi."
+  course: go
+  lesson: 36
+- term: bufio.Scanner
+  aliases: []
+  uz: "Kirishni qator yoki boshqa tokenlar bo'yicha o'qiydigan qulay interfeys; token MaxScanTokenSize (64 KiB) dan oshsa to'xtaydi va xato faqat Err() orqali ko'rinadi."
+  course: go
+  lesson: 36
+- term: bufio.Writer
+  aliases: []
+  uz: "io.Writer ustidagi bufer: kichik yozuvlarni yig'ib, kam sonli Write chaqiruviga aylantiradi; ma'lumot Flush chaqirilgandagina pastki yozuvchiga o'tadi."
+  course: go
+  lesson: 36
+- term: functional options
+  aliases: ["functional option"]
+  uz: "Konstruktor variadic Option funksiyalarini qabul qiladigan naqsh: yangi sozlama qo'shish imzoni o'zgartirmaydi, standart qiymatlar va validatsiya bir joyda bo'ladi."
+  course: go
+  lesson: 37
+- term: import cycle
+  aliases: []
+  uz: "Ikki yoki undan ortiq paket bir-birini aylana bo'ylab import qilishi; Go kompilyatori buni xato deb rad etadi, odatda dizayn signali."
+  course: go
+  lesson: 38
+- term: MVS
+  aliases: ["minimal version selection", "Minimal version selection"]
+  uz: "Go modullarining versiya tanlash algoritmi: modul grafida har modul uchun uchragan eng yuqori talab qilingan versiya tanlanadi; yangi versiya chiqishi natijani o'zgartirmaydi."
+  course: go
+  lesson: 39
+- term: build list
+  aliases: []
+  uz: "MVS natijasi: buildda ishlatiladigan modul versiyalari ro'yxati; lock faylda saqlanmaydi va go list -m all bilan ko'rsatiladi."
+  course: go
+  lesson: 39
+- term: go.sum
+  aliases: []
+  uz: "Modul va uning go.mod faylining kriptografik xeshlarini saqlaydigan fayl; yuklangan kod o'zgarmaganini tekshirish uchun, versiya tanlash uchun emas."
+  course: go
+  lesson: 39
+- term: pseudo-version
+  aliases: ["pseudo-versions"]
+  uz: "Tag qo'yilmagan commit uchun v0.0.0-20191109021931-daa7c04131f5 shaklidagi versiya: bazaviy versiya, UTC vaqt tamg'asi va commit hash prefiksi."
+  course: go
+  lesson: 39
+- term: GOPRIVATE
+  aliases: []
+  uz: "Private modul yo'l prefikslarining glob ro'yxati; GONOPROXY va GONOSUMDB uchun standart qiymat bo'lib, bu modullar proksi va umumiy checksum DB ga yuborilmaydi."
+  course: go
+  lesson: 39
+- term: GOPROXY
+  aliases: []
+  uz: "Modullar yuklanadigan manzillar ro'yxati; standarti https://proxy.golang.org,direct, ya'ni avval Google mirrori, topilmasa to'g'ridan-to'g'ri repozitoriya."
+  course: go
+  lesson: 39
+- term: go.work
+  aliases: ["workspace"]
+  uz: "Bir nechta lokal modulni asosiy modul sifatida birga build qilish uchun fayl (go work init, go work use); go.mod fayllarini o'zgartirmaydi."
+  course: go
+  lesson: 39
+- term: doc comment
+  aliases: ["doc comments"]
+  uz: "Top-level e'londan oldin turuvchi izoh, go doc va pkg.go.dev hujjatga aylantiradi; nom bilan boshlanadigan to'liq gap bo'lishi kerak, paket izohi esa Package bilan boshlanadi."
+  course: go
+  lesson: 40
+- term: gofmt
+  aliases: []
+  uz: "Go kodini yagona kanonik shaklga keltiruvchi formatlovchi; doc izohlardagi ro'yxat va kod bloklarini ham qayta formatlaydi."
+  course: go
+  lesson: 40
+- term: go vet
+  aliases: []
+  uz: "Kompilyatsiya bo'ladigan, lekin shubhali konstruksiyalarni (format turi mos emasligi, lock nusxalash, buzuq struct teg) topuvchi statik tahlil vositasi."
+  course: go
+  lesson: 40
+- term: modernizer
+  aliases: ["modernizers", "go fix"]
+  uz: "Go 1.26 dagi go fix ichidagi analyzer: kodni yangi til va kutubxona idiomalariga xulqni o'zgartirmasdan avtomatik yangilaydi; //go:fix inline bilan API migratsiyasi ham avtomatlashadi."
+  course: go
+  lesson: 40
+- term: copylocks
+  aliases: []
+  uz: "go vet tekshiruvi: sync.Mutex kabi lock saqlovchi qiymatni nusxalash (qiymat bo'yicha uzatish) shubhali ekanini xabar qiladi."
+  course: go
+  lesson: 40
+- term: stdversion
+  aliases: []
+  uz: "Go 1.27 dan go test sukut bo'yicha ishga tushiradigan vet tekshiruvi: go.mod dagi go versiyasi uchun juda yangi standart kutubxona simvollarini topadi."
+  course: go
+  lesson: 40

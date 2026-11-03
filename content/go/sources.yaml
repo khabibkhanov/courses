@@ -522,3 +522,77 @@ blog-synctest:
   year: 2025
   kind: article
   url: https://go.dev/blog/synctest
+
+# --- Tekshiruv bosqichida qo'shilgan manbalar ---
+pkg-io:
+  title: "Package io"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/io
+pkg-bufio:
+  title: "Package bufio"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/bufio
+pkg-cmd-go:
+  title: "cmd/go"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/cmd/go
+blog-go-fix-inliner:
+  title: "//go:fix inline and the source-level inliner"
+  author: Alan Donovan
+  year: 2026
+  kind: article
+  url: https://go.dev/blog/inliner
+pkg-cgo:
+  title: "cmd/cgo"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/cmd/cgo
+pkg-x509:
+  title: "Package crypto/x509"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/crypto/x509
+rfc-9457:
+  title: "RFC 9457: Problem Details for HTTP APIs"
+  author: IETF
+  year: 2023
+  kind: spec
+  url: https://www.rfc-editor.org/rfc/rfc9457.html
+grpc-http2-protocol:
+  title: "gRPC over HTTP2"
+  author: gRPC team
+  year: 2026
+  kind: spec
+  url: https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md
+protobuf-encoding:
+  title: "Protocol Buffers: Encoding"
+  author: Protocol Buffers team
+  year: 2026
+  kind: docs
+  url: https://protobuf.dev/programming-guides/encoding/
+pkg-os:
+  title: "Package os"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/os
+go121:
+  title: "Go 1.21 Release Notes"
+  author: Go team
+  year: 2023
+  kind: docs
+  url: https://go.dev/doc/go1.21
+pkg-maphash:
+  title: "Package hash/maphash"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/hash/maphash

@@ -1,0 +1,135 @@
+- term: dead code elimination
+  aliases: []
+  uz: "Compiler natijasi ishlatilmaydigan hisobni olib tashlaydi; benchmark'da natija saqlanmasa o'lchanayotgan kod butunlay yo'qolib, soxta, nolga yaqin vaqt chiqadi."
+  course: go
+  lesson: 61
+- term: benchstat
+  aliases: []
+  uz: "Bir necha -count o'lchovini statistik solishtiradigan vosita: farq haqiqiymi yoki shovqinmi, shuni ko'rsatadi."
+  course: go
+  lesson: 61
+- term: B.Loop
+  aliases: []
+  uz: "Go 1.24 da qo'shilgan benchmark tsikli: setup va cleanup'ni o'lchovdan chiqaradi va tsikl ichidagi chaqiruvlarni compiler olib tashlamasligini ta'minlaydi."
+  course: go
+  lesson: 61
+- term: pprof.Do
+  aliases: []
+  uz: "Berilgan funksiya ishlayotgan vaqtda goroutine'ga profil label'larini biriktiradi, shunda CPU profilini label bo'yicha (masalan, endpoint) bo'lib ko'rish mumkin."
+  course: go
+  lesson: 62
+- term: mutex profili
+  aliases: []
+  uz: "Mutex'ni kutib turgan goroutine'larning umumiy kutish vaqtini, uni ushlab turgan kod joylari bo'yicha ko'rsatadigan profil; sampling darajasi qo'lda yoqilmaguncha o'chiq."
+  course: go
+  lesson: 63
+- term: block profili
+  aliases: []
+  uz: "Goroutine'lar kanal, mutex yoki sync primitivida bloklangan vaqtni ko'rsatadigan profil; standart holatda o'chiq va runtime.SetBlockProfileRate bilan yoqiladi."
+  course: go
+  lesson: 63
+- term: heap profili
+  aliases: []
+  uz: "Xotira ajratishlarini ajratgan kod joylari bo'yicha ko'rsatadigan namunaviy profil; inuse_* hozir tirik xotirani, alloc_* esa umumiy ajratilganini bildiradi."
+  course: go
+  lesson: 63
+- term: inuse_space
+  aliases: []
+  uz: "Heap profilidagi ko'rinish: profil olingan paytda hali tirik (GC yig'maganlari) obyektlar egallagan bayt."
+  course: go
+  lesson: 63
+- term: alloc_space
+  aliases: []
+  uz: "Heap profilidagi ko'rinish: dastur boshidan beri ajratilgan jami bayt, tirik yoki yo'qligidan qat'i nazar; alloc bosimini topishga yaraydi."
+  course: go
+  lesson: 63
+- term: MemProfileRate
+  aliases: []
+  uz: "Heap profili namuna olish chastotasi: o'rtacha shuncha bayt ajratilganda bitta namuna olinadi (standart qiymat 512 KiB)."
+  course: go
+  lesson: 63
+- term: execution trace
+  aliases: []
+  uz: "runtime/trace bilan yozilgan hodisalar ketma-ketligi (scheduler, GC, syscall, goroutine holatlari); CPU profil ko'rsata olmaydigan kutish va kechikishlarni vaqt o'qida ochadi."
+  course: go
+  lesson: 64
+- term: FlightRecorder
+  aliases: []
+  uz: "Go 1.25 da qo'shilgan runtime/trace vositasi: trace'ni doimo xotirada oxirgi bir necha soniya bilan saqlaydi va muammo yuz berganda faqat shu oynani diskka yozadi."
+  course: go
+  lesson: 64
+- term: false sharing
+  aliases: []
+  uz: "Turli yadrolardagi goroutine'lar bir-biriga bog'liq bo'lmagan o'zgaruvchilarni yozadi, lekin ular bitta cache line'da turgani uchun yadrolar line'ni bir-biridan tortib oladi va ish sekinlashadi."
+  course: go
+  lesson: 66
+- term: cache line
+  aliases: []
+  uz: "Protsessor keshi bilan xotira o'rtasida bir yo'la ko'chiriladigan blok (amd64 da odatda 64 bayt); ma'lumotlar joylashuvi shu blok bo'yicha baholanadi."
+  course: go
+  lesson: 66
+- term: AoS
+  aliases: ["array of structs"]
+  uz: "Array of structs: yozuvlar massivi, har bir yozuvning barcha maydonlari ketma-ket turadi; butun yozuv kerak bo'lganda qulay."
+  course: go
+  lesson: 66
+- term: SoA
+  aliases: []
+  uz: "Structure of arrays: har bir maydon alohida massivda saqlanadi; faqat bitta maydon bo'yicha tsiklda kesh yaxshi ishlaydi."
+  course: go
+  lesson: 66
+- term: PGO
+  aliases: ["profile-guided optimization"]
+  uz: "Profile-guided optimization: compiler production CPU profilidan issiq funksiya va chaqiruv joylarini bilib, inlining va devirtualization'ni shularga qaratadi."
+  course: go
+  lesson: 67
+- term: devirtualization
+  aliases: []
+  uz: "Interface orqali chaqiruvni konkret tipga to'g'ridan-to'g'ri chaqiruvga aylantirish; PGO'da profil eng ko'p uchraydigan tipni ko'rsatganda qo'llanadi."
+  course: go
+  lesson: 67
+- term: default.pgo
+  aliases: []
+  uz: "Main paket papkasidagi pprof CPU profili; go build uni avtomatik topib, PGO bilan quradi (-pgo=auto)."
+  course: go
+  lesson: 67
+- term: RawMessage
+  aliases: ["json.RawMessage"]
+  uz: "JSON bo'lagini dekodlamasdan xom bayt sifatida saqlaydigan tip; masalan, tur maydoniga qarab payload'ni keyin kerakli tipga o'qish uchun."
+  course: go
+  lesson: 68
+- term: UseNumber
+  aliases: []
+  uz: "Decoder sozlamasi: any ichidagi JSON raqamlari float64 o'rniga json.Number (satr ko'rinishida) bo'lib qoladi va aniqlik yo'qolmaydi."
+  course: go
+  lesson: 68
+- term: omitzero
+  aliases: []
+  uz: "Go 1.24 dagi JSON struct tegi opsiyasi: maydon nol qiymatda (yoki IsZero() true qaytarsa) chiqarilmaydi; omitempty ishlamaydigan time.Time kabi struct'lar uchun."
+  course: go
+  lesson: 68
+- term: jsontext
+  aliases: []
+  uz: "encoding/json/jsontext paketi: JSON'ni sintaksis darajasida (token va qiymat ketma-ketligi sifatida) o'qiydi va yozadi; json/v2 ning quyi qatlami."
+  course: go
+  lesson: 68
+- term: json/v2
+  aliases: []
+  uz: "encoding/json ning yangi tahriri: qattiqroq standartlar (yaroqsiz UTF-8 va takroriy nomni rad etadi) va Options bilan sozlash; Go 1.25 da tajribaviy, Go 1.27 da v1 uning ustiga qurilgan."
+  course: go
+  lesson: 68
+- term: unsafe.String
+  aliases: ["unsafe.Slice"]
+  uz: "Baytlarni nusxalamasdan satr (yoki slice) hosil qiladi; foyda alloc yo'qolishida, xavf esa baytlar satr yashar ekan o'zgartirilmasligi shartida."
+  course: go
+  lesson: 69
+- term: runtime.Pinner
+  aliases: []
+  uz: "Go obyektini GC va ko'chishdan mahkamlaydi, shunda uning ko'rsatkichini cgo orqali C kodiga qoidaga zid bo'lmay uzatish mumkin."
+  course: go
+  lesson: 69
+- term: Amdahl qonuni
+  aliases: []
+  uz: "Funksiya umumiy vaqtning p ulushini olsa, uni qanchalik tezlashtirmang, umumiy tezlashish 1/(1-p) dan oshmaydi."
+  course: go
+  lesson: 70
