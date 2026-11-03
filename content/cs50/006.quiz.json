@@ -40,7 +40,7 @@
       "q": "int n = -3.99; qatoridan keyin n nimaga teng?",
       "options": ["-4", "Kompilyatsiya xatosi", "4", "-3"],
       "answer": 3,
-      "why": "Kasrdan butunga o'tkazish nol tomonga qirqadi, yaxlitlamaydi va pastga ham yaxlitlamaydi. Natija -3, xato yoki ogohlantirishsiz."
+      "why": "Kasrdan butunga o'tkazish nol tomonga qirqadi, yaxlitlamaydi va pastga ham yaxlitlamaydi. Natija -3. Kompilyatsiya xatosi yo'q: clang literal uchun faqat -Wliteral-conversion ogohlantirishini beradi."
     },
     {
       "q": "FLT_EPSILON nimani bildiradi va float uchun u qanday hisoblanadi?",
