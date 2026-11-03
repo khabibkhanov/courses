@@ -282,7 +282,7 @@ Dastur o'zi `1` chiqaradi (Go 1.24.7), ya'ni xato ishlash vaqtida ko'rinmaydi: `
 
 ### nil pointer va metod chaqiruvi: panic qachon bo'ladi
 
-Spetsifikatsiyaga ko'ra value receiver'li metodga pointer orqali murojaat pointer'ni avtomatik dereference qiladi: `pt.Mv` bu `(*pt).Mv`. Method value esa receiver'ni baholash paytida saqlaydi. Demak `pt` nil bo'lsa va metod value receiver'li bo'lsa, panic metod chaqirilganda emas, **method value yaratilganda** yuz beradi, chunki `*pt` shu yerda baholanadi. Pointer receiver'li metod bilan esa nil bog'lash o'zi xatosiz (nil manzil saqlanadi; shu holatda `p.Km` bog'landi va tana nil'ni tekshirgani uchun `g()` panicsiz ishladi), panic faqat metod tanasi nil'ni dereference qilganda. Method expression `(*Vehicle).Total` nil pointer bilan chaqirilganda ham panic beradi, lekin matni boshqacha:
+Spetsifikatsiyaga ko'ra value receiver'li metodga pointer orqali murojaat pointer'ni avtomatik dereference qiladi: `pt.Mv` bu `(*pt).Mv`. Method value esa receiver'ni baholash paytida saqlaydi. Demak `pt` nil bo'lsa va metod value receiver'li bo'lsa, panic metod chaqirilganda emas, **method value yaratilganda** yuz beradi, chunki `*pt` shu yerda baholanadi. Pointer receiver'li metod bilan esa nil bog'lash o'zi xatosiz (nil manzil saqlanadi; masalan, tanasi `if v == nil` ni tekshiradigan `func (v *V) Km() int` uchun `g := p.Km` va `g()` panicsiz ishlaydi, Go 1.24.7 da tekshirildi), panic faqat metod tanasi nil'ni dereference qilganda. Method expression `(*Vehicle).Total` nil pointer bilan chaqirilganda ham panic beradi, lekin matni boshqacha:
 
 ```go run
 package main
