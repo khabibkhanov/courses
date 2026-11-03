@@ -177,17 +177,17 @@ Modullar bor edi, lekin ular hech narsani yashirmagan edi. Ular faqat kodni ucht
 
 ## Asosiy g'oya
 
-Parnasning "On the Criteria To Be Used in Decomposing Systems into Modules" maqolasi bitta savolni qo'yadi: tizimni modullarga qanday mezon bo'yicha bo'lish kerak? Javob uchun u kichik tizimni ikki xil usulda modullarga bo'ladi va ularni o'zgarishlarga chidamliligi bo'yicha solishtiradi.
+Parnasning "On the Criteria To Be Used in Decomposing Systems into Modules" maqolasi bitta savolni qo'yadi: tizimni modullarga qanday mezon bo'yicha bo'lish kerak? Javob uchun u kichik tizimni ikki xil usulda modullarga bo'ladi va ularni o'zgarishlarga chidamliligi, mustaqil ishlab chiqish va tushunarlilik bo'yicha solishtiradi.
 
 ### KWIC misoli
 
-Tizim - KWIC (Key Word In Context) indeksi. Kirish - satrlar to'plami, har bir satr so'zlardan, so'z belgilardan iborat. Har bir satrni "aylana siljitish" mumkin: birinchi so'zni olib, oxiriga qo'yish va buni takrorlash. Tizim barcha satrlarning barcha aylana siljishlarini alifbo tartibida chiqaradi. Parnas ta'kidlaydiki, bu tizim kichik: yaxshi dasturchi uni bir-ikki haftada yozadi. Misolning qiymati aynan shunda: modullashtirish farqi kichik tizimda ham ko'rinadi.
+Tizim - KWIC (Key Word In Context) indeksi. Kirish - satrlar to'plami, har bir satr so'zlardan, so'z belgilardan iborat. Har bir satrni "aylana siljitish" mumkin: birinchi so'zni olib, oxiriga qo'yish va buni takrorlash. Tizim barcha satrlarning barcha aylana siljishlarini alifbo tartibida chiqaradi. Parnas ta'kidlaydiki, bu tizim kichik: yaxshi dasturchi uni bir-ikki haftada yozadi. Shuning uchun Parnas uni katta loyiha deb hisoblab ko'rishni so'raydi: modullashtirish farqi kichik tizimda ham ko'rinadi.
 
 **Birinchi modullashtirish** an'anaviy, flowchart bo'yicha: Input (satrlarni o'qib xotiraga joylaydi), Circular Shift (siljishlar indeksini tayyorlaydi), Alphabetizing (indeksni tartiblaydi), Output (natijani chop etadi) va Master Control (ketma-ketlikni boshqaradi). Har bir modul jarayonning bir bosqichi. Modullar orasidagi interfeys - xotiradagi umumiy ma'lumot formatlari: satrlar qanday joylashgani, siljishlar indeksi qanday tuzilgani.
 
 **Ikkinchi modullashtirish** boshqacha: Line Storage (satrlar, so'zlar va belgilarga funksiyalar orqali kirish beradi, ularni qanday saqlashni yashiradi), Input, Circular Shifter (siljishlarni xuddi alohida satrlardek beradi, ularni haqiqatan saqlash yoki hisoblashni yashiradi), Alphabetizer (tartiblangan tartibni funksiya orqali beradi, qachon va qanday tartiblashni yashiradi), Output va Master Control.
 
-Ikkala variant ham ishlaydi va hatto bir xil kodga ega bo'lishi mumkin. Farq o'zgarishda ko'rinadi. Parnas bir nechta ehtimoliy o'zgarishni sanaydi: kirish formati; barcha satrlarni xotirada saqlash qarori; belgilarni mashina so'ziga zich joylash; siljishlarni saqlash o'rniga indeks bilan ifodalash; alifbo tartibini bir marta to'liq qilish yoki talab bo'yicha qisman qilish. Birinchi variantda bularning ko'pi deyarli barcha modullarga ta'sir qiladi, chunki ular umumiy ma'lumot formatini bevosita ishlatadi. Ikkinchisida har bir o'zgarish bitta modul ichida qoladi.
+Ikkala variant ham ishlaydi va hatto bir xil kodga ega bo'lishi mumkin. Farq o'zgarishda ko'rinadi. Parnas bir nechta ehtimoliy o'zgarishni sanaydi: kirish formati; barcha satrlarni xotirada saqlash qarori; belgilarni mashina so'ziga zich joylash; siljishlarni saqlash o'rniga indeks bilan ifodalash; alifbo tartibini bir marta to'liq qilish yoki talab bo'yicha qisman qilish. Kirish formatini o'zgartirish ikkala variantda ham bitta modulga tegadi. Lekin satrlarni xotirada saqlash qarori va belgilarni zich joylash birinchi variantda har bir modulga ta'sir qiladi, siljishlarni indeks bilan ifodalash esa alifbolovchi va chiqish modullariga ham tegadi, chunki ular umumiy ma'lumot formatini bevosita ishlatadi. Ikkinchisida bu o'zgarishlarning har biri bitta modul ichida qoladi.
 
 ### Mezon
 
