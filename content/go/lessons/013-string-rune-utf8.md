@@ -156,7 +156,7 @@ task:
 
 Telemetriya servisi turli manbalardan matn oladi: qurilma nomlari, marshrut nomlari, haydovchi izohlari. O'zbekiston bozorida bu matn lotin va kirill alifbosida, ba'zan emoji bilan keladi. Node.js'dan kelgan dasturchi `str.length` va `str[i]` ga o'rganib qolgan va ular UTF-16 kod birliklari ustida ishlaydi; Go'da esa xuddi shu ifodalar boshqacha ma'noga ega. `len("Қашқадарё")` 9 emas, 18 qaytaradi; `s[:3]` kirill harfni o'rtasidan kesadi.
 
-Natijada production'da uchta muammo uchraydi. Birinchisi: ekran uchun nomni `name[:20]` bilan qisqartirish yaroqsiz UTF-8 beradi, `encoding/json` yaroqsiz baytlarni jimgina U+FFFD ga almashtiradi (`json.Marshal` hujjati), ya'ni nom buziladi va xato ham chiqmaydi; UTF-8 kodlashdagi PostgreSQL esa bunday ketma-ketlikni rad etadi. Ikkinchisi: katta satrdan olingan kichik bo'lak butun satrni xotirada ushlab turadi. Uchinchisi: `+=` bilan satr yig'ish ming marta nusxalash degani. Bu darsda satrning tilda va xotirada tuzilishini ko'ramiz.
+Natijada production'da uchta muammo uchraydi. Birinchisi: ekran uchun nomni `name[:20]` bilan qisqartirish yaroqsiz UTF-8 beradi, `encoding/json` yaroqsiz baytlarni jimgina U+FFFD ga almashtiradi (`json.Marshal` hujjati), ya'ni nom buziladi va xato ham chiqmaydi; UTF-8 kodlashdagi PostgreSQL esa bunday ketma-ketlikni odatda rad etadi (bu darsda tekshirilmagan). Ikkinchisi: katta satrdan olingan kichik bo'lak butun satrni xotirada ushlab turadi. Uchinchisi: `+=` bilan satr yig'ish ming marta nusxalash degani. Bu darsda satrning tilda va xotirada tuzilishini ko'ramiz.
 
 ## Asosiy g'oya
 

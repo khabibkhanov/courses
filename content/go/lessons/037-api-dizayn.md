@@ -10,7 +10,7 @@ sources:
   - id: code-review-comments
     note: "Interfaces (interfeys iste'molchi paketda, implementatsiya konkret tip qaytaradi), Contexts (ctx birinchi parametr, struct maydoni emas), Package Names (util, common kabi ma'nosiz nomlardan qoching)"
   - id: go1compat
-    note: "Struct literals va Methods bo'limlari: keyed literal, eksport struct'ga maydon qo'shish, embedding bilan metod to'qnashuvi"
+    note: "Expectations bo'limidagi 'Struct literals' va 'Methods' bandlari: keyed literal, eksport struct'ga maydon qo'shish, embedding bilan metod to'qnashuvi"
 quiz:
   - q: "Kutubxona v1 da `type Point struct{ Lat, Lon float64 }` e'lon qildi. Mijoz kodi `lib.Point{55.75, 37.61}` yozgan. Kutubxona v1.1 da `Alt float64` maydonini qo'shsa nima bo'ladi?"
     options:

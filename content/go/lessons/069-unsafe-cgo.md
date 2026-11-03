@@ -7,6 +7,8 @@ duration: 35
 sources:
   - id: pkg-unsafe
     note: "String, StringData, Slice, SliceData tavsiflari: bayt'lar o'zgartirilmasligi sharti, nil va manfiy uzunlik holatlarida panic"
+  - id: go126
+    note: "Runtime bo'limi, Faster cgo calls: cgo chaqiruvlarining boshlang'ich runtime overhead'i ~30% kamaygan"
   - id: 100go
     note: "Ro'yxatdagi xatolar kontekstida: optimallashtirishdan oldin o'lchash; unsafe va cgo haqida alohida bob sifatida emas"
 quiz:
@@ -38,7 +40,7 @@ quiz:
     options:
       - "C funksiya nomi noto'g'ri"
       - "Struct juda katta"
-      - "C'ga uzatilayotgan Go xotirasi ichida boshqa Go xotirasiga ko'rsatkich bor; cgo qoidasi buni (mahkamlanmagan holda) taqiqlaydi, chunki Go obyektlari stack ko'chishida joyini o'zgartirishi, GC esa C ko'rsatkichlarini ko'rmasdan yig'ishi mumkin"
+      - "C'ga uzatilayotgan Go xotirasi ichida boshqa Go xotirasiga ko'rsatkich bor; cgo qoidasi buni (mahkamlanmagan holda) taqiqlaydi, chunki cmd/cgo hujjatiga ko'ra garbage collector Go xotirasiga har bir ko'rsatkich joyini bilishi kerak"
       - "Go 1.24 da cgo o'chirilgan"
     answer: 2
     explain: "Runtime cgo chaqiruvida argumentlarni tekshiradi (standart tekshiruv yoqilgan). Go pointer ichidagi Go pointer'ni C'ga o'tkazish taqiqlangan; kerak bo'lsa runtime.Pinner yoki C xotirasi ishlatiladi. Panic'ni shu mashinada ko'rdik."
@@ -192,11 +194,11 @@ Map kalitlari "o'zgarmas" deb faraz qilinadi: map hash'ni kalit asosida hisoblab
 
 ### cgo chaqiruvi nega qimmat
 
-Go goroutine'lari kichik, o'sadigan stack'da ishlaydi; C kodi esa katta, o'sib bo'lmaydigan thread stack'ni kutadi. cgo chaqiruvi paytida runtime goroutine'ni "C kodida" holatiga o'tkazadi, thread stack'ga o'tadi va qaytganda holatni tiklaydi; scheduler uchun ham bu chaqiruv bloklovchi syscall'ga o'xshash hisoblanadi. Natijada ichki ishi nol bo'lgan C funksiya ham Go funksiyasidan ancha sekin. Aniq raqam pastda o'lchangan; versiyalar o'rtasida narx o'zgarib turadi, shuning uchun o'z Go versiyangizda qayta o'lchang. (Go 1.26 release notes'ini bu darsni yozishda ocholmadim, shuning uchun 1.26 da cgo narxi o'zgargan-o'zgarmagani haqida da'vo bermayman.)
+Go goroutine'lari kichik, o'sadigan stack'da ishlaydi; C kodi esa katta, o'sib bo'lmaydigan thread stack'ni kutadi. cgo chaqiruvi paytida runtime goroutine'ni "C kodida" holatiga o'tkazadi, thread stack'ga o'tadi va qaytganda holatni tiklaydi; scheduler uchun ham bu chaqiruv bloklovchi syscall'ga o'xshash hisoblanadi. Natijada ichki ishi nol bo'lgan C funksiya ham Go funksiyasidan ancha sekin. Aniq raqam pastda o'lchangan (Go 1.24.7); versiyalar o'rtasida narx o'zgarib turadi. Go 1.26 release notes'ining Runtime bo'limiga ko'ra cgo chaqiruvlarining boshlang'ich runtime overhead'i ~30% kamaygan, shuning uchun quyidagi 60.7 ns ni Go 1.26+ ga ko'chirmang va o'z Go versiyangizda qayta o'lchang. Notes qaysi mashinada o'lchangani va 60 ns dan nechaga tushganini yozmaydi, shuning uchun men yangi raqam bermayman.
 
 ### Go pointer qoidalari
 
-C ga Go xotirasiga ko'rsatkich uzatish mumkin, lekin shu xotira ichida boshqa Go xotirasiga ko'rsatkich bo'lmasligi kerak (mahkamlanmagan holda). Sabab: Go stack o'sganda obyektlar ko'chadi, GC esa C ko'rsatkichlarini ko'rmay obyektni yig'ishi mumkin; C tomoni bundan bexabar. Runtime argumentlarni tekshiradi va qoida buzilsa panic beradi. Pastdagi misolda aynan shu panic real chiqishda ko'rinadi. Chiqish yo'llari: C xotirasini (`C.malloc`) ishlatish, ma'lumotni tekis bo'lakka joylash yoki `runtime.Pinner` bilan mahkamlash (bu qoidalar cmd/cgo hujjatida; u bu darsning manbalar ro'yxatida yo'q, shuning uchun tafsilotlarni o'sha hujjatdan o'qing).
+C ga Go xotirasiga ko'rsatkich uzatish mumkin, lekin shu xotira ichida boshqa Go xotirasiga ko'rsatkich bo'lmasligi kerak (mahkamlanmagan holda). Sabab (cmd/cgo hujjati): garbage collector Go xotirasiga har bir ko'rsatkich joyini bilishi kerak, C kodi esa ularni ko'rmaydi. Hujjatga ko'ra argument sifatida uzatilgan Go xotirasi chaqiruv davomida avtomatik mahkamlanadi; ichidagi ko'rsatkichlar ham mahkamlangan xotiraga ishora qilishi shart. Runtime argumentlarni tekshiradi (standart `GODEBUG=cgocheck=1`) va qoida buzilsa panic beradi. Pastdagi misolda aynan shu panic real chiqishda ko'rinadi. Chiqish yo'llari: C xotirasini (`C.malloc`) ishlatish, ma'lumotni tekis bo'lakka joylash yoki `runtime.Pinner` bilan mahkamlash (bu qoidalar pkg.go.dev/cmd/cgo hujjatining "Passing pointers" bo'limida; u bu darsning manbalar ro'yxatida yo'q, shuning uchun tafsilotlarni o'sha hujjatdan o'qing).
 
 ## Misol: nusxasiz konvertatsiya, qoida buzilishi va cgo narxi
 

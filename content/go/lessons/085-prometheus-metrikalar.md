@@ -27,7 +27,7 @@ quiz:
       - "Prometheus bir xil prefikslarni avtomatik birlashtiradi"
       - "Har yangi qurilma yangi time series hosil qiladi; seriyalar soni cheksiz o'sib, xotira va Prometheus narxi portlaydi"
     answer: 3
-    explain: "Har noyob label kombinatsiyasi alohida time series. Cheksiz qiymatli label (user id, device id, xom yo'l) kardinallik portlashiga olib keladi, bu aniq o'lchangan: misolimizda 1000 qurilma + 50 begona yo'l = 1050 seriya, namuna (`r.Pattern`) bilan esa 2 ta. Qurilma bo'yicha tahlil kerak bo'lsa, log yoki trace ishlating."
+    explain: "Har noyob label kombinatsiyasi alohida time series. Cheksiz qiymatli label (user id, device id, xom yo'l) kardinallik portlashiga olib keladi, masalan, 1000 qurilma va 50 begona yo'l 1050 ta `route` qiymati beradi (bu hisob, o'lchov emas), namuna (`r.Pattern`) bilan esa qurilmalar sonidan qat'i nazar bitta qiymat qoladi. Qurilma bo'yicha tahlil kerak bo'lsa, log yoki trace ishlating."
   - q: "Histogram `le` bucket'lari kumulyativmi?"
     options:
       - "Yo'q, har bucket faqat o'z oralig'idagi kuzatuvlar sonini beradi"
@@ -222,7 +222,7 @@ Label metrikani kesimlarga ajratadi: `route`, `method`, `code`. Har noyob label 
 
 ### Route yorlig'i: ServeMux namunasi
 
-Middleware'da `route` ni `r.URL.Path` dan olish klassik xato: `/devices/T-101` va `/devices/T-102` ikkita seriya. Go 1.22 dan `ServeMux` namunalarda wildcard (`GET /devices/{id}`) qo'llaydi, Go 1.23 dan esa mos kelgan namunani `Request.Pattern` maydoniga yozadi (mos kelmasa bo'sh). Shu qiymatni label sifatida ishlatish seriyalarni cheklaydi. `Pattern` handler ishga tushgandan keyin to'ldiriladi, shuning uchun `next.ServeHTTP` dan keyin o'qiladi. Mos namuna bo'lmagan so'rovlar (skanerlar, noto'g'ri URL) uchun bo'sh qiymat doimiy yorliqqa almashtiriladi.
+Middleware'da `route` ni `r.URL.Path` dan olish klassik xato: `/devices/T-101` va `/devices/T-102` ikkita seriya. Go 1.22 dan `ServeMux` namunalarda wildcard (`GET /devices/{id}`) qo'llaydi, Go 1.23 dan esa mos kelgan namunani `Request.Pattern` maydoniga yozadi (mos kelmasa bo'sh). Shu qiymatni label sifatida ishlatish seriyalarni cheklaydi. `Pattern` handler ishga tushgandan keyin to'ldiriladi, shuning uchun `next.ServeHTTP` dan keyin o'qiladi. Oradagi middleware so'rovni nusxalasa (masalan `r.WithContext`), tashqi middleware'dagi `r.Pattern` bo'sh qoladi (Go 1.24.7 da sinadik); 100-darsdagi `RouteCapture` shu uchun kerak. Mos namuna bo'lmagan so'rovlar (skanerlar, noto'g'ri URL) uchun bo'sh qiymat doimiy yorliqqa almashtiriladi.
 
 ### Histogram bucket'larini tanlash
 
@@ -399,7 +399,7 @@ Nimalar ko'rinadi:
 
 ### Client_golang bilan
 
-Yuqoridagi mantiq `client_golang` da tayyor. Tashqi modul sandbox'da yuklanmagani uchun u kompilyatsiya qilinmagan: faqat sintaksis `gofmt` bilan tekshirilgan, `client_golang` imzolari esa hujjat sahifasi bilan avtor tomonidan qo'lda solishtirilmagan (veb tekshiruvi bu sessiyada ishlamadi). Uni loyihangizda `go build` bilan tekshirib oling.
+Yuqoridagi mantiq `client_golang` da tayyor. Tashqi modul sandbox'da yuklanmagani uchun u kompilyatsiya qilinmagan: faqat sintaksis `gofmt` bilan tekshirilgan, `NewRegistry`, `NewCounterVec`, `NewHistogramVec`, `NewGauge`, `DefBuckets`, `collectors.NewGoCollector`, `collectors.NewProcessCollector` va `promhttp.HandlerFor` imzolari pkg.go.dev hujjatidagi bilan solishtirildi (2026-11-03). Baribir uni loyihangizda `go build` bilan tekshirib oling.
 
 ```go
 package main
@@ -560,7 +560,7 @@ Goroutine soni, heap maqsadi va GC sikllari soni oddiy `uint64`; scheduling kech
 
 - Metrikaga cheksiz qiymatli label qo'shish. Qurilma, foydalanuvchi, buyurtma kesimi kerak bo'lsa, log yoki trace ishlating.
 - Metrika "nima bo'ldi?" savoliga javob bermaydi: u agregat. Alohida so'rov bilan nima sodir bo'lganini log va trace ko'rsatadi.
-- Har funksiya uchun metrika yaratish: bu shovqin va xarajat. Avval 4 ta "oltin signal" ni qo'ying: latency, trafik, xatolar va to'yinish (resurs bandligi), keyin kerak bo'lganda kengaytiring.
+- Har funksiya uchun metrika yaratish: bu shovqin va xarajat. Avval 4 ta "oltin signal" ni qo'ying (bu Google SRE kitobidagi tasnif, kurs manbalarida yo'q): latency, trafik, xatolar va to'yinish (resurs bandligi), keyin kerak bo'lganda kengaytiring.
 - Histogram o'rniga o'rtacha (average) latency'ni alert qilish. O'rtacha dumni yashiradi; persentil kerak.
 - Ichki servislarda juda tez-tez chaqiriladigan funksiyada metrika yangilash: `WithLabelValues` map qidiruvi va atomik amallarni talab qiladi. Issiq yo'lda label'li metrika qiymatini oldindan olib qo'yish (`With(...)` natijasini saqlash) yaxshiroq. Aniq narxni o'lchang (61-dars).
 - `/metrics` ni autentifikatsiyasiz ommaviy portda ochish. Ichki tafsilot oshkor bo'ladi.

@@ -236,7 +236,7 @@ Spetsifikatsiya jadvali:
 
 Muhim qoidalar:
 
-- **Range ifodasi tsikl boshlanishidan oldin bir marta baholanadi** (istisno: bitta o'zgaruvchi bor va ifoda yoki uning `len`i konstanta bo'lsa, ifoda baholanmaydi).
+- **Range ifodasi tsikl boshlanishidan oldin bir marta baholanadi** (istisno: ko'pi bilan bitta tsikl o'zgaruvchisi bor va ifoda yoki uning `len`i konstanta bo'lsa, ifoda baholanmaydi).
 - Map tartibi aniqlanmagan va har safar farq qilishi mumkin. Iteratsiya paytida o'chirilgan hali yetib kelinmagan yozuv ishlab chiqarilmaydi; yaratilgan yozuv chiqarilishi ham, o'tkazib yuborilishi ham mumkin (14-dars).
 - Integer range'da n integer tipda bo'lsa, iteratsiya qiymatlari ham shu tipda. Untyped konstanta uchun tip o'zgaruvchi e'lon qilingan bo'lsa default type, mavjud o'zgaruvchiga yozilsa o'sha tip. `n <= 0` bo'lsa tsikl bajarilmaydi.
 - String bo'yicha range code point'lar ustida yuradi; noto'g'ri UTF-8 ketma-ketlikda ikkinchi qiymat `0xFFFD` bo'ladi va indeks bir baytga siljiydi (13-dars).

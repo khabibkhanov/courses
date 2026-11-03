@@ -186,7 +186,7 @@ Release notes shu bilan chegaralanadi. Quyidagilar notes'da yozilmagan va bu dar
 
 ### Spetsifikatsiyadan nima ma'lum
 
-Spetsifikatsiyaning "Method declarations" bo'limi generic tip uchun receiver qoidasini beradi: receiver tipi generic bo'lsa, receiver spetsifikatsiyasi mos type parameter'larni e'lon qilishi kerak (ularning soni tip e'lonidagi bilan teng, nomlari esa farq qilishi mumkin). "Type parameter declarations" bo'limi esa type parameter ro'yxati generic funksiya, metod yoki tip e'lonini belgilashini aytadi. Metodning o'z type parameter'lari uchun yangi sintaksis qoidalarining aniq matni bu dars yozilgan paytda o'qilgan spetsifikatsiya sahifasida topilmadi, shu sababli ularni bu yerda keltirmaymiz. Release notes'dagi `(*Rand) N[Int intType](Int) Int` yozuvi sintaksisning ko'rinishini ko'rsatadi: metod nomidan keyin kvadrat qavsda type parameter ro'yxati.
+Spetsifikatsiyaning "Method declarations" bo'limi generic tip uchun receiver qoidasini beradi: receiver tipi generic bo'lsa, receiver spetsifikatsiyasi mos type parameter'larni e'lon qilishi kerak (ularning soni tip e'lonidagi bilan teng, nomlari esa farq qilishi mumkin). "Type parameter declarations" bo'limi esa type parameter ro'yxati generic funksiya, metod yoki tip e'lonini belgilashini aytadi. Go 1.27 spetsifikatsiyasida bu bo'lim metod e'lonining grammatikasida metod nomidan keyin ixtiyoriy type parameter ro'yxatini ko'rsatadi va metod o'z type parameter'larini e'lon qilsa, uni generic metod deb ataydi: generic funksiya kabi, chaqirishdan yoki qiymat sifatida ishlatishdan oldin u instantiate qilinishi kerak. Chaqiruv sintaksisi va tip xulosasining batafsil qoidalarini bu dars keltirmaydi. Release notes'dagi `(*Rand) N[Int intType](Int) Int` yozuvi sintaksisning ko'rinishini ko'rsatadi: metod nomidan keyin kvadrat qavsda type parameter ro'yxati.
 
 ### Eslatma: nima o'zgarmaydi
 
@@ -251,7 +251,7 @@ Metod bilan zanjir olish uchun ba'zan `any` ishlatiladi: elementlar `[]any`, fun
 
 ### Generic metodlar kelganda nima o'zgaradi (release notes darajasida)
 
-Notes'ga ko'ra metod endi o'z type parameter'lariga ega bo'la oladi, ya'ni `(*Rand) N[Int intType](Int) Int` kabi API'lar tipning nom maydonida turadi. Bu kutubxona API dizayniga ta'sir qiladi: `rand.N(...)` va `r.N(...)` ikkalasi mavjud bo'ladi va bir xil nomli generic funksiya hamda metod birga yashaydi. Kutubxona muallifi uchun amaliy xulosa: yangi API'larni tipga bog'lash mumkin, lekin Go 1.27 ni minimal versiya qilgan modullar uchungina (go.mod dagi `go` qatori, 1-dars).
+Notes'ga ko'ra metod endi o'z type parameter'lariga ega bo'la oladi, ya'ni `(*Rand) N[Int intType](Int) Int` kabi API'lar tipning nom maydonida turadi. Bu kutubxona API dizayniga ta'sir qiladi: `rand.N(...)` va `r.N(...)` ikkalasi mavjud bo'ladi va bir xil nomli generic funksiya hamda metod birga yashaydi. Kutubxona muallifi uchun amaliy xulosa: yangi API'larni tipga bog'lash mumkin, lekin Go 1.27 ni minimal versiya qilgan modullar uchungina (go.mod dagi `go` qatori, 2-dars).
 
 ### Kutubxona muallifi uchun migratsiya rejasi
 

@@ -12,7 +12,7 @@ sources:
   - id: go127
     note: "Go command (go fix: yangi modernizer'lar, go test va stdversion), Gofmt (ustun tekislash o'zgarishi), Vet (printf %w ko'rsatkich)"
   - id: code-review-comments
-    note: "Gofmt, Comment Sentences, Doc Comments, Error Strings, Indent Error Flow, Initialisms bo'limlari"
+    note: "Gofmt, Comment Sentences va Doc Comments bo'limlari"
 quiz:
   - q: "Paket izohining birinchi jumlasi doc comment qoidasiga ko'ra qanday boshlanishi kerak (paket nomi `meter`)?"
     options:

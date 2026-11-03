@@ -6,7 +6,7 @@ summary: "Trace, span va context propagation mexanikasi: W3C traceparent sarlavh
 duration: 45
 sources:
   - id: otel-go
-    note: "Go API paketi: Tracer, Span va global provider/propagator funksiyalari. Quyidagi SDK kodi shu hujjatga tayanadi, lekin sahifa bu sessiyada qayta tekshirilmagan"
+    note: "Go API paketi: Tracer, global provider/propagator funksiyalari (SetTracerProvider, SetTextMapPropagator); SDK paketlari imzolari pkg.go.dev da alohida tekshirildi"
   - id: otel-go-docs
     note: "Go uchun OpenTelemetry qo'llanmasi: instrumentatsiya, SDK sozlash va exporter tushunchalari. Sahifa bu sessiyada qayta tekshirilmagan"
   - id: pkg-context
@@ -198,7 +198,7 @@ Distributed tracing bu savolga bitta so'rovning butun yo'lini daraxt sifatida ko
 
 ### W3C Trace Context
 
-Jarayonlar orasida standart `traceparent` sarlavhasi ishlatiladi: `versiya-traceid-spanid-flags`, masalan `00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01`. Versiya `00`, trace id 32 hex, parent span id 16 hex, flags'ning eng quyi biti (`01`) trace sampled ekanini bildiradi. Hammasi nol bo'lgan trace id yoki span id yaroqsiz, versiya `ff` taqiqlangan. Qabul qiluvchi servis sarlavhani o'qiydi (extract), yangi bola span ochadi va chiquvchi chaqiruvlarga o'z span id'si bilan yozadi (inject). OpenTelemetry'da buni propagator bajaradi (`propagation.TraceContext{}`), tillar orasida mos kelishining sababi shu standart.
+Jarayonlar orasida standart `traceparent` sarlavhasi ishlatiladi: `versiya-traceid-spanid-flags`, masalan `00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01`. Versiya `00`, trace id 32 hex, parent span id 16 hex, flags'ning eng quyi biti (`01`, sampled) chaqiruvchi trace ma'lumotini yozgan bo'lishi mumkinligini bildiradi. Hammasi nol bo'lgan trace id yoki span id yaroqsiz, versiya `ff` taqiqlangan. Qabul qiluvchi servis sarlavhani o'qiydi (extract), yangi bola span ochadi va chiquvchi chaqiruvlarga o'z span id'si bilan yozadi (inject). OpenTelemetry'da buni propagator bajaradi (`propagation.TraceContext{}`), tillar orasida mos kelishining sababi shu standart.
 
 ### Go'da span context orqali yashaydi
 
@@ -419,7 +419,7 @@ Chiqishdan:
 
 ### OpenTelemetry SDK bilan
 
-Haqiqiy loyihada shu mexanizmni `otelhttp` (server va client instrumentatsiyasi) va SDK qoplaydi. Quyidagi kod tashqi modullarga tayanadi (`go.opentelemetry.io/otel` va unga bog'liq paketlar), sandbox'da yuklanmagani uchun kompilyatsiya qilinmagan: sintaksis `gofmt` bilan tekshirilgan, imzolar esa hujjat sahifasi bilan bu sessiyada qo'lda solishtirilmagan (veb tekshiruvi ishlamadi). `semconv` paketi versiyasi o'rnatilgan otel modulingizga mos tanlanadi. Loyihangizda `go build` bilan tekshiring.
+Haqiqiy loyihada shu mexanizmni `otelhttp` (server va client instrumentatsiyasi) va SDK qoplaydi. Quyidagi kod tashqi modullarga tayanadi (`go.opentelemetry.io/otel` va unga bog'liq paketlar), sandbox'da yuklanmagani uchun kompilyatsiya qilinmagan: sintaksis `gofmt` bilan tekshirilgan, imzolar (`sdktrace.NewTracerProvider`, `WithBatcher`, `ParentBased`, `TraceIDRatioBased`, `resource.NewWithAttributes`, `otlptracegrpc.New`, `otelhttp.NewHandler`, `propagation.NewCompositeTextMapPropagator`, `semconv/v1.26.0` dagi `SchemaURL`, `ServiceName`, `ServiceVersion`) esa pkg.go.dev hujjati bilan solishtirildi (2026-11-03). `semconv` paketi versiyasi o'rnatilgan otel modulingizga mos tanlanadi. Loyihangizda `go build` bilan tekshiring.
 
 ```go
 package main

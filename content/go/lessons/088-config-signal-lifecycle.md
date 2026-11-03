@@ -10,7 +10,7 @@ sources:
   - id: pkg-context
     note: "WithTimeout va bekor qilish: shutdown muddati uchun mustaqil context"
   - id: 100go
-    note: "Umumiy tavsiyalar: goroutine hayot siklini boshqarish va graceful shutdown mavzulari. Aniq band raqamlari tekshirilmagan"
+    note: "Goroutine'ni qachon to'xtashini bilmay ishga tushirish (#62) va kontekstni noto'g'ri uzatish (#61) haqidagi bandlar. Graceful shutdown tartibi 100go.co ro'yxatida alohida band emas"
 quiz:
   - q: "Orkestrator konteynerni to'xtatish uchun SIGTERM yuboradi. Dastur `signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)` ishlatgan, lekin to'xtash muddati o'tib ketdi. Qaysi signal kod ichida ushlab bo'lmaydi va oxirgi chora sifatida ishlatiladi?"
     options:
@@ -217,7 +217,7 @@ Qoidalar:
 
 ### Signal: orkestrator qanday gaplashadi
 
-Konteyner orkestratorlari (Kubernetes va boshqalar) to'xtatishda avval SIGTERM yuboradi, ma'lum muddatdan keyin SIGKILL. Bu Go standart kutubxonasi hujjatida emas, orkestratorning o'z hujjatiga tegishli; aniq muddat va xatti-harakatni o'zingiz ishlatadigan platforma hujjatidan tekshiring (bu darsda tekshirilmadi). Lokal ishlab chiqishda Ctrl+C SIGINT yuboradi. SIGKILL ni dastur ushlay olmaydi. Demak, qoida: shutdown muddati orkestrator kutish muddatidan qisqa bo'lishi kerak.
+Konteyner orkestratorlari (Kubernetes va boshqalar) to'xtatishda avval SIGTERM yuboradi, ma'lum muddatdan keyin SIGKILL. Bu Go standart kutubxonasi hujjatida emas, orkestratorning o'z hujjatiga tegishli. Kubernetes hujjatida (Pod Lifecycle, "Termination of Pods") yozilishicha, kubelet har konteynerdagi 1-jarayonga TERM signalini yuboradi, `terminationGracePeriodSeconds` standart bo'yicha 30 soniya, muddat tugagach ishlayotgan jarayonlarga SIGKILL yuboriladi. Boshqa platformalarda muddatni o'zingiz ishlatadigan platforma hujjatidan tekshiring. Lokal ishlab chiqishda Ctrl+C SIGINT yuboradi. SIGKILL ni dastur ushlay olmaydi. Demak, qoida: shutdown muddati orkestrator kutish muddatidan qisqa bo'lishi kerak.
 
 Go'da signalni ushlash uchun ikki yo'l bor: `signal.Notify(ch, ...)` va `signal.NotifyContext(ctx, ...)`. Birinchisida kanal buferli bo'lishi shart (`make(chan os.Signal, 1)`), chunki signal kelganda qabul qiluvchi tayyor bo'lmasa, u tashlab yuboriladi; `go vet` bufersiz kanalni ogohlantiradi. `NotifyContext` esa signal kelganda context'ni bekor qiladi va dasturning qolgan qismi uchun bekor qilishni yagona mexanizmga (context, 34-dars) birlashtiradi.
 
@@ -422,7 +422,7 @@ Ikkala xato bitta ishga tushirishda ko'rindi, jarayon `2` kodi bilan chiqdi (`go
 
 ## Stack'da: Node.js bilan farq
 
-Node.js'da `process.on('SIGTERM', ...)` ichida `server.close()` chaqiriladi: u yangi ulanishlarni to'xtatadi, mavjudlari tugagach callback ishlaydi. Keep-alive ulanishlar uni kutdirib qo'yishi odatiy muammo. Go'da `Shutdown` bo'sh ulanishlarni o'zi yopadi va faol so'rovni kutadi, muddat esa context orqali aniq beriladi. NestJS'da `app.enableShutdownHooks()` va `OnApplicationShutdown` hook'lari bor; Go'da bu tartib aniq yoziladi, odatda `run` funksiyasida ketma-ket yoki `errgroup` bilan, framework yashirin chaqirmaydi.
+Node.js'da `process.on('SIGTERM', ...)` ichida `server.close()` chaqiriladi: hozirgi hujjatga ko'ra u yangi ulanishlarni to'xtatadi va so'rov yubormayotgan (bo'sh) ulanishlarni yopadi, faol so'rovlarni majburan uzish uchun esa `server.closeAllConnections()` bor. Eski Node.js versiyalarida keep-alive ulanishlar `close()` callback'ini kutdirib qo'yishi mumkin edi. Go'da `Shutdown` bo'sh ulanishlarni o'zi yopadi va faol so'rovni kutadi, muddat esa context orqali aniq beriladi. NestJS'da `app.enableShutdownHooks()` va `OnApplicationShutdown` hook'lari bor; Go'da bu tartib aniq yoziladi, odatda `run` funksiyasida ketma-ket yoki `errgroup` bilan, framework yashirin chaqirmaydi.
 
 Konfiguratsiya tomonida NestJS `ConfigModule` + `class-validator`/`zod` bilan validatsiya qiladi. Go'da ekvivalenti oddiy: struct, `LoadConfig` va `errors.Join`. Telemetriya platformasi uchun amaliy to'plam: HTTP server, navbat consumer'lari va fon "flush" goroutine'i bitta context'dan boshqariladi; signal kelganda avval readiness, so'ng server va consumer'lar, keyin batch flush, keyin DB pool yopiladi.
 

@@ -447,7 +447,7 @@ nilDefer tanasi tugadi
 recover: runtime error: invalid memory address or nil pointer dereference
 ```
 
-`directRecover` panic'ni ushladi. `helperRecover` da recover yordamchi orqali chaqirildi: nil qaytdi va panic tashqi funksiyagacha yetib bordi (u yerda ushlandi). `nilDefer`da `defer f()` (f nil) statement bajarilganda panic bermadi: tana tugadi, keyin chaqirilganda panic bo'ldi, shu bilan spetsifikatsiya tasdiqlandi. Oxirgi `os.Exit(0)` dan keyin `bu qator chop etilmaydi` qatori ham chiqmadi: dastur deferred funksiyalarni ishga tushirmasdan tugadi. (Bu xatti-harakat bu darsda faqat shu dasturda kuzatildi, `os.Exit` hujjati bu darsning manbalari ichida emas.)
+`directRecover` panic'ni ushladi. `helperRecover` da recover yordamchi orqali chaqirildi: nil qaytdi va panic tashqi funksiyagacha yetib bordi (u yerda ushlandi). `nilDefer`da `defer f()` (f nil) statement bajarilganda panic bermadi: tana tugadi, keyin chaqirilganda panic bo'ldi, shu bilan spetsifikatsiya tasdiqlandi. Oxirgi `os.Exit(0)` dan keyin `bu qator chop etilmaydi` qatori ham chiqmadi: dastur deferred funksiyalarni ishga tushirmasdan tugadi. `os.Exit` paketi hujjati (pkg.go.dev/os) ham buni aytadi: dastur darhol tugaydi, deferred funksiyalar ishga tushmaydi. Bu hujjat kursning manbalar ro'yxatida yo'q, shuning uchun dars frontmatter'iga kiritilmagan.
 
 ### 3. Mutex va natija o'zgartirish
 
@@ -564,7 +564,7 @@ careful: conn 2: close xatosi ochiq: 0
 
 - Tsikl ichida resurs ochib `defer` yozmang. Tanani funksiyaga ajrating. Bu kichik tsikl uchun ham to'g'ri odat, chunki iteratsiyalar soni keyin o'sadi.
 - Juda issiq (hot) yo'lda, bir sekundda millionlab chaqiriladigan kichik funksiyada defer xarajatini o'lchang. Bizning mikrobenchmark'da bitta defer farq qilmadi, lekin o'z kodingizda o'lchamasdan "defer sekin" deb yozmang (61-dars).
-- `os.Exit` va `log.Fatal` oldidan deferred tozalash ishlamaydi: bu darsda `os.Exit` bilan tasdiqlandi. Tozalash kerak bo'lsa, `main` ichida natijani qaytaruvchi funksiyani chaqiring va faqat `main` oxirida chiqing (88-dars).
+- `os.Exit` va `log.Fatal` oldidan deferred tozalash ishlamaydi: `os.Exit` bu darsda sinaldi va uning hujjati ham buni yozadi; `log.Fatal` hujjatga ko'ra `Print` va `os.Exit(1)` chaqiruviga teng. Tozalash kerak bo'lsa, `main` ichida natijani qaytaruvchi funksiyani chaqiring va faqat `main` oxirida chiqing (88-dars).
 - `recover`ni umumiy xato ushlagich sifatida ishlatmang. Panic dasturiy xato yoki tiklab bo'lmaydigan holat belgisi; ushlash faqat chegarada (server handler, goroutine ildizi) mantiqli (33-dars).
 - Deferred funksiya qiymat qaytarsa, u tashlanadi: `defer f.Close()` xatosi yo'qoladi. Kod ahamiyatli ma'lumotni yozayotgan bo'lsa, Close xatosini tekshiring (topshiriq).
 

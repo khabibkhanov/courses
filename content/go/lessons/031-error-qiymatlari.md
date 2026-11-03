@@ -228,7 +228,7 @@ Natijada "zanjir" aslida daraxt. `errors.Is` va `errors.As` hujjatiga ko'ra dara
 
 ### Is: tenglik va Is metodi
 
-Hujjat bo'yicha xato maqsadga mos hisoblanadi, agar u maqsadga teng bo'lsa yoki `Is(error) bool` metodi `true` qaytarsa. `target` taqqoslanadigan (comparable) bo'lishi kerak. `Is` metodi faqat sayoz taqqoslashi kerak: `Unwrap`ni chaqirmasligi, zanjirni o'zi aylanmasligi lozim, aylanishni `errors.Is` bajaradi. Blog bunga shablon xato misolini keltiradi: shablondagi nol maydonlar "farqi yo'q" ma'nosini beradi. Quyidagi misolda aynan shu naqsh ishlatilgan.
+Hujjat bo'yicha xato maqsadga mos hisoblanadi, agar u maqsadga teng bo'lsa yoki `Is(error) bool` metodi `true` qaytarsa. Taqqoslanmaydigan tipli `target` bilan `Is` panic qilmaydi: `==` solishtirish o'tkazilmaydi, mos kelish faqat `Is` metodi orqali bo'lishi mumkin (Go 1.24.7 da tekshirildi: slice maydonli xato tipi uchun `errors.Is` `false` qaytardi). `Is` metodi faqat sayoz taqqoslashi kerak: `Unwrap`ni chaqirmasligi, zanjirni o'zi aylanmasligi lozim, aylanishni `errors.Is` bajaradi. Blog bunga shablon xato misolini keltiradi: shablondagi nol maydonlar "farqi yo'q" ma'nosini beradi. Quyidagi misolda aynan shu naqsh ishlatilgan.
 
 ### As: pointer talabi
 

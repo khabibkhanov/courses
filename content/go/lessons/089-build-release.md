@@ -191,7 +191,7 @@ Go 1.18 dan binary ichiga qurish ma'lumoti yoziladi: Go versiyasi, modul, bog'li
 	build	vcs.modified=false
 ```
 
-`vcs.revision` aniq commit, `vcs.modified=false` ish daraxti toza bo'lganini bildiradi (`true` bo'lsa, build commit qilinmagan o'zgarishlar bilan olingan). Main modul versiyasi bu Go 1.24.7 da VCS vaqti va commit'dan olingan pseudo-versiya bo'ldi. Kuzatuv: `-ldflags` bilan berilgan `-X` bayrog'i bu chiqishda ko'rinmadi; shuning uchun versiya manbasi sifatida ldflags'ga emas, o'zingiz kiritgan o'zgaruvchiga tayanamiz. VCS stamping `.git` bo'lmasa ishlamaydi (`-buildvcs=false` yoki Docker konteksti), shuning uchun u erda commit'ni ldflags bilan uzating.
+`vcs.revision` aniq commit, `vcs.modified=false` ish daraxti toza bo'lganini bildiradi (`true` bo'lsa, build commit qilinmagan o'zgarishlar bilan olingan). Go 1.24 dan `go build` main modul versiyasini VCS tegi va/yoki commit'dan qo'yadi (Go 1.24 release notes), commit qilinmagan o'zgarish bo'lsa `+dirty` qo'shiladi; bizda teg yo'q edi, shuning uchun vaqt va commit'dan pseudo-versiya chiqdi. Kuzatuv: bu build `-trimpath` bilan qurilgan va `-ldflags` (shu jumladan `-X`) build info'da ko'rinmadi. Qayta sinadik (Go 1.24.7): `-trimpath` siz qurilganda `build -ldflags="..."` qatori bor, `-trimpath` bilan esa yo'q. Shuning uchun `-trimpath` ishlatilganda versiyani build info'dan emas, o'zingiz kiritgan `version` o'zgaruvchisidan o'qing. VCS stamping `.git` bo'lmasa ishlamaydi (`-buildvcs=false` yoki Docker konteksti), shuning uchun u erda commit'ni ldflags bilan uzating.
 
 ### embed
 
@@ -271,7 +271,7 @@ Nimalar ko'rinadi: versiya va commit ldflags orqali o'rnatildi; `go run` bilan (
 
 ### Docker: multi-stage build
 
-Konteyner uchun uch maqsad: kichik image, ildiz bo'lmagan foydalanuvchi va keshlanadigan qatlamlar. Docker daemon sandbox'da ishga tushmadi (socket yo'q), shuning uchun quyidagi Dockerfile **ishga tushirilmagan va tekshirilmagan**; image nomlari va teglarini o'z reestringizdan tasdiqlang. U yuqoridagi tajribalardan olingan qarorlarga tayanadi:
+Konteyner uchun uch maqsad: kichik image, ildiz bo'lmagan foydalanuvchi va keshlanadigan qatlamlar. Docker daemon sandbox'da ishga tushmadi (socket yo'q), shuning uchun quyidagi Dockerfile **ishga tushirilmagan va tekshirilmagan**; image nomlari va teglarini o'z reestringizdan tasdiqlang. Distroless README'da (2026-11-03) `static-debian13` va `nonroot` tegi ko'rsatilgan; `golang:1.24` tegi esa tekshirilmadi. U yuqoridagi tajribalardan olingan qarorlarga tayanadi:
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -284,13 +284,13 @@ RUN go mod download
 
 COPY . .
 ARG VERSION=dev
-ARG COMMIT=noma'lum
+ARG COMMIT=unknown
 # .git konteyner kontekstiga kirmasligi mumkin, shuning uchun versiya ldflags bilan beriladi.
 RUN CGO_ENABLED=0 go build -trimpath -buildvcs=false \
     -ldflags "-s -w -X main.version=${VERSION} -X main.commit=${COMMIT}" \
     -o /out/ingest ./cmd/ingest
 
-FROM gcr.io/distroless/static-debian12:nonroot
+FROM gcr.io/distroless/static-debian13:nonroot
 COPY --from=build /out/ingest /ingest
 USER nonroot:nonroot
 ENTRYPOINT ["/ingest"]

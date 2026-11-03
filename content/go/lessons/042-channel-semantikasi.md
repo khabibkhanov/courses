@@ -8,9 +8,9 @@ sources:
   - id: go-spec
     note: "Send statements, Receive operator, Select statements, For statements (range over channel), Channel types va Making slices, maps and channels bo'limlari"
   - id: gopl
-    note: "Concurrency bobi: goroutine'lar va channel'lar (umumiy tushunchalar)"
+    note: "8-bob (Goroutines and Channels): umumiy tushunchalar"
   - id: 100go
-    note: "Concurrency boblari: kanal sig'imi, notification channel va nil channel mavzulari"
+    note: "Concurrency boblari: #57 (kanal yoki mutex), #65 (Not using notification channels), #66 (Not using nil channels), #67 (Being puzzled about channel size)"
   - id: go-mem
     note: "Channel communication bo'limi: yuborish, yopish va qabul qilish orasidagi happens-before qoidalari"
 quiz:
@@ -185,7 +185,7 @@ task:
     - `for a != nil || b != nil` tsikli ikkala kanal ham yopilgunicha davom etadi. Yopilgan kanal `nil` ga tenglanadi va `select` uni boshqa tanlamaydi.
     - `continue` kerak: yopiq kanaldan kelgan zero value natijaga yuborilmasligi shart. Shuni `ok` tekshiruvi ta'minlaydi.
     - `defer close(out)` natija kanalini faqat tsikl tugagach yopadi. Yopuvchi bitta goroutine bo'lgani uchun ikki marta close xavfi yo'q.
-    - Boshlang'ich kod nodeterministik: qaysi kanal oldin yopilishiga qarab turli yig'indi chiqadi. Tuzatilgan kod har gal `soni: 8 yig'indi: 75` beradi.
+    - Boshlang'ich kod nodeterministik: qaysi kanal oldin yopilishiga qarab turli yig'indi chiqadi. Tuzatilgan kod har gal `soni: 8 yig'indi: 75` beradi. Xato kam uchraydi: Go 1.24.7, linux/amd64 da 200 ta ishga tushirishning 10 tasida boshlang'ich kod noto'g'ri natija berdi (qolgani 8 va 75), shuning uchun bir martalik muvaffaqiyatli ishga tushirish kodni to'g'ri deb isbotlamaydi.
     - Cheklov: `out <- v` iste'molchi to'xtasa qotib qoladi. Haqiqiy kodda bu yuborishni `ctx.Done()` bilan `select`ga o'rang (47-dars).
   checklist:
     - "Natija har gal `soni: 8 yig'indi: 75`"
@@ -254,7 +254,7 @@ Bundan ikki amaliy xulosa chiqadi. Birinchisi, `select` manbada yozilgan tartibg
 
 ### Notification channel: `chan struct{}`
 
-Faqat signal kerak bo'lganda, qiymat kerak bo'lmaganda `chan struct{}` ishlatiladi. `struct{}` hech qancha xotira olmaydi va o'quvchiga "bu yerda ma'lumot yo'q, faqat hodisa" deb aytadi. 100 Go Mistakes kitobi alohida mavzu sifatida "notification channel" ni ko'rsatadi: `chan bool` ga `true` yuborish ma'nosiz, chunki `false` hech qachon yuborilmaydi.
+Faqat signal kerak bo'lganda, qiymat kerak bo'lmaganda `chan struct{}` ishlatiladi. `struct{}` hech qancha xotira olmaydi va o'quvchiga "bu yerda ma'lumot yo'q, faqat hodisa" deb aytadi. 100 Go Mistakes kitobi buni alohida mavzu qiladi (#65, "Not using notification channels"): `chan bool` da `false` nimani bildirishi noaniq, qiymat tashimaydigan signal uchun esa idiomatik tur `chan struct{}`.
 
 ### nil kanal bilan shoxni o'chirish
 
@@ -314,7 +314,7 @@ len/cap: 2 2
 range: 10
 range: 20
 yopiq kanaldan: 0 false
-yopilgan kanalga yuborish -> send on closed channel
+yopiq kanalga yuborish -> send on closed channel
 ikkinchi close         -> close of closed channel
 nil kanalni close      -> close of nil channel
 ```
@@ -442,7 +442,7 @@ Birinchi qatordagi `true` ikkala kanalda ham 1000 ta tayyor qiymat bo'lgan sharo
 
 Kanal har bir muammoning yechimi emas:
 
-- Umumiy holatni himoyalash (hisoblagich, kesh, map) uchun mutex (44-dars) ko'pincha sodda va tezroq. "Share memory by communicating" shiori hamma joyda kanal ishlatishni talab qilmaydi: 100 Go Mistakes kitobi kanal va mutex tanlovini alohida mavzu qiladi.
+- Umumiy holatni himoyalash (hisoblagich, kesh, map) uchun mutex (44-dars) ko'pincha sodda va tezroq. "Share memory by communicating" shiori hamma joyda kanal ishlatishni talab qilmaydi: 100 Go Mistakes kitobi kanal va mutex tanlovini alohida mavzu qiladi (#57).
 - Bir vaqtning o'zida ko'p goroutine'ga signal yuborish uchun kanal ishlatsangiz, `close` bir martalik. Qayta-qayta uyg'otish kerak bo'lsa `sync.Cond` yoki alohida kanallar ro'yxati kerak (45-dars).
 - Ketma-ket "so'rov-javob" uchun kanallarga kanal yuborish (`chan chan T`) tezda o'qib bo'lmaydigan kodga aylanadi. Oddiy funksiya chaqiruvi yoki natija struct'li kanal aniqroq.
 - `len(ch)` bo'yicha qaror qabul qilmang: tekshirish bilan keyingi amal orasida holat o'zgaradi.

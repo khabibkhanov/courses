@@ -183,7 +183,7 @@ task:
     - MVS grafni kezib, har modul uchun uchragan eng yuqori talab qilingan versiyani oladi (reference: build list = traversal'da uchragan eng yuqori talablar). "Birinchi uchragani" yoki "eng yangisi" emas.
     - `seen` tugun darajasida (`Node`), modul darajasida emas: bir modulning turli versiyalari o'z talablarini olib keladi. `C v1.3` ning `D v1.5` talabi `C v1.4` tanlangandan keyin ham natijaga ta'sir qiladi.
     - `D v1.9` hech kim talab qilmagani uchun tanlanmaydi: MVS "minimal" shu ma'noda, yangi versiya chiqishi build list'ni o'zgartirmaydi.
-    - Bu o'quv modeli: haqiqiy `go` buyrug'i go.mod fayllaridagi graf pruning va lazy loading qo'llaydi (Go 1.17 va undan keyingi go.mod fayllari uchun), ammo natija konsepsiya bilan mos.
+    - Bu o'quv modeli: haqiqiy `go` buyrug'i asosiy modul `go 1.17` yoki yuqori bo'lganda module graph pruning va lazy loading qo'llaydi (go.dev/ref/mod), shuning uchun u butun grafni kezmaydi; model esa konsepsiyani soddalashtirib ko'rsatadi.
     - Natija tartiblanadi (`sort.Slice`), map iteratsiyasi tartibi tasodifiy bo'lgani uchun (14-dars).
   checklist:
     - "Tugunlar `seen` bilan bir martadan tashrif qilinadi"
@@ -209,7 +209,7 @@ Asosiy oqibat reference'da aniq yozilgan: boshqa tizimlardan farqli, build list 
 
 **go.sum.** Modul ildizidagi `go.sum` modul va uning go.mod faylining kriptografik xeshlarini saqlaydi. Go modul `.mod` yoki `.zip` faylini keshga yuklaganda xeshni hisoblab, asosiy modul `go.sum` idagi bilan solishtiradi. Qatorda uch maydon bor: modul yo'li, versiya (go.mod xeshi uchun `/go.mod` bilan tugaydi) va xesh (`h1:` SHA-256). `go.sum` da bir modulning bir necha versiyasi bo'lishi mumkin, chunki MVS uchun turli versiyalarning go.mod fayllari kerak bo'ladi; `go mod tidy` yetishmayotgan xeshlarni qo'shadi va keraksizlarini o'chiradi.
 
-**Proksi va checksum DB.** `GOPROXY` standarti `https://proxy.golang.org,direct`: avval Google'ning modul mirrori, u modulni topmasa to'g'ridan-to'g'ri repozitoriya. Checksum database (sum.golang.org) global shaffof log bo'lib, proksi yoki origin noto'g'ri kodni sezdirmay bera olmasligini ta'minlaydi. Private modullar uchun reference to'rt o'zgaruvchini sanaydi: `GOPROXY`, `GOPRIVATE` (private modul yo'l prefikslarining glob ro'yxati; `GONOPROXY` va `GONOSUMDB` uchun standart), `GONOPROXY` (proksidan yuklamaslik) va `GONOSUMDB` (public checksum DB bilan tekshirmaslik). Odatda faqat `GOPRIVATE=corp.example.com` kifoya.
+**Proksi va checksum DB.** `GOPROXY` standarti `https://proxy.golang.org,direct`: avval Google'ning modul mirrori, u modulni topmasa to'g'ridan-to'g'ri repozitoriya. Checksum database (sum.golang.org) global shaffof log bo'lib, proksi yoki origin noto'g'ri kodni sezdirmay bera olmasligini ta'minlaydi. Private modullar uchun reference besh o'zgaruvchini sanaydi: `GOPROXY`, `GOPRIVATE` (private modul yo'l prefikslarining glob ro'yxati; `GONOPROXY` va `GONOSUMDB` uchun standart), `GONOPROXY` (proksidan yuklamaslik), `GONOSUMDB` (public checksum DB bilan tekshirmaslik) va `GOINSECURE` (HTTP kabi xavfsiz bo'lmagan protokol bilan olishga ruxsat). Odatda faqat `GOPRIVATE=corp.example.com` kifoya.
 
 **replace.** Direktiva modulning ma'lum versiyasi yoki barcha versiyalari mazmunini boshqa joydagi bilan almashtiradi: boshqa modul yo'li va versiyasi yoki lokal yo'l (`./` yoki `../` bilan boshlanadi, u yerda go.mod bo'lishi shart). Muhim cheklov: `replace` faqat asosiy modulning go.mod (yoki go.work) faylida amal qiladi, boshqa modullarda e'tiborga olinmaydi. Alohida replace modulni grafga qo'shmaydi: unga mos `require` ham kerak.
 
@@ -229,7 +229,7 @@ Tag yo'q revizyonlarga murojaat uchun `v0.0.0-20191109021931-daa7c04131f5` ko'ri
 - Yuqori talab hamma uchun yutadi. Bitta bog'liqlik `lib v1.2.0` talab qilsa, siz v1.1.0 da qolmaysiz. Downgrade qilmoqchi bo'lsangiz, uni talab qilgan modullar ham pasayishi kerak.
 - Pastroq versiyaning talablari ham hisobga olinadi: A ning C 1.3 talabi C 1.4 tanlangandan keyin ham graf tarkibida. Darsdagi topshiriq aynan shu holatni modellashtiradi.
 
-Eslatma: Go 1.17 dan boshlab go.mod fayllarida graf pruning va lazy loading bor; shu sababli real `go` buyrug'i butun grafni yuklamasligi mumkin, lekin natija MVS bilan mos. Bu darsda pruning ichki tafsilotlari tekshirilmagan.
+Eslatma: reference'ga ko'ra asosiy modul `go 1.17` yoki yuqori bo'lsa, MVS grafi `go 1.17`+ bog'liqliklar uchun faqat ularning bevosita talablarini o'z ichiga oladi (module graph pruning), va `go` buyrug'i to'liq grafni faqat kerak bo'lganda yuklaydi (lazy module loading). Shu sababli real buyruq butun grafni yuklamasligi mumkin. Pruning'ning aniq qoidalari va chekka holatlari bu darsda ko'rib chiqilmagan.
 
 ### readonly standarti
 

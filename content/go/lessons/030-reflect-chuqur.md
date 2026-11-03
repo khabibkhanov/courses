@@ -27,7 +27,7 @@ quiz:
       - "`secret` string emas"
       - "Eksport qilinmagan maydondan olingan `Value` o'zgartirilmaydi: `reflect.Value.SetString using value obtained using unexported field`"
     answer: 3
-    explain: "Paket chegarasi reflection orqali ham saqlanadi. Eksport qilinmagan maydonni o'qish (`Interface()` ham) va yozish mumkin emas; `CanInterface()` `false` qaytaradi. Shuning uchun umumiy kod oldin `IsExported()` yoki `CanSet()` ni tekshirishi kerak."
+    explain: "Paket chegarasi reflection orqali ham saqlanadi. Eksport qilinmagan maydondan `Interface()` bilan qiymat olish va uni yozish mumkin emas; `CanInterface()` `false` qaytaradi (`String()`, `Float()` kabi metodlar bilan primitiv qiymatni o'qish texnik jihatdan ishlaydi, lekin bu chegarani aylanib o'tadi). Shuning uchun umumiy kod oldin `IsExported()` yoki `CanSet()` ni tekshirishi kerak."
   - q: "`reflect.ValueOf(\"gps\").Int()` nima qiladi?"
     options:
       - "Panic: `call of reflect.Value.Int on string Value`"
@@ -457,7 +457,7 @@ Tahlil:
 - Tiplarni oldindan bilsangiz, generics (24-26-darslar) yoki interface (21-dars) ishlating: kompilyator tekshiradi, narx past.
 - Faqat bir nechta aniq tipni qo'llab-quvvatlash kerak bo'lsa, type switch (23-dars) reflection'dan oddiy va tezroq.
 - Hot path'da `FieldByName`/`MethodByName` har chaqiruvda ishlatmang: yuqoridagi o'lchovda nom bo'yicha qidirish 52-63 ns/op, indeks bo'yicha 6-8 ns/op. Tuzilmani bir marta o'qib keshlang.
-- Eksport qilinmagan maydonlarga reflection orqali tegmang: o'qish ham, yozish ham chegara bilan to'siladi. Agar tegishingiz kerak bo'lsa, dizayn xato.
+- Eksport qilinmagan maydonlarga reflection orqali tegmang: `Interface()` bilan olish ham, yozish ham chegara bilan to'siladi (`Float()`, `String()` kabi metodlar bilan o'qish ishlaydi, lekin bu paket chegarasini aylanib o'tadi). Agar tegishingiz kerak bo'lsa, dizayn xato.
 - Reflection kodini kutubxona chegarasida ushlang: ichkarida konkret tiplar, tashqarida `any` ko'rinishini kamaytiring.
 - Reflection xatolarini panic bilan boshqarish o'rniga kirishni oldindan tekshiring (misoldagi `Validate` yechimi).
 

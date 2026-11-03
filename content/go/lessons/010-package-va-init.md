@@ -10,7 +10,7 @@ sources:
   - id: gopl
     note: "Kitobning package va import boblari (umumiy tayanch; aniq qoidalar spetsifikatsiya va go buyrug'idan olingan)"
   - id: code-review-comments
-    note: "Umumiy tayanch (kod uslubi); bu darsdagi aniq qoidalar spetsifikatsiya va go buyrug'idan olingan"
+    note: "Import Blank va Package Names bo'limlari (blank import faqat main yoki testlarda; ma'nosiz paket nomlaridan qochish); qolgan aniq qoidalar spetsifikatsiya va go buyrug'idan olingan"
 quiz:
   - q: "Paketda ikki fayl: a_first.go va telemetry.go, ikkalasida init() bor. Qaysi biri avval ishlaydi?"
     options:
@@ -175,7 +175,7 @@ Spetsifikatsiya bosqichma-bosqich tartibni belgilaydi.
 
 1. **Paket ichida o'zgaruvchilar**: har qadamda "tayyor" o'zgaruvchilardan e'lon tartibida eng birinchisi baholanadi. O'zgaruvchi tayyor, agar initsializatori hali baholanmagan o'zgaruvchilarga bog'liq bo'lmasa. Bog'liqlik leksik tahlil bilan topiladi: funksiya tanasidagi murojaatlar ham hisobga olinadi. Tugamagan o'zgaruvchilar qolsa, bu initsializatsiya sikli va dastur noto'g'ri (kompilyatsiya xatosi).
 2. **Barcha o'zgaruvchilardan keyin** `init` funksiyalari manbada uchrash tartibida chaqiriladi. Paketda ularning soni cheksiz, hatto bitta faylda ham bir nechta bo'lishi mumkin. `init` e'lon qilinmaydi, unga murojaat qilib bo'lmaydi.
-3. **Paketlar orasida**: import qilingan paketlar avval initsializatsiya qilinadi. Bog'liq bo'lmagan paketlar orasidagi tartib Go 1.21 dan aniq: paketlar import yo'li bo'yicha saralanadi, har qadamda ro'yxatdagi birinchi, barcha importlari tayyor paket initsializatsiya qilinadi. Go 1.21 gacha bu tartib spetsifikatsiyada aniq emas edi.
+3. **Paketlar orasida**: import qilingan paketlar avval initsializatsiya qilinadi. Bog'liq bo'lmagan paketlar orasidagi tartib Go 1.21 dan aniq: paketlar import yo'li bo'yicha saralanadi, har qadamda ro'yxatdagi birinchi, barcha importlari tayyor paket initsializatsiya qilinadi. Go 1.21 gacha bu tartib spetsifikatsiyada aniq emas edi (Go 1.21 release notes: paket initsializatsiya tartibi endi aniqroq belgilangan).
 
 Hammasi bitta goroutine'da, ketma-ket. `init` goroutine ishga tushirishi mumkin, lekin keyingi init'ga o'tishdan oldin oldingisi qaytishi shart.
 
@@ -192,7 +192,7 @@ Blank identifier `_` bog'lanish yaratmaydi. Undan foydalaniladi:
 - **Compile-time interface tekshiruvi**: `var _ Sensor = (*Fuel)(nil)`. Metod imzosi o'zgarsa, xato tipning o'z paketida chiqadi.
 - **Blank import**: `import _ "lib/math"`. Paket faqat initsializatsiya uchun bog'lanadi, yon ta'sirlari (`init`) bajariladi, nomlari kiritilmaydi.
 
-Blank import `database/sql`, tasvir formatlari va shunga o'xshash "plugin" modelida keng tarqalgan: driver paketi `init()` da o'zini markaziy registry'ga yozadi, asosiy dastur esa `_` bilan import qiladi. Muallifning tavsiyasi (manbada tekshirilmagan): blank import'ni `main` paketi yoki testlarda qiling. Kutubxona paketida u foydalanuvchi ko'rmaydigan yashirin bog'liqlik bo'ladi.
+Blank import `database/sql`, tasvir formatlari va shunga o'xshash "plugin" modelida keng tarqalgan: driver paketi `init()` da o'zini markaziy registry'ga yozadi, asosiy dastur esa `_` bilan import qiladi. Code Review Comments (Import Blank bo'limi) ham shuni tavsiya qiladi: yon ta'sir uchun import qilingan paketlar faqat dasturning `main` paketida yoki ularni talab qiladigan testlarda import qilinsin. Kutubxona paketida u foydalanuvchi ko'rmaydigan yashirin bog'liqlik bo'ladi.
 
 ### Nega init'dan qochish kerak
 
@@ -362,7 +362,7 @@ cannot use (*Fuel)(nil) (value of type *Fuel) as Sensor value in variable declar
 - Kutubxona paketida blank import orqali yon ta'sirni yashirmang. Foydalanuvchi bog'liqlikni ko'rmaydi. `main` ichida aniq `_` import qiling.
 - Init tartibiga fayl nomi orqali tayanmang. `a_first.go` qayta nomlansa, tartib o'zgaradi. Bog'liqlik kerak bo'lsa, uni o'zgaruvchi bog'liqligi yoki funksiya argumenti sifatida ifodalang.
 - Hamma narsani eksport qilmang. Har eksport qilingan nom keyinchalik API sifatida qoladi. Dastlab yopiq qiling, `internal` bilan chegaralang.
-- Paket nomini `util`, `common`, `helpers` deb qo'ymang (muallifning tavsiyasi). Nom import qiluvchi kodda `package.Name` ko'rinishida o'qiladi, shuning uchun `util.Parse` hech narsa demaydi, `telemetry.Parse` aytadi.
+- Paket nomini `util`, `common`, `misc` kabi ma'nosiz qilmang (Code Review Comments, Package Names bo'limi shunday tavsiya qiladi; `helpers` ro'yxatda yo'q, bu muallifning qo'shimchasi). Nom import qiluvchi kodda `package.Name` ko'rinishida o'qiladi, shuning uchun `util.Parse` hech narsa demaydi, `telemetry.Parse` aytadi.
 - Global o'zgaruvchilarga tayanmang. Concurrent kodda ular data race manbai, testda esa holatni tozalash qiyin. Zero value ishlaydigan, qiymat sifatida uzatiladigan tiplar (8-dars) global holatdan yaxshiroq.
 
 ## Stack'da: Node.js/TypeScript bilan solishtirish

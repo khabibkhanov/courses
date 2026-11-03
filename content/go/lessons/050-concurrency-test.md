@@ -479,7 +479,7 @@ Hujjat namunasida bubble ichida kontekst uchun `t.Context()` ham ishlatiladi.
 
 ### Natijani oddiy o'zgaruvchi orqali olish tuzog'i
 
-Birinchi yozgan versiyamizda `flush` natijani tashqi `[]int` o'zgaruvchiga yozardi, test esa `Wait()` dan keyin uni o'qirdi. Go 1.24 eksperimental synctest va `-race` bilan bu data race hisobotini berdi, hatto `Wait()` dan keyin ham. Ya'ni, mahalliy kuzatuvimiz shunday: eksperimental API'da `Wait` boshqa goroutine yozuvlarini race detector ko'ziga ko'ra sinxronlamagan. Bu Go 1.25 da boshqacha bo'lishi mumkin, uni biz tekshirmadik. Uslub qoidasi baribir foydali: bubble ichida natijalarni sinxronlash primitivi (bu yerda buferli kanal `out`) orqali yig'ing, umumiy o'zgaruvchi orqali emas. Yuqoridagi test shunday yozilgan.
+Birinchi yozgan versiyamizda `flush` natijani tashqi `[]int` o'zgaruvchiga yozardi, test esa `Wait()` dan keyin uni o'qirdi, va Go 1.24 eksperimental synctest bilan `-race` data race hisobotini bergandek tuyuldi. Bu kuzatuv tekshiruvda tasdiqlanmadi: shunga o'xshash test (flush tashqi o'zgaruvchiga `append` qiladi, test `Wait()` dan keyin o'qiydi) Go 1.24.7 da `GOEXPERIMENT=synctest go test -race -count=30` bilan hech qanday race hisobotisiz o'tdi. Paket hujjati ham (Go 1.25) `Wait` dan keyin oddiy o'zgaruvchini o'qishni to'g'ri misol sifatida ko'rsatadi. Birinchi hisobotning sababi noma'lum, shuning uchun uni qoida sifatida qabul qilmang. Uslub tavsiyasi (muallifning tanlovi, hujjat talabi emas): natijalarni sinxronlash primitivi (bu yerda buferli kanal `out`) orqali yig'ish testni o'qishni osonlashtiradi. Yuqoridagi test shunday yozilgan.
 
 ### Goroutine leak'ni testda qo'lga olish
 

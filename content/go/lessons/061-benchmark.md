@@ -10,7 +10,7 @@ sources:
   - id: go126
     note: "testing bo'limi: B.Loop endi tsikl tanasida inlining'ga to'sqinlik qilmaydi"
   - id: diagnostics
-    note: "Profiling bo'limidagi eslatma: diagnostika vositalari bir-biriga xalaqit berishi mumkin, ularni alohida ishlating"
+    note: "Introduction bo'limidagi eslatma: ba'zi diagnostika vositalari bir-biriga xalaqit berishi mumkin, aniq natija uchun ularni alohida ishlating"
 quiz:
   - q: "Eski uslubdagi `for i := 0; i < b.N; i++ { SpeedKmh(625) }` benchmark'i 0.3 ns/op ko'rsatdi (bitta CPU tsikliga ham yetmaydi). Eng ehtimolli sabab nima?"
     options:
@@ -59,7 +59,7 @@ quiz:
       - "Funksiyaga //go:noinline qo'yib, natijani chiqarmaslik"
       - "b.StopTimer() ni har iteratsiyada chaqirish"
     answer: 1
-    explain: "Lokal o'zgaruvchi ishlatilmasa, compiler uni baribir o'chiradi. Paket darajasidagi sink compiler uchun kuzatiladigan yon ta'sir bo'ladi. //go:noinline natijani ishlatilmagan holda ham qoldirmaydi va benchmark'ni o'zgartirib yuboradi, StopTimer esa vaqtni boshqaradi, himoya qilmaydi."
+    explain: "Lokal o'zgaruvchi ishlatilmasa, compiler uni baribir o'chiradi. Paket darajasidagi sink compiler uchun kuzatiladigan yon ta'sir bo'ladi. //go:noinline chaqiruvni saqlab qoladi, lekin inlining'ni o'chirib benchmark'ni real koddan farqli qiladi (natijani himoya qilishning odatiy usuli emas), StopTimer esa vaqtni boshqaradi, himoya qilmaydi."
 task:
   title: "Setup'i tsikldan chiqarilgan batch benchmark"
   prompt: |

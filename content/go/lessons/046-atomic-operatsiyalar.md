@@ -6,11 +6,11 @@ summary: "sync/atomic'ning tipli API'si (Int64, Bool, Pointer[T], Value), ketma-
 duration: 40
 sources:
   - id: pkg-atomic
-    note: "Package overview: ketma-ket izchil tartib, tipli atomic'lar, And/Or amallari, Value qoidalari, 64-bit alignment eslatmasi"
+    note: "Package overview (past darajali vosita ogohlantirishi, synchronizes-before va ketma-ket izchil tartib), funksiya hujjatlari (tipli atomic tavsiyasi, And/Or), Value tipi qoidalari va Bugs bo'limi (64-bit alignment eslatmasi)"
   - id: go-mem
     note: "Atomic Values bo'limi va data race ta'rifi: atomic amallar race hisoblanmaydi, ular synchronized-before munosabatini yaratadi"
   - id: 100go
-    note: "Concurrency boblari: data race va atomic/mutex tanlovi mavzulari"
+    note: "Concurrency boblari: #57 (kanal yoki mutex tanlovi) va #58 (data race va race condition)"
 quiz:
   - q: "Bitta goroutine `atomic.AddInt64(&n, 1)` chaqiradi, boshqasi sinxronlashsiz `fmt.Println(n)` bilan o'qiydi. Xotira modeli ma'nosida bu nima?"
     options:

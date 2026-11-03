@@ -10,9 +10,9 @@ sources:
   - id: go127
     note: "Runtime bo'limidagi Goroutine leak profile: goroutineleak profili, GC asosidagi aniqlash, chegaralari"
   - id: 100go
-    note: "Concurrency boblari: goroutine qachon to'xtashini bilmay ishga tushirish xatosi"
+    note: "Concurrency boblari: #62 Starting a goroutine without knowing when to stop it"
   - id: blog-pipelines
-    note: "Cleaning up / leak qismi: goroutine'lar GC qilinmaydi, stack'dagi havolalar ma'lumotni ushlab turadi"
+    note: "Stopping short bo'limi: goroutine'lar GC qilinmaydi, stack'dagi havolalar ma'lumotni ushlab turadi"
 quiz:
   - q: "firstResponse(3) buferlanmagan kanal bilan uchta goroutine ishga tushiradi, chaqiruvchi esa bitta qiymat o'qiydi. Har chaqiruvdan keyin nechta goroutine abadiy bloklanib qoladi?"
     options:
@@ -258,6 +258,7 @@ Quyidagi kod uslubi 1.27 hujjatiga tayanadi va lokal kompilyatsiya qilinmagan (s
 package main
 
 import (
+	"errors"
 	"os"
 	"runtime/pprof"
 )
@@ -265,7 +266,11 @@ import (
 // dumpLeaks Go 1.27+ da sizib chiqqan goroutine'larni stdout'ga yozadi.
 // Go 1.26 da shu kod GOEXPERIMENT=goroutineleakprofile bilan qurilganda ishlaydi.
 func dumpLeaks() error {
-	return pprof.Lookup("goroutineleak").WriteTo(os.Stdout, 1)
+	p := pprof.Lookup("goroutineleak")
+	if p == nil { // profil yo'q: eski toolchain yoki GOEXPERIMENT yoqilmagan
+		return errors.New("goroutineleak profili mavjud emas")
+	}
+	return p.WriteTo(os.Stdout, 1)
 }
 
 func main() {
@@ -422,7 +427,7 @@ Goroutine har doim javob emas va leak'ni topish vositalari ham cheklangan:
 - Oddiy ketma-ket ishni goroutine bilan o'rash xarajat va murakkablik qo'shadi, foyda bermaydi. Bitta qisqa funksiya uchun goroutine ishga tushirib, darhol kutish ma'nosiz.
 - Bufer sig'imini "kattaroq qilib qo'yaman" yo'li bilan leak'dan qutulishga urinmang. Sig'im 1000 qilingan kanal leak'ni 1001-chi yuborishgacha yashiradi. Sig'imni aniq hisoblanadigan holatda (yuboruvchilar soni ma'lum) ishlating.
 - `runtime.NumGoroutine()` ni qat'iy test sharti qilishda ehtiyot bo'ling. Boshqa kutubxonalar fon goroutine'lari ishga tushirishi mumkin, shuning uchun absolyut son emas, farq tekshiriladi va fon goroutine'lar tugashiga bir oz vaqt beriladi. Bu testlar vaqtga bog'liq bo'ladi: tizimli yechim 50-darsda.
-- `goroutineleak` profiliga "leak yo'q" kafolati sifatida tayanmang. Notes uning chegaralarini ochiq yozgan. Go 1.25 va undan eski toolchain'larda profil umuman yo'q: u 1.26 da GOEXPERIMENT bilan, 1.27 da default mavjud.
+- `goroutineleak` profiliga "leak yo'q" kafolati sifatida tayanmang. Notes uning chegaralarini ochiq yozgan. Go 1.25 va undan eski toolchain'larda profil umuman yo'q (Go 1.24.7 da `pprof.Lookup("goroutineleak")` `nil` qaytaradi, shuning uchun natijani tekshirmasdan `WriteTo` chaqirish nil pointer panic beradi): u 1.26 da GOEXPERIMENT bilan, 1.27 da default mavjud.
 - Qotib qolgan goroutine har doim leak emas. Doimiy ishlashi kerak bo'lgan worker `for range jobs` da kutib turishi normal; muammo faqat uni to'xtatish yo'li yo'q bo'lganda.
 
 ## Stack'da: Node.js/TypeScript bilan solishtirish

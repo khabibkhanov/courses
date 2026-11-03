@@ -194,7 +194,7 @@ Hujjat data race'ni shunday ta'riflaydi: xotiradagi joyga yozish shu joyga boshq
 
 Hujjatdagi asosiy va'da: data race'siz dasturlar xuddi barcha goroutine'lar bitta protsessorda ketma-ket bajarilgandek ishlaydi. Bu xususiyat DRF-SC (data-race-free programs execute in a sequentially consistent manner) deb ataladi. Sizning vazifangiz dasturni race'siz yozish, qolgan hamma narsani, jumladan kompilyator optimizatsiyalarini, Go hal qiladi.
 
-Race bo'lsa-chi? Go bu holatda C va C++ dagidek "undefined behavior" bermaydi, lekin kafolat zaif. Hujjat: implementatsiya race'ni aniqlab, dasturni to'xtatishi mumkin. Aks holda bitta mashina so'zi (yoki undan kichik) o'lchamidagi joyni o'qish haqiqatan yozilgan va hali ustidan yozilmagan qiymatni ko'rishi kerak. Ya'ni oddiy `int` yoki `bool` o'qishda "yarim yozilgan" qiymat ko'rinmaydi. Bu faqat bitta so'zli joylar uchun va'da qilingan. Ko'p so'zli qiymatlar (interface, slice, string sarlavhasi) bilan bunday kafolat yo'q, shu sabab ular bilan race'lar xotirani buzishga olib kelishi mumkin. Race detector hujjatining o'zi bir vaqtda map'ga yozishni "crash va xotira buzilishiga olib kelishi mumkin" misol sifatida keltiradi.
+Race bo'lsa-chi? Go bu holatda C va C++ dagidek "undefined behavior" bermaydi, lekin kafolat zaif. Hujjat: implementatsiya race'ni aniqlab, dasturni to'xtatishi mumkin. Aks holda bitta mashina so'zi (yoki undan kichik) o'lchamidagi joyni o'qish haqiqatan yozilgan va hali ustidan yozilmagan qiymatni ko'rishi kerak. Ya'ni oddiy `int` yoki `bool` o'qishda "yarim yozilgan" qiymat ko'rinmaydi. Bu faqat bitta so'zli (yoki undan kichik) joylar uchun majburiy. Ko'p so'zli qiymatlar uchun hujjat shunday semantikani "encouraged but not required" deydi: implementatsiya ularni alohida so'zlar to'plami sifatida, noaniq tartibda o'qishi mumkin va natijada bitta yozuvga mos kelmaydigan qiymat ko'rinadi. Interface, map, slice va string ichki (pointer, uzunlik) yoki (pointer, tip) juftligiga tayanadi, shuning uchun ular bilan race'lar xotirani o'zboshimchalik bilan buzishga olib kelishi mumkin. Race detector hujjatining o'zi bir vaqtda map'ga yozishni "crash va xotira buzilishiga olib kelishi mumkin" misol sifatida keltiradi.
 
 ### Happens-before
 
@@ -274,7 +274,7 @@ func main() {
 hisoblagich: 1000
 ```
 
-To'g'ri chiqdi, lekin bu tasodif. Xuddi shu dastur `-race` bilan boshqa gapni aytadi. Quyida hisobotning boshi keltirilgan (manzillar, goroutine raqamlari va yo'llar har ishga tushirishda farq qiladi, ularni qisqartirdik):
+To'g'ri chiqdi, lekin bu tasodif: shu mashinada qayta ishga tushirishda 976, 992 va 996 kabi natijalar ham chiqdi. Xuddi shu dastur `-race` bilan boshqa gapni aytadi. Quyida hisobotning boshi keltirilgan (manzillar, goroutine raqamlari va yo'llar har ishga tushirishda farq qiladi, ularni qisqartirdik):
 
 ```text
 ==================
@@ -416,7 +416,7 @@ func Collect(speeds []float64) (count int, max float64) {
 }
 ```
 
-Oddiy `go test` bu paketda `ok` chiqardi, `go test -race` esa quyidagi bilan tugadi (Go 1.24.7):
+Test faqat natijani tekshirsa, oddiy `go test` ko'pincha `ok` chiqaradi (natija ham barqaror emas: bu mashinada 200 elementli testimiz bir ishga tushirishda 199 bilan yiqildi). `go test -race` esa har safar race'ni belgilaydi; hisobot oxiri quyidagicha (Go 1.24.7):
 
 ```text
     testing.go:1490: race detected during execution of test
@@ -425,7 +425,7 @@ FAIL	stats	0.014s
 FAIL
 ```
 
-Test o'tib ketgan, chunki natija to'g'ri chiqqan. Ammo `-race` testni muvaffaqiyatsiz deb belgilaydi. Shu sabab CI'da `go test -race ./...` majburiy qadam bo'lishi kerak (50-dars).
+Oddiy rejimda o'tgan testda natija tasodifan to'g'ri chiqqan. Ammo `-race` testni muvaffaqiyatsiz deb belgilaydi. Shu sabab CI'da `go test -race ./...` majburiy qadam bo'lishi kerak (50-dars).
 
 ## Race detector bilan ishlash qoidalari
 

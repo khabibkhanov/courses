@@ -6,7 +6,7 @@ summary: "Kursning yakuniy servisi: config, domen, service, store, HTTP chegaras
 duration: 60
 sources:
   - id: 100go
-    note: "Xatolarni qayta ishlash, context, HTTP va testlash bilan bog'liq keng tarqalgan xatolar; servis tuzilmasi qarorlari shu ro'yxatga qarshi tekshirilgan"
+    note: "Xatolarni qayta ishlash, context, HTTP va testlash bilan bog'liq keng tarqalgan xatolar; servis tuzilmasi qarorlari shu mavzularga mos"
   - id: diagnostics
     note: "Profiling va tracing asboblari: servisning admin portida pprof endpoint'lari shu hujjatdagi asboblar uchun ochiladi"
   - id: vuln-mgmt
@@ -214,7 +214,7 @@ task:
 
 ## Muammo
 
-Kursning oxirgi darsi: oldingi 99 darsdagi qismlarni bitta servisga yig'amiz. Real loyihalarda dasturlar tilni bilmagani uchun emas, atrofdagi narsalar uchun yiqiladi: noto'g'ri sozlama jimgina qabul qilinadi, deploy paytida so'rovlar uzib tashlanadi, pprof tashqariga ochiq qoladi, panic butun jarayonni o'chiradi, access log'da qaysi marshrut ishlagani ko'rinmaydi, sinab bo'lmaydigan `main`. Bu hammasi algoritmik emas, "yopishtiruvchi" qatlam. 100 Go Mistakes shunday xatolarning ko'pini (context, HTTP server timeout'lari, `os.Exit`, xatolarni qayta ishlash) ro'yxatlaydi, va capstone shu ro'yxatga qarshi tekshirilgan.
+Kursning oxirgi darsi: oldingi 99 darsdagi qismlarni bitta servisga yig'amiz. Real loyihalarda dasturlar tilni bilmagani uchun emas, atrofdagi narsalar uchun yiqiladi: noto'g'ri sozlama jimgina qabul qilinadi, deploy paytida so'rovlar uzib tashlanadi, pprof tashqariga ochiq qoladi, panic butun jarayonni o'chiradi, access log'da qaysi marshrut ishlagani ko'rinmaydi, sinab bo'lmaydigan `main`. Bu hammasi algoritmik emas, "yopishtiruvchi" qatlam. 100 Go Mistakes shunday xatolarning ko'pini (context, standart HTTP client va server, xatolarni qayta ishlash) ro'yxatlaydi, va capstone shu mavzularni qamrab oladi.
 
 Servisning vazifasi kichik, ataylab: avtopark monitoring platformasidan yoqilg'i datchigi o'qishlarini qabul qiladi (`POST /v1/vehicles/{id}/readings`) va mashinaning oxirgi o'qishini qaytaradi (`GET /v1/vehicles/{id}/last`). Domen sodda bo'lgani uchun e'tibor tuzilmaga va hayot siklida qoladi. Saqlash xotirada (35 satrlik adapter): SQL adapter xuddi shu interface'ni bajaradi, uni qanday yozishni 94, 95 va 97-darslarda ko'rdingiz va 78-darsda `database/sql` bilan.
 
@@ -898,7 +898,7 @@ Nimaga e'tibor bering: yaroqsiz o'qish 422 va domen xabari bilan, oxirgi log qat
 
 ### Build, Docker, CI: kompilyatsiya qilinmagan / ishga tushirilmagan
 
-Quyidagi fayllar matn sifatida beriladi. Men ularni sandbox'da ishga tushirmadim: `govulncheck` o'rnatilmagan va tashqi tarmoq cheklangan, Docker tasviri qurilmagan. Ulardagi har bir qator o'z muhitingizda tekshiriladi.
+Quyidagi fayllar matn sifatida beriladi. Men ularni sandbox'da ishga tushirmadim: `govulncheck` o'rnatilmagan va tashqi tarmoq cheklangan, Docker tasviri qurilmagan. Ulardagi har bir qator o'z muhitingizda tekshiriladi. Image va action versiyalari: distroless README'sida (2026-11-03) `static-debian13` va `nonroot` tegi ko'rsatilgan; `golang:1.24`, `actions/checkout@v4` va `actions/setup-go@v5` teglari tekshirilmadi, yangiroq major versiyalar chiqqan bo'lishi mumkin.
 
 `Makefile`:
 
@@ -924,7 +924,7 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/fleetapi ./cmd/fleetapi
 
-FROM gcr.io/distroless/static-debian12:nonroot
+FROM gcr.io/distroless/static-debian13:nonroot
 COPY --from=build /out/fleetapi /fleetapi
 EXPOSE 8080
 ENTRYPOINT ["/fleetapi"]

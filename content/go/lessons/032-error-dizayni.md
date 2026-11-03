@@ -492,7 +492,7 @@ Handler `getOrder` faqat xato qaytaradi; status tanlash va log `ServeHTTP` ichid
 - Sentinel o'zgaruvchilar ro'yxatini uzaytirib borish dizayn belgisi: o'nlab `ErrX` bo'lsa, xulq-atvor interface'i yoki bitta ma'lumotli tip yaxshiroq.
 - Opaque xato diagnostikani qiyinlashtirishi mumkin. `%v` ichki sababning faqat matnini saqlaydi, shuning uchun ichki matn log'ga to'liq tushishi kerak. Matnga tayanib qaror qilmang, lekin uni yo'qotmang.
 - Tip dizayni bilan ortiqcha ishlamang: tip maydonlari ham API. Maydon qo'shish mumkin (keyed literal), olib tashlash yoki ma'nosini o'zgartirish esa mumkin emas (37-dars).
-- `Temporary()` kabi eski xulq metodlariga tayanishdan oldin ularning hozirgi holatini hujjatdan tekshiring: bu darsda faqat `net.Error` blog misolida ko'rsatilgan, uning hozirgi ahvoli tekshirilmagan. Shuning uchun o'z xulq interface'ingizni (`Retryable`) e'lon qiling.
+- `Temporary()` kabi eski xulq metodlariga tayanmang: `net.Error` hujjatida (`go doc net.Error`, Go 1.24.7) `Temporary()` deprecated deb belgilangan, sababi: temporary xatolar yaxshi aniqlanmagan, ko'pchiligi timeout, istisnolari esa kutilmagan. Blog misoli g'oyani ko'rsatadi, hozirgi API esa boshqacha. Shuning uchun o'z xulq interface'ingizni (`Retryable`) e'lon qiling.
 
 ## Stack'da: Node.js/TypeScript bilan solishtirish
 

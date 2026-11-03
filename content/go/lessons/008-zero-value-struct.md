@@ -232,7 +232,7 @@ Maydon deklaratsiyasidan keyin ixtiyoriy string literal tag turishi mumkin. Spet
 
 Composite literal struct, massiv, slice va map uchun yangi qiymat yaratadi (har safar baholanganda yangi). Qoidalar:
 
-- **Struct**: unkeyed shaklda hamma maydon, deklaratsiya tartibida, berilishi shart. Keyed shaklda har element kalitli, tushirilgan maydonlar zero value oladi. Bir maydonni ikki marta berish xato. Eksport qilinadigan struct uchun unkeyed shakl maydon qo'shilganda kompilyatsiyadan chiqadi (1-dars). Spetsifikatsiyaning 1.27 versiyasida kalit promoted maydon uchun ham yozilishi mumkin ([Go 1.27]); bu xususiyatni biz kompilyatsiya qilib ko'rmadik (sandbox Go 1.24.7).
+- **Struct**: unkeyed shaklda hamma maydon, deklaratsiya tartibida, berilishi shart. Keyed shaklda har element kalitli, tushirilgan maydonlar zero value oladi. Bir maydonni ikki marta berish xato. Eksport qilinadigan struct uchun unkeyed shakl maydon qo'shilganda kompilyatsiyadan chiqadi (1-dars). Spetsifikatsiyaning 1.27 versiyasi ([Go 1.27] belgisi) kalit sifatida struct'ning (promoted bo'lishi mumkin bo'lgan) maydoni uchun yaroqli har qanday field selector'ni ruxsat etadi, faqat yuqori darajadagi maydon nomini emas; bu xususiyatni biz kompilyatsiya qilib ko'rmadik (sandbox Go 1.24.7).
 - **Massiv va slice**: elementlar indeks bilan; kalit manfiy bo'lmagan konstanta. Kalitsiz element oldingisi + 1 indeksga ega. Slice literal butun massivni tasvirlaydi: uzunlik va sig'im = maksimal indeks + 1. `[...]T{}` massiv uzunligini avtomatik aniqlaydi.
 - **Map**: har element kalitli; takroriy konstanta kalit xato.
 - **Element tipini tushirish**: massiv, slice yoki map ichidagi composite literal element tipi bilan bir xil bo'lsa, tipni yozmaslik mumkin; element tipi `*T` bo'lsa `&T` ham tushiriladi: `[]*Point{{1, 1}, {}}`.
@@ -473,7 +473,7 @@ invalid operation: Bad{} == Bad{} (struct containing []string cannot be compared
 - Zero value va "belgilanmagan"ni aralashtirmang. `Status` enum'ida `0` ni `Unknown` qilish (3-dars) buni aniq belgilaydi; aks holda yangi yozuv jimgina "birinchi holat"da bo'ladi.
 - Unkeyed literal'ni faqat o'z paketingizdagi kichik, barqaror struct'lar uchun ishlating (masalan `Point{1, 2}`). Boshqa paket tipi uchun keyed yozing (1-dars).
 - Struct tag'ga biznes qoidalarini ortiqcha yuklamang. Tag'lar string va kompilyator ularni tekshirmaydi: bir struct'ga `json`, `db`, `validate`, `xml` tag'lari to'planib ketsa, transport modeli va domen modeli aralashadi (92-dars). Chegaralar uchun alohida DTO struct'lari afzalroq: ular orasida konversiyada tag'lar e'tiborga olinmaydi (4-dars).
-- Katta struct'ni qiymat bilan uzatmang: har chaqiruv to'liq nusxa. Aniq chegara spetsifikatsiyada yo'q; Code Review Comments uni "barcha elementlarni argument qilib uzatish" bilan solishtirishni tavsiya qiladi (9-dars).
+- Katta struct'ni qiymat bilan uzatmang: har chaqiruv to'liq nusxa. Aniq chegara spetsifikatsiyada yo'q; Code Review Comments (Receiver Type bo'limi) receiver uchun "katta"ni "barcha elementlarni argument qilib uzatish" bilan solishtirishni tavsiya qiladi (9-dars).
 
 ## Stack'da: Node.js/TypeScript bilan solishtirish
 

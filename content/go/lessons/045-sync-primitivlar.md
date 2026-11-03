@@ -19,7 +19,7 @@ quiz:
       - "Done manfiy hisoblagich panic'ini beradi"
       - "Hech qanday xavf yo'q, Add istalgan joyda chaqirilishi mumkin"
     answer: 1
-    explain: "Hujjat: hisoblagich nol bo'lganda musbat delta bilan Add chaqiruvi Wait dan oldin sodir bo'lishi kerak. Goroutine ichidagi Add hali bajarilmagan bo'lsa, Wait hisoblagichni nol ko'rib darhol qaytadi. Dars misolida natija 0 va 2 orasida o'zgardi."
+    explain: "Hujjat: hisoblagich nol bo'lganda musbat delta bilan Add chaqiruvi Wait dan oldin sodir bo'lishi kerak. Goroutine ichidagi Add hali bajarilmagan bo'lsa, Wait hisoblagichni nol ko'rib darhol qaytadi. Dars misolida natija 0, 1 yoki 2 bo'lib o'zgardi."
   - q: "`WaitGroup.Go(f)` haqida qaysi gap to'g'ri?"
     options:
       - "Go 1.21 dan beri bor; f xatoni qaytarsa Wait uni qaytaradi"
@@ -184,7 +184,7 @@ task:
 - Servis ishga tushganda `WaitGroup` bilan hamma worker'larni kutadi. Bitta kod yo'lida `Add` goroutine ichida chaqirilgan. Ba'zan `Wait` erta qaytadi va servis ishlarni tugatmay chiqib ketadi. Test hech qachon buni ko'rmaydi: sekin CI mashinasida yoki yuk ostida faqat ba'zi ishga tushirishlarda chiqadi.
 - Konfiguratsiyani birinchi so'rovda yuklaydigan `Once` birinchi urinishda xato oladi va keyingi barcha so'rovlar o'sha xatoni qaytaradi, servis qayta ishga tushirilmaguncha.
 - Kod `sync.Pool` dagi buferni qaytarishdan oldin tozalamaydi va keyingi so'rov oldingi so'rovning ma'lumotini ko'radi.
-- Kutish uchun `sync.Cond` ishlatiladi, lekin shart `if` bilan tekshiriladi, yolg'on uyg'onishdan keyin kod noto'g'ri holatda davom etadi.
+- Kutish uchun `sync.Cond` ishlatiladi, lekin shart `if` bilan tekshiriladi: `Wait` uyg'otilgandan qaytguncha boshqa goroutine holatni o'zgartirib ulgurgan bo'lishi mumkin, kod esa shart hali to'g'ri deb noto'g'ri holatda davom etadi (Go'da `Cond.Wait` hujjatga ko'ra `Signal` yoki `Broadcast`siz qaytmaydi, ya'ni "spurious wakeup" yo'q).
 
 Bu darsda to'rtala primitivni hujjat qoidalariga ko'ra, Go 1.25 dagi yangiliklar bilan (WaitGroup.Go va go vet ga qo'shilgan tekshiruv) ko'rib chiqamiz. Har biri uchun "qachon kerak emas" savoliga ham javob beramiz: sync primitivlarining ko'pi kanal yoki errgroup (48-dars) bilan yaxshiroq ifodalanadi.
 
@@ -313,7 +313,7 @@ func main() {
 }
 ```
 
-Natija har ishga tushirishda farq qiladi. Biz Go 1.24.7 da oltita ishga tushirishda `0` va `2` ni ko'rdik:
+Natija har ishga tushirishda farq qiladi. Biz Go 1.24.7 da `0` va `2` ni ko'rdik; tekshiruv uchun qayta ishga tushirganda 20 ta ishga tushirishning 19 tasida `0`, bittasida `1` chiqdi:
 
 ```text
 tugagan goroutine'lar: 0

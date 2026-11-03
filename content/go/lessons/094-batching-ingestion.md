@@ -43,7 +43,7 @@ quiz:
       - "Tranzaksiya faqat 1000 qatordan keyin commit qilinadi"
       - "Qatorlar saralanishi uchun"
     answer: 0
-    explain: "Parametr limiti baza protokolining xususiyati (bu kurs manbalarida emas, muallif tekshirmagan: o'z bazangiz hujjatidan tasdiqlang). Bo'laklash bitta tranzaksiya ichida qoladi, shuning uchun butun batch atomik."
+    explain: "Parametr limiti baza protokolining xususiyati: Bind xabari parametrlar sonini `Int16` bilan uzatadi (PostgreSQL protokol hujjati), shuning uchun amalda 65535; boshqa baza uchun o'z hujjatini tekshiring. Bo'laklash bitta tranzaksiya ichida qoladi, shuning uchun butun batch atomik."
   - q: "`Batcher.Close()` chaqirilganda boshqa goroutine hali `Add` qilmoqda. Nima bo'lishi mumkin?"
     options:
       - "Add xatosiz davom etadi, element yo'qoladi"
@@ -260,8 +260,8 @@ Batcher'ning `Close()` kanalni yopadi, shuning uchun u chaqirilganda hech kim `A
 
 Batchni bazaga yozishning uch asosiy yo'li bor:
 
-1. Ko'p qatorli `INSERT ... VALUES (...), (...), ...`. Standart `database/sql` bilan ishlaydi, tranzaksiyaga o'raladi. Cheklov: bitta so'rovdagi parametrlar soni chegaralangan (PostgreSQL protokolida bu 65535 deb ma'lum, lekin bu kurs manbalarida yo'q va tekshirilmagan; o'z bazangiz hujjatidan tasdiqlang). Shuning uchun katta batch bo'laklanadi.
-2. `COPY`. PostgreSQL'ning ommaviy yuklash buyrug'i; pgx uni `Conn.CopyFrom(ctx, tableName, columnNames, rowSrc)` bilan, `pgx.CopyFromRows` manba sifatida beradi. Ko'p qatorli INSERT'dan tezroq bo'lishi mumkin (o'lchash kerak), lekin `COPY` o'zi `ON CONFLICT` ni qo'llamaydi (PostgreSQL xususiyati, kurs manbalarida yo'q): konfliktli qatorlar uchun avval vaqtinchalik jadvalga yozib, so'ng `INSERT ... SELECT ... ON CONFLICT` qilinadi. Tezlik farqi sizning ma'lumotingiz va bazangizga bog'liq: o'lchang (61-dars).
+1. Ko'p qatorli `INSERT ... VALUES (...), (...), ...`. Standart `database/sql` bilan ishlaydi, tranzaksiyaga o'raladi. Cheklov: bitta so'rovdagi parametrlar soni chegaralangan (PostgreSQL protokolida Bind xabari parametrlar sonini 16 bitli butun (`Int16`) bilan uzatadi, shuning uchun amalda chegara 65535: postgresql.org/docs/current/protocol-message-formats.html; qatorlar soni x ustunlar soni shundan oshmasligi kerak). Shuning uchun katta batch bo'laklanadi.
+2. `COPY`. PostgreSQL'ning ommaviy yuklash buyrug'i; pgx uni `Conn.CopyFrom(ctx, tableName, columnNames, rowSrc)` bilan, `pgx.CopyFromRows` manba sifatida beradi. Ko'p qatorli INSERT'dan tezroq bo'lishi mumkin (o'lchash kerak), lekin `COPY` o'zi `ON CONFLICT` ni qo'llamaydi (PostgreSQL `COPY` sintaksisida `ON CONFLICT` bandi yo'q: postgresql.org/docs/current/sql-copy.html): konfliktli qatorlar uchun avval vaqtinchalik jadvalga yozib, so'ng `INSERT ... SELECT ... ON CONFLICT` qilinadi. Tezlik farqi sizning ma'lumotingiz va bazangizga bog'liq: o'lchang (61-dars).
 3. pgx `Batch` / `SendBatch`: bir nechta turli so'rovni bitta tarmoq aylanishida yuboradi. Bir turdagi ko'p qator uchun odatda ko'p qatorli INSERT yoki COPY ma'quldir.
 
 ```go

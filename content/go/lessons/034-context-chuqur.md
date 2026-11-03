@@ -233,7 +233,7 @@ Code Review Comments qo'shimcha: maxsus Context tiplari yaratmang, signaturalard
 - `WithTimeoutCause` va `WithDeadlineCause` muddat tugaganda sabab o'rnatadi. **Ularning qaytargan `CancelFunc`i sabab o'rnatmaydi**: erta cancel chaqirsangiz, `Cause` `context.Canceled` bo'ladi.
 - Bola otadan keyin bekor qilinsa, `Cause(child)` otaning sababiga teng bo'ladi (birinchi bekor qilish yutadi).
 
-Amaliy foydasi: log va metrikada `context deadline exceeded` o'rniga "database 10 ms ichida javob bermadi" yoki "servis to'xtatilmoqda" ni ko'rasiz. Go 1.26 release notes'ga ko'ra `os/signal.NotifyContext` endi qaytarilgan kontekstni `CancelCauseFunc` bilan bekor qiladi va sababda qaysi signal kelgani bor (bu qism lokal tekshirilmagan).
+Amaliy foydasi: log va metrikada `context deadline exceeded` o'rniga "database 10 ms ichida javob bermadi" yoki "servis to'xtatilmoqda" ni ko'rasiz. Go 1.26 release notes'ga ko'ra `os/signal.NotifyContext` endi qaytarilgan kontekstni `CancelCauseFunc` bilan bekor qiladi va sababda qaysi signal kelgani bor (bu go.dev/doc/go1.26 da tasdiqlangan; Go 1.24 da lokal ishga tushirilmagan).
 
 ### WithoutCancel va AfterFunc (Go 1.21)
 

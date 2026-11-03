@@ -330,7 +330,7 @@ Topshiriqdagi `Reading` 56 bayt edi, maydonlar yig'indisi 33. Kamayish tartibi (
 const _ = 40 - unsafe.Sizeof(Reading{})
 ```
 
-`unsafe.Sizeof` konstanta, ayirma `uintptr` tipida. Struct 40 baytdan oshsa, ayirma manfiy bo'ladi va kompilyator `constant -24 of type uintptr overflows uintptr` xatosini beradi. Biz buni maydon qo'shib tekshirdik (Go 1.24.7): build to'xtadi. Shunday qilib, hajm kodning bir qismi: tartibni buzgan o'zgarish review'ga qadar yo'l topmaydi.
+`unsafe.Sizeof` konstanta, ayirma `uintptr` tipida. Struct 40 baytdan oshsa, ayirma manfiy bo'ladi va kompilyator `40 - unsafe.Sizeof(Reading{}) (constant -24 of type uintptr) overflows uintptr` ko'rinishidagi xatoni beradi. Biz buni maydon qo'shib tekshirdik (Go 1.24.7): build to'xtadi. Shunday qilib, hajm kodning bir qismi: tartibni buzgan o'zgarish review'ga qadar yo'l topmaydi.
 
 ## Qachon qo'llamaslik kerak
 

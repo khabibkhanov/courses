@@ -6,11 +6,11 @@ summary: "Kanallar bilan bog'langan bosqichlardan iborat pipeline, fan-out va fa
 duration: 45
 sources:
   - id: blog-pipelines
-    note: "Pipelines va cancellation maqolasi: pipeline ta'rifi, fan-out/fan-in, leak muammosi, done kanali orqali bekor qilish"
+    note: "Pipelines va cancellation maqolasi: Squaring numbers, Fan-out fan-in, Stopping short (leak muammosi va buferli kanal yechimi), Explicit cancellation (done kanali orqali bekor qilish)"
   - id: blog-context
     note: "Context maqolasi: done kanali g'oyasining context.Context ga umumlashtirilishi"
   - id: gopl
-    note: "Concurrency bobi: pipelines va cancellation bo'limlari"
+    note: "8-bob (Goroutines and Channels): pipeline va bekor qilishga oid bo'limlar (bo'lim nomlari va raqamlari tekshirilmagan)"
 quiz:
   - q: "Stage ichida 3 ta worker bitta chiqish kanaliga yozadi. Chiqish kanalini kim va qachon yopishi kerak?"
     options:

@@ -8,7 +8,7 @@ sources:
   - id: pkg-sync
     note: "Mutex, RWMutex, Map va TryLock hujjatlari: nusxalamaslik, Unlock qoidasi, rekursiv read-lock taqiqi, synchronizes-before qoidalari"
   - id: 100go
-    note: "Concurrency boblari: mutex'larni slice va map bilan noaniq ishlatish, sync turlarini nusxalash mavzulari"
+    note: "Concurrency boblari: #70 (Using mutexes inaccurately with slices and maps), #74 (Copying a sync type)"
   - id: gopl
     note: "Concurrency with Shared Variables bobi: mutual exclusion va read/write mutex"
 quiz:
@@ -51,7 +51,7 @@ quiz:
       - "RWMutex faqat yozuv ko'p bo'lganda tezroq"
       - "RWMutex va Mutex orasida hech qanday farq yo'q"
     answer: 0
-    explain: "Dars o'lchovida ikki yadroli mashinada qisqa o'qish bo'limlarida ikkala variant ham bir xil tartibdagi ns/op berdi. RWMutex uzun o'qish bo'limlarida va ko'p yadroda foyda berishi mumkin, lekin buni o'lchamasdan faraz qilmang."
+    explain: "Dars o'lchovida ikki yadroli mashinada qisqa o'qish bo'limlarida RWMutex Mutex'dan tez bo'lmadi (birinchi o'lchovda bir xil tartibdagi ns/op, qayta o'lchovda sekinroq). RWMutex uzun o'qish bo'limlarida va ko'p yadroda foyda berishi mumkin, lekin buni o'lchamasdan faraz qilmang."
   - q: "Bitta umumiy map va bitta mutex 64 ta goroutine uchun to'siq bo'ldi, goroutine'lar asosan turli kalitlar bilan ishlaydi. Qaysi o'zgarish eng to'g'ri?"
     options:
       - "Mutex'ni RWMutex ga almashtirish, har doim"
@@ -281,7 +281,7 @@ goroutine 18 [sync.RWMutex.Lock]:
 ...
 ```
 
-Ikkala goroutine ham bloklangan: asosiy `RLock` da, yordamchi `Lock` da. Runtime hamma goroutine uxlayotganini ko'rib, "deadlock" fatal xatosi bilan to'xtatadi. Bu faqat dastur ichidagi barcha goroutine'lar bloklanganda ishlaydi: server kabi boshqa goroutine'lar ishlayotgan dasturda deadlock jim qoladi, ikkita goroutine shunchaki abadiy qotadi. Shu sababli ularni goroutine profilidan qidirish kerak (41-dars).
+Bu chiqish `go run` (yoki oddiy qurilgan binary) uchun; `-race` bilan qurilganda shu dastur fatal xato chiqarmasdan osilib qoladi (Go 1.24.7 da tekshirildi, 90 soniyada tugamadi). Ikkala goroutine ham bloklangan: asosiy `RLock` da, yordamchi `Lock` da. Runtime hamma goroutine uxlayotganini ko'rib, "deadlock" fatal xatosi bilan to'xtatadi. Bu faqat dastur ichidagi barcha goroutine'lar bloklanganda ishlaydi: server kabi boshqa goroutine'lar ishlayotgan dasturda deadlock jim qoladi, ikkita goroutine shunchaki abadiy qotadi. Shu sababli ularni goroutine profilidan qidirish kerak (41-dars).
 
 ## Chuqurroq: kritik bo'lim chegarasi va contention
 
@@ -323,7 +323,7 @@ BenchmarkMutexRead-2     ~17-26 ns/op
 BenchmarkRWMutexRead-2   ~17-19 ns/op
 ```
 
-Bu raqamlar bir mashina va bitta mikro-benchmark uchun, takroriy o'lchovlar orasida ham farqlanadi (`-count 3`), shuning uchun natija "RWMutex sezilarli tezlashtirmadi" deb o'qilishi kerak, aniq nisbat sifatida emas. Ko'p yadroli mashinada yoki uzunroq o'qish bo'limlarida natija boshqacha bo'lishi mumkin, biz bunday sharoitda o'lchamadik. Qoida: `RWMutex` ni faqat o'qishlar ham uzoq davom etsa va o'lchov foyda ko'rsatsa tanlang.
+Bu raqamlar bir mashina va bitta mikro-benchmark uchun, takroriy o'lchovlar orasida ham farqlanadi (`-count 3`). Tekshiruv uchun xuddi shu sharoitda (`-cpu 2`, `-count 3`, `RunParallel`, bitta kalit) qayta o'lchaganda Mutex 29-33 ns/op, RWMutex esa 63-70 ns/op chiqdi, ya'ni bu safar RWMutex sekinroq bo'ldi. Shuning uchun natija "RWMutex qisqa o'qishlarda tezlashtirmadi" deb o'qilishi kerak, aniq nisbat sifatida emas. Ko'p yadroli mashinada yoki uzunroq o'qish bo'limlarida natija boshqacha bo'lishi mumkin, biz bunday sharoitda o'lchamadik. Qoida: `RWMutex` ni faqat o'qishlar ham uzoq davom etsa va o'lchov foyda ko'rsatsa tanlang.
 
 ### TryLock
 
@@ -548,4 +548,4 @@ Go'da muammo bir daraja chuqurroq: xotiraga kirish ham parallel. Shuning uchun G
 - `RWMutex` kutayotgan writer bo'lsa yangi reader'larni to'xtatadi, shu sababli rekursiv `RLock` deadlock beradi; `RLock` ni `Lock` ga ko'tarib bo'lmaydi.
 - Kritik bo'lim qisqa va faqat umumiy holatga tegadigan bo'lishi kerak; sekin chaqiruvni lock tashqarisiga chiqarish takroriy ish xavfi bilan keladi, uni singleflight (48-dars) kamaytiradi.
 - Contention'ni kritik bo'limni qisqartirish, holatni bo'lish (sharding), atomic va faqat keyin lock turini o'zgartirish bilan kamaytiring; avval o'lchang.
-- `RWMutex` har doim tezroq emas: ikki yadroli sandbox'da qisqa o'qishlarda Mutex bilan bir xil tartibdagi vaqt chiqdi; qarorni o'z yukingizdagi o'lchov bilan asoslang.
+- `RWMutex` har doim tezroq emas: ikki yadroli sandbox'da qisqa o'qishlarda Mutex'dan tez bo'lmadi (bir xil tartibda yoki sekinroq); qarorni o'z yukingizdagi o'lchov bilan asoslang.

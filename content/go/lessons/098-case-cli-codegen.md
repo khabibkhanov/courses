@@ -8,7 +8,7 @@ sources:
   - id: go-mod-ref
     note: "tool direktivasi: Go 1.24 dan paketni modul bog'liqligi qiladi va go tool bilan ishga tushirishga imkon beradi"
   - id: 100go
-    note: "Testlash va xatolarni qayta ishlash bilan bog'liq xatolar: os.Exit va log.Fatal ni testlanmaydigan joyda ishlatmaslik"
+    note: "Testlash (jadvalli testlar, httptest/iotest) va xatolarni qayta ishlash bilan bog'liq xatolar. os.Exit va log.Fatal haqidagi tavsiya 100go.co ro'yxatida alohida band sifatida topilmadi, u muallifning amaliy tavsiyasi"
   - id: gopl
     note: "Matn shablonlari (text/template) va buyruq qatori dasturlarini yozish misollari"
   - id: pkg-embed
@@ -180,7 +180,7 @@ func main() {
 func run(args []string, stdout, stderr io.Writer) int
 ```
 
-`run` argumentlar va chiqish oqimlarini parametr sifatida oladi, shuning uchun sinov uni bufer bilan chaqirib, chiqish kodi va matnini tekshiradi. Konvensiya: 0 muvaffaqiyat, 1 ish vaqti xatosi, 2 noto'g'ri foydalanish (noma'lum buyruq, yetishmaydigan flag). Natijalar `stdout`ga, tashxis va xatolar `stderr`ga yoziladi: shunda `fleetgen gen -out -  > fayl.go` toza Go kodini beradi, xabarlar esa terminalga tushadi. Flaglar `flag.NewFlagSet` bilan `ContinueOnError` rejimida o'qiladi: global `flag.Parse()` xatoda jarayonni o'zi to'xtatadi va sinab bo'lmaydi. 100 Go Mistakes sinovga to'sqinlik qiladigan `os.Exit` va `log.Fatal` ni mantiq ichida ishlatishdan ogohlantiradi (91-darsdagi sabab bir xil: deferred funksiyalar o'tkazib yuboriladi).
+`run` argumentlar va chiqish oqimlarini parametr sifatida oladi, shuning uchun sinov uni bufer bilan chaqirib, chiqish kodi va matnini tekshiradi. Konvensiya: 0 muvaffaqiyat, 1 ish vaqti xatosi, 2 noto'g'ri foydalanish (noma'lum buyruq, yetishmaydigan flag). Natijalar `stdout`ga, tashxis va xatolar `stderr`ga yoziladi: shunda `fleetgen gen -out -  > fayl.go` toza Go kodini beradi, xabarlar esa terminalga tushadi. Flaglar `flag.NewFlagSet` bilan `ContinueOnError` rejimida o'qiladi: global `flag.Parse()` xatoda jarayonni o'zi to'xtatadi va sinab bo'lmaydi. `os.Exit` va `log.Fatal` ni mantiq ichida ishlatmang: ular jarayonni darhol tugatadi, sinovni to'xtatadi va deferred funksiyalarni o'tkazib yuboradi (bu muallifning amaliy tavsiyasi, 91-darsdagi sabab bir xil).
 
 ### go generate
 

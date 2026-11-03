@@ -6,7 +6,7 @@ summary: "Modul 7 ni birlashtiruvchi amaliy tsikl: benchmark bilan bazani o'lcha
 duration: 40
 sources:
   - id: diagnostics
-    note: "Profiling bo'limi: pprof profil turlari va ular nimani o'lchashi; diagnostika vositalari bir-birini almashtirmasligi"
+    note: "Profiling bo'limi: pprof profil turlari; Introduction bo'limi: ba'zi diagnostika vositalari bir-biriga xalaqit berishi mumkin"
   - id: blog-pprof
     note: "Profiling Go Programs: pprof bilan issiq joyni topish va o'zgartirishdan keyin qayta o'lchash yondashuvi"
   - id: pgo-doc
@@ -43,7 +43,7 @@ quiz:
       - "GC o'chirilgan"
       - "Production latency'da bu funksiya ulushi kichik (vaqt DB, tarmoq yoki boshqa joyda ketadi) yoki benchmark yuklamasi haqiqiy kirishni aks ettirmaydi; production profili bilan tasdiqlash kerak edi"
     answer: 3
-    explain: "Amdahl qonuni: funksiya umumiy vaqtning kichik qismi bo'lsa, uni cheksiz tezlashtirish ham umumiy natijani o'zgartirmaydi. Profil production'dan (net/http/pprof, 63-dars) yoki real kirish bilan olinishi shart."
+    explain: "Amdahl qonuni: funksiya umumiy vaqtning kichik qismi bo'lsa, uni cheksiz tezlashtirish ham umumiy natijani o'zgartirmaydi. Profil production'dan (net/http/pprof, 62-dars) yoki real kirish bilan olinishi shart."
   - q: "Optimallashtirishni qachon to'xtatish kerak?"
     options:
       - "Benchmark nolga yetganda"
@@ -187,7 +187,7 @@ Alloc ko'rsatkichlari (B/op, allocs/op) kamdan-kam shovqinli: pastdagi jadvalda 
 
 CPU profil (62-dars) namuna olish bilan ishlaydi: u issiq joyni ko'rsatadi, sababini emas. `fmt.Sprintf` 66% bo'lsa, bu "Sprintf qimmat" degani emas, "bu yerda ko'p chaqirilyapti" degani. Gipoteza shu yerdan chiqadi: "har nuqtada kalit yasash ortiqcha". Gipotezani benchmark tekshiradi.
 
-Profil faqat o'lchangan kirish uchun to'g'ri. Benchmark uchun yasalgan sintetik kirish (bu darsda 20 ming nuqta, 500 qurilma) production'dagi taqsimotdan farq qilishi mumkin. Oxirgi tekshiruv har doim production profili yoki real kirish bilan (63-dars).
+Profil faqat o'lchangan kirish uchun to'g'ri. Benchmark uchun yasalgan sintetik kirish (bu darsda 20 ming nuqta, 500 qurilma) production'dagi taqsimotdan farq qilishi mumkin. Oxirgi tekshiruv har doim production profili (62-dars) yoki real kirish bilan.
 
 ### Qachon to'xtash
 

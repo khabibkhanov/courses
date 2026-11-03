@@ -185,7 +185,7 @@ Spetsifikatsiya uch indeksli shaklni belgilaydi: `a[low:high:max]` oddiy `a[low:
 
 ### Nusxa va xotira: bo'lak butun massivni ushlaydi
 
-Go Blog'ning slice maqolasi "A possible gotcha" bo'limida buni misol bilan beradi: fayl butunligicha xotiraga o'qiladi, regexp undan raqamlar guruhini topib, subslice qaytaradi, va shu bir necha bayt butun faylni tirik ushlab turadi. Maqolaning yechimi - kerakli ma'lumotni yangi slice'ga nusxalash. 100 Go Mistakes #26 shuni takrorlaydi va qo'shadi: full slice expression bu holda yordam bermaydi, faqat nusxa yordam beradi, chunki uzunlik va sig'im pointer qaysi massivga qaraganini o'zgartirmaydi.
+Go Blog'ning slice maqolasi "A possible gotcha" bo'limida buni misol bilan beradi: fayl butunligicha xotiraga o'qiladi, regexp undan raqamlar guruhini topib, subslice qaytaradi, va shu bir necha bayt butun faylni tirik ushlab turadi. Maqolaning yechimi - kerakli ma'lumotni yangi slice'ga nusxalash. 100 Go Mistakes #26 ham yechim sifatida slice nusxasini ko'rsatadi. Full slice expression bu holda yordam bermaydi, faqat nusxa yordam beradi, chunki uzunlik va sig'im pointer qaysi massivga qaraganini o'zgartirmaydi (bu so'nggi gap bu darsning o'z xulosasi: 100go.co dagi #26 xulosasi full slice expression'ni tilga olmaydi).
 
 ## Chuqurroq: pointer dumi, range nusxalari va slices paketi
 

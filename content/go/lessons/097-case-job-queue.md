@@ -663,11 +663,11 @@ Qatorma-qator:
 
 ## Qachon qo'llamaslik kerak
 
-- Yuqori hajmda (kuchli oqim, sekundiga minglab job) Postgres jadvali tez eskiradi: har job bir necha marta yangilanadi, bu jadvalda o'lik qatorlar va VACUUM yukini oshiradi (PostgreSQL xususiyati; bu kurs manbalarida emas, o'z yukingizda o'lchang). Bunday hajm uchun maxsus broker (Kafka, NATS, Redis stream) ma'qul.
+- Yuqori hajmda (kuchli oqim, sekundiga minglab job) Postgres jadvali tez eskiradi: har job bir necha marta yangilanadi, bu jadvalda o'lik qatorlar va VACUUM yukini oshiradi (PostgreSQL hujjatiga ko'ra yangilangan yoki o'chirilgan qatorlarning eski versiyalarini VACUUM tozalaydi: Routine Vacuuming; ta'sir miqdorini o'z yukingizda o'lchang). Bunday hajm uchun maxsus broker (Kafka, NATS, Redis stream) ma'qul.
 - Pub/sub va fan-out (bir voqea ko'p iste'molchiga) navbat jadvali uchun noqulay: u har job uchun bitta iste'molchi modeliga mo'ljallangan.
 - Uzoq, ko'p bosqichli workflow'lar uchun (kutish, shartli tarmoqlanish, taymerlar) holat mashinasi yoki workflow dvigateli kerak; oddiy navbat bunga qurilmagan.
 - Exactly-once kafolati yo'q. Handler idempotent bo'lmasa (to'lov, xat), takroriy bajarish zarar qiladi.
-- Polling kechikish qo'shadi: job `Poll` intervali bilan topiladi. Bildirishnoma mexanizmlari (masalan, Postgres'ning LISTEN/NOTIFY) kechikishni kamaytirishi mumkin, lekin bu darsda ko'rilmagan va tekshirilmagan.
+- Polling kechikish qo'shadi: job `Poll` intervali bilan topiladi. Bildirishnoma mexanizmlari (masalan, Postgres'ning LISTEN/NOTIFY: NOTIFY LISTEN qilgan klientlarga kanal bo'yicha xabar yuboradi, PostgreSQL hujjati) kechikishni kamaytirishi mumkin, lekin bu darsda ko'rilmagan va sinalmagan; kafolat va cheklovlarini hujjatdan o'qing.
 - Worker'lar bazaga ulanishlarni ishlatadi. Ko'p worker va qisqa polling intervali ulanishlar pulini (78-dars) va bazani yuklaydi.
 
 ## Stack'da: Node.js bilan solishtirish

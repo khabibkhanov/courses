@@ -10,7 +10,7 @@ sources:
   - id: go-spec
     note: "Handling panics va Run-time panics bo'limlari: recover'ning nil qaytarish shartlari, runtime.Error"
   - id: 100go
-    note: "#48 (Panicking): panic faqat dasturchi xatosi va majburiy dependency yaratilmaganda; #54"
+    note: "#48 (Panicking): panic faqat dasturchi xatosi va majburiy dependency yaratilmaganda"
   - id: pkg-net-http
     note: "Handler.ServeHTTP hujjati: server panic'ni recover qiladi; ErrAbortHandler"
   - id: code-review-comments

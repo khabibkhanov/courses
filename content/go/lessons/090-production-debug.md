@@ -8,7 +8,7 @@ sources:
   - id: pkg-http-pprof
     note: "pprof endpoint'lari, query parametrlar (debug, seconds, gc), DefaultServeMux'ga ro'yxatdan o'tish va GET talabi"
   - id: blog-flight-recorder
-    note: "Flight recorder maqsadi va ishlatilishi (Go 1.25). Maqola bu sessiyada qayta o'qilmagan; kod shu tavsifga tayanadi"
+    note: "Flight recorder maqsadi va ishlatilishi (Go 1.25), FlightRecorderConfig (MinAge, MaxBytes) va MinAge uchun tavsiya; imzolar pkg.go.dev/runtime/trace bilan solishtirildi"
   - id: diagnostics
     note: "Diagnostika vositalari tasnifi: profiling, tracing, debugging va runtime statistikasi"
 quiz:
@@ -210,13 +210,13 @@ Heap profil `inuse_space` (hozir band), `inuse_objects`, `alloc_space` (jami ajr
 
 ### Crash ma'lumoti
 
-Ushlanmagan panic stack trace'ni stderr'ga yozadi va dastur 2 kodi bilan chiqadi. Qaysi goroutine'lar ko'rsatilishi `GOTRACEBACK` bilan boshqariladi: standart holatda faqat panic qilgan goroutine, `all` bilan hammasi, `crash` bilan esa chiqishdan keyin core dump. `crash` rejimi operatsion tizim sozlamalariga bog'liq va biz uni sinamadik. SIGQUIT process'ga goroutine dump'ini chiqartirib to'xtatadi: osilib qolgan, lekin hali tirik process uchun "oxirgi chora" diagnostika.
+Ushlanmagan panic stack trace'ni stderr'ga yozadi va dastur 2 kodi bilan chiqadi. Qaysi goroutine'lar ko'rsatilishi `GOTRACEBACK` bilan boshqariladi: standart holatda faqat panic qilgan goroutine, `all` bilan hammasi, `system` hamma goroutine'larni runtime ichki goroutine'lari bilan ko'rsatadi, `crash` esa `system` kabi, lekin chiqish o'rniga OS'ga xos tarzda yiqiladi (Unix'da SIGABRT bilan core dump; runtime hujjati). `crash` rejimi operatsion tizim sozlamalariga bog'liq va biz uni sinamadik. SIGQUIT process'ga goroutine dump'ini chiqartirib to'xtatadi: osilib qolgan, lekin hali tirik process uchun "oxirgi chora" diagnostika.
 
 Konteynerda stderr qayta ishga tushishda yo'qolishi mumkin. Go 1.23 dan `runtime/debug.SetCrashOutput(f, debug.CrashOptions{})` crash chiqishini qo'shimcha faylga ham yozadi (persistent volume yoki log agentiga ko'riladigan joy).
 
 ### Flight recorder (Go 1.25)
 
-Execution trace (64-dars) juda boy, lekin uni doim yozish qimmat, kerak bo'lgan hodisa esa oldindan noma'lum. Flight recorder trace'ni xotirada aylanma bufer sifatida saqlaydi va faqat siz so'raganda (masalan, sekin so'rov yoki xato aniqlanganda) oxirgi bir necha soniyani faylga yozadi. Shu bilan "muammo bo'lganda nima sodir bo'lgan edi?" savoliga javob topiladi. Quyidagi kod `blog-flight-recorder` maqolasi tavsifiga tayanadi, maqola bu sessiyada qayta o'qilmagan va Go 1.25 kerak: kompilyatsiya qilinmagan, `FlightRecorderConfig` maydon nomlari va metod imzolarini rasmiy hujjat bilan solishtiring.
+Execution trace (64-dars) juda boy, lekin uni doim yozish qimmat, kerak bo'lgan hodisa esa oldindan noma'lum. Flight recorder trace'ni xotirada aylanma bufer sifatida saqlaydi va faqat siz so'raganda (masalan, sekin so'rov yoki xato aniqlanganda) oxirgi bir necha soniyani faylga yozadi. Shu bilan "muammo bo'lganda nima sodir bo'lgan edi?" savoliga javob topiladi. Quyidagi kod Go 1.25 talab qiladi va sandbox'da (Go 1.24.7) kompilyatsiya qilinmagan. `trace.NewFlightRecorder`, `FlightRecorderConfig{MinAge, MaxBytes}`, `Start`, `Stop` va `WriteTo` imzolari pkg.go.dev/runtime/trace hujjati ("added in go1.25.0") va `blog-flight-recorder` maqolasi bilan solishtirildi (2026-11-03). Maqola `MinAge` ni kuzatmoqchi bo'lgan hodisa oynasidan taxminan 2 baravar katta qo'yishni tavsiya qiladi. Hujjatga ko'ra `MaxBytes` `MinAge` dan ustun va faqat maslahat sifatida ishlaydi; bir vaqtda faqat bitta `WriteTo` ishlay oladi, ikkinchisi xato qaytaradi.
 
 ```go
 package main
@@ -239,8 +239,8 @@ var (
 
 func startFlightRecorder() error {
 	recorder = trace.NewFlightRecorder(trace.FlightRecorderConfig{
-		MinAge:   5 * time.Second, // kamida oxirgi ~5 soniya saqlansin
-		MaxBytes: 16 << 20,        // bufer hajmi yuqori chegarasi
+		MinAge:   5 * time.Second, // quyi chegara: taxminan oxirgi 5 soniya (MaxBytes bilan cheklanishi mumkin)
+		MaxBytes: 16 << 20,        // hajm uchun yuqori chegara (maslahat, MinAge'dan ustun)
 	})
 	return recorder.Start()
 }

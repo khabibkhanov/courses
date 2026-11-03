@@ -256,7 +256,7 @@ Chegarani `sc.Buffer(buf, max)` bilan o'zgartirasiz: birinchi argument boshlang'
 
 ### Reader shartnomasi va o'zingizning Reader'ingiz
 
-O'z `Read`ingizni yozsangiz, shartnomaga amal qiling: `len(p) == 0` bo'lsa `0` qaytaring; `p`ni saqlab qo'ymang (chaqiruvchi uni qayta ishlatadi); EOF'ni o'ramasdan qaytaring. Standart kutubxonada `testing/iotest` paketi bor, u kichik bo'laklarda yoki EOF bilan birga ma'lumot qaytaradigan reader'lar beradi. Ularni o'z reader iste'molchingizni sinash uchun ishlatish yaxshi. Bu paketning aniq API'si bu darsda tekshirilmagan, hujjatga qarang.
+O'z `Read`ingizni yozsangiz, shartnomaga amal qiling: `len(p) == 0` bo'lsa `0` qaytaring; `p`ni saqlab qo'ymang (chaqiruvchi uni qayta ishlatadi); EOF'ni o'ramasdan qaytaring. Standart kutubxonada `testing/iotest` paketi bor, u kichik bo'laklarda yoki EOF bilan birga ma'lumot qaytaradigan reader'lar beradi. Ularni o'z reader iste'molchingizni sinash uchun ishlatish yaxshi. `go doc testing/iotest` (Go 1.24.7) bo'yicha: `OneByteReader` har `Read`da bir bayt qaytaradi, `HalfReader` so'ralgan hajmning yarmini, `DataErrReader` esa oxirgi xatoni (odatda EOF) oxirgi ma'lumot bilan birga qaytaradi, ya'ni yuqoridagi `chunkReader` xulqi; `TestReader` reader'ning kutilgan mazmunni to'g'ri qaytarishini tekshiradi.
 
 ### io.Pipe
 

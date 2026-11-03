@@ -6,7 +6,7 @@ summary: "Chegaralangan worker pool, navbat o'lchami qarori, backpressure (produ
 duration: 45
 sources:
   - id: 100go
-    note: "Concurrency boblari: goroutine va kanallardan noto'g'ri foydalanish, worker pool mavzulari (muayyan band raqamlari tekshirilmagan)"
+    note: "Concurrency boblari: umumiy kontekst - #62 (goroutine qachon to'xtashi), #67 (kanal sig'imi), #73 (Not using errgroup). Dars matnida kitobdan aniq da'vo keltirilmagan"
   - id: blog-pipelines
     note: "Pipelines maqolasi: kanal bilan bog'langan bosqichlar, bekor qilish va goroutine'larning o'zi chiqishi kerakligi"
   - id: pkg-context
@@ -27,7 +27,7 @@ quiz:
       - "Chunki range tsikli goroutine'ni kutmaydi"
       - "Chunki goroutine soni elementlar soniga teng va hech narsa bir vaqtdagi ishni cheklamaydi"
     answer: 3
-    explain: "Bu chegarasiz fan-out: har element uchun goroutine. Dars topshirig'ida 200 elementda 30 dan 66 gacha parallel ish ko'rsatildi (har ishga tushirishda boshqacha). Pool ishchilar sonini oldindan belgilaydi."
+    explain: "Bu chegarasiz fan-out: har element uchun goroutine. Dars topshirig'ida 200 elementda bir vaqtdagi ishlar soni cheklanmagan: qayta tekshirganda bu qiymat har ishga tushirishda boshqacha chiqdi (0 dan 179 gacha). Pool ishchilar sonini oldindan belgilaydi."
   - q: "Navbat to'la bo'lganda `TrySubmit` `ErrFull` qaytaradi va ishni rad etadi. Bu qaysi strategiya?"
     options:
       - "Load shedding: ortiqcha ishni rad etib, tizimni himoya qilish"
@@ -65,7 +65,7 @@ task:
   prompt: |
     `processAll` 200 ta paketni `handle` bilan qayta ishlaydi. Hozir u har paket uchun goroutine ishga tushiradi va `workers` parametrini e'tiborsiz qoldiradi. Natijada `processAll` qaytganda hali hech narsa qayta ishlanmagan bo'lishi mumkin va bir vaqtdagi ishlar soni cheklanmagan.
 
-    Starter: `qayta ishlandi: 0` va eng ko'p parallel qiymat 4 dan ancha katta (bu ishga tushirishda 30, har safar boshqacha), shuning uchun `main` 1 kod bilan chiqadi.
+    Starter: `qayta ishlandi: 0` va eng ko'p parallel qiymat 4 dan ancha katta (qiymat har ishga tushirishda boshqacha: shu sandbox'da 0 dan 179 gacha ko'rindi), shuning uchun `main` 1 kod bilan chiqadi.
 
     `processAll` ni tuzating: aynan `workers` ta goroutine'li pool yarating, elementlarni buferlanmagan kanal orqali bering, `processAll` hamma ish tugagandan keyingina qaytsin. Natija: `qayta ishlandi: 200 eng ko'p parallel: 4`. `go run -race` ogohlantirishsiz o'tsin.
   lang: go

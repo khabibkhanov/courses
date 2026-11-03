@@ -6,11 +6,11 @@ summary: "Go servis xavfsizligining uch qatlami: bog'liqliklar (govulncheck, go.
 duration: 45
 sources:
   - id: vuln-mgmt
-    note: "Go Vulnerability Management umumiy tavsifi: vulnerability database, govulncheck va ularning o'zaro munosabati. Aniq bo'limlar bu sessiyada qayta o'qilmagan"
+    note: "Go Vulnerability Management umumiy tavsifi: vulnerability database va govulncheck kodingizdagi zaif funksiyalarga transitiv chaqiruvlar asosida tahlil qilishi"
   - id: govulncheck-tutorial
-    note: "govulncheck qo'llanmasi: ishga tushirish va natijani o'qish. Sahifa bu sessiyada qayta o'qilmagan, buyruq shakllari qo'llanma tavsifiga tayanadi"
+    note: "govulncheck qo'llanmasi: go install buyrug'i, ishga tushirish, natijadagi 'Information' bo'limi (kod chaqirmaydigan zaifliklar)"
   - id: blog-osroot
-    note: "os.Root va traversal-resistant fayl API'lari: maqsad va ishlatish. Cheklovlar ro'yxati bu sessiyada qayta o'qilmagan"
+    note: "os.Root va os.OpenInRoot (Go 1.24): maqsad, ishlatish va 'Caveats and considerations' bo'limidagi platforma cheklovlari"
 quiz:
   - q: "Loyihada zaif kutubxona bor, lekin govulncheck uni 'import qilingan, lekin kodingiz zaif funksiyani chaqirmaydi' deb alohida belgiladi. Bu nimani anglatadi?"
     options:
@@ -183,7 +183,7 @@ Bu dars har qatlam uchun amaliy minimumni beradi: bog'liqlik zaifliklarini `govu
 
 ### Bog'liqlik zaifliklari: govulncheck
 
-Go jamoasi ma'lum zaifliklarni vulnerability database'da yuritadi. `govulncheck` shu bazaga qarshi loyihani tekshiradi. Uning asosiy farqi: u faqat go.mod ro'yxatiga emas, kodingiz zaif funksiyaga haqiqatan yetib boradimi, shuni call graph bo'yicha tahlil qiladi. Natija shovqinsizroq: "paket import qilingan, lekin zaif funksiya chaqirilmaydi" holatlari alohida ajratiladi. Ikki rejim bor: manba kodi bo'yicha (`govulncheck ./...`) va tayyor binary bo'yicha (`-mode=binary`). Binary rejimi mumkin, chunki Go binary ichiga qaysi modul versiyalari bilan qurilgani haqida ma'lumot yozadi (`go version -m <binary>` yoki `runtime/debug.ReadBuildInfo`, quyida misol).
+Go jamoasi ma'lum zaifliklarni vulnerability database'da yuritadi. `govulncheck` shu bazaga qarshi loyihani tekshiradi. Uning asosiy farqi: u faqat go.mod ro'yxatiga emas, kodingiz zaif funksiyaga haqiqatan yetib boradimi, shuni call graph bo'yicha tahlil qiladi. Natija shovqinsizroq: qo'llanmada ko'rsatilganidek, kod zaif funksiyani chaqirmaydigan holatlar alohida "Information" bo'limiga ajratiladi. Ikki rejim bor: manba kodi bo'yicha (`govulncheck ./...`) va tayyor binary bo'yicha (`-mode=binary`). Binary rejimi ham bor: hujjatga ko'ra govulncheck binary'ning symbol jadvalidan zaif funksiyalar tilga olinganini topadi (bu source rejimidagi to'liq call graph tahlilidan kamroq aniq), symbol ma'lumoti olinmasa esa binary bog'liq bo'lgan hamma modullar bo'yicha xabar beradi. Binary ichidagi modul versiyalarini `go version -m <binary>` yoki `runtime/debug.ReadBuildInfo` ko'rsatadi (quyida misol).
 
 ```bash
 # o'rnatish (tashqi modul, sandbox'da bajarilmadi)
@@ -196,7 +196,7 @@ govulncheck ./...
 govulncheck -mode=binary ./bin/ingest
 ```
 
-Bu buyruq shakllari govulncheck tavsifiga tayanib yozilgan va tekshirilmagan: sandbox'da tashqi modul yuklab bo'lmaydi, qo'llanma sahifasi esa bu sessiyada qayta o'qilmagan. Bayroqlarni `govulncheck -h` bilan solishtiring. Standart kutubxonadagi zaifliklar Go versiyasi bilan bog'liq, shuning uchun ularni toolchain'ni yangilab bartaraf etasiz (1-dars: qo'llab-quvvatlash siyosati, 2-dars: toolchain).
+`go install ...@latest` buyrug'i govulncheck qo'llanmasida (go.dev/doc/tutorial/govulncheck), `-mode binary` bayrog'i esa govulncheck paketi hujjatida (pkg.go.dev/golang.org/x/vuln/cmd/govulncheck) tasdiqlangan; hujjat bayroqni bo'sh joy bilan yozadi (`-mode binary`), Go `flag` paketi `-mode=binary` shaklini ham qabul qiladi. Sandbox'da tashqi modul yuklab bo'lmagani uchun buyruqlar ishga tushirilmadi. Bayroqlarni `govulncheck -h` bilan solishtiring. Standart kutubxonadagi zaifliklar Go versiyasi bilan bog'liq, shuning uchun ularni toolchain'ni yangilab bartaraf etasiz (1-dars: qo'llab-quvvatlash siyosati, 2-dars: toolchain).
 
 ### Yetkazib berish zanjiri: go.sum va checksum
 
@@ -216,7 +216,7 @@ Tashqaridan kelgan har qiymat ishonchsiz: sarlavha, yo'l, tana, qurilma identifi
 
 ## Chuqurroq: path traversal va os.Root
 
-Foydalanuvchi bergan fayl nomini `filepath.Join(base, name)` bilan qo'shish klassik zaiflik: `name` `../` elementlariga ega bo'lsa, natija `base` dan tashqariga chiqadi. `filepath.Clean` va prefiks tekshiruvi (`strings.HasPrefix`) bu xatoni qisman yopadi, lekin symlink'lar (`base` ichidagi havola tashqaridagi faylga ishora qiladi) bu usullarni chetlab o'tadi, chunki matn darajasida yo'l ichkarida ko'rinadi. Go 1.24 da `os.Root` qo'shilgan (API ro'yxatida `os.OpenRoot` va `os.OpenInRoot` bor): u katalogni "ildiz" sifatida ochadi va undan keyingi barcha operatsiyalar shu ildiz ichida bajariladi; ildizdan chiqib ketadigan yo'l (`..` yoki symlink orqali) xato beradi. `blog-osroot` maqolasi shu dizaynni tushuntiradi. `os.OpenInRoot(dir, name)` bir martalik ochish uchun qisqartma. `os.Root` ning qaysi holatlarda himoya qilmasligi (platformaga xos cheklovlar) maqola va paket hujjatida yozilgan; ularni bu darsda tekshirmadik.
+Foydalanuvchi bergan fayl nomini `filepath.Join(base, name)` bilan qo'shish klassik zaiflik: `name` `../` elementlariga ega bo'lsa, natija `base` dan tashqariga chiqadi. `filepath.Clean` va prefiks tekshiruvi (`strings.HasPrefix`) bu xatoni qisman yopadi, lekin symlink'lar (`base` ichidagi havola tashqaridagi faylga ishora qiladi) bu usullarni chetlab o'tadi, chunki matn darajasida yo'l ichkarida ko'rinadi. Go 1.24 da `os.Root` qo'shilgan (API ro'yxatida `os.OpenRoot` va `os.OpenInRoot` bor): u katalogni "ildiz" sifatida ochadi va undan keyingi barcha operatsiyalar shu ildiz ichida bajariladi; ildizdan chiqib ketadigan yo'l (`..` yoki symlink orqali) xato beradi. `blog-osroot` maqolasi shu dizaynni tushuntiradi. `os.OpenInRoot(dir, name)` bir martalik ochish uchun qisqartma. Maqolaning "Caveats and considerations" bo'limiga ko'ra cheklovlar bor: Unix'da `Root` symlink orqali chiqishdan himoya qiladi, lekin mount point'lardan o'tishni cheklamaydi (masalan Linux bind mount; tahdid modeli oddiy foydalanuvchi yarata oladigan konstruksiyalar, root huquqi talab qiladiganlar emas); `GOOS=js` da `openat` yo'qligi sababli symlink tekshiruvida TOCTOU poygasi mumkin; WASI'da himoya WASI implementatsiyasi bergan darajadan oshmaydi; Plan 9'da symlink yo'q va faqat leksik tozalash qilinadi. Ko'p katalog komponentli nomlarda `Root` amallari oddiy amallardan ancha qimmat bo'lishi mumkin. Bu cheklovlarni bu darsda o'zimiz sinamadik.
 
 Quyidagi misol aynan shu xatti-harakatni ko'rsatadi: `base/reports` ichida `may.txt` oddiy fayl, tashqarida `secret.txt`, va `base/link.txt` symlink shu maxfiy faylga ishora qiladi.
 

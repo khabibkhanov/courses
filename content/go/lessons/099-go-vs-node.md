@@ -273,7 +273,7 @@ Qaror uchun savollar tartibi: (1) hozirgi bottleneck nima va u o'lchanganmi? (2)
 - Go'ni tanlamang, agar sabab faqat "tezroq" bo'lsa va bottleneck o'lchanmagan. Tilni almashtirish sekin SQL, yetishmayotgan indeks yoki tarmoq kechikishini tuzatmaydi.
 - Katta ishlayotgan tizimni "bir zarbada" qayta yozmang. Yaxshiroq yo'l: yangi yoki aniq chegaralangan komponentni (masalan, ingestion yoki gateway) Go'da yozib, qolganini saqlash.
 - Node.js'ni tanlamang, agar servis CPU-og'ir, ko'p yadroli mashinada bir jarayonga mo'ljallangan va siz allaqachon `worker_threads` bilan kurashayotgan bo'lsangiz: Go bu masalani tilning o'zida hal qiladi.
-- Go'da ham concurrency "bepul" emas: noto'g'ri qo'llangan goroutine'lar oqish, race va qiyin debug beradi (93-dars). Node.js'ning bitta thread modeli ko'p masalada soddaroq va xavfsizroq.
+- Go'da ham concurrency "bepul" emas: noto'g'ri qo'llangan goroutine'lar oqish, race va qiyin debug beradi (93-dars). Node.js'ning bitta thread modeli ko'p masalada soddaroq va xavfsizroq (muallifning tajribaviy bahosi).
 - Bu darsdagi hech narsa "til A yaxshiroq" degan umumiy da'vo emas: u faqat ko'rsatilgan o'lchov va mexanizmlar haqida.
 
 ## Stack'da: Node.js/NestJS'dan Go servisiga

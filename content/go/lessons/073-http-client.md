@@ -11,6 +11,8 @@ sources:
     note: "\"Using the default HTTP client and server\" (#81) va \"Not closing transient resources\" (#79)"
   - id: go126
     note: "net/http bo'limi: Transport.NewClientConn va HTTP2Config.StrictMaxConcurrentRequests"
+  - id: go127
+    note: "net/http bo'limi: HTTP/1 Response.Body yopilganda o'qilmagan ma'lumotni konservativ limitgacha avtomatik o'qib tashlaydi"
 quiz:
   - q: "Mijoz bir xil serverga ketma-ket 5 ta GET yuboradi. Har javob 1 MB, kod esa faqat `resp.Body.Close()` chaqiradi, tanani o'qimaydi. Go 1.24 da lokal o'lchovda nechta TCP ulanish ochildi?"
     options:

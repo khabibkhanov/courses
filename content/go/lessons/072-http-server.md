@@ -7,6 +7,10 @@ duration: 45
 sources:
   - id: pkg-net-http
     note: "ServeMux pattern'lari va ustuvorlik qoidalari; Server maydonlari (ReadHeaderTimeout, ReadTimeout, WriteTimeout, IdleTimeout); Server.Shutdown va RegisterOnShutdown; Request.Context; ResponseController; TimeoutHandler"
+  - id: go126
+    note: "net/http bo'limi: ServeMux oxiridagi slash redirect'lari endi 301 o'rniga 307"
+  - id: go127
+    note: "net/http bo'limi: yangi Server.MaxHeaderValueCount maydoni (default DefaultMaxHeaderValueCount)"
   - id: pkg-os-signal
     note: "NotifyContext: signal kelganda bekor bo'ladigan context"
   - id: 100go
@@ -282,7 +286,7 @@ Hujjatga ko'ra server so'rovining context'i klient ulanishi yopilganda, HTTP/2 d
 
 `Server.Shutdown(ctx)` hujjatdagi ketma-ketlik bilan ishlaydi: avval barcha listener'larni yopadi, keyin bo'sh ulanishlarni yopadi, keyin faol ulanishlar bo'shashini cheksiz kutadi. Agar tugashidan oldin `ctx` muddati o'tsa, `ctx` xatosini qaytaradi. Shutdown chaqirilishi bilan `Serve` va `ListenAndServe` darhol `http.ErrServerClosed` qaytaradi: hujjat dastur chiqib ketmasligi, Shutdown qaytguncha kutishi kerakligini ayniqsa ta'kidlaydi. Shutdown hijack qilingan ulanishlarni (masalan WebSocket) kuzatmaydi; ular uchun `RegisterOnShutdown`.
 
-Signal bilan bog'lash `os/signal.NotifyContext` orqali: u signal kelganda, `stop` chaqirilganda yoki ota context tugaganda bekor bo'ladigan context qaytaradi. `stop` chaqirilgach signal uchun default xatti-harakat (jarayonni to'xtatish) qaytadi, shuning uchun ikkinchi Ctrl+C jarayonni majburan to'xtatadi.
+Signal bilan bog'lash `os/signal.NotifyContext` orqali: u signal kelganda, `stop` chaqirilganda yoki ota context tugaganda bekor bo'ladigan context qaytaradi. `stop` signal uchun ro'yxatdan o'tishni bekor qiladi va hujjatga ko'ra signal uchun default xatti-harakatni (jarayonni to'xtatish) tiklashi mumkin. Shuning uchun birinchi signaldan keyin `stop()` ni chaqirsangiz, ikkinchi Ctrl+C jarayonni majburan to'xtatadi.
 
 ## Chuqurroq: nozik joylar
 
@@ -296,7 +300,7 @@ Global timeout hamma endpoint uchun bir xil. Katta fayl yuklash yoki SSE uchun a
 
 ### Shutdown tartibi servisda
 
-Production'da to'xtatish odatda to'rt bosqich: (1) signal keldi, readiness tekshiruvi "tayyor emas" qaytara boshlaydi, shunda load balancer yangi trafik yubormaydi; (2) bir necha soniya kutiladi, chunki balancer holatni darhol yangilamaydi; (3) `Shutdown` chaqiriladi; (4) bazalar, kanal va worker'lar yopiladi. Kubernetes kabi orkestratorlarda grace period tugagach jarayon SIGKILL bilan o'ldiriladi, shuning uchun `Shutdown` muddati shu chegaradan qisqa bo'lishi kerak. Bu qism orkestrator xatti-harakati haqida umumiy tavsiya, Go hujjatidan emas.
+Production'da to'xtatish odatda to'rt bosqich: (1) signal keldi, readiness tekshiruvi "tayyor emas" qaytara boshlaydi, shunda load balancer yangi trafik yubormaydi; (2) bir necha soniya kutiladi, chunki balancer holatni darhol yangilamaydi; (3) `Shutdown` chaqiriladi; (4) bazalar, kanal va worker'lar yopiladi. Kubernetes kabi orkestratorlarda grace period tugagach jarayon SIGKILL bilan o'ldiriladi, shuning uchun `Shutdown` muddati shu chegaradan qisqa bo'lishi kerak. Bu qism orkestrator xatti-harakati haqida umumiy tavsiya, Go hujjatidan emas va Kubernetes hujjati bu darsni tekshirishda ochilmadi (tekshirilmagan): o'z klasteringizdagi grace period qiymatini (`terminationGracePeriodSeconds`) o'zingiz tekshiring.
 
 ### HTTP/2 va protokollar
 

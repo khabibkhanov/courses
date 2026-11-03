@@ -8,7 +8,7 @@ sources:
   - id: pkg-maps
     note: "Clone (sayoz nusxa), Copy, DeleteFunc, Equal, Keys/Values/All/Insert/Collect (iterator'lar) funksiyalari hujjati"
   - id: blog-maps
-    note: "Key types bo'limi (struct kalitlar va ko'p o'lchovli guruhlash), nil map bo'limi"
+    note: "Key types bo'limi (struct kalitlar va ko'p o'lchovli guruhlash), nil map eslatmasi Declaration and initialization bo'limida; ichma-ich map o'rniga struct kalit Key types bo'limida"
   - id: 100go
     note: "#27 (map'ni hajm bilan yaratish), #28 (map va xotira sizishi), #29 (qiymatlarni taqqoslash)"
 quiz:

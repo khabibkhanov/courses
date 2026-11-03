@@ -429,7 +429,7 @@ Tahlil:
 ## Stack'da: Node.js/TypeScript bilan farq
 
 - Generator (`function*`, `yield`) pull modeliga mos: iste'molchi `next()` chaqiradi. Go'dagi `iter.Seq` push modeli: iterator o'zi `yield` chaqiradi, siklni `range` boshqaradi. Pull kerak bo'lsa `iter.Pull` bor.
-- TS'da `for...of` + `break` generatorning `return()` metodini chaqiradi va `finally` ishlaydi. Go'da bunga `break` → `yield` `false` → iterator `return` → `defer` mos keladi.
+- TS'da `for...of` + `break` generatorning `return()` metodini chaqiradi va `finally` ishlaydi. Go'da bunga quyidagi zanjir mos keladi: `break` bo'lsa `yield` `false` qaytaradi, iterator `return` qiladi va `defer` ishlaydi.
 - Go'da alohida `async` iterator turi yo'q: I/O ga bog'liq ketma-ketlikda iterator ichidagi I/O chaqiruvi oddiy bloklovchi chaqiruv. Bekor qilish uchun iterator konstruktoriga `ctx` parametri beriladi (34-dars); bu muallifning tavsiyasi, `iter` hujjatida kontekst haqida konvensiya yo'q.
 - Node.js stream'lari backpressure bilan ishlaydi; Go iteratori backpressure'ni tabiiy beradi, chunki iste'molchi `yield` ichida band bo'lsa iterator kutadi.
 - TS'dagi `Array.prototype.map/filter` zanjiri o'rniga Go'da `slices.Collect(Filter(...))` kabi funksiya kompozitsiyasi yoki oddiy `for` sikli ishlatiladi.

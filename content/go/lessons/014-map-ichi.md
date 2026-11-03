@@ -8,7 +8,7 @@ sources:
   - id: go-spec
     note: "Map types, For statements with range clause (map uchun iteratsiya qoidalari), Deletion of map elements, Comparison operators bo'limlari"
   - id: blog-maps
-    note: "Concurrency, Iteration order, Key types va nil map haqidagi bo'limlar"
+    note: "Concurrency, Iteration order, Key types bo'limlari va nil map eslatmasi (Declaration and initialization bo'limida)"
   - id: blog-swisstable
     note: "Swiss Table dizayni (8 slotli guruhlar, control word, h1/h2), Go uchun moslashuv (1024 yozuvgacha jadvallar, extendible hashing) va Modification during iteration bo'limi"
 quiz:
