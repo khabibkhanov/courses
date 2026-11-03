@@ -10,7 +10,9 @@ export type HeroLine = {
 };
 
 const W = 1000;
-const START = { x: 40, y: 150 };
+const START_X = 40;
+const TOP = 48; // birinchi liniya nomi sig'ishi uchun joy
+const BOTTOM = 36;
 const FORK_X = 130; // shu yergacha liniyalar birga yuradi
 const RUN_X = 330; // bekatlar shu yerdan boshlanadi
 const END_X = 960;
@@ -23,19 +25,20 @@ const ROW_GAP = 90;
 export function MetroHero({ lines }: { lines: HeroLine[] }) {
   const max = Math.max(...lines.map((l) => l.lessons));
   const mid = (lines.length - 1) / 2;
-  const height = START.y * 2;
+  const startY = TOP + mid * ROW_GAP;
+  const height = TOP + (lines.length - 1) * ROW_GAP + BOTTOM;
 
   return (
-    <svg viewBox={`0 8 ${W} ${height - 28}`} className="h-auto w-full" role="img" aria-label="Kurslar xaritasi">
+    <svg viewBox={`0 0 ${W} ${height}`} className="h-auto w-full" role="img" aria-label="Kurslar xaritasi">
       {lines.map((l, i) => {
-        const bundleY = START.y + (i - mid) * 9;
-        const y = START.y + (i - mid) * ROW_GAP;
+        const bundleY = startY + (i - mid) * 9;
+        const y = TOP + i * ROW_GAP;
         const diag = Math.abs(y - bundleY);
         const end = RUN_X + ((END_X - RUN_X) * l.lessons) / max;
         const builtX = RUN_X + ((end - RUN_X) * l.published) / l.lessons;
         const step = (end - RUN_X) / l.modules;
         const stations = Array.from({ length: l.modules + 1 }, (_, k) => RUN_X + k * step);
-        const path = `M ${START.x} ${bundleY} H ${FORK_X} L ${FORK_X + diag} ${y} H ${RUN_X}`;
+        const path = `M ${START_X} ${bundleY} H ${FORK_X} L ${FORK_X + diag} ${y} H ${RUN_X}`;
 
         return (
           <Link key={l.slug} href={`/${l.slug}`} className="group outline-none" aria-label={`${l.title}: ${l.lessons} dars`}>
@@ -70,7 +73,7 @@ export function MetroHero({ lines }: { lines: HeroLine[] }) {
           </Link>
         );
       })}
-      <circle cx={START.x} cy={START.y} r={20} fill="var(--paper)" stroke="var(--ink)" strokeWidth={4} />
+      <circle cx={START_X} cy={startY} r={20} fill="var(--paper)" stroke="var(--ink)" strokeWidth={4} />
     </svg>
   );
 }

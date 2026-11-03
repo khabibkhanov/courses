@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
-import { BookOpen } from "lucide-react";
 import "@fontsource/ibm-plex-sans/400.css";
 import "@fontsource/ibm-plex-sans/400-italic.css";
 import "@fontsource/ibm-plex-sans/500.css";
@@ -10,6 +9,8 @@ import "@fontsource/ibm-plex-mono/400.css";
 import "./globals.css";
 import { ThemeProvider, ThemeToggle } from "@/components/theme";
 import { SiteSearch } from "@/components/search";
+import { SiteNav } from "@/components/site-nav";
+import { SiteFooter } from "@/components/site-footer";
 import { ProgressImport } from "@/components/progress-import";
 import { SITE } from "@/lib/site";
 
@@ -32,22 +33,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Logo />
                 {SITE.name}
               </Link>
-              <div className="flex items-center gap-2 sm:gap-4">
+              <div className="flex items-center gap-3 sm:gap-5">
+                <SiteNav />
                 <SiteSearch />
-                <Link href="/lugat" className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink" aria-label="Lug'at">
-                  <BookOpen size={16} className="sm:hidden" aria-hidden />
-                  <span className="hidden sm:inline">Lug&apos;at</span>
-                </Link>
                 <ThemeToggle />
               </div>
             </nav>
           </header>
           <main className="flex-1">{children}</main>
-          <footer className="border-t border-rule">
-            <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-muted">
-              Darslar ochiq manbalarga tayanadi, har bir darsning oxirida manbalar ro&apos;yxati bor.
-            </div>
-          </footer>
+          <SiteFooter />
         </ThemeProvider>
         <ProgressImport />
         {/* Vercel Web Analytics: cookie'siz, sahifa ko'rishlar soni (qaysi darsda to'xtashadi). */}
