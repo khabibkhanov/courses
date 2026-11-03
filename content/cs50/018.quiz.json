@@ -94,7 +94,7 @@
         "Farqi yo'q, ikkalasi ham O(1) xotira oladi"
       ],
       "answer": 2,
-      "why": "Chiziqli chuqurlikdagi rekursiya n ta frame ochadi: 1 000 000 · 32 bayt ham 8 MB atrofida. Sikl O(1) xotira oladi. Tail call optimization esa kafolatlanmagan."
+      "why": "Chiziqli chuqurlikdagi rekursiya n ta frame ochadi: 1 000 000 · 32 bayt = 32 MB atrofida, bu 8 MB stack'dan 4 baravar ko'p. Sikl O(1) xotira oladi. Tail call optimization esa kafolatlanmagan."
     }
   ]
 }
