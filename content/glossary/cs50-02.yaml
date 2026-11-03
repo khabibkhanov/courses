@@ -1,0 +1,87 @@
+# CS50 2-3-dars atamalari: ma'lumot ko'rinishi va media.
+- term: binary
+  uz: "Ikkilik sanoq tizimi: faqat 0 va 1 raqamlari, ustun og'irliklari 2 ning darajalari. n bit 2ⁿ ta qiymat beradi."
+  course: cs50
+  lesson: 2
+- term: hexadecimal
+  aliases: [hex]
+  uz: "O'n oltilik sanoq tizimi: 0-9 va A-F raqamlari. Bitta hex raqam aynan 4 bit, shuning uchun bayt ikki hex raqam bilan yoziladi (0xFF = 255)."
+  course: cs50
+  lesson: 2
+- term: ASCII
+  uz: "7 bitli belgilar jadvali: 128 ta kod, 0-31 boshqaruv belgilari, raqamlar 48 dan, katta harflar 65 dan, kichik harflar 97 dan boshlanadi."
+  course: cs50
+  lesson: 2
+- term: Unicode
+  uz: "Dunyodagi barcha yozuvlar belgilariga bitta umumiy raqam (code point) beradigan standart. Codespace U+0000 dan U+10FFFF gacha."
+  course: cs50
+  lesson: 2
+- term: code point
+  uz: "Unicode da belgiga berilgan raqam, U+ prefiksi bilan hex da yoziladi (U+0041 = A). Baytlarga qanday yozilishini kodlash belgilaydi."
+  course: cs50
+  lesson: 2
+- term: UTF-8
+  uz: "Unicode ning o'zgaruvchan uzunlikdagi kodlashi: code point 1-4 baytga yoziladi. ASCII bilan to'liq mos, nol baytsiz va o'z-o'zini sinxronlaydi."
+  course: cs50
+  lesson: 2
+- term: surrogate pair
+  uz: "UTF-16 da BMP dan tashqaridagi code point ni yozish uchun ishlatiladigan ikki 16-bitli birlik. Shuning uchun JavaScript da emoji ning length i 2."
+  course: cs50
+  lesson: 2
+- term: grapheme cluster
+  uz: "Foydalanuvchi bitta belgi deb ko'radigan birlik. U bir nechta code point dan iborat bo'lishi mumkin, masalan teri rangi qo'shilgan emoji."
+  course: cs50
+  lesson: 2
+- term: mojibake
+  uz: "Matn baytlari bir kodlashda yozilib, boshqasida o'qilganda chiqadigan ma'nosiz belgilar. Baytlar butun bo'lsa, to'g'ri kodlash bilan qayta o'qib tiklash mumkin."
+  course: cs50
+  lesson: 2
+- term: RGB
+  aliases: [RGBA]
+  uz: "Rangni qizil, yashil va ko'k kanallar yorqinligi bilan ifodalash. Har kanal odatda bir bayt, jami 2²⁴ = 16 777 216 rang; RGBA da to'rtinchi alpha kanali qo'shiladi."
+  course: cs50
+  lesson: 3
+- term: piksel
+  aliases: [pixel]
+  uz: "Raster rasmning eng kichik elementi, bitta rang. Rasm hajmi = kenglik · balandlik · pikselga bayt."
+  course: cs50
+  lesson: 3
+- term: sample rate
+  uz: "Soniyadagi o'lchovlar (namunalar) soni, Hz da. U yozib olinadigan eng yuqori chastotani belgilaydi: sample rate ning yarmi (Nyquist chastotasi)."
+  course: cs50
+  lesson: 3
+- term: bit depth
+  uz: "Bitta namuna yoki kanal uchun ajratilgan bitlar soni. b bit 2ᵇ ta daraja beradi; har qo'shimcha bit kvantlash xatosini ikki baravar kamaytiradi."
+  course: cs50
+  lesson: 3
+- term: aliasing
+  uz: "Nyquist chastotasidan yuqori komponentning sampling dan keyin pastroq chastotaga niqoblanishi. Shuning uchun sampling dan oldin past chastota filtri qo'yiladi."
+  course: cs50
+  lesson: 3
+- term: lossless
+  uz: "Yo'qotishsiz siqish: dekodlangandan keyin asl ma'lumot bitma-bit tiklanadi. Faqat ortiqchaligi bor ma'lumotni kichraytira oladi."
+  course: cs50
+  lesson: 3
+- term: lossy
+  uz: "Yo'qotishli siqish: inson sezmaydigan yoki kam sezadigan ma'lumot ataylab tashlanadi. Fotosurat, musiqa va video uchun standart, narxi esa artefaktlar."
+  course: cs50
+  lesson: 3
+- term: run-length encoding
+  aliases: [RLE]
+  uz: "Bir xil qiymatlar ketma-ketligini soni va qiymat juftligi bilan yozadigan oddiy lossless siqish. Takrorlanishi yo'q ma'lumotni esa kattalashtiradi."
+  course: cs50
+  lesson: 3
+- term: frame rate
+  aliases: [fps]
+  uz: "Videodagi soniyasiga kadrlar soni. Kino odatda 24 fps, siqishsiz video hajmi fps ga chiziqli bog'liq."
+  course: cs50
+  lesson: 3
+- term: keyframe
+  aliases: [key frame, I-frame]
+  uz: "Video oqimidagi to'liq kadr, oldingi kadrlarga tayanmaydi. Qolgan kadrlar faqat farqni yozadi, keyframe lar esa seek va artefaktlarni tozalash uchun davriy qo'yiladi."
+  course: cs50
+  lesson: 3
+- term: chroma subsampling
+  uz: "Rang ma'lumotini yorqinlikdan pastroq aniqlikda saqlash. 4:2:0 sxemasida pikselga 3 o'rniga 1.5 qiymat qoladi, chunki ko'z rangdan ko'ra yorqinlikka sezgirroq."
+  course: cs50
+  lesson: 3

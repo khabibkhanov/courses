@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "CSS dagi `#80FF00` rangida qizil, yashil va ko'k kanallarning o'nlik qiymatlari qanday?",
+      "options": ["80, 255, 0", "128, 255, 0", "128, 15, 0", "8, 0, 255"],
+      "answer": 1,
+      "why": "Har kanal ikki hex raqam: 0x80 = 8·16 = 128, 0xFF = 255, 0x00 = 0."
+    },
+    {
+      "q": "2560 × 1440 piksellik RGBA (pikselga 4 bayt) siqilmagan rasm necha bayt?",
+      "options": ["3 686 400", "11 059 200", "14 745 600", "29 491 200"],
+      "answer": 2,
+      "why": "2560 · 1440 = 3 686 400 piksel, · 4 bayt = 14 745 600 bayt. 11 059 200 RGB (3 bayt) uchun bo'lardi."
+    },
+    {
+      "q": "16 kHz gacha chastotalarni to'g'ri yozib olish kerak. Quyidagi sample rate lardan qaysi biri Nyquist shartini qanoatlantiradigan eng kichigi?",
+      "options": ["16 000 Hz", "24 000 Hz", "32 000 Hz", "44 100 Hz"],
+      "answer": 3,
+      "why": "Sample rate 2f = 32 000 Hz dan qat'iy katta bo'lishi kerak. 32 000 chegaraning o'zi, shart bajarilmaydi; ro'yxatda undan kattasi faqat 44 100."
+    },
+    {
+      "q": "44 100 Hz da filtrsiz yozilgan 30 000 Hz tovush tinglanganda nima eshitiladi?",
+      "options": [
+        "Hech narsa, chunki 30 kHz eshitilmaydi va yozilmaydi",
+        "14 100 Hz tovush, chunki namunalar shu chastota namunalari bilan bir xil",
+        "30 000 Hz tovush, faqat sokinroq",
+        "22 050 Hz tovush, chunki u Nyquist chastotasi"
+      ],
+      "answer": 1,
+      "why": "Nyquist chastotasidan yuqori komponent fs - f = 44 100 - 30 000 = 14 100 Hz ga niqoblanadi (aliasing). Shuning uchun sampling dan oldin past chastota filtri qo'yiladi."
+    },
+    {
+      "q": "Bit depth 8 dan 16 ga oshirildi. Kvantlash darajalari soni va fayl hajmi qanday o'zgaradi?",
+      "options": [
+        "Darajalar 2 baravar, hajm 2 baravar",
+        "Darajalar 256 baravar, hajm 256 baravar",
+        "Darajalar 8 baravar, hajm o'zgarmaydi",
+        "Darajalar 256 baravar, hajm 2 baravar"
+      ],
+      "answer": 3,
+      "why": "2¹⁶ / 2⁸ = 256 baravar ko'p daraja, lekin har namuna 1 o'rniga 2 bayt, ya'ni hajm faqat 2 baravar."
+    },
+    {
+      "q": "48 kHz, 24 bit, stereo siqilmagan ovozning bitrate i qancha?",
+      "options": ["1 152 000 bit/s", "2 304 000 bit/s", "1 411 200 bit/s", "288 000 bit/s"],
+      "answer": 1,
+      "why": "48 000 · 24 · 2 = 2 304 000 bit/s. 1 152 000 mono uchun, 1 411 200 esa CD (44.1 kHz, 16 bit, stereo)."
+    },
+    {
+      "q": "Brauzerdagi C muhitida (wasm32) bir daqiqalik siqilmagan Full HD video hajmini hisoblash uchun qaysi tip to'g'ri?",
+      "options": [
+        "long long, chunki natija 11 197 440 000 bayt va 4 baytli long ga sig'maydi",
+        "int, chunki u har doim yetarli",
+        "long, chunki u har doim 8 bayt",
+        "char, chunki hajm baytlarda"
+      ],
+      "answer": 0,
+      "why": "wasm32 da long 4 bayt, maksimum 2 147 483 647. 1920·1080·3·30·60 = 11 197 440 000 undan katta; long long kamida 8 bayt."
+    },
+    {
+      "q": "ZIP arxivni yana ZIP ga siqganda hajm deyarli kamaymaydi. Buning eng to'g'ri izohi qaysi?",
+      "options": [
+        "ZIP algoritmi ikkinchi marta ishlamaydi",
+        "Lossless siqish ortiqchalikni olib tashlaydi, siqilgan ma'lumotda u qolmagan; hamma kirishni kichraytiradigan lossless algoritm esa mavjud emas",
+        "ZIP lossy algoritm, ikkinchi marta yo'qotadigan narsa qolmagan",
+        "Fayl tizimi minimal hajmni cheklaydi"
+      ],
+      "answer": 1,
+      "why": "2ⁿ ta n bitli kirish va faqat 2ⁿ - 1 ta qisqaroq chiqish bor, shuning uchun lossless algoritm ba'zi kirishlarni kichraytira olmaydi; ortiqchaligi yo'q ma'lumot aynan shunday."
+    },
+    {
+      "q": "Matematik formulalar va chiziqlar bo'lgan doska skrinshotini qaysi formatda saqlash eng to'g'ri?",
+      "options": [
+        "JPEG, chunki u eng kichik fayl beradi",
+        "GIF, chunki u animatsiyani qo'llaydi",
+        "BMP, chunki u siqilmagan",
+        "PNG, chunki u lossless va keskin chiziqlar atrofida artefakt bermaydi"
+      ],
+      "answer": 3,
+      "why": "JPEG ning lossy siqishi keskin qirrali tasvirlarda artefaktlar beradi. PNG lossless va diagramma, skrinshotlar uchun mos; BMP esa keraksiz katta."
+    },
+    {
+      "q": "Qo'zg'almas kameradan olingan videoda fon deyarli o'zgarmaydi. Video kodek buni qanday qilib arzonlashtiradi?",
+      "options": [
+        "Har kadrni JPEG kabi alohida siqadi",
+        "Frame rate ni avtomatik 12 fps ga tushiradi",
+        "Kadrlar orasidagi farqni va harakatni (motion compensation) yozadi, to'liq kadrni faqat vaqti-vaqti bilan keyframe sifatida saqlaydi",
+        "Fonni lossless, odamlarni lossy siqadi"
+      ],
+      "answer": 2,
+      "why": "O'zgarmagan qismlar uchun farq kadrida deyarli hech narsa yozilmaydi. Keyframe lar seek va artefaktlarni tozalash uchun davriy qo'yiladi."
+    }
+  ]
+}

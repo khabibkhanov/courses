@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Do'kondagi 300 xil mahsulotga har biriga alohida butun son-kod berish kerak. Eng kamida nechta bit yetadi?",
+      "options": [
+        "8",
+        "9",
+        "10",
+        "300"
+      ],
+      "answer": 1,
+      "why": "k ta qiymat uchun ⌈log₂ k⌉ bit kerak. 2⁸ = 256 < 300, 2⁹ = 512 ≥ 300, demak 9 bit."
+    },
+    {
+      "q": "0x7EA o'nlik tizimda nechaga teng?",
+      "options": [
+        "2026",
+        "1962",
+        "7010",
+        "2010"
+      ],
+      "answer": 0,
+      "why": "7·16² + 14·16 + 10 = 1792 + 224 + 10 = 2026. E = 14, A = 10."
+    },
+    {
+      "q": "Nega dasturchilar baytlarni ko'rsatish uchun o'nlik emas, hex tizimdan foydalanadi?",
+      "options": [
+        "Hex sonlar xotirada kamroq joy egallaydi",
+        "Protsessor hex da hisoblaydi",
+        "Bitta hex raqam aynan 4 bitga mos keladi, shuning uchun bitlarni guruhlab to'g'ridan-to'g'ri o'qish mumkin",
+        "Hex manfiy sonlarni ham ifodalay oladi, o'nlik esa yo'q"
+      ],
+      "answer": 2,
+      "why": "16 = 2⁴, shuning uchun har nibble bitta hex raqam, bayt esa ikki raqam. Xotirada son baribir bitlar ko'rinishida turadi, hex faqat yozuv shakli."
+    },
+    {
+      "q": "C da `char c = '7';` bo'lsa, `c - '0'` ifodasi nima beradi va nega?",
+      "options": [
+        "55, chunki '7' ning ASCII kodi 55",
+        "Kompilyatsiya xatosi, belgidan belgini ayirib bo'lmaydi",
+        "'7' belgisi, chunki natija char tipida",
+        "7, chunki raqam belgilari ASCII da 48 dan ketma-ket joylashgan"
+      ],
+      "answer": 3,
+      "why": "'0' = 48, '7' = 55, ular ketma-ket. 55 - 48 = 7 - belgidan raqam qiymatini olishning standart usuli."
+    },
+    {
+      "q": "ASCII da 'G' ning kodi 71. 'g' ning kodi qancha va bu farq bitlarda nimani anglatadi?",
+      "options": [
+        "103, faqat bitta bit (0x20) farq qiladi",
+        "97, chunki kichik harflar 97 dan boshlanadi",
+        "72, keyingi kod",
+        "135, chunki kichik harflar 8-bitda"
+      ],
+      "answer": 0,
+      "why": "Katta va kichik harf orasidagi farq doim 32 = 0x20, ya'ni 5-bit. 71 + 32 = 103."
+    },
+    {
+      "q": "U+00E9 (é) UTF-8 da nechta bayt oladi?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer": 1,
+      "why": "0xE9 = 233, bu 0x80-0x7FF oralig'ida, demak 2 bayt (110xxxxx 10xxxxxx): C3 A9."
+    },
+    {
+      "q": "JavaScript da `\"😀\".length` nega 2 qaytaradi?",
+      "options": [
+        "Emoji UTF-8 da 2 bayt",
+        "JavaScript emoji ni ikki belgidan iborat deb biladi",
+        "length UTF-16 birliklarini sanaydi, U+1F600 esa BMP dan tashqarida va surrogate pair bilan yoziladi",
+        "Bu JavaScript dagi bug, yangi versiyalarda 1 qaytaradi"
+      ],
+      "answer": 2,
+      "why": "BMP dan tashqaridagi code point UTF-16 da ikki 16-bitli birlik (D83D DE00). UTF-8 da esa u 4 bayt."
+    },
+    {
+      "q": "Saytda kirill matni \"РЎР°Р»РѕРј\" ko'rinishida chiqyapti. Eng ehtimoliy sabab nima?",
+      "options": [
+        "Baytlar tarmoqda buzilgan, matnni tiklab bo'lmaydi",
+        "Shriftda kirill glyph lari yo'q",
+        "Matn UTF-32 da saqlangan",
+        "UTF-8 baytlari Windows-1251 deb o'qilgan; baytlarni cp1251 bilan qaytarib, UTF-8 deb o'qilsa, matn tiklanadi"
+      ],
+      "answer": 3,
+      "why": "Har kirill harfi UTF-8 da 2 bayt (D0 xx yoki D1 xx), cp1251 da D0 = Р. Baytlar butun, faqat noto'g'ri jadval bilan talqin qilingan."
+    },
+    {
+      "q": "Dekoder `C0 80` ketma-ketligini uchratdi. RFC 3629 bo'yicha u nima qilishi kerak?",
+      "options": [
+        "U+0000 deb o'qishi kerak, chunki bitlar shuni beradi",
+        "U+0080 deb o'qishi kerak",
+        "Noto'g'ri ketma-ketlik sifatida rad etishi kerak: bu overlong kodlash, C0 bayti UTF-8 da umuman uchramaydi",
+        "Ikkala baytni alohida ASCII belgilar sifatida o'qishi kerak"
+      ],
+      "answer": 2,
+      "why": "U+0000 bitta bayt (00) bilan yoziladi. Uni ko'proq bayt bilan yozish overlong va taqiqlangan: aks holda NUL ni tekshiradigan filtrni chetlab o'tish mumkin."
+    },
+    {
+      "q": "1000 ta xitoy ieroglif (U+4E00-U+9FFF oralig'ida) dan iborat matn UTF-8 va UTF-16 da qancha joy oladi?",
+      "options": [
+        "UTF-8: 2000 bayt, UTF-16: 2000 bayt",
+        "UTF-8: 3000 bayt, UTF-16: 2000 bayt",
+        "UTF-8: 4000 bayt, UTF-16: 4000 bayt",
+        "UTF-8: 1000 bayt, UTF-16: 2000 bayt"
+      ],
+      "answer": 1,
+      "why": "U+0800-U+FFFF UTF-8 da 3 bayt, UTF-16 da BMP ichida bo'lgani uchun 2 bayt. 1000·3 = 3000, 1000·2 = 2000: bu holatda UTF-8 ixchamroq emas."
+    }
+  ]
+}
