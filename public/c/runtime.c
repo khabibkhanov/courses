@@ -74,7 +74,11 @@ static header read_hdr(header *h) {
   return v;
 }
 
+/* main boshlanguncha ajratilgan xotira (argv, preopen ro'yxati) libc'niki: leak hisobiga kirmaydi. */
+static int user_code;
+
 static void *alloc(size_t n, int library) {
+  library = library || !user_code;
   size_t body = (n + 7) & ~(size_t)7;
   char *raw = __real_malloc(REDZONE + body + REDZONE);
   if (!raw) return NULL;
@@ -274,6 +278,28 @@ static void leaks(void) {
   if (live_blocks > 0)
     fprintf(stderr, "\nXOTIRA: %zu bayt bo'shatilmagan, %ld ta blokda (%ld ta malloc, %ld ta free). Har malloc uchun free kerak.\n",
             live_bytes, live_blocks, allocs, frees);
+}
+
+/*
+ * _start -> __main_void. main(void) bo'lsa __main_void - o'quvchining main'i; main(argc, argv) bo'lsa -
+ * libc funksiyasi: argv uchun xotira ajratib, __main_argc_argv (o'quvchining main'i) ni chaqiradi.
+ * Ikkalasi --wrap bilan ushlanadi; __main_argc_argv yo'q bo'lsa (main(void)) weak manzil 0.
+ */
+extern int __real___main_void(void);
+extern int __real___main_argc_argv(int, char **) __attribute__((weak));
+int __wrap___main_void(void) {
+  if (!__real___main_argc_argv) user_code = 1;
+  return __real___main_void();
+}
+int __wrap___main_argc_argv(int argc, char **argv) {
+  user_code = 1;
+  return __real___main_argc_argv(argc, argv);
+}
+
+/* Fayl tizimi ro'yxati (preopen) odatda birinchi fopen'da to'ldiriladi - oldindan, libc hisobida to'ldiramiz. */
+extern void __wasilibc_populate_preopens(void) __attribute__((weak));
+__attribute__((constructor)) static void preopens(void) {
+  if (__wasilibc_populate_preopens) __wasilibc_populate_preopens();
 }
 
 /* stdout buferlanmaydi: printf("a: ") so'rovi scanf'dan oldin ko'rinsin (worker chiqishni o'zi guruhlaydi). */

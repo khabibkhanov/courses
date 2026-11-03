@@ -1,6 +1,7 @@
 # Darslardagi ```<til> run bloklarini lokal runtime'larda ishga tushiradi (brauzerdagi natijaga yaqin).
 # python -> python3, sql -> sqlite3, js/ts -> node + sucrase (brauzerdagi kabi), c -> lokal clang (sanitizer'siz: lokal ASan kutubxonasi bo'lmasligi mumkin).
-# C uchun keyingi ```text stdin bloki dasturga kirish sifatida beriladi; public/c/cs50.h o'rniga lokal libcs50 kerak emas:
+# C uchun keyingi ```text stdin bloki dasturga kirish sifatida beriladi, ```text args - buyruq qatori (birinchi so'z argv[0]),
+# ```text file <nom> - dastur papkasidagi fayl (dastur yozgan fayllar natijada ko'rsatiladi); public/c/cs50.h o'rniga lokal libcs50 kerak emas:
 # cs50.h funksiyalari public/c/runtime.c da, u ham birga kompilyatsiya qilinadi.
 # Ortidan ```<til> test bloki kelsa, u ham brauzerdagi kabi check(nom, fn) bilan ishga tushiriladi.
 # Ishlatish: python3 scripts/run-blocks.py content/system-design/056.md [boshqa fayllar...]
@@ -55,7 +56,8 @@ def run_js(code, ts):
     return p.returncode == 0, (p.stdout + p.stderr).strip()
 
 
-def run_c(code, stdin):
+def run_c(code, stdin, args=None, files=()):
+    import shlex
     import tempfile
     with tempfile.TemporaryDirectory() as d:
         src = os.path.join(d, "main.c")
@@ -67,8 +69,25 @@ def run_c(code, stdin):
         c = subprocess.run(["clang", "-O0", "-g", "-Wall", "-I", os.path.join(ROOT, "public", "c"), src, cs50, "-lm", "-o", exe], capture_output=True, text=True)
         if c.returncode:
             return False, c.stderr.strip()
-        p = subprocess.run([exe], input=stdin or "", capture_output=True, text=True, timeout=10)
-        return p.returncode == 0, ((c.stderr + "\n") if c.stderr else "") + (p.stdout + p.stderr).strip()
+        work = os.path.join(d, "work")
+        os.mkdir(work)
+        for name, text in files:
+            open(os.path.join(work, name), "w", encoding="utf8").write(text)
+        before = {n: open(os.path.join(work, n), "rb").read() for n in os.listdir(work)}
+        argv = shlex.split(args) if args else ["./main"]
+        p = subprocess.run(argv, executable=exe, input=stdin or "", capture_output=True, text=True, timeout=10, cwd=work)
+        out = ((c.stderr + "\n") if c.stderr else "") + (p.stdout + p.stderr).strip()
+        for n in sorted(os.listdir(work)):
+            data = open(os.path.join(work, n), "rb").read()
+            if before.get(n) != data:
+                try:
+                    shown = data.decode("utf8")
+                except UnicodeDecodeError:
+                    shown = data[:64].hex(" ")
+                out += f"\n--- fayl {n} ({len(data)} bayt)\n{shown[:2000]}"
+        if p.returncode:
+            out += f"\n(exit {p.returncode})"
+        return p.returncode == 0, out
 
 
 CS50_C = r"""
@@ -128,15 +147,21 @@ def main(files):
             if not re.search(r"(^|\s)run(\s|$)", meta):
                 continue
             kind = LANG.get(lang)
-            # Keyingi test va stdin bloklari (orasida matn bo'lmasligini validator tekshiradi).
-            tests = stdin = None
-            for _, m2, c2 in blocks[i + 1 : i + 3]:
-                if re.search(r"(^|\s)test(\s|$)", m2) and tests is None:
-                    tests = c2
-                elif re.search(r"(^|\s)stdin(\s|$)", m2) and stdin is None:
-                    stdin = c2
-                else:
+            # Keyingi test / stdin / args / file bloklari (orasida matn bo'lmasligini validator tekshiradi).
+            tests = stdin = args = None
+            files = []
+            for _, m2, c2 in blocks[i + 1 :]:
+                tag = re.search(r"(?:^|\s)(test|stdin|args|file)(?:\s+(\S+))?", m2)
+                if not tag or (tag[1] == "test" and tests is not None) or (tag[1] == "stdin" and stdin is not None) or (tag[1] == "args" and args is not None):
                     break
+                if tag[1] == "test":
+                    tests = c2
+                elif tag[1] == "stdin":
+                    stdin = c2
+                elif tag[1] == "args":
+                    args = c2.strip()
+                else:
+                    files.append((tag[2], c2))  # fayl oxiridagi \n saqlanadi
             if kind == "python" and tests is not None:
                 ok, out = run_python(PY_CHECK + code, tests + PY_EXIT)
             elif kind == "python":
@@ -144,7 +169,7 @@ def main(files):
             elif kind == "sql":
                 ok, out = run_sql(code)
             elif kind == "c":
-                ok, out = run_c(code, stdin)
+                ok, out = run_c(code, stdin, args, files)
             elif kind in ("js", "ts"):
                 ok, out = run_js(code + ("\n;\n" + tests if tests is not None else ""), kind == "ts")
             else:

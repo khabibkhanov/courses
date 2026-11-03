@@ -27,14 +27,32 @@ function rehypeMermaid() {
   };
 }
 
-/** ```<til> test yoki ```text stdin kabi biriktiriladigan blok: [belgi, matn]. */
-function attachedBlock(node: Element): ["test" | "stdin", string] | undefined {
+/** ```<til> test, ```text stdin, ```text args, ```text file <nom> kabi biriktiriladigan blok. */
+type Attached = { tag: "test" | "stdin" | "args" | "file"; name?: string; text: string };
+
+function attachedBlock(node: Element): Attached | undefined {
   const code = node.tagName === "pre" ? node.children[0] : undefined;
   if (code?.type !== "element" || code.tagName !== "code") return undefined;
   const meta = (code.data as { meta?: string } | undefined)?.meta ?? "";
-  const tag = /(^|\s)test(\s|$)/.test(meta) ? "test" : /(^|\s)stdin(\s|$)/.test(meta) ? "stdin" : undefined;
-  if (!tag) return undefined;
-  return [tag, code.children.map((c) => (c.type === "text" ? c.value : "")).join("").replace(/\n$/, "")];
+  const m = meta.match(/(?:^|\s)(test|stdin|args|file)(?:\s+(\S+))?/);
+  if (!m) return undefined;
+  const raw = code.children.map((c) => (c.type === "text" ? c.value : "")).join("");
+  // Fayl matni oxiridagi \n bilan qoladi (oddiy matn fayli kabi), qolganlarida olib tashlanadi.
+  const text = m[1] === "file" ? raw : raw.replace(/\n$/, "");
+  return { tag: m[1] as Attached["tag"], name: m[1] === "file" ? m[2] : undefined, text };
+}
+
+/** Blokni spec'ga qo'shadi; shu turdagi blok allaqachon bo'lsa (file'dan tashqari) - false. */
+function attach(spec: PlaygroundSpec, b: Attached): boolean {
+  if (b.tag === "file") {
+    if (!b.name) return false;
+    (spec.files ??= []).push({ name: b.name, text: b.text });
+    return true;
+  }
+  const key = b.tag === "test" ? "tests" : b.tag;
+  if (spec[key] !== undefined) return false;
+  spec[key] = b.tag === "args" ? b.text.trim() : b.text;
+  return true;
 }
 
 /** ```python run kabi bloklar: o'rniga belgi qo'yiladi, kodi esa file.data.playgrounds ga yig'iladi. */
@@ -53,13 +71,12 @@ function rehypePlayground() {
       if (!lang) return;
       const text = code.children.map((c) => (c.type === "text" ? c.value : "")).join("");
       const spec: PlaygroundSpec = { lang, code: text.replace(/\n$/, "") };
-      // Darhol keyingi ```<til> test (yashirin testlar) va ```text stdin (kirish) bloklari playground'ga
-      // biriktiriladi va matndan olib tashlanadi.
+      // Darhol keyingi test (yashirin testlar), stdin (kirish), args (buyruq qatori) va file bloklari
+      // playground'ga biriktiriladi va matndan olib tashlanadi.
       for (;;) {
         const next = parent.children.findIndex((c, k) => k > index && c.type === "element");
         const block = next === -1 ? undefined : attachedBlock(parent.children[next] as Element);
-        if (!block || spec[block[0] === "test" ? "tests" : "stdin"] !== undefined) break;
-        spec[block[0] === "test" ? "tests" : "stdin"] = block[1];
+        if (!block || !attach(spec, block)) break;
         parent.children.splice(next, 1);
       }
       specs.push(spec);

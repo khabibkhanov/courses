@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import { Check, FlaskConical, Play, RotateCcw, Square, X } from "lucide-react";
 import { LANG_LABEL, LANG_NOTE, LOADING_LABEL, type Output, type RunHandle } from "./runners";
-import { STDIN_LANGS, type PlaygroundSpec } from "@/lib/playground";
+import { STDIN_LANGS, splitArgs, type PlaygroundSpec } from "@/lib/playground";
 import { saveProgress, useProgress } from "@/lib/progress";
 
 // Muharrir va runtime'lar faqat brauzerda va kerak bo'lganda yuklanadi.
@@ -24,7 +24,7 @@ type Mode = "run" | "test";
 type TestOutput = Extract<Output, { kind: "test" }>;
 
 /** Darsdagi tahrirlanadigan va ishga tushiriladigan kod bloki; testlar bo'lsa - mashq. */
-export function Playground({ lang, code: initial, tests, stdin, course, n, index }: Props) {
+export function Playground({ lang, code: initial, tests, stdin, args, files, course, n, index }: Props) {
   const saved = useProgress(course)[n]?.exercises?.[index];
   const [draft, setDraft] = useState<string | null>(null);
   const code = draft ?? (tests ? saved?.code : undefined) ?? initial;
@@ -33,6 +33,8 @@ export function Playground({ lang, code: initial, tests, stdin, course, n, index
   const [mode, setMode] = useState<Mode>("run");
   const hasStdin = STDIN_LANGS.includes(lang);
   const [input, setInput] = useState(stdin ?? "");
+  const [command, setCommand] = useState(args ?? "");
+  const [fileTexts, setFileTexts] = useState(files ?? []);
   const handle = useRef<RunHandle | null>(null);
 
   function edit(value: string) {
@@ -60,7 +62,12 @@ export function Playground({ lang, code: initial, tests, stdin, course, n, index
         if (!loading) started = performance.now();
         setState(loading ? "loading" : "running");
       },
-      { tests: m === "test" ? tests : undefined, stdin: hasStdin ? input : undefined },
+      {
+        tests: m === "test" ? tests : undefined,
+        stdin: hasStdin ? input : undefined,
+        argv: args !== undefined ? splitArgs(command) : undefined,
+        files: fileTexts,
+      },
     );
     await handle.current.done;
     const ms = Math.round(performance.now() - started);
@@ -138,7 +145,38 @@ export function Playground({ lang, code: initial, tests, stdin, course, n, index
         </noscript>
       </div>
 
-      {hasStdin && (
+      {args !== undefined && (
+        <label className="flex items-center gap-2 border-t border-rule px-3 py-2">
+          <span className="shrink-0 text-xs font-medium text-muted">Buyruq qatori:</span>
+          <span className="font-mono text-[0.8rem] text-muted" aria-hidden>
+            $
+          </span>
+          <input
+            value={command}
+            onChange={(e) => setCommand(e.target.value)}
+            spellCheck={false}
+            aria-label="Buyruq qatori (argv)"
+            className="w-full rounded-md border border-rule bg-paper px-2 py-1 font-mono text-[0.8rem] outline-none focus:border-muted"
+          />
+        </label>
+      )}
+
+      {fileTexts.map((f, k) => (
+        <label key={f.name} className="block border-t border-rule px-3 py-2">
+          <span className="text-xs font-medium text-muted">
+            Fayl: <span className="font-mono">{f.name}</span>
+          </span>
+          <textarea
+            value={f.text}
+            onChange={(e) => setFileTexts((prev) => prev.map((x, j) => (j === k ? { ...x, text: e.target.value } : x)))}
+            rows={Math.min(8, Math.max(2, f.text.split("\n").length))}
+            spellCheck={false}
+            className="mt-1 block w-full resize-y rounded-md border border-rule bg-paper px-2 py-1 font-mono text-[0.8rem] outline-none focus:border-muted"
+          />
+        </label>
+      ))}
+
+      {hasStdin && (stdin !== undefined || args === undefined) && (
         <label className="block border-t border-rule px-3 py-2">
           <span className="text-xs font-medium text-muted">Kirish (stdin): har qator - dastur o&apos;qiydigan bitta javob</span>
           <textarea
@@ -183,6 +221,28 @@ export function Playground({ lang, code: initial, tests, stdin, course, n, index
                   </span>
                 </p>
               );
+            if (o.kind === "file")
+              return (
+                <div key={i} className="my-1.5">
+                  <p className="m-0 font-sans text-xs font-medium text-muted">
+                    {o.size < 0 ? (
+                      <>
+                        Fayl o&apos;chirildi: <span className="font-mono">{o.name}</span>
+                      </>
+                    ) : (
+                      <>
+                        Fayl yozildi: <span className="font-mono">{o.name}</span> ({o.size} bayt
+                        {o.text === null ? ", binary, boshidagi baytlar hex'da" : ""})
+                      </>
+                    )}
+                  </p>
+                  {o.size >= 0 && (
+                    <pre className="m-0 mt-0.5 max-h-60 overflow-auto rounded border border-rule bg-sheet px-2 py-1 whitespace-pre">
+                      {o.text ?? o.hex}
+                    </pre>
+                  )}
+                </div>
+              );
             if (o.kind === "table")
               return (
                 <div key={i} className="my-1 overflow-x-auto">
@@ -214,11 +274,11 @@ export function Playground({ lang, code: initial, tests, stdin, course, n, index
             // C terminal oqimi kabi keladi (o'z \n lari bilan): so'rov va kiritilgan javob bitta qatorda qoladi.
             if (lang === "c" && o.kind !== "info") {
               const prev = output[i - 1];
-              if (prev && prev.kind !== "info" && "text" in prev) return null;
+              if (prev && prev.kind !== "info" && prev.kind !== "file" && "text" in prev) return null;
               const run: { kind: string; text: string }[] = [];
               for (let k = i; k < output.length; k++) {
                 const x = output[k];
-                if (x.kind === "info" || !("text" in x)) break;
+                if (x.kind === "info" || x.kind === "file" || !("text" in x)) break;
                 run.push(x);
               }
               return (

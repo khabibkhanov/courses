@@ -10,7 +10,7 @@ const send = (kind, t) => postMessage({ type: "out", out: { kind, text: t } });
 
 // Xotira: [0, 16MB) - sanitizer shadow'i, dastur undan keyin (runtime.c ga qarang).
 const LINK = [
-  "-Wl,--wrap=malloc,--wrap=free,--wrap=calloc,--wrap=realloc,--wrap=strcpy,--wrap=strcat,--wrap=strlen",
+  "-Wl,--wrap=malloc,--wrap=free,--wrap=calloc,--wrap=realloc,--wrap=strcpy,--wrap=strcat,--wrap=strlen,--wrap=__main_void,--wrap=__main_argc_argv",
   "-Wl,--global-base=16777216,--initial-memory=33554432,--max-memory=134217728,-z,stack-size=1048576,--no-stack-first",
 ];
 const SANITIZE = [
@@ -52,11 +52,19 @@ class Exit {
 }
 
 /**
- * Faqat stdin/stdout/stderr bor WASI. stdin qatorma-qator beriladi va natijaga terminaldagidek yoziladi.
+ * Kichik WASI: stdin/stdout/stderr, argv va xotiradagi bitta papka (fayllar ro'yxati, fopen uchun).
+ * stdin qatorma-qator beriladi va natijaga terminaldagidek yoziladi.
  * stderr() - dastur stderr'ga yozgan matn (runtime hisoboti bormi, bilish uchun).
+ * changed() - dastur yaratgan yoki o'zgartirgan fayllar.
  */
-function wasi(stdinText, memory) {
+function wasi(stdinText, argv, inputFiles, memory) {
   const enc = new TextEncoder();
+  const args = argv.map((a) => enc.encode(a + "\0"));
+  // Fayl tizimi: fd 3 - "." papkasi (preopen), 4 va undan keyingilari - ochilgan fayllar.
+  const fs = new Map(inputFiles.map((f) => [f.name, { data: enc.encode(f.text), size: enc.encode(f.text).length, dirty: false }]));
+  const open = new Map();
+  let nextFd = 4;
+  const DIR = 3;
   const lines = stdinText ? stdinText.replace(/\r/g, "").match(/[^\n]*\n|[^\n]+$/g) ?? [] : [];
   let written = 0;
   let errText = "";
@@ -88,8 +96,64 @@ function wasi(stdinText, memory) {
   };
   const ENOSYS = 52;
   const EBADF = 8;
+  const ENOENT = 44;
+  const EEXIST = 20;
+  const EINVAL = 28;
+  const ENOTDIR = 54;
+  const FILE_LIMIT = 4 << 20; // bitta fayl uchun 4 MB
+  const iov = (iovs, n) => {
+    const v = view();
+    return Array.from({ length: n }, (_, i) => [v.getUint32(iovs + i * 8, true), v.getUint32(iovs + i * 8 + 4, true)]);
+  };
+  const pathAt = (ptr, len) => dec.decode(bytes().slice(ptr, ptr + len)).replace(/^\.\//, "");
+  const grow = (f, need) => {
+    if (need <= f.data.length) return;
+    const next = new Uint8Array(Math.max(need, f.data.length * 2, 64));
+    next.set(f.data.subarray(0, f.size));
+    f.data = next;
+  };
+  const fileWrite = (h, iovs, n, nwritten) => {
+    if (!h.write) return EBADF;
+    const f = h.file;
+    let total = 0;
+    for (const [ptr, len] of iov(iovs, n)) {
+      const at = h.append ? f.size : h.pos;
+      if (at + len > FILE_LIMIT) return 22; // EFBIG
+      grow(f, at + len);
+      f.data.set(bytes().subarray(ptr, ptr + len), at);
+      h.pos = at + len;
+      f.size = Math.max(f.size, h.pos);
+      total += len;
+    }
+    if (total) f.dirty = true;
+    view().setUint32(nwritten, total, true);
+    return 0;
+  };
+  const fileRead = (h, iovs, n, nread) => {
+    if (!h.read) return EBADF;
+    const f = h.file;
+    let total = 0;
+    for (const [ptr, len] of iov(iovs, n)) {
+      const take = f.data.subarray(h.pos, Math.min(f.size, h.pos + len));
+      bytes().set(take, ptr);
+      h.pos += take.length;
+      total += take.length;
+      if (take.length < len) break;
+    }
+    view().setUint32(nread, total, true);
+    return 0;
+  };
+  // filestat: dev, ino, filetype, nlink, size, atim, mtim, ctim (64 bayt).
+  const filestat = (ptr, type, size) => {
+    const v = view();
+    for (let i = 0; i < 64; i++) v.setUint8(ptr + i, 0);
+    v.setUint8(ptr + 16, type);
+    v.setBigUint64(ptr + 24, 1n, true);
+    v.setBigUint64(ptr + 32, BigInt(size), true);
+  };
   const imports = {
     fd_write(fd, iovs, n, nwritten) {
+      if (open.has(fd)) return fileWrite(open.get(fd), iovs, n, nwritten);
       if (fd !== 1 && fd !== 2) return EBADF;
       const v = view();
       let total = 0;
@@ -105,6 +169,7 @@ function wasi(stdinText, memory) {
       return 0;
     },
     fd_read(fd, iovs, n, nread) {
+      if (open.has(fd)) return fileRead(open.get(fd), iovs, n, nread);
       if (fd !== 0) return EBADF;
       const v = view();
       let line = lines.shift();
@@ -129,29 +194,109 @@ function wasi(stdinText, memory) {
       return 0;
     },
     fd_fdstat_get(fd, ptr) {
-      if (fd > 2) return EBADF;
+      // 2 - character device (stdout qatorma-qator buferlanadi), 3 - papka, 4 - oddiy fayl.
+      const type = fd <= 2 ? 2 : fd === DIR ? 3 : open.has(fd) ? 4 : 0;
+      if (!type) return EBADF;
       const v = view();
       for (let i = 0; i < 24; i++) v.setUint8(ptr + i, 0);
-      v.setUint8(ptr, 2); // character device: stdout qatorma-qator buferlanadi
-      v.setBigUint64(ptr + 8, 0xffffffffn, true);
-      v.setBigUint64(ptr + 16, 0xffffffffn, true);
+      v.setUint8(ptr, type);
+      if (open.get(fd)?.append) v.setUint16(ptr + 2, 1, true);
+      v.setBigUint64(ptr + 8, 0xffffffffffffffffn, true);
+      v.setBigUint64(ptr + 16, 0xffffffffffffffffn, true);
       return 0;
     },
-    fd_close: () => 0,
-    fd_seek: () => 70, // ESPIPE
-    fd_prestat_get: () => EBADF,
-    fd_prestat_dir_name: () => EBADF,
+    fd_fdstat_set_flags: () => 0,
+    fd_close(fd) {
+      open.delete(fd);
+      return 0;
+    },
+    fd_seek(fd, offset, whence, newoffset) {
+      const h = open.get(fd);
+      if (!h) return fd <= 2 ? 70 : EBADF; // ESPIPE: terminalda seek yo'q
+      const base = whence === 0 ? 0 : whence === 1 ? h.pos : h.file.size;
+      const pos = base + Number(offset);
+      if (pos < 0) return EINVAL;
+      h.pos = pos;
+      view().setBigUint64(newoffset, BigInt(pos), true);
+      return 0;
+    },
+    fd_tell(fd, ptr) {
+      const h = open.get(fd);
+      if (!h) return EBADF;
+      view().setBigUint64(ptr, BigInt(h.pos), true);
+      return 0;
+    },
+    fd_filestat_get(fd, ptr) {
+      if (fd === DIR) filestat(ptr, 3, 0);
+      else if (open.has(fd)) filestat(ptr, 4, open.get(fd).file.size);
+      else if (fd <= 2) filestat(ptr, 2, 0);
+      else return EBADF;
+      return 0;
+    },
+    fd_prestat_get(fd, ptr) {
+      if (fd !== DIR) return EBADF;
+      view().setUint8(ptr, 0);
+      view().setUint32(ptr + 4, 1, true);
+      return 0;
+    },
+    fd_prestat_dir_name(fd, ptr) {
+      if (fd !== DIR) return EBADF;
+      bytes().set([0x2e], ptr); // "."
+      return 0;
+    },
+    path_open(dirfd, _dirflags, ptr, len, oflags, rights, _inh, fdflags, fdOut) {
+      if (dirfd !== DIR) return EBADF;
+      const name = pathAt(ptr, len);
+      if (!name || name === "." || name.includes("/")) return name.includes("/") ? ENOENT : 31; // EISDIR
+      if (oflags & 2) return ENOTDIR;
+      let file = fs.get(name);
+      if (!file) {
+        if (!(oflags & 1)) return ENOENT;
+        file = { data: new Uint8Array(0), size: 0, dirty: true };
+        fs.set(name, file);
+      } else if (oflags & 4) return EEXIST;
+      const r = BigInt(rights);
+      const write = (r & 64n) !== 0n; // FD_WRITE
+      if (oflags & 8 && write) {
+        file.size = 0;
+        file.dirty = true;
+      }
+      const fd = nextFd++;
+      open.set(fd, { file, pos: 0, read: (r & 2n) !== 0n, write, append: (fdflags & 1) !== 0 });
+      view().setUint32(fdOut, fd, true);
+      return 0;
+    },
+    path_filestat_get(dirfd, _flags, ptr, len, out) {
+      if (dirfd !== DIR) return EBADF;
+      const name = pathAt(ptr, len);
+      if (name === "." || name === "") return filestat(out, 3, 0), 0;
+      const f = fs.get(name);
+      if (!f) return ENOENT;
+      filestat(out, 4, f.size);
+      return 0;
+    },
+    path_unlink_file(dirfd, ptr, len) {
+      if (dirfd !== DIR) return EBADF;
+      const name = pathAt(ptr, len);
+      if (!fs.delete(name)) return ENOENT;
+      removed.add(name);
+      return 0;
+    },
     proc_exit(code) {
       throw new Exit(code);
     },
     args_sizes_get(argc, size) {
-      view().setUint32(argc, 1, true);
-      view().setUint32(size, 2, true);
+      view().setUint32(argc, args.length, true);
+      view().setUint32(size, args.reduce((s, a) => s + a.length, 0), true);
       return 0;
     },
     args_get(argv, buf) {
-      view().setUint32(argv, buf, true);
-      bytes().set([0x61, 0], buf); // "a"
+      let p = buf;
+      args.forEach((a, i) => {
+        view().setUint32(argv + i * 4, p, true);
+        bytes().set(a, p);
+        p += a.length;
+      });
       return 0;
     },
     environ_sizes_get(count, size) {
@@ -175,7 +320,14 @@ function wasi(stdinText, memory) {
     },
     sched_yield: () => 0,
   };
-  return { imports: new Proxy(imports, { get: (t, k) => t[k] ?? (() => ENOSYS) }), stderr: () => errText, flush };
+  const removed = new Set();
+  const changed = () => [
+    ...[...fs].filter(([, f]) => f.dirty).map(([name, f]) => ({ name, data: f.data.slice(0, f.size) })),
+    ...[...removed].filter((n) => !fs.has(n)).map((name) => ({ name, data: null })),
+  ];
+  // fclose qilinmagan fayllar (FILE tuzilmasi leak hisobotida ham ko'rinadi).
+  const unclosed = () => [...new Set([...open.values()].map((h) => [...fs].find(([, f]) => f === h.file)?.[0]).filter(Boolean))];
+  return { imports: new Proxy(imports, { get: (t, k) => t[k] ?? (() => ENOSYS) }), stderr: () => errText, flush, changed, unclosed };
 }
 
 // DWARF manzillari CODE bo'limi boshidan hisoblanadi, brauzer stack'i esa fayl boshidan beradi.
@@ -220,6 +372,18 @@ async function where(err, wasm, code) {
   return `\nmain.c:${line}:${col}, ${fn} funksiyasida:\n${String(line).padStart(4)} | ${src}\n     | ${" ".repeat(Math.max(0, col - 1))}^`;
 }
 
+/** Dastur yozgan fayl: matn bo'lsa - matni, aks holda boshidagi baytlar hex ko'rinishida. */
+function fileOutput({ name, data }) {
+  if (!data) return { kind: "file", name, size: -1, text: null };
+  let text = null;
+  try {
+    text = new TextDecoder("utf-8", { fatal: true }).decode(data);
+    if (/[\0-\x08\x0e-\x1f]/.test(text)) text = null;
+  } catch {}
+  const hex = text === null ? [...data.subarray(0, 64)].map((b) => b.toString(16).padStart(2, "0")).join(" ") : null;
+  return { kind: "file", name, size: data.length, text: text === null ? null : text.slice(0, 20000), hex };
+}
+
 const TRAPS = [
   [/call stack|stack size/i, "Stack to'ldi: rekursiya juda chuqur yoki cheksiz."],
   [/out of bounds/i, "Xotira chegarasidan tashqariga murojaat."],
@@ -231,7 +395,7 @@ self.onmessage = async (e) => {
   try {
     await ready;
     if (!runtime) throw new Error("C runtime yuklanmadi.");
-    const { code, stdin } = e.data;
+    const { code, stdin, argv = ["./main"], files = [] } = e.data;
     const { out, log } = await clang(
       ["-O0", "-g", "-Wall", ...SANITIZE, "-I.", "-o", "a.wasm", "main.c", "runtime.o", "-lm", ...LINK],
       { "main.c": code, ...runtime },
@@ -243,7 +407,7 @@ self.onmessage = async (e) => {
     if (log.trim()) send("info", log.trim());
     const wasm = out["a.wasm"];
     let memory;
-    const sys = wasi(stdin, () => memory);
+    const sys = wasi(stdin, argv, files, () => memory);
     const { instance } = await WebAssembly.instantiate(wasm, { wasi_snapshot_preview1: sys.imports });
     memory = instance.exports.memory;
     let exitCode = 0;
@@ -254,6 +418,9 @@ self.onmessage = async (e) => {
       exitCode = err.quiet ? 0 : err.code;
     } finally {
       sys.flush();
+      const left = sys.unclosed();
+      if (left.length) send("err", `fclose qilinmagan fayl: ${left.join(", ")}\n`);
+      for (const f of sys.changed()) postMessage({ type: "out", out: fileOutput(f) });
     }
     if (exitCode > 0) send("info", `Dastur ${exitCode} kodi bilan tugadi.`);
   } catch (err) {

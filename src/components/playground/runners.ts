@@ -9,7 +9,9 @@ export type { RunLang };
 export type Output =
   | { kind: "out" | "err" | "info" | "in"; text: string }
   | { kind: "table"; columns: string[]; rows: unknown[][] }
-  | { kind: "test"; name: string; ok: boolean; error?: string };
+  | { kind: "test"; name: string; ok: boolean; error?: string }
+  /** C dasturi yaratgan/o'zgartirgan fayl: matn yoki boshidagi baytlar (hex); size -1 - o'chirildi. */
+  | { kind: "file"; name: string; size: number; text: string | null; hex?: string | null };
 
 const PYODIDE = "https://cdn.jsdelivr.net/npm/pyodide@314.0.7/";
 const SQLJS = "https://cdn.jsdelivr.net/npm/sql.js@1.15.2/dist/";
@@ -168,9 +170,9 @@ export function run(
   code: string,
   onOutput: (o: Output) => void,
   onLoading: (loading: boolean) => void,
-  extra: { tests?: string; stdin?: string } = {},
+  extra: { tests?: string; stdin?: string; argv?: string[]; files?: { name: string; text: string }[] } = {},
 ): RunHandle {
-  const { tests, stdin } = extra;
+  const { tests, stdin, argv, files } = extra;
   const kind = lang === "ts" ? "js" : lang;
   let stop = () => {};
   const done = (async () => {
@@ -217,7 +219,7 @@ export function run(
           resolve();
         }
       };
-      worker.postMessage({ code: source, tests: kind === "python" ? tests : undefined, stdin });
+      worker.postMessage({ code: source, tests: kind === "python" ? tests : undefined, stdin, argv, files });
     });
   })();
   return { done, stop: () => stop() };

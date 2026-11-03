@@ -8,7 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { getCourse, getLesson, listCourses, publishedNumbers, syllabus, type Course, type Lesson } from "../src/lib/content";
-import { STDIN_LANGS, TESTABLE, runLang } from "../src/lib/playground";
+import { FILE_NAME, STDIN_LANGS, TESTABLE, runLang } from "../src/lib/playground";
 import { glossary, termMatcher } from "../src/lib/glossary";
 
 const [onlyCourse, fromArg, toArg] = process.argv.slice(2);
@@ -60,30 +60,39 @@ const RULES: Record<Course["format"], (l: Lesson, raw: string) => string[]> = {
   },
 };
 
-/** ```<til> run va undan keyin keladigan ```<til> test / ```text stdin bloklari qoidalari. */
+/** ```<til> run va undan keyin keladigan test / stdin / args / file bloklari qoidalari. */
 function checkRunBlocks(body: string): string[] {
   const e: string[] = [];
-  const blocks = [...body.matchAll(/^```(\w*)([^\n]*)\n[\s\S]*?^```[ \t]*$/gm)].map((m) => ({
-    lang: m[1],
-    run: /(^|\s)run(\s|$)/.test(m[2]),
-    test: /(^|\s)test(\s|$)/.test(m[2]),
-    stdin: /(^|\s)stdin(\s|$)/.test(m[2]),
-    start: m.index!,
-    end: m.index! + m[0].length,
-  }));
+  const blocks = [...body.matchAll(/^```(\w*)([^\n]*)\n([\s\S]*?)^```[ \t]*$/gm)].map((m) => {
+    const tag = m[2].match(/(?:^|\s)(test|stdin|args|file)(?:\s+(\S+))?/);
+    return {
+      lang: m[1],
+      run: /(^|\s)run(\s|$)/.test(m[2]),
+      tag: tag?.[1],
+      name: tag?.[1] === "file" ? tag[2] : undefined,
+      text: m[3],
+      start: m.index!,
+      end: m.index! + m[0].length,
+    };
+  });
   blocks.forEach((b, i) => {
     if (b.run && !runLang(b.lang)) e.push(`"run" bloki uchun til qo'llab-quvvatlanmaydi: ${b.lang || "(yo'q)"}`);
-    if (!b.test && !b.stdin) return;
-    // Biriktiriladigan bloklar zanjiri: run, keyin test va/yoki stdin, orasida matn yo'q.
+    if (!b.tag) return;
+    // Biriktiriladigan bloklar zanjiri: run, keyin test / stdin / args / file, orasida matn yo'q.
     let k = i - 1;
-    while (k >= 0 && (blocks[k].test || blocks[k].stdin) && body.slice(blocks[k].end, blocks[k + 1].start).trim() === "") k--;
+    while (k >= 0 && blocks[k].tag && body.slice(blocks[k].end, blocks[k + 1].start).trim() === "") k--;
     const run = blocks[k];
-    const tag = b.test ? "test" : "stdin";
+    const lang = runLang(run?.lang ?? "");
+    const chain = blocks.slice(k + 1, i);
     if (!run?.run || body.slice(run.end, blocks[k + 1].start).trim() !== "")
-      e.push(`"${tag}" bloki darhol "run" blokidan keyin kelishi kerak (${b.lang})`);
-    else if (b.test && runLang(run.lang) !== runLang(b.lang)) e.push(`"test" bloki tili "run" bloki tili bilan bir xil emas`);
-    else if (b.test && !TESTABLE.includes(runLang(b.lang)!)) e.push(`"test" bloki ${b.lang} uchun qo'llab-quvvatlanmaydi`);
-    else if (b.stdin && !STDIN_LANGS.includes(runLang(run.lang)!)) e.push(`"stdin" bloki ${run.lang} uchun qo'llab-quvvatlanmaydi`);
+      e.push(`"${b.tag}" bloki darhol "run" blokidan keyin kelishi kerak (${b.lang})`);
+    else if (b.tag !== "file" && chain.some((c) => c.tag === b.tag)) e.push(`"${b.tag}" bloki bitta "run" blokiga ikki marta biriktirilgan`);
+    else if (b.tag === "test" && lang !== runLang(b.lang)) e.push(`"test" bloki tili "run" bloki tili bilan bir xil emas`);
+    else if (b.tag === "test" && !TESTABLE.includes(lang!)) e.push(`"test" bloki ${b.lang} uchun qo'llab-quvvatlanmaydi`);
+    else if (b.tag !== "test" && !STDIN_LANGS.includes(lang!)) e.push(`"${b.tag}" bloki ${run.lang} uchun qo'llab-quvvatlanmaydi`);
+    else if (b.tag === "args" && b.text.trim().includes("\n")) e.push(`"args" bloki bitta qator bo'lishi kerak`);
+    else if (b.tag === "file" && !FILE_NAME.test(b.name ?? "")) e.push(`"file" blokida fayl nomi yo'q yoki noto'g'ri: ${b.name ?? ""}`);
+    else if (b.tag === "file" && chain.some((c) => c.tag === "file" && c.name === b.name)) e.push(`"file ${b.name}" ikki marta berilgan`);
   });
   return e;
 }
