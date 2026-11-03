@@ -1,0 +1,58 @@
+# CS50 12-13-darslar atamalari.
+- term: null-terminated byte string
+  aliases: [NTBS]
+  uz: "C dagi satr ko'rinishi: nolga teng bo'lmagan baytlar va ulardan keyin qiymati 0 bo'lgan bitta bayt. n belgili satr xotirada n + 1 bayt egallaydi."
+  course: cs50
+  lesson: 12
+- term: NUL terminator
+  aliases: [NUL]
+  uz: "C satrining oxiridagi 0-kodli bayt, kodda '\\0'. Satr uzunligi saqlanmaydi, uning chegarasi faqat shu bayt bilan belgilanadi."
+  course: cs50
+  lesson: 12
+- term: string literal
+  uz: "Kodda qo'shtirnoq ichida yozilgan satr, masalan \"HI!\". Tipi char[N], N terminator bilan; uni o'zgartirish undefined behavior."
+  course: cs50
+  lesson: 12
+- term: typedef
+  uz: "Mavjud tipga yangi nom beradigan C kalit so'zi. cs50.h dagi string aslida typedef char *string."
+  course: cs50
+  lesson: 12
+- term: leksikografik tartib
+  uz: "Satrlarni birinchi farq qilgan belgi bo'yicha tartiblash. C dagi strcmp alfavit emas, bayt kodlari bo'yicha solishtiradi: katta harflar kichiklardan oldin."
+  course: cs50
+  lesson: 12
+- term: buffer overflow
+  aliases: [bufer to'lishi]
+  uz: "Buferga uning o'lchamidan ko'p bayt yozish: qo'shni xotira buziladi. strcpy va strcat bufer hajmini bilmagani uchun eng ko'p uchraydigan manba."
+  course: cs50
+  lesson: 12
+- term: command-line argument
+  aliases: [command-line arguments]
+  uz: "Dastur nomidan keyin buyruq qatorida yozilgan so'z. main ga argv massividagi satr bo'lib keladi, soni argc da."
+  course: cs50
+  lesson: 13
+- term: exit status
+  uz: "Dastur tugaganda operatsion tizim orqali uni chaqirgan jarayonga qaytadigan son: 0 - muvaffaqiyat, boshqasi - xato. Shell uni $? da saqlaydi, faqat 0-255 oralig'i yetib boradi."
+  course: cs50
+  lesson: 13
+- term: usage xabari
+  uz: "Dastur noto'g'ri argumentlar bilan chaqirilganda chiqaradigan qisqa ko'rsatma (Usage: ./greet ism). stderr ga yoziladi va nol emas exit status bilan birga keladi."
+  course: cs50
+  lesson: 13
+- term: shell
+  uz: "Terminaldagi buyruq tarjimoni (masalan bash): qatorni so'zlarga bo'lib dasturni ishga tushiradi va uning exit status ini $? da saqlaydi."
+  course: cs50
+  lesson: 13
+- term: null pointer
+  aliases: [NULL]
+  uz: "Hech qayerga qaramaydigan manzil. argv[argc] standart bo'yicha null pointer; uni satr sifatida o'qish undefined behavior."
+  course: cs50
+  lesson: 13
+- term: stderr
+  uz: "Xato va diagnostika xabarlari uchun standart oqim (fayl deskriptori 2). Buferlanmaydi va > bilan yo'naltirilganda ekranda qoladi."
+  course: cs50
+  lesson: 13
+- term: redirect
+  uz: "Shell'da dastur oqimini faylga yo'naltirish: > stdout ni, 2> stderr ni faylga yozadi."
+  course: cs50
+  lesson: 13

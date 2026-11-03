@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Terminalda `./copy \"mening fayl.txt\" zaxira` yozildi. `argc` va `argv[1]` nima?",
+      "options": [
+        "argc = 3, argv[1] = \"mening fayl.txt\"",
+        "argc = 4, argv[1] = \"\\\"mening\"",
+        "argc = 2, argv[1] = \"mening fayl.txt\"",
+        "argc = 3, argv[1] = \"./copy\""
+      ],
+      "answer": 0,
+      "why": "Shell qo'shtirnoq ichidagi probelda so'zni bo'lmaydi va qo'shtirnoqni olib tashlaydi: ./copy, mening fayl.txt, zaxira - 3 so'z. argv[0] dastur nomi."
+    },
+    {
+      "q": "Dastur argumentsiz (`./greet`) ishga tushirildi va `argc` tekshirilmasdan `printf(\"%s\", argv[1])` bajarildi. Nima bo'ladi?",
+      "options": [
+        "Bo'sh satr chiqadi",
+        "argv[1] = argv[argc] = NULL; uni %s bilan o'qish undefined behavior",
+        "argv[1] dastur nomini qaytaradi",
+        "Kompilyator buni oldindan xato deb topadi"
+      ],
+      "answer": 1,
+      "why": "argc = 1, standart bo'yicha argv[argc] null pointer. NULL ni satr sifatida o'qish UB: brauzer muhiti uni to'xtatadi, Linux da ko'pincha segfault."
+    },
+    {
+      "q": "Foydalanuvchi `./pay abc` yozdi va dastur `int n = atoi(argv[1]);` qiladi. Qaysi gap to'g'ri?",
+      "options": [
+        "atoi -1 qaytaradi va errno ni o'rnatadi",
+        "Dastur crash bo'ladi",
+        "n = 0, va bu natijani ./pay 0 dan farqlab bo'lmaydi",
+        "atoi xatoni stderr ga yozadi"
+      ],
+      "answer": 2,
+      "why": "atoi aylantira olmasa 0 qaytaradi va hech qanday xato belgisi bermaydi. strtol esa end == s orqali raqam o'qilmaganini ko'rsatadi."
+    },
+    {
+      "q": "`errno = 0; long v = strtol(\"12abc\", &end, 10);` dan keyin holat qanday?",
+      "options": [
+        "v = 0, errno = ERANGE",
+        "v = 12, errno = 0, *end == '\\0'",
+        "v = 0, end == s",
+        "v = 12, errno = 0, end \"abc\" ning boshiga qaraydi"
+      ],
+      "answer": 3,
+      "why": "strtol raqamlarni o'qib 'a' da to'xtaydi. Diapazon xatosi yo'q, shuning uchun errno 0; xato faqat *end != '\\0' tekshiruvida ko'rinadi."
+    },
+    {
+      "q": "Dastur xato topganda `return 256;` qiladi. Bash da `echo $?` nima ko'rsatadi?",
+      "options": ["0", "256", "255", "1"],
+      "answer": 0,
+      "why": "Ota jarayonga faqat kichik 8 bit (status & 0377) yetib boradi: 256 = 1 0000 0000, kichik 8 bit nol. Xato muvaffaqiyatga aylanadi."
+    },
+    {
+      "q": "`./check data.csv && ./upload data.csv` buyrug'ida `./upload` qachon ishga tushadi?",
+      "options": [
+        "Har doim",
+        "Faqat ./check 0 status bilan tugasa",
+        "Faqat ./check nol emas status bilan tugasa",
+        "Faqat ./check stderr ga hech narsa yozmasa"
+      ],
+      "answer": 1,
+      "why": "&& (AND list) da ikkinchi buyruq birinchisi 0 (muvaffaqiyat) qaytarganda bajariladi. stderr matni emas, exit status hal qiladi."
+    },
+    {
+      "q": "Dastur usage xabarini `printf` bilan chiqaradi va foydalanuvchi `./report > out.txt` yozdi. Nima muammo?",
+      "options": [
+        "Hech qanday: printf avtomatik stderr ga yozadi",
+        "Dastur kompilyatsiya bo'lmaydi",
+        "Xabar ekranda ikki marta chiqadi",
+        "Xabar ekranda ko'rinmaydi va out.txt ichiga ma'lumot bilan aralashib tushadi"
+      ],
+      "answer": 3,
+      "why": "> faqat stdout ni yo'naltiradi. Xatolar fprintf(stderr, ...) bilan yozilsa, ekranda qoladi va fayl toza bo'ladi."
+    },
+    {
+      "q": "`parse_or_exit` funksiyasi ichida `exit(2)` chaqirildi. `main` dagi keyingi qatorlar bilan nima bo'ladi?",
+      "options": [
+        "Boshqaruv main ga qaytadi va dastur davom etadi",
+        "Faqat joriy sikl iteratsiyasi o'tkazib yuboriladi",
+        "Butun dastur shu yerda 2 status bilan tugaydi, main dagi qolgan kod bajarilmaydi",
+        "exit faqat main ichida ishlaydi, bu yerda kompilyatsiya xatosi"
+      ],
+      "answer": 2,
+      "why": "return faqat joriy funksiyadan chiqadi, exit esa qayerdan chaqirilmasin, dasturni tugatadi (oqimlarni yopib, atexit funksiyalarini chaqirib)."
+    },
+    {
+      "q": "Brauzer muhitida (long 32 bit) `strtol(\"3000000000\", &end, 10)` va x86-64 Linux da (long 64 bit) xuddi shu chaqiruv. Natijani int ga saqlash uchun qanday tekshiruv ikkala platformada ham xatoni ushlaydi?",
+      "options": [
+        "Faqat errno == ERANGE",
+        "errno == ERANGE yoki v < INT_MIN yoki v > INT_MAX",
+        "Faqat *end != '\\0'",
+        "Faqat end == s"
+      ],
+      "answer": 1,
+      "why": "wasm32 da ERANGE bo'ladi, x86-64 da esa 3 000 000 000 long ga sig'adi va errno 0, lekin int dan katta. Ikkala tekshiruv birga kerak."
+    },
+    {
+      "q": "Segmentation fault (SIGSEGV, Linux da 11-signal) bilan yiqilgan dasturdan keyin bash da `echo $?` nima chiqaradi?",
+      "options": ["11", "1", "127", "139"],
+      "answer": 3,
+      "why": "Bash signal bilan o'ldirilgan buyruq uchun 128 + N beradi: 128 + 11 = 139. 127 - buyruq topilmadi."
+    }
+  ]
+}

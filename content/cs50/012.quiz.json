@@ -1,0 +1,90 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`char s[] = \"Toshkent\";` uchun `sizeof(s)` va `strlen(s)` nimaga teng?",
+      "options": ["8 va 8", "9 va 8", "8 va 9", "Ikkalasi ham manzil o'lchami (4 yoki 8)"],
+      "answer": 1,
+      "why": "8 ta harf + NUL = 9 bayt massiv; strlen NUL gacha sanaydi: 8. s bu yerda haqiqiy massiv, manzil emas."
+    },
+    {
+      "q": "Satr 500 belgidan iborat. `for (int i = 0; i < strlen(s); i++)` sikli `strlen` ichida jami nechta bayt o'qiydi (sikl tanasi satrni o'zgartirmaydi)?",
+      "options": ["501", "500", "250 500", "251 001"],
+      "answer": 3,
+      "why": "Shart 501 marta tekshiriladi, har strlen 501 bayt o'qiydi: 501 x 501 = 251 001. Uzunlikni bir marta hisoblaganda 501."
+    },
+    {
+      "q": "Ikki marta `get_string` bilan \"olma\" kiritildi va `s == t` tekshirildi. Natija va sababi?",
+      "options": [
+        "Yolg'on: string - manzil, == ikki xil massivning manzillarini solishtiradi",
+        "Rost: harflar bir xil",
+        "Kompilyatsiya xatosi: satrlarni == bilan solishtirib bo'lmaydi",
+        "Rost, chunki kompilyator bir xil satrlarni birlashtiradi"
+      ],
+      "answer": 0,
+      "why": "get_string har chaqiruvda yangi massiv ajratadi; == mazmunni emas, manzillarni solishtiradi. Mazmun uchun strcmp(s, t) == 0."
+    },
+    {
+      "q": "`strcmp(\"Zebra\", \"apple\")` natijasi haqida qaysi gap to'g'ri?",
+      "options": [
+        "Musbat, chunki alfavitda 'z' 'a' dan keyin",
+        "Aniq -1",
+        "Manfiy, chunki 'Z' (90) 'a' (97) dan kichik",
+        "0, chunki strcmp katta-kichik harfni farqlamaydi"
+      ],
+      "answer": 2,
+      "why": "strcmp bayt kodlari bo'yicha solishtiradi: barcha katta harflar kichiklardan oldin. Faqat ishora kafolatlangan, aniq -1 emas."
+    },
+    {
+      "q": "`if (strcmp(a, b))` sharti qachon bajariladi?",
+      "options": ["Satrlar teng bo'lganda", "Satrlar teng bo'lmaganda", "Faqat a b dan oldin kelganda", "Hech qachon: strcmp bool qaytarmaydi"],
+      "answer": 1,
+      "why": "Teng satrlar uchun strcmp 0 qaytaradi, 0 esa yolg'on. Shart nol emas, ya'ni har xil satrlarda bajariladi. Shuning uchun doim == 0 deb aniq yozing."
+    },
+    {
+      "q": "\"Ali\" va \"Valiyev\" ni probel bilan ulab `full` ga yozish kerak. `full` kamida necha bayt bo'lishi shart?",
+      "options": ["10", "11", "13", "12"],
+      "answer": 3,
+      "why": "3 + 1 (probel) + 7 + 1 (NUL) = 12. 11 baytda natija sig'adi, lekin NUL ga joy qolmaydi."
+    },
+    {
+      "q": "`char city[8]; strcpy(city, \"Samarqand\");` ni oddiy (sanitizer'siz) kompilyatsiya qilib ishga tushirganda \"Samarqand\" chiqdi. Qaysi xulosa to'g'ri?",
+      "options": [
+        "Kod to'g'ri: strcpy buferni o'zi kengaytirdi",
+        "Kod xato: 10 bayt 8 baytli massivga yozildi; bu UB, jim o'tishi ham mumkin edi",
+        "Kod to'g'ri, chunki NUL hisobga kirmaydi",
+        "Xato faqat 32-bitli platformada bo'ladi"
+      ],
+      "answer": 1,
+      "why": "strcpy dest o'lchamini bilmaydi va 9 + 1 = 10 bayt yozadi. To'g'ri natija ko'rinishi UB yo'qligini isbotlamaydi; brauzer muhiti buni stack-buffer-overflow deb to'xtatadi."
+    },
+    {
+      "q": "Nega `toupper(s[i])` o'rniga `toupper((unsigned char) s[i])` yoziladi?",
+      "options": [
+        "toupper faqat unsigned char qaytaradi",
+        "Aks holda kompilyatsiya xatosi bo'ladi",
+        "Signed char da UTF-8 baytlari manfiy bo'ladi, ctype.h funksiyalari uchun bu undefined behavior",
+        "unsigned char tezroq ishlaydi"
+      ],
+      "answer": 2,
+      "why": "Argument unsigned char diapazonida yoki EOF bo'lishi kerak. x86-64 va wasm32 da char signed, 0xD0 kabi bayt -48 bo'lib qoladi."
+    },
+    {
+      "q": "`string words[3] = {\"olma\", \"nok\", \"uzum\"};` va `char grid[3][5] = {\"olma\", \"nok\", \"uzum\"};` uchun brauzer muhitida (wasm32) `sizeof` qiymatlari?",
+      "options": ["12 va 15", "15 va 15", "13 va 15", "24 va 15"],
+      "answer": 0,
+      "why": "words - 3 ta manzil, wasm32 da 3 x 4 = 12 (x86-64 da 24). grid - yaxlit 3 x 5 = 15 bayt, platformaga bog'liq emas."
+    },
+    {
+      "q": "`char *p = \"olma\"; p[0] = 'O';` va `char a[] = \"olma\"; a[0] = 'O';` haqida qaysi biri to'g'ri?",
+      "options": [
+        "Ikkalasi ham to'g'ri",
+        "Ikkalasi ham kompilyatsiya xatosi",
+        "Birinchisi to'g'ri, ikkinchisi UB",
+        "Birinchisi literalni o'zgartiradi (UB), ikkinchisi nusxani o'zgartiradi (to'g'ri)"
+      ],
+      "answer": 3,
+      "why": "p literalning o'ziga qaraydi va literalni o'zgartirish UB. char a[] = \"...\" literaldan o'zgartiriladigan nusxa oladi."
+    }
+  ]
+}
