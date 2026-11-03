@@ -44,3 +44,7 @@ __pycache__/
 
 # qidiruv indeksi build paytida yaratiladi
 /public/pagefind/
+
+# run-blocks.py misollari repo ildizida yaratgan vaqtinchalik fayllar
+/*.db
+/*.csv
