@@ -1,0 +1,53 @@
+# CS50 18-19-darslar atamalari.
+- term: rekursiya
+  aliases: [recursion]
+  uz: "Funksiyaning o'z ishining bir qismini bajarish uchun o'zini kichikroq kirish bilan chaqirishi. Base case va kirishni unga qarab kamaytiruvchi rekursiv qadamdan iborat."
+  course: cs50
+  lesson: 18
+- term: base case
+  uz: "Rekursiv funksiyada javob boshqa chaqiruvsiz darhol ma'lum bo'lgan eng kichik holat. U bo'lmasa yoki unga yetib bo'lmasa, rekursiya to'xtamaydi."
+  course: cs50
+  lesson: 18
+- term: call stack
+  uz: "Faol funksiya chaqiruvlarining frame'lari LIFO tartibda taxlanadigan xotira hududi: chaqiruvda frame qo'shiladi, return da olib tashlanadi."
+  course: cs50
+  lesson: 18
+- term: stack frame
+  uz: "Bitta funksiya chaqiruvi uchun stack'da ajratilgan joy: parametrlar, lokal o'zgaruvchilar, qaytish manzili va saqlangan registrlar."
+  course: cs50
+  lesson: 18
+- term: stack overflow
+  uz: "Call stack uchun ajratilgan xotiraning tugashi, odatda juda chuqur yoki cheksiz rekursiya tufayli. C dasturi halokat bilan to'xtaydi."
+  course: cs50
+  lesson: 18
+- term: memoization
+  uz: "Funksiya natijalarini jadvalda eslab qolib, bir xil kirish qayta so'ralganda hisoblamasdan qaytarish. Naive Fibonacci'ni eksponensial vaqtdan chiziqli vaqtga tushiradi."
+  course: cs50
+  lesson: 18
+- term: tail recursion
+  aliases: [tail call]
+  uz: "Rekursiv chaqiruv funksiyaning eng oxirgi amali bo'lgan holat. Kompilyator uni siklga aylantirishi mumkin, lekin C standarti buni kafolatlamaydi."
+  course: cs50
+  lesson: 18
+- term: divide and conquer
+  uz: "Masalani bir xil turdagi kichik masalalarga bo'lish, ularni rekursiv yechish va javoblarni birlashtirish usuli. Binary search va merge sort shu usulda ishlaydi."
+  course: cs50
+  lesson: 19
+- term: merge sort
+  uz: "Massivni ikkiga bo'lib, har yarmini rekursiv saralab, ikki saralangan yarmini chiziqli vaqtda birlashtiradigan saralash. Har doim Θ(n log n) vaqt va O(n) qo'shimcha xotira."
+  course: cs50
+  lesson: 19
+- term: stable
+  aliases: [stable saralash]
+  uz: "Teng kalitli elementlarning boshlang'ich nisbiy tartibini saqlaydigan saralash xususiyati. Merge sort'da merge teng elementda chap qatordan olsa (<=), u stable."
+  course: cs50
+  lesson: 19
+- term: qaror daraxti
+  aliases: [decision tree]
+  uz: "Taqqoslash algoritmining modeli: ichki tugunlar taqqoslashlar, barglar natijalar. n! barg kerakligidan har qanday taqqoslash saralashi kamida log2(n!) taqqoslash qilishi kelib chiqadi."
+  course: cs50
+  lesson: 19
+- term: inversiya
+  uz: "Massivda i < j bo'lib a[i] > a[j] bo'lgan juftlik. Saralangan massivda 0 ta, teskari massivda n(n - 1)/2 ta; merge sort bilan Θ(n log n) da sanaladi."
+  course: cs50
+  lesson: 19

@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`int f(int n) { if (n == 1) return 1; return n * f(n - 1); }` funksiyasi `f(0)` bilan chaqirildi. Nima bo'ladi?",
+      "options": [
+        "0 qaytaradi, chunki 0 ga ko'paytiriladi",
+        "1 qaytaradi, chunki 0! = 1",
+        "n -1, -2, -3, ... ga qarab ketadi, base case'ga hech qachon yetmaydi va stack to'ladi",
+        "Kompilyator bunday chaqiruvni rad etadi"
+      ],
+      "answer": 2,
+      "why": "Base case faqat n == 1 da ishlaydi. 0 dan boshlab n kamayib, 1 dan uzoqlashadi, frame'lar to'xtovsiz qo'shiladi. `n <= 1` sharti bu xatoni oldini oladi."
+    },
+    {
+      "q": "`factorial(5)` ichida eng chuqur nuqtada (base case bajarilayotganda) call stack'da nechta `factorial` frame'i bor?",
+      "options": ["1", "5", "6", "120"],
+      "answer": 1,
+      "why": "factorial(5), (4), (3), (2), (1) - beshta frame bir vaqtda turadi, har biri o'z n qiymatini saqlab, ichki chaqiruv natijasini kutadi. Ularning ostida main frame'i ham bor."
+    },
+    {
+      "q": "Stack frame'da quyidagilardan qaysi biri saqlanmaydi?",
+      "options": [
+        "Chaqiruvning parametrlari",
+        "Funksiyaning lokal o'zgaruvchilari",
+        "Chaqiruv tugagach qaytiladigan joy (qaytish manzili)",
+        "Boshqa barcha chaqiruvlardagi parametrlarning nusxalari"
+      ],
+      "answer": 3,
+      "why": "Har frame faqat o'z chaqiruvining ma'lumotini saqlaydi. Aynan shuning uchun factorial(3) ning n = 3 qiymati factorial(2) dagi n = 2 bilan aralashmaydi."
+    },
+    {
+      "q": "Rekursiv funksiyaning har bir frame'i 64 bayt oladi, stack hajmi 1 MB (1 048 576 bayt). Taxminan qancha chuqurlikda stack to'ladi?",
+      "options": ["Taxminan 1 000", "Taxminan 16 000", "Taxminan 64 000", "Cheksiz, frame'lar qayta ishlatiladi"],
+      "answer": 1,
+      "why": "Maksimal chuqurlik taxminan stack hajmi / frame hajmi = 1 048 576 / 64 = 16 384. Bu baho: stack'ning bir qismini boshqa narsalar ham egallaydi."
+    },
+    {
+      "q": "`draw(n)` funksiyasida `printf` qatori rekursiv chaqiruv `draw(n - 1)` dan OLDINga ko'chirildi. `draw(3)` natijasi qanday o'zgaradi?",
+      "options": [
+        "O'zgarmaydi: chaqiruvlar baribir bir xil",
+        "Qatorlar teskari tartibda chiqadi: eng uzun qator birinchi",
+        "Faqat bitta qator chiqadi",
+        "Dastur cheksiz rekursiyaga tushadi"
+      ],
+      "answer": 1,
+      "why": "Ish chaqiruvdan oldin bajarilsa, har chaqiruv avval o'z qatorini chiqarib, keyin chuqurlashadi: 333, 22, 1. Keyin bajarilsa, eng chuqur chaqiruv birinchi chiqaradi."
+    },
+    {
+      "q": "Naive `fib(n)` chaqiruvlar soni C(n) = 2 · F(n + 1) - 1. F(21) = 10 946 bo'lsa, `fib(20)` nechta chaqiruv qiladi?",
+      "options": ["6 765", "10 946", "21 891", "39"],
+      "answer": 2,
+      "why": "C(20) = 2 · F(21) - 1 = 2 · 10 946 - 1 = 21 891. 39 - bu memoization bilan chaqiruvlar soni (2n - 1)."
+    },
+    {
+      "q": "Naive Fibonacci'ga memoization qo'shilganda vaqt qanday o'zgaradi va nima evaziga?",
+      "options": [
+        "Θ(φⁿ) dan Θ(n) ga tushadi, evaziga natijalar jadvali uchun O(n) xotira kerak",
+        "Θ(φⁿ) dan Θ(log n) ga tushadi, qo'shimcha xotirasiz",
+        "Vaqt o'zgarmaydi, faqat stack chuqurligi kamayadi",
+        "Θ(n²) ga tushadi, evaziga O(1) xotira"
+      ],
+      "answer": 0,
+      "why": "Har F(k) bir marta hisoblanib jadvalga yoziladi, qayta so'ralganda darhol qaytadi: chaqiruvlar 2n - 1. Jadval va rekursiya chuqurligi O(n) xotira oladi."
+    },
+    {
+      "q": "Python'da base case'siz rekursiv funksiya chaqirildi. C dagidan asosiy farq nima?",
+      "options": [
+        "Python cheksiz rekursiyani avtomatik siklga aylantiradi",
+        "Python chuqurlikni sanaydi va chegaradan (standart 1000) oshganda ushlab olinadigan RecursionError ko'taradi",
+        "Python ham Segmentation fault bilan to'xtaydi",
+        "Python'da rekursiya chuqurligi cheklanmagan"
+      ],
+      "answer": 1,
+      "why": "CPython recursion limit (sys.getrecursionlimit(), standart 1000) C stack'i to'lishidan oldin RecursionError beradi va uni try/except bilan ushlash mumkin. Python tail call optimization qilmaydi."
+    },
+    {
+      "q": "Base case'siz `dive` funksiyasi `clang -O0` bilan Segmentation fault berdi, `clang -O2` bilan esa to'xtamay ishlab qoldi. Buning sababi nima?",
+      "options": [
+        "-O2 stack hajmini avtomatik oshiradi",
+        "-O2 da kompilyator tail call'ni siklga aylantirdi va stack o'smay qoldi; C standarti bu optimizatsiyani kafolatlamaydi",
+        "-O2 rekursiv chaqiruvni butunlay olib tashlaydi va funksiya darhol qaytadi",
+        "-O2 da printf ishlamaydi"
+      ],
+      "answer": 1,
+      "why": "Rekursiv chaqiruv oxirgi amal (tail call) bo'lgani uchun optimizator uni jump'ga aylantirishi mumkin. Bu ixtiyoriy optimizatsiya: -O0 da yo'q, standart esa uni talab qilmaydi."
+    },
+    {
+      "q": "1 000 000 elementli bog'langan zanjir bo'ylab yurib, elementlarni sanash kerak. Qaysi yondashuv to'g'ri?",
+      "options": [
+        "Rekursiya: kod qisqaroq, chuqurlik muammo emas",
+        "Rekursiya, lekin -O2 bilan kompilyatsiya qilish shart, chunki u har doim tail call'ni optimallashtiradi",
+        "Sikl: chuqurlik n ga chiziqli bog'liq va 1 000 000 frame stack'ni to'ldirishi mumkin",
+        "Farqi yo'q, ikkalasi ham O(1) xotira oladi"
+      ],
+      "answer": 2,
+      "why": "Chiziqli chuqurlikdagi rekursiya n ta frame ochadi: 1 000 000 · 32 bayt ham 8 MB atrofida. Sikl O(1) xotira oladi. Tail call optimization esa kafolatlanmagan."
+    }
+  ]
+}

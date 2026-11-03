@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Saralangan `[1, 4, 9]` va `[2, 3, 10, 11]` qatorlari merge qilinmoqda. Nechta taqqoslash bajariladi?",
+      "options": [
+        "7",
+        "6",
+        "3",
+        "5"
+      ],
+      "answer": 3,
+      "why": "1<2, 4>2, 4>3, 4<10, 9<10 - beshta taqqoslash; chap qator tugaydi va 10, 11 taqqoslashsiz ko'chiriladi. Eng ko'pi n - 1 = 6 bo'lardi."
+    },
+    {
+      "q": "Merge sort'da base case `if (hi - lo == 0) return;` deb yozildi (`[lo, hi)` oraliq). Nima bo'ladi?",
+      "options": [
+        "Hech narsa: bo'sh oraliq yagona base case",
+        "Natija saralangan, lekin stable emas",
+        "1 elementli oraliqda mid = lo bo'ladi va funksiya o'zini xuddi shu oraliq bilan cheksiz chaqiradi, stack to'ladi",
+        "Faqat birinchi element saralanmay qoladi"
+      ],
+      "answer": 2,
+      "why": "hi - lo = 1 da mid = lo, ikkinchi chaqiruv sort_range(mid, hi) yana o'sha 1 elementli oraliq. Kirish kamaymaydi - 18-darsdagi cheksiz rekursiya. To'g'risi: hi - lo < 2."
+    },
+    {
+      "q": "T(n) = 2T(n/2) + n. n = 1024 bo'lsa, rekursiya daraxtida merge bajariladigan nechta sath bor va jami ish taxminan qancha?",
+      "options": [
+        "10 sath, taxminan 10 240",
+        "1024 sath, taxminan 1 048 576",
+        "2 sath, taxminan 2 048",
+        "20 sath, taxminan 20 480"
+      ],
+      "answer": 0,
+      "why": "Har sathda bo'lak uzunligi ikki baravar kamayadi: log₂ 1024 = 10 sath. Har sathda jami n ish, demak n · log₂ n = 1024 · 10 = 10 240."
+    },
+    {
+      "q": "1 000 000 elementli massiv uchun selection sort taxminan 5 · 10¹¹, merge sort taxminan 2 · 10⁷ taqqoslash qiladi. Sekundiga 10⁹ taqqoslashda vaqtlar qanday?",
+      "options": [
+        "0.5 s va 0.002 s",
+        "500 s va 0.02 s",
+        "50 s va 2 s",
+        "Ikkalasi ham 1 soniyadan kam"
+      ],
+      "answer": 1,
+      "why": "5 · 10¹¹ / 10⁹ = 500 s (8 daqiqadan ortiq), 2 · 10⁷ / 10⁹ = 0.02 s. Farq taxminan 25 ming baravar."
+    },
+    {
+      "q": "Merge sort saralangan massivga berildi. Uning ish vaqti haqida qaysi gap to'g'ri?",
+      "options": [
+        "Insertion sort kabi Θ(n) da tugaydi",
+        "Θ(n²) ga oshadi",
+        "Baribir Θ(n log n): bo'lish va ko'chirishlar kirishga bog'liq emas, faqat taqqoslashlar taxminan ikki baravar kamayadi",
+        "Rekursiya ishlatilmaydi, chunki massiv allaqachon saralangan"
+      ],
+      "answer": 2,
+      "why": "Klassik merge sort har doim log₂ n sathda bo'ladi va har sathda n ta ko'chirish qiladi. Saralangan kirishda har merge min(na, nb) taqqoslash qiladi, lekin o'sish tartibi o'zgarmaydi."
+    },
+    {
+      "q": "Merge funksiyasida `if (a[i] <= a[j])` o'rniga `if (a[i] < a[j])` yozildi. Natija qanday o'zgaradi?",
+      "options": [
+        "Massiv endi saralanmaydi",
+        "Massiv saralanadi, lekin teng elementlar o'ng qatordan birinchi olinadi va algoritm stable bo'lmay qoladi",
+        "Algoritm tezroq ishlaydi va stable bo'lib qoladi",
+        "Teng elementlar natijadan tushib qoladi"
+      ],
+      "answer": 1,
+      "why": "Tartib baribir to'g'ri, lekin teng kalitlarda o'ngdagi (massivda keyinroq turgan) element oldinga o'tadi - boshlang'ich nisbiy tartib buziladi."
+    },
+    {
+      "q": "Merge sort'ning qo'shimcha xotira narxi qanday va asosan nimadan iborat?",
+      "options": [
+        "O(1): hamma narsa o'z joyida",
+        "O(log n): faqat rekursiya stack'i",
+        "O(n): yordamchi massiv tmp, unga O(log n) chuqurlikdagi stack qo'shiladi",
+        "O(n log n): har sathda yangi massiv ajratiladi"
+      ],
+      "answer": 2,
+      "why": "tmp butun massiv o'lchamida bir marta ajratiladi - O(n). Rekursiya chuqurligi log₂ n atrofida, bu n ga nisbatan kichik. 17-darsdagi algoritmlar esa O(1) xotira oladi."
+    },
+    {
+      "q": "Qaror daraxti dalilida n ta element uchun daraxtda kamida nechta barg bo'lishi shart va nega?",
+      "options": [
+        "n ta, har element uchun bitta",
+        "n! ta, chunki har bir tartib boshqa javob talab qiladi va ikki kirish bitta bargga tushsa, biri noto'g'ri saralanadi",
+        "2ⁿ ta, chunki har taqqoslash ikki javob beradi",
+        "n log n ta, merge sort'dagi taqqoslashlar soni"
+      ],
+      "answer": 1,
+      "why": "n! xil kirish tartibi bor. Balandligi h bo'lgan ikkilik daraxtda ko'pi bilan 2ʰ barg, demak 2ʰ ≥ n!, h ≥ log₂(n!) = Ω(n log n)."
+    },
+    {
+      "q": "n = 8 uchun log₂(8!) ≈ 15.3. Bundan qanday xulosa chiqadi?",
+      "options": [
+        "Har qanday taqqoslashga asoslangan saralash 8 elementni har doim 15 ta taqqoslashda saralaydi",
+        "Har qanday taqqoslashga asoslangan saralash eng yomon holatda kamida 16 ta taqqoslash qiladi",
+        "Merge sort 8 elementni 15 ta taqqoslashda saralaydi",
+        "Counting sort ham 16 dan kam taqqoslash qila olmaydi"
+      ],
+      "answer": 1,
+      "why": "Taqqoslashlar soni butun, demak eng yomon holat kamida ⌈15.3⌉ = 16. Merge sort'ning eng yomon holati 17. Counting sort taqqoslamaydi, shuning uchun bu chegaraga bo'ysunmaydi."
+    },
+    {
+      "q": "CPython'ning `list.sort()` haqida qaysi gap to'g'ri?",
+      "options": [
+        "U quicksort, shuning uchun stable emas",
+        "U sof klassik merge sort: har doim o'rtadan bo'ladi",
+        "U Timsort asosidagi adaptiv, stable merge sort: tayyor run'larni topadi, kichik bo'laklarni insertion sort bilan saralaydi; 3.11 dan run'larni birlashtirish tartibi Powersort bilan tanlanadi",
+        "U Θ(n²) algoritm, lekin C da yozilgani uchun tez"
+      ],
+      "answer": 2,
+      "why": "Objects/listsort.txt uni adaptive, stable, natural mergesort deb ta'riflaydi. Python hujjati sort() stable bo'lishini kafolatlaydi."
+    }
+  ]
+}
