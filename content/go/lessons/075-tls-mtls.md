@@ -11,6 +11,8 @@ sources:
     note: "crypto/tls bo'limi: SecP256r1MLKEM768 va SecP384r1MLKEM1024 default; GODEBUG sozlamalarining 1.27 da olib tashlanishi haqida ogohlantirish"
   - id: go127
     note: "crypto/tls bo'limi: ConnectionState.LocalCertificate, MLKEM1024, olib tashlangan GODEBUG sozlamalari (tlsrsakex, tls3des, tls10server va boshqalar)"
+  - id: pkg-x509
+    note: "Certificate.Verify: revocation tekshiruvi qilinmasligi haqida ogohlantirish"
 quiz:
   - q: "mTLS server uchun qaysi `ClientAuth` qiymati klient sertifikatini talab qiladi VA uni `ClientCAs` bo'yicha tekshiradi?"
     options:

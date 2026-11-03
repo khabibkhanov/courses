@@ -11,6 +11,8 @@ sources:
     note: "\"JSON handling common mistakes\" (#77) xatolar guruhi"
   - id: pkg-net-http
     note: "MaxBytesReader va MaxBytesError, ResponseWriter bilan javob yozish tartibi"
+  - id: rfc-9457
+    note: "application/problem+json va Extension Members"
 quiz:
   - q: "`dec := json.NewDecoder(r.Body); dec.Decode(&in)` ga `{\"vehicle\":\"a\"} {\"vehicle\":\"b\"}` tanasi keldi. Decode nima qiladi va xavfsiz API uchun nima qo'shish kerak?"
     options:

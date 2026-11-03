@@ -11,6 +11,8 @@ sources:
     note: "unique.Make va unique.Handle hujjati: handle'lar teng bo'lishi faqat qiymatlar teng bo'lganda, taqqoslash arzonligi"
   - id: blog-unique
     note: "Interning g'oyasi va unique paketining maqsadi"
+  - id: pkg-maphash
+    note: "Comparable va Seed"
 quiz:
   - q: "type Reading struct{ Device string; Samples []float64 }. r1 == r2 yozilsa nima bo'ladi?"
     options:

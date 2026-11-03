@@ -11,6 +11,8 @@ sources:
     note: "Runtime bo'limi, Faster cgo calls: cgo chaqiruvlarining boshlang'ich runtime overhead'i ~30% kamaygan"
   - id: 100go
     note: "Ro'yxatdagi xatolar kontekstida: optimallashtirishdan oldin o'lchash; unsafe va cgo haqida alohida bob sifatida emas"
+  - id: pkg-cgo
+    note: "C va Go pointer o'tkazish qoidalari"
 quiz:
   - q: "`key := unsafe.String(&buf[0], len(buf))` bilan olingan satr map kaliti sifatida saqlandi, keyin `buf` keyingi qator bilan qayta yozildi. Nima bo'ladi?"
     options:

@@ -11,6 +11,8 @@ sources:
     note: "Defer'ning uch qoidasi: argumentlar defer ifodasi baholanganda, LIFO tartibi, nomli natijalarni o'zgartirish"
   - id: 100go
     note: "#35 (tsiklda defer), #47 (defer argument va receiver'lari qanday baholanadi), #54 (defer xatolarini qayta ishlamaslik): sarlavhalar saytdagi ro'yxatdan"
+  - id: pkg-os
+    note: "Exit: defer'lar ishlamaydi"
 quiz:
   - q: "func a() { i := 0; defer fmt.Println(i); i++ } nimani chop etadi?"
     options:

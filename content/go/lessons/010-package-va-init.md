@@ -11,6 +11,8 @@ sources:
     note: "Kitobning package va import boblari (umumiy tayanch; aniq qoidalar spetsifikatsiya va go buyrug'idan olingan)"
   - id: code-review-comments
     note: "Import Blank va Package Names bo'limlari (blank import faqat main yoki testlarda; ma'nosiz paket nomlaridan qochish); qolgan aniq qoidalar spetsifikatsiya va go buyrug'idan olingan"
+  - id: go121
+    note: "Package initialization order o'zgarishi"
 quiz:
   - q: "Paketda ikki fayl: a_first.go va telemetry.go, ikkalasida init() bor. Qaysi biri avval ishlaydi?"
     options:

@@ -13,6 +13,10 @@ sources:
     note: "Go command (go fix: yangi modernizer'lar, go test va stdversion), Gofmt (ustun tekislash o'zgarishi), Vet (printf %w ko'rsatkich)"
   - id: code-review-comments
     note: "Gofmt, Comment Sentences va Doc Comments bo'limlari"
+  - id: pkg-cmd-go
+    note: "go fix (-diff, -fixtool) va go fmt tavsifi"
+  - id: blog-go-fix-inliner
+    note: "//go:fix inline direktivasi va source-level inliner"
 quiz:
   - q: "Paket izohining birinchi jumlasi doc comment qoidasiga ko'ra qanday boshlanishi kerak (paket nomi `meter`)?"
     options:

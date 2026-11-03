@@ -9,6 +9,10 @@ sources:
     note: "Kitob io.Reader/io.Writer interfeyslari va oqimli ishlash g'oyasi uchun umumiy manba; aniq bob raqami bu darsda tekshirilmagan"
   - id: 100go
     note: "#46 (Using a filename as a function input): funksiya fayl nomi o'rniga io.Reader qabul qilsin"
+  - id: pkg-io
+    note: "io.Reader shartnomasi, EOF, Copy, LimitReader, TeeReader, MultiWriter, ReadFull, Pipe"
+  - id: pkg-bufio
+    note: "Scanner, MaxScanTokenSize, ErrTooLong, Writer va Flush"
 quiz:
   - q: "Custom Reader oxirgi chaqiruvda `n=3, err=io.EOF` qaytardi. `n, err := r.Read(buf); if err != nil { break }; use(buf[:n])` tsikli nima qiladi?"
     options:

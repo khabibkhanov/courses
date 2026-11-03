@@ -11,6 +11,10 @@ sources:
     note: "Go uchun gRPC asoslari: .proto dan kod generatsiyasi, unary va streaming RPC turlari"
   - id: go-faq
     note: "Go FAQ: Go'ning umumiy dizayn qarorlari (kod generatsiyasi va interfeyslar bilan ishlash fonida)"
+  - id: grpc-http2-protocol
+    note: "5 baytli kadr, grpc-timeout, trailer'lar"
+  - id: protobuf-encoding
+    note: "tag va wire type kodlash"
 quiz:
   - q: "Protobuf'da `string vehicle = 1;` maydoni qiymati \"truck-7\" kodlanganda birinchi bayt `0a` bo'ladi. Nega?"
     options:
