@@ -1,0 +1,78 @@
+# CS50 33-34-darslar atamalari.
+- term: keyword argument
+  aliases: [keyword argumentlar]
+  uz: "Funksiyaga parametr nomi bilan berilgan argument, masalan f(name=\"Ali\"). Tartibga bog'liq emas va chaqiruvni o'zini tushuntiradigan qiladi."
+  course: cs50
+  lesson: 33
+- term: keyword-only
+  uz: "Python'da parametr ro'yxatidagi * dan keyin turgan, faqat nomi bilan berilishi mumkin bo'lgan parametr."
+  course: cs50
+  lesson: 33
+- term: LEGB
+  uz: "Python'da nom qidirish tartibi: Local, Enclosing, Global, Built-in. Nom birinchi topilgan scope'dan olinadi."
+  course: cs50
+  lesson: 33
+- term: first-class function
+  uz: "Funksiya oddiy qiymat sifatida ishlatiladigan til xususiyati: uni o'zgaruvchiga yozish, argument sifatida uzatish va qaytarish mumkin."
+  course: cs50
+  lesson: 33
+- term: lambda
+  uz: "Python'da bitta ifodani qaytaradigan nomsiz funksiya, masalan lambda s: s[1]. Ko'pincha sorted(key=...) uchun ishlatiladi."
+  course: cs50
+  lesson: 33
+- term: traceback
+  uz: "Ushlanmagan exception paytidagi call stack hisoboti. Pastdan yuqoriga o'qiladi: oxirgi qator xato tipi va xabari, uning ustida xato qatori."
+  course: cs50
+  lesson: 33
+- term: exception chaining
+  uz: "raise Yangi(...) from asl ko'rinishida past darajadagi xatoni yangisiga o'rash. Asl xato __cause__ atributida saqlanadi va traceback'da ko'rinadi."
+  course: cs50
+  lesson: 33
+- term: EAFP
+  uz: "Easier to ask for forgiveness than permission: amalni bajarib, muvaffaqiyatsizlikni exception orqali ushlash uslubi. Python uchun odatiy."
+  course: cs50
+  lesson: 33
+- term: LBYL
+  uz: "Look before you leap: amaldan oldin shartni tekshirish uslubi. C kabi tillarga xos; tekshiruv va amal orasida holat o'zgarishi mumkin."
+  course: cs50
+  lesson: 33
+- term: context manager
+  uz: "__enter__ va __exit__ metodlari bor obyekt. with bloki undan chiqishning har qanday yo'lida __exit__ ni chaqirib, resursni bo'shatadi."
+  course: cs50
+  lesson: 33
+- term: universal newlines
+  uz: "Matn rejimida \\n, \\r\\n va \\r qator oxirlarining barchasini \\n deb o'qish usuli."
+  course: cs50
+  lesson: 34
+- term: CSV
+  uz: "Comma-separated values: jadvalni matn sifatida saqlash formati. Vergul, qo'shtirnoq yoki yangi qator bor maydon qo'shtirnoqqa olinadi (RFC 4180)."
+  course: cs50
+  lesson: 34
+- term: regular expression
+  aliases: [regex]
+  uz: "Satrlar to'plamini ta'riflaydigan naqsh tili. Python'da re moduli orqali qidirish, tekshirish va almashtirish uchun ishlatiladi."
+  course: cs50
+  lesson: 34
+- term: raw string
+  uz: "r bilan boshlanadigan Python satri, unda \\ escape belgisi sifatida talqin qilinmaydi. Regex naqshlari shunday yoziladi."
+  course: cs50
+  lesson: 34
+- term: belgilar sinfi
+  aliases: [character class]
+  uz: "Regex'da kvadrat qavsdagi to'plam, masalan [0-9] yoki [^>]. Har doim aynan bitta belgiga mos keladi."
+  course: cs50
+  lesson: 34
+- term: kvantifikator
+  aliases: [quantifier]
+  uz: "Regex'da oldingi element necha marta takrorlanishini belgilovchi belgi: *, +, ?, {m,n}."
+  course: cs50
+  lesson: 34
+- term: greedy
+  uz: "Regex kvantifikatorining standart rejimi: iloji boricha ko'p belgini oladi va kerak bo'lsa bittadan qaytaradi."
+  course: cs50
+  lesson: 34
+- term: catastrophic backtracking
+  aliases: [ReDoS]
+  uz: "Ichma-ich kvantifikatorli regex moslik yo'q satrda eksponensial ko'p bo'linishni sinab chiqishi. Server uchun ReDoS hujumiga olib keladi."
+  course: cs50
+  lesson: 34

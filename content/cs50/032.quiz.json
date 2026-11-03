@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Nima uchun `[1, \"salom\", 3.5]` ro'yxatida `lst[2]` ga murojaat ro'yxat uzunligidan qat'i nazar O(1)?",
+      "options": [
+        "Ro'yxat ichida obyektlarning o'zi emas, bir xil o'lchamdagi pointerlar massivi turadi; manzil = boshi + i x pointer o'lchami",
+        "Python har elementni hash qilib, hash table'dan topadi",
+        "Ro'yxat linked list, lekin CPython oxirgi uchta elementni keshlaydi",
+        "Har xil tipli ro'yxatlarda indekslash aslida O(n)"
+      ],
+      "answer": 0,
+      "why": "CPython list - pointerlarning dinamik massivi. Har katak bitta pointer bo'lgani uchun 11-darsdagi indekslash formulasi ishlaydi."
+    },
+    {
+      "q": "CPython list sig'imini taxminan 1.125 koeffitsiyent bilan o'stiradi. Bu `append` narxiga qanday ta'sir qiladi?",
+      "options": [
+        "append O(n) ga aylanadi, chunki o'sish juda kichik",
+        "Har resize ikki barobar o'sishdagidan ko'proq ko'chirishga olib keladi, lekin geometrik o'sish bo'lgani uchun append baribir amortized O(1)",
+        "append O(log n) bo'ladi",
+        "Hech qanday ko'chirish bo'lmaydi, chunki Python linked list ishlatadi"
+      ],
+      "answer": 1,
+      "why": "Koeffitsiyent r > 1 bo'lsa, n append'dagi ko'chirishlar taxminan n / (r - 1): r = 1.125 da taxminan 8n. Bu n ga proporsional, demak append boshiga o'zgarmas son."
+    },
+    {
+      "q": "100 000 ta mijoz ID si ro'yxatda turibdi. Har kecha 50 000 ta to'lovning ID si shu ro'yxatda bormi-yo'qmi tekshiriladi (`if pid in ids:`). Eng yaxshi tuzatish?",
+      "options": [
+        "Ro'yxatni har tekshiruvdan oldin saralash",
+        "`ids` ni tuple'ga aylantirish",
+        "Siklni list comprehension bilan yozish",
+        "Sikldan oldin bir marta `ids = set(ids)`: jami O(n + m), har tekshiruv o'rtacha O(1)"
+      ],
+      "answer": 3,
+      "why": "`in` ro'yxatda O(n): 50 000 x 100 000 = 5 x 10⁹ solishtirishgacha. set'da hash bilan o'rtacha O(1); qurish narxi O(n) bir marta to'lanadi."
+    },
+    {
+      "q": "Navbatdagi vazifalar `tasks.pop(0)` bilan olinadi va n = 200 000 vazifada dastur juda sekin. Sabab va yechim?",
+      "options": [
+        "`pop(0)` keyingi barcha pointerlarni bir katak suradi, O(n), jami O(n²); `collections.deque` va `popleft` O(1)",
+        "`pop(0)` xotirani bo'shatmaydi; `del tasks[0]` tezroq",
+        "Ro'yxat juda katta, uni bir nechta kichik ro'yxatga bo'lish kerak",
+        "`pop(0)` ro'yxatni saralaydi; `sort` ni o'chirish kerak"
+      ],
+      "answer": 0,
+      "why": "Ro'yxat boshidan o'chirish 27-darsdagi oddiy massivli queue muammosi. deque ikki uchda O(1) amallar beradi."
+    },
+    {
+      "q": "Qaysi biri `dict` kaliti bo'la oladi?",
+      "options": [
+        "`[2026, 11]`",
+        "`{\"yil\": 2026}`",
+        "`(2026, 11)`",
+        "`(2026, [11])`"
+      ],
+      "answer": 2,
+      "why": "Kalit hashable bo'lishi kerak. Elementlari hashable bo'lgan tuple hashable; list va dict o'zgaruvchan, ichida list bo'lgan tuple esa hash qilinmaydi."
+    },
+    {
+      "q": "Nima uchun Python o'zgaruvchan ro'yxatni dict kaliti qilishga umuman ruxsat bermaydi?",
+      "options": [
+        "Ro'yxatlar xotirada juda ko'p joy egallaydi",
+        "Kalit qo'shilgandan keyin ro'yxat o'zgarsa, uning hash qiymati ham o'zgaradi va kalit o'z katagida topilmay qoladi",
+        "Ro'yxatlarni `==` bilan solishtirib bo'lmaydi",
+        "Hash funksiya faqat satrlar uchun ishlaydi"
+      ],
+      "answer": 1,
+      "why": "Hash table kalitni hash bo'yicha joylaydi (30-dars). Mazmun o'zgarsa, yangi hash boshqa katakni ko'rsatadi va eski joydagi obyekt endi teng emas: kalit lug'at ichida yo'qoladi."
+    },
+    {
+      "q": "Quyidagi kod nima chiqaradi?\n\nd = {\"b\": 1, \"a\": 2}\nd[\"c\"] = 3\nd[\"b\"] = 10\nprint(list(d))",
+      "options": [
+        "['a', 'b', 'c']",
+        "Tartib har ishga tushirishda boshqacha",
+        "['c', 'b', 'a']",
+        "['b', 'a', 'c']"
+      ],
+      "answer": 3,
+      "why": "Python 3.7 dan dict qo'shilish tartibini saqlashi til kafolati. Mavjud kalitning qiymatini yangilash tartibni o'zgartirmaydi; dict kalitlarni saralamaydi."
+    },
+    {
+      "q": "a = [[1, 2], [3]]\nb = a.copy()\nb[0].append(9)\nb.append([4])\nprint(a)\n\nNatija qanday?",
+      "options": [
+        "[[1, 2], [3]]",
+        "[[1, 2, 9], [3]]",
+        "[[1, 2, 9], [3], [4]]",
+        "[[1, 2], [3], [4]]"
+      ],
+      "answer": 1,
+      "why": "`copy()` shallow copy: tashqi ro'yxat yangi (shuning uchun `[4]` a ga qo'shilmaydi), lekin ichki ro'yxatlar umumiy (shuning uchun 9 a da ham ko'rinadi). Mustaqil nusxa uchun `copy.deepcopy`."
+    },
+    {
+      "q": "`board = [[\".\"] * 3] * 3` dan keyin `board[1][1] = \"X\"` qilindi. Nima uchun uchala qatorning o'rtasida X paydo bo'ldi?",
+      "options": [
+        "`* 3` ichki ro'yxatning nusxalarini emas, unga pointerni uch marta takrorlaydi: uchala qator bitta obyekt",
+        "Python ikki o'lchovli ro'yxatlarni qo'llab-quvvatlamaydi",
+        "\".\" satri immutable bo'lgani uchun Python uni hamma joyda almashtiradi",
+        "Indekslash 1 dan boshlanadi"
+      ],
+      "answer": 0,
+      "why": "Bu mutable aliasing: tashqi ro'yxatning uchta katagi bitta ichki ro'yxatga qaraydi. To'g'risi `[[\".\"] * 3 for _ in range(3)]` - har qadamda yangi ro'yxat."
+    },
+    {
+      "q": "Log faylidan har bir IP manzil necha marta uchraganini sanab, eng faol 10 tasini topish kerak. Eng mos tanlov?",
+      "options": [
+        "Ro'yxat va har IP uchun `lst.count(ip)` - O(n²)",
+        "`deque(maxlen=10)` ga hamma IP larni qo'shish",
+        "`collections.Counter(ips).most_common(10)` - har element o'rtacha O(1) bilan sanash",
+        "IP larni `set` ga qo'shib, `len` ni olish"
+      ],
+      "answer": 2,
+      "why": "Counter - sanash uchun dict (hash table): bir o'tishda O(n) sanaydi va most_common eng ko'plarini qaytaradi. set faqat takrorlanmaslarni saqlaydi, sonini emas."
+    }
+  ]
+}

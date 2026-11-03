@@ -1,0 +1,105 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "CSV faylda har yozilish qatorida o'qituvchining telefon raqami ham yozilgan. O'qituvchi raqamini almashtirdi, skript esa faqat oxirgi 10 qatorni yangiladi. Bu qaysi muammo?",
+      "options": ["Lost update", "Update anomaly", "Insert anomaly", "Type affinity"],
+      "answer": 1,
+      "why": "Bitta fakt (telefon) ko'p qatorda takrorlangan va faqat bir qismi o'zgargan: ma'lumot o'ziga zid bo'lib qoldi. Bu update anomaly."
+    },
+    {
+      "q": "Flat-file da 'Algoritmlar' kursining yagona o'quvchisi chiqib ketdi va uning qatori o'chirildi. Natijada kurs va uning o'qituvchisi haqidagi ma'lumot ham yo'qoldi. Bu qanday ataladi va relational yechim nima?",
+      "options": [
+        "Insert anomaly; kursni boshqa CSV ga ko'chirish",
+        "Lost update; faylni qulflash",
+        "Delete anomaly; kurslarni alohida jadvalda saqlash, yozilishlar jadvali esa unga kalit orqali murojaat qilishi",
+        "Update anomaly; UPDATE buyrug'ini ishlatish"
+      ],
+      "answer": 2,
+      "why": "Yozilishni o'chirish boshqa faktni (kurs va o'qituvchi) ham o'chirdi. Kurslar alohida jadvalda bo'lsa, enrollments dan qator o'chirilganda kurs saqlanib qoladi."
+    },
+    {
+      "q": "Ikki skript bir vaqtda 100 qatorli CSV ni to'liq o'qib, har biri xotirada bittadan qator qo'shib, faylni to'liq qayta yozdi. Faylda nechta qator qoladi?",
+      "options": ["101", "102", "100", "200"],
+      "answer": 0,
+      "why": "Ikkinchi yozuv birinchisining natijasini ustidan yozadi: har biri 100 + 1 = 101 qator yozgan. Bittasining qatori jimgina yo'qoladi (lost update)."
+    },
+    {
+      "q": "1 000 000 qatorli, har qatori 80 bayt bo'lgan CSV da bitta qiymatni qidirish uchun har so'rovda qancha ma'lumot o'qiladi va indeks bilan taxminan nechta qadam kerak bo'ladi?",
+      "options": [
+        "80 KB va 1000 qadam",
+        "80 MB va taxminan 20 qadam",
+        "8 MB va taxminan 1000 qadam",
+        "80 MB va 1 qadam"
+      ],
+      "answer": 1,
+      "why": "To'liq skan: 10^6 x 80 = 80 000 000 bayt = 80 MB. Tartiblangan indeksda O(log n): log2(10^6) taxminan 20."
+    },
+    {
+      "q": "`csv.DictReader` bilan o'qilgan qatorda `row[\"year\"] == 2026` sharti hech qachon True bo'lmayapti. Nima uchun?",
+      "options": [
+        "DictReader sarlavha qatorini o'tkazib yubormaydi",
+        "Yil float sifatida o'qiladi",
+        "CSV da tiplar yo'q: qiymat '2026' satri, u int 2026 ga teng emas",
+        "DictReader sonli ustunlarni o'qimaydi"
+      ],
+      "answer": 2,
+      "why": "CSV - matn, csv moduli hamma maydonni str qaytaradi. Solishtirishdan oldin int() bilan aylantirish kerak."
+    },
+    {
+      "q": "SQLite'da `CREATE TABLE t (n INTEGER); INSERT INTO t VALUES ('42'), ('qirq');` dan keyin `SELECT typeof(n) FROM t;` nima qaytaradi?",
+      "options": [
+        "integer, text",
+        "text, text",
+        "integer, va ikkinchi INSERT xato beradi",
+        "integer, null"
+      ],
+      "answer": 0,
+      "why": "INTEGER affinity to'g'ri shakllangan '42' satrini songa aylantiradi. 'qirq' ni aylantirib bo'lmaydi, u xatosiz text sifatida saqlanadi (STRICT bo'lmagan jadvalda)."
+    },
+    {
+      "q": "SQLite affinity qoidalariga ko'ra `price DECIMAL(10,2)` va `title VARCHAR(50)` ustunlari qaysi affinity'ni oladi?",
+      "options": [
+        "REAL va TEXT",
+        "NUMERIC va TEXT, uzunlik 50 esa tekshirilmaydi",
+        "INTEGER va BLOB",
+        "NUMERIC va TEXT, 50 belgidan uzun satr xato beradi"
+      ],
+      "answer": 1,
+      "why": "DECIMAL da INT, CHAR, BLOB, REAL, FLOA, DOUB yo'q, shuning uchun NUMERIC. VARCHAR da CHAR bor - TEXT; qavs ichidagi uzunlik SQLite'da e'tiborga olinmaydi."
+    },
+    {
+      "q": "`DELETE FROM enrollments;` buyrug'i bajarildi. Nima bo'ladi?",
+      "options": [
+        "Faqat oxirgi qator o'chadi",
+        "SQLite tasdiq so'raydi",
+        "Sintaksis xatosi: WHERE majburiy",
+        "Jadvaldagi barcha qatorlar o'chadi, jadvalning o'zi (sxemasi) qoladi"
+      ],
+      "answer": 3,
+      "why": "WHERE bo'lmasa, shart barcha qatorlarga mos keladi. Jadvalni o'zi bilan o'chirish uchun boshqa buyruq (DROP TABLE) kerak."
+    },
+    {
+      "q": "Qaysi gap SQLite haqida to'g'ri?",
+      "options": [
+        "U alohida server jarayoni sifatida ishlaydi va dastur unga TCP orqali ulanadi",
+        "Butun baza bitta faylda, server yo'q; bir vaqtda ko'p o'quvchi, lekin istalgan paytda bitta yozuvchi",
+        "Har jadval alohida CSV faylda saqlanadi",
+        "Bir vaqtda cheksiz yozuvchini qo'llab-quvvatlaydi"
+      ],
+      "answer": 1,
+      "why": "SQLite dastur ichiga ulanadigan kutubxona, bazani bitta disk faylda saqlaydi. Rasmiy hujjatga ko'ra o'quvchilar soni cheklanmagan, yozuvchi esa bir vaqtda bitta."
+    },
+    {
+      "q": "Haftasiga bir marta bitta skript 5 000 qatorli eksport faylini o'qib, hisobot chiqaradi; fayl tahrirlanmaydi. Eng o'rinli tanlov qaysi?",
+      "options": [
+        "Client-server baza o'rnatish",
+        "CSV ni SQLite'ga ko'chirib, indeks qo'shish",
+        "Har qatorni alohida faylga yozish",
+        "CSV + Python yetarli"
+      ],
+      "answer": 3,
+      "why": "Ma'lumot kichik, faqat o'qiladi, bitta dastur bir marta ishlaydi: anomaliyalar va bir vaqtda yozish muammosi yo'q. Relational baza bu yerda ortiqcha murakkablik."
+    }
+  ]
+}

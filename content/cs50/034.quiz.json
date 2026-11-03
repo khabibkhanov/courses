@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`open(\"report.txt\", \"w\", encoding=\"utf-8\")` mavjud va 5 KB ma'lumotli faylga qo'llandi. Nima bo'ladi?",
+      "options": [
+        "Yangi ma'lumot fayl oxiriga qo'shiladi",
+        "FileExistsError ko'tariladi",
+        "Fayl ochilishi bilan tozalanadi, keyin yoziladi",
+        "Fayl faqat o'qish uchun ochiladi"
+      ],
+      "answer": 2,
+      "why": "\"w\" faylni ochishda kesib tashlaydi. Qo'shish uchun \"a\", faqat yangi fayl uchun \"x\" (u holda FileExistsError) ishlatiladi."
+    },
+    {
+      "q": "UTF-8 faylda bitta qator bor: `Ўзбек` va `\\n`. Fayl hajmi necha bayt?",
+      "options": ["6", "11", "10", "12"],
+      "answer": 1,
+      "why": "5 ta kirill harfi UTF-8 da 2 baytdan: 5 · 2 = 10, va \\n 1 bayt. Jami 11 bayt, belgilar esa 6 ta."
+    },
+    {
+      "q": "UTF-8 da yozilgan kirill matnli fayl Python 3.14 da encoding berilmasdan ochildi. Qaysi gap to'g'ri?",
+      "options": [
+        "Python 3 har doim UTF-8 ishlatadi, muammo yo'q",
+        "Natija platformaga bog'liq: locale encoding UTF-8 bo'lmasa, mojibake yoki UnicodeDecodeError bo'lishi mumkin",
+        "Fayl avtomatik binary rejimda ochiladi",
+        "Python encoding'ni fayl ichidan aniqlaydi"
+      ],
+      "answer": 1,
+      "why": "3.14 gacha standart encoding locale.getencoding() dan olinadi. Faqat 3.15 da (PEP 686) UTF-8 mode sukut bo'yicha yoqildi."
+    },
+    {
+      "q": "CSV qatori: `Vali,\"Samarqand, markaz\",\"u \"\"zo'r\"\" dedi\"`. `csv.reader` nechta maydon qaytaradi va uchinchisi qanday?",
+      "options": [
+        "3 ta; uchinchisi: u \"zo'r\" dedi",
+        "4 ta; vergul maydonni bo'ladi",
+        "3 ta; uchinchisi: u \"\"zo'r\"\" dedi",
+        "5 ta; har qo'shtirnoq yangi maydon"
+      ],
+      "answer": 0,
+      "why": "Qo'shtirnoq ichidagi vergul ajratuvchi emas, ikkilangan qo'shtirnoq esa bitta qo'shtirnoq belgisi (RFC 4180)."
+    },
+    {
+      "q": "Nega `csv` moduli bilan ishlatiladigan fayl `newline=\"\"` bilan ochilishi kerak?",
+      "options": [
+        "Aks holda fayl binary rejimda ochiladi",
+        "Bu faqat Windows uchun shart, Linux da farqi yo'q",
+        "csv moduli bo'sh qatorlarni o'chirish uchun",
+        "Qo'shtirnoq ichidagi qator uzilishlari to'g'ri o'qilishi va yozishda ortiqcha \\r qo'shilmasligi uchun; csv qator oxirlarini o'zi boshqaradi"
+      ],
+      "answer": 3,
+      "why": "csv hujjati izohiga ko'ra newline='' bo'lmasa ichki qator uzilishlari noto'g'ri talqin qilinadi va \\r\\n platformalarda ortiqcha \\r yoziladi."
+    },
+    {
+      "q": "Foydalanuvchi PIN kodi aynan 4 raqam bo'lishini tekshirish kerak. Qaysi chaqiruv to'g'ri?",
+      "options": [
+        "re.match(r\"[0-9]{4}\", pin)",
+        "re.search(r\"[0-9]{4}\", pin)",
+        "re.fullmatch(r\"[0-9]{4}\", pin)",
+        "re.findall(r\"[0-9]\", pin)"
+      ],
+      "answer": 2,
+      "why": "match faqat boshini, search istalgan qismini tekshiradi: \"12345\" yoki \"1234abc\" ham o'tib ketadi. fullmatch butun satrni talab qiladi."
+    },
+    {
+      "q": "`re.findall(r\"\\[.*\\]\", \"[a] va [b]\")` natijasi qanday?",
+      "options": ["['[a]', '[b]']", "['[a] va [b]']", "['a', 'b']", "[]"],
+      "answer": 1,
+      "why": ".* greedy: iloji boricha ko'p oladi va oxirgi ] gacha boradi. Alohida qavslar uchun .*? yoki [^\\]]* kerak."
+    },
+    {
+      "q": "Naqshda `\\d{9}` ishlatilgan. Foydalanuvchi arab-hind raqamlarida 9 ta raqam kiritdi. Nima bo'ladi?",
+      "options": [
+        "Moslik bo'lmaydi, \\d faqat 0-9",
+        "re.error ko'tariladi",
+        "Faqat re.ASCII bo'lganda moslik bor",
+        "Moslik bo'ladi, chunki str naqshlarda \\d istalgan Unicode o'nlik raqamiga mos keladi"
+      ],
+      "answer": 3,
+      "why": "re hujjatiga ko'ra Unicode naqshlarda \\d Nd toifasidagi barcha raqamlarni qabul qiladi. Faqat lotin raqamlari uchun [0-9] yoki re.ASCII."
+    },
+    {
+      "q": "Email tekshiruvi uchun eng to'g'ri yondashuv qaysi?",
+      "options": [
+        "Qo'pol regex filtri (bo'shliq, @, domendagi nuqta) va manzilga tasdiqlash xati yuborish",
+        "RFC 5322 ni to'liq qamraydigan regex topish",
+        "Faqat @ belgisi borligini tekshirish va boshqa hech narsa qilmaslik",
+        "Domen ro'yxatini regex ichiga qattiq yozish"
+      ],
+      "answer": 0,
+      "why": "Mukammal email regex yo'q: hatto HTML standarti RFC 5322 ni ataylab soddalashtiradi. Manzil ishlashini faqat tasdiqlash xati ko'rsatadi."
+    },
+    {
+      "q": "`(x+x+)+y` naqshi 20 ta x (y siz) satrida taxminan 0.08 soniya ishladi. Har bir qo'shimcha x ish hajmini taxminan ikki baravar oshirsa, 25 ta x uchun taxminiy vaqt?",
+      "options": ["0.1 soniya", "0.4 soniya", "2.6 soniya", "80 soniya"],
+      "answer": 2,
+      "why": "5 ta qo'shimcha x: 0.08 · 2^5 = 0.08 · 32 ≈ 2.6 soniya. Bu catastrophic backtracking: O(2^n)."
+    }
+  ]
+}

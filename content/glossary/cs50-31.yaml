@@ -1,0 +1,68 @@
+# CS50 31-32-darslar atamalari.
+- term: interpreter
+  aliases: [interpretator]
+  uz: "Dasturni oldindan mashina kodiga aylantirmasdan o'qib, o'zi bajaradigan dastur. CPython avval manbani bytecode'ga kompilyatsiya qiladi, keyin uni virtual mashinada bajaradi."
+  course: cs50
+  lesson: 31
+- term: bytecode
+  uz: "Interpreterning virtual mashinasi uchun yozilgan oddiy buyruqlar ketma-ketligi (mashina kodi emas). CPython bytecode'ini dis moduli ko'rsatadi; u versiyalar orasida o'zgaradi."
+  course: cs50
+  lesson: 31
+- term: CPython
+  uz: "Python tilining C da yozilgan asosiy, eng keng tarqalgan amalga oshirilishi: manbani bytecode'ga kompilyatsiya qiladi va stack mashinada bajaradi."
+  course: cs50
+  lesson: 31
+- term: dinamik tiplash
+  aliases: [dynamic typing]
+  uz: "Tip o'zgaruvchiga emas, qiymatga (obyektga) tegishli bo'lgan va bajarilish vaqtida tekshiriladigan tizim. Bitta nom navbatma-navbat har xil tipdagi obyektlarga qarashi mumkin."
+  course: cs50
+  lesson: 31
+- term: statik tiplash
+  aliases: [static typing]
+  uz: "Tip o'zgaruvchiga bog'langan va kompilyatsiya vaqtida tekshiriladigan tizim, masalan C dagi int n."
+  course: cs50
+  lesson: 31
+- term: strong typing
+  aliases: [kuchli tiplash]
+  uz: "Mos kelmaydigan tiplar ustidagi amalni yashirin aylantirishsiz rad etish. Python'da \"1\" + 2 TypeError beradi."
+  course: cs50
+  lesson: 31
+- term: floor division
+  uz: "Bo'linmani pastga, manfiy cheksizlikka qarab yaxlitlaydigan butun bo'lish; Python'da // operatori. -7 // 2 = -4, C dagi nolga qarab kesish esa -3 beradi."
+  course: cs50
+  lesson: 31
+- term: immutable
+  aliases: [o'zgarmas obyekt]
+  uz: "Yaratilgandan keyin qiymati o'zgarmaydigan obyekt; o'zgartirish yangi obyekt yaratadi. Python'da str, int, tuple shunday."
+  course: cs50
+  lesson: 31
+- term: f-string
+  aliases: [formatted string literal]
+  uz: "f bilan boshlanadigan satr literali: jingalak qavslar ichidagi ifodalar qiymati satrga qo'yiladi, ixtiyoriy format belgisi bilan (f\"{x:.2f}\"). Python 3.6 dan."
+  course: cs50
+  lesson: 31
+- term: hashable
+  uz: "Hash qiymati umri davomida o'zgarmaydigan va boshqa obyektlar bilan solishtiriladigan obyekt; faqat shundaylar dict kaliti va set elementi bo'la oladi. list hashable emas."
+  course: cs50
+  lesson: 32
+- term: over-allocation
+  uz: "Dinamik massivga hozir keraklidan ko'proq joy ajratish, keyingi qo'shishlar resize'siz bajarilishi uchun. CPython list sig'imini taxminan 1.125 koeffitsiyent bilan o'stiradi."
+  course: cs50
+  lesson: 32
+- term: list comprehension
+  uz: "Ro'yxatni bitta ifoda bilan qurish sintaksisi: [ifoda for x in manba if shart]. Shu shakl dict va set uchun ham bor."
+  course: cs50
+  lesson: 32
+- term: mutable aliasing
+  uz: "Bitta o'zgaruvchan obyektga bir nechta nom qarab turishi: bittasi orqali o'zgartirish hammasida ko'rinadi. Python'da b = a nusxa emas, aynan shunday holat."
+  course: cs50
+  lesson: 32
+- term: deque
+  aliases: [double-ended queue]
+  uz: "Ikki uchidan qo'shish va olish O(1) bo'lgan navbat, Python'da collections.deque. maxlen berilsa, aylanma buffer kabi eng eski elementni tashlaydi."
+  course: cs50
+  lesson: 32
+- term: defaultdict
+  uz: "Yo'q kalitga birinchi murojaatda berilgan funksiya bilan qiymat yaratadigan dict, masalan defaultdict(list) bo'sh ro'yxat yaratadi. Guruhlash uchun qulay."
+  course: cs50
+  lesson: 32

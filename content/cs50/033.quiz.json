@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`def add(x, items=[]): items.append(x); return items` berilgan. `add(1)`, keyin `add(2)` chaqirildi. Ikkinchi chaqiruv nima qaytaradi?",
+      "options": ["[2]", "[1, 2]", "TypeError", "[]"],
+      "answer": 1,
+      "why": "Standart qiymat def bajarilganda bir marta yaratiladi va __defaults__ da saqlanadi: ikkala chaqiruv bitta list'ga qo'shadi."
+    },
+    {
+      "q": "`def copy(src, dst, *, overwrite=False)` uchun qaysi chaqiruv xato beradi?",
+      "options": ["copy(\"a\", \"b\")", "copy(dst=\"b\", src=\"a\")", "copy(\"a\", \"b\", True)", "copy(\"a\", \"b\", overwrite=True)"],
+      "answer": 2,
+      "why": "* dan keyingi overwrite keyword-only: uni positional uzatib bo'lmaydi, uchinchi positional argument uchun joy yo'q va TypeError chiqadi."
+    },
+    {
+      "q": "Modul darajasida `total = 0`, funksiya ichida esa faqat `total += 5` yozilgan. Funksiya chaqirilganda nima bo'ladi?",
+      "options": [
+        "Global total 5 ga oshadi",
+        "Yangi lokal total 5 ga teng bo'ladi",
+        "NameError, chunki total topilmaydi",
+        "UnboundLocalError, chunki total butun funksiya bo'ylab lokal hisoblanadi"
+      ],
+      "answer": 3,
+      "why": "Funksiyada nomga qiymat berilsa (+= ham), u kompilyatsiyada lokal deb belgilanadi; qiymat berilishidan oldin o'qishga urinish UnboundLocalError beradi."
+    },
+    {
+      "q": "`sorted(words, key=slow_len)` 1000 ta so'z ro'yxati uchun chaqirildi. `slow_len` necha marta chaqiriladi?",
+      "options": ["Taxminan 1000 · log2(1000) ≈ 10 000 marta", "Aniq 1000 marta", "Aniq 2000 marta, har taqqoslashda ikki marta", "Bir marta"],
+      "answer": 1,
+      "why": "Sorting HOWTO bo'yicha key funksiya har element uchun aniq bir marta chaqiriladi; taqqoslashlar keyin tayyor kalitlar ustida bajariladi."
+    },
+    {
+      "q": "`geometry.py` faylining oxirida shartsiz `main()` chaqiruvi bor. Boshqa fayl `import geometry` qilsa nima bo'ladi?",
+      "options": [
+        "main() import paytida bajariladi, chunki import modul faylini boshidan oxirigacha bajaradi",
+        "Hech narsa, import faqat funksiyalarni ko'chiradi",
+        "main() faqat ikkinchi import da bajariladi",
+        "ImportError, chunki modulda main bo'lmasligi kerak"
+      ],
+      "answer": 0,
+      "why": "Birinchi import modul kodini bajaradi. if __name__ == \"__main__\": sharti main() ni faqat fayl to'g'ridan-to'g'ri ishga tushirilganda chaqiradi."
+    },
+    {
+      "q": "`try: r = a / b` dan keyin `except ZeroDivisionError`, `else` va `finally` bloklari bor, b = 4. Qaysi bloklar bajariladi?",
+      "options": ["Faqat finally", "except va finally", "else va finally", "Faqat else"],
+      "answer": 2,
+      "why": "else try xatosiz tugaganda, finally esa har doim bajariladi. except faqat exception bo'lganda ishlaydi."
+    },
+    {
+      "q": "Kodda `except LookupError:` bloki `except KeyError:` blokidan oldin yozilgan. Lug'atda kalit topilmasa qaysi blok ishlaydi?",
+      "options": [
+        "except KeyError, chunki u aniqroq",
+        "Ikkalasi ketma-ket",
+        "Hech biri, exception yuqoriga ketadi",
+        "except LookupError, chunki KeyError uning avlodi va birinchi mos blok tanlanadi"
+      ],
+      "answer": 3,
+      "why": "except avlod klasslarni ham ushlaydi va bloklar tartib bilan tekshiriladi; shuning uchun aniq tip umumiydan oldin yozilishi kerak."
+    },
+    {
+      "q": "Dastur `main` ichida `try: ... except: pass` (yalang'och except) ishlatadi, ichkarida `sys.exit(2)` chaqirildi. Natija?",
+      "options": [
+        "Dastur exit status 2 bilan tugaydi",
+        "SystemExit ushlanib yutiladi va dastur davom etadi",
+        "Dastur exit status 1 bilan tugaydi",
+        "SyntaxError"
+      ],
+      "answer": 1,
+      "why": "sys.exit SystemExit exception'ini ko'taradi. Yalang'och except BaseException avlodlarini, jumladan SystemExit ni ham ushlaydi."
+    },
+    {
+      "q": "Traceback oxiri: `File \"app.py\", line 7, in report` / `File \"app.py\", line 2, in average` / `ZeroDivisionError: division by zero`. Xato qayerda paydo bo'lgan?",
+      "options": [
+        "app.py 2-qator, average funksiyasida",
+        "app.py 7-qator, report funksiyasida",
+        "Modul darajasida",
+        "Aniqlab bo'lmaydi"
+      ],
+      "answer": 0,
+      "why": "\"most recent call last\": eng pastki fayl qatori xato ko'tarilgan joy, yuqoridagilar unga olib kelgan chaqiruvlar."
+    },
+    {
+      "q": "Fayl bormi deb `os.path.exists(p)` tekshirib, keyin `open(p)` qilish (LBYL) o'rniga nega `try: open(p) except FileNotFoundError` (EAFP) afzal?",
+      "options": [
+        "try bloki har doim if dan tezroq",
+        "open fayl yo'q bo'lsa None qaytaradi",
+        "Tekshiruv va open orasida boshqa jarayon faylni o'chirishi mumkin; EAFP bitta urinish bilan bu poygani yo'q qiladi",
+        "os.path.exists faqat Linux da ishlaydi"
+      ],
+      "answer": 2,
+      "why": "LBYL da tekshiruv va amal orasida holat o'zgarishi mumkin (time-of-check to time-of-use). EAFP amalning o'zini sinaydi va xatoni ushlaydi."
+    }
+  ]
+}

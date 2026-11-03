@@ -20,7 +20,8 @@ const SANITIZE = [
   "-mllvm",
   "-asan-use-after-return=never",
 ];
-const BASE = ["--target=wasm32-wasip1", "-fno-color-diagnostics"];
+// clock(), times() uchun wasi-libc emulyatsiyasi (vaqt o'lchaydigan dars misollari).
+const BASE = ["--target=wasm32-wasip1", "-fno-color-diagnostics", "-D_WASI_EMULATED_PROCESS_CLOCKS"];
 
 async function clang(args, files) {
   const log = [];
@@ -397,7 +398,7 @@ self.onmessage = async (e) => {
     if (!runtime) throw new Error("C runtime yuklanmadi.");
     const { code, stdin, argv = ["./main"], files = [] } = e.data;
     const { out, log } = await clang(
-      ["-O0", "-g", "-Wall", ...SANITIZE, "-I.", "-o", "a.wasm", "main.c", "runtime.o", "-lm", ...LINK],
+      ["-O0", "-g", "-Wall", ...SANITIZE, "-I.", "-o", "a.wasm", "main.c", "runtime.o", "-lm", "-lwasi-emulated-process-clocks", ...LINK],
       { "main.c": code, ...runtime },
     );
     if (!out) {

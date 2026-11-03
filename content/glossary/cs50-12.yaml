@@ -43,8 +43,8 @@
   uz: "Terminaldagi buyruq tarjimoni (masalan bash): qatorni so'zlarga bo'lib dasturni ishga tushiradi va uning exit status ini $? da saqlaydi."
   course: cs50
   lesson: 13
+# "NULL" alias qilinmaydi: SQL darslaridagi NULL (qiymat yo'qligi) pointer'ga bog'lanib qolardi.
 - term: null pointer
-  aliases: ["NULL"]
   uz: "Hech qayerga qaramaydigan manzil. argv[argc] standart bo'yicha null pointer; uni satr sifatida o'qish undefined behavior."
   course: cs50
   lesson: 13

@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "CPython `python3 app.py` ni qanday bajaradi?",
+      "options": [
+        "Manba kodni to'g'ridan-to'g'ri mashina kodiga kompilyatsiya qilib, `a.out` ga o'xshash fayl yaratadi",
+        "Har qatorni matn sifatida qayta-qayta tahlil qilib bajaradi, hech qanday oraliq ko'rinish yo'q",
+        "Manbani bytecode'ga kompilyatsiya qiladi, keyin C da yozilgan virtual mashina bytecode buyruqlarini birma-bir bajaradi",
+        "Kodni brauzerdagi JavaScript dvigateliga uzatadi"
+      ],
+      "answer": 2,
+      "why": "CPython oraliq yo'lni tanlaydi: manba bytecode'ga aylanadi (modullar uchun `.pyc` da keshlanadi) va stack mashina uni bajaradi."
+    },
+    {
+      "q": "Dasturchi `dis.dis(f)` natijasidagi buyruq nomlariga tayanib kod yozdi. Python 3.12 dan 3.14 ga o'tgach u buzildi. Nima uchun?",
+      "options": [
+        "3.14 da `dis` moduli olib tashlangan",
+        "Bytecode CPython'ning ichki tafsiloti: buyruqlar versiyalar orasida qo'shiladi, birlashtiriladi va o'zgaradi",
+        "Bytecode faqat Windows'da bir xil bo'ladi",
+        "Funksiya nomi o'zgargani uchun bytecode o'zgaradi"
+      ],
+      "answer": 1,
+      "why": "`dis` hujjati bytecode versiyalar orasida o'zgarishi mumkinligini aniq aytadi; masalan 3.12 dagi ikki `LOAD_FAST` 3.13 da `LOAD_FAST_LOAD_FAST` ga birlashgan."
+    },
+    {
+      "q": "C dagi `for (int i = 1; i <= n; i++)` siklini Python'ga to'g'ri ko'chirilgan varianti qaysi?",
+      "options": [
+        "`for i in range(1, n):`",
+        "`for i in range(n):`",
+        "`for i in range(0, n + 1):`",
+        "`for i in range(1, n + 1):`"
+      ],
+      "answer": 3,
+      "why": "`range(start, stop)` yarim ochiq: stop kirmaydi. 1 dan n gacha (n ham kirib) uchun stop = n + 1; `range(1, n)` oxirgi elementni tashlaydi."
+    },
+    {
+      "q": "Quyidagi kod nima chiqaradi?\n\nx = 10\nx = \"o'n\"\nprint(type(x))",
+      "options": [
+        "<class 'str'>",
+        "TypeError: x int deb e'lon qilingan",
+        "<class 'int'>",
+        "Kompilyatsiya xatosi"
+      ],
+      "answer": 0,
+      "why": "Dinamik tiplash: tip obyektda, nom esa shunchaki havola. Ikkinchi o'zlashtirishdan keyin x satr obyektiga qaraydi."
+    },
+    {
+      "q": "`print(\"Yosh: \" + 25)` qatori bajarilganda nima bo'ladi?",
+      "options": [
+        "`Yosh: 25` chiqadi, chunki Python sonni avtomatik satrga aylantiradi",
+        "Satr manzili 25 baytga suriladi, xuddi C dagidek",
+        "`TypeError`: Python str va int ni yashirin aylantirmasdan birlashtirmaydi",
+        "Dastur ishga tushishidan oldin kompilyator xato beradi"
+      ],
+      "answer": 2,
+      "why": "Python dinamik, lekin kuchli tiplangan: yashirin aylantirish yo'q, xato esa faqat qator bajarilganda chiqadi. To'g'risi: `\"Yosh: \" + str(25)` yoki f-string."
+    },
+    {
+      "q": "`2 ** 64` Python'da nima beradi va C dagi `unsigned long long` bilan farqi qanday?",
+      "options": [
+        "Python'da ham 0, chunki 64 bitga sig'maydi",
+        "Python'da 18446744073709551616; C da 2⁶⁴ unsigned long long ga sig'maydi (maksimum 2⁶⁴ - 1)",
+        "Python'da `OverflowError`",
+        "Python'da 1.8446744073709552e+19 float"
+      ],
+      "answer": 1,
+      "why": "Python `int` cheksiz aniqlikka ega va katta sonni bo'laklar massivida saqlaydi. C da 64-bitli unsigned tip modul 2⁶⁴ bo'yicha ishlaydi, 2⁶⁴ esa 0 ga aylanadi."
+    },
+    {
+      "q": "Python'da `0.1 + 0.2 == 0.3` nima uchun `False`?",
+      "options": [
+        "Python float'lari 32-bitli, shuning uchun aniqlik past",
+        "Python `==` float'lar uchun manzillarni solishtiradi",
+        "Bu Python'dagi bug, 3.14 da tuzatilgan",
+        "Python `float` odatda C `double` (IEEE 754): 0.1 va 0.2 ikkilikda aniq saqlanmaydi, yig'indi 0.30000000000000004"
+      ],
+      "answer": 3,
+      "why": "Butun sonlardan farqli, `float` uchun Python apparat formatidan foydalanadi. Solishtirish uchun `math.isclose` yoki butun sonli birliklar."
+    },
+    {
+      "q": "`-7 // 2` va `-7 % 2` Python'da nimaga teng?",
+      "options": [
+        "-3 va -1",
+        "-4 va 1",
+        "-3.5 va 1",
+        "-4 va -1"
+      ],
+      "answer": 1,
+      "why": "`//` pastga (manfiy cheksizlikka) yaxlitlaydi: -3.5 dan -4. `%` shunga mos: -7 = -4 · 2 + 1. C esa nolga qarab kesadi: -3 va -1."
+    },
+    {
+      "q": "n = 100 000 ta qismdan `s = s + part` sikli bilan satr yig'ildi va dastur sekin ishladi. Asosiy sabab va tuzatish?",
+      "options": [
+        "Satrlar immutable: har `+` butun satrni yangi joyga nusxalaydi, jami O(n²); qismlarni ro'yxatga yig'ib `\"\".join(parts)` qilish kerak",
+        "`+` operatori faqat bitta belgini qo'shadi; `s.append(part)` ishlatish kerak",
+        "`len(s)` har safar O(n) hisoblanadi; uzunlikni alohida saqlash kerak",
+        "Python satrlari NUL bilan tugaydi, shuning uchun har safar oxiri qidiriladi"
+      ],
+      "answer": 0,
+      "why": "O'zgarmas ketma-ketliklarni takroran birlashtirish kvadratik narx beradi (1 + 2 + ... + n nusxa). `join` umumiy uzunlikni bir marta hisoblab, bir marta nusxalaydi. `len` esa O(1)."
+    },
+    {
+      "q": "Oddiy arifmetik siklda CPython C dan o'nlab barobar sekinroq. Qaysi o'zgarish Python dasturini ko'pincha eng ko'p tezlashtiradi?",
+      "options": [
+        "Barcha o'zgaruvchilarni global qilish",
+        "Indentatsiyani 4 dan 2 bo'shliqqa kamaytirish",
+        "Algoritmni yaxshilash va Python siklini C da yozilgan o'rnatilgan funksiya yoki tuzilma bilan almashtirish (`sum`, `set`, `join`)",
+        "`print` ni f-string bilan almashtirish"
+      ],
+      "answer": 2,
+      "why": "Interpreter narxi har bytecode buyrug'ida to'lanadi. O'rnatilgan funksiyalar siklni C ichida bajaradi, yaxshiroq algoritm esa ish hajmini kamaytiradi - ikkalasi ham tildagi farqdan katta ta'sir beradi."
+    }
+  ]
+}

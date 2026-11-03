@@ -1,0 +1,91 @@
+# CS50 35-36-darslar atamalari.
+- term: reference counting
+  aliases: [reference count]
+  uz: "Har obyektda unga nechta havola borligini saqlab, havola qo'shilganda oshirib, yo'qolganda kamaytirib, 0 ga tushgan zahoti obyektni bo'shatish usuli. CPython xotirani asosan shu bilan boshqaradi."
+  course: cs50
+  lesson: 35
+- term: immortal obyekt
+  aliases: []
+  uz: "CPython 3.12+ da hisoblagichi maxsus katta qiymatda turadigan va hech qachon bo'shatilmaydigan obyekt (None, True, kichik sonlar). INCREF va DECREF uni o'zgartirmaydi."
+  course: cs50
+  lesson: 35
+- term: reference cycle
+  aliases: [aylanma havola]
+  uz: "Obyektlarning bir-biriga havola qilib yopiq zanjir hosil qilishi. Tashqi havolalar yo'qolsa ham hisoblagichlar 0 ga tushmaydi, shuning uchun ularni faqat cycle collector bo'shatadi."
+  course: cs50
+  lesson: 35
+- term: cycle garbage collector
+  aliases: [cycle collector]
+  uz: "CPython'ning gc moduli boshqaradigan yordamchi mexanizmi: konteyner obyektlar orasidan tashqaridan yetib bo'lmaydigan tsikllarni topib bo'shatadi. Obyektlarni yoshiga qarab avlodlarga bo'ladi (generational)."
+  course: cs50
+  lesson: 35
+- term: weak reference
+  aliases: [kuchsiz havola]
+  uz: "Obyektni tirik ushlab turmaydigan havola (weakref moduli). Obyekt yo'q qilingach, u None qaytaradi; tsiklsiz orqa havolalar va keshlar uchun ishlatiladi."
+  course: cs50
+  lesson: 35
+- term: GIL
+  aliases: [global interpreter lock]
+  uz: "CPython'da bir vaqtda faqat bitta thread Python bytecode bajarishini kafolatlaydigan qulf. Reference counting va ichki tuzilmalarni himoya qiladi, lekin CPU-bound thread'larni parallel ishlatmaydi."
+  course: cs50
+  lesson: 35
+- term: free-threaded build
+  aliases: []
+  uz: "GIL'siz kompilyatsiya qilingan CPython (python3.13t, python3.14t). 3.13 da eksperimental, 3.14 da PEP 779 bo'yicha rasmiy qo'llab-quvvatlanadi, lekin ixtiyoriy."
+  course: cs50
+  lesson: 35
+- term: CPU-bound
+  aliases: []
+  uz: "Vaqtining deyarli hammasi protsessorda hisob-kitobga ketadigan ish. Uni tezlashtirish uchun bir nechta yadroda haqiqiy parallellik kerak."
+  course: cs50
+  lesson: 35
+- term: I/O-bound
+  aliases: []
+  uz: "Vaqtining ko'p qismi disk, tarmoq yoki boshqa tashqi manbani kutishga ketadigan ish. Kutish paytida thread GIL'ni bo'shatadi, shuning uchun thread'lar bilan tezlashadi."
+  course: cs50
+  lesson: 35
+- term: flat-file database
+  aliases: []
+  uz: "Barcha ma'lumot bitta jadval sifatida oddiy matnli faylda (odatda CSV) saqlanadigan ombor. Sxema, tiplar va bir vaqtda yozishdan himoya yo'q."
+  course: cs50
+  lesson: 36
+- term: relational database
+  aliases: [relyatsion ma'lumotlar bazasi]
+  uz: "Ma'lumotni har biri bitta turdagi narsani saqlaydigan jadvallarga ajratib, ularni kalitlar orqali bog'laydigan baza. Relational modelni Codd 1970-yilda taklif qilgan."
+  course: cs50
+  lesson: 36
+- term: SQL
+  aliases: []
+  uz: "Structured Query Language: relational bazalarda jadval yaratish, ma'lumot qo'shish, o'qish, yangilash va o'chirish uchun deklarativ til."
+  course: cs50
+  lesson: 36
+- term: CRUD
+  aliases: []
+  uz: "Create, Read, Update, Delete: ma'lumot ustidagi to'rt asosiy amal. SQL da ular INSERT, SELECT, UPDATE va DELETE buyruqlariga mos keladi."
+  course: cs50
+  lesson: 36
+- term: update anomaly
+  aliases: [yangilash anomaliyasi]
+  uz: "Bitta fakt bir nechta qatorda takrorlanganda, uni faqat bir qismida o'zgartirish natijasida ma'lumotning o'ziga zid bo'lib qolishi. Delete va insert anomaliyalari bilan birga takrorlanishning oqibati."
+  course: cs50
+  lesson: 36
+- term: lost update
+  aliases: []
+  uz: "Ikki dastur bir xil ma'lumotni o'qib, har biri o'zgartirib qayta yozganda, birinchisining o'zgarishi ikkinchisi tomonidan jim ustidan yozilib yo'qolishi."
+  course: cs50
+  lesson: 36
+- term: SQLite
+  aliases: []
+  uz: "Alohida server jarayonisiz, dastur ichiga ulanadigan relational baza kutubxonasi. Butun baza bitta faylda; bir vaqtda ko'p o'quvchi, lekin bitta yozuvchi."
+  course: cs50
+  lesson: 36
+- term: storage class
+  aliases: []
+  uz: "SQLite'da qiymatning haqiqiy tipi: NULL, INTEGER, REAL, TEXT yoki BLOB. Tip ustunga emas, har bir qiymatning o'ziga bog'langan."
+  course: cs50
+  lesson: 36
+- term: type affinity
+  aliases: []
+  uz: "SQLite ustunining e'lon qilingan tipidan kelib chiqadigan afzal tipi (TEXT, NUMERIC, INTEGER, REAL, BLOB). Yozilgan qiymat iloji bo'lsa shu tipga aylantiriladi, bo'lmasa o'z holicha qoladi."
+  course: cs50
+  lesson: 36

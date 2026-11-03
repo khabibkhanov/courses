@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`books` jadvalida 16 qator, `rating` ustuni 4 qatorda NULL. `WHERE rating >= 4.5` 5 qator qaytardi. `WHERE NOT (rating >= 4.5)` nechta qator qaytaradi?",
+      "options": [
+        "11",
+        "16",
+        "7",
+        "0"
+      ],
+      "answer": 2,
+      "why": "NULL qatorlar uchun ikkala shart ham UNKNOWN va ikkala natijadan tushadi: NULL bo'lmagan 16 - 4 = 12 qatordan 12 - 5 = 7."
+    },
+    {
+      "q": "`WHERE genre = 'roman' OR genre = 'nazm' AND price < 50` qanday o'qiladi?",
+      "options": [
+        "(genre = 'roman' OR genre = 'nazm') AND price < 50",
+        "genre = 'roman' OR (genre = 'nazm' AND price < 50)",
+        "Shartlar chapdan o'ngga ketma-ket, ustunliksiz",
+        "SQLite bunday shartni sintaksis xatosi deb rad etadi"
+      ],
+      "answer": 1,
+      "why": "AND OR dan kuchliroq bog'lanadi, xuddi ko'paytirish qo'shishdan oldin bajarilgani kabi. Shuning uchun barcha romanlar narxidan qat'i nazar chiqadi."
+    },
+    {
+      "q": "12 ta bahoning yig'indisi 51.9, jadvalda 16 qator (4 tasining bahosi NULL). `AVG(rating)` nimaga teng?",
+      "options": [
+        "3.24375",
+        "4.325",
+        "NULL, chunki ustunda NULL bor",
+        "51.9"
+      ],
+      "answer": 1,
+      "why": "AVG NULL qiymatlarni maxrajga ham, suratga ham qo'shmaydi: 51.9 / 12 = 4.325. 3.24375 esa SUM / COUNT(*) natijasi."
+    },
+    {
+      "q": "Qaysi so'rov xato beradi yoki niyatga mos ishlamaydi?",
+      "options": [
+        "SELECT genre, COUNT(*) FROM books GROUP BY genre HAVING COUNT(*) > 3",
+        "SELECT genre, COUNT(*) AS n FROM books GROUP BY genre ORDER BY n DESC",
+        "SELECT genre, COUNT(*) FROM books WHERE COUNT(*) > 3 GROUP BY genre",
+        "SELECT genre, COUNT(*) FROM books WHERE price > 100 GROUP BY genre"
+      ],
+      "answer": 2,
+      "why": "WHERE guruhlashdan oldin, har bir qator uchun ishlaydi, u paytda aggregat hali hisoblanmagan. Guruh sharti HAVING da yoziladi."
+    },
+    {
+      "q": "Sahifada 20 ta mahsulot ko'rsatiladi. 7-sahifa uchun qaysi qism to'g'ri?",
+      "options": [
+        "LIMIT 20 OFFSET 140",
+        "LIMIT 7 OFFSET 20",
+        "LIMIT 20 OFFSET 120",
+        "LIMIT 140 OFFSET 20"
+      ],
+      "answer": 2,
+      "why": "OFFSET = (p - 1) * k = (7 - 1) * 20 = 120, LIMIT = k = 20. Natija 121-140-qatorlar."
+    },
+    {
+      "q": "`SELECT COUNT(*) FROM books WHERE id NOT IN (1, 2, NULL)` nechta qator sanaydi (jadvalda 16 qator, id hech qachon NULL emas)?",
+      "options": [
+        "14",
+        "16",
+        "13",
+        "0"
+      ],
+      "answer": 3,
+      "why": "x NOT IN (1, 2, NULL) bu x <> 1 AND x <> 2 AND x <> NULL. Oxirgi qism doim UNKNOWN, shuning uchun shart hech qachon TRUE bo'lmaydi."
+    },
+    {
+      "q": "Bir xil `SELECT title FROM books ORDER BY rating LIMIT 3` so'rovi SQLite va PostgreSQL'da turli natija berdi. Eng ehtimolli sabab?",
+      "options": [
+        "SQLite NULL'ni eng kichik, PostgreSQL eng katta deb saralaydi, shuning uchun bahosiz kitoblar birida boshida, birida oxirida",
+        "PostgreSQL LIMIT ni ORDER BY dan oldin bajaradi",
+        "SQLite REAL ustunlarni satr sifatida saralaydi",
+        "PostgreSQL'da ORDER BY sukut bo'yicha DESC"
+      ],
+      "answer": 0,
+      "why": "SQLite hujjati bo'yicha NULL ASC da boshida, PostgreSQL'da esa oxirida. Natijani bir xil qilish uchun NULLS FIRST yoki NULLS LAST yoziladi."
+    },
+    {
+      "q": "Ikki so'rov: (A) `WHERE price > 100 GROUP BY genre` va (B) `GROUP BY genre HAVING MAX(price) > 100`. Ikkalasida ham `SELECT genre, COUNT(*)`. Texnik janrda 5 kitob, ulardan 4 tasi 100 dan qimmat. Texnik qatorida qanday sonlar chiqadi?",
+      "options": [
+        "A: 5, B: 4",
+        "A: 4, B: 4",
+        "A: 5, B: 5",
+        "A: 4, B: 5"
+      ],
+      "answer": 3,
+      "why": "A da WHERE arzon kitobni guruhlashdan oldin tashlaydi, 4 qoladi. B da hamma 5 kitob sanaladi, HAVING faqat guruhni tanlaydi."
+    },
+    {
+      "q": "`DELETE FROM books WHERE year < 2010` ni bajarishdan oldin eng to'g'ri qadam qaysi?",
+      "options": [
+        "Shartni olib tashlab, avval DELETE FROM books ni sinab ko'rish",
+        "Xuddi shu WHERE bilan SELECT COUNT(*) bajarib, sonni tekshirish, keyin DELETE va changes() bilan solishtirish",
+        "DELETE ... LIMIT 1 yozish: SQLite bu sintaksisni har doim qo'llaydi",
+        "Avval UPDATE bilan year ni NULL qilish"
+      ],
+      "answer": 1,
+      "why": "Bir xil WHERE bilan SELECT qaysi qatorlarga tegilishini oldindan ko'rsatadi. DELETE ... LIMIT SQLite'da faqat maxsus kompilyatsiya opsiyasi bilan bor."
+    },
+    {
+      "q": "Nega `SELECT price * 2 AS d FROM books ORDER BY d` ishlaydi, `SELECT price * 2 AS d FROM books WHERE d > 100` esa standart SQL'da (masalan, PostgreSQL'da) xato?",
+      "options": [
+        "Alias faqat bitta harfli bo'lsa WHERE da ishlamaydi",
+        "WHERE da faqat indekslangan ustunlar ishlatiladi",
+        "Mantiqiy tartibda WHERE SELECT dan oldin, ORDER BY esa keyin bajariladi, alias SELECT qadamida paydo bo'ladi",
+        "ORDER BY so'rovning birinchi qadami"
+      ],
+      "answer": 2,
+      "why": "FROM, WHERE, GROUP BY, HAVING, SELECT, DISTINCT, ORDER BY, LIMIT. WHERE ishlayotganda alias hali yo'q. SQLite bu yerda yumshoq, lekin bunday kod ko'chirilmaydi."
+    }
+  ]
+}

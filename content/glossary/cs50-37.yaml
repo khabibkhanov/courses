@@ -1,0 +1,76 @@
+# CS50 37-38-darslar atamalari.
+- term: deklarativ
+  aliases: [declarative]
+  uz: "Natija qanday bo'lishi kerakligini aytib, uni topish qadamlarini tizimning o'ziga qoldiradigan til yoki uslub. SQL deklarativ, C va Python esa imperativ."
+  course: cs50
+  lesson: 37
+- term: aggregat funksiya
+  aliases: [aggregate function, aggregat funksiyalar]
+  uz: "Ko'p qatordan bitta qiymat hisoblaydigan SQL funksiyasi: COUNT, SUM, AVG, MIN, MAX. COUNT(*) dan boshqalari NULL qiymatlarni tashlab ketadi."
+  course: cs50
+  lesson: 37
+- term: uch qiymatli mantiq
+  aliases: [three-valued logic]
+  uz: "SQL shartlari TRUE, FALSE yoki UNKNOWN qaytaradigan mantiq. NULL bilan taqqoslash UNKNOWN beradi, WHERE esa faqat TRUE qatorlarni o'tkazadi."
+  course: cs50
+  lesson: 37
+- term: sahifalash
+  aliases: [pagination]
+  uz: "Natijani teng bo'laklarga bo'lib qaytarish: p-sahifa uchun LIMIT k OFFSET (p - 1) * k. Katta offsetda tashlab o'tilgan qatorlar ham o'qilgani uchun sekinlashadi."
+  course: cs50
+  lesson: 37
+- term: bare column
+  aliases: []
+  uz: "GROUP BY li so'rovda na guruhlash ustuni, na aggregat ichida bo'lgan ustun. SQLite unga guruhdagi biror qator qiymatini beradi, standart SQL va PostgreSQL esa xato deydi."
+  course: cs50
+  lesson: 37
+- term: primary key
+  aliases: [asosiy kalit]
+  uz: "Jadvaldagi har bir qatorni ajratib turadigan noyob, NULL bo'lmagan va barqaror ustun yoki ustunlar to'plami."
+  course: cs50
+  lesson: 38
+- term: surrogate key
+  aliases: []
+  uz: "Faqat identifikatsiya uchun qo'shilgan ma'nosiz kalit (odatda id = 1, 2, 3). Natural key esa ma'lumotning o'zidagi noyob qiymat: telefon, ISBN."
+  course: cs50
+  lesson: 38
+- term: foreign key
+  aliases: [tashqi kalit]
+  uz: "Boshqa jadvalning kalitiga ishora qiluvchi ustun. Uning qiymati NULL yoki ota jadvalda mavjud kalit bo'lishi kerak. SQLite'da PRAGMA foreign_keys = ON bilan yoqiladi."
+  course: cs50
+  lesson: 38
+- term: referential integrity
+  aliases: [bog'lanish yaxlitligi]
+  uz: "Bazada mavjud bo'lmagan qatorga ishora qiladigan yetim yozuvlar yo'qligi kafolati. Foreign key cheklovlari bilan ta'minlanadi."
+  course: cs50
+  lesson: 38
+- term: bog'lovchi jadval
+  aliases: [junction table]
+  uz: "Many-to-many bog'lanishni ifodalovchi jadval: har qatori ikki jadval qatorlari juftligi, ikkita foreign key bilan. Bog'lanishning o'z ustunlari ham shu yerda saqlanadi."
+  course: cs50
+  lesson: 38
+- term: INNER JOIN
+  aliases: []
+  uz: "Ikki jadvaldan faqat ON sharti TRUE bo'lgan juft qatorlarni qaytaradigan birlashtirish. Jufti yo'q qatorlar va NULL kalitlar natijaga tushmaydi."
+  course: cs50
+  lesson: 38
+- term: LEFT JOIN
+  aliases: [LEFT OUTER JOIN]
+  uz: "Chap jadvalning barcha qatorlarini saqlaydigan birlashtirish: jufti topilmagan qatorga o'ng jadval ustunlari NULL bilan to'ldiriladi."
+  course: cs50
+  lesson: 38
+- term: correlated subquery
+  aliases: []
+  uz: "Tashqi so'rov ustuniga murojaat qiladigan ichki so'rov. Mantiqan har bir tashqi qator uchun qaytadan hisoblanadi."
+  course: cs50
+  lesson: 38
+- term: normalizatsiya
+  aliases: [normalization]
+  uz: "Jadvallarni takrorlanish va update, insert, delete anomaliyalari yo'qoladigan qilib bo'lish. Asosiy bosqichlari 1NF, 2NF va 3NF."
+  course: cs50
+  lesson: 38
+- term: denormalizatsiya
+  aliases: [denormalization]
+  uz: "O'qishni tezlashtirish uchun ma'lumotni ataylab takrorlash. Nusxalarni izchil saqlash mas'uliyati ilovaga o'tadi."
+  course: cs50
+  lesson: 38

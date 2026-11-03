@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`a = [1, 2]; b = a; b += [3]` dan keyin `a` nimaga teng?",
+      "options": ["[1, 2]", "[1, 2, 3]", "[1, 2, [3]]", "TypeError chiqadi"],
+      "answer": 1,
+      "why": "`b = a` ikkinchi nom, nusxa emas. Ro'yxat uchun `+=` joyida kengaytiradi, shuning uchun bitta umumiy obyekt o'zgaradi va `a` ham [1, 2, 3]."
+    },
+    {
+      "q": "`x = 5; y = x; y += 1` dan keyin `x` nimaga teng va nima uchun?",
+      "options": [
+        "6, chunki x va y bitta obyektga qaraydi",
+        "6, chunki int mutable",
+        "5, chunki int immutable: `y += 1` yangi 6 obyektini yaratib, faqat y nomini unga bog'laydi",
+        "5, chunki `y = x` doim nusxa oladi"
+      ],
+      "answer": 2,
+      "why": "int obyektini joyida o'zgartirib bo'lmaydi. `+=` yangi obyekt yaratadi va faqat chap tomondagi nomni qayta bog'laydi; x eski 5 ga qarayveradi."
+    },
+    {
+      "q": "CPython 3.14 da `int(\"300\") is int(\"300\")` nima qaytaradi va bundan qanday xulosa chiqadi?",
+      "options": [
+        "True, chunki qiymatlari teng",
+        "False, chunki 300 keshdan (-5..256) tashqarida; sonlarni doim `==` bilan solishtirish kerak",
+        "True, chunki barcha int lar immortal",
+        "SyntaxError, chunki `is` sonlarga qo'llanmaydi"
+      ],
+      "answer": 1,
+      "why": "3.14 da faqat -5..256 oraliqdagi sonlar oldindan yaratilgan. Bu implementatsiya tafsiloti (3.15 da chegara 1024), shuning uchun qiymat uchun `==` ishlatiladi."
+    },
+    {
+      "q": "`grid = [[0] * 3] * 2; grid[1][2] = 9` dan keyin `grid` qanday bo'ladi?",
+      "options": [
+        "[[0, 0, 0], [0, 0, 9]]",
+        "[[0, 0, 9], [0, 0, 0]]",
+        "IndexError",
+        "[[0, 0, 9], [0, 0, 9]]"
+      ],
+      "answer": 3,
+      "why": "Tashqi `* 2` bitta ichki ro'yxatga havolani ikki marta takrorlaydi. Ikkala qator bitta obyekt, shuning uchun o'zgarish ikkalasida ko'rinadi."
+    },
+    {
+      "q": "`obj = object(); lst = [obj, obj, obj]` qatoridan keyin `sys.getrefcount(obj)` boshlang'ich qiymatiga nisbatan qanchaga o'zgaradi?",
+      "options": ["+1", "+3", "0, chunki ro'yxat nusxa saqlaydi", "+4"],
+      "answer": 1,
+      "why": "Ro'yxatning har bir katagi obyektga alohida pointer saqlaydi va har biri hisoblagichni 1 ga oshiradi: 3 ta havola. `getrefcount` ning o'z argument havolasi ikkala o'lchovda bor, farqda qisqaradi."
+    },
+    {
+      "q": "Ikki obyekt bir-biriga havola qiladi (`a.other = b; b.other = a`). `del a, b` dan keyin, avtomatik GC o'chirilgan holda, ular bilan nima bo'ladi?",
+      "options": [
+        "Ikkalasi tirik qoladi: har birining hisoblagichi kamida 1, ularni faqat cycle collector (`gc.collect()`) bo'shatadi",
+        "Ikkalasi darhol bo'shatiladi, chunki nomlar o'chirildi",
+        "Faqat `a` bo'shatiladi, `b` tirik qoladi",
+        "Interpreter RecursionError chiqaradi"
+      ],
+      "answer": 0,
+      "why": "Reference counting tsiklni ko'rmaydi: har obyektni ikkinchisi ushlab turibdi. Tashqaridan yetib bo'lmaydigan tsiklni faqat gc modulidagi collector topadi."
+    },
+    {
+      "q": "Nega CPython'da `None` ning `sys.getrefcount` qiymati milliardlab chiqadi?",
+      "options": [
+        "Dastur ichida None ga haqiqatan shuncha havola bor",
+        "Bu xato, getrefcount None uchun ishlamaydi",
+        "None immortal obyekt (PEP 683, 3.12+): hisoblagichi maxsus katta qiymatda turadi va INCREF/DECREF uni o'zgartirmaydi",
+        "None har murojaatda qaytadan yaratiladi"
+      ],
+      "answer": 2,
+      "why": "Immortal obyektlar hech qachon bo'shatilmaydi va hisoblagichi haqiqiy havolalar sonini bildirmaydi. Aniq son ham versiyaga bog'liq."
+    },
+    {
+      "q": "Oddiy CPython 3.14 (GIL bilan) da 4 ta thread 4 ta mustaqil tarmoq so'rovini bajaradi, har biri 0.5 s javob kutadi. Taxminan qancha vaqt ketadi?",
+      "options": ["2.0 s, chunki GIL hamma narsani ketma-ket qiladi", "0.5 s, chunki kutish paytida GIL bo'shatiladi va kutishlar ustma-ust tushadi", "0.125 s", "8.0 s, chunki GIL'ni uzatish qimmat"],
+      "answer": 1,
+      "why": "I/O-bound ishda thread kutish paytida Python bytecode bajarmaydi va GIL'ni qo'yib yuboradi. To'rtta 0.5 s lik kutish parallel o'tadi: max = 0.5 s."
+    },
+    {
+      "q": "CPU-bound hisob-kitobni 4 yadroda tezlashtirish kerak. Qaysi variant oddiy (GIL'li) CPython'da haqiqiy parallellik bermaydi?",
+      "options": [
+        "`multiprocessing` bilan 4 ta jarayon",
+        "Hisobni GIL'ni bo'shatadigan C extension'ga topshirish",
+        "Free-threaded build (`python3.14t`) ga o'tish",
+        "`threading` bilan 4 ta thread"
+      ],
+      "answer": 3,
+      "why": "GIL bilan bir vaqtda faqat bitta thread bytecode bajaradi, shuning uchun CPU-bound thread'lar navbatma-navbat ishlaydi. Jarayonlar, C extension va free-threaded build bu cheklovni chetlab o'tadi."
+    },
+    {
+      "q": "Python 3.14 holatiga ko'ra free-threaded build haqida qaysi gap to'g'ri?",
+      "options": [
+        "U standart `python3` bo'ldi va GIL butunlay olib tashlandi",
+        "U hali ham faqat eksperimental, rasmiy qo'llab-quvvatlanmaydi",
+        "PEP 779 bo'yicha rasmiy qo'llab-quvvatlanadi, lekin ixtiyoriy; standart build hamon GIL bilan",
+        "U faqat 3.15 da paydo bo'ladi"
+      ],
+      "answer": 2,
+      "why": "3.13 da eksperimental edi (I bosqich), 3.14 da PEP 779 bilan rasmiy qo'llab-quvvatlanadigan, lekin ixtiyoriy (II bosqich). Standart qilish (III bosqich) haqida qaror hali yo'q."
+    }
+  ]
+}

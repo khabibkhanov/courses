@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`authors` da 5 muallif, `books` da 8 kitob. Bitta muallifning kitobi yo'q, bitta kitobning `author_id` si NULL, qolgan 7 kitob mavjud mualliflarga ishora qiladi. `authors LEFT JOIN books ON books.author_id = authors.id` nechta qator qaytaradi?",
+      "options": ["7", "8", "9", "40"],
+      "answer": 1,
+      "why": "7 ta juftlik va kitobsiz muallif uchun NULL'li bitta qator: 7 + 1 = 8. Muallifsiz kitob chap tomonda emas, shuning uchun qo'shilmaydi."
+    },
+    {
+      "q": "SQLite'da `books.author_id INTEGER REFERENCES authors(id)` e'lon qilingan, lekin `INSERT INTO books VALUES (1, 'X', 99)` mavjud bo'lmagan 99-muallif bilan xatosiz o'tdi. Sabab?",
+      "options": [
+        "INTEGER ustunlarda foreign key tekshirilmaydi",
+        "Foreign key majburlash sukut bo'yicha o'chiq, shu ulanishda PRAGMA foreign_keys = ON berilmagan",
+        "REFERENCES faqat ON DELETE CASCADE bilan ishlaydi",
+        "authors.id UNIQUE emas"
+      ],
+      "answer": 1,
+      "why": "SQLite eski bazalar bilan moslik uchun foreign key'larni sukut bo'yicha majburlamaydi. PRAGMA har bir ulanishda alohida yoqiladi."
+    },
+    {
+      "q": "Kitobxonlar va kitoblar orasidagi many-to-many bog'lanishni, olish sanasi bilan birga, qanday saqlash to'g'ri?",
+      "options": [
+        "readers jadvaliga book_ids TEXT ustunini qo'shib, '1,3,7' ko'rinishida yozish",
+        "books jadvaliga reader_id ustunini qo'shish",
+        "reader_id va book_id foreign key'lari hamda taken_on ustuni bor alohida loans jadvali",
+        "readers va books ni bitta jadvalga birlashtirish"
+      ],
+      "answer": 2,
+      "why": "Many-to-many bog'lovchi jadval bilan ifodalanadi. Olish sanasi kitobxonga ham, kitobga ham emas, ularning bog'lanishiga tegishli, shuning uchun shu jadvalda."
+    },
+    {
+      "q": "`authors a LEFT JOIN books b ON b.author_id = a.id WHERE b.year >= 2020` so'rovida kitobsiz mualliflar natijaga tushmadi. Barcha mualliflarni saqlab, faqat 2020-yildan beri chiqqan kitoblarni juftlash uchun nima qilish kerak?",
+      "options": [
+        "LEFT JOIN o'rniga INNER JOIN yozish",
+        "WHERE ga OR b.year IS NULL emas, shartni ON ga ko'chirish: ON b.author_id = a.id AND b.year >= 2020",
+        "GROUP BY a.id qo'shish",
+        "DISTINCT qo'shish"
+      ],
+      "answer": 1,
+      "why": "WHERE JOIN dan keyin ishlaydi va NULL'li qatorlarda b.year >= 2020 UNKNOWN bo'lib, ular tashlanadi. ON dagi shart faqat qaysi juftlar qo'shilishini belgilaydi."
+    },
+    {
+      "q": "`SELECT name FROM authors WHERE id NOT IN (SELECT author_id FROM books)` bo'sh natija berdi, garchi kitobsiz muallif bor bo'lsa ham. Eng to'g'ri tuzatish?",
+      "options": [
+        "NOT IN o'rniga NOT EXISTS (SELECT 1 FROM books b WHERE b.author_id = authors.id) ishlatish",
+        "Subquery'ga ORDER BY qo'shish",
+        "IN o'rniga = ishlatish",
+        "PRAGMA foreign_keys = ON yozish"
+      ],
+      "answer": 0,
+      "why": "books.author_id da NULL bor, va x NOT IN (..., NULL) hech qachon TRUE bo'lmaydi. NOT EXISTS qiymat solishtirmaydi, faqat qator borligini tekshiradi."
+    },
+    {
+      "q": "Anvar 2 marta, Barno 2 marta, Sardor 1 marta mos kitob olgan. `readers JOIN loans` bilan yozilgan so'rov 5 qator, `WHERE id IN (SELECT reader_id FROM loans ...)` bilan yozilgani 3 qator berdi. Nega?",
+      "options": [
+        "IN subquery NULL'larni tashlab yuboradi",
+        "JOIN har bir mos loans qatori uchun alohida natija qatori beradi, IN esa faqat borligini tekshiradi va kitobxonni takrorlamaydi",
+        "JOIN Cartesian product beradi",
+        "IN faqat birinchi 3 qatorni qaytaradi"
+      ],
+      "answer": 1,
+      "why": "One-to-many bo'ylab JOIN 'bir' tomonni 'ko'p' tomondagi har bir juft uchun takrorlaydi: 2 + 2 + 1 = 5. IN esa har kitobxon uchun ha/yo'q savoli."
+    },
+    {
+      "q": "`loans(reader_id, book_id, taken_on, book_title, returned_on)`, kaliti `(reader_id, book_id, taken_on)`. Qaysi normal forma buzilgan?",
+      "options": [
+        "1NF: book_title atomar emas",
+        "3NF: returned_on taken_on ga bog'liq",
+        "Hech biri: jadvalda primary key bor",
+        "2NF: book_title kalitning faqat bir qismi (book_id) ga bog'liq"
+      ],
+      "answer": 3,
+      "why": "2NF talabi: kalit bo'lmagan ustun butun kalitga bog'liq bo'lsin. Kitob nomini bilish uchun book_id yetarli, shuning uchun u books jadvaliga ko'chiriladi."
+    },
+    {
+      "q": "`books(id, title, author_id, author_city)` jadvalida muallif ko'chganda uning 3 ta kitobidan faqat bittasining `author_city` si yangilandi. Bu qaysi muammo va uni qanday tuzatish kerak?",
+      "options": [
+        "Insert anomaliyasi, author_city ga UNIQUE qo'yish kerak",
+        "3NF buzilishidan kelib chiqqan update anomaliyasi, author_city ni authors jadvaliga ko'chirish kerak",
+        "1NF buzilishi, author_city ni ikki ustunga bo'lish kerak",
+        "Foreign key o'chiqligi, PRAGMA foreign_keys = ON kifoya"
+      ],
+      "answer": 1,
+      "why": "author_city id ga emas, author_id ga bog'liq (tranzitiv bog'liqlik). U bir necha qatorda takrorlangani uchun qisman yangilanish qarama-qarshi ma'lumot qoldirdi."
+    },
+    {
+      "q": "`readers(id)` va `loans(reader_id REFERENCES readers(id) ON DELETE CASCADE)`, foreign key yoqilgan. 1-kitobxonning 2 ta loans yozuvi bor. `DELETE FROM readers WHERE id = 1` dan keyin nima bo'ladi?",
+      "options": [
+        "Buyruq FOREIGN KEY xatosi bilan rad etiladi",
+        "Kitobxon o'chadi, uning loans yozuvlarida reader_id NULL bo'ladi",
+        "Kitobxon va uning 2 ta loans yozuvi o'chadi, changes() esa 1 qaytaradi",
+        "Faqat loans yozuvlari o'chadi, kitobxon qoladi"
+      ],
+      "answer": 2,
+      "why": "CASCADE o'chirishni bola qatorlarga uzatadi. changes() faqat to'g'ridan-to'g'ri o'chirilgan qatorlarni sanaydi, shuning uchun 1."
+    },
+    {
+      "q": "Kitoblar sahifasi har ochilganda `COUNT(*)` bilan olishlar sonini hisoblaydi va o'lchovlar bu so'rov tor joy ekanini ko'rsatdi. `books.loan_count` ustunini qo'shishning asosiy narxi nima?",
+      "options": [
+        "Har olish va o'chirishda loan_count ni ham yangilash kerak, aks holda u loans dagi haqiqiy son bilan mos kelmay qoladi",
+        "SQLite bitta jadvalda 5 tadan ortiq ustunga ruxsat bermaydi",
+        "JOIN'lar endi ishlamaydi",
+        "Hech qanday narx yo'q, denormalizatsiya doim foydali"
+      ],
+      "answer": 0,
+      "why": "Denormalizatsiya o'qishni tezlashtiradi, lekin bir fakt ikki joyda saqlanadi. Izchillikni ilova yoki trigger ta'minlashi kerak."
+    }
+  ]
+}
