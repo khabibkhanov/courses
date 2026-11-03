@@ -59,8 +59,8 @@
   uz: "Odamlar javoblarni tartiblaydi, ulardan mukofot modeli o'rganiladi va til modeli shu mukofotni oshirish yo'nalishida qo'shimcha o'rgatiladi."
   course: cs50
   lesson: 55
-- term: registr
-  aliases: [register]
+- term: register
+  aliases: []
   uz: "Protsessor ichidagi juda kichik va eng tez xotira katagi; hisob-kitob asosan registrlar ustida bajariladi (x86-64 da 16 ta, ARM64 da 31 ta umumiy registr)."
   course: cs50
   lesson: 56
