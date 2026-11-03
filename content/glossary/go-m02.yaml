@@ -1,0 +1,95 @@
+- term: slice header
+  aliases: ["slice descriptor"]
+  uz: "Slice qiymatining ichki tuzilishi: massivga pointer, uzunlik (len) va sig'im (cap). Slice uzatilganda aynan shu uch maydon nusxalanadi, massivning o'zi emas."
+  course: go
+  lesson: 11
+- term: backing array
+  aliases: ["underlying array"]
+  uz: "Slice ma'lumotni saqlaydigan asosiy massiv. Bir massivga bir nechta slice qarashi mumkin, shu sababli birining o'zgarishi boshqasida ko'rinadi."
+  course: go
+  lesson: 11
+- term: full slice expression
+  aliases: ["three-index slice"]
+  uz: "a[low:high:max] shaklidagi ifoda: sig'imni max bilan cheklaydi, shunda keyingi append ortiqcha joyga yozmasdan yangi massiv ajratadi."
+  course: go
+  lesson: 12
+- term: slice aliasing
+  aliases: ["aliasing"]
+  uz: "Ikki yoki undan ortiq slice bir xil massivga qaraganda bittasi orqali qilingan yozuv boshqasida ham ko'rinishi."
+  course: go
+  lesson: 12
+- term: rune
+  aliases: ["code point"]
+  uz: "Go'da Unicode code point'ni ifodalovchi tip (int32 uchun alias). Satrni rune bo'yicha aylanish UTF-8 baytlarni qiymatga ajratadi."
+  course: go
+  lesson: 13
+- term: string header
+  aliases: ["string descriptor"]
+  uz: "Satr qiymatining ichki tuzilishi: baytlarga pointer va uzunlik. Satr o'zgarmas, shuning uchun uni nusxalash faqat shu ikki maydonni ko'chiradi."
+  course: go
+  lesson: 13
+- term: replacement character
+  aliases: ["U+FFFD"]
+  uz: "Noto'g'ri UTF-8 ketma-ketlik uchrasa, range sikli beradigan U+FFFD belgisi (rune qiymati)."
+  course: go
+  lesson: 13
+- term: Swiss table
+  aliases: ["swiss map"]
+  uz: "Go 1.24 dan map'ning ichki joylashuvi: 8 uyali guruhlar va nazorat so'zi bilan ishlaydigan ochiq adreslash jadvali."
+  course: go
+  lesson: 14
+- term: extendible hashing
+  aliases: []
+  uz: "Jadvalni to'liq qayta qurmasdan, katalogni bo'lib o'stirish usuli; Go 1.24 map'ida katta map bir nechta kichik jadvalga bo'linadi."
+  course: go
+  lesson: 14
+- term: comma ok idiom
+  aliases: ["comma-ok"]
+  uz: "v, ok := m[k] shakli: kalit mavjudligini ok orqali ajratadi, zero value va haqiqiy qiymatni adashtirmaslik uchun."
+  course: go
+  lesson: 14
+- term: sayoz nusxa
+  aliases: ["shallow copy"]
+  uz: "Faqat tashqi qatlamni nusxalash: ichidagi slice, map yoki pointer'lar asl bilan bir xil ma'lumotga qaraydi, shuning uchun o'zgarish ikkalasida ko'rinadi."
+  course: go
+  lesson: 15
+- term: alignment
+  aliases: ["hizalash"]
+  uz: "Qiymat manzili tipning talab qilgan sonining karrali bo'lishi sharti. Struct maydonlari shu talab bilan joylashadi."
+  course: go
+  lesson: 16
+- term: padding
+  aliases: ["to'ldirish"]
+  uz: "Alignment talabini bajarish uchun kompilyator maydonlar orasiga yoki oxiriga qo'shgan foydalanilmaydigan baytlar."
+  course: go
+  lesson: 16
+- term: dynamic type
+  aliases: ["dinamik tip"]
+  uz: "Interface o'zgaruvchisi ish vaqtida saqlayotgan konkret qiymatning tipi; interface faqat dinamik tipi yo'q bo'lganda nil."
+  course: go
+  lesson: 17
+- term: itab
+  aliases: ["interface table"]
+  uz: "gc implementatsiyasida nonempty interface'ning konkret tip va metodlar jadvalini bog'laydigan ichki struktura; interface qiymati ikki so'zdan iborat."
+  course: go
+  lesson: 17
+- term: typed nil
+  aliases: []
+  uz: "Nil pointer interface ichiga solinganda hosil bo'ladigan qiymat: interface nil emas (dinamik tipi bor), garchi ichidagi pointer nil bo'lsa ham."
+  course: go
+  lesson: 18
+- term: strictly comparable
+  aliases: []
+  uz: "Taqqoslash hech qachon panic bermaydigan tip: interface bo'lmagan va interface tarkibiy qismi yo'q comparable tip. comparable cheklovi shularni implement qiladi."
+  course: go
+  lesson: 19
+- term: interning
+  aliases: ["interning qilish"]
+  uz: "Teng qiymatlarning bitta kanonik nusxasini saqlash; Go'da unique.Make shuni amalga oshiradi va handle taqqoslashni arzonlashtiradi."
+  course: go
+  lesson: 19
+- term: escape analysis
+  aliases: []
+  uz: "Kompilyator tahlili: qiymatga havola funksiyadan tashqariga chiqishi mumkinmi. Chiqsa qiymat heap'ga ko'chadi, aks holda stack'da qoladi."
+  course: go
+  lesson: 20
