@@ -11,6 +11,8 @@ sources:
     note: "Server, Shutdown, MaxBytesReader va MaxBytesError, ServeMux naqshlari, Request.PathValue"
   - id: pgx
     note: "pgx: Postgres bilan ulanish va ommaviy yozish (CopyFrom) variantlari; bu darsda faqat database/sql orqali, drayver kodi kompilyatsiya qilinmagan"
+  - id: rfc-9110
+    note: "503 va Retry-After sarlavhasi semantikasi."
 quiz:
   - q: "Mijoz 500 nuqta yubordi, pipeline'da faqat 300 joy bor. Servis birinchi 300 tasini qabul qilib, qolganini rad etsa, qanday muammo tug'iladi?"
     options:
@@ -226,6 +228,63 @@ Worker'ning qayta urinish paytida `time.Sleep` bilan kutishi uni boshqa batchlar
 `http.Server` da `ReadHeaderTimeout`, `ReadTimeout`, `WriteTimeout` va `IdleTimeout` berilgan: bularsiz sekin mijoz ulanishlarni cheksiz ushlab turishi mumkin (72-dars). To'xtatish `signal.NotifyContext` bilan boshlanadi: `SIGTERM` kelganda kontekst bekor bo'ladi, `srv.Shutdown` yangi ulanishlarni to'xtatib, ishlayotgan so'rovlarni kutadi, undan keyingina `pl.Close` navbatni bo'shatadi. Tartib muhim: pipeline avval yopilsa, hali jarayondagi so'rovlar `ErrClosed` oladi.
 
 `Pipeline.Close` kanalni yopadi, `Submit` esa `RWMutex`ning o'qish qulfini ushlaydi: yopilish yozuvchi qulfni oladi, shuning uchun yopiq kanalga yuborish mumkin emas (94-darsdagi panic xavfi shu bilan yo'qotilgan).
+
+### 503, 429 va Retry-After: mijozga nima deyiladi
+
+Navbat to'lganda biz 503 qaytaramiz. RFC 9110 bu kodni "server vaqtincha haddan tashqari yuklangan yoki rejali ish olib borilmoqda, bu biroz kechikishdan keyin yengillashishi mumkin" holatiga bog'laydi va serverga `Retry-After` yuborishga ruxsat beradi (MAY). Xuddi shu RFC `Retry-After` qiymati ikki xil bo'lishi mumkinligini yozadi: HTTP sanasi yoki soniyalar soni (`Retry-After: 120`). Bizning servisda soniyalar shakli oddiyroq, chunki soat sinxronligiga bog'liq emas. RFC shuningdek eslatadi: 503 kodining mavjudligi overload paytida server uni albatta ishlatishi kerak degani emas, ba'zi serverlar ulanishni shunchaki rad etadi.
+
+429 esa boshqa narsa: RFC 6585 uni "foydalanuvchi ma'lum vaqt ichida juda ko'p so'rov yubordi (rate limiting)" deb ta'riflaydi. Ya'ni 429 bitta mijozga qo'yilgan limit, 503 esa butun servis holati. Bu servisda navbat hamma mijozlar uchun umumiy, shuning uchun 503 to'g'ri. Agar keyin mijoz bo'yicha kvota qo'shsangiz, o'sha kvota uchun 429 ishlating, aks holda mijoz o'zining haddan oshgani bilan servisning umumiy yukini farqlay olmaydi.
+
+`Retry-After` qiymatini qanday tanlash hujjatlarda berilmagan, bu muallifning tajribaviy tavsiyasi: uni navbat bo'shash tezligidan hisoblash (masalan bir batch yozilish vaqtiga yaqin qilib) va mijoz tomonda qiymatga tasodifiy kechikish (jitter) qo'shish. Aks holda yuzlab qurilma bir xil soniyada qayta urinadi va yuk to'lqini qaytadan paydo bo'ladi. Qurilma dasturini siz yozmasangiz, jitter qo'shilishiga ishonib bo'lmaydi: bu holda `Retry-After` ni mijozlar bo'yicha biroz farqlab berish mumkin.
+
+### Mashina bo'yicha shard: tartib va issiq kalit
+
+Yuqorida aytilganidek, bir nechta worker umumiy kanaldan o'qisa, bir mashinaning nuqtalari tartibsiz yoziladi. Yechim: har worker o'z kanaliga ega bo'ladi, nuqta esa `hash(vehicle_id) % workers` bo'yicha tegishli kanalga yuboriladi. Deterministik xesh bir mashinani doim bir workerga yo'naltiradi, shu worker esa nuqtalarni kelish tartibida yozadi. Tajriba (Go 1.24.7, `hash/fnv`):
+
+```go run
+package main
+
+import (
+	"fmt"
+	"hash/fnv"
+)
+
+// shardOf mashina identifikatorini qat'iy shard raqamiga o'giradi.
+func shardOf(vehicleID string, shards int) int {
+	h := fnv.New32a()
+	h.Write([]byte(vehicleID))
+	return int(h.Sum32() % uint32(shards))
+}
+
+func main() {
+	const shards = 4
+
+	// Bir mashina doim bir shard'ga tushadi: tartib saqlanadi.
+	for i := 0; i < 3; i++ {
+		fmt.Println("veh-0042 ->", shardOf("veh-0042", shards))
+	}
+
+	// 200 mashina: bittasi "issiq" (so'rovlari 600 ta), qolganlari 2 tadan.
+	load := make([]int, shards)
+	for v := 0; v < 200; v++ {
+		weight := 2
+		if v == 7 {
+			weight = 600
+		}
+		load[shardOf(fmt.Sprintf("veh-%04d", v), shards)] += weight
+	}
+	fmt.Println("shard yuklari:", load)
+}
+```
+
+```text
+veh-0042 -> 1
+veh-0042 -> 1
+veh-0042 -> 1
+shard yuklari: [100 100 698 100]
+```
+
+Bu sun'iy tajriba (yuklar sintetik), lekin ikki narsani ko'rsatadi. Birinchisi, xesh tartibni kafolatlaydi. Ikkinchisi, narx: bitta "issiq" mashina bitta shard'ni yuklab qo'yadi (698 ga 100), qolgan uch shard esa bo'sh turadi. Shard'langanda "navbat sig'imi" invarianti ham o'zgaradi: endi har shard'ning o'z `pending` hisoblagichi bor, va bitta shard to'lganda boshqalarda joy bo'lsa ham shu mashinaning so'rovi rad etiladi. Hammasi-yoki-hech-narsa qoidasi bilan birga bu murakkablashadi: bir so'rovdagi nuqtalar turli shard'larga tushsa, har shard'dan joy band qilish atomik bo'lishi kerak. Shuning uchun tartib talabi haqiqatan bo'lmasa, umumiy kanal va idempotent yozuv (UNIQUE kalit) oddiyroq yechim.
 
 ## Misol: to'liq servis
 

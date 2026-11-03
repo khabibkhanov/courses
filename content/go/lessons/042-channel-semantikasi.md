@@ -277,7 +277,7 @@ Xotira modelidagi qoida buferli kanalni semafor sifatida ishlatish imkonini bera
 
 Birinchi dastur jadvaldagi yopiq va nil kanal qatorlarini, bufer va panic xabarlarini ko'rsatadi:
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -323,7 +323,7 @@ nil kanalni close      -> close of nil channel
 
 Ikkinchi dastur nil kanal usulini ko'rsatadi:
 
-```go
+```go run
 package main
 
 import (

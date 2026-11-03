@@ -260,7 +260,7 @@ Ikki atomic o'zgaruvchi birga atomic emas. `lat` va `lon` ni ikkita atomic'da sa
 
 Birinchi dastur lock'siz metrikalar: so'rovlar soni `Add` bilan, maksimal tezlik CAS tsikli bilan, to'xtash bayrog'i `atomic.Bool` bilan.
 
-```go
+```go run
 package main
 
 import (
@@ -320,7 +320,7 @@ yopilgan: true
 
 Ikkinchi dastur `atomic.Pointer` bilan konfiguratsiyani almashtirish. Bir yozuvchi `Reload` chaqiradi, to'rt o'quvchi parallel o'qiydi va har safar bitta snapshot ichidagi maydonlar bir-biriga mosligini tekshiradi.
 
-```go
+```go run
 package main
 
 import (
@@ -381,7 +381,7 @@ versiya: 1 poll: 2s maxSpeed: 90
 
 `Reload` komentariyada ko'rsatilganidek yagona yozuvchi uchun yozilgan. Ikkita `Reload` bir vaqtda chaqirilsa, `Version` hisobi yo'qolishi mumkin: ikkalasi ham `old.Version + 1` ni hisoblaydi. Bu holat uchun uchinchi dastur:
 
-```go
+```go run
 package main
 
 import (

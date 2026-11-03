@@ -214,6 +214,51 @@ Ushlanmagan panic stack trace'ni stderr'ga yozadi va dastur 2 kodi bilan chiqadi
 
 Konteynerda stderr qayta ishga tushishda yo'qolishi mumkin. Go 1.23 dan `runtime/debug.SetCrashOutput(f, debug.CrashOptions{})` crash chiqishini qo'shimcha faylga ham yozadi (persistent volume yoki log agentiga ko'riladigan joy).
 
+### SetCrashOutput: hujjatdagi shartlar
+
+`runtime/debug.SetCrashOutput` hujjati uchta narsani aniq yozadi. Birinchisi: u faqat bitta qo'shimcha fayl sozlaydi, qayta chaqirish oldingisini almashtiradi (ikkita fayl yoki ikkita manzilga parallel yozib bo'lmaydi). Ikkinchisi: u `f` ning fayl deskriptorini nusxalaydi, shuning uchun `SetCrashOutput` qaytgach `f.Close()` chaqirish xavfsiz. Uchinchisi: o'chirish uchun `SetCrashOutput(nil)`; crash bilan bir vaqtda qayta chaqirilsa, yarim yozilgan chiqish eski faylga tushishi mumkin. Ikkinchi qoidani sinab ko'rdik (Go 1.24.7, linux/amd64): fayl ochiladi, `SetCrashOutput` chaqiriladi, `f.Close()` darhol bajariladi, so'ng nil xaritaga yoziladi.
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+	"runtime/debug"
+)
+
+func main() {
+	f, err := os.Create(os.Getenv("CRASH_FILE"))
+	if err != nil {
+		fmt.Println("fayl ochilmadi:", err)
+		os.Exit(1)
+	}
+	if err := debug.SetCrashOutput(f, debug.CrashOptions{}); err != nil {
+		fmt.Println("SetCrashOutput:", err)
+		os.Exit(1)
+	}
+	// Hujjatga ko'ra fayl deskriptori nusxalanadi: f ni darhol yopsak bo'ladi.
+	f.Close()
+
+	var sensors map[string]float64
+	sensors["fuel"] = 41.5 // nil xaritaga yozish: panic
+}
+```
+
+```text
+exit=2
+panic: assignment to entry in nil map
+
+goroutine 1 [running]:
+main.main()
+```
+
+Birinchi qator dastur chiqish kodi (`CRASH_FILE=./crash.txt ./app 2>/dev/null` dan keyin), qolgani `crash.txt` boshi: stderr o'chirilgan bo'lsa ham fayl panic xabarini oldi. Hujjatda bu mexanizmning yana bir qo'llanilishi keltirilgan: crash chiqishini "monitor" jarayoniga yo'naltirish, ya'ni o'sha binary'ning maxsus rejimida ishlaydigan va avtomatik crash hisoboti yuboradigan ikkinchi jarayon. Muhim cheklov: faylga yoziladigan narsa panic va boshqa halokatli xatolar chiqishi, ya'ni Go runtime o'zi o'ldirgan holatlar. `os.Exit(1)` yoki SIGKILL (OOM killer) bunday iz qoldirmaydi, shuning uchun OOM tufayli o'lgan konteynerni faqat orkestrator hodisalari va xotira metrikasi ko'rsatadi.
+
+### Profil nolga teng ko'rinsa
+
+`net/http/pprof` hujjati block va mutex profillari faqat dastur `runtime.SetBlockProfileRate` yoki `runtime.SetMutexProfileFraction` ni chaqirgandan keyin ma'noli ekanini qayd etadi; aks holda u yerda yig'ilgan ma'lumot yo'q. Bo'sh natijani "bloklanish yo'q" deb o'qish xato bo'ladi (bu xulosa muallifniki: hujjat faqat "chaqirgandan keyin" shartini keltiradi). Heap profilning o'zi namuna olish bilan ishlaydi: `runtime.MemProfileRate` hujjatiga ko'ra profilyor o'rtacha har `MemProfileRate` bayt ajratishga bitta namuna oladi, 1 qiymati har bloklni qo'shadi, 0 profilni o'chiradi, va hujjat bu qiymatni faqat bir marta, imkon qadar erta (`main` boshida) o'zgartirishni aytadi, chunki tahlil vositalari qiymat butun umr davomida doimiy deb hisoblaydi. Standart qiymatning aniq sonini bu darsda tekshirmadik. Va nihoyat, agar `DefaultServeMux` ishlatmasangiz, hujjatga ko'ra handler'larni o'zingiz ro'yxatdan o'tkazishingiz kerak (`pprof.Index`, `pprof.Profile`, `pprof.Handler("heap")` va h.k.), ichki mux misolimizda aynan shunday qilingan.
+
 ### Flight recorder (Go 1.25)
 
 Execution trace (64-dars) juda boy, lekin uni doim yozish qimmat, kerak bo'lgan hodisa esa oldindan noma'lum. Flight recorder trace'ni xotirada aylanma bufer sifatida saqlaydi va faqat siz so'raganda (masalan, sekin so'rov yoki xato aniqlanganda) oxirgi bir necha soniyani faylga yozadi. Shu bilan "muammo bo'lganda nima sodir bo'lgan edi?" savoliga javob topiladi. Quyidagi kod Go 1.25 talab qiladi va sandbox'da (Go 1.24.7) kompilyatsiya qilinmagan. `trace.NewFlightRecorder`, `FlightRecorderConfig{MinAge, MaxBytes}`, `Start`, `Stop` va `WriteTo` imzolari pkg.go.dev/runtime/trace hujjati ("added in go1.25.0") va `blog-flight-recorder` maqolasi bilan solishtirildi (2026-11-03). Maqola `MinAge` ni kuzatmoqchi bo'lgan hodisa oynasidan taxminan 2 baravar katta qo'yishni tavsiya qiladi. Hujjatga ko'ra `MaxBytes` `MinAge` dan ustun va faqat maslahat sifatida ishlaydi; bir vaqtda faqat bitta `WriteTo` ishlay oladi, ikkinchisi xato qaytaradi.

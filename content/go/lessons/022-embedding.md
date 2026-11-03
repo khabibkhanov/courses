@@ -228,7 +228,7 @@ Interface boshqa interface'larni embed qilishi ham mumkin (`io.ReadWriter` `Read
 
 Birinchi dastur embedding'ning to'rt xatti-harakatini ko'rsatadi: shadowing, delegatsiya (virtual dispatch yo'qligi), ochiq qolgan `Lock`, va embed qilingan interface orqali dekorator.
 
-```go
+```go run
 package main
 
 import (

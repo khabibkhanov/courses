@@ -383,7 +383,7 @@ Nimalarni ko'rish kerak:
 
 Ikki marta qayta ishlash:
 
-```go
+```go run
 package main
 
 import (

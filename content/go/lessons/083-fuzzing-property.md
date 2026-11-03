@@ -485,12 +485,110 @@ PASS
 ok  	lesson83/packet	1.035s
 ```
 
+### Ikkinchi misol: UTF-8 va bayt bo'yicha kesish
+
+Binary protokoldan tashqari, matn bilan ishlaydigan kod ham fuzz uchun yaxshi nishon. Jadval ustuni 8 baytga sig'sin deb qurilma yorlig'ini kesadigan funksiya:
+
+```go
+package label
+
+// Truncate qurilma yorlig'ini ko'pi bilan n bayt qiladi (jadval ustuni uchun).
+func Truncate(s string, n int) string {
+	if len(s) <= n {
+		return s
+	}
+	return s[:n]
+}
+```
+
+Xossa ikkita: natija `n` baytdan oshmaydi, va kirish yaroqli UTF-8 bo'lsa, natija ham yaroqli UTF-8. Argumentlar: `string` va `int`; kerak bo'lmagan kirishlar (`n < 0`, yaroqsiz kirish) `t.Skip()` bilan o'tkazib yuboriladi:
+
+```go
+package label
+
+import (
+	"testing"
+	"unicode/utf8"
+)
+
+func FuzzTruncate(f *testing.F) {
+	f.Add("T-104", 8)
+	f.Add("", 0)
+	f.Fuzz(func(t *testing.T, s string, n int) {
+		if n < 0 || !utf8.ValidString(s) {
+			t.Skip()
+		}
+		out := Truncate(s, n)
+		if len(out) > n {
+			t.Errorf("uzunlik %d > %d", len(out), n)
+		}
+		if !utf8.ValidString(out) {
+			t.Errorf("yaroqsiz UTF-8: %q (kirish %q, n=%d)", out, s, n)
+		}
+	})
+}
+```
+
+`go test -run xxx -fuzz FuzzTruncate -fuzztime 10s` (Go 1.24.7, linux/amd64) bir soniya ichida topdi:
+
+```text
+fuzz: elapsed: 0s, gathering baseline coverage: 2/2 completed, now fuzzing with 2 workers
+fuzz: elapsed: 1s, execs: 29733 (31079/sec), new interesting: 19 (total: 21)
+--- FAIL: FuzzTruncate (0.96s)
+    --- FAIL: FuzzTruncate (0.00s)
+        label_test.go:20: yaroqsiz UTF-8: "\xf3\xb8" (kirish "\U000f83cd", n=2)
+    Failing input written to testdata/fuzz/FuzzTruncate/d3991743958ab635
+    To re-run:
+    go test -run=FuzzTruncate/d3991743958ab635
+```
+
+To'rt baytli bitta belgi ikki baytda kesildi. Corpus fayli:
+
+```text
+go test fuzz v1
+string("\U000f83cd")
+int(2)
+```
+
+Bu xato qo'lda yozilgan testlarda deyarli uchramaydi: dasturchi `"T-104"` kabi ASCII yorliq yozadi, kirill yoki emoji yozmaydi, ammo kirishni mijoz yuboradi. Tuzatish: kesish nuqtasini belgi chegarasiga qaytarish.
+
+```go
+package label
+
+import "unicode/utf8"
+
+// Truncate qurilma yorlig'ini ko'pi bilan n bayt qiladi (jadval ustuni uchun)
+// va belgini o'rtasidan kesmaydi.
+func Truncate(s string, n int) string {
+	if len(s) <= n {
+		return s
+	}
+	for n > 0 && !utf8.RuneStart(s[n]) {
+		n--
+	}
+	return s[:n]
+}
+```
+
+Tuzatishdan keyin saqlangan kirish seed kabi o'tadi, 8 soniyalik yangi fuzz sessiyasi yiqilishsiz tugadi (`PASS`). Bu yerda `n` indekslash xavfsizligi uchun `len(s) > n` shartiga tayanadi; `n == 0` holati ham `for` sharti bilan himoyalangan.
+
+### Fuzz hujjatining qo'shimcha qoidalari
+
+go.dev/doc/security/fuzz hujjatidan tekshirilgan tafsilotlar:
+
+- `-fuzztime` default cheksiz: tushuntirmasangiz fuzz yiqilgan kirish topilguncha yoki to'xtatilguncha ishlaydi. CI'da doim `-fuzztime` bering.
+- Yiqilgan kirishni engine qisqartiradi (minimization); `-fuzzminimizetime` default 60 soniya va `-fuzzminimizetime 0` bilan butunlay o'chiriladi. Sekin fuzz funksiyasida minimization CI vaqtini yeb qo'yishi mumkin.
+- `-parallel` default `$GOMAXPROCS`: fuzz ishchilari soni. Konteynerda cheklangan CPU bilan bu raqam kutilganidan boshqacha bo'lishi mumkin.
+- Coverage instrumentation hozircha faqat AMD64 va ARM64 da; hujjatga ko'ra boshqa platformada corpus mazmunli o'smaydi. Boshqa arxitekturada fuzz ishga tushirish foydasiz.
+- Har fuzz testda aynan bitta fuzz target (`f.Fuzz`) bo'lishi shart; seed corpus yozuvlari va `testdata/fuzz` fayllari tiplari fuzz argumentlari bilan bir xil va bir xil tartibda bo'lishi kerak. `f.Add` ga noto'g'ri sondagi qiymat berilsa, `go test` bu xatoni kompilyatsiya/vet bosqichida ushlaydi: `wrong number of values in call to (*testing.F).Add: 1, fuzz target expects 2` (sinaldi, Go 1.24.7; testlar umuman ishga tushmaydi).
+
 ## Qachon qo'llamaslik kerak
 
 - Fuzzing tashqi dunyoga chiqadigan va kirishni parse qiladigan kod uchun (parser, kodek, validator). Sof biznes mantiq (narx hisoblash, holat mashinasi) uchun jadvalli test yaxshiroq: kirish maydoni tuzilmali, xossa topish qiyin.
 - Test deterministik bo'lmasa (vaqt, tarmoq, fayl tizimi) fuzz funksiyasi sekin yoki flaky bo'ladi va engine samarasiz ishlaydi. Fuzz funksiyasi tez bo'lishi kerak.
 - Xossa topa olmasangiz, fuzz faqat "panic yo'q" ni tekshiradi. Bu hali ham foydali, lekin mantiqiy xatolarni topmaydi.
 - Uzoq fuzz sessiyalarini PR'ning majburiy qadamiga qo'ymang: natija vaqtga bog'liq va CI'ni sekinlashtiradi. Seed corpus'ni PR'da, vaqt cheklangan fuzz'ni rejali ishga tushirishda ishlating.
+- Boshqa arxitektura yoki cheklangan CI mashinasi: coverage-yo'naltirilgan fuzz hozircha AMD64 va ARM64 uchun; CPU cheklangan konteynerda `-parallel` kamayadi va natija sekin keladi. Bunday joyda seed corpus va qat'iy seedli property test yetarli.
 - Property test kirishni tasodifiy tanlaydi, lekin kod qamrovini hisobga olmaydi. U fuzz'ning o'rnini bosmaydi, faqat tezkor qo'shimcha.
 
 ## Stack'da: Node.js bilan farq

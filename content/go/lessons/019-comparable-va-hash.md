@@ -186,7 +186,7 @@ Interface qiymatlari doim comparable. Spetsifikatsiya: ikki interface qiymati te
 
 Kichik dastur bu qoidalarni bir joyda ko'rsatadi:
 
-```go
+```go run
 package main
 
 import (
@@ -283,7 +283,7 @@ Custom hash table, shard tanlash yoki Bloom filter qurishda kalitdan `uint64` ke
 
 Go 1.24 dan `maphash.Comparable(seed, v)` va `maphash.WriteComparable` bor (API fayllari bilan tasdiqlandi: `go1.24.txt`). Kafolat: `v1 == v2` bo'lsa, `Comparable(s, v1) == Comparable(s, v2)`. `v != v` (masalan, NaN) bo'lsa, hash tasodifiy taqsimlanadi. Seed haqida hujjat: Seed tasodifiy qiymat, bir jarayonga xos va boshqa jarayonda qayta yaratib bo'lmaydi. Natijalar:
 
-```go
+```go run
 package main
 
 import (
@@ -348,7 +348,7 @@ Mexanizm kodda ko'rinadi: Go 1.24.7 manba kodida `Handle[T]` ichida bitta `*T` p
 
 Telemetriyada bu quyidagicha ko'rinadi:
 
-```go
+```go run
 package main
 
 import (

@@ -337,7 +337,7 @@ Bu raqamlar bir mashina va bitta mikro-benchmark uchun, takroriy o'lchovlar oras
 
 Birinchi dastur avtopark xaritasi: `Update` yozadi, `Get` o'qiydi, `Snapshot` map nusxasini qaytaradi, shunda chaqiruvchi lock'siz o'qiy oladi.
 
-```go
+```go run
 package main
 
 import (
@@ -413,7 +413,7 @@ Dastur `go run -race` bilan ogohlantirishsiz o'tdi. Uchta qaror: mutex ustida hi
 
 Ikkinchi dastur value receiver tuzog'i. Bu kod noto'g'ri:
 
-```go
+```go run
 package main
 
 import (
@@ -449,7 +449,7 @@ Metod har chaqiruvda `Counter` nusxasini oladi va nusxaning mutex'ini qulflaydi:
 
 Uchinchi dastur sharding. 16 ta shard, har birida o'z mutex'i va map'i:
 
-```go
+```go run
 package main
 
 import (

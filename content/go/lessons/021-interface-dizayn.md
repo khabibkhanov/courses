@@ -261,7 +261,7 @@ Interface boshqa interface'larni embed qilishi mumkin; hosil bo'lgan interface'n
 
 Dasturda `Pipe` funksiyasi o'lchovlarni manbadan oladi va qabul qiluvchiga yozadi. Ikkala interface `Pipe` bilan bir joyda, bittadan metod bilan e'lon qilingan. `MemStore` konkret tip va `NewMemStore` struct pointer'i qaytaradi.
 
-```go
+```go run
 package main
 
 import (

@@ -302,7 +302,7 @@ Shunga o'xshash: `var x int64 = math.MaxInt64 + 1` ham `(overflows)` xatosi bera
 
 ### 2. iota: enum, bitmask, o'lchamlar
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -364,7 +364,7 @@ Muhim: enum qiymatlari bazada yoki protokolda raqam bo'lsa, `iota` tartibiga ish
 
 ### 3. := va shadowing
 
-```go
+```go run
 package main
 
 import (

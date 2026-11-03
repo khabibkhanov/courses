@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import { Check, FlaskConical, Play, RotateCcw, Square, X } from "lucide-react";
 import { LANG_LABEL, LANG_NOTE, LOADING_LABEL, type Output, type RunHandle } from "./runners";
-import { STDIN_LANGS, splitArgs, type PlaygroundSpec } from "@/lib/playground";
+import { STDIN_LANGS, splitArgs, type PlaygroundSpec, type RunLang } from "@/lib/playground";
 import { saveProgress, useProgress } from "@/lib/progress";
 
 // Muharrir va runtime'lar faqat brauzerda va kerak bo'lganda yuklanadi.
@@ -22,6 +22,8 @@ type Props = PlaygroundSpec & {
 
 type Mode = "run" | "test";
 type TestOutput = Extract<Output, { kind: "test" }>;
+
+const NOTE_SHORT: Partial<Record<RunLang, string>> = { c: "32-bit", go: "go.dev'da ishlaydi" };
 
 /** Darsdagi tahrirlanadigan va ishga tushiriladigan kod bloki; testlar bo'lsa - mashq. */
 export function Playground({ lang, code: initial, tests, stdin, args, files, course, n, index }: Props) {
@@ -90,7 +92,7 @@ export function Playground({ lang, code: initial, tests, stdin, args, files, cou
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-rule px-3 py-2">
         <span className="text-xs font-medium text-muted">
           {LANG_LABEL[lang]}
-          {LANG_NOTE[lang] && <span title={LANG_NOTE[lang]}> (32-bit)</span>}, {tests ? "mashq" : "tahrirlash mumkin"}
+          {LANG_NOTE[lang] && <span title={LANG_NOTE[lang]}> ({NOTE_SHORT[lang]})</span>}, {tests ? "mashq" : "tahrirlash mumkin"}
           {tests && saved?.passed ? ", bajarilgan" : ""}
         </span>
         <div className="flex items-center gap-2">

@@ -244,7 +244,7 @@ Data race xotira darajasidagi aniq ta'rifli hodisa va uni asboblar topa oladi. R
 
 Birinchi dastur: 1000 goroutine umumiy hisoblagichni `counter++` bilan oshiradi. Bu kod data race'ga ega.
 
-```go
+```go run
 package main
 
 import (
@@ -332,7 +332,7 @@ GPS nuqta qabul qilindi
 
 Uchinchi dastur uchta to'g'ri usulni ko'rsatadi: kanalni yopish, mutex va atomic.
 
-```go
+```go run
 package main
 
 import (

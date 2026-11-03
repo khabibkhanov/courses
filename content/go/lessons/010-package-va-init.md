@@ -202,6 +202,61 @@ Blank import `database/sql`, tasvir formatlari va shunga o'xshash "plugin" model
 
 `init` o'rinli holatlar: driver/format registry'si (yuqoridagi `database/sql` modeli) va hisoblanishi kerak bo'lgan, boshqacha ifodalab bo'lmaydigan paket holati.
 
+### Bog'liqlik tahlili nimani ko'rmaydi: interface orqali chaqiruv
+
+Spetsifikatsiya bog'liqlikni faqat leksik havolalar bo'yicha, tranzitiv tarzda topadi. Metodga havola faqat `t.m` ko'rinishidagi method value yoki method expression bo'lib, `t` ning **statik** tipi interface bo'lmasa hisoblanadi; metod chaqirilishi shart emas. Demak interface orqali chaqiruv bog'liqlik yaratmaydi: kompilyator chaqirilayotgan aniq metodni bilmaydi. Quyidagi paketda `viaInterface` va `viaStatic` bir xil metodni chaqiradi, lekin birinchisi `region` tayyor bo'lishini kutmaydi:
+
+```go run
+package main
+
+import "fmt"
+
+type Provider interface{ Name() string }
+
+type config struct{}
+
+func (config) Name() string { return region }
+
+var p Provider = config{}
+
+// p.Name() interface metodi: bog'liqlik region'ga o'tmaydi.
+var viaInterface = p.Name()
+
+// config{}.Name() statik tipli: metod havolasi bog'liqlik yaratadi.
+var viaStatic = config{}.Name()
+
+var region = loadRegion()
+
+func loadRegion() string {
+	fmt.Println("region yuklandi")
+	return "uz"
+}
+
+func main() {
+	fmt.Printf("viaInterface=%q viaStatic=%q region=%q\n", viaInterface, viaStatic, region)
+}
+```
+
+```text
+region yuklandi
+viaInterface="" viaStatic="uz" region="uz"
+```
+
+`viaInterface` bo'sh satr oldi: u `p` ga bog'liq, `region` ga emas, shuning uchun e'lon tartibida oldin baholandi va `region` hali zero value edi. Xato sizning kodingizda ko'rinmaydi: kompilyator ham, vet ham ogohlantirmaydi. Registry, logger yoki `Provider` kabi interface orqali ishlaydigan global o'zgaruvchilarni paket darajasida bir-biriga bog'lash shu sababli mo'rt. Aniq tartib kerak bo'lsa, qiymatni funksiya argumenti qilib bering yoki `main` da yig'ing. Bu natija sodda `region = "uz"` bilan emas, funksiya chaqiruvi bilan olingan: konstanta initsializatori statik ma'lumot bo'lishi mumkin va bunday holat yuqoridagi tartibni ko'rsatmaydi.
+
+### Init xarajatini ko'rish: GODEBUG=inittrace=1
+
+Qaysi paket ishga tushishda vaqt va xotira sarflayotganini taxmin qilmasdan ko'rish mumkin. runtime hujjatiga ko'ra `inittrace=1` har bir "init ishi bor" paket uchun standart xato oqimiga bitta qator yozadi: paket nomi, init boshlangan vaqt (dastur boshidan millisekundlarda), davomiyligi, heap'da ajratilgan bayt va allokatsiyalar soni. Hujjat qator formati o'zgarishi mumkinligini ta'kidlaydi, shuning uchun uni parser bilan o'qishga tayanmang. `net/http` import qiladigan kichik dasturda (Go 1.24.7, linux/amd64) chiqishning boshi:
+
+```text
+GODEBUG=inittrace=1 ./i2
+init internal/bytealg @0 ms, 0 ms clock, 0 bytes, 0 allocs
+init runtime @0.049 ms, 0.082 ms clock, 0 bytes, 0 allocs
+init internal/godebug @0.74 ms, 0.049 ms clock, 312 bytes, 7 allocs
+```
+
+Raqamlar mashinaga bog'liq, ular faqat format namunasi. Ishlatish: servis ishga tushishi sekin bo'lsa (masalan, katta regexp yoki jadval yaratadigan paket `init` da), `inittrace` aybdor paketni bir ishga tushirishda ko'rsatadi; keyin `init` ni lazy initsializatsiyaga (`sync.OnceValue`, Go 1.21 dan; 45-dars) ko'chirish mumkin. Hujjat plugin yuklashdagi init'lar va init ishi bo'lmagan paketlar chiqmasligini ham aytadi.
+
 ## Misol: init tartibi va ko'rinish
 
 Quyidagi dastur uch paketdan iborat: `telemetry` (uch faylda to'rtta `init`), `driver/mem` (blank import) va `main`.
@@ -309,7 +364,7 @@ use of internal package example.com/l10/a/internal/cfg not allowed
 
 ### 4. Blank identifier amalda
 
-```go
+```go run
 package main
 
 import (

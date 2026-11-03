@@ -11,6 +11,8 @@ sources:
     note: "WithTimeout va bekor qilish: shutdown muddati uchun mustaqil context"
   - id: 100go
     note: "Bandlar (100go.co bo'yicha tekshirilgan): #62 goroutine'ni qachon to'xtashini bilmay ishga tushirish, #61 kontekstni noto'g'ri uzatish. Graceful shutdown tartibi 100go.co ro'yxatida alohida band emas"
+  - id: k8s-pod-lifecycle
+    note: "Pod Termination Flow: preStop, TERM, EndpointSlice yangilanishi, grace period."
 quiz:
   - q: "Orkestrator konteynerni to'xtatish uchun SIGTERM yuboradi. Dastur `signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)` ishlatgan, lekin to'xtash muddati o'tib ketdi. Qaysi signal kod ichida ushlab bo'lmaydi va oxirgi chora sifatida ishlatiladi?"
     options:
@@ -245,6 +247,86 @@ Servis ishga tushishida bog'liqliklar ketma-ketligi: konfiguratsiya, logger, tra
 ### main va os.Exit
 
 `os.Exit` deferred chaqiruvlarni bajarmaydi. Shuning uchun naqsh: `func main() { if err := run(); err != nil { log...; os.Exit(1) } }`, hamma tozalash `run` ichida `defer` bilan. Konfiguratsiya xatosi uchun alohida chiqish kodi (misolda 2) deploy tizimi uchun foydali.
+
+### Kubernetes: SIGTERM va trafikning to'xtashi bir vaqtda sodir bo'lmaydi
+
+Kubernetes hujjati (Pod Lifecycle, "Pod Termination Flow") ketma-ketlikni shunday beradi: Pod o'chirishga belgilanadi va grace period boshlanadi; kubelet `preStop` hook bo'lsa avval uni ishga tushiradi; keyin konteyner runtime har konteynerdagi 1-jarayonga TERM yuboradi. Aynan shu paytda control plane Pod'ni Service'ning EndpointSlice'laridan chiqarish masalasini ko'radi. Ya'ni "SIGTERM keldi" va "balanser sizga trafik yuborishni to'xtatdi" bir lahzada emas, parallel jarayonlar. Hujjat shuningdek, terminating endpoint'ning `ready` holati doim `false` bo'lishini, haqiqiy holat esa `serving` sharti bilan ko'rinishini yozadi. Shu sababli ba'zi jamoalar signal olingach readiness'ni o'chirib, darhol `Shutdown` chaqirmay, qisqa pauza (yoki `preStop` da sleep) qo'yadi. Pauza uzunligi hujjatda berilmagan, uni o'z klasteringizda o'lchash kerak. `preStop` ham `terminationGracePeriodSeconds` ichiga sanaladi: hujjat hook muddatdan oshib ketsa, kubelet atigi 2 soniyalik bir martalik uzaytirish so'rashini yozadi. Demak, `preStop` pauzasi + `Shutdown` timeout'i yig'indisi grace period'dan kichik bo'lishi shart.
+
+### BaseContext: signal context'ini so'rovlarga ulashdan ehtiyot bo'ling
+
+`http.Server.Shutdown` hujjatiga ko'ra faol ulanishlarni uzmaydi va ular bo'shashini kutadi. Lekin handler ichidagi `r.Context()` qayerdan kelishi sizning qo'lingizda: `Server.BaseContext` `nil` bo'lsa, `context.Background()` olinadi. Ba'zi kodlarda "hamma narsa signal bilan to'xtasin" deb `BaseContext` ga `signal.NotifyContext` natijasi beriladi. Natija: signal kelgan zahoti har bir faol so'rovning context'i bekor bo'ladi, `Shutdown` esa kutadigan so'rovlar allaqachon yarim yo'lda uzilgan bo'ladi. Ikki variantni solishtiruvchi tajriba (signalni `cancel()` bilan taqlid qildik, Go 1.24.7, linux/amd64, 3 marta ishga tushirildi):
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"net"
+	"net/http"
+	"time"
+)
+
+// scenario slow so'rov ketayotganda "signal" (cancel) keladi va Shutdown chaqiriladi.
+// useBase true bo'lsa, signal context'i serverning BaseContext'i qilib berilgan.
+func scenario(useBase bool) string {
+	sigCtx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/slow", func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case <-time.After(300 * time.Millisecond):
+			fmt.Fprint(w, "tugadi")
+		case <-r.Context().Done():
+			http.Error(w, "bekor qilindi", http.StatusServiceUnavailable)
+		}
+	})
+	srv := &http.Server{Handler: mux}
+	if useBase {
+		srv.BaseContext = func(net.Listener) context.Context { return sigCtx }
+	}
+	ln, _ := net.Listen("tcp", "127.0.0.1:0")
+	go srv.Serve(ln)
+
+	type result struct {
+		code int
+		body string
+	}
+	done := make(chan result)
+	go func() {
+		resp, err := http.Get("http://" + ln.Addr().String() + "/slow")
+		if err != nil {
+			done <- result{0, err.Error()}
+			return
+		}
+		defer resp.Body.Close()
+		b, _ := io.ReadAll(resp.Body)
+		done <- result{resp.StatusCode, string(b)}
+	}()
+
+	time.Sleep(100 * time.Millisecond)
+	cancel() // signal keldi
+	sctx, c2 := context.WithTimeout(context.Background(), 2*time.Second)
+	defer c2()
+	err := srv.Shutdown(sctx)
+	res := <-done
+	return fmt.Sprintf("status=%d body=%q shutdown=%v", res.code, res.body, err)
+}
+
+func main() {
+	fmt.Println("BaseContext default :", scenario(false))
+	fmt.Println("BaseContext = signal:", scenario(true))
+}
+```
+
+```text
+BaseContext default : status=200 body="tugadi" shutdown=<nil>
+BaseContext = signal: status=503 body="bekor qilindi\n" shutdown=<nil>
+```
+
+Birinchi holatda so'rov to'liq bajarildi. Ikkinchisida `Shutdown` xatosiz qaytdi (ulanish tez bo'shadi), lekin mijoz 503 oldi: "toza to'xtash" metrikasi yashil, foydalanuvchi esa xato ko'rdi. Xulosa: `BaseContext` ni faqat so'rovlarni ataylab shu zahoti bekor qilmoqchi bo'lsangiz ulang. Odatiy graceful shutdown uchun signal context'i faqat `main`/`run` ichidagi fon goroutine'larga beriladi, so'rov context'lari esa Shutdown timeout'i tugagach (`srv.Close`) bekor bo'ladi.
 
 ## Misol: server, readiness va toza to'xtash
 

@@ -265,7 +265,7 @@ Expression switch'da case ifodalari konstanta bo'lishi shart emas, chapdan o'ngg
 
 ### 1. Per-iteration o'zgaruvchi va go.mod
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -328,7 +328,7 @@ true
 
 Ya'ni toolchain bir xil, natija go qatoriga bog'liq. Eski semantikada `&s` har safar bir xil manzil bo'lib, `ptrs[0] == ptrs[1]` `true` chiqdi. Kodning qolgan qismi range elementi nusxa ekanini ko'rsatadi: `s.Fuel = 0` slice'dagi `40.5` ni o'zgartirmadi, indeks orqali yozish esa o'zgartirdi. Spetsifikatsiyaning `1 3 5` misolini ham ikki rejimda sinadik:
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -349,7 +349,7 @@ func main() {
 
 ### 2. Range ifodasi, integer va string
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -416,7 +416,7 @@ Massiv uchun `v` uchinchi iteratsiyada `3` (nusxadan), slice uchun `100`. `grow`
 
 ### 3. break, label va fallthrough
 
-```go
+```go run
 package main
 
 import "fmt"

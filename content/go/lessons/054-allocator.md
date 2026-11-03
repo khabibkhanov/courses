@@ -230,7 +230,7 @@ Go 1.27 release notes: compiler endi hajmi 80 baytdan kichik ba'zi ajratishlar u
 
 Dastur turli hajmdagi pointer-free baytlar slice'ini 20000 martadan ajratadi (ular global `keep`da saqlanadi, shuning uchun heap'ga qochadi) va `runtime.MemStats.TotalAlloc` o'sishini ajratishlar soniga bo'ladi:
 
-```go
+```go run
 package main
 
 import (
@@ -288,7 +288,7 @@ Yaxlitlash xarajati ichki fragmentatsiya: 33 baytlik obyekt 15 bayt (31%) isrof 
 
 Ikkinchi dastur `runtime/metrics` orqali shu jadvalni to'g'ridan-to'g'ri ko'rsatadi, chunki `/gc/heap/allocs-by-size:bytes` histogrammasining bucket chegaralari size class'lar atrofida qurilgan:
 
-```go
+```go run
 package main
 
 import (

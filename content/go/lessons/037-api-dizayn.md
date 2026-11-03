@@ -11,6 +11,12 @@ sources:
     note: "Interfaces (interfeys iste'molchi paketda, implementatsiya konkret tip qaytaradi), Contexts (ctx birinchi parametr, struct maydoni emas), Package Names (util, common kabi ma'nosiz nomlardan qoching)"
   - id: go1compat
     note: "Expectations bo'limidagi 'Struct literals' va 'Methods' bandlari: keyed literal, eksport struct'ga maydon qo'shish, embedding bilan metod to'qnashuvi"
+  - id: go-spec
+    note: "Comparison operators: struct tiplari barcha maydonlari taqqoslanadigan bo'lsa taqqoslanadi; slice, map va funksiya tiplari taqqoslanmaydi"
+  - id: go-faq
+    note: "Why is my nil error value not equal to nil? bo'limi: interface ikki qismdan (tip va qiymat) iborat, ikkalasi nil bo'lsagina nil"
+  - id: doc-comment
+    note: "Deprecated: bilan boshlanadigan paragraf eskirish belgisi, vositalar ogohlantiradi, pkg.go.dev hujjatni yashiradi"
 quiz:
   - q: "Kutubxona v1 da `type Point struct{ Lat, Lon float64 }` e'lon qildi. Mijoz kodi `lib.Point{55.75, 37.61}` yozgan. Kutubxona v1.1 da `Alt float64` maydonini qo'shsa nima bo'ladi?"
     options:
@@ -341,6 +347,102 @@ Odatda xavfsiz: yangi eksport funksiya, tip, o'zgaruvchi qo'shish; yangi Option 
 
 Buzuvchi: mavjud eksport nomni o'chirish yoki o'zgartirish; funksiya imzosiga parametr qo'shish yoki qaytish turini o'zgartirish; eksport qilingan interfeysga metod qo'shish; xulqni o'zgartirish (masalan, avval `nil` qaytargan joyda xato qaytarish: mijoz `err == nil` ga tayangan bo'lishi mumkin). Buzuvchi o'zgarish kerak bo'lsa, major versiya (`/v2` yo'li) kerak, bu 39-darsda.
 
+### Ko'rinmas buzilishlar: taqqoslanuvchanlik va generic parametr
+
+Yuqoridagi ro'yxatda yo'q, lekin mijozni sindiradigan ikki o'zgarish bor, ikkalasi ham spetsifikatsiyadan chiqadi. Birinchisi: struct faqat barcha maydon tiplari taqqoslanadigan bo'lsa taqqoslanadi (slice, map va funksiya tiplari taqqoslanmaydi). v1 da `Point{Lat, Lon float64}` taqqoslanadi, mijoz uni `==` bilan solishtiradi va map kaliti qiladi. v2 da unga `Tags []string` qo'shsangiz, struct taqqoslanmaydigan bo'ladi. Mijozning bitta qatorini ham o'zgartirmagan "faqat maydon qo'shish" kompilyatsiyadan chiqadi. Ikkinchisi: mavjud tipga tip parametri qo'shish (`Box` o'rniga `Box[T any]`) har bir eski ishlatilishni sindiradi, chunki generic tip instansiyalashsiz ishlatilmaydi. Yuqoridagi `lib` paketini shunday o'zgartirib, mijozni Go 1.24.7 da kompilyatsiya qilganda uchta xato chiqdi:
+
+```text
+cmd/main.go:10:14: invalid map key type lib.Point
+cmd/main.go:13:14: invalid operation: a == lib.Point{…} (struct containing []string cannot be compared)
+cmd/main.go:14:8: cannot use generic type lib.Box[T any] without instantiation
+```
+
+Qaysi tipning taqqoslanuvchanligi kafolat ekanini avvaldan hal qiling. Agar tip taqqoslanishini va map kaliti bo'lishini va'da qilmasangiz, buni dastlabdan to'sib qo'yish mumkin: struct'ga `_ [0]func()` kabi nolinchi o'lchamli taqqoslanmaydigan maydon qo'shiladi, shunda `a == b` birinchi kundan kompilyatsiya bo'lmaydi va keyinchalik slice qo'shish hech kimni sindirmaydi.
+
+```go
+package main
+
+import "fmt"
+
+// Config uzoq muddatli kutubxona tipi: taqqoslash va'dasi berilmagan.
+type Config struct {
+	_    [0]func() // struct'ni taqqoslanmaydigan qiladi
+	Addr string
+}
+
+func main() {
+	a := Config{Addr: "x"}
+	b := Config{Addr: "x"}
+	fmt.Println(a.Addr == b.Addr)
+	fmt.Println(a == b)
+}
+```
+
+```text
+./main.go:15:14: invalid operation: a == b (struct containing [0]func() cannot be compared)
+```
+
+Bu mening tavsiyam, rasmiy qoida emas, va narxi bor: mijoz bunday tipni `==` bilan solishtira olmaydi (testda `reflect.DeepEqual` yoki maydonma-maydon solishtirish kerak), maydon solishtirishi esa ishlayveradi (misolda birinchi `Println` shuni ko'rsatadi). Faqat chindan ham "qiymat identifikatori" bo'lmagan, sozlamaga o'xshash tiplarda ishlating. `Point` kabi qiymat tiplari uchun taqqoslanuvchanlik odatda foydali xususiyat va uni saqlash kerak.
+
+### Qaytariladigan xato tipi va nil interface
+
+Konkret tip qaytarish qoidasining bitta muhim istisnosi bor: xato. Funksiya `*ValidationError` kabi konkret pointer tipini `error` interface sifatida qaytarsa, "xato yo'q" holatini ham nil pointer sifatida qaytarish xavfi tug'iladi. Go FAQ'ning "Why is my nil error value not equal to nil?" bo'limi sababini aytadi: interface qiymati ikki qismdan iborat, tip `T` va qiymat `V`, va interface faqat ikkalasi ham nil bo'lganda nil bo'ladi. Nil `*ValidationError` ni `error` ga o'rasangiz, tip `T=*ValidationError`, qiymat `V=nil`, ya'ni interface nil emas, va mijozning `if err != nil` tekshiruvi yolg'on xato topadi.
+
+```go run
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+// ValidationError eksport qilingan konkret xato tipi.
+type ValidationError struct{ Field string }
+
+func (e *ValidationError) Error() string { return "noto'g'ri maydon: " + e.Field }
+
+// validateBad konkret pointer tipini qaytaradi va uni error sifatida e'lon qiladi.
+func validateBad(fuel float64) error {
+	var err *ValidationError
+	if fuel < 0 {
+		err = &ValidationError{Field: "fuel"}
+	}
+	return err // nil pointer, lekin nil bo'lmagan interface
+}
+
+// validateGood faqat aniq nil yoki aniq xatoni qaytaradi.
+func validateGood(fuel float64) error {
+	if fuel < 0 {
+		return &ValidationError{Field: "fuel"}
+	}
+	return nil
+}
+
+func main() {
+	err := validateBad(10)
+	fmt.Println("validateBad(10) == nil:", err == nil)
+	fmt.Printf("%T %v\n", err, err == (*ValidationError)(nil))
+	var ve *ValidationError
+	fmt.Println("errors.As:", errors.As(err, &ve), ve == nil)
+
+	err = validateGood(10)
+	fmt.Println("validateGood(10) == nil:", err == nil)
+}
+```
+
+```text
+validateBad(10) == nil: false
+*main.ValidationError true
+errors.As: true true
+validateGood(10) == nil: true
+```
+
+`validateBad(10)` xato yo'q holatda ham nil bo'lmagan `error` qaytardi: dinamik tipi `*main.ValidationError`, qiymati nil pointer (ikkinchi qator). `errors.As` ham `true` qaytardi va `ve == nil`: mijoz kodi `err.Error()` ni chaqirsa, bu misolda metod `e.Field` ga murojaat qiladi va nil pointer dereference panic'i bo'ladi (alohida testda tasdiqlandi). API qoidasi: xato qaytaradigan eksport funksiyalar imzosida `error` bo'lsin (konkret xato tipi emas), "xato yo'q" yo'li esa literal `return nil` bo'lsin, o'zgaruvchi orqali emas. Konkret xato tipini mijoz `errors.As` bilan oladi (31-dars). Bu `go vet` ushlamaydigan xato: `go vet` bu faylda ogohlantirish bermadi.
+
+### Eskirtirish: buzmasdan olib tashlash
+
+Nomni darhol o'chirish buzuvchi o'zgarish, shuning uchun yo'l ikki bosqichli: avval eskirgan deb belgilash, keyin major versiyada olib tashlash. Go doc comment qo'llanmasi (Go Doc Comments) `Deprecated:` bilan boshlanadigan paragrafni eskirish belgisi deb hisoblaydi: ba'zi vositalar eskirgan identifikator ishlatilganda ogohlantiradi, pkg.go.dev esa eskirgan nomlarning hujjatini sukut bo'yicha yashiradi. Belgidan keyin nega eskirgani va nima ishlatish kerakligi yoziladi; paragraf doc comment'ning oxirgisi bo'lishi shart emas. Amaliy qoida: yangi `WithTimeout` option'ini qo'shgach, eski `NewServerWithTimeout(addr, timeout)` konstruktorini o'chirmay, uning doc comment'iga `Deprecated: WithTimeout option'li NewServer ishlating.` qatorini qo'shing va eski funksiyani yangisi orqali amalga oshiring. Eskirtirilgan nom 39-darsda ko'riladigan `/v2` da olib tashlanadi.
+
 ### Zero value va lazy init
 
 `nil` map'ga yozish panic beradi (`assignment to entry in nil map`), o'qish va `len` esa ishlaydi. Zero value foydali bo'lishi uchun tip birinchi yozishda map'ni yaratadi. Bu goroutine'lar bir vaqtda chaqirishi mumkin bo'lgan tipda mutex ostida bo'lishi kerak: tekshiruv va yaratish bir kritik bo'limda. Tip nusxalanmasligi kerak (`sync.Mutex` ni o'z ichiga olgan struct'ni qiymat bo'yicha uzatmang, `go vet` copylocks bunga ogohlantiradi); bu `go vet` ning mavjud tekshiruvi.
@@ -355,7 +457,7 @@ Agar nol qiymat foydali bo'la olmasa (masalan, bog'lanish manzili majburiy), bun
 
 ## Misol: options, foydali zero value va validatsiya
 
-```go
+```go run
 package main
 
 import (
@@ -488,3 +590,4 @@ noto'g'ri option: timeout -1s true
 - Paket konkret tip qaytarsin, interfeysni iste'molchi o'zi kerakli metodlari bilan e'lon qilsin (Code Review Comments: Interfaces).
 - Eksport struct'ga maydon qo'shish unkeyed literal'larni, eksport interfeysga metod qo'shish tashqi implementatorlarni sindiradi: bu o'zgarishlarni buzuvchi deb hisoblang.
 - `ctx` birinchi parametr, struct maydoni emas; bool bayroq o'rniga nomlangan option.
+- Taqqoslanuvchanlik va tip parametri ham API'ning bir qismi: struct'ga slice qo'shish `==` va map kalitini, tipga `[T any]` qo'shish esa eski ishlatilishlarni sindiradi. Xato qaytarganda `error` interface va literal `return nil` ishlating, olib tashlanadigan nomni avval `Deprecated:` bilan belgilang.

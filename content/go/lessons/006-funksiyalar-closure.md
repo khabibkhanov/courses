@@ -263,7 +263,7 @@ Nomli natijaning tuzog'i - shadowing. Spetsifikatsiya: kompilyator bare `return`
 
 ### 1. Closure, funksiya tipidagi metod va nil funksiya
 
-```go
+```go run
 package main
 
 import (
@@ -325,7 +325,7 @@ Birinchi `makeCounter` juftligi bitta `n`ni baham ko'radi (`get: 2`), ikkinchi c
 
 ### 2. Variadic
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -379,7 +379,7 @@ Argumentsiz chaqiruvda `nil=true`, `s...` bilan uzatilgan slice `zero` ichida o'
 
 ### 3. Method value, method expression
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -424,7 +424,7 @@ func() string | func(main.Odometer) string
 
 ### 4. defer, nomli natija va shadowing
 
-```go
+```go run
 package main
 
 import (

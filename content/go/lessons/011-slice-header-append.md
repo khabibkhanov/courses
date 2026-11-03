@@ -200,7 +200,7 @@ Bu qoida ikki tomonlama xavf tug'diradi: `append` yangi massiv ajratganida eski 
 
 Spetsifikatsiya o'sish koeffitsiyentini belgilamaydi: faqat "yetarlicha katta yangi massiv" deydi. Go Blog'dagi "Growing slices" bo'limi o'sish g'oyasini ikkilanish (`(cap+1)*2`) bilan ko'rsatadi, lekin bu o'quv misoli: real `append` bunday ishlamaydi, buni quyidagi o'lchov ko'rsatadi. Real o'sish toolchain'ga bog'liq va release'lar orasida o'zgargan. Quyidagi o'lchov faqat Go 1.24.7, linux/amd64 uchun:
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -249,11 +249,83 @@ Funksiyaga slice berish header'ni nusxalaydi (24 bayt, 64-bitli platformada: poi
 - Funksiya ichida `s = append(s, x)` chaqiruvchining `s` header'ini o'zgartirmaydi, hatto massiv umumiy bo'lsa ham: chaqiruvchining len'i eski qiymatda qoladi.
 - Slice'ni o'zgartiradigan funksiya yangi slice'ni qaytarishi kerak (`s = f(s)`, standart `append` va `slices.Insert` shunday) yoki slice'ga pointer olishi kerak.
 
+### To'liq slice ifodasi: sig'imni cheklash
+
+Oddiy reslice `s[low:high]` sig'imni massiv oxirigacha qoldiradi, shu sababli qismni olgan kod `append` bilan qo'shni elementlarni bosib yozishi mumkin. Spetsifikatsiya buning uchun uch indeksli shaklni beradi: massiv, massivga pointer yoki slice `a` uchun `a[low:high:max]` xuddi `a[low:high]` kabi elementlarni oladi, lekin sig'imni `max-low` ga tenglaydi (string uchun bu shakl yo'q). Spetsifikatsiya misoli: `a := [5]int{1, 2, 3, 4, 5}; t := a[1:3:5]` uzunlik 2, sig'im 4. Quyidagi dastur ikkala shaklni yonma-yon qo'yadi va sig'imdan katta `high` run-time panic berishini ko'rsatadi:
+
+```go run
+package main
+
+import "fmt"
+
+func main() {
+	fuel := []float64{41.5, 40.9, 40.2, 39.8, 39.1}
+
+	// Oddiy reslice: cap oxirigacha cho'ziladi, append fuel[3] ni bosib yozadi.
+	a := fuel[1:3]
+	a = append(a, -1)
+	fmt.Println("oddiy:   fuel =", fuel, "cap(a) =", cap(a))
+
+	// To'liq slice ifodasi: cap = max-low = 2, append yangi massiv ajratadi.
+	fuel = []float64{41.5, 40.9, 40.2, 39.8, 39.1}
+	b := fuel[1:3:3]
+	b = append(b, -1)
+	fmt.Println("3-indeks: fuel =", fuel, "cap(b) =", cap(b))
+
+	// Chegaradan chiqish: cap'dan katta high run-time panic beradi.
+	defer func() { fmt.Println("recover:", recover()) }()
+	n := 6
+	_ = fuel[:n]
+}
+```
+
+```text
+oddiy:   fuel = [41.5 40.9 40.2 -1 39.1] cap(a) = 4
+3-indeks: fuel = [41.5 40.9 40.2 39.8 39.1] cap(b) = 4
+recover: runtime error: slice bounds out of range [:6] with capacity 5
+```
+
+Birinchi holatda `a` ning sig'imi 4 edi, `append` yangi massiv ajratmadi va `fuel[3]` ni `-1` ga almashtirdi. Ikkinchi holatda `b` ning sig'imi 2 edi, shuning uchun `append` yangi massiv ajratdi va `fuel` o'zgarmadi; chiqishdagi `cap(b) = 4` append'dan keyingi yangi sig'im (ikkilanish). Qoida: slice'ni boshqa kodga "faqat o'qish uchun" berayotgan bo'lsangiz va u `append` qilishi mumkin bo'lsa, `s[i:j:j]` bilan bering. Bu `slices.Clip` ning ham mohiyati. `[:n]` panic xabari esa sig'im bo'yicha tekshiruvni tasdiqlaydi: `len` emas, `cap` chegara (`[:6] with capacity 5`).
+
+### Slice'dan massivga o'tkazish (Go 1.17 va Go 1.20)
+
+Spetsifikatsiya slice'ni massiv yoki massivga pointer tipiga konversiya qilishni beradi; slice uzunligi massiv uzunligidan kichik bo'lsa, run-time panic bo'ladi. Go 1.17 faqat massivga pointer konversiyasini qo'shgan, Go 1.20 release notes'ga ko'ra massivga to'g'ridan-to'g'ri konversiya (`[4]byte(x)`) shu versiyadan beri mumkin. Farq muhim: massivga konversiya **nusxa** yaratadi (qiymat semantikasi), pointer konversiyasi esa slice xotirasini bo'lishadi:
+
+```go run
+package main
+
+import "fmt"
+
+func main() {
+	s := []byte{1, 2, 3, 4, 5, 6}
+
+	arr := [4]byte(s[:4]) // Go 1.20: slice'dan massivga konversiya (nusxa)
+	arr[0] = 99
+	fmt.Println("massiv:", arr, "slice:", s)
+
+	p := (*[4]byte)(s) // Go 1.17: massivga pointer (umumiy xotira)
+	p[1] = 77
+	fmt.Println("pointer orqali:", s)
+
+	defer func() { fmt.Println("recover:", recover()) }()
+	short := s[:2]
+	_ = [4]byte(short)
+}
+```
+
+```text
+massiv: [99 2 3 4] slice: [1 2 3 4 5 6]
+pointer orqali: [1 77 3 4 5 6]
+recover: runtime error: cannot convert slice with length 2 to array or pointer to array with length 4
+```
+
+Telemetriya paketlarini parse qilganda bu foydali: sarlavhani `[8]byte(buf)` bilan nusxalab, bufer qayta ishlatilganda sarlavha buzilmaydi; uzunlik tekshiruvi esa konversiyaning o'zida (`len(buf) < 8` bo'lsa panic) bajariladi, shuning uchun kiruvchi ma'lumot ishonchsiz bo'lsa avval uzunlikni qo'lda tekshiring va xatoni qaytaring. Panic'ni tarmoqdan kelgan ma'lumotga qarshi himoya sifatida qoldirmang (33-dars).
+
 ## Misol: header, umumiy massiv va append
 
 Birinchi dastur header, nil va bo'sh slice hamda reslice orqali massivning bo'lishilishini ko'rsatadi:
 
-```go
+```go run
 package main
 
 import (
@@ -305,7 +377,7 @@ tail[:3] = [0 39.8 39.1] (len=2 dan ortiq, cap ichida)
 
 Ikkinchi dastur `append` qachon massivni bo'lishishini ko'rsatadi:
 
-```go
+```go run
 package main
 
 import "fmt"

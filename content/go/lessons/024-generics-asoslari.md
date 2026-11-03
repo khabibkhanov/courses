@@ -247,7 +247,7 @@ Ikkala xabar Go 1.24.7 dan. `[]int` kabi taqqoslanmaydigan tip `comparable` tala
 
 Dastur oddiy funksional yordamchilarni (`Map`, `Filter`), constraint'li `Max` va `Sum`ni, generic `Stack`ni va `comparable` kalitli `Index`ni ko'rsatadi. `Liters` nomli tip bo'lgani uchun `Number`da `~` kerak.
 
-```go
+```go run
 package main
 
 import (

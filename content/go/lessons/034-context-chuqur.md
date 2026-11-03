@@ -253,7 +253,7 @@ Kontekst bekor qilish kooperativ: u goroutine'ni majburan to'xtatmaydi. Funksiya
 
 Birinchi dastur bekor qilish, sabab va muddat qoidalarini ko'rsatadi (Go 1.24.7, `go vet`dan o'tgan):
 
-```go
+```go run
 package main
 
 import (
@@ -320,7 +320,7 @@ Kuzatuvlar: `Err` har doim standart qiymat, sabab faqat `Cause`da. `cancel()` er
 
 `WithoutCancel` va `AfterFunc`:
 
-```go
+```go run
 package main
 
 import (
@@ -381,7 +381,7 @@ ctx, _ := context.WithTimeout(context.Background(), 10*time.Millisecond)
 
 Kontekst qiymatlari uchun yopiq kalit tipi:
 
-```go
+```go run
 package main
 
 import (

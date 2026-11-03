@@ -193,7 +193,7 @@ Go Blog'ning slice maqolasi "A possible gotcha" bo'limida buni misol bilan berad
 
 Elementni o'rtadan o'chirishning klassik shakli `s = append(s[:i], s[i+1:]...)`. U massiv elementlarini bir joyga siljitadi va yangi len'ni qaytaradi, lekin massivning eski oxirgi joyi o'zgarmaydi: u yerda oxirgi elementning nusxasi qoladi. Element qiymat bo'lsa (`int`), bu zararsiz. Element pointer yoki pointer saqlovchi struct bo'lsa (`*Trip`, `[]string` maydonli struct), bu qolgan nusxa ob'ektni tirik ushlab turadi: 100 Go Mistakes #26 bunday elementlarni GC bo'shatmasligini yozadi. Quyidagi dastur ikkala yo'lni solishtiradi:
 
-```go
+```go run
 package main
 
 import (
@@ -234,7 +234,7 @@ slices.Delete:     len = 3 tail[3] nil emasmi: false
 
 `for _, s := range sensors` har iteratsiyada element nusxasini `s` ga beradi. Struct element bo'lsa, `s.Level *= 2` nusxani o'zgartiradi. 100 Go Mistakes #30 buni alohida xato sifatida sanaydi.
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -297,7 +297,7 @@ Go'da egalik tilda ifodalanmaydi, shuning uchun uni hujjat va nom bilan ifodalas
 
 Birinchi dastur `append` ning chaqiruvchi massivini buzishini va full slice expression bilan bu tuzalishini ko'rsatadi:
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -339,7 +339,7 @@ b:   [10 20 30 -1] cap(b) = 6
 
 Ikkinchi dastur retention'ni o'lchaydi. U 64 MiB bufer ajratadi, undan 16 baytlik sarlavha oladi va heap hajmini GC dan keyin o'qiydi:
 
-```go
+```go run
 package main
 
 import (

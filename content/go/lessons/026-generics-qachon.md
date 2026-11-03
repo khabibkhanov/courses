@@ -352,7 +352,7 @@ Generic funksiya imzosi uning API'si. Constraint'ni keyinroq qattiqlashtirish (m
 
 Dastur uch holatni ko'rsatadi: `Cache[K, V]` umumiy ma'lumot tuzilmasi sifatida generics uchun yaxshi nomzod; `JoinGeneric[T Namer]` va `Join([]Namer)`: faqat metod chaqiriladigan joyda generic hech narsa qo'shmaydi; heterogen ro'yxat faqat interface bilan tabiiy; `sort.Slice` va `slices.SortFunc` taqqoslash.
 
-```go
+```go run
 package main
 
 import (

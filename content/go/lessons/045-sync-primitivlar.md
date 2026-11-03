@@ -282,7 +282,7 @@ Amaliy qoidalar (hujjatdan keyingi mantiqiy xulosa): Pool'dan olingan obyektni i
 
 Birinchi dastur WaitGroup'ning klassik xatosi. Bu kod noto'g'ri: `wg.Add` goroutine ichida.
 
-```go
+```go run
 package main
 
 import (
@@ -340,7 +340,7 @@ panic: sync: negative WaitGroup counter
 
 Ikkinchi dastur `OnceValues` ning xato keshlashi va `Cond` bilan chegaralangan navbatni ko'rsatadi. Navbat sig'imi 2, ishlab chiqaruvchi 10 ta qiymat yuboradi, iste'molchi o'qiydi. `Put` to'la navbatda `notFull` ni, `Get` bo'sh navbatda `notEmpty` ni kutadi, ikkalasi ham `for` tsiklida.
 
-```go
+```go run
 package main
 
 import (

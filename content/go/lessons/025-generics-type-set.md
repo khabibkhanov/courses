@@ -260,7 +260,7 @@ Bu kod Go 1.26 dan kompilyatsiya bo'ladi. Bu parcha Go 1.26 talab qiladi: u rele
 
 Dastur `Measure` (union + metod kesishmasi), `Half` uchun kesishma natijasida `~int`ga torayish, `Clone[S ~[]E, E any]` (slice tipini saqlab nusxalash) va `Lesser[T]` bilan o'ziga murojaat qiluvchi `Min`ni ko'rsatadi.
 
-```go
+```go run
 package main
 
 import (
@@ -370,7 +370,7 @@ Birinchisi type set'li interface'ni oddiy tip sifatida ishlatishda, ikkinchisi `
 
 `comparable` istisnosi:
 
-```go
+```go run
 package main
 
 import "fmt"
