@@ -39,7 +39,7 @@
   course: cs50
   lesson: 26
 - term: endianness
-  aliases: [little-endian, big-endian]
+  aliases: [big-endian]
   uz: "Ko'p baytli sonning baytlari xotirada qaysi tartibda turishi. Little-endian da eng kichik bayt birinchi (x86, WebAssembly, BMP), big-endian da eng kattasi (tarmoq protokollari, JPEG maydonlari)."
   course: cs50
   lesson: 26
