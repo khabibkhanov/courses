@@ -1,0 +1,45 @@
+- term: composition root
+  aliases: []
+  uz: "Dastur boshlanadigan yagona joy (odatda main yoki unga yaqin paket), bu yerda hamma bog'liqliklar yaratiladi va bir-biriga ulanadi. Qolgan kod bog'liqliklarni tayyor holda oladi."
+  course: go
+  lesson: 91
+- term: supervisor
+  aliases: []
+  uz: "Boshqa goroutine'lar ishini kuzatib, ular yiqilsa (panic yoki xato) backoff bilan qayta ishga tushiradigan goroutine. Panic'ni recover qilib, jarayon o'lishining oldini oladi."
+  course: go
+  lesson: 93
+- term: batching
+  aliases: ["batch"]
+  uz: "Ko'p kichik yozuvni bitta guruhga yig'ib, bitta amal bilan (masalan, bitta INSERT) bajarish. Guruh hajmi, vaqt yoki yopilish bo'yicha ishga tushadi."
+  course: go
+  lesson: 94
+- term: reverse proxy
+  aliases: []
+  uz: "Mijoz so'rovini qabul qilib, uni ichki serverga (upstream) yo'naltiradigan va javobni mijozga qaytaradigan server. Go'da net/http/httputil.ReverseProxy shu vazifani bajaradi."
+  course: go
+  lesson: 96
+- term: hop-by-hop
+  aliases: ["hop-by-hop sarlavha"]
+  uz: "Faqat bitta tarmoq ulanishi (hop) uchun mo'ljallangan HTTP sarlavhalar (masalan, Connection). Proxy ularni keyingi tugunga uzatmasligi kerak."
+  course: go
+  lesson: 96
+- term: SKIP LOCKED
+  aliases: ["FOR UPDATE SKIP LOCKED"]
+  uz: "Postgres qatorlarni qulflaganda boshqa tranzaksiya allaqachon qulflagan qatorlarni kutmasdan o'tkazib yuboradigan rejim. Job queue'da worker'lar bir-birini bloklamasdan turli vazifa oladi."
+  course: go
+  lesson: 97
+- term: golden fayl
+  aliases: ["golden file"]
+  uz: "Kutilgan chiqish saqlangan fayl: sinov haqiqiy natijani shu fayl bilan solishtiradi. Generator o'zgarsa, fayl ongli ravishda yangilanadi."
+  course: go
+  lesson: 98
+- term: tool direktivasi
+  aliases: ["tool directive"]
+  uz: "Go 1.24 dan go.mod'dagi direktiva: paketni modulning bog'liqligi sifatida e'lon qiladi va go tool bilan ishga tushirishga imkon beradi. Asbob versiyasi go.mod bilan qotiriladi."
+  course: go
+  lesson: 98
+- term: graceful shutdown
+  aliases: []
+  uz: "Servisni to'xtatishda yangi so'rovlarni qabul qilishni to'xtatib, ishlayotganlarini tugatish. Odatda readiness o'chiriladi, drain kutiladi, keyin http.Server.Shutdown chaqiriladi."
+  course: go
+  lesson: 100

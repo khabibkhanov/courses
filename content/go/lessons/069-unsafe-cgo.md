@@ -38,7 +38,7 @@ quiz:
     options:
       - "C funksiya nomi noto'g'ri"
       - "Struct juda katta"
-      - "C'ga uzatilayotgan Go xotirasi ichida boshqa Go xotirasiga ko'rsatkich bor; cgo qoidasi buni (mahkamlanmagan holda) taqiqlaydi, chunki GC obyektni ko'chirishi yoki yig'ishi mumkin"
+      - "C'ga uzatilayotgan Go xotirasi ichida boshqa Go xotirasiga ko'rsatkich bor; cgo qoidasi buni (mahkamlanmagan holda) taqiqlaydi, chunki Go obyektlari stack ko'chishida joyini o'zgartirishi, GC esa C ko'rsatkichlarini ko'rmasdan yig'ishi mumkin"
       - "Go 1.24 da cgo o'chirilgan"
     answer: 2
     explain: "Runtime cgo chaqiruvida argumentlarni tekshiradi (standart tekshiruv yoqilgan). Go pointer ichidagi Go pointer'ni C'ga o'tkazish taqiqlangan; kerak bo'lsa runtime.Pinner yoki C xotirasi ishlatiladi. Panic'ni shu mashinada ko'rdik."
@@ -196,7 +196,7 @@ Go goroutine'lari kichik, o'sadigan stack'da ishlaydi; C kodi esa katta, o'sib b
 
 ### Go pointer qoidalari
 
-C ga Go xotirasiga ko'rsatkich uzatish mumkin, lekin shu xotira ichida boshqa Go xotirasiga ko'rsatkich bo'lmasligi kerak (mahkamlanmagan holda). Sabab: GC Go obyektlarini ko'chirishi yoki yig'ishi mumkin, C tomoni esa bundan bexabar. Runtime argumentlarni tekshiradi va qoida buzilsa panic beradi. Pastdagi misolda aynan shu panic real chiqishda ko'rinadi. Chiqish yo'llari: C xotirasini (`C.malloc`) ishlatish, ma'lumotni tekis bo'lakka joylash yoki `runtime.Pinner` bilan mahkamlash (bu qoidalar cmd/cgo hujjatida; u bu darsning manbalar ro'yxatida yo'q, shuning uchun tafsilotlarni o'sha hujjatdan o'qing).
+C ga Go xotirasiga ko'rsatkich uzatish mumkin, lekin shu xotira ichida boshqa Go xotirasiga ko'rsatkich bo'lmasligi kerak (mahkamlanmagan holda). Sabab: Go stack o'sganda obyektlar ko'chadi, GC esa C ko'rsatkichlarini ko'rmay obyektni yig'ishi mumkin; C tomoni bundan bexabar. Runtime argumentlarni tekshiradi va qoida buzilsa panic beradi. Pastdagi misolda aynan shu panic real chiqishda ko'rinadi. Chiqish yo'llari: C xotirasini (`C.malloc`) ishlatish, ma'lumotni tekis bo'lakka joylash yoki `runtime.Pinner` bilan mahkamlash (bu qoidalar cmd/cgo hujjatida; u bu darsning manbalar ro'yxatida yo'q, shuning uchun tafsilotlarni o'sha hujjatdan o'qing).
 
 ## Misol: nusxasiz konvertatsiya, qoida buzilishi va cgo narxi
 
