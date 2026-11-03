@@ -105,6 +105,7 @@ def check(name, fn):
     _report(name, ok, err)
 \`;
 let py;
+let flaskReady = false;
 const ready = (async () => {
   py = await loadPyodide({ indexURL: "${PYODIDE}" });
   py.setStdout({ batched: (text) => postMessage({ type: "out", out: { kind: "out", text } }) });
@@ -117,12 +118,14 @@ self.onmessage = async (e) => {
   // Blok - asosiy dastur: if __name__ == "__main__" ishlashi uchun.
   ns.set("__name__", "__main__");
   try {
-    await py.loadPackagesFromImports(e.data.code);
+    // Yuklash xabarlari ("Loading micropip...") o'quvchi natijasiga aralashmasin.
+    const quiet = { messageCallback: () => {} };
+    await py.loadPackagesFromImports(e.data.code, quiet);
     // Pyodide tarkibida yo'q, lekin sof Python paketlar PyPI'dan micropip bilan o'rnatiladi (Flask darslari uchun).
-    const extra = /^\\s*(from|import)\\s+flask\\b/m.test(e.data.code) ? ["flask"] : [];
-    if (extra.length) {
-      await py.loadPackage("micropip");
-      await py.pyimport("micropip").install(extra);
+    if (!flaskReady && /^\\s*(from|import)\\s+flask\\b/m.test(e.data.code)) {
+      await py.loadPackage("micropip", quiet);
+      await py.pyimport("micropip").install(["flask"]);
+      flaskReady = true;
     }
     await py.runPythonAsync(e.data.code, { globals: ns });
     if (e.data.tests) {
