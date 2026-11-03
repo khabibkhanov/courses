@@ -1,0 +1,110 @@
+- term: table-driven test
+  aliases: ["table-driven"]
+  uz: "Bir xil mantiqni turli kirishlar bilan tekshirish uchun nom, kirish va kutilgan natija qatorlari jadvali va har qator uchun t.Run chaqiruvi."
+  course: go
+  lesson: 81
+- term: subtest
+  aliases: []
+  uz: "t.Run bilan ishga tushiriladigan ichki test: mustaqil yiqiladi, nom bo'yicha -run bilan tanlanadi va o'z Cleanup hamda TempDir'iga ega."
+  course: go
+  lesson: 81
+- term: fake
+  aliases: []
+  uz: "Haqiqiy bog'liqlikning ishlaydigan soddalashtirilgan realizatsiyasi (masalan, xotiradagi Store); test chaqiruvlarni emas, natijaviy holatni tekshiradi."
+  course: go
+  lesson: 82
+- term: fuzzing
+  aliases: ["fuzz test"]
+  uz: "Kirishlarni dastur o'zi mutatsiya qilib, kod qamroviga qarab hosil qiladigan test; panic, osilish va xossa buzilishini topadi. Go 1.18 dan go test ichida."
+  course: go
+  lesson: 83
+- term: seed corpus
+  aliases: ["corpus"]
+  uz: "Fuzz test boshlanadigan kirishlar to'plami: f.Add qiymatlari va testdata/fuzz katalogidagi fayllar. Oddiy go test ularni unit test sifatida ishga tushiradi."
+  course: go
+  lesson: 83
+- term: property test
+  aliases: []
+  uz: "Aniq javobni emas, kirishdan mustaqil xossani (round-trip, invariant) ko'p tasodifiy kirishda tekshiradigan test."
+  course: go
+  lesson: 83
+- term: structured logging
+  aliases: []
+  uz: "Log yozuvini erkin matn o'rniga kalit-qiymat atributlari bilan yozish; agregator ularni maydon sifatida qidiradi. Go 1.21 dan log/slog."
+  course: go
+  lesson: 84
+- term: LogValuer
+  aliases: []
+  uz: "LogValue() metodi bilan o'z log ko'rinishini belgilaydigan slog interface'i; maxfiy qiymatni yashirish uchun ishlatiladi."
+  course: go
+  lesson: 84
+- term: kardinallik
+  aliases: []
+  uz: "Metrikadagi noyob label kombinatsiyalari soni; har biri alohida time series bo'lgani uchun cheksiz qiymatli label xotira va narxni portlatadi."
+  course: go
+  lesson: 85
+- term: histogram
+  aliases: []
+  uz: "Kuzatuvlarni oldindan belgilangan kumulyativ bucket'larga yig'adigan Prometheus metrikasi; persentil so'rov vaqtida taxminiy hisoblanadi."
+  course: go
+  lesson: 85
+- term: gauge
+  aliases: []
+  uz: "Ham oshishi, ham kamayishi mumkin bo'lgan metrika: navbat uzunligi, goroutine'lar soni, ochiq ulanishlar."
+  course: go
+  lesson: 85
+- term: time series
+  aliases: []
+  uz: "Bitta metrika nomi va label kombinatsiyasi uchun vaqt bo'yicha saqlanadigan qiymatlar ketma-ketligi."
+  course: go
+  lesson: 85
+- term: context propagation
+  aliases: []
+  uz: "Trace id va joriy span id'ni jarayon ichida (context.Context) va jarayonlar orasida (traceparent sarlavhasi) uzatish; trace shu orqali ulanadi."
+  course: go
+  lesson: 86
+- term: traceparent
+  aliases: []
+  uz: "W3C Trace Context sarlavhasi: versiya, trace id, parent span id va flags (versiya-traceid-spanid-flags)."
+  course: go
+  lesson: 86
+- term: head sampling
+  aliases: []
+  uz: "Trace saqlanadimi yoki yo'qmi, shuni trace boshida hal qilish; arzon, lekin keyin paydo bo'lgan xatoni inobatga olmaydi."
+  course: go
+  lesson: 86
+- term: govulncheck
+  aliases: []
+  uz: "Loyiha yoki binary bo'yicha ma'lum zaifliklarni tekshiradigan Go vositasi; zaif funksiyaga haqiqatan chaqiruv yo'li bormi, shuni tahlil qiladi."
+  course: go
+  lesson: 87
+- term: path traversal
+  aliases: []
+  uz: "Foydalanuvchi bergan yo'lda ../ yoki symlink orqali ruxsat etilgan katalogdan tashqaridagi faylga chiqib ketish hujumi; os.Root bunga qarshi."
+  course: go
+  lesson: 87
+- term: supply chain
+  aliases: []
+  uz: "Dasturga kiradigan tashqi kod va yetkazib berish zanjiri (bog'liqliklar, build, artefakt); go.sum va go mod verify uni himoya qiladi."
+  course: go
+  lesson: 87
+- term: cross-compile
+  aliases: []
+  uz: "Bir platformada boshqa GOOS/GOARCH uchun binary qurish; Go'da cgo ishlatilmasa qo'shimcha toolchain kerak emas."
+  course: go
+  lesson: 89
+- term: ldflags
+  aliases: []
+  uz: "go build'ning linker bayroqlari; -X bilan paket o'zgaruvchisiga versiyani yozish, -s -w bilan simvol va debug ma'lumotini olib tashlash."
+  course: go
+  lesson: 89
+- term: goroutine dump
+  aliases: []
+  uz: "Hamma goroutine'larning joriy stack va holatlari ro'yxati (pprof goroutine?debug=2, SIGQUIT); sizish va bloklanishni topish uchun."
+  course: go
+  lesson: 90
+- term: GOTRACEBACK
+  aliases: []
+  uz: "Panic paytida qaysi goroutine'lar stack trace'i chiqarilishini boshqaradigan muhit o'zgaruvchisi (masalan all)."
+  course: go
+  lesson: 90
