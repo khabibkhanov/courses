@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Hash chiqishi 64 bit bo'lsa, istalgan ikki xabar uchun collision topish uchun taxminan nechta hash hisoblash kerak?",
+      "options": ["2^64", "2^32", "64 · 2 = 128", "2^128"],
+      "answer": 1,
+      "why": "Birthday paradoksi: k ta qiymat orasida taxminan k^2/2 juftlik bor, shuning uchun collision taxminan sqrt(2^64) = 2^32 urinishda topiladi."
+    },
+    {
+      "q": "SHAttered (2017) natijasi nima uchun aynan raqamli imzo va sertifikatlar uchun xavfli?",
+      "options": [
+        "SHA-1 dan parolni teskari hisoblash mumkin bo'lib qoldi",
+        "Imzo hujjat hashiga qo'yiladi: bir xil SHA-1 hashli ikki hujjatdan biriga olingan imzo ikkinchisiga ham to'g'ri keladi",
+        "SHA-1 hashlari endi 160 emas, 80 bitli bo'lib qoldi",
+        "SHA-1 bilan shifrlangan ma'lumotlarni ochish mumkin bo'ldi"
+      ],
+      "answer": 1,
+      "why": "Collision resistance buzilsa, zararsiz hujjatga olingan imzo bir xil hashli zararli hujjatga ko'chiriladi. Preimage (paroldan hash) bu hujumda buzilmagan."
+    },
+    {
+      "q": "Dasturchi API so'rovlarini tag = SHA-256(sir + xabar) bilan himoyalamoqchi. Eng to'g'ri baho qaysi?",
+      "options": [
+        "Xavfsiz, chunki sir hash ichida va uni hashdan tiklab bo'lmaydi",
+        "Xavfsiz emas, chunki SHA-256 buzilgan",
+        "Xavfsiz emas: length extension hujumi bilan sirni bilmasdan uzaytirilgan xabar uchun to'g'ri tag yasash mumkin; HMAC ishlatish kerak",
+        "Xavfsiz, faqat == o'rniga compare_digest ishlatilsa"
+      ],
+      "answer": 2,
+      "why": "Merkle-Damgard tuzilishidagi hash'larda H(sir ‖ m) dan H(sir ‖ m ‖ qo'shimcha) ni hisoblash mumkin. HMAC ikki qatlamli tuzilma bilan buni yopadi."
+    },
+    {
+      "q": "Bitta one-time pad kaliti ikki xabarni shifrlash uchun ishlatildi va hujumchi ikkala shifrni oldi. U nimani bevosita hisoblay oladi?",
+      "options": [
+        "Kalitni, chunki u ikki marta takrorlangan",
+        "Hech narsani, one-time pad mukammal maxfiylik beradi",
+        "Faqat xabarlar uzunligini",
+        "c1 XOR c2 = m1 XOR m2: kalit yo'qoladi, bir xil joylar ko'rinadi, bitta xabar ma'lum bo'lsa ikkinchisi to'liq ochiladi"
+      ],
+      "answer": 3,
+      "why": "Mukammal maxfiylik faqat kalit bir marta ishlatilganda. Ikki marta ishlatilsa, XOR'da kalit qisqarib ketadi."
+    },
+    {
+      "q": "AES-ECB bilan shifrlangan rasmda nega obyekt konturi ko'rinib qoladi?",
+      "options": [
+        "Har 16 baytli blok bir xil kalit bilan alohida shifrlanadi, shuning uchun bir xil ochiq bloklar bir xil shifr bloklarga aylanadi",
+        "AES 128 bitli kalit bilan zaif, 256 bit kerak edi",
+        "ECB rasmning faqat yarmini shifrlaydi",
+        "Rasm sarlavhasi (header) shifrlanmay qoladi"
+      ],
+      "answer": 0,
+      "why": "ECB deterministik va bloklarni bog'lamaydi: naqsh shifr matnda saqlanadi. CTR yoki GCM nonce bilan har blokni har xil qiladi."
+    },
+    {
+      "q": "AES-CTR bilan shifrlangan 'amount=100' xabarida hujumchi kalitni bilmasdan nima qila oladi, AES-GCM esa buni qanday to'xtatadi?",
+      "options": [
+        "Hech narsa: CTR ham, GCM ham bir xil himoya beradi",
+        "Shifr matndagi bitlarni o'zgartirib, ochiq matnni oldindan aytiladigan tarzda o'zgartira oladi; GCM'dagi tag ochishda buni aniqlab InvalidTag beradi",
+        "Kalitni tiklay oladi; GCM uzunroq kalit ishlatadi",
+        "Xabarni o'qiy oladi; GCM uni ikki marta shifrlaydi"
+      ],
+      "answer": 1,
+      "why": "CTR'da ochiq matn = shifr XOR keystream, bit o'zgarishi bevosita o'tadi. AEAD (GCM) 16 baytli tag bilan yaxlitlikni tekshiradi."
+    },
+    {
+      "q": "Diffie-Hellman: p = 23, g = 5, Aziza a = 4, Bekzod b = 3 tanladi. Umumiy sir qancha?",
+      "options": ["5^7 mod 23 = 17", "4 · 3 = 12", "5^12 mod 23 = 18", "4 + 3 = 7"],
+      "answer": 2,
+      "why": "Sir = g^(ab) mod p = 5^12 mod 23. 5^2 = 2 (mod 23), 5^12 = 2^6 = 64 = 18 (mod 23). Tekshiruv: A = 5^4 mod 23 = 4, B = 5^3 mod 23 = 10, 10^4 mod 23 = 18."
+    },
+    {
+      "q": "O'yinchoq RSA: p = 5, q = 11, e = 3. Yopiq daraja d qancha?",
+      "options": ["d = 7", "d = 27", "d = 3", "d = 55"],
+      "answer": 1,
+      "why": "n = 55, φ = 4 · 10 = 40. e · d ≡ 1 (mod 40): 3 · 27 = 81 = 2 · 40 + 1, demak d = 27."
+    },
+    {
+      "q": "TLS 1.3 handshake'dagi CertificateVerify xabari qaysi muammoni hal qiladi?",
+      "options": [
+        "Mijoz va server qaysi TLS versiyasini ishlatishini kelishadi",
+        "Ma'lumotni AES-GCM bilan shifrlash uchun kalit yaratadi",
+        "Sertifikat muddatini uzaytiradi",
+        "Server sertifikatdagi ochiq kalitga mos yopiq kalitga ega ekanini handshake ustidan imzo bilan isbotlaydi va DH'ni o'rtadagi odamdan himoya qiladi"
+      ],
+      "answer": 3,
+      "why": "DH o'zi autentifikatsiya qilmaydi. Sertifikat kalitning yopiq qismisiz hujumchi handshake'ga to'g'ri imzo qo'ya olmaydi."
+    },
+    {
+      "q": "Foydalanuvchi bank xatidagi havola orqali haqiqiy sertifikatli HTTPS saytga kirdi, manzil satrida qulf bor, lekin domen bankniki emas. HTTPS bu holatda nimani kafolatlaydi?",
+      "options": [
+        "Ulanish shifrlangan va u aynan shu (soxta) domen bilan; sayt halol ekanini kafolatlamaydi",
+        "Sayt bank tomonidan tasdiqlangan",
+        "Kiritilgan parol bankka yetib boradi",
+        "Hech narsani, chunki sertifikat soxta bo'lishi shart"
+      ],
+      "answer": 0,
+      "why": "Har qanday domen egasi o'z domeniga haqiqiy sertifikat oladi. HTTPS kanalni himoya qiladi, saytning niyatini emas; phishing'dan passkey himoya qiladi (51-dars)."
+    }
+  ]
+}

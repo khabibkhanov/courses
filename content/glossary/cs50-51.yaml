@@ -1,0 +1,101 @@
+# CS50 51-52-darslar atamalari.
+- term: CIA triadasi
+  aliases: [CIA triad]
+  uz: "Axborot xavfsizligining uch maqsadi: confidentiality (maxfiylik), integrity (yaxlitlik) va availability (mavjudlik). Har bir himoya qaysi maqsadga foyda yoki zarar berishini tahlil qilish uchun ishlatiladi."
+  course: cs50
+  lesson: 51
+- term: tahdid modeli
+  aliases: [threat model, threat modeling]
+  uz: "Nimani, kimdan va qaysi hujumlardan himoya qilishni va bunga qarshi nima qilishni yozib chiqish. OWASP uni to'rt savolga tayantiradi: nima ustida ishlayapmiz, nima noto'g'ri ketishi mumkin, nima qilamiz, yetarlimi."
+  course: cs50
+  lesson: 51
+- term: phishing
+  aliases: []
+  uz: "Soxta xat yoki xabar bilan foydalanuvchini asl saytga o'xshash sahifaga olib borib, parol yoki kodni kiritishga undash. Parol, SMS va TOTP kodlari phishing'dan himoya qilmaydi, passkey esa himoya qiladi."
+  course: cs50
+  lesson: 51
+- term: credential stuffing
+  aliases: []
+  uz: "Boshqa saytdan sizib chiqqan login va parol juftliklarini ommaviy sinab ko'rish hujumi; bitta parolni ko'p saytda ishlatishdan foydalanadi. Himoya - har saytga noyob parol va MFA."
+  course: cs50
+  lesson: 51
+- term: entropiya
+  aliases: [parol entropiyasi]
+  uz: "Tasodifiy tanlangan parol yoki kalitning kuchi bitlarda: N ta belgidan L uzunlikda tanlansa H = L · log2(N). Har qo'shimcha bit hujumni ikki baravar qimmatlashtiradi."
+  course: cs50
+  lesson: 51
+- term: MFA
+  aliases: [2FA, multi-factor authentication]
+  uz: "Ko'p faktorli autentifikatsiya: kamida ikki turli faktorni (bilgan, bor yoki o'zingiz) talab qilish. Ikki faktorli holat 2FA deyiladi."
+  course: cs50
+  lesson: 51
+- term: TOTP
+  aliases: [HOTP, Time-based One-Time Password]
+  uz: "Umumiy sir va joriy vaqtdan HMAC orqali hisoblanadigan, odatda har 30 sekundda almashadigan bir martalik kod (RFC 6238). TOTP = HOTP(sir, vaqt / 30)."
+  course: cs50
+  lesson: 51
+- term: SIM swap
+  aliases: []
+  uz: "Hujumchi mobil operatorni aldab, qurbonning telefon raqamini o'z SIM kartasiga o'tkazadi va SMS kodlarni oladi. SMS ikkinchi faktor sifatida shu sababli zaif."
+  course: cs50
+  lesson: 51
+- term: passkey
+  aliases: [passkeys, WebAuthn]
+  uz: "Har sayt uchun qurilmada yaratiladigan kalit juftligiga asoslangan parolsiz kirish: server ochiq kalitni saqlaydi, qurilma challenge'ni yopiq kalit bilan imzolaydi. Imzo origin va domenga bog'langani uchun phishing'ga chidamli; brauzer API'si WebAuthn."
+  course: cs50
+  lesson: 51
+- term: rate limiting
+  aliases: [account lockout]
+  uz: "Vaqt birligida yoki ketma-ket ruxsat etilgan urinishlar sonini cheklash; account lockout - chegaradan keyin akkaunt yoki autentifikatorni bloklash. NIST: ketma-ket 100 xatodan ko'p emas."
+  course: cs50
+  lesson: 51
+- term: birthday paradoksi
+  aliases: [birthday attack]
+  uz: "N ta mumkin bo'lgan qiymatda tasodifiy tanlovlar orasida takror taxminan sqrt(N) urinishda paydo bo'ladi. Shuning uchun n bitli hash uchun collision topish narxi 2^(n/2)."
+  course: cs50
+  lesson: 52
+- term: HMAC
+  aliases: [message authentication code]
+  uz: "Kalitli hash (RFC 2104): xabar yaxlitligi va uni kalitni biladigan tomon yuborganini tasdiqlaydi. H(sir + xabar) dagi length extension zaifligi yo'q."
+  course: cs50
+  lesson: 52
+- term: one-time pad
+  aliases: []
+  uz: "Xabardek uzun, haqiqatan tasodifiy va faqat bir marta ishlatiladigan kalit bilan XOR shifrlash. Nazariy jihatdan mukammal maxfiy, lekin kalitni yetkazish amalda deyarli imkonsiz; qayta ishlatilsa buziladi."
+  course: cs50
+  lesson: 52
+- term: AES
+  aliases: [Advanced Encryption Standard]
+  uz: "Zamonaviy standart simmetrik blok shifr (FIPS 197): 128 bitli blok, 128, 192 yoki 256 bitli kalit. Uzun xabar uchun rejim (GCM) bilan ishlatiladi."
+  course: cs50
+  lesson: 52
+- term: AEAD
+  aliases: [authenticated encryption, GCM]
+  uz: "Shifrlash va autentifikatsiyani birga beradigan sxema: shifr matn yoki bog'liq ma'lumot o'zgartirilsa, ochish rad etiladi. Eng keng tarqalgani AES-GCM; nonce takrorlanmasligi shart."
+  course: cs50
+  lesson: 52
+- term: Diffie-Hellman
+  aliases: [DH, ECDH]
+  uz: "Ochiq kanal orqali umumiy sir kelishish: tomonlar g^a va g^b mod p ni almashadi, ikkalasi g^(ab) mod p ni hisoblaydi. Diskret logarifm qiyinligiga tayanadi, autentifikatsiyasiz o'rtadagi odamga zaif."
+  course: cs50
+  lesson: 52
+- term: RSA
+  aliases: []
+  uz: "Ochiq kalitli kriptotizim: n = p · q, e · d ≡ 1 (mod φ); shifrlash m^e mod n, imzo h^d mod n. Xavfsizligi katta sonni tub ko'paytuvchilarga ajratish qiyinligiga tayanadi."
+  course: cs50
+  lesson: 52
+- term: raqamli imzo
+  aliases: [digital signature]
+  uz: "Yopiq kalit bilan xabar hashiga qo'yilgan qiymat; ochiq kalit bilan har kim tekshiradi, lekin yasay olmaydi. Yaxlitlik, kelib chiqish va inkor qilib bo'lmaslikni beradi."
+  course: cs50
+  lesson: 52
+- term: CA
+  aliases: [Certificate Authority, sertifikat markazi]
+  uz: "Ochiq kalit ma'lum domenga tegishli ekanini tasdiqlab, sertifikatga imzo qo'yadigan tashkilot. Brauzer sertifikat zanjirini o'zidagi ildiz CA'gacha tekshiradi."
+  course: cs50
+  lesson: 52
+- term: TLS
+  aliases: [Transport Layer Security]
+  uz: "HTTPS ichidagi himoya protokoli: kalit kelishish, sertifikat bilan server autentifikatsiyasi va AEAD shifrlash. Joriy versiya TLS 1.3 (RFC 8446, yangilangan matni RFC 9846)."
+  course: cs50
+  lesson: 52

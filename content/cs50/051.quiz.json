@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Sayt brute force'ga qarshi 'ketma-ket 5 xatodan keyin akkaunt butunlay bloklanadi' qoidasini qo'ydi. Foydalanuvchi nomlari ochiq. CIA nuqtai nazaridan asosiy yangi xavf qaysi?",
+      "options": [
+        "Maxfiylik buziladi: bloklash xabari parolni oshkor qiladi",
+        "Yaxlitlik buziladi: bloklangan akkaunt ma'lumotlari o'zgaradi",
+        "Mavjudlik buziladi: har kim istalgan foydalanuvchini 5 ta xato urinish bilan tizimdan chiqarib qo'ya oladi",
+        "Hech qanday yangi xavf yo'q, bu NIST tavsiya qilgan aniq qiymat"
+      ],
+      "answer": 2,
+      "why": "Butunlay bloklovchi lockout hujumchiga xizmatni to'xtatish quroli beradi (Availability). Eksponensial kechikish va IP bo'yicha chegaralar yaxshiroq."
+    },
+    {
+      "q": "Parol 94 ta bosiladigan ASCII belgidan tasodifiy tanlangan va 10 belgidan iborat. Uning entropiyasi taxminan qancha?",
+      "options": [
+        "65,5 bit",
+        "94 bit",
+        "47 bit",
+        "6,55 bit"
+      ],
+      "answer": 0,
+      "why": "H = L · log2(N) = 10 · log2(94) = 10 · 6,55 = 65,5 bit."
+    },
+    {
+      "q": "Qaysi o'zgarish tasodifiy parolni ko'proq kuchaytiradi: 8 belgili kichik harfli parolga (26 belgi) alifboni 94 belgiga kengaytirish yoki uzunlikni 12 belgiga oshirish (alifbo 26 bo'lib qoladi)?",
+      "options": [
+        "Alifboni kengaytirish: 8 · 6,55 = 52,4 bit",
+        "Ikkalasi bir xil, chunki ikkalasida 4 ta belgi turi qo'shiladi",
+        "Uzunlikni oshirish: 12 · 4,70 = 56,4 bit, alifbo esa 52,4 bit beradi",
+        "Hech biri, entropiya faqat maxsus belgilarga bog'liq"
+      ],
+      "answer": 2,
+      "why": "Uzunlik har belgida butun log2(N) bitni qo'shadi: 56,4 bit 52,4 bitdan 16 marta kuchliroq. Shuning uchun NIST uzunlikni talab qiladi, murakkablikni emas."
+    },
+    {
+      "q": "NIST SP 800-63B-4 (2025) bo'yicha qaysi talab TO'G'RI?",
+      "options": [
+        "Parolda kamida bitta katta harf, raqam va maxsus belgi bo'lishi shart",
+        "Parol har 90 kunda almashtirilishi shart",
+        "Parolni maydonga paste qilishni bloklash kerak, chunki bu xavfli",
+        "Yagona faktor sifatida ishlatiladigan parol kamida 15 belgi, va u keng tarqalgan yoki buzilgan parollar blocklist'i bilan tekshiriladi"
+      ],
+      "answer": 3,
+      "why": "SP 800-63B-4 murakkablik qoidalari va davriy almashtirishni taqiqlaydi, paste'ga ruxsat berishni tavsiya qiladi; uzunlik (15, MFA bilan 8) va blocklist talab qilinadi."
+    },
+    {
+      "q": "Hujumchi bitta sizib chiqqan bazadagi 1 million email:parol juftligini boshqa saytning login sahifasida sinab ko'ryapti. Bu qaysi hujum va eng samarali himoya nima?",
+      "options": [
+        "Credential stuffing; har saytga noyob parol (parol menejeri) va MFA",
+        "Password spraying; parolga murakkablik qoidasi qo'shish",
+        "Brute force; parolni 90 kunda almashtirish",
+        "Phishing; HTTPS sertifikatini yangilash"
+      ],
+      "answer": 0,
+      "why": "Credential stuffing parollarni qayta ishlatishdan foydalanadi. Noyob parollar uni butunlay yopadi, MFA esa to'g'ri parol bilan ham kirishni to'xtatadi."
+    },
+    {
+      "q": "TOTP'da server soat farqi uchun joriy, oldingi va keyingi qadam kodlarini qabul qiladi (6 raqam). Ketma-ket 100 xatodan keyin autentifikator o'chiriladi. Hujumchining tasodifiy taxminlar bilan topish ehtimoli qancha?",
+      "options": [
+        "100 / 10^6 = 0,01%",
+        "100 · 3 / 10^6 = 0,03%",
+        "3 / 10^6 = 0,0003%",
+        "1 / 3 = 33%"
+      ],
+      "answer": 1,
+      "why": "Har urinishda 10^6 dan 3 ta kod to'g'ri; 100 urinishda ehtimol taxminan 100 · 3 / 10^6 = 0,0003, ya'ni 0,03%."
+    },
+    {
+      "q": "TOTP kodi nima uchun real vaqtdagi phishing'dan (reverse proxy) himoya qilmaydi, passkey esa qiladi?",
+      "options": [
+        "TOTP SHA-1 ishlatadi, SHA-1 esa buzilgan",
+        "TOTP kodi qaysi saytga kiritilayotganiga bog'lanmagan: foydalanuvchi uni soxta sahifaga yozadi va u asl saytga uzatiladi; passkey imzosi esa brauzer yozgan origin va RP ID'ga bog'langan",
+        "TOTP kodi 30 sekund yashaydi, passkey esa umrbod",
+        "Passkey biometrikani serverga yuboradi va server yuzni tekshiradi"
+      ],
+      "answer": 1,
+      "why": "Qayta ishlatiladigan qiymat (kod) kimga berilsa, u ishlatadi. Passkey'da imzoga origin va rpIdHash kiradi, soxta domen uchun esa kalit umuman yo'q."
+    },
+    {
+      "q": "Passkey ishlatadigan saytning foydalanuvchilar bazasi to'liq o'g'irlandi. Hujumchi nima oladi?",
+      "options": [
+        "Faqat ochiq kalitlar: ular bilan imzoni tekshirish mumkin, lekin kirish uchun imzo yaratib bo'lmaydi",
+        "Barmoq izlari shablonlari",
+        "Barcha yopiq kalitlar, ular bilan har qanday foydalanuvchi sifatida kira oladi",
+        "Sekin hash bilan saqlangan parollar, ularni offline buzish mumkin"
+      ],
+      "answer": 0,
+      "why": "Yopiq kalit qurilmadan chiqmaydi, biometrika faqat qurilmada kalitni ochadi. Serverda faqat ochiq kalit bor va u sir emas."
+    },
+    {
+      "q": "Foydalanuvchining parolini bilgan hujumchi telefoniga ketma-ket 30 ta 'Kirishni tasdiqlaysizmi?' bildirishnomasini yuboryapti. Bu qanday hujum va OWASP qanday himoyani tavsiya qiladi?",
+      "options": [
+        "SIM swap; operatorda PIN o'rnatish",
+        "MFA fatigue (push bombing); number matching va push sonini cheklash",
+        "Credential stuffing; parolni almashtirish",
+        "Replay hujumi; TOTP oynasini kengaytirish"
+      ],
+      "answer": 1,
+      "why": "MFA fatigue foydalanuvchini charchatib, ko'r-ko'rona tasdiqlashga undaydi. Number matching tasdiqni ekrandagi raqamga bog'laydi, cheklov esa so'rovlar oqimini to'xtatadi."
+    },
+    {
+      "q": "TOTP tekshiruvini yozgan dasturchi kodni int ga aylantirib, str(code) ni foydalanuvchi kiritgani bilan == orqali solishtiradi. Qaysi ikki muammo bor?",
+      "options": [
+        "Boshidagi nollar yo'qoladi (07081804 -> 7081804) va == solishtirish vaqti mos kelgan belgilar soniga bog'liq bo'lishi mumkin",
+        "int juda kichik tip, 6 xonali son sig'maydi",
+        "== Python'da satrlarni solishtira olmaydi",
+        "Muammo yo'q, faqat sekinroq ishlaydi"
+      ],
+      "answer": 0,
+      "why": "Kod satr sifatida, zfill bilan kerakli uzunlikda saqlanishi va sirlar kabi hmac.compare_digest bilan solishtirilishi kerak (50-darsdagi timing attack)."
+    }
+  ]
+}
