@@ -436,7 +436,7 @@ Tahlil:
 
 ## Xulosa
 
-- `iter.Seq[V]` va `iter.Seq2[K, V]` — `yield` callback'ini chaqiradigan funksiya tiplari; Go 1.23 dan `for ... range` ularni to'g'ridan-to'g'ri qabul qiladi.
+- `iter.Seq[V]` va `iter.Seq2[K, V]`: `yield` callback'ini chaqiradigan funksiya tiplari; Go 1.23 dan `for ... range` ularni to'g'ridan-to'g'ri qabul qiladi.
 - `yield` `false` qaytarsa iterator darhol to'xtashi va boshqa `yield` chaqirmasligi shart; buzilsa run-time panic, kompilyator buni ushlamaydi.
 - Resurs tozalash iterator ichida `defer` bilan yoziladi: `break` va `return` holatlarida ham ishlaydi.
 - `iter.Pull` pull iterator beradi; `stop`ni chaqirish (odatda `defer stop()`) majburiy, va u bir goroutine uchun.

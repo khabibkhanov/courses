@@ -1,0 +1,145 @@
+- term: goroutine
+  aliases: []
+  uz: "Go runtime boshqaradigan yengil bajarilish oqimi. go kalit so'zi bilan ishga tushadi, kichik stack bilan boshlanadi va OS thread'iga bog'lanmagan; dastur main qaytganda ularni kutmay tugaydi."
+  course: go
+  lesson: 41
+- term: goroutine leak
+  aliases: ["goroutine sizishi"]
+  uz: "Goroutine hech qachon tugamaydigan holatda qolishi (odatda kanalda bloklanib). Goroutine'lar GC qilinmaydi, shuning uchun sizib chiqqan goroutine stack va unga bog'langan xotirani abadiy ushlab turadi."
+  course: go
+  lesson: 41
+- term: buferlanmagan kanal
+  aliases: ["unbuffered channel"]
+  uz: "Sig'imi 0 bo'lgan kanal: yuborish qabul qiluvchi tayyor bo'lguncha bloklanadi. Yuborish va qabul qilish bir vaqtda uchrashadi, shuning uchun u sinxronlash vositasi ham."
+  course: go
+  lesson: 42
+- term: buferli kanal
+  aliases: ["buffered channel"]
+  uz: "Sig'imi noldan katta bo'lgan kanal: bufer to'lmaguncha yuborish bloklanmaydi, bufer bo'sh bo'lmaguncha qabul qilish ham. Sig'im navbat uzunligi va backpressure darajasini belgilaydi."
+  course: go
+  lesson: 42
+- term: nil kanal
+  aliases: ["nil channel"]
+  uz: "Qiymati nil bo'lgan kanal: unga yuborish va undan qabul qilish abadiy bloklanadi. select ichida holatni o'chirib qo'yish uchun foydali (masalan, tugagan manbani merge'dan chiqarish)."
+  course: go
+  lesson: 42
+- term: happens-before
+  aliases: ["happens before"]
+  uz: "Go xotira modelidagi qisman tartib: A hodisa B dan oldin sodir bo'lsa, B A ning yozuvlarini ko'rishi kafolatlanadi. Kanal, mutex, WaitGroup va atomic amallar shu munosabatni yaratadi."
+  course: go
+  lesson: 43
+- term: data race
+  aliases: ["data race'lar"]
+  uz: "Ikki goroutine bir xotira joyiga sinxronlashsiz kiradi va kamida bittasi yozadi. Go xotira modelida bunday dastur kafolatsiz: natija tasodifiy yoki buzilgan bo'lishi mumkin."
+  course: go
+  lesson: 43
+- term: DRF-SC
+  aliases: ["data-race-free sequential consistency"]
+  uz: "Go xotira modelining va'dasi: data race'siz dastur ketma-ket izchil (sequentially consistent) bajarilganday ishlaydi. Race bo'lsa, bu kafolat yo'qoladi."
+  course: go
+  lesson: 43
+- term: race detector
+  aliases: []
+  uz: "go test, run va build uchun -race bayrog'i bilan yoqiladigan vosita. U bajarilgan kod yo'llarida happens-before bo'lmagan kirishlarni topadi; xotira va vaqtni sezilarli oshiradi."
+  course: go
+  lesson: 43
+- term: mutex
+  aliases: ["sync.Mutex"]
+  uz: "O'zaro chiqarib tashlash qulfi: bir vaqtda faqat bitta goroutine kritik qismga kiradi. Ishlatilgandan keyin nusxalanmasligi kerak; Unlock'ni odatda defer bilan chaqiriladi."
+  course: go
+  lesson: 44
+- term: RWMutex
+  aliases: ["sync.RWMutex"]
+  uz: "O'qish va yozish qulfi: bir nechta o'quvchi bir vaqtda, yozuvchi esa yolg'iz kiradi. Kutayotgan Lock yangi RLock'larni to'sadi, shuning uchun rekursiv o'qish qulfi deadlock keltirishi mumkin."
+  course: go
+  lesson: 44
+- term: contention
+  aliases: ["qulf raqobati"]
+  uz: "Ko'p goroutine bir qulfni olishga urinishi: ular kutib turadi va parallellik pasayadi. Qulf ichidagi ish qisqartirilsa yoki holat bo'laklansa (shard) raqobat kamayadi."
+  course: go
+  lesson: 44
+- term: deadlock
+  aliases: ["deadlock'lar"]
+  uz: "Goroutine'lar bir-birini abadiy kutib qolishi: hech biri davom eta olmaydi. Go runtime hamma goroutine bloklanganini aniqlasa dasturni fatal xato bilan tugatadi, qisman deadlock esa jim qoladi."
+  course: go
+  lesson: 44
+- term: WaitGroup
+  aliases: ["sync.WaitGroup"]
+  uz: "Bir guruh goroutine tugashini kutish uchun hisoblagich: Add hisobni oshiradi, Done kamaytiradi, Wait nolga yetguncha bloklaydi. Add goroutine ishga tushishidan oldin chaqirilishi shart."
+  course: go
+  lesson: 45
+- term: sync.Once
+  aliases: []
+  uz: "Funksiyani butun umr davomida aynan bir marta bajarishni kafolatlaydi, hatto parallel chaqiruvlarda ham. Do ichida yana shu Once'ning Do'sini chaqirish deadlock beradi."
+  course: go
+  lesson: 45
+- term: sync.Cond
+  aliases: []
+  uz: "Shart o'zgarishini kutish va xabar berish primitivi, qulf bilan birga ishlaydi. Wait doim shartni tekshiruvchi tsikl ichida chaqiriladi; ko'p holda kanal soddaroq."
+  course: go
+  lesson: 45
+- term: sync.Pool
+  aliases: []
+  uz: "Vaqtinchalik obyektlarni qayta ishlatish uchun havza: ajratishlarni kamaytiradi. Elementlar istalgan paytda olib tashlanishi mumkin, shuning uchun u kesh yoki resurslar ro'yxati emas."
+  course: go
+  lesson: 45
+- term: compare-and-swap
+  aliases: ["CAS"]
+  uz: "Atomic amal: qiymat kutilgan bilan teng bo'lsagina uni yangisiga almashtiradi va natijani qaytaradi. Tsikl ichida qayta urinish (CAS loop) lock-free yangilashning asosi."
+  course: go
+  lesson: 46
+- term: lock-free
+  aliases: ["lock-free algoritm"]
+  uz: "Qulfsiz, atomic amallarga tayanadigan yondashuv: bir goroutine to'xtasa ham boshqalar davom etadi. Murakkab, ko'p o'zgaruvchili invariantlar uchun odatda mutex ishonchliroq."
+  course: go
+  lesson: 46
+- term: ABA problem
+  aliases: ["ABA"]
+  uz: "CAS qiymat A dan B ga va yana A ga qaytganini sezmaydigan holat: qiymat o'zgarmagandek ko'rinadi, aslida holat o'zgargan. Versiya hisoblagichi yoki o'zgarmas snapshot bilan yengiladi."
+  course: go
+  lesson: 46
+- term: pipeline
+  aliases: ["pipeline'lar"]
+  uz: "Kanallar bilan bog'langan bosqichlar qatori: har bosqich kiruvchi kanaldan o'qiydi, ishlov beradi va natijani chiquvchi kanalga yozadi. Bosqichlar parallel ishlaydi."
+  course: go
+  lesson: 47
+- term: fan-in
+  aliases: []
+  uz: "Bir nechta kanaldan o'qib, hammasi yopilgandagina yopiladigan bitta kanalga birlashtirish. Odatda har manba uchun goroutine va WaitGroup bilan yopuvchi goroutine ishlatiladi."
+  course: go
+  lesson: 47
+- term: errgroup
+  aliases: ["errgroup.Group"]
+  uz: "golang.org/x/sync paketi: goroutine guruhi, birinchi xatoni qaytaradi va WithContext bilan qolganlarini bekor qiladi. SetLimit parallellikni cheklaydi."
+  course: go
+  lesson: 48
+- term: singleflight
+  aliases: []
+  uz: "golang.org/x/sync paketi: bir kalit uchun bir vaqtdagi chaqiruvlarni bittaga birlashtiradi, kutganlar bir xil natija va xatoni oladi. Kesh emas, faqat uchib yurgan chaqiruvlarni birlashtiradi."
+  course: go
+  lesson: 48
+- term: weighted semaphore
+  aliases: ["vaznli semafor", "semaphore"]
+  uz: "Umumiy sig'imi n birlik bo'lgan semafor: Acquire(ctx, k) k birlik oladi, Release qaytaradi. Har vazifa turli og'irlikdagi resurs talab qila oladi; Acquire ctx bilan bekor qilinadi."
+  course: go
+  lesson: 48
+- term: worker pool
+  aliases: ["worker pool'lar"]
+  uz: "Oldindan belgilangan sondagi goroutine umumiy ish kanalidan ish oladi. Parallellik ish hajmiga emas, ishchilar soniga bog'liq; navbat o'lchami backpressure xatti-harakatini belgilaydi."
+  course: go
+  lesson: 49
+- term: bubble
+  aliases: ["synctest bubble"]
+  uz: "testing/synctest ichida ajratilgan muhit: unda yaratilgan goroutine'lar o'z soxta soatiga ega. Hamma goroutine durably blocked bo'lganda soat keyingi uyg'otish momentiga sakraydi."
+  course: go
+  lesson: 50
+- term: soxta soat
+  aliases: ["fake clock"]
+  uz: "Haqiqiy vaqtni almashtiradigan, test boshqaradigan soat (inyeksiya qilingan now funksiyasi yoki synctest bubble'i). Testlarni Sleep siz, tez va deterministik qiladi."
+  course: go
+  lesson: 50
+- term: flaky test
+  aliases: ["flaky"]
+  uz: "Kod o'zgarmasa ham ba'zan o'tadigan, ba'zan yiqiladigan test. Concurrent kodda sabablari: time.Sleep bilan kutish, sinxronlanmagan natija, umumiy holat, data race."
+  course: go
+  lesson: 50
