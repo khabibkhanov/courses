@@ -219,7 +219,7 @@ Maydon tipi `float64` bo'lsa, `{}` va `{"fuel":0}` bir xil ko'rinadi. Farq muhim
 
 ### Xato formati: problem+json
 
-Mijoz xatoni mashina o'qiy oladigan shaklda olishi kerak. RFC 9457 ("Problem Details for HTTP APIs") `application/problem+json` formatini belgilaydi: `type`, `title`, `status`, `detail` va kengaytma maydonlari. Misolda kengaytma sifatida `errors` ro'yxati bor (maydon nomi va xabar). Bu RFC darsning manbalar ro'yxatida emas, shuning uchun uning aniq matniga emas, keng qo'llaniladigan shakliga tayanamiz.
+Mijoz xatoni mashina o'qiy oladigan shaklda olishi kerak. RFC 9457 ("Problem Details for HTTP APIs") `application/problem+json` formatini belgilaydi: `type`, `title`, `status`, `detail` va kengaytma maydonlari. Misolda kengaytma sifatida `errors` ro'yxati bor (maydon nomi va xabar). RFC 9457 o'zi ham "errors" kengaytmasini validatsiya xatolari misoli sifatida keltiradi (rfc-editor.org/rfc/rfc9457, Extension Members bo'limi). Bu RFC darsning manbalar ro'yxatida yo'q, shuning uchun uning aniq matniga emas, keng qo'llaniladigan shakliga tayanamiz.
 
 Status kodlari (bu jamoa kelishuvi, qat'iy qoida emas): 400 sintaksis va tur xatolari, 413 juda katta tana, 415 noto'g'ri `Content-Type`, 422 validatsiya xatolari (sintaksis to'g'ri, mazmun noto'g'ri). Ba'zi jamoalar 422 o'rniga 400 ishlatadi; muhimi bir xillik.
 

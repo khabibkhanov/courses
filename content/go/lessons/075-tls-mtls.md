@@ -269,7 +269,7 @@ Qisqa muddatli sertifikat xavfsizlikni oshiradi, lekin yangilash jarayonini avto
 
 ### Go nimani tekshirmaydi
 
-- `crypto/tls` default tekshiruvi sertifikat bekor qilinganini (CRL, OCSP) tekshirmaydi. Bu kerak bo'lsa, `VerifyConnection` yoki `VerifyPeerCertificate` callback'larida o'zingiz qo'shasiz, yoki qisqa muddatli sertifikatlarga o'tasiz.
+- `crypto/tls` default tekshiruvi `x509.Certificate.Verify` ga tayanadi, uning hujjati ogohlantiradi: "this function doesn't do any revocation checking" (crypto/x509 hujjati). Ya'ni sertifikat bekor qilinganini (CRL, OCSP) tekshirilmaydi; `crypto/tls` faqat staple qilingan OCSP javobini ochib beradi (`ConnectionState.OCSPResponse`). Bu kerak bo'lsa, `VerifyConnection` yoki `VerifyPeerCertificate` callback'larida o'zingiz qo'shasiz, yoki qisqa muddatli sertifikatlarga o'tasiz.
 - Go 1.21 release notes: server tiklangan (resumed) ulanishlarda klient sertifikatini qayta tekshirmaydi, `Config.VerifyPeerCertificate` ham chaqirilmaydi, faqat muddat tekshiriladi. Ya'ni bekor qilingan sertifikat ticket muddati tugaguncha ishlashda davom etishi mumkin. Bekor qilish tezligi muhim bo'lsa, ticket'larni o'chirish, qisqa ticket muddati yoki qisqa muddatli sertifikatlar tanlanadi.
 
 ### Default versiyalar va xavfsizlik o'zgarishlari

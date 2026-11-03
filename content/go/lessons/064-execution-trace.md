@@ -302,7 +302,7 @@ Topshiriqda task, region va `Stop` tartibini mustahkamlaysiz.
 
 - Agregat savollar uchun trace emas, profil. "Qaysi funksiya CPU'ning 30% ini yeydi?" savoliga CPU profil javob beradi. Trace hajmi katta, o'qish vaqt oladi.
 - Trace'ni doim yoqib, butun hajmini yozmang. Hajm tez o'sadi; uzluksiz kerak bo'lsa, flight recorder yoki qisqa oynali namuna.
-- Flight recorder xotira sarfini oshiradi: oyna hajmi (`MaxBytes`) shu xotirani egallaydi. Go 1.25 da bu overhead'ni o'z yuklamangizda o'lchamasdan production'ga qo'ymang. Blog bu sonlarni bermaydi, shuning uchun men ham uydirmayman.
+- Flight recorder xotira sarfini oshiradi: oyna hajmi (`MaxBytes`) shu xotirani egallaydi. Go 1.25 da bu overhead'ni o'z yuklamangizda o'lchamasdan production'ga qo'ymang. Blog CPU overhead raqamini bermaydi, shuning uchun men ham uydirmayman; u faqat hajm bo'yicha taxminiy o'lchovni keltiradi (trace odatda soniyasiga bir necha MB, band servis uchun taxminan 10 MB/s) va `MinAge` ni kerakli hodisa oynasidan taxminan 2 baravar katta qo'yishni tavsiya qiladi. Shu hajmda yuqoridagi misolning `MaxBytes: 3 << 20` qiymati band servisda `MinAge: 5s` dan oldin to'lib, oynani taxminan 1 soniyagacha qisqartirishi mumkin (MaxBytes ustun).
 - `go tool trace` butun trace'ni xotiraga yuklaydi (blog 1.22 dan keyin ham shunday ekanini yozadi): katta trace uchun RAM zahirasi kerak va brauzer sekinlashadi.
 - Trace'da maxfiy ma'lumot bo'lishi mumkin (`trace.Log` xabarlari, region nomlari). Foydalanuvchi ma'lumotini Log'ga yozmang, trace fayllarini oshkor qilmang.
 - Trace goroutine darajasini ko'rsatadi, mikro-optimizatsiya uchun emas (cache miss, allocation tafsilotlari uchun benchmark va profil kerak).
