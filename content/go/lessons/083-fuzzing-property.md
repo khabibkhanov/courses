@@ -570,7 +570,7 @@ func Truncate(s string, n int) string {
 }
 ```
 
-Tuzatishdan keyin saqlangan kirish seed kabi o'tadi, 8 soniyalik yangi fuzz sessiyasi yiqilishsiz tugadi (`PASS`). Bu yerda `n` indekslash xavfsizligi uchun `len(s) > n` shartiga tayanadi; `n == 0` holati ham `for` sharti bilan himoyalangan.
+Tuzatishdan keyin saqlangan kirish seed kabi o'tadi, 8 soniyalik yangi fuzz sessiyasi yiqilishsiz tugadi (`PASS`). Bu yerda `n` indekslash xavfsizligi uchun `len(s) > n` shartiga tayanadi; `n == 0` holati ham `for` sharti bilan himoyalangan. `n < 0` da funksiya panic beradi (`s[:n]`); fuzz xossasi bunday kirishni `t.Skip()` bilan chiqarib tashlagani uchun uni ushlamaydi, shuning uchun chaqiruvchi `n >= 0` ni kafolatlashi kerak.
 
 ### Fuzz hujjatining qo'shimcha qoidalari
 
@@ -579,7 +579,7 @@ go.dev/doc/security/fuzz hujjatidan tekshirilgan tafsilotlar:
 - `-fuzztime` default cheksiz: tushuntirmasangiz fuzz yiqilgan kirish topilguncha yoki to'xtatilguncha ishlaydi. CI'da doim `-fuzztime` bering.
 - Yiqilgan kirishni engine qisqartiradi (minimization); `-fuzzminimizetime` default 60 soniya va `-fuzzminimizetime 0` bilan butunlay o'chiriladi. Sekin fuzz funksiyasida minimization CI vaqtini yeb qo'yishi mumkin.
 - `-parallel` default `$GOMAXPROCS`: fuzz ishchilari soni. Konteynerda cheklangan CPU bilan bu raqam kutilganidan boshqacha bo'lishi mumkin.
-- Coverage instrumentation hozircha faqat AMD64 va ARM64 da; hujjatga ko'ra boshqa platformada corpus mazmunli o'smaydi. Boshqa arxitekturada fuzz ishga tushirish foydasiz.
+- Coverage instrumentation hozircha faqat AMD64 va ARM64 da; hujjatga ko'ra boshqa platformada corpus mazmunli o'smaydi. Boshqa arxitekturada fuzz ishga tushirish kam foyda beradi.
 - Har fuzz testda aynan bitta fuzz target (`f.Fuzz`) bo'lishi shart; seed corpus yozuvlari va `testdata/fuzz` fayllari tiplari fuzz argumentlari bilan bir xil va bir xil tartibda bo'lishi kerak. `f.Add` ga noto'g'ri sondagi qiymat berilsa, `go test` bu xatoni kompilyatsiya/vet bosqichida ushlaydi: `wrong number of values in call to (*testing.F).Add: 1, fuzz target expects 2` (sinaldi, Go 1.24.7; testlar umuman ishga tushmaydi).
 
 ## Qachon qo'llamaslik kerak
