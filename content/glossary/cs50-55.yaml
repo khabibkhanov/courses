@@ -1,0 +1,111 @@
+# CS50 55-56-darslar atamalari.
+- term: til modeli
+  aliases: [language model]
+  uz: "Matn bo'lagidan keyin qaysi token kelishi ehtimolini beradigan model. Matn hosil qilish - tanlangan tokenni kontekstga qo'shib, bashoratni takrorlash."
+  course: cs50
+  lesson: 55
+- term: bigram
+  aliases: []
+  uz: "Faqat bitta oldingi so'zga qarab keyingi so'z ehtimolini beradigan eng oddiy til modeli; ehtimollar juftliklarni sanash bilan topiladi."
+  course: cs50
+  lesson: 55
+- term: tokenizatsiya
+  aliases: [tokenizer]
+  uz: "Matnni model lug'atidagi bo'laklarga (token: so'z, so'z qismi, belgi yoki bayt) ajratish. Narx, tezlik va kontekst chegarasi tokenlarda o'lchanadi."
+  course: cs50
+  lesson: 55
+- term: BPE
+  aliases: [byte pair encoding]
+  uz: "Eng ko'p uchraydigan qo'shni belgilar juftligini qayta-qayta bitta yangi belgiga birlashtirib, so'z bo'laklari lug'atini quradigan algoritm."
+  course: cs50
+  lesson: 55
+- term: embedding
+  aliases: [embeddinglar]
+  uz: "Token yoki matnni ifodalovchi sonlar vektori; o'xshash ma'noli so'zlarning vektorlari bir-biriga yaqin bo'ladi."
+  course: cs50
+  lesson: 55
+- term: kosinus o'xshashlik
+  aliases: [cosine similarity]
+  uz: "Ikki vektor yo'nalishlari qanchalik mosligini o'lchaydi: skalyar ko'paytmani uzunliklar ko'paytmasiga bo'lish, natija -1 dan 1 gacha."
+  course: cs50
+  lesson: 55
+- term: transformer
+  aliases: []
+  uz: "Asosiy qismi self-attention bo'lgan neural network arxitekturasi (2017); zamonaviy til modellari shunga asoslanadi."
+  course: cs50
+  lesson: 55
+- term: self-attention
+  aliases: [attention]
+  uz: "Har token kontekstdagi boshqa tokenlarga query-key moslik ballari va softmax og'irliklari bilan qarab, ularning value vektorlarini aralashtiradigan mexanizm. Narxi kontekst uzunligiga nisbatan O(n²)."
+  course: cs50
+  lesson: 55
+- term: kontekst oynasi
+  aliases: [context window]
+  uz: "Model bir vaqtda ko'ra oladigan tokenlarning eng ko'p soni: so'rov, oldingi suhbat va javob shunga sig'ishi kerak."
+  course: cs50
+  lesson: 55
+- term: temperature
+  aliases: []
+  uz: "Softmax'dan oldin logitlar bo'linadigan son: kichigi taqsimotni keskinlashtiradi (deyarli har doim eng ehtimolli token), kattasi tekislaydi."
+  course: cs50
+  lesson: 55
+- term: gallyutsinatsiya
+  aliases: [hallucination]
+  uz: "Til modelining ishonchli ohangda, haqiqatga o'xshash, lekin noto'g'ri ma'lumot hosil qilishi. Himoya - manba va testlar bilan tekshirish."
+  course: cs50
+  lesson: 55
+- term: RLHF
+  aliases: [reinforcement learning from human feedback]
+  uz: "Odamlar javoblarni tartiblaydi, ulardan mukofot modeli o'rganiladi va til modeli shu mukofotni oshirish yo'nalishida qo'shimcha o'rgatiladi."
+  course: cs50
+  lesson: 55
+- term: registr
+  aliases: [register]
+  uz: "Protsessor ichidagi juda kichik va eng tez xotira katagi; hisob-kitob asosan registrlar ustida bajariladi (x86-64 da 16 ta, ARM64 da 31 ta umumiy registr)."
+  course: cs50
+  lesson: 56
+- term: ALU
+  aliases: [arithmetic logic unit]
+  uz: "Protsessorning qo'shish, ayirish, bitli amallar va solishtirishni bajaradigan qismi."
+  course: cs50
+  lesson: 56
+- term: program counter
+  aliases: [instruction pointer]
+  uz: "Keyingi bajariladigan buyruq manzilini saqlaydigan registr (x86-64 da rip); sakrash buyruqlari uni o'zgartiradi."
+  course: cs50
+  lesson: 56
+- term: fetch-decode-execute
+  aliases: []
+  uz: "Protsessor ishining asosiy sikli: buyruqni xotiradan olish, uni tushunish va bajarish, keyin keyingi buyruqqa o'tish."
+  course: cs50
+  lesson: 56
+- term: ISA
+  aliases: [instruction set architecture, instruction set]
+  uz: "Protsessor tushunadigan buyruqlar to'plami va ularning baytlardagi ko'rinishi; dasturiy ta'minot va apparat orasidagi shartnoma (x86-64, ARM64, WebAssembly)."
+  course: cs50
+  lesson: 56
+- term: calling convention
+  aliases: [chaqiruv qoidasi]
+  uz: "Funksiya argumentlari va natijasi qaysi registr yoki stack katagida uzatilishi haqidagi kelishuv; Linux x86-64 da System V: rdi, rsi, rdx, rcx, r8, r9 va natija rax."
+  course: cs50
+  lesson: 56
+- term: constant folding
+  aliases: []
+  uz: "Kompilyatsiya vaqtida ma'lum bo'lgan ifodani (24 * 60 * 60) kompilyatorning o'zi hisoblab, tayyor sonni yozishi."
+  course: cs50
+  lesson: 56
+- term: inlining
+  aliases: []
+  uz: "Funksiya chaqiruvini funksiya tanasining nusxasi bilan almashtirish; chaqiruv narxini olib tashlaydi va boshqa optimizatsiyalarga yo'l ochadi."
+  course: cs50
+  lesson: 56
+- term: dead code elimination
+  aliases: []
+  uz: "Hech qachon bajarilmaydigan yoki natijasi ishlatilmaydigan kodni kompilyatorning olib tashlashi."
+  course: cs50
+  lesson: 56
+- term: loop unrolling
+  aliases: []
+  uz: "Sikl tanasini bir necha marta takrorlab yozib, hisoblagich, solishtirish va sakrash buyruqlarini kamaytirish optimizatsiyasi."
+  course: cs50
+  lesson: 56

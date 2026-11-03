@@ -1,0 +1,90 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Korpusda \"choy\" so'zidan keyin 6 marta \"ichaman\", 3 marta \"ichasan\" va 1 marta \"sovuq\" kelgan. Bigram modelda P(ichasan | choy) nimaga teng?",
+      "options": ["0.1", "0.3", "0.5", "0.6"],
+      "answer": 1,
+      "why": "\"choy\" dan keyin jami 6 + 3 + 1 = 10 so'z; \"ichasan\" 3 marta: 3 / 10 = 0.3."
+    },
+    {
+      "q": "Bigram model \"men choy ichasan\" degan grammatik xato gap hosil qildi. Buning asosiy sababi nima?",
+      "options": [
+        "Model faqat bitta oldingi so'zni ko'radi va \"men\" ni hisobga olmaydi",
+        "Seed noto'g'ri tanlangan",
+        "Korpusda \"men choy ichasan\" gapi bor edi",
+        "Softmax temperature juda past"
+      ],
+      "answer": 0,
+      "why": "Bigram uchun kontekst - faqat \"choy\"; \"choy\" dan keyin \"ichasan\" haqiqatan uchragan, shuning uchun u ehtimolli davom."
+    },
+    {
+      "q": "BPE da birinchi qadamda korpus: \"dars\" 4 marta, \"darslar\" 3 marta, \"kitoblar\" 3 marta. \"ar\" juftligi necha marta sanaladi?",
+      "options": ["10", "7", "13", "16"],
+      "answer": 2,
+      "why": "\"dars\": 1 x 4 = 4; \"darslar\": 2 x 3 = 6 (\"dar\" va \"lar\"); \"kitoblar\": 1 x 3 = 3. Jami 13."
+    },
+    {
+      "q": "Tadqiqotlarga ko'ra bir xil mazmundagi o'zbek matni ingliz tiliga mo'ljallangan tokenizerda ko'proq token oladi. Bu foydalanuvchi uchun nimani anglatadi?",
+      "options": [
+        "Model o'zbek tilini umuman tushunmaydi",
+        "Faqat UTF-8 baytlari soni oshadi, tokenlar soni bir xil qoladi",
+        "Javob sifati albatta yaxshiroq bo'ladi",
+        "Token bo'yicha narx yuqoriroq, ishlash sekinroq va kontekst oynasiga kamroq mazmun sig'adi"
+      ],
+      "answer": 3,
+      "why": "Narx, tezlik va kontekst chegarasi tokenlarda o'lchanadi; ko'proq token - qimmatroq, sekinroq va oynaga kamroq matn."
+    },
+    {
+      "q": "a = [1, 0], b = [1, 1] vektorlari orasidagi kosinus o'xshashlik taxminan nechaga teng?",
+      "options": ["0.707", "1.0", "0.5", "1.414"],
+      "answer": 0,
+      "why": "a · b = 1, |a| = 1, |b| = √2 ≈ 1.414; 1 / 1.414 ≈ 0.707."
+    },
+    {
+      "q": "Matn hosil qiluvchi transformer'da 3-token attention hisoblaganda qaysi tokenlarga qaray oladi?",
+      "options": [
+        "Faqat o'ziga",
+        "1, 2 va 3-tokenlarga (causal mask)",
+        "Kontekstdagi barcha tokenlarga, keyingilariga ham",
+        "Faqat 2-tokenga (bigram kabi)"
+      ],
+      "answer": 1,
+      "why": "Causal mask token faqat o'zi va o'zidan oldingilarga qarashiga ruxsat beradi, chunki generatsiya paytida keyingi tokenlar hali yo'q."
+    },
+    {
+      "q": "Self-attention'ning hisob hajmi kontekst uzunligiga nisbatan O(n²). Kontekst 3000 tokendan 12 000 tokenga oshsa, attention ballari soni taxminan necha baravar oshadi?",
+      "options": ["4 baravar", "8 baravar", "16 baravar", "12 baravar"],
+      "answer": 2,
+      "why": "n 4 baravar oshdi, n² esa 4² = 16 baravar."
+    },
+    {
+      "q": "Logitlar [2, 1] va T = 0.5. Softmax'dan keyin birinchi tokenning ehtimoli taxminan qancha?",
+      "options": ["0.73", "0.67", "0.50", "0.88"],
+      "answer": 3,
+      "why": "Logitlar T ga bo'linadi: [4, 2]. e^4 / (e^4 + e^2) = 1 / (1 + e^-2) ≈ 0.88. Past T taqsimotni keskinlashtiradi."
+    },
+    {
+      "q": "Pretraining'dan keyin model savolga javob o'rniga savolni davom ettirmoqda. Qaysi bosqich buni asosan tuzatadi?",
+      "options": [
+        "Fine-tuning (namuna javoblarda) va RLHF",
+        "Tokenizer lug'atini kattalashtirish",
+        "Temperature'ni oshirish",
+        "Kontekst oynasini uzaytirish"
+      ],
+      "answer": 0,
+      "why": "Pretraining faqat keyingi tokenni bashorat qilishni o'rgatadi; ko'rsatmaga amal qilish va foydali javob berish fine-tuning va RLHF da o'rganiladi."
+    },
+    {
+      "q": "AI yordamchi sizga mavjud bo'lmagan kutubxona funksiyasini ishonchli ohangda tavsiya qildi. Eng to'g'ri harakat qaysi?",
+      "options": [
+        "Temperature'ni 0 qilib qayta so'rash - endi javob to'g'ri bo'ladi",
+        "Javobni qabul qilish, chunki model ishonchli gapirdi",
+        "Rasmiy hujjatda tekshirish va kodni test bilan sinash",
+        "Butun loyihani va .env faylini yuborib, kontekstni ko'paytirish"
+      ],
+      "answer": 2,
+      "why": "Gallyutsinatsiya mexanizmning tabiiy natijasi; past temperature faqat tasodifiylikni kamaytiradi. Himoya - hujjat va testlar; maxfiy fayllar yuborilmaydi."
+    }
+  ]
+}

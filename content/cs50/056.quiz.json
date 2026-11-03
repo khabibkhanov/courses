@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "O'yinchoq protsessorda r0 = 4 bilan dastur ishga tushirildi: 3 ta LOAD, keyin sikl tanasi (ADD, SUB, JNZ) r0 nolga tushguncha, oxirida PRINT va HALT. Jami nechta buyruq bajariladi?",
+      "options": ["12", "17", "15", "20"],
+      "answer": 1,
+      "why": "3 + 4 x 3 + 2 = 17. Sikl tanasi 4 marta aylanadi, har aylanishda 3 buyruq."
+    },
+    {
+      "q": "C dagi `while` sikli mashina darajasida asosan nimaga aylanadi?",
+      "options": [
+        "Protsessorning maxsus `while` buyrug'iga",
+        "Har aylanish uchun alohida funksiya chaqiruviga",
+        "Solishtirish va shartli sakrash buyruqlariga (masalan `cmp` va `jg`/`jmp`)",
+        "Faqat stack'ka push va pop buyruqlariga"
+      ],
+      "answer": 2,
+      "why": "Protsessorda sikl tushunchasi yo'q: shart solishtirilib flag'lar o'rnatiladi va shartli sakrash program counter'ni orqaga yoki oldinga o'zgartiradi."
+    },
+    {
+      "q": "Linux x86-64 da `long f(long a, long b, long c)` chaqirilganda `c` argumenti qayerda keladi?",
+      "options": ["`rdx` registrida", "`rcx` registrida", "Stack'da", "`rax` registrida"],
+      "answer": 0,
+      "why": "System V tartibi: rdi, rsi, rdx, rcx, r8, r9. Uchinchi argument rdx da; rax natija uchun."
+    },
+    {
+      "q": "x86-64 ning `objdump` chiqishida uchta buyruq 4, 3 va 1 baytdan iborat, ARM64 da esa xuddi shu funksiya 3 ta buyruq. ARM64 kodi necha bayt va nega?",
+      "options": [
+        "8 bayt, chunki ikki ISA bir xil kodlashdan foydalanadi",
+        "12 bayt, chunki ARM64 da har buyruq qat'iy 4 bayt",
+        "6 bayt, chunki RISC buyruqlari qisqaroq",
+        "Aniqlab bo'lmaydi, chunki ARM64 buyruqlari 1-15 bayt"
+      ],
+      "answer": 1,
+      "why": "ARM64 (RISC) qat'iy 4 baytli buyruqlardan foydalanadi: 3 x 4 = 12 bayt. 1-15 baytli o'zgaruvchan uzunlik x86-64 ga xos."
+    },
+    {
+      "q": "`int area(void) { return square(12); }` (`square` - `static`, `x * x`) `-O2` da `movl $144, %eax` va `retq` ga aylandi. Bunga qaysi optimizatsiyalar birgalikda olib keldi?",
+      "options": [
+        "Loop unrolling va dead code elimination",
+        "Faqat register allocation",
+        "Inlining, keyin constant folding",
+        "Tail call va SIMD"
+      ],
+      "answer": 2,
+      "why": "Avval `square` tanasi `area` ichiga ko'chirildi (inlining), shundan keyin 12 * 12 kompilyatsiya vaqtida 144 ga hisoblandi (constant folding)."
+    },
+    {
+      "q": "Benchmark'da `long long s = sum_loop(n);` dan keyin `s` hech qayerda ishlatilmaydi va kod `-O2` bilan kompilyatsiya qilinadi. Eng ehtimolli natija qanday?",
+      "options": [
+        "O'lchangan vaqt -O0 dagidan biroz kam bo'ladi",
+        "Kompilyator xato beradi",
+        "Dastur UBSan xabari bilan to'xtaydi",
+        "Hisob dead code elimination bilan olib tashlanadi va deyarli nol vaqt o'lchanadi"
+      ],
+      "answer": 3,
+      "why": "Natijasi kuzatilmaydigan hisobni as-if qoidasi bo'yicha olib tashlash mumkin. Benchmark'da natija doim ishlatilishi kerak."
+    },
+    {
+      "q": "`int bigger(int x) { return x + 1 > x; }` `-O2` da `movl $1, %eax` ga, `unsigned` versiyasi esa `x != UINT_MAX` tekshiruviga aylandi. Farqning sababi nima?",
+      "options": [
+        "Protsessor signed qo'shishni boshqacha bajaradi va hech qachon aylanmaydi",
+        "Signed overflow UB, shuning uchun kompilyator u bo'lmaydi deb faraz qiladi; unsigned overflow esa modul 2^32 bo'yicha aniqlangan",
+        "Unsigned sonlar uchun optimizatsiya o'chirilgan",
+        "-O2 da int 64 bitga kengayadi"
+      ],
+      "answer": 1,
+      "why": "-O0 da ikkalasida bir xil `addl` ishlatiladi. Farq C qoidalarida: UB yo'q degan farazga faqat signed holatda huquq bor."
+    },
+    {
+      "q": "`-O0` dagi rekursiv `factorial` har chaqiruvda `pushq %rbp`, `movq %rsp, %rbp`, `subq $16, %rsp` qiladi. `subq` nima uchun kerak?",
+      "options": [
+        "Lokal o'zgaruvchilar (n nusxasi, spill qilingan qiymat) uchun stack'da joy ajratish",
+        "n dan 16 ni ayirish",
+        "Qaytish manzilini o'chirish",
+        "Heap'dan 16 bayt so'rash"
+      ],
+      "answer": 0,
+      "why": "Stack pastga o'sadi, shuning uchun rsp dan ayirish frame ichida lokal kataklarga joy ochadi; oxirida `addq $16, %rsp` uni qaytaradi."
+    },
+    {
+      "q": "Wasm stack mashinasida stack bo'sh, keyin `local.get 0` (qiymat 6), `local.get 1` (qiymat 7), `i32.mul`, `local.get 0`, `i32.add` bajarildi. Stack tepasida nima qoladi?",
+      "options": ["13", "42", "48", "49"],
+      "answer": 2,
+      "why": "6, 7 -> mul -> 42; keyin 6 qo'shiladi -> 42, 6 -> add -> 48."
+    },
+    {
+      "q": "Brauzerdagi `c run` blokida 20 million aylanishli sikl vaqtini o'lchadingiz va lokal `-O2` dan ancha sekin chiqdi. Eng to'g'ri izoh qaysi?",
+      "options": [
+        "WebAssembly har doim mashina kodidan 1000 baravar sekin",
+        "Brauzer muhiti ham -O2 ishlatadi, lekin clock() noto'g'ri",
+        "Brauzer muhiti -O0 va sanitizer'lar bilan kompilyatsiya qiladi, -O2 esa siklni butunlay formulaga almashtirishi mumkin",
+        "Brauzerda long long 32-bitli"
+      ],
+      "answer": 2,
+      "why": "Brauzerda optimizatsiya o'chirilgan va xotira/UB tekshiruvlari qo'shilgan; lokal -O2 esa sum_loop ni yopiq formulaga aylantiradi."
+    }
+  ]
+}
