@@ -242,7 +242,7 @@ Go 1.25 release notes: go buyrug'i go qatorini yangilaganda endi o'zining versiy
 
 String taqqoslash va `go/version` farqini ko'ring:
 
-```go
+```go run
 package main
 
 import (

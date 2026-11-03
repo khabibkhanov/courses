@@ -206,7 +206,7 @@ Blank import `database/sql`, tasvir formatlari va shunga o'xshash "plugin" model
 
 Spetsifikatsiya bog'liqlikni faqat leksik havolalar bo'yicha, tranzitiv tarzda topadi. Metodga havola faqat `t.m` ko'rinishidagi method value yoki method expression bo'lib, `t` ning **statik** tipi interface bo'lmasa hisoblanadi; metod chaqirilishi shart emas. Demak interface orqali chaqiruv bog'liqlik yaratmaydi: kompilyator chaqirilayotgan aniq metodni bilmaydi. Quyidagi paketda `viaInterface` va `viaStatic` bir xil metodni chaqiradi, lekin birinchisi `region` tayyor bo'lishini kutmaydi:
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -364,7 +364,7 @@ use of internal package example.com/l10/a/internal/cfg not allowed
 
 ### 4. Blank identifier amalda
 
-```go
+```go run
 package main
 
 import (

@@ -212,7 +212,7 @@ Bu yerda Kafka yoki NATS kutubxonalari ishga tushirilmaydi (sandbox'da tashqi mo
 
 Quyidagi model broker (`Receive`, `ExpireInflight` ack kelmagan xabarni navbatga qaytaradi) va hisob (`Ledger`) ni stdlib bilan yozadi. `drain` birinchi xabarda ack yuborishdan OLDIN yiqilishni taqlid qiladi:
 
-```go
+```go run
 package main
 
 import (
@@ -424,7 +424,7 @@ Relay'ni ishlatish usullari: davriy so'rov (polling, `select ... where sent_at i
 
 Idempotentlik qoidasi "ID tekshiruvi va ta'sir bitta atomik bosqichda" deydi. Buzilishi qanday ko'rinishini ikki yetkazish bir vaqtda kelgan holda ko'ramiz. Birinchi variantda `seen` va `apply` har biri o'z mutex'ida, lekin ular orasida oraliq bor: ikkala goroutine ham "ko'rmadim" javobini oladi (kod buni to'siq bilan majburan ko'rsatadi), keyin ikkalasi ham qo'llaydi. Ikkinchi variantda tekshiruv va qo'llash bitta kritik bo'limda. Oxirida kalit bo'yicha ishchi tanlash ko'rsatilgan: bir xil kalit doim bir xil ishchiga tushadi.
 
-```go
+```go run
 package main
 
 import (

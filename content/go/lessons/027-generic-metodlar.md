@@ -216,7 +216,7 @@ Go 1.27 release notes bir bo'limda yana ikki til o'zgarishini yozadi, ular gener
 
 Generic metod yo'qligida standart yechim: ikkinchi type parameter kerak bo'lsa, funksiya yozing. Quyidagi tajriba Go 1.24.7 da ishga tushirilgan:
 
-```go
+```go run
 package main
 
 import (

@@ -274,7 +274,7 @@ Connection pool (ulanishlar havzasi) tayyor ulanishlarni saqlab, har so'rovda ya
 
 `QueryContext` `*sql.Rows` qaytaradi va ulanishni **ushlab turadi**, `Rows` yopilgunga (yoki sikl oxirigacha o'qilib, Next false qaytarmaguncha) qadar. Quyidagi dastur `MaxOpenConns=2` qilib, ikki `Rows` ni ochiq qoldiradi va uchinchi so'rovni 100 ms muddat bilan yuboradi:
 
-```go
+```go run
 package main
 
 import (
@@ -397,7 +397,7 @@ Hamma metodning `Context` varianti bor (`QueryContext`, `ExecContext`, `BeginTx`
 
 Qo'lda `Begin` / `Commit` / `Rollback` ko'p yo'l hosil qiladi va biri unutilsa ulanish tranzaksiyada qotib qoladi. Odat: bitta yordamchi funksiya. Quyidagisi `sql.DB` ustida yozilgan, jurnal yozuvchi soxta driver bilan sinalgan:
 
-```go
+```go run
 package main
 
 import (

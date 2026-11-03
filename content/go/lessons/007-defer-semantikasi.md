@@ -311,7 +311,7 @@ Dastur chiqish kodi 2 bilan tugadi, `main recover:` qatori va oxirgi `Println` c
 
 Yuqoridagi "closure oxirgi qiymatni ko'radi" qoidasi tsikl o'zgaruvchisiga qo'llanganda versiyaga bog'liq. Go 1.22 release notes'iga ko'ra, 1.22 gacha `for` tsiklida e'lon qilingan o'zgaruvchilar bir marta yaratilib, har iteratsiyada yangilangan; 1.22 dan boshlab har iteratsiya yangi o'zgaruvchilar yaratadi. Qaysi qoida amal qilishi go.mod'dagi `go` qatoriga bog'liq (1-dars), shuning uchun eski modulda yangi toolchain bilan ham eski xatti-harakat saqlanadi. Bir xil manba kodini ikki xil go.mod bilan ishga tushirdik (Go 1.24.7, linux/amd64):
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -342,7 +342,7 @@ Argumentli shakl ikkala holatda bir xil: qiymat defer paytida saqlanadi. Closure
 
 `runtime.Goexit` chaqirgan goroutine'ni tugatadi. pkg.go.dev/runtime hujjatiga ko'ra u tugatishdan oldin barcha deferred chaqiruvlarni bajaradi, lekin Goexit panic emas, shuning uchun o'sha deferred funksiyalardagi `recover` `nil` qaytaradi. Ya'ni "recover() nil bo'lsa, panic bo'lmagan" degan xulosa noto'g'ri: goroutine Goexit bilan chiqayotgan bo'lishi ham mumkin. Test kutubxonalari (`t.FailNow` va `t.Fatal` shu mexanizmdan foydalanadi) shunga tayanadi. Natija sifatida `wg.Done()` kabi tozalash defer'da yozilgan bo'lsa, Goexit'da ham ishlaydi:
 
-```go
+```go run
 package main
 
 import (
@@ -408,7 +408,7 @@ Ya'ni funksiya boshida bitta `defer mu.Unlock()` bu o'lchovda to'g'ridan-to'g'ri
 
 ### 1. Argument, closure, tartib, receiver
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -471,7 +471,7 @@ Chiqishda ko'rinadi: `defer fmt.Println(..., x)` `x = 1` ni saqladi, closure esa
 
 ### 2. recover chegaralari, nil defer, os.Exit
 
-```go
+```go run
 package main
 
 import (
@@ -533,7 +533,7 @@ recover: runtime error: invalid memory address or nil pointer dereference
 
 ### 3. Mutex va natija o'zgartirish
 
-```go
+```go run
 package main
 
 import (
@@ -585,7 +585,7 @@ func main() {
 
 ### 4. Close xatosi
 
-```go
+```go run
 package main
 
 import (

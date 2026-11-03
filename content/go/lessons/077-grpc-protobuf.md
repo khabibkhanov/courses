@@ -247,7 +247,7 @@ Maydon **raqami** (`= 1`) kodlashda ishlatiladi, maydon nomi emas. Shuning uchun
 
 Protobuf kodlash hujjatiga ko'ra har maydon `tag` bilan boshlanadi: `tag = (maydon_raqami << 3) | wire_type`. Wire type oltita; uchtasi bu darsda kerak: 0 (VARINT), 1 (I64, 8 bayt) va 2 (LEN, uzunlik-prefiksli). Varint kichik sonlarni kam baytda yozadi (har baytning 7 biti ma'lumot, yuqori biti "davomi bor" belgisi). Quyidagi dastur yuqoridagi `Reading` ni qo'lda kodlaydi va qaytaradi:
 
-```go
+```go run
 package main
 
 import (
@@ -578,7 +578,7 @@ Yuqoridagi lokal kodlovchi minimal edi. Production sxemalarni buzadigan to'rtta 
 3. **Implicit presence.** Field presence qo'llanmasiga ko'ra implicit presence maydonlar (proto3 oddiy skalyar maydonlari) standart qiymatga teng bo'lsa serializatsiya qilinmaydi: son uchun 0, string uchun bo'sh qator. Natijada hamma maydoni standart bo'lgan `Reading` 0 bayt bo'ladi, va qabul qiluvchi "`seq` yuborilmadi" bilan "`seq = 0` yuborildi" ni ajrata olmaydi. Qo'llanma proto3 asosiy tiplari uchun `optional` yorlig'ini sukut bo'yicha qo'shishni tavsiya qiladi, chunki u explicit presence beradi (`has_` metodi bilan). Telemetriyada `fuel = 0` (bak bo'sh) va "datchik ma'lumot bermadi" bir narsa emas, shuning uchun bunday maydonlar `optional` bo'lishi kerak.
 4. **Oxirgisi yutadi va birlashtirish.** Bir xil skalyar maydon xabarda ikki marta uchrasa, parser oxirgi qiymatni oladi; ichki xabar maydonlari esa `MergeFrom` kabi birlashtiriladi. Hujjatning xulosasi: ikki kodlangan xabarning birlashtirilgan baytlarini parse qilish, ularni alohida parse qilib birlashtirishga teng.
 
-```go
+```go run
 package main
 
 import (

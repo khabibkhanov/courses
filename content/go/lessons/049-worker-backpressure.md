@@ -290,7 +290,7 @@ Bu soddalashtirilgan variant. Uning cheklovlari bor: fon goroutine va ticker (`C
 
 Birinchi dastur: 2 ishchi va 3 o'rinli navbatli pool. Ishchilar `gate` yopilmaguncha band, shuning uchun natija deterministik. Avval 2 ishni `Submit` bilan berib, ishchilar ularni olishini kutamiz, keyin 8 ta ishni `TrySubmit` bilan yuboramiz.
 
-```go
+```go run
 package main
 
 import (

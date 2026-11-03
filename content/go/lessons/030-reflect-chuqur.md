@@ -13,6 +13,8 @@ sources:
     note: "reflect bo'limi: Type.Fields, Type.Methods, Type.Ins, Type.Outs, Value.Fields, Value.Methods iterator metodlari"
   - id: go-spec
     note: "Method sets bo'limi: T va *T metod to'plamlari (NumMethod va MethodByName misoli)"
+  - id: pkg-time
+    note: "time.Time taqqoslash: == Location va monotonic ko'rsatkichni ham solishtiradi, Equal tavsiyasi."
 quiz:
   - q: "`reflect.ValueOf(d).FieldByName(\"Fuel\").SetFloat(10)` bu yerda `d` `Device` struct (pointer emas). Natija?"
     options:

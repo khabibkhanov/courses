@@ -243,7 +243,7 @@ Pointer receiver'li metod nil receiver bilan chaqirilishi mumkin; metod ichida `
 
 `sync.Mutex` saqlaydigan struct uchun value receiver yozish xato: har chaqiruvda mutex holati bilan birga nusxalanadi va nusxadagi qulf asl qulfni himoya qilmaydi. Kompilyator buni to'xtatmaydi, lekin `go vet` ning `copylocks` tekshiruvi (cmd/vet ro'yxatida "check for locks erroneously passed by value" deb ta'riflangan) ushlaydi. Quyidagi kodda `Value` value receiver, `Inc` pointer receiver:
 
-```go
+```go run
 package main
 
 import (
@@ -284,7 +284,7 @@ Dastur o'zi `1` chiqaradi (Go 1.24.7), ya'ni xato ishlash vaqtida ko'rinmaydi: `
 
 Spetsifikatsiyaga ko'ra value receiver'li metodga pointer orqali murojaat pointer'ni avtomatik dereference qiladi: `pt.Mv` bu `(*pt).Mv`. Method value esa receiver'ni baholash paytida saqlaydi. Demak `pt` nil bo'lsa va metod value receiver'li bo'lsa, panic metod chaqirilganda emas, **method value yaratilganda** yuz beradi, chunki `*pt` shu yerda baholanadi. Pointer receiver'li metod bilan esa nil bog'lash o'zi xatosiz (nil manzil saqlanadi; shu holatda `p.Km` bog'landi va tana nil'ni tekshirgani uchun `g()` panicsiz ishladi), panic faqat metod tanasi nil'ni dereference qilganda. Method expression `(*Vehicle).Total` nil pointer bilan chaqirilganda ham panic beradi, lekin matni boshqacha:
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -341,7 +341,7 @@ Spetsifikatsiya: pointer-to-array tipidagi `a` uchun `a[x]` bu `(*a)[x]` ning qi
 
 ### 1. Addressability va pointer
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -417,7 +417,7 @@ invalid operation: cannot take address of Trip{}.ID (value of type string)
 
 ### 2. Method set va interface
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -462,7 +462,7 @@ cannot call pointer method Add on Vehicle
 
 ### 3. Nusxalar: range, method value, append
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -523,7 +523,7 @@ total: 0 haqiqiy: 7
 
 ### 4. nil receiver
 
-```go
+```go run
 package main
 
 import "fmt"

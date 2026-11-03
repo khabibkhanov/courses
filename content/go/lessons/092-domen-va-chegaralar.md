@@ -11,6 +11,8 @@ sources:
     note: "100go.co bo'yicha tekshirilgan bandlar: #49 xatoni qachon o'rash, #50 xato tipini noto'g'ri solishtirish, #51 xato qiymatini noto'g'ri solishtirish, #52 xatoni ikki marta qayta ishlash"
   - id: code-review-comments
     note: "Error strings va Handle Errors bo'limlari: xatoni e'tiborsiz qoldirmaslik, xabar formati"
+  - id: rfc-9457
+    note: "Problem Details: type/title/detail/instance maydonlari, application/problem+json."
 quiz:
   - q: "JSON so'rovda `{}` kelganda DTO'dagi `Liters float64` maydoni 0 bo'ladi, `{\"liters\": 0}` kelganda ham 0. Maydon yo'qligini 0 qiymatdan ajratish uchun nima qilinadi?"
     options:
@@ -268,7 +270,7 @@ Adapter drayver xatosini domen xatosiga o'girganda asl sababni yo'qotmasligi ker
 
 Domen tipi o'zining `UnmarshalJSON` metodini bersa, diapazon tekshiruvi JSON o'qilgan zahoti, DTO bosqichisiz bajariladi. `encoding/json` hujjati qoidani shunday beradi: qiymat `Unmarshaler` ni amalga oshirsa, `UnmarshalJSON` chaqiriladi, JSON `null` kelganda ham. Ammo bu pointer maydonlar bilan aralashganda nozik joy bor: maydon `*Liters` bo'lsa, `null` kelganda `Unmarshal` ko'rsatkichni birinchi navbatda nil qiladi va metodni chaqirmaydi (hujjat: pointer holatida avval `null` hal qilinadi). Natijada "yuborilmagan" va "aniq null" ikkalasi ham `nil` bo'ladi va farqlanmaydi; farq kerak bo'lsa, alohida `Set bool` bilan yoki `json.RawMessage` orqali qo'lda ajratiladi. Bir nechta maydon xatosini yig'ish uchun esa Go 1.20 dagi `Unwrap() []error` qulay: bitta `ValidationError` ichida har maydon xatosi saqlanadi va `errors.Is(err, ErrInvalid)` ham, `errors.As(err, &FieldError{})` ham ishlaydi. Tajriba (Go 1.24.7):
 
-```go
+```go run
 package main
 
 import (

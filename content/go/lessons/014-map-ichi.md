@@ -212,7 +212,7 @@ Iteratsiya semantikasi dizaynni murakkablashtirgan: Go spetsifikatsiyasi o'zgart
 
 Quyidagi dastur 1M yozuvli `map[int64]int64` ni to'ldiradi, o'chiradi va heap'ni har qadamda o'lchaydi (`report` map'ni o'lchov davomida tirik ushlab turadi, aks holda kompilyator uni erta bo'shatadi):
 
-```go
+```go run
 package main
 
 import (
@@ -299,7 +299,7 @@ Go 1.6 release notes bu aniqlashni "lightweight, best-effort" deb ta'riflaydi: y
 
 ## Misol: map semantikasi bir dasturda
 
-```go
+```go run
 package main
 
 import (
@@ -377,7 +377,7 @@ Qatorlar: nil map'dan o'qish `0 false`, yozish esa panic. `addReading` `stats[id
 
 Tartib masalasi:
 
-```go
+```go run
 package main
 
 import (

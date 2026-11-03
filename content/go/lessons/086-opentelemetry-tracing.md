@@ -11,6 +11,8 @@ sources:
     note: "Go uchun OpenTelemetry qo'llanmasi: instrumentatsiya, SDK sozlash va exporter tushunchalari. Sahifa bu sessiyada qayta tekshirilmagan"
   - id: pkg-context
     note: "Context qiymatlari va bekor qilish: span aynan context orqali uzatiladi"
+  - id: w3c-trace-context
+    note: "traceparent/tracestate tekshiruv qoidalari (kichik harfli hex, ff versiya, nol id, 512 belgi chegarasi)."
 quiz:
   - q: "Servis A servis B ni HTTP orqali chaqiradi, lekin Jaeger'da ikki alohida trace ko'rinyapti. Eng ehtimoliy sabab?"
     options:
@@ -236,7 +238,7 @@ W3C Trace Context matni (w3.org/TR/trace-context) bir nechta nozik joyni aniq yo
 
 Versiya `00` dan yuqori bo'lsa, spetsifikatsiya trace id va parent id'ni baribir `00` formatida o'qishni, o'zi tushunadigan flags bitlarini olib, qolganini tashlab yuborishni buyuradi. O'qib bo'lmasa, yangi `traceparent` yaratiladi va kelgan `tracestate` o'chiriladi. Ikkinchi sarlavha, `tracestate`, vendorga xos key-value juftliklarini tashiydi: kamida 512 belgini uzatish tavsiya etiladi, qisqartirish kerak bo'lsa butun yozuvlar olib tashlanadi, 128 belgidan uzun yozuvlar birinchi navbatda. Pastdagi kichik tekshiruv shu qoidalarni ko'rsatadi (Go 1.24.7, tashqi modulsiz):
 
-```go
+```go run
 package main
 
 import (

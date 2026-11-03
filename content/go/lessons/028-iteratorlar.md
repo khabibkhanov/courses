@@ -205,7 +205,7 @@ Iterator oddiy funksiya, shuning uchun uning `defer`i funksiya qaytishida ishlay
 
 Iterator `false`ni e'tiborsiz qoldirib davom etsa, ish vaqti panic beradi. Go 1.24.7 da:
 
-```go
+```go run
 package main
 
 import (
@@ -266,7 +266,7 @@ Ikkita tuzoq run-time panic bilan ushlanadi, kompilyator esa ularni ko'rmaydi. A
 
 Ikki ketma-ketlikni juftlab o'tish `range` bilan yozilmaydi: ikkalasi ham push, biri o'z siklini boshqaradi, ikkinchisini qo'lda olish kerak. Aynan shu joyda `iter.Pull` kerak. `iter` hujjatida `Pull2` ham bor (`Seq2[K, V]` uchun, `next` uchta qiymat qaytaradi: `K`, `V`, `bool`). `Zip` adapteri bitta ketma-ketlikni `range` bilan, ikkinchisini `Pull` bilan aylanadi, `defer stop()` ikkinchi iteratorni har qanday chiqishda yopadi. Quyidagi to'liq dastur yuqoridagi barcha holatlarni va `Zip` ni ishlatadi (uzunroq `Count(3)` va qisqa ikkinchi ketma-ketlik: `Zip` qisqasi tugagach to'xtaydi, `Count` ning `defer`i esa baribir ishlaydi):
 
-```go
+```go run
 package main
 
 import (
@@ -401,7 +401,7 @@ recover nil: runtime error: invalid memory address or nil pointer dereference
 
 Dastur `Track` iteratorini, `Filter` va `Take` adapterlarini, `Seq2` ko'rinishidagi `Enumerate`ni, tozalash bilan `Lines` iteratorini va `iter.Pull`ni ko'rsatadi.
 
-```go
+```go run
 package main
 
 import (

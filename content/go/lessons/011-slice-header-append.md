@@ -200,7 +200,7 @@ Bu qoida ikki tomonlama xavf tug'diradi: `append` yangi massiv ajratganida eski 
 
 Spetsifikatsiya o'sish koeffitsiyentini belgilamaydi: faqat "yetarlicha katta yangi massiv" deydi. Go Blog'dagi "Growing slices" bo'limi o'sish g'oyasini ikkilanish (`(cap+1)*2`) bilan ko'rsatadi, lekin bu o'quv misoli: real `append` bunday ishlamaydi, buni quyidagi o'lchov ko'rsatadi. Real o'sish toolchain'ga bog'liq va release'lar orasida o'zgargan. Quyidagi o'lchov faqat Go 1.24.7, linux/amd64 uchun:
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -253,7 +253,7 @@ Funksiyaga slice berish header'ni nusxalaydi (24 bayt, 64-bitli platformada: poi
 
 Oddiy reslice `s[low:high]` sig'imni massiv oxirigacha qoldiradi, shu sababli qismni olgan kod `append` bilan qo'shni elementlarni bosib yozishi mumkin. Spetsifikatsiya buning uchun uch indeksli shaklni beradi: massiv, massivga pointer yoki slice `a` uchun `a[low:high:max]` xuddi `a[low:high]` kabi elementlarni oladi, lekin sig'imni `max-low` ga tenglaydi (string uchun bu shakl yo'q). Spetsifikatsiya misoli: `a := [5]int{1, 2, 3, 4, 5}; t := a[1:3:5]` uzunlik 2, sig'im 4. Quyidagi dastur ikkala shaklni yonma-yon qo'yadi va sig'imdan katta `high` run-time panic berishini ko'rsatadi:
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -291,7 +291,7 @@ Birinchi holatda `a` ning sig'imi 4 edi, `append` yangi massiv ajratmadi va `fue
 
 Spetsifikatsiya slice'ni massiv yoki massivga pointer tipiga konversiya qilishni beradi; slice uzunligi massiv uzunligidan kichik bo'lsa, run-time panic bo'ladi. Go 1.17 faqat massivga pointer konversiyasini qo'shgan, Go 1.20 release notes'ga ko'ra massivga to'g'ridan-to'g'ri konversiya (`[4]byte(x)`) shu versiyadan beri mumkin. Farq muhim: massivga konversiya **nusxa** yaratadi (qiymat semantikasi), pointer konversiyasi esa slice xotirasini bo'lishadi:
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -325,7 +325,7 @@ Telemetriya paketlarini parse qilganda bu foydali: sarlavhani `[8]byte(buf)` bil
 
 Birinchi dastur header, nil va bo'sh slice hamda reslice orqali massivning bo'lishilishini ko'rsatadi:
 
-```go
+```go run
 package main
 
 import (
@@ -377,7 +377,7 @@ tail[:3] = [0 39.8 39.1] (len=2 dan ortiq, cap ichida)
 
 Ikkinchi dastur `append` qachon massivni bo'lishishini ko'rsatadi:
 
-```go
+```go run
 package main
 
 import "fmt"

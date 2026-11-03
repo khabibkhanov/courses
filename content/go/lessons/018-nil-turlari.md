@@ -227,7 +227,7 @@ Pointer receiver'li metod nil pointer bilan chaqirilishi mumkin: metodning o'zi 
 
 Typed nil xatoni chop etish yashirin: `fmt` hujjati Error, String yoki GoString nil receiver tufayli panic qilsa, natija `<nil>` bo'lishini yozadi. Natijada log'da `xato: <nil>` ko'rinadi va tushunmovchilik chiqadi: matn nil, lekin shart rost. Quyidagi dastur ikkala variantni solishtiradi:
 
-```go
+```go run
 package main
 
 import (
@@ -337,7 +337,7 @@ Taqqoslash qoidasi ham tipga bog'liq. Spetsifikatsiya: slice, map va funksiya ti
 
 JSON chegarasida nil va bo'sh qiymatni boshqarish uchun Go 1.24 `encoding/json` ga `omitzero` tag opsiyasini qo'shdi. Release notes: `omitzero` maydonni qiymati zero bo'lsa tushirib qoldiradi (tipda `IsZero() bool` metodi bo'lsa shu ishlatiladi), `omitempty` va `omitzero` birga berilsa maydon ulardan biri bajarilsa tushiriladi. Slice va map uchun farq muhim: nil slice zero qiymat, bo'sh (`[]string{}`) esa zero emas. Quyidagi dastur ikkala opsiyani nil va bo'sh qiymatda solishtiradi:
 
-```go
+```go run
 package main
 
 import (

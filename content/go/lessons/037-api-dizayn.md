@@ -388,7 +388,7 @@ Bu mening tavsiyam, rasmiy qoida emas, va narxi bor: mijoz bunday tipni `==` bil
 
 Konkret tip qaytarish qoidasining bitta muhim istisnosi bor: xato. Funksiya `*ValidationError` kabi konkret pointer tipini `error` interface sifatida qaytarsa, "xato yo'q" holatini ham nil pointer sifatida qaytarish xavfi tug'iladi. Go FAQ'ning "Why is my nil error value not equal to nil?" bo'limi sababini aytadi: interface qiymati ikki qismdan iborat, tip `T` va qiymat `V`, va interface faqat ikkalasi ham nil bo'lganda nil bo'ladi. Nil `*ValidationError` ni `error` ga o'rasangiz, tip `T=*ValidationError`, qiymat `V=nil`, ya'ni interface nil emas, va mijozning `if err != nil` tekshiruvi yolg'on xato topadi.
 
-```go
+```go run
 package main
 
 import (
@@ -457,7 +457,7 @@ Agar nol qiymat foydali bo'la olmasa (masalan, bog'lanish manzili majburiy), bun
 
 ## Misol: options, foydali zero value va validatsiya
 
-```go
+```go run
 package main
 
 import (

@@ -291,7 +291,7 @@ GC qachon boshlanishi va qanday tezlikda ishlashi pacer'ning vazifasi. gc-guide'
 
 Eng kichik tajriba: ikki funksiya, biri int maydonga, biri ko'rsatkich maydoniga yozadi.
 
-```go
+```go run
 package main
 
 import "fmt"

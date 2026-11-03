@@ -184,7 +184,7 @@ Spetsifikatsiya interface qiymatining xotirada qanday turishini belgilamaydi. Qu
 
 `unsafe.Sizeof(any(nil))` amd64 da 16, 386 da 8 bayt: ikkita mashina so'zi. Bo'sh bo'lmagan interface (`fmt.Stringer`) ham xuddi shunday. Birinchi so'z dinamik tipni aniqlaydi; ikkinchisi ma'lumotga tegishli. `unsafe` yordamida ikki so'zni o'qib, nimalar haqiqat ekanini tekshirdik:
 
-```go
+```go run
 package main
 
 import (
@@ -298,7 +298,7 @@ Xato tiplarida ham shu mexanizm ishlaydi. Qiymat receiver'li `RouteError` struct
 
 Generics bilan bog'liq versiya farqi: Go 1.20 release notes'ga ko'ra oddiy interface'lar `comparable` constraint'ini qanoatlantira oladi, garchi ular strictly comparable bo'lmasa ham (taqqoslash run-time'da panic berishi mumkin). Spetsifikatsiya buni shunday ifodalaydi: interface `comparable` ni implement qilmaydi, lekin uni satisfy qiladi. Natija: `eq[any]([]int{1}, []int{1})` kompilyatsiya bo'ladi va faqat bajarilishda qulaydi. Go 1.19 va undan oldingi kodda bunday instantiation kompilyatsiya xatosi edi. Quyidagi dastur yuqoridagi barcha holatlarni tekshiradi:
 
-```go
+```go run
 package main
 
 import (
@@ -385,7 +385,7 @@ eq[any](1, 1)                true
 
 Quyidagi dastur yuqoridagi qoidalarni bitta joyda ko'rsatadi:
 
-```go
+```go run
 package main
 
 import "fmt"

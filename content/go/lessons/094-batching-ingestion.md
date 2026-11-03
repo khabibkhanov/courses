@@ -11,6 +11,8 @@ sources:
     note: "DB (ulanishlar puli, bir nechta goroutine uchun xavfsiz), BeginTx, Tx.Rollback va ErrTxDone, SetMaxOpenConns"
   - id: blog-pipelines
     note: "Bosqichlar orasidagi kanallar va bekor qilish: batcher pipeline bosqichi sifatida"
+  - id: pg-sql-insert
+    note: "ON CONFLICT DO UPDATE va command tag count qoidalari."
 quiz:
   - q: "Batcher faqat hajm triggeriga ega (100 ta yig'ilganda yozadi). Kechasi oqim sekinlashib, soatiga 10 ta nuqta keladi. Nima bo'ladi?"
     options:

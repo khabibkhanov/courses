@@ -242,7 +242,7 @@ Bu Go'da sum type'ga eng yaqin vosita: tiplar to'plami ma'lum va yopiq, shuning 
 
 Dastur telemetriya hodisalarini yopiq `Event` interface'i orqali ifodalaydi: `Position`, `FuelDrop` (qiymat tiplari) va `*Offline` (pointer). `describe` type switch bilan tarmoqlanadi, `kind` ko'p tipli case'da `v`ning tipini ko'rsatadi, `write` esa ixtiyoriy `flusher` interface'iga o'tadi.
 
-```go
+```go run
 package main
 
 import (
@@ -357,7 +357,7 @@ Tahlil:
 
 JSON bilan ishlashda ham xuddi shu mexanizm: `json.Unmarshal` natijasi `map[string]any` bo'lganda qiymatlar `any` ichida keladi va ularni type switch ochadi.
 
-```go
+```go run
 package main
 
 import (

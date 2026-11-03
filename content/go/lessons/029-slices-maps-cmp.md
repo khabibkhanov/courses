@@ -260,7 +260,7 @@ Shu sababli CI da `go vet` majburiy bo'lishi kerak (40-dars). Telemetriya ma'lum
 
 Funksiya imzolari `func Clone[S ~[]E, E any](s S) S` shaklida, ya'ni natija tipi argument tipi bilan bir xil: `type Route []Point` ni `Clone` qilsangiz `Route` qaytadi, `[]Point` emas. Shuning uchun nomlangan slice tipi o'z metodlarini yo'qotmaydi. Quyidagi dastur bundan tashqari bir nechta kam ma'lum nozikliklarni tekshiradi:
 
-```go
+```go run
 package main
 
 import (
@@ -362,7 +362,7 @@ Kuzatuvlar. `Clone(nil)` nil, `Clone([]int{})` esa nil emas: nil'lik saqlanadi. 
 
 ## Misol: ko'p kalitli saralash, qidirish, nusxalash, map'lar
 
-```go
+```go run
 package main
 
 import (

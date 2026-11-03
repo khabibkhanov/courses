@@ -215,7 +215,7 @@ Go'da to'plam tipi yo'q. Standart usul: `map[T]struct{}`. Bo'sh struct nol bayt 
 
 `maps.Clone` map'ning o'zini ajratadi, lekin qiymatlarni "oddiy assignment" bilan ko'chiradi. Qiymat slice, map yoki pointer bo'lsa, nusxa va asl bir ichki ma'lumotni ko'radi. Quyidagi dastur buni ko'rsatadi:
 
-```go
+```go run
 package main
 
 import (
@@ -373,7 +373,7 @@ Xato jimgina: `Equal` rost, lekin map yozuvni topmaydi, va test faqat UTC qiymat
 
 Kalit uzun satr bo'lsa (masalan, to'liq marshrut tavsifi), har qidirishda hash va tenglik tekshiruvi butun satr bo'yicha ishlaydi, va bir xil satrning ko'p nusxasi xotirada turadi. Go 1.23 release notes yangi `unique` paketini qo'shgan: `unique.Make(value)` har qanday taqqoslanuvchi qiymatning kanonik nusxasiga `Handle[T]` beradi. pkg.go.dev hujjatiga ko'ra ikki handle faqat va faqat ular yaratilgan qiymatlar teng bo'lsa teng, handle'larni taqqoslash esa qiymatlarni taqqoslashdan odatda ancha samarali. Ya'ni handle'ni map kaliti qilib, satrni bir marta intern qilsangiz, keyingi qidirishlar qisqa taqqoslashga tayanadi:
 
-```go
+```go run
 package main
 
 import (
@@ -408,7 +408,7 @@ Ikki alohida yaratilgan 700 baytli satr bitta handle'ga aylandi va map'da bitta 
 
 Birinchi dastur ikki o'lchov bo'yicha jami, massiv kalit va guruhlashni ko'rsatadi:
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -463,7 +463,7 @@ Toshkent safarlari: 3 | Samarqand: 1
 
 Ikkinchi dastur to'plam naqshi va kesishma:
 
-```go
+```go run
 package main
 
 import (

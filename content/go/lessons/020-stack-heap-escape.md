@@ -192,7 +192,7 @@ Inline qilish bilan bog'liq qatorlar (`can inline`, `inlining call to`) ham chiq
 
 Quyidagi dastur beshta tipik holatni ko'rsatadi: qiymat qaytarish, pointer qaytarish, funksiya ichidagi pointer, interface'ga o'rash va closure:
 
-```go
+```go run
 package main
 
 import "fmt"

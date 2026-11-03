@@ -243,7 +243,7 @@ Composite literal struct, massiv, slice va map uchun yangi qiymat yaratadi (har 
 
 ### 1. Zero value foydali bo'lganda va nil map
 
-```go
+```go run
 package main
 
 import (
@@ -315,7 +315,7 @@ recover: assignment to entry in nil map
 
 ### 2. Composite literal qoidalari
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -424,7 +424,7 @@ struct field tag `json:"km` not compatible with reflect.StructTag.Get: bad synta
 
 ### 4. Taqqoslash va zero-size struct
 
-```go
+```go run
 package main
 
 import (

@@ -186,7 +186,7 @@ Slice kabi satr ham kichik header (string header): baytlarga pointer va uzunlik.
 
 Quyidagi dastur bitta kirill so'z ustida har bir birlikni ko'rsatadi:
 
-```go
+```go run
 package main
 
 import (
@@ -300,7 +300,7 @@ Builder+Grow, ajratishlar: 1
 
 Muammo bo'limidagi `name[:20]` xatosining to'g'ri varianti: rune sonini sanab, kesish nuqtasini `range` indeksidan olish. `range` indeksi doim rune boshining bayt o'rni, shuning uchun `s[:pos]` hech qachon rune'ni o'rtasidan kesmaydi. Tashqaridan kelgan yaroqsiz baytlar uchun `strings.ToValidUTF8(s, replacement)` bor: pkg.go.dev hujjatiga ko'ra u yaroqsiz UTF-8 baytlarning har bir ketma-ketligini (run) bitta `replacement` bilan almashtirilgan nusxani qaytaradi, `replacement` bo'sh bo'lishi ham mumkin. Ikkalasi bitta dasturda (Go 1.24.7):
 
-```go
+```go run
 package main
 
 import (
@@ -378,7 +378,7 @@ Ikki tafsilot: `Lines` har qatorning oxiridagi `\n` ni saqlaydi (chiqishda `"a=1
 
 Substring nusxalanmasligini manzillar orqali tekshiramiz. `unsafe.StringData` satrning birinchi baytiga pointer beradi (Go 1.20 dan):
 
-```go
+```go run
 package main
 
 import (
@@ -414,7 +414,7 @@ Clone dan keyin ham ichida: false
 
 `id` pointer'i asl `log` boshidan 28 bayt narida, ya'ni bir xil xotira. `strings.Clone` esa yangi allokatsiya qiladi va nusxa asl satr ichida emas. Ikkinchi o'lchov: satr va byte slice konvertatsiyasi qanday xatti-harakat qiladi:
 
-```go
+```go run
 package main
 
 import (

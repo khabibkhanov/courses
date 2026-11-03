@@ -11,6 +11,8 @@ sources:
     note: "Server, Shutdown, MaxBytesReader va MaxBytesError, ServeMux naqshlari, Request.PathValue"
   - id: pgx
     note: "pgx: Postgres bilan ulanish va ommaviy yozish (CopyFrom) variantlari; bu darsda faqat database/sql orqali, drayver kodi kompilyatsiya qilinmagan"
+  - id: rfc-9110
+    note: "503 va Retry-After sarlavhasi semantikasi."
 quiz:
   - q: "Mijoz 500 nuqta yubordi, pipeline'da faqat 300 joy bor. Servis birinchi 300 tasini qabul qilib, qolganini rad etsa, qanday muammo tug'iladi?"
     options:
@@ -239,7 +241,7 @@ Navbat to'lganda biz 503 qaytaramiz. RFC 9110 bu kodni "server vaqtincha haddan 
 
 Yuqorida aytilganidek, bir nechta worker umumiy kanaldan o'qisa, bir mashinaning nuqtalari tartibsiz yoziladi. Yechim: har worker o'z kanaliga ega bo'ladi, nuqta esa `hash(vehicle_id) % workers` bo'yicha tegishli kanalga yuboriladi. Deterministik xesh bir mashinani doim bir workerga yo'naltiradi, shu worker esa nuqtalarni kelish tartibida yozadi. Tajriba (Go 1.24.7, `hash/fnv`):
 
-```go
+```go run
 package main
 
 import (

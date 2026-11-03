@@ -11,6 +11,8 @@ sources:
     note: "WithTimeout va bekor qilish: shutdown muddati uchun mustaqil context"
   - id: 100go
     note: "Bandlar (100go.co bo'yicha tekshirilgan): #62 goroutine'ni qachon to'xtashini bilmay ishga tushirish, #61 kontekstni noto'g'ri uzatish. Graceful shutdown tartibi 100go.co ro'yxatida alohida band emas"
+  - id: k8s-pod-lifecycle
+    note: "Pod Termination Flow: preStop, TERM, EndpointSlice yangilanishi, grace period."
 quiz:
   - q: "Orkestrator konteynerni to'xtatish uchun SIGTERM yuboradi. Dastur `signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)` ishlatgan, lekin to'xtash muddati o'tib ketdi. Qaysi signal kod ichida ushlab bo'lmaydi va oxirgi chora sifatida ishlatiladi?"
     options:

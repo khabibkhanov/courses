@@ -236,7 +236,7 @@ Metrikalarni global o'zgaruvchi sifatida e'lon qilish (`promauto` yoki `init`) q
 
 `histogram_quantile` saqlangan har kuzatuvni emas, faqat bucket sonlarini ko'radi. Prometheus hujjatiga ko'ra klassik histogram uchun u kvantil tushgan bucket ichida kuzatuvlar tekis taqsimlangan deb chiziqli interpolyatsiya qiladi. Maxsus holatlar ham hujjatda yozilgan: kvantil eng yuqori (`+Inf`) bucket'ga tushsa, ikkinchi eng yuqori bucket'ning yuqori chegarasi qaytariladi; eng quyi bucket'ning quyi chegarasi, uning yuqori chegarasi noldan katta bo'lsa, 0 deb olinadi; kuzatuv bo'lmasa natija `NaN`. Quyidagi dastur shu algoritmni stdlib bilan takrorlaydi va ikki bucket to'plamini solishtiradi. Servis 1-3 ms oralig'ida javob beradi (har 50-so'rov 8 ms), jami 10000 kuzatuv, tasodifiy generator qat'iy seed bilan:
 
-```go
+```go run
 package main
 
 import (
@@ -592,7 +592,7 @@ Qarorlar: metrikalar `NewMetrics` konstruktorida yaratiladi va berilgan `Registe
 
 Quyidagi dastur bir nechta runtime metrikasini o'qiydi va sched metrikalarining tavsifini chiqaradi (Go 1.24.7, linux/amd64):
 
-```go
+```go run
 package main
 
 import (

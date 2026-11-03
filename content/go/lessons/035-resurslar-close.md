@@ -21,6 +21,8 @@ sources:
     note: "Response.Body: ulanishni qayta ishlatish va Body'ni yopish; Client.Do: CheckRedirect xatosida Response va xato birga qaytishi"
   - id: pkg-database-sql
     note: "Rows.Close idempotent, Next false qaytarsa Rows avtomatik yopiladi; Conn pool'ga Close bilan qaytariladi"
+  - id: go124
+    note: "os.Root (Go 1.24)."
 quiz:
   - q: "1000 iteratsiyali tsiklda har safar `r := pool.Open(); defer r.Close()` yozilgan (bitta funksiya ichida). Resurslar qachon yopiladi?"
     options:
@@ -420,7 +422,7 @@ Blogdagi caveat'lar: Unix'da `Root` `openat` oilasiga tayanadi, katalog deskript
 
 Tsikldagi `defer`:
 
-```go
+```go run
 package main
 
 import "fmt"

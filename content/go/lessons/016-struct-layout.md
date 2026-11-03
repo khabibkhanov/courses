@@ -170,7 +170,7 @@ Spetsifikatsiya shu bilan cheklanadi. `int`, `uintptr`, pointer, string va slice
 
 Bir xil to'rt-besh maydonni ikki xil tartibda yozamiz va o'lchaymiz:
 
-```go
+```go run
 package main
 
 import (
@@ -251,7 +251,7 @@ Packed: size=20 align=4
 
 386 da `int64`/`float64` alignment'i 4: `Lat` ofseti 4, struct alignment'i 4. Pointer 4 bayt bo'lgani uchun `string` 8, `slice` 12, `interface` 8. Bu tafovut atomik operatsiyalarda muhim: `sync/atomic` hujjati ARM, 386 va 32-bitli MIPS da oddiy 64-bitli so'zni primitiv funksiyalar (`atomic.AddInt64`) bilan atomik ishlatsangiz, alignment'ni o'zingiz ta'minlashingiz kerakligini yozadi; `atomic.Int64` va `atomic.Uint64` tiplari esa avtomatik moslanadi. Tekshirdik:
 
-```go
+```go run
 package main
 
 import (
@@ -287,7 +287,7 @@ amd64 da hammasi 8. Xuddi shu kod `GOARCH=386` da: `Hits` align 4 (ofset 4, ya'n
 
 Spetsifikatsiya nol o'lchamli maydonlar uchun faqat "hajm nol" deydi. Quyidagi tajriba toolchain'ning aniq xatti-harakatini ko'rsatadi:
 
-```go
+```go run
 package main
 
 import (
@@ -332,7 +332,7 @@ Struct maydoni sifatida boshqa struct kelsa, ichki struct o'zining hajmi va alig
 
 Ikkinchi nozik joy: bitta-bitta heap'ga ajratilgan obyektlar (`new(T)`, `&T{}` natijasi escape qilsa, 20-dars) aynan `Sizeof` bayt egallamaydi. Quyidagi o'lchovda `runtime.MemStats.TotalAlloc` farqi har obyektga qancha bayt ajratilganini ko'rsatdi. Dastur 56 baytli va 40 baytli variantni, ichma-ich struct'ni, massiv qadamini va `Sizeof` sayozligini birga tekshiradi:
 
-```go
+```go run
 package main
 
 import (

@@ -13,6 +13,8 @@ sources:
     note: "PGO hujjati: optimallashtirish tsiklida kompilyator darajasidagi qadam sifatida, unrepresentativ profil haqidagi ogohlantirish"
   - id: pkg-testing
     note: "Go 1.24 release notes (go.dev/doc/go1.24) bo'yicha testing.B.Loop: benchmark funksiyasi har -count uchun bir marta bajariladi, chaqiruv parametrlari va natijalari tirik saqlanadi"
+  - id: go124
+    note: "testing.B.Loop (Go 1.24)."
 quiz:
   - q: "CPU profilda `fmt.Sprintf` kumulativ 66% chiqdi (u har nuqtada map kaliti yasaydi). Eng to'g'ri keyingi qadam qaysi?"
     options:
