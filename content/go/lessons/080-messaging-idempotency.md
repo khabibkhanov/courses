@@ -523,7 +523,7 @@ acc-9 -> ishchi 0
 acc-7 -> ishchi 2
 ```
 
-Birinchi variantning "yaxshi" ko'rinishi aldamchi: har bir qadam alohida xavfsiz, `-race` ham hech narsa topmaydi (data race yo'q, mantiqiy poyga bor). Haqiqiy tizimda bu "SELECT processed, keyin INSERT" ketma-ketligiga mos keladi. Bazada atomik bosqich uchun UNIQUE indeks va `insert ... on conflict do nothing` ishlatiladi. Postgres hujjatiga ko'ra `ON CONFLICT DO NOTHING` konflikt bo'lganda qatorni shunchaki qo'shmaydi; ta'sirlangan qatorlar soni (`RowsAffected`) nol bo'lsa, xabar allaqachon ko'rilgan. Quyidagi funksiya `withTx` yordamchisi (78-dars) ustida yozilgan; u `go vet` dan o'tdi, lekin haqiqiy bazada ishga tushirilmagan, shuning uchun jadval sxemasi taxminiy:
+Birinchi variantning "yaxshi" ko'rinishi aldamchi: har bir qadam alohida xavfsiz, `-race` ham hech narsa topmaydi (data race yo'q, mantiqiy poyga bor: bu klassik check-then-act xatosi). Haqiqiy tizimda bu "SELECT processed, keyin INSERT" ketma-ketligiga mos keladi. Bazada atomik bosqich uchun UNIQUE indeks va `insert ... on conflict do nothing` ishlatiladi. Postgres hujjatiga ko'ra `ON CONFLICT DO NOTHING` konflikt bo'lganda qatorni shunchaki qo'shmaydi; ta'sirlangan qatorlar soni (`RowsAffected`) nol bo'lsa, xabar allaqachon ko'rilgan. Quyidagi funksiya `withTx` yordamchisi (78-dars) ustida yozilgan; u `go vet` dan o'tdi, lekin haqiqiy bazada ishga tushirilmagan, shuning uchun jadval sxemasi taxminiy:
 
 ```go
 // handle: xabar ID'sini "egallash" va ta'sir bitta tranzaksiyada.
