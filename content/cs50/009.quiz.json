@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "clang -c main.c -o main.o buyrug'i qaysi bosqichdan keyin to'xtaydi?",
+      "options": ["Preprocessing", "Compiling (assembly)", "Assembling (object fayl)", "Linking"],
+      "answer": 2,
+      "why": "-c preprocessing, kompilyatsiya va assembly ni bajaradi va object fayl yozadi; linking bajarilmaydi. -E preprocessing dan, -S assembly dan keyin to'xtaydi."
+    },
+    {
+      "q": "`#define SQUARE(x) x * x` bo'lsa, SQUARE(2 + 3) nimaga teng?",
+      "options": ["25", "11", "10", "Kompilyatsiya xatosi"],
+      "answer": 1,
+      "why": "Preprocessor matnni so'zma-so'z almashtiradi: 2 + 3 * 2 + 3. Ko'paytirish avval: 2 + 6 + 3 = 11. To'g'ri macro: ((x) * (x))."
+    },
+    {
+      "q": "`#include <cs50.h>` bor, lekin cs50.h hech qaysi include katalogida yo'q. Xato qaysi bosqichda chiqadi?",
+      "options": ["Preprocessing", "Compiling", "Assembling", "Linking"],
+      "answer": 0,
+      "why": "#include ni preprocessor bajaradi va faylni topa olmasa fatal error: 'cs50.h' file not found beradi. Kompilyator ishga ham tushmaydi."
+    },
+    {
+      "q": "nm main.o chiqishida `U square` qatori bor. Bu nimani bildiradi?",
+      "options": [
+        "square main.o da aniqlangan va undan foydalanilmagan",
+        "square main.o da ishlatilgan, lekin aniqlanmagan; uni linker boshqa fayl yoki kutubxonadan topishi kerak",
+        "square xato bilan kompilyatsiya qilingan",
+        "square faqat o'qiladigan ma'lumot"
+      ],
+      "answer": 1,
+      "why": "U - undefined belgi: chaqiruv bor, kod yo'q. T esa shu faylning kod qismida aniqlangan belgini bildiradi."
+    },
+    {
+      "q": "main.c:(.text+0xa): undefined reference to `square' xatosini tuzatish uchun eng to'g'ri qadam qaysi?",
+      "options": [
+        "main.c ga int square(int n); prototype ini qo'shish",
+        "#include <math.h> qo'shish",
+        "Linking buyrug'iga square aniqlangan object faylni (square.o) yoki uning kutubxonasini qo'shish",
+        "-O2 bilan kompilyatsiya qilish"
+      ],
+      "answer": 2,
+      "why": "Xato ld dan keladi: belgi ishlatilgan, lekin hech qaysi kirish faylida aniqlanmagan. Prototype faqat kompilyatorga kerak, kodni linker ga beradigan narsa object fayl yoki kutubxona."
+    },
+    {
+      "q": "Linking dan keyin main da `e8 22 00 00 00` call instruksiyasi 0x1149 manzilda turibdi (keyingi instruksiya 0x114e da). Chaqirilayotgan funksiya qaysi manzilda?",
+      "options": ["0x0022", "0x116b", "0x1149", "0x1170"],
+      "answer": 3,
+      "why": "x86-64 da e8 dan keyingi to'rt bayt keyingi instruksiyaga nisbatan masofa: 0x114e + 0x22 = 0x1170."
+    },
+    {
+      "q": "glibc 2.39 li Linux da sqrt(x) ishlatilgan dastur clang root.c -o root bilan undefined reference to `sqrt' beradi. Sababi?",
+      "options": [
+        "math.h include qilinmagan",
+        "sqrt ning kodi alohida libm kutubxonasida va -lm berilmagan",
+        "sqrt faqat double emas, float qabul qiladi",
+        "Preprocessor sqrt macro sini ochmagan"
+      ],
+      "answer": 1,
+      "why": "math.h faqat prototype beradi. glibc da matematik funksiyalar libm da va linking uchun -lm kerak."
+    },
+    {
+      "q": "libgreet.a static arxiv. Qaysi buyruq GNU ld bilan undefined reference to `greet' beradi?",
+      "options": [
+        "clang -L. -lgreet usegreet.c -o ug",
+        "clang usegreet.c -L. -lgreet -o ug",
+        "clang -L. usegreet.c -lgreet -o ug",
+        "Hech biri, tartib ahamiyatsiz"
+      ],
+      "answer": 0,
+      "why": "Arxiv buyruq qatoridagi o'rnida bir marta ko'riladi va faqat undan oldin kelgan fayllardagi undefined belgilarni hal qiladi. -lgreet usegreet.c dan oldin turgani uchun greet olinmaydi."
+    },
+    {
+      "q": "square funksiyasi -O0 da 7 ta, -O2 da 3 ta instruksiyaga kompilyatsiya bo'ldi. -O2 da asosan nima yo'qoldi?",
+      "options": [
+        "Ko'paytirish instruksiyasi",
+        "ret instruksiyasi",
+        "Stack frame ochish/yopish va parametrni stack ga yozib qayta o'qish",
+        "Funksiya nomi belgilar jadvalidan"
+      ],
+      "answer": 2,
+      "why": "-O0 da push/mov/pop bilan frame ochiladi va n stack ga yozilib qayta o'qiladi. -O2 da argument to'g'ridan-to'g'ri %edi registridan ishlatiladi: mov, imul, ret."
+    },
+    {
+      "q": "Saytdagi brauzer muharririda printf(\"%zu\", sizeof(long)) 4 chiqaradi, lokal x86-64 Linux da 8. Sababi nima?",
+      "options": [
+        "Brauzer muharriri C emas, JavaScript ishlatadi",
+        "Muharrir clang bilan wasm32 nishoniga kompilyatsiya qiladi va bu nishonda long va pointer 4 bayt",
+        "Brauzerda optimizatsiya long ni qisqartiradi",
+        "C standarti long ni doim 4 bayt deb belgilaydi"
+      ],
+      "answer": 1,
+      "why": "Tip hajmi nishon (ABI) xususiyati. wasm32-wasip1 da __SIZEOF_LONG__ va __SIZEOF_POINTER__ 4, x86-64 Linux da 8."
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+# CS50 8-9-dars atamalari.
+- term: short-circuit evaluation
+  aliases: [short-circuit]
+  uz: "&& va || operatorlari natija aniq bo'lishi bilan to'xtashi: && da chap operand 0 bo'lsa, || da chap operand nol bo'lmasa, o'ng operand umuman hisoblanmaydi."
+  course: cs50
+  lesson: 8
+- term: fall-through
+  uz: "switch da break bo'lmaganda bajarilish keyingi case belgilaridan o'tib pastga davom etishi. Ataylab ishlatilsa, izoh bilan belgilanadi."
+  course: cs50
+  lesson: 8
+- term: off-by-one
+  uz: "Sikl bitta ortiqcha yoki kam aylanadigan xato, odatda < va <= ni almashtirishdan. [a, b) oralig'ida b - a, [a, b] da b - a + 1 aylanish bo'ladi."
+  course: cs50
+  lesson: 8
+- term: prototype
+  uz: "Funksiyaning tanasiz e'loni: qaytish tipi, nomi va parametr tiplari, nuqta-vergul bilan. Kompilyatorga funksiya ta'rifi keyinroq yoki boshqa faylda ekanini aytadi."
+  course: cs50
+  lesson: 8
+- term: pass by value
+  uz: "Argument funksiyaga nusxa sifatida uzatilishi. Funksiya ichida parametrni o'zgartirish chaqiruvchidagi o'zgaruvchiga ta'sir qilmaydi."
+  course: cs50
+  lesson: 8
+- term: block scope
+  uz: "Figurali qavslar ichida yoki parametr sifatida e'lon qilingan nomning ko'rinish sohasi: e'lon nuqtasidan blok oxirigacha. Bunday o'zgaruvchilar lokal deyiladi."
+  course: cs50
+  lesson: 8
+- term: file scope
+  uz: "Barcha funksiyalardan tashqarida e'lon qilingan nomning ko'rinish sohasi: e'lon nuqtasidan fayl oxirigacha. Bunday o'zgaruvchilar global deyiladi va 0 bilan boshlanadi."
+  course: cs50
+  lesson: 8
+- term: shadowing
+  uz: "Ichki blokda tashqi nom bilan bir xil nomli o'zgaruvchi e'lon qilinganda, blok ichida tashqisi ko'rinmay qolishi. clang -Wshadow bilan ogohlantiradi."
+  course: cs50
+  lesson: 8
+- term: preprocessor
+  uz: "Kompilyatsiyadan oldin # bilan boshlanadigan qatorlarni bajaradigan matn almashtiruvchi: #include faylni joyiga qo'yadi, #define macro larni ochadi. clang -E natijasini ko'rsatadi."
+  course: cs50
+  lesson: 9
+- term: macro
+  uz: "#define bilan e'lon qilingan matnli almashtirish qoidasi. Preprocessor uni tip va qavslarga qaramasdan so'zma-so'z ochadi, shuning uchun parametrlar qavsga olinadi."
+  course: cs50
+  lesson: 9
+- term: shartli kompilyatsiya
+  uz: "#if, #ifdef, #elif, #else bilan kodning bir qismini preprocessing bosqichida tanlash. Tanlanmagan tarmoq kompilyatorga umuman yetib bormaydi."
+  course: cs50
+  lesson: 9
+- term: line marker
+  uz: "Preprocessor natijasidagi # 2 \"hello.c\" kabi qatorlar. Ular kompilyatorga kod qaysi faylning qaysi qatoridan kelganini aytadi, shuning uchun xatolar asl fayl qatori bilan ko'rsatiladi."
+  course: cs50
+  lesson: 9
+- term: IR
+  aliases: [intermediate representation]
+  uz: "Kompilyatorning oraliq ko'rinishi: clang C kodini avval LLVM IR ga, keyin backend orqali aniq protsessor assembly siga o'giradi. Bitta front-end ko'p nishonni qo'llab-quvvatlaydi."
+  course: cs50
+  lesson: 9
+- term: assembly
+  uz: "Protsessor instruksiyalarining matnli ko'rinishi, har qatori odatda bitta mashina instruksiyasi. clang -S bilan olinadi."
+  course: cs50
+  lesson: 9
+- term: object fayl
+  aliases: [object file]
+  uz: "Assembler chiqaradigan, mashina kodi va belgilar jadvalidan iborat, lekin hali mustaqil ishlamaydigan fayl (.o). clang -c bilan olinadi."
+  course: cs50
+  lesson: 9
+- term: belgilar jadvali
+  aliases: [symbol table]
+  uz: "Object fayldagi funksiya va global o'zgaruvchi nomlari ro'yxati. nm da T - shu faylda aniqlangan, U - boshqa joydan kutilayotgan belgi."
+  course: cs50
+  lesson: 9
+- term: relocation
+  uz: "Object faylda hali noma'lum manzil uchun qoldirilgan yozuv. Linker belgining yakuniy manzilini topib, bo'sh qoldirilgan baytlarni to'ldiradi."
+  course: cs50
+  lesson: 9
+- term: linker
+  uz: "Object fayllar va kutubxonalarni bitta executable ga birlashtiradigan dastur: undefined belgilarni hal qiladi va manzillarni joylaydi. Linux da GNU ld yoki lld."
+  course: cs50
+  lesson: 9
+- term: WebAssembly
+  uz: "Brauzer bajaradigan, protsessorga bog'liq bo'lmagan stack mashina formatidagi modul. Bu saytdagi C bloklari clang bilan wasm32 nishoniga kompilyatsiya qilinadi."
+  course: cs50
+  lesson: 9

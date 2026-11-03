@@ -1,0 +1,80 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "int a = -5; bo'lsa, `if (a > 0 && check(a))` qatorida check funksiyasi necha marta chaqiriladi?",
+      "options": ["0 marta", "1 marta", "2 marta", "Kompilyatorga bog'liq, kafolat yo'q"],
+      "answer": 0,
+      "why": "a > 0 yolg'on, && esa short-circuit qiladi: chap operand 0 bo'lsa o'ng operand umuman hisoblanmaydi. Bu til kafolati, optimizatsiya emas."
+    },
+    {
+      "q": "`printf(\"%d\\n\", 7 > 3);` nimani chiqaradi?",
+      "options": ["true", "7", "1", "Kompilyatsiya xatosi: boolean ni %d bilan chiqarib bo'lmaydi"],
+      "answer": 2,
+      "why": "C da taqqoslash operatorlari int qaytaradi: rost uchun 1, yolg'on uchun 0. Shuning uchun %d bilan 1 chiqadi."
+    },
+    {
+      "q": "x = 15 bo'lganda `if (0 < x < 10)` sharti qanday baholanadi?",
+      "options": [
+        "Yolg'on, chunki 15 oraliqdan tashqarida",
+        "Rost, chunki (0 < 15) natijasi 1 va 1 < 10",
+        "Kompilyatsiya xatosi",
+        "Undefined behavior"
+      ],
+      "answer": 1,
+      "why": "Ifoda (0 < x) < 10 deb o'qiladi. Chap qism 0 yoki 1, u har doim 10 dan kichik, demak shart doim rost. To'g'risi: x > 0 && x < 10."
+    },
+    {
+      "q": "switch (c) da case 'o': printf(\"o'chirish\\n\"); dan keyin break yo'q, undan keyin case 'q': printf(\"chiqish\\n\"); break; turibdi. c = 'o' bo'lsa nima chiqadi?",
+      "options": [
+        "Faqat o'chirish",
+        "Faqat chiqish",
+        "Hech narsa, chunki break yo'q",
+        "o'chirish, keyin chiqish"
+      ],
+      "answer": 3,
+      "why": "case faqat kirish nuqtasi. break uchramaguncha bajarilish keyingi case lardan o'tib davom etadi (fall-through)."
+    },
+    {
+      "q": "`for (int i = 3; i <= 12; i++)` sikli tanasi necha marta bajariladi?",
+      "options": ["9", "10", "11", "12"],
+      "answer": 1,
+      "why": "Yopiq oraliq [a, b] uchun aylanishlar soni b - a + 1 = 12 - 3 + 1 = 10."
+    },
+    {
+      "q": "Balandlik 1 dan 8 gacha bo'lishi kerak. do { h = get_int(...); } while (SHART); dagi SHART qaysi bo'lishi kerak?",
+      "options": ["h >= 1 && h <= 8", "h < 1 || h > 8", "h < 1 && h > 8", "h > 1 || h < 8"],
+      "answer": 1,
+      "why": "Shart qachon qayta so'rash kerakligini bildiradi, ya'ni to'g'ri shartning inkori: !(h >= 1 && h <= 8) = h < 1 || h > 8 (De Morgan). && varianti hech qachon rost bo'lmaydi."
+    },
+    {
+      "q": "Ichma-ich siklda tashqi i = 1..8, ichki `for (int j = 0; j < i; j++)`. Ichki tana jami necha marta bajariladi?",
+      "options": ["8", "36", "64", "72"],
+      "answer": 1,
+      "why": "Ichki sikl i marta ishlaydi: 1 + 2 + ... + 8 = 8 · 9 / 2 = 36."
+    },
+    {
+      "q": "void reset(int n) { n = 0; } funksiyasi int x = 5; reset(x); tarzida chaqirildi. Keyin x nimaga teng?",
+      "options": ["5", "0", "Noma'lum (garbage)", "Kompilyatsiya xatosi, chunki void funksiya parametrni o'zgartira olmaydi"],
+      "answer": 0,
+      "why": "C da argument qiymati bo'yicha uzatiladi: n - x ning nusxasi. Nusxani o'zgartirish chaqiruvchidagi x ga ta'sir qilmaydi."
+    },
+    {
+      "q": "main ichida square(7) chaqirilgan, square esa faylning pastida ta'riflangan va yuqorida prototype yo'q. clang 18 nima qiladi?",
+      "options": [
+        "Muammosiz kompilyatsiya qiladi, chunki funksiya faylda bor",
+        "Faqat linking da xato beradi",
+        "call to undeclared function xatosini beradi",
+        "Funksiyani avtomatik ravishda yuqoriga ko'chiradi"
+      ],
+      "answer": 2,
+      "why": "Kompilyator faylni yuqoridan pastga o'qiydi va chaqiruv nuqtasida square ning tiplarini bilmaydi. C99 dan beri implicit e'lon yo'q, clang 18 buni xato deb hisoblaydi. Prototype yoki ta'rifni main dan yuqoriga qo'yish kerak."
+    },
+    {
+      "q": "Global int count = 100; bor. main da int count = 1; e'lon qilingan, keyin show() chaqiriladi va u count ni chiqaradi. Nima chiqadi?",
+      "options": ["1", "0", "Kompilyatsiya xatosi: count ikki marta e'lon qilingan", "100"],
+      "answer": 3,
+      "why": "main dagi lokal count faqat main blokida globalni yashiradi. show boshqa funksiya, u main ning lokal o'zgaruvchilarini ko'rmaydi va global count ni o'qiydi."
+    }
+  ]
+}
