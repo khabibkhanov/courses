@@ -1,0 +1,66 @@
+# CS50 16-17-darslar atamalari.
+- term: asimptotik tahlil
+  aliases: [asymptotic analysis]
+  uz: "Algoritmlarni kirish o'lchami n juda katta bo'lgandagi qadamlar sonining o'sishi bo'yicha solishtirish. Konstanta ko'paytuvchilar va kichik hadlar e'tiborga olinmaydi."
+  course: cs50
+  lesson: 16
+- term: Big O
+  uz: "Yuqori chegara: f(n) = O(g(n)), agar biror n0 dan boshlab f(n) <= c · g(n) bo'ladigan musbat c mavjud bo'lsa. f g dan tezroq o'smaydi."
+  course: cs50
+  lesson: 16
+- term: Big Omega
+  uz: "Quyi chegara: f(n) = Ω(g(n)), agar biror n0 dan boshlab f(n) >= c · g(n) bo'ladigan musbat c mavjud bo'lsa. f g dan sekinroq o'smaydi."
+  course: cs50
+  lesson: 16
+- term: Big Theta
+  uz: "Aniq tartib: f(n) = Θ(g(n)), agar f bir vaqtda O(g(n)) va Ω(g(n)) bo'lsa, ya'ni biror n0 dan boshlab c1 · g(n) <= f(n) <= c2 · g(n)."
+  course: cs50
+  lesson: 16
+- term: worst case
+  aliases: [eng yomon holat]
+  uz: "n o'lchamli barcha kirishlar orasida algoritm eng ko'p qadam bajaradigani. Bu kirish tanlovi; unga O, Ω yoki Θ bilan chegara qo'yiladi."
+  course: cs50
+  lesson: 16
+- term: best case
+  aliases: [eng yaxshi holat]
+  uz: "n o'lchamli barcha kirishlar orasida algoritm eng kam qadam bajaradigani. Big Omega bilan bir xil narsa emas: eng yaxshi holat ham O bilan baholanishi mumkin."
+  course: cs50
+  lesson: 16
+- term: average case
+  aliases: [o'rtacha holat]
+  uz: "Kirishlarning biror taqsimoti bo'yicha kutilgan qadamlar soni, masalan barcha tartiblar teng ehtimolli deb faraz qilinganda. Faraz doim aytilishi kerak."
+  course: cs50
+  lesson: 16
+- term: space complexity
+  aliases: [xotira murakkabligi]
+  uz: "Algoritm ishlatadigan qo'shimcha xotiraning kirish o'lchami n ga bog'liqligi, vaqt kabi O, Ω, Θ bilan yoziladi. Kirishning o'zi odatda hisobga olinmaydi."
+  course: cs50
+  lesson: 16
+- term: selection sort
+  uz: "Har o'tishda saralanmagan qismdan eng kichik elementni topib, uni shu qism boshiga qo'yadigan saralash. Har doim n(n-1)/2 taqqoslash va ko'pi bilan n-1 almashtirish; stable emas."
+  course: cs50
+  lesson: 17
+- term: bubble sort
+  uz: "Qo'shni noto'g'ri juftlarni almashtirib, har o'tishda eng katta elementni oxiriga suzdiradigan saralash. Erta to'xtash bilan saralangan massivda n-1 taqqoslash, eng yomon holatda Θ(n^2); stable."
+  course: cs50
+  lesson: 17
+- term: insertion sort
+  uz: "Har keyingi elementni saralangan chap qismdagi o'z joyiga undan katta elementlarni surib qo'yadigan saralash. Ish n + inversiyalar soniga proporsional; stable va in-place."
+  course: cs50
+  lesson: 17
+- term: in-place
+  uz: "Massivning o'zi ichida ishlaydigan va faqat O(1) qo'shimcha xotira talab qiladigan algoritm xususiyati. Selection, bubble va insertion sort in-place."
+  course: cs50
+  lesson: 17
+- term: adaptive
+  uz: "Ish hajmi kirishning tartibsizligiga moslashadigan saralash: deyarli saralangan massivda tezroq ishlaydi. Insertion sort adaptive, selection sort emas."
+  course: cs50
+  lesson: 17
+- term: Introsort
+  uz: "Quicksort bilan boshlab, rekursiya juda chuqurlashsa heapsort'ga o'tadigan gibrid saralash. GCC libstdc++ std::sort shunday ishlaydi va kichik bo'laklarni insertion sort bilan tugatadi."
+  course: cs50
+  lesson: 17
+- term: Timsort
+  uz: "Massivdagi tayyor saralangan bo'laklarni (run) topib birlashtiradigan stable gibrid saralash; qisqa run'lar insertion sort bilan uzaytiriladi. CPython va V8 da ishlatiladi."
+  course: cs50
+  lesson: 17

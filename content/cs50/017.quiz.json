@@ -1,0 +1,110 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Selection sort allaqachon saralangan 1000 elementli massivga berildi. Nechta taqqoslash bajariladi?",
+      "options": ["999", "499 500", "0", "1 000 000"],
+      "answer": 1,
+      "why": "Minimumni topish uchun har o'tishda oraliqning barcha elementlari ko'riladi: (n-1) + ... + 1 = 1000 x 999 / 2 = 499 500, kirishdan qat'i nazar."
+    },
+    {
+      "q": "{3, 1, 2} massivida nechta inversiya bor va insertion sort nechta surish bajaradi?",
+      "options": [
+        "1 inversiya, 1 surish",
+        "3 inversiya, 3 surish",
+        "2 inversiya, 3 surish",
+        "2 inversiya, 2 surish"
+      ],
+      "answer": 3,
+      "why": "Noto'g'ri tartibdagi juftlar: (3,1) va (3,2). Insertion sort har bir surishda aynan bitta inversiyani yo'qotadi, demak 2 surish."
+    },
+    {
+      "q": "Bubble sort'ning \"eng yaxshi holatda Theta(n)\" xossasi nimaga bog'liq?",
+      "options": [
+        "O'tishda almashtirish bo'lmasa to'xtaydigan bayroqqa (erta to'xtash); bayroqsiz eng yaxshi holat ham Theta(n^2)",
+        "Qo'shni elementlarni solishtirishning o'ziga: har qanday bubble sort shunday",
+        "Massiv uzunligi juft bo'lishiga",
+        "Ichki sikl chegarasi n - 1 - pass bo'lishiga"
+      ],
+      "answer": 0,
+      "why": "Bayroqsiz versiya saralangan massivda ham barcha n - 1 o'tishni bajaradi: n(n-1)/2 taqqoslash. Faqat erta to'xtash bitta o'tishdan keyin chiqib ketadi."
+    },
+    {
+      "q": "Kartalar faqat qiymat bo'yicha saralanadi: 4a 2a 4b 1a. Selection sort'dan keyin 4a va 4b qanday tartibda bo'ladi va nega?",
+      "options": [
+        "4a 4b: selection sort stable",
+        "4b 4a: birinchi o'tishda 1a va 4a almashtirilib, 4a uzoq sakrab 4b dan keyinga tushadi",
+        "4a 4b: teng elementlar hech qachon almashtirilmaydi",
+        "Natijani oldindan aytib bo'lmaydi: algoritm tasodifiy"
+      ],
+      "answer": 1,
+      "why": "Minimum 1a 3-o'rinda, u 0-o'rindagi 4a bilan almashtiriladi: 1a 2a 4b 4a. Keyingi o'tishlar 4b va 4a tartibini o'zgartirmaydi."
+    },
+    {
+      "q": "Insertion sort ichki siklida `a[j] > key` o'rniga `a[j] >= key` yozildi. Nima o'zgaradi?",
+      "options": [
+        "Massiv noto'g'ri saralanadi",
+        "Hech narsa: ikkala shart bir xil",
+        "Natija saralangan bo'ladi, lekin teng elementlar o'rin almashadi: saralash stable bo'lmay qoladi va ortiqcha surishlar paydo bo'ladi",
+        "Dastur massiv chegarasidan chiqadi"
+      ],
+      "answer": 2,
+      "why": "Teng element ham surilsa, key undan oldinga o'tadi. Tartib to'g'ri, lekin teng kalitlarning kirishdagi tartibi buziladi."
+    },
+    {
+      "q": "n = 1000 tasodifiy massivda bubble sort 246 350 almashtirish qildi. Xuddi shu massivda insertion sort nechta surish qiladi?",
+      "options": [
+        "Taxminan ikki baravar kam: 123 175",
+        "Aynan 246 350",
+        "499 500",
+        "999"
+      ],
+      "answer": 1,
+      "why": "Ikkala son ham inversiyalar soniga teng: har bir qo'shni almashtirish ham, har bir surish ham aynan bitta inversiyani yo'qotadi."
+    },
+    {
+      "q": "Massivda har bir element yakuniy joyidan ko'pi bilan 3 o'rin uzoqda. n = 10^6. Insertion sort ishi qaysi tartibda?",
+      "options": [
+        "Theta(n^2), chunki eng yomon holat shunday",
+        "Theta(n log n)",
+        "Theta(log n)",
+        "O(n): inversiyalar ko'pi bilan 3n, ish Theta(n + I)"
+      ],
+      "answer": 3,
+      "why": "Har bir key ko'pi bilan 3 ta element ustidan suriladi, I <= 3n. Ish n + I ga proporsional, ya'ni chiziqli."
+    },
+    {
+      "q": "Elementlar katta yozuvlar (har biri 4 KB), ularni ko'chirish taqqoslashdan ancha qimmat. Uchala oddiy saralashdan qaysi biri eng kam yozish bajaradi?",
+      "options": [
+        "Selection sort: ko'pi bilan n - 1 almashtirish",
+        "Bubble sort: erta to'xtash tufayli",
+        "Insertion sort: surish almashtirishdan arzon",
+        "Uchalasida ham yozishlar soni inversiyalarga teng"
+      ],
+      "answer": 0,
+      "why": "Selection sort har o'tishda ko'pi bilan bitta almashtirish qiladi. Bubble va insertion esa inversiyalar soni I qadar yozadi, bu o'rtacha n(n-1)/4."
+    },
+    {
+      "q": "GCC libstdc++ `std::sort` da insertion sort qanday ishlatiladi?",
+      "options": [
+        "Faqat n < 16 bo'lsa, aks holda umuman ishlatilmaydi",
+        "Introsort 16 tadan katta bo'laklarni bo'lishni davom ettiradi, keyin `__final_insertion_sort` butun deyarli saralangan massivni tugatadi",
+        "Insertion sort birinchi bosqich, keyin heapsort",
+        "std::sort stable bo'lishi uchun insertion sort ishlatiladi"
+      ],
+      "answer": 1,
+      "why": "_S_threshold = 16: kichik bo'laklar tegmay qoladi, har element yakuniy joyidan 16 o'rindan uzoq emas, shuning uchun yakuniy insertion sort tez ishlaydi. std::sort stable emas."
+    },
+    {
+      "q": "Talabalar ro'yxati avval ism bo'yicha saralangan. Uni ball bo'yicha saralab, teng balli talabalar ism tartibida qolishini xohlaysiz. Ikkinchi saralash qanday bo'lishi kerak?",
+      "options": [
+        "In-place bo'lishi kerak",
+        "Theta(n log n) bo'lishi kerak",
+        "Stable bo'lishi kerak: masalan insertion sort yoki Python sorted()",
+        "Selection sort bo'lishi kerak, chunki u kam almashtiradi"
+      ],
+      "answer": 2,
+      "why": "Stable saralash teng kalitli yozuvlarning oldingi tartibini saqlaydi, shuning uchun birinchi saralash natijasi teng ballar ichida qoladi."
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Algoritm n = 10^6 kirishda n^2 qadam bajaradi, kompyuter sekundiga 10^9 amal bajaradi. Taxminan qancha vaqt ketadi?",
+      "options": ["1 ms", "1 soniya", "Taxminan 17 daqiqa", "Taxminan 12 kun"],
+      "answer": 2,
+      "why": "(10^6)^2 = 10^12 qadam, 10^12 / 10^9 = 1000 soniya, bu taxminan 16.7 daqiqa."
+    },
+    {
+      "q": "f(n) = 3n^2 + 5n + 2. Qaysi juftlik f(n) = O(n^2) ni isbotlash uchun yaroqli?",
+      "options": [
+        "c = 3, n0 = 1",
+        "c = 4, n0 = 6",
+        "c = 4, n0 = 1",
+        "c = 1, n0 = 100"
+      ],
+      "answer": 1,
+      "why": "3n^2 + 5n + 2 <= 4n^2 tengsizligi n^2 - 5n - 2 >= 0 ga teng: n = 5 da bajarilmaydi, n >= 6 da bajariladi. c = 3 yoki c = 1 da f har doim kattaroq."
+    },
+    {
+      "q": "Talaba: \"Big O - bu eng yomon holat, Omega - eng yaxshi holat\". Qaysi izoh to'g'ri?",
+      "options": [
+        "To'g'ri, bu ta'rifning o'zi",
+        "Faqat saralash algoritmlari uchun to'g'ri",
+        "Noto'g'ri: Theta eng yomon holatni bildiradi",
+        "Noto'g'ri: holat qaysi kirish ekanini tanlaydi, O va Omega esa shu holat funksiyasining yuqori va quyi chegarasi; masalan, eng yaxshi holat ham O bilan yozilishi mumkin"
+      ],
+      "answer": 3,
+      "why": "Holat (best, worst, average) bitta funksiya beradi, O, Omega, Theta esa istalgan funksiya haqidagi bayon. Ular mustaqil tushunchalar."
+    },
+    {
+      "q": "Funksiya birinchi takror topilishi bilan to'xtaydi: eng yaxshi holatda 1 ta, eng yomon holatda n(n-1)/2 ta solishtirish. Qaysi bayon NOTO'G'RI?",
+      "options": [
+        "Algoritm (barcha kirishlar uchun) Theta(n^2)",
+        "Eng yomon holat Theta(n^2)",
+        "Algoritm O(n^2)",
+        "Eng yaxshi holat Theta(1)"
+      ],
+      "answer": 0,
+      "why": "Ba'zi kirishlarda faqat 1 qadam bo'lgani uchun barcha kirishlar bo'yicha Omega(n^2) bajarilmaydi, demak Theta(n^2) ham yo'q."
+    },
+    {
+      "q": "Quyidagi kod qaysi sinfda? for (i = 0; i < n; i++) for (j = 0; j < 10; j++) count++;",
+      "options": ["Theta(n^2)", "Theta(n)", "Theta(n log n)", "Theta(10^n)"],
+      "answer": 1,
+      "why": "Ichki sikl n ga bog'liq emas: jami 10n qadam. Konstanta 10 tashlanadi, natija Theta(n)."
+    },
+    {
+      "q": "for (i = 1; i < n; i *= 2) for (j = 0; j < n; j++) count++; n = 1000 da count nimaga teng?",
+      "options": ["1 000", "999 000", "10 000", "1 000 000"],
+      "answer": 2,
+      "why": "i = 1, 2, 4, ..., 512: 10 ta qiymat (2^10 = 1024 > 1000). Har birida 1000 aylanish: 10 x 1000 = 10 000, ya'ni n x log n sinfi."
+    },
+    {
+      "q": "Dastur qadamlarini sanadingiz: n = 2000 da 3.1 million, n = 4000 da 12.4 million, n = 8000 da 49.6 million. Eng ehtimolli sinf qaysi?",
+      "options": ["Theta(n)", "Theta(n log n)", "Theta(n^3)", "Theta(n^2)"],
+      "answer": 3,
+      "why": "n ikki baravar oshganda qadamlar 4 baravar oshyapti (12.4 / 3.1 = 4, 49.6 / 12.4 = 4), bu (2n)^2 / n^2 = 4 ga mos."
+    },
+    {
+      "q": "Nima uchun log2 n va log10 n ni bitta sinf Theta(log n) deb yozamiz, 2^n va 3^n ni esa yo'q?",
+      "options": [
+        "log2 n = log10 n / log10 2, farq konstanta ko'paytuvchi; 3^n / 2^n = 1.5^n esa cheksiz o'sadi",
+        "Logarifmlar doim kichik, shuning uchun farqi ahamiyatsiz",
+        "Kelishuv bo'yicha: matematik sababi yo'q",
+        "2^n va 3^n ham bitta sinf, faqat yozuv har xil"
+      ],
+      "answer": 0,
+      "why": "Asos almashtirish formulasi logarifmlarni konstantaga ko'paytiradi, c uni yutadi. Darajalar nisbati esa n ga bog'liq va hech qanday c ostida qolmaydi."
+    },
+    {
+      "q": "Kompyuter 1000 baravar tezlashdi. Bir xil vaqt ichida 2^n qadamli algoritm qanchalik katta kirishni ishlay oladi?",
+      "options": [
+        "1000 baravar katta n",
+        "Taxminan 31.6 baravar katta n",
+        "Atigi taxminan 10 ta element ko'proq",
+        "Ikki baravar katta n"
+      ],
+      "answer": 2,
+      "why": "2^(n + k) = 1000 x 2^n bo'lishi uchun 2^k = 1000, ya'ni k = log2 1000, taxminan 10. 31.6 = sqrt(1000) javobi n^2 algoritmga tegishli."
+    },
+    {
+      "q": "Takrorni topishning ikki usuli: (A) barcha juftlar, (B) ko'rilganlarni set'da saqlash. Vaqt va qo'shimcha xotira bo'yicha to'g'ri tavsif qaysi?",
+      "options": [
+        "A: Theta(n^2) vaqt, Theta(n) xotira; B: Theta(n) vaqt, Theta(1) xotira",
+        "A: Theta(n^2) vaqt, Theta(1) xotira; B: o'rtacha Theta(n) vaqt, Theta(n) xotira",
+        "Ikkalasi ham Theta(n) vaqt, farq faqat xotirada",
+        "B tezroq va xotirani ham kamroq ishlatadi"
+      ],
+      "answer": 1,
+      "why": "Juftlar usuli faqat bir nechta indeks saqlaydi. Set usuli n tagacha elementni saqlaydi: xotira evaziga vaqt yutiladi (time-space trade-off)."
+    }
+  ]
+}

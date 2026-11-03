@@ -44,7 +44,7 @@
   course: cs50
   lesson: 13
 - term: null pointer
-  aliases: [NULL]
+  aliases: ["NULL"]
   uz: "Hech qayerga qaramaydigan manzil. argv[argc] standart bo'yicha null pointer; uni satr sifatida o'qish undefined behavior."
   course: cs50
   lesson: 13

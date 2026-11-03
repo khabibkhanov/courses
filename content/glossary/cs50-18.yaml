@@ -39,9 +39,9 @@
   lesson: 19
 - term: stable
   aliases: [stable saralash]
-  uz: "Teng kalitli elementlarning boshlang'ich nisbiy tartibini saqlaydigan saralash xususiyati. Merge sort'da merge teng elementda chap qatordan olsa (<=), u stable."
+  uz: "Teng kalitli elementlarning boshlang'ich nisbiy tartibini saqlaydigan saralash xususiyati. Insertion sort va merge sort stable, selection sort esa odatda stable emas."
   course: cs50
-  lesson: 19
+  lesson: 17
 - term: qaror daraxti
   aliases: [decision tree]
   uz: "Taqqoslash algoritmining modeli: ichki tugunlar taqqoslashlar, barglar natijalar. n! barg kerakligidan har qanday taqqoslash saralashi kamida log2(n!) taqqoslash qilishi kelib chiqadi."
@@ -50,4 +50,4 @@
 - term: inversiya
   uz: "Massivda i < j bo'lib a[i] > a[j] bo'lgan juftlik. Saralangan massivda 0 ta, teskari massivda n(n - 1)/2 ta; merge sort bilan Θ(n log n) da sanaladi."
   course: cs50
-  lesson: 19
+  lesson: 17
