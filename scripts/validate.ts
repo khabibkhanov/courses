@@ -8,7 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { getCourse, getLesson, listCourses, publishedNumbers, syllabus, type Course, type Lesson } from "../src/lib/content";
-import { FILE_NAME, STDIN_LANGS, TESTABLE, runLang } from "../src/lib/playground";
+import { FILE_NAME, STDIN_LANGS, TESTABLE, runLang, testLang } from "../src/lib/playground";
 import { glossary, termMatcher } from "../src/lib/glossary";
 
 const [onlyCourse, fromArg, toArg] = process.argv.slice(2);
@@ -87,7 +87,7 @@ function checkRunBlocks(body: string): string[] {
     if (!run?.run || body.slice(run.end, blocks[k + 1].start).trim() !== "")
       e.push(`"${b.tag}" bloki darhol "run" blokidan keyin kelishi kerak (${b.lang})`);
     else if (b.tag !== "file" && chain.some((c) => c.tag === b.tag)) e.push(`"${b.tag}" bloki bitta "run" blokiga ikki marta biriktirilgan`);
-    else if (b.tag === "test" && lang !== runLang(b.lang)) e.push(`"test" bloki tili "run" bloki tili bilan bir xil emas`);
+    else if (b.tag === "test" && testLang(lang!) !== runLang(b.lang)) e.push(`"test" bloki tili "run" bloki tiliga mos emas (html uchun js)`);
     else if (b.tag === "test" && !TESTABLE.includes(lang!)) e.push(`"test" bloki ${b.lang} uchun qo'llab-quvvatlanmaydi`);
     else if (b.tag !== "test" && !STDIN_LANGS.includes(lang!)) e.push(`"${b.tag}" bloki ${run.lang} uchun qo'llab-quvvatlanmaydi`);
     else if (b.tag === "args" && b.text.trim().includes("\n")) e.push(`"args" bloki bitta qator bo'lishi kerak`);

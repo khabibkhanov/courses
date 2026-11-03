@@ -16,7 +16,14 @@ export type Output =
 const PYODIDE = "https://cdn.jsdelivr.net/npm/pyodide@314.0.7/";
 const SQLJS = "https://cdn.jsdelivr.net/npm/sql.js@1.15.2/dist/";
 
-export const LANG_LABEL: Record<RunLang, string> = { python: "Python", sql: "SQL (SQLite)", js: "JavaScript", ts: "TypeScript", c: "C" };
+export const LANG_LABEL: Record<RunLang, string> = {
+  python: "Python",
+  sql: "SQL (SQLite)",
+  js: "JavaScript",
+  ts: "TypeScript",
+  c: "C",
+  html: "HTML",
+};
 /** Til haqida qisqa eslatma (sarlavhada). */
 export const LANG_NOTE: Partial<Record<RunLang, string>> = {
   c: "32-bit muhit: pointer va long 4 bayt (odatiy 64-bit kompyuterda 8 bayt)",
@@ -28,9 +35,10 @@ export const LOADING_LABEL: Record<RunLang, string> = {
   js: "JavaScript",
   ts: "TypeScript",
   c: "C kompilyatori (clang, ~23 MB)",
+  html: "Sahifa",
 };
 // C: vaqt kompilyatsiyani ham o'z ichiga oladi.
-const LIMIT_MS: Record<RunLang, number> = { python: 15000, sql: 5000, js: 5000, ts: 5000, c: 10000 };
+const LIMIT_MS: Record<Exclude<RunLang, "html">, number> = { python: 15000, sql: 5000, js: 5000, ts: 5000, c: 10000 };
 
 const JS_WORKER = `
 const fmt = (v) => typeof v === "string" ? v : (() => { try { return JSON.stringify(v, null, 2) ?? String(v); } catch { return String(v); } })();
@@ -76,6 +84,12 @@ self.onmessage = async (e) => {
   const ns = py.globals.get("dict")();
   try {
     await py.loadPackagesFromImports(e.data.code);
+    // Pyodide tarkibida yo'q, lekin sof Python paketlar PyPI'dan micropip bilan o'rnatiladi (Flask darslari uchun).
+    const extra = /^\\s*(from|import)\\s+flask\\b/m.test(e.data.code) ? ["flask"] : [];
+    if (extra.length) {
+      await py.loadPackage("micropip");
+      await py.pyimport("micropip").install(extra);
+    }
     await py.runPythonAsync(e.data.code, { globals: ns });
     if (e.data.tests) {
       ns.set("_report", (name, ok, error) => postMessage({ type: "out", out: { kind: "test", name, ok, error: error ?? undefined } }));
@@ -162,11 +176,40 @@ async function transpile(code: string, ts: boolean): Promise<string> {
 export type RunHandle = { done: Promise<void>; stop: () => void };
 
 /**
+ * HTML bloki: sahifa sandbox'li iframe'da (srcdoc) ochiladi. Boshiga qo'yilgan ko'prik skripti console, xatolar va
+ * check() test natijalarini ota sahifaga postMessage bilan yuboradi (token - shu ishga tushirishniki).
+ * Testlar (```js test) sahifa yuklangandan keyin ishlaydi; "done" - testlar tugagach.
+ */
+export function htmlDocument(code: string, token: string, tests?: string): string {
+  const bridge = `<script>(() => {
+const T = ${JSON.stringify(token)};
+const post = (o) => parent.postMessage(Object.assign({ __pg: T }, o), "*");
+const fmt = (v) => typeof v === "string" ? v : (() => { try { return JSON.stringify(v, null, 2) ?? String(v); } catch { return String(v); } })();
+for (const [m, k] of [["log", "out"], ["info", "out"], ["debug", "out"], ["table", "out"], ["warn", "err"], ["error", "err"]])
+  console[m] = (...a) => post({ type: "out", out: { kind: k, text: a.map(fmt).join(" ") } });
+addEventListener("error", (e) => post({ type: "out", out: { kind: "err", text: String(e.message) + (e.lineno ? " (qator " + e.lineno + ")" : "") } }));
+addEventListener("unhandledrejection", (e) => post({ type: "out", out: { kind: "err", text: "Ushlanmagan xato (Promise): " + String((e.reason && e.reason.message) || e.reason) } }));
+const pending = [];
+window.check = (name, fn) => pending.push((async () => {
+  try { post({ type: "out", out: { kind: "test", name, ok: Boolean(await fn()) } }); }
+  catch (err) { post({ type: "out", out: { kind: "test", name, ok: false, error: String((err && err.message) || err) } }); }
+})());
+window.__pgDone = async () => { await Promise.all(pending); post({ type: "done" }); };
+})();<\/script>`;
+  const run = tests
+    ? `<script>addEventListener("load", async () => { try { await (async () => {\n${tests.replace(/<\/script/gi, "<\\/script")}\n})(); } catch (err) { console.error(String((err && err.message) || err)); } __pgDone(); });<\/script>`
+    : `<script>addEventListener("load", () => setTimeout(__pgDone, 0));<\/script>`;
+  // Ko'prik o'quvchining skriptlaridan oldin ishlashi kerak, lekin <!doctype> dan keyin (aks holda quirks mode).
+  const doctype = code.match(/^\s*<!doctype[^>]*>/i)?.[0] ?? "";
+  return doctype + bridge + "\n" + code.slice(doctype.length) + "\n" + run;
+}
+
+/**
  * Kodni ishga tushiradi. onOutput har bir chiqish bo'lagi uchun chaqiriladi,
  * onLoading - runtime birinchi marta yuklanayotganda.
  */
 export function run(
-  lang: RunLang,
+  lang: Exclude<RunLang, "html">,
   code: string,
   onOutput: (o: Output) => void,
   onLoading: (loading: boolean) => void,

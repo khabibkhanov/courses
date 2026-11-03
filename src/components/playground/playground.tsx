@@ -1,9 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, FlaskConical, Play, RotateCcw, Square, X } from "lucide-react";
-import { LANG_LABEL, LANG_NOTE, LOADING_LABEL, type Output, type RunHandle } from "./runners";
+import { LANG_LABEL, LANG_NOTE, LOADING_LABEL, htmlDocument, type Output, type RunHandle } from "./runners";
 import { STDIN_LANGS, splitArgs, type PlaygroundSpec } from "@/lib/playground";
 import { saveProgress, useProgress } from "@/lib/progress";
 
@@ -36,28 +36,74 @@ export function Playground({ lang, code: initial, tests, stdin, args, files, cou
   const [command, setCommand] = useState(args ?? "");
   const [fileTexts, setFileTexts] = useState(files ?? []);
   const handle = useRef<RunHandle | null>(null);
+  // HTML: iframe'ga beriladigan hujjat va shu ishga tushirish tokeni (eski iframe xabarlari aralashmasin).
+  const [page, setPage] = useState<{ doc: string; token: string } | null>(null);
+  const frame = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    if (!page) return;
+    const onMessage = (e: MessageEvent) => {
+      if (e.source !== frame.current?.contentWindow || e.data?.__pg !== page.token) return;
+      if (e.data.type === "out") pageOutput.current?.(e.data.out);
+      if (e.data.type === "done") pageDone.current?.();
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [page]);
+  const pageOutput = useRef<((o: Output) => void) | null>(null);
+  const pageDone = useRef<(() => void) | null>(null);
 
   function edit(value: string) {
     setDraft(value);
     if (tests) saveProgress(course, n, { exercises: { [index]: { code: value, passed: saved?.passed ?? false } } });
   }
 
+  /** HTML: sahifani iframe'da ochadi; konsol va test natijalari postMessage orqali keladi. */
+  function startPage(m: Mode, push: (o: Output) => void): RunHandle {
+    const token = Math.random().toString(36).slice(2);
+    let finish = () => {};
+    const done = new Promise<void>((resolve) => {
+      // Sahifa "done" yubormasa (masalan, skript cheksiz siklda), 5 soniyadan keyin natija yakunlanadi.
+      const timer = setTimeout(resolve, 5000);
+      finish = () => {
+        clearTimeout(timer);
+        resolve();
+      };
+    });
+    pageOutput.current = push;
+    pageDone.current = finish;
+    setPage({ doc: htmlDocument(code, token, m === "test" ? tests : undefined), token });
+    return {
+      done,
+      stop: () => {
+        setPage(null);
+        finish();
+      },
+    };
+  }
+
   async function start(m: Mode) {
     if (state !== "idle") return;
-    const { run } = await import("./runners");
     const results: Output[] = [];
     setMode(m);
     setOutput([]);
     setState("running");
+    const push = (o: Output) => {
+      results.push(o);
+      setOutput((prev) => [...(prev ?? []), o]);
+    };
     // Vaqt runtime yuklanib bo'lgandan keyin hisoblanadi: birinchi yuklash natijaga qo'shilmaydi.
     let started = performance.now();
+    if (lang === "html") {
+      handle.current = startPage(m, push);
+      await finishRun(m, results, started);
+      return;
+    }
+    const { run } = await import("./runners");
     handle.current = run(
       lang,
       code,
-      (o) => {
-        results.push(o);
-        setOutput((prev) => [...(prev ?? []), o]);
-      },
+      push,
       (loading) => {
         if (!loading) started = performance.now();
         setState(loading ? "loading" : "running");
@@ -69,7 +115,11 @@ export function Playground({ lang, code: initial, tests, stdin, args, files, cou
         files: fileTexts,
       },
     );
-    await handle.current.done;
+    await finishRun(m, results, started);
+  }
+
+  async function finishRun(m: Mode, results: Output[], started: number) {
+    await handle.current?.done;
     const ms = Math.round(performance.now() - started);
     setOutput((prev) => [...(prev ?? []), { kind: "info", text: `${ms} ms` }]);
     if (m === "test") {
@@ -187,6 +237,20 @@ export function Playground({ lang, code: initial, tests, stdin, args, files, cou
             className="mt-1 block w-full resize-y rounded-md border border-rule bg-paper px-2 py-1 font-mono text-[0.8rem] outline-none focus:border-muted"
           />
         </label>
+      )}
+
+      {page && (
+        <div className="h-64 resize-y overflow-hidden border-t border-rule bg-white">
+          {/* allow-same-origin yo'q: sahifa saytning cookie/localStorage'iga tega olmaydi. */}
+          <iframe
+            ref={frame}
+            key={page.token}
+            srcDoc={page.doc}
+            sandbox="allow-scripts allow-modals allow-forms"
+            title="Natija sahifasi"
+            className="block h-full w-full"
+          />
+        </div>
       )}
 
       {(output || state !== "idle") && (

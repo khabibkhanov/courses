@@ -46,7 +46,9 @@ print("salom")
 ```
 ````
 
-- Tillar: `python`, `sql` (SQLite), `js`, `ts`, `c`. Boshqa til bilan `run` - validator xatosi.
+- Tillar: `python`, `sql` (SQLite), `js`, `ts`, `c`, `html`. Boshqa til bilan `run` - validator xatosi.
+- `html run`: sahifa kod ostida sandbox'li iframe'da ochiladi (`<!doctype html>` dan boshlang, CSS va `<script>` shu blok ichida). `console.log` va JS xatolari natija maydoniga chiqadi. Testli mashq uchun keyin ```` ```js test ```` bloki: sahifa yuklangandan keyin ishlaydi, DOM'ga murojaat qiladi (`document.querySelector(...)`), `check("nom", () => shart)`. Sahifada localStorage/cookie yo'q (sandbox), tashqi `fetch` faqat CORS ruxsat bergan API'larga ishlaydi.
+- Python'da `import flask` bo'lsa, Flask PyPI'dan avtomatik o'rnatiladi (birinchi marta sekinroq); server ishga tushirilmaydi, ilova `app.test_client()` bilan tekshiriladi: `print(app.test_client().get("/").data.decode())`.
 - Blok o'zi yetarli bo'lishi kerak: SQL'da jadvallarni yaratish va ma'lumot qo'shish shu blok ichida; JS/TS'da natija `console.log` bilan chiqariladi. `import` ishlamaydi.
 - Kod yozishdan oldin lokal ishga tushirib, natijasini tekshiring. Matnda natijaga tayanilsa, u haqiqiy natija bilan bir xil bo'lsin.
 - Hamma blokni `run` qilmang: faqat o'quvchi o'zgartirib ko'rishidan foyda bo'ladigan, natija chiqaradigan misollar uchun.
@@ -97,7 +99,7 @@ check("takrorlar", lambda: lower_bound([2, 2, 2, 2], 2) == 0)
 ```
 ````
 
-- Tillar: `python`, `js`, `ts` (`sql` uchun test yo'q). JS/TS'da: `check("nom", () => shart)`, shart `async` bo'lishi mumkin.
+- Tillar: `python`, `js`, `ts`, `html` (html uchun test bloki ```` ```js test ````; `sql` va `c` uchun test yo'q). JS/TS'da: `check("nom", () => shart)`, shart `async` bo'lishi mumkin.
 - `check` ichidagi xato yoki `false` - test o'tmadi; xato matni o'quvchiga ko'rsatiladi. Test nomi o'quvchi nimani tuzatishi kerakligini aytsin.
 - Ikki blok orasida matn bo'lmasin, tillar bir xil bo'lsin - aks holda validator xatosi.
 - Boshlang'ich kod testlardan o'tmasligi, namunaviy yechim esa hammasidan o'tishi kerak. Ikkalasini `python3 scripts/run-blocks.py <fayl>` bilan tekshiring (u test bloklarini ham ishga tushiradi; boshlang'ich kodda `TEST XATO` kutilgan natija).

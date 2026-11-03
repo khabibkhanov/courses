@@ -14,7 +14,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FENCE = re.compile(r"^```(\w+)([^\n]*)\n(.*?)^```", re.S | re.M)
-LANG = {"python": "python", "py": "python", "sql": "sql", "js": "js", "javascript": "js", "ts": "ts", "typescript": "ts", "c": "c"}
+LANG = {"python": "python", "py": "python", "sql": "sql", "js": "js", "javascript": "js", "ts": "ts", "typescript": "ts", "c": "c", "html": "html"}
 
 NODE_RUNNER = r"""
 const { transform } = require("sucrase");
@@ -119,6 +119,38 @@ char get_char(const char *f, ...) { for (;;) { READ; if (!s) return CHAR_MAX; in
 """
 
 
+HTML_INIT = """
+window.__pending = [];
+window.check = (name, fn) => window.__pending.push((async () => {
+  try { const ok = Boolean(await fn()); console.log((ok ? "TEST OK " : "TEST XATO") + " " + name); }
+  catch (e) { console.log("TEST XATO " + name + " - " + e); }
+})());
+"""
+
+
+def run_html(code, tests=None):
+    # Brauzerdagi kabi: sahifa ochiladi, console va xatolar yig'iladi, testlar load'dan keyin ishlaydi.
+    from playwright.sync_api import sync_playwright
+    out = []
+    with sync_playwright() as p:
+        b = p.chromium.launch()
+        page = b.new_page()
+        page.on("console", lambda m: out.append(("[" + m.type + "] " if m.type in ("error", "warning") else "") + m.text))
+        page.on("pageerror", lambda e: out.append(f"[pageerror] {e}"))
+        m = re.match(r"\s*<!doctype[^>]*>", code, re.I)
+        head = m.group(0) if m else ""
+        page.set_content(head + "<script>" + HTML_INIT + "</script>" + code[len(head):], wait_until="load")
+        if tests is not None:
+            try:
+                page.evaluate("async (t) => { await (new Function('return (async () => {' + t + '})()'))(); await Promise.all(window.__pending); }", tests)
+            except Exception as e:  # noqa: BLE001 - test kodi xatosi natijaga yoziladi
+                out.append(f"[pageerror] {e}")
+        page.wait_for_timeout(300)
+        b.close()
+    text = "\n".join(out)
+    return "TEST XATO" not in text and "[pageerror]" not in text and "[error]" not in text, text or "(konsolga hech narsa chiqmadi)"
+
+
 def run_sql(code):
     db = sqlite3.connect(":memory:")
     out, buf = [], ""
@@ -170,6 +202,8 @@ def main(files):
                 ok, out = run_sql(code)
             elif kind == "c":
                 ok, out = run_c(code, stdin, args, files)
+            elif kind == "html":
+                ok, out = run_html(code, tests)
             elif kind in ("js", "ts"):
                 ok, out = run_js(code + ("\n;\n" + tests if tests is not None else ""), kind == "ts")
             else:

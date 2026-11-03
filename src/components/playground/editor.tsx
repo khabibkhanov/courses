@@ -10,6 +10,7 @@ import { python } from "@codemirror/lang-python";
 import { sql } from "@codemirror/lang-sql";
 import { javascript } from "@codemirror/lang-javascript";
 import { cpp } from "@codemirror/lang-cpp";
+import { html } from "@codemirror/lang-html";
 import type { RunLang } from "./runners";
 
 // Ranglar CSS o'zgaruvchilaridan: yorug' va qorong'i mavzuga o'zi moslashadi (globals.css, --cm-*).
@@ -38,6 +39,7 @@ const language = {
   js: () => javascript(),
   ts: () => javascript({ typescript: true }),
   c: () => cpp(),
+  html: () => html(),
 };
 
 type Props = { lang: RunLang; value: string; onChange: (v: string) => void; onRun: () => void };

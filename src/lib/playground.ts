@@ -8,6 +8,7 @@ export const RUN_LANGS = {
   ts: "ts",
   typescript: "ts",
   c: "c",
+  html: "html",
 } as const;
 
 export type RunLang = (typeof RUN_LANGS)[keyof typeof RUN_LANGS];
@@ -27,7 +28,10 @@ export type PlaygroundSpec = {
 };
 
 /** Test bloki faqat shu tillarda: check(nom, () => shart) yordamchisi bilan. */
-export const TESTABLE: RunLang[] = ["python", "js", "ts"];
+export const TESTABLE: RunLang[] = ["python", "js", "ts", "html"];
+
+/** Test bloki tili: html sahifasi testlari JavaScript'da yoziladi (```js test). */
+export const testLang = (lang: RunLang): RunLang => (lang === "html" ? "js" : lang);
 
 /** Kirish (stdin), buyruq qatori (args) va fayllar (file) bor tillar. */
 export const STDIN_LANGS: RunLang[] = ["c"];
