@@ -1,0 +1,96 @@
+# CS50 45-46-darslar atamalari.
+- term: hoisting
+  aliases: []
+  uz: "JavaScript engine funksiyani bajarishdan oldin undagi e'lonlarni oldindan ro'yxatga olishi. var e'loni funksiya boshiga ko'tarilib undefined oladi, function declaration esa butunligicha."
+  course: cs50
+  lesson: 45
+- term: temporal dead zone
+  aliases: [TDZ]
+  uz: "Blok boshidan let yoki const e'loni qatorigacha bo'lgan zona: unda o'zgaruvchiga murojaat ReferenceError beradi."
+  course: cs50
+  lesson: 45
+- term: type coercion
+  aliases: [coercion]
+  uz: "Tilning qiymatni yashirincha boshqa tipga aylantirishi, masalan == da yoki \"5\" + 1 da. === tipni o'zgartirmasdan solishtiradi."
+  course: cs50
+  lesson: 45
+- term: truthy
+  aliases: []
+  uz: "Mantiqiy kontekstda (if, &&, ||) true deb qabul qilinadigan qiymat. JavaScript'da falsy bo'lmagan hamma narsa, jumladan bo'sh massiv [] va bo'sh obyekt {}."
+  course: cs50
+  lesson: 45
+- term: falsy
+  aliases: []
+  uz: "Mantiqiy kontekstda false deb qabul qilinadigan qiymat. JavaScript'da: false, 0, -0, 0n, bo'sh satr, null, undefined, NaN."
+  course: cs50
+  lesson: 45
+- term: template literal
+  aliases: [template literallar]
+  uz: "Teskari tirnoq ichidagi JavaScript satri: ichiga ${ifoda} qo'yish va bir necha qatorga yozish mumkin. Python f-string'ining o'rni."
+  course: cs50
+  lesson: 45
+- term: closure
+  aliases: []
+  uz: "Funksiya va u yaratilgan joydagi o'zgaruvchilarning birikmasi: ichki funksiya tashqi funksiya qaytgandan keyin ham uning o'zgaruvchilarini ko'radi va o'zgartira oladi."
+  course: cs50
+  lesson: 45
+- term: event bubbling
+  aliases: [bubbling]
+  uz: "Hodisa avval u sodir bo'lgan elementda (target), keyin uning ota elementlarida document gacha navbatma-navbat qayta ishlanishi."
+  course: cs50
+  lesson: 45
+- term: event delegation
+  aliases: []
+  uz: "Ko'p bola elementlarga alohida listener o'rniga ularning otasiga bitta listener qo'yib, event.target orqali qaysi bola bosilganini aniqlash. Keyin qo'shilgan elementlar ham ishlaydi."
+  course: cs50
+  lesson: 45
+- term: event loop
+  aliases: []
+  uz: "Bitta thread'li JavaScript'da navbatdan task olib bajaradigan, har task'dan keyin microtask navbatini bo'shatib, sahifani chizishga imkon beradigan mexanizm."
+  course: cs50
+  lesson: 46
+- term: microtask
+  aliases: [microtask'lar]
+  uz: "Joriy task tugashi bilan, keyingi task'dan oldin bajariladigan ish: Promise then/catch callback'lari, await davomi, queueMicrotask. Navbati har safar to'liq bo'shatiladi."
+  course: cs50
+  lesson: 46
+- term: macrotask
+  aliases: []
+  uz: "Event loop task navbatidagi alohida ish birligi: skript, setTimeout callback'i, foydalanuvchi hodisasi. Har biridan keyin microtask navbati bo'shatiladi."
+  course: cs50
+  lesson: 46
+- term: run-to-completion
+  aliases: []
+  uz: "Boshlangan JavaScript task'i oxirigacha, hech kim to'xtatmasdan bajarilishi qoidasi; u ishlayotganda boshqa callback'lar va sahifani chizish kutadi."
+  course: cs50
+  lesson: 46
+- term: callback hell
+  aliases: [pyramid of doom]
+  uz: "Ketma-ket asinxron amallarni ichma-ich callback'lar bilan yozganda hosil bo'ladigan o'ngga suriluvchi, xatolarni har darajada qo'lda tekshirishni talab qiladigan kod shakli."
+  course: cs50
+  lesson: 46
+- term: Promise
+  aliases: []
+  uz: "Kelajakdagi natijani ifodalovchi obyekt: pending, fulfilled yoki rejected holatda bo'ladi, holati bir marta o'zgaradi; then va catch yangi Promise qaytaradi."
+  course: cs50
+  lesson: 46
+- term: async/await
+  aliases: []
+  uz: "Promise ustidagi sintaksis: async funksiya doim Promise qaytaradi, await esa Promise hal bo'lguncha faqat shu funksiyani to'xtatadi, thread'ni emas."
+  course: cs50
+  lesson: 46
+- term: JSON
+  aliases: [JavaScript Object Notation]
+  uz: "Tildan mustaqil matnli ma'lumot formati (RFC 8259): obyekt, massiv, satr, son, true/false va null. NaN, undefined, izoh va ortiqcha vergulga ruxsat yo'q."
+  course: cs50
+  lesson: 46
+- term: same-origin policy
+  aliases: []
+  uz: "Brauzer qoidasi: bir origin'dagi (sxema, host, port) sahifa skripti boshqa origin javobini server ruxsatisiz o'qiy olmaydi."
+  course: cs50
+  lesson: 46
+- term: CORS
+  aliases: [Cross-Origin Resource Sharing]
+  uz: "Server Access-Control-Allow-Origin kabi javob sarlavhalari bilan boshqa origin'dagi skriptlarga javobni o'qishga ruxsat beradigan mexanizm; oddiy bo'lmagan so'rovlardan oldin preflight OPTIONS yuboriladi."
+  course: cs50
+  lesson: 46

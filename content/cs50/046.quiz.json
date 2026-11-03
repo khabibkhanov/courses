@@ -1,0 +1,95 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Quyidagi kod qanday tartibda chiqaradi?\n\nconsole.log(\"A\");\nsetTimeout(() => console.log(\"B\"), 0);\nPromise.resolve().then(() => console.log(\"C\"));\nconsole.log(\"D\");",
+      "options": ["A B C D", "A D B C", "A D C B", "A C D B"],
+      "answer": 2,
+      "why": "Avval butun sinxron kod (A, D). Joriy task tugagach microtask navbati to'liq bo'shatiladi (C), shundan keyingina keyingi task - setTimeout callback'i (B)."
+    },
+    {
+      "q": "Quyidagi kodda nima chiqadi?\n\nsetTimeout(() => console.log(\"T1\"), 0);\nsetTimeout(() => console.log(\"T2\"), 0);\nPromise.resolve().then(() => {\n  console.log(\"M1\");\n  setTimeout(() => console.log(\"T3\"), 0);\n  queueMicrotask(() => console.log(\"M2\"));\n});",
+      "options": ["M1 M2 T1 T2 T3", "M1 T1 M2 T2 T3", "T1 T2 M1 M2 T3", "M1 M2 T3 T1 T2"],
+      "answer": 0,
+      "why": "Skript tugagach microtask'lar: M1, u qo'shgan M2 ham shu bo'shatishda bajariladi. Keyin task'lar navbat tartibida: T1, T2 avvalroq qo'yilgan, T3 esa M1 ichida, ulardan keyin qo'yilgan."
+    },
+    {
+      "q": "Click listener ichida 2 soniya davom etadigan sinxron sikl bor. Shu vaqtda foydalanuvchi boshqa tugmani bosadi va sahifadagi animatsiya ham ishlashi kerak. Nima bo'ladi?",
+      "options": [
+        "Ikkinchi click darhol ishlaydi, chunki har bir listener alohida thread'da",
+        "Animatsiya davom etadi, faqat click kechikadi",
+        "Ikkinchi click yo'qoladi va hech qachon ishlamaydi",
+        "2 soniya davomida sahifa qotadi: ikkinchi click task navbatda kutadi va sikl tugagach bajariladi, animatsiya ham to'xtaydi"
+      ],
+      "answer": 3,
+      "why": "Bitta thread va run-to-completion: task tugamaguncha event loop na boshqa task'ni, na chizishni bajaradi. Click hodisasi yo'qolmaydi, navbatda kutadi."
+    },
+    {
+      "q": "fetch(\"/api/cars/99\") so'roviga server 404 status va HTML xato sahifasi bilan javob berdi. Kod `const data = await (await fetch(url)).json();` shaklida. Natija?",
+      "options": [
+        "fetch TypeError bilan reject qiladi, chunki status 404",
+        "fetch Response bilan fulfilled bo'ladi (ok = false), keyin .json() HTML matnni tahlil qila olmay SyntaxError bilan reject qiladi",
+        "data ga null yoziladi",
+        "fetch avtomatik qayta urinadi"
+      ],
+      "answer": 1,
+      "why": "fetch faqat javob umuman olinmaganda reject qiladi. 404 - to'liq HTTP javob, shuning uchun Response.ok = false bilan keladi. ok tekshirilmagani uchun haqiqiy sabab SyntaxError ostida yashirinadi."
+    },
+    {
+      "q": "Uchta mustaqil so'rov har biri 200 ms oladi. `const a = await f1(); const b = await f2(); const c = await f3();` va `await Promise.all([f1(), f2(), f3()])` variantlari taxminan qancha vaqt oladi?",
+      "options": ["600 ms va 200 ms", "200 ms va 200 ms", "600 ms va 600 ms", "200 ms va 600 ms"],
+      "answer": 0,
+      "why": "Ketma-ket await har birini oldingisi tugagach boshlaydi: 3 x 200 = 600 ms. Promise.all da uchala so'rov bir vaqtda boshlanadi, umumiy vaqt eng sekinigacha, ya'ni taxminan 200 ms."
+    },
+    {
+      "q": "Dashboard 20 ta mashinaning holatini yuklaydi. Bitta mashina so'rovi xato bersa ham, qolganlari ko'rsatilishi kerak. Qaysi kombinator mos?",
+      "options": ["Promise.all", "Promise.race", "Promise.allSettled", "Promise.any"],
+      "answer": 2,
+      "why": "allSettled hech qachon reject qilmaydi va har bir Promise uchun status (fulfilled yoki rejected) bilan natija beradi. all birinchi xatoda butun natijani rad etadi, race va any esa faqat bitta natija qaytaradi."
+    },
+    {
+      "q": "Quyidagi kodda xato nega ushlanmaydi?\n\nasync function save() { throw new Error(\"server\"); }\ntry {\n  save();\n} catch (e) {\n  console.log(\"ushlandi\");\n}",
+      "options": [
+        "async funksiya ichidagi throw umuman xato hisoblanmaydi",
+        "catch faqat SyntaxError ni ushlaydi",
+        "save() sinxron throw qiladi, lekin catch blokida console.log ishlamaydi",
+        "save() xatoni throw qilmaydi, rejected Promise qaytaradi; await bo'lmagani uchun try bu Promise'ni kutmaydi"
+      ],
+      "answer": 3,
+      "why": "async funksiya har doim Promise qaytaradi, ichidagi throw uni rejected qiladi. try bloki Promise'ni olib darhol tugaydi. To'g'risi: await save() yoki save().catch(...)."
+    },
+    {
+      "q": "`JSON.parse(JSON.stringify({ a: undefined, b: NaN, c: new Date(0), d: [1, 2] }))` natijasi qanday?",
+      "options": [
+        "{ b: null, c: \"1970-01-01T00:00:00.000Z\", d: [1, 2] }",
+        "{ a: undefined, b: NaN, c: Date obyekti, d: [1, 2] }",
+        "TypeError, chunki NaN ni JSON'ga yozib bo'lmaydi",
+        "{ a: null, b: null, c: 0, d: [1, 2] }"
+      ],
+      "answer": 0,
+      "why": "stringify undefined qiymatli kalitni tashlab yuboradi, NaN ni null qiladi, Date ni toJSON orqali ISO satrga aylantiradi. parse satrni Date ga qaytarmaydi."
+    },
+    {
+      "q": "Flask serveri Python'da `json.dumps({\"speed\": float(\"nan\")})` bilan javob tayyorladi, brauzer esa `await response.json()` qiladi. Nima bo'ladi?",
+      "options": [
+        "Brauzer speed ni NaN sifatida oladi",
+        "Python ValueError beradi va javob yuborilmaydi",
+        "Python sukut bo'yicha {\"speed\": NaN} yozadi, bu standart JSON emas, brauzerdagi parse SyntaxError bilan reject qiladi",
+        "speed avtomatik null ga aylanadi"
+      ],
+      "answer": 2,
+      "why": "Python json da allow_nan sukut bo'yicha True va NaN literal sifatida yoziladi. RFC 8259 NaN ni taqiqlaydi, JavaScript JSON.parse uni qabul qilmaydi. Server tomonda allow_nan=False yoki None ishlatish kerak."
+    },
+    {
+      "q": "https://app.example.uz sahifasidagi skript https://api.example.uz/cars ga fetch qiladi. Server javobida Access-Control-Allow-Origin sarlavhasi yo'q. Nima bo'ladi va qayerda tuzatiladi?",
+      "options": [
+        "So'rov umuman yuborilmaydi; brauzer kodida mode: \"no-cors\" qo'yish yetarli",
+        "Brauzer javobni skriptga bermaydi va fetch TypeError bilan reject qiladi; tuzatish - serverga to'g'ri Access-Control-Allow-Origin qo'shish",
+        "Server 403 qaytaradi; tuzatish - foydalanuvchini qayta login qildirish",
+        "Hech narsa bo'lmaydi, chunki ikkalasi ham example.uz domenida"
+      ],
+      "answer": 1,
+      "why": "Origin = sxema + host + port, app va api xostlari farq qiladi. CORS ruxsati serverning javob sarlavhasida beriladi; usiz brauzer javobni o'qishga ruxsat bermaydi. no-cors esa javobni o'qib bo'lmaydigan (opaque) qiladi."
+    }
+  ]
+}

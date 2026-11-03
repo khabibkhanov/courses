@@ -44,8 +44,18 @@ export const LOADING_LABEL: Record<RunLang, string> = {
 // C: vaqt kompilyatsiyani ham o'z ichiga oladi. HTML iframe'da ishlaydi, chegarasi playground.tsx da.
 const LIMIT_MS: Record<Exclude<RunLang, "html">, number> = { python: 15000, sql: 5000, js: 5000, ts: 5000, c: 10000, go: 20000 };
 
+// console.log formati (worker va HTML ko'prigi uchun bitta): primitivlar String() bilan (NaN, undefined, 10n),
+// obyektlar JSON ko'rinishida (BigInt ichida bo'lsa ham).
+const FMT = `const fmt = (v) => {
+  if (typeof v === "string") return v;
+  if (typeof v === "bigint") return v + "n";
+  if (v === null || (typeof v !== "object" && typeof v !== "function")) return String(v);
+  if (v instanceof Error) return String(v.stack || v);
+  try { return JSON.stringify(v, (k, x) => (typeof x === "bigint" ? x + "n" : x), 2) ?? String(v); } catch { return String(v); }
+};`;
+
 const JS_WORKER = `
-const fmt = (v) => typeof v === "string" ? v : (() => { try { return JSON.stringify(v, null, 2) ?? String(v); } catch { return String(v); } })();
+${FMT}
 const send = (kind) => (...a) => postMessage({ type: "out", out: { kind, text: a.map(fmt).join(" ") } });
 const console = { log: send("out"), info: send("out"), debug: send("out"), warn: send("err"), error: send("err"), table: send("out") };
 const pending = [];
@@ -54,11 +64,29 @@ const check = (name, fn) => pending.push((async () => {
   try { postMessage({ type: "out", out: { kind: "test", name, ok: Boolean(await fn()) } }); }
   catch (err) { postMessage({ type: "out", out: { kind: "test", name, ok: false, error: String(err && err.message || err) } }); }
 })());
+// Kutilayotgan setTimeout'lar: kod tugagach ham ular bajarilib bo'lguncha natija yopilmaydi (vaqt chegarasi baribir bor).
+const live = new Set();
+let idle = () => {};
+const report = (err) => postMessage({ type: "out", out: { kind: "err", text: String((err && err.stack) || err) } });
+const nativeSet = setTimeout.bind(self), nativeClear = clearTimeout.bind(self);
+self.setTimeout = (fn, ms, ...args) => {
+  const id = nativeSet(() => {
+    live.delete(id);
+    try { if (typeof fn === "function") fn(...args); } catch (err) { report(err); }
+    if (!live.size) idle();
+  }, ms);
+  live.add(id);
+  return id;
+};
+self.clearTimeout = (id) => { live.delete(id); nativeClear(id); if (!live.size) idle(); };
+self.addEventListener("unhandledrejection", (e) => report("Ushlanmagan xato (Promise): " + ((e.reason && e.reason.message) || e.reason)));
 self.onmessage = async (e) => {
   try {
     const exports = {};
     const require = (m) => { throw new Error("import/require bu yerda ishlamaydi: " + m); };
     await new Function("console", "exports", "require", "check", '"use strict"; return (async () => {\\n' + e.data.code + '\\n})()')(console, exports, require, check);
+    await Promise.all(pending);
+    if (live.size) await new Promise((resolve) => (idle = resolve));
     await Promise.all(pending);
   } catch (err) {
     postMessage({ type: "out", out: { kind: "err", text: err && err.stack ? String(err.stack).split("\\n    at new Function")[0] : String(err) } });
@@ -225,7 +253,7 @@ export function htmlDocument(code: string, token: string, tests?: string): strin
   const bridge = `<script>(() => {
 const T = ${JSON.stringify(token)};
 const post = (o) => parent.postMessage(Object.assign({ __pg: T }, o), "*");
-const fmt = (v) => typeof v === "string" ? v : (() => { try { return JSON.stringify(v, null, 2) ?? String(v); } catch { return String(v); } })();
+${FMT}
 for (const [m, k] of [["log", "out"], ["info", "out"], ["debug", "out"], ["table", "out"], ["warn", "err"], ["error", "err"]])
   console[m] = (...a) => post({ type: "out", out: { kind: k, text: a.map(fmt).join(" ") } });
 addEventListener("error", (e) => post({ type: "out", out: { kind: "err", text: String(e.message) + (e.lineno ? " (qator " + e.lineno + ")" : "") } }));

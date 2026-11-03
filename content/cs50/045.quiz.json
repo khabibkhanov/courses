@@ -1,0 +1,100 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Quyidagi kod nima chiqaradi?\n\nconst fs = [];\nfor (var i = 0; i < 3; i++) fs.push(() => i);\nconsole.log(fs.map((f) => f()).join(\" \"));",
+      "options": ["0 1 2", "undefined undefined undefined", "3 3 3", "ReferenceError"],
+      "answer": 2,
+      "why": "var funksiya scope'iga ega, shuning uchun butun sikl uchun bitta i bor. Funksiyalar uni sikl tugagandan keyin o'qiydi, u paytda i = 3. let bilan har iteratsiya o'z nusxasini olib, 0 1 2 chiqardi."
+    },
+    {
+      "q": "Serverdan JSON'da 64-bitli ID 9007199254740993 keldi va JavaScript uni oddiy son (number) sifatida o'qidi. Nima bo'ladi?",
+      "options": [
+        "Hech narsa: number 64-bitli butun sonlarni aniq saqlaydi",
+        "Qiymat jimgina 9007199254740992 ga yaxlitlanadi, chunki number - double va 2^53 dan keyin qo'shni qiymatlar orasidagi masofa 2",
+        "TypeError chiqadi, chunki son juda katta",
+        "Qiymat avtomatik BigInt ga aylanadi"
+      ],
+      "answer": 1,
+      "why": "number - IEEE 754 double, 53 bit aniqlik. Number.MAX_SAFE_INTEGER = 2^53 - 1; undan kattalarida toq sonlar ifodalanmaydi va eng yaqin juft qiymatga yaxlitlanadi, xato chiqmaydi. Bunday ID'larni satr yoki BigInt sifatida saqlash kerak."
+    },
+    {
+      "q": "Python'da `if items:` bilan ro'yxat bo'sh emasligini tekshirishga o'rgangan dasturchi JavaScript'da `if (items) { ... }` yozdi, items = []. Natija?",
+      "options": [
+        "Blok bajarilmaydi, chunki bo'sh massiv falsy",
+        "TypeError, chunki massivni boolean'ga aylantirib bo'lmaydi",
+        "Blok faqat strict mode'da bajariladi",
+        "Blok bajariladi, chunki har qanday obyekt, jumladan bo'sh massiv, truthy"
+      ],
+      "answer": 3,
+      "why": "JavaScript'da falsy qiymatlar ro'yxati qisqa: false, 0, -0, 0n, \"\", null, undefined, NaN. [] va {} obyekt bo'lgani uchun truthy. To'g'ri tekshiruv: items.length > 0."
+    },
+    {
+      "q": "Foydalanuvchi sozlamasida sukut bo'yicha ovoz balandligi 50, foydalanuvchi esa ataylab 0 ni tanlagan (volume = 0). Qaysi ifoda 0 ni saqlab qoladi?",
+      "options": ["volume ?? 50", "volume || 50", "volume == null ? 0 : 50", "Boolean(volume) ? volume : 50"],
+      "answer": 0,
+      "why": "|| chap qiymat har qanday falsy bo'lsa (0 ham) o'ngini oladi va 50 qaytaradi. ?? faqat null va undefined da o'ng qiymatni oladi, shuning uchun 0 saqlanadi."
+    },
+    {
+      "q": "`[10, 9, 1, 100].sort()` natijasi qanday va nima uchun?",
+      "options": [
+        "[1, 9, 10, 100], chunki sort sonlarni o'sish tartibida saralaydi",
+        "[100, 10, 9, 1], chunki sukut bo'yicha kamayish tartibi",
+        "[1, 10, 100, 9], chunki argumentsiz sort elementlarni satr sifatida leksikografik solishtiradi",
+        "TypeError, chunki solishtirish funksiyasi majburiy"
+      ],
+      "answer": 2,
+      "why": "Solishtirish funksiyasi berilmasa, elementlar satrga aylantirilib solishtiriladi: \"100\" < \"9\", chunki birinchi belgilar \"1\" < \"9\". Sonlar uchun sort((a, b) => a - b)."
+    },
+    {
+      "q": "Quyidagi kod nima chiqaradi?\n\nfunction makeCounter() { let n = 0; return () => ++n; }\nconst a = makeCounter();\nconst b = makeCounter();\na(); a();\nconsole.log(a(), b());",
+      "options": ["3 4", "3 1", "1 1", "ReferenceError: n is not defined"],
+      "answer": 1,
+      "why": "Har makeCounter chaqiruvi yangi n yaratadi va qaytgan funksiya (closure) aynan o'sha n ni eslab qoladi. a uchinchi chaqiruvda 3, b esa o'z n i bilan birinchi marta 1 qaytaradi."
+    },
+    {
+      "q": "Izohlar sahifasida foydalanuvchi matni `comment.innerHTML = text` bilan chiqariladi. Hujumchi matn sifatida `<img src=x onerror=\"...\">` yuboradi. Nima sodir bo'ladi va qanday tuzatiladi?",
+      "options": [
+        "Brauzer innerHTML dagi barcha atributlarni bloklaydi, xavf yo'q",
+        "Faqat <script> teglari xavfli, img xavfsiz",
+        "Rasm sahifada ko'rinmaydi, boshqa hech narsa bo'lmaydi; tuzatish shart emas",
+        "Satr HTML sifatida tahlil qilinadi, rasm yuklanmay onerror dagi kod boshqa foydalanuvchilar sahifasida bajariladi (XSS); matnni textContent bilan qo'yish kerak"
+      ],
+      "answer": 3,
+      "why": "innerHTML satrni HTML sifatida tahlil qiladi. innerHTML orqali qo'shilgan <script> bajarilmaydi, lekin onerror kabi atributlardagi kod bajariladi. textContent esa satrni oddiy matn sifatida qo'yadi."
+    },
+    {
+      "q": "Sahifada <div id=\"outer\"><button id=\"btn\">Bos</button></div> bor, ikkalasiga ham click listener qo'shilgan. Tugma bosilganda outer ning listener'ida e.target va e.currentTarget nima bo'ladi?",
+      "options": [
+        "e.target = btn, e.currentTarget = outer",
+        "e.target = outer, e.currentTarget = btn",
+        "Ikkalasi ham outer",
+        "outer listener'i umuman chaqirilmaydi, chunki hodisa btn da sodir bo'ldi"
+      ],
+      "answer": 0,
+      "why": "Hodisa btn da sodir bo'lgan (target) va bubbling bilan outer ga ko'tarilgan. currentTarget - hozir ishlayotgan listener o'rnatilgan element, ya'ni outer."
+    },
+    {
+      "q": "Ro'yxatga elementlar JavaScript orqali doim qo'shilib turadi va har birida \"o'chirish\" tugmasi bor. Eng ishonchli yondashuv qaysi?",
+      "options": [
+        "Sahifa yuklanganda document.querySelectorAll(\".delete\") ga listener qo'shish",
+        "Ro'yxatning o'ziga bitta click listener qo'yib, e.target.closest(\".delete\") bilan bosilgan tugmani aniqlash (event delegation)",
+        "Har bir tugmaga onclick atributini innerHTML bilan yozish",
+        "setInterval bilan har soniyada yangi tugmalarga listener qo'shish"
+      ],
+      "answer": 1,
+      "why": "querySelectorAll faqat chaqiruv paytidagi elementlarni topadi, keyin qo'shilganlar listener'siz qoladi. Bubbling tufayli otadagi bitta listener barcha, jumladan kelajakdagi tugmalarni ham ushlaydi."
+    },
+    {
+      "q": "Forma uchun `button.addEventListener(\"click\", save)` yozildi, save ichida ma'lumot ro'yxatga qo'shiladi. Foydalanuvchi maydonda Enter bossa, sahifa qayta yuklanib, ro'yxat yo'qoladi. To'g'ri tuzatish qaysi?",
+      "options": [
+        "Formaga action=\"#\" qo'shish",
+        "keydown listener'ida Enter ni bloklash",
+        "form ga submit listener qo'yib, uning boshida e.preventDefault() chaqirish",
+        "save funksiyasini setTimeout ichiga o'rash"
+      ],
+      "answer": 2,
+      "why": "Enter formani tugma bosilmasdan yuboradi va standart harakat - sahifani qayta yuklash. submit eventi tugma va Enter ikkalasini ushlaydi, preventDefault esa standart yuborishni bekor qiladi."
+    }
+  ]
+}
