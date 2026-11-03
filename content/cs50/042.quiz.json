@@ -1,0 +1,85 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Brauzer `https://kutubxona.example.uz/kitob?id=12#sharhlar` ni ochdi. Server so'rovda qaysi request target ni ko'radi?",
+      "options": ["/kitob?id=12#sharhlar", "/kitob?id=12", "/kitob", "kutubxona.example.uz/kitob?id=12"],
+      "answer": 1,
+      "why": "Request target - path va query. Fragment (#sharhlar) brauzerda qoladi va serverga yuborilmaydi, host esa Host headerida alohida keladi."
+    },
+    {
+      "q": "Mijoz `DELETE /users/7` yubordi, javob kelmasdan ulanish uzildi va mijoz so'rovni qayta yubordi. Ikkinchi javob 404 bo'ldi. Bu DELETE ning idempotentligiga zid emasmi?",
+      "options": [
+        "Zid, idempotent metod har safar bir xil status kod qaytarishi kerak",
+        "Zid, shuning uchun DELETE ni hech qachon qayta yuborib bo'lmaydi",
+        "Zid emas, chunki DELETE safe metod",
+        "Zid emas: idempotentlik serverdagi holat haqida, ikkala holda ham 7-foydalanuvchi yo'q"
+      ],
+      "answer": 3,
+      "why": "RFC 9110 bo'yicha idempotentlik so'rovning serverga ta'siri haqida. Bir yoki ikki marta o'chirishdan keyin holat bir xil; javob kodi farq qilishi mumkin."
+    },
+    {
+      "q": "Qaysi metodlar RFC 9110 bo'yicha safe hisoblanadi?",
+      "options": ["GET, HEAD, OPTIONS, TRACE", "GET, PUT, DELETE", "GET, POST", "Faqat GET"],
+      "answer": 0,
+      "why": "RFC 9110 9.2.1: GET, HEAD, OPTIONS va TRACE safe. PUT va DELETE idempotent, lekin safe emas, chunki holatni o'zgartiradi."
+    },
+    {
+      "q": "Foydalanuvchi login qilgan, lekin oddiy foydalanuvchi sifatida `/admin/hisobot` sahifasini ochmoqchi. Server qaysi kodni qaytarishi to'g'ri?",
+      "options": ["401 Unauthorized", "404 Not Found ni doim", "403 Forbidden", "500 Internal Server Error"],
+      "answer": 2,
+      "why": "Kimligi ma'lum (autentifikatsiya bor), lekin ruxsat yo'q - 403. 401 kimligi noma'lum, ya'ni login kerak bo'lganda ishlatiladi."
+    },
+    {
+      "q": "Javob body'si `Salom, dunyo №1` (UTF-8). Unda 15 ta belgi bor, `№` UTF-8 da 3 bayt, qolganlari ASCII. `Content-Length` qancha bo'lishi kerak?",
+      "options": ["15", "16", "18", "17"],
+      "answer": 3,
+      "why": "Content-Length baytlarda: 14 ta ASCII belgi x 1 bayt + 1 ta belgi x 3 bayt = 17."
+    },
+    {
+      "q": "Sayt `eski.example.uz` domenidan `yangi.example.uz` ga butunlay ko'chdi va qidiruv tizimlari ham yangi manzilni eslab qolishi kerak. Qaysi javob to'g'ri?",
+      "options": [
+        "301 Moved Permanently va Location: https://yangi.example.uz/...",
+        "302 Found va Location: https://yangi.example.uz/...",
+        "200 OK va body'da yangi manzil",
+        "404 Not Found"
+      ],
+      "answer": 0,
+      "why": "Doimiy ko'chish uchun 301: brauzerlar va qidiruv tizimlari uni eslab qoladi. 302 vaqtinchalik, 200 esa yo'naltirmaydi."
+    },
+    {
+      "q": "Brauzer keshida `logo.png` bor va u oldingi `ETag` bilan `If-None-Match` headerini yubordi. Fayl o'zgarmagan. Server nima qaytaradi?",
+      "options": ["200 OK va faylning to'liq nusxasi", "304 Not Modified, body'siz", "204 No Content", "301 Moved Permanently"],
+      "answer": 1,
+      "why": "Shartli so'rovda manba o'zgarmagan bo'lsa, server body'siz 304 qaytaradi va brauzer keshdagi nusxani ishlatadi."
+    },
+    {
+      "q": "Bitta IP manzilli serverda o'nta sayt turibdi. Server `GET / HTTP/1.1` so'rovi qaysi saytga tegishli ekanini qanday biladi?",
+      "options": ["Mijozning IP manzilidan", "Port raqamidan", "Host headeridan", "User-Agent headeridan"],
+      "answer": 2,
+      "why": "Request line da faqat path bor. Sayt nomi Host headerida keladi, shuning uchun u HTTP/1.1 da majburiy."
+    },
+    {
+      "q": "Nima uchun HTTP/3 TCP o'rniga UDP ustidagi QUIC ni ishlatadi?",
+      "options": [
+        "UDP paketlari yo'qolmaydi",
+        "TCP shifrlashni qo'llamaydi",
+        "UDP sarlavhasi kattaroq va ishonchliroq",
+        "TCP da bitta yo'qolgan paket shu ulanishdagi barcha oqimlarni kutdiradi, QUIC esa oqimlarni mustaqil tartiblaydi"
+      ],
+      "answer": 3,
+      "why": "TCP baytlarni qat'iy tartibda beradi, shuning uchun HTTP/2 da bitta yo'qotish hamma oqimni to'xtatadi. QUIC ishonchlilikni o'zi va har bir oqim uchun alohida ta'minlaydi."
+    },
+    {
+      "q": "Onlayn do'konda \"Buyurtma berish\" tugmasi `POST /orders` yuboradi. Tarmoq sekin, foydalanuvchi tugmani uch marta bosdi. Qanday xavf bor?",
+      "options": [
+        "Hech qanday xavf yo'q, POST idempotent",
+        "Uchta alohida buyurtma yaratilishi mumkin, chunki POST idempotent emas",
+        "Server ikkinchi va uchinchi so'rovga avtomatik 304 qaytaradi",
+        "Brauzer POST ni bir martadan ortiq yubora olmaydi"
+      ],
+      "answer": 1,
+      "why": "POST har safar yangi qayta ishlashni so'raydi va idempotent emas. Takrorlanishdan himoyani ilova o'zi qilishi kerak (masalan, noyob so'rov identifikatori bilan)."
+    }
+  ]
+}

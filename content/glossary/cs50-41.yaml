@@ -1,0 +1,96 @@
+# CS50 41-42-darslar atamalari.
+- term: packet switching
+  aliases: [paketli kommutatsiya]
+  uz: "Ma'lumotni kichik paketlarga bo'lib, har birini sarlavhasidagi manzil bo'yicha tarmoqdan mustaqil yuborish usuli. Liniya ko'p foydalanuvchi orasida bo'lishiladi, lekin paketlar aralashishi va yo'qolishi mumkin."
+  course: cs50
+  lesson: 41
+- term: router
+  aliases: [marshrutizator]
+  uz: "Bir nechta tarmoqqa ulangan va paketni marshrutlash jadvali bo'yicha keyingi qadamga uzatadigan qurilma. U butun yo'lni emas, faqat keyingi hopni biladi."
+  course: cs50
+  lesson: 41
+- term: IP manzil
+  aliases: [IP address]
+  uz: "Tarmoqdagi qurilmaning manzili: IPv4 da 32 bit (192.168.1.37 kabi to'rtta bayt), IPv6 da 128 bit. Paket shu manzil bo'yicha routerdan routerga yetkaziladi."
+  course: cs50
+  lesson: 41
+- term: CIDR
+  aliases: []
+  uz: "IP manzilning tarmoq qismini /n bilan ko'rsatish yozuvi: 192.168.1.0/24 da birinchi 24 bit tarmoq, qolgan 8 bit host. /n tarmoqda 2^(32 - n) ta IPv4 manzil bor."
+  course: cs50
+  lesson: 41
+- term: NAT
+  aliases: [Network Address Translation]
+  uz: "Router private manzilli qurilmalar paketlaridagi manzil va portni o'zining public manzili va portiga almashtirib, moslikni jadvalda saqlaydigan mexanizm. Ko'p qurilma bitta public IP bilan Internetga chiqadi."
+  course: cs50
+  lesson: 41
+- term: TCP
+  aliases: [Transmission Control Protocol]
+  uz: "IP ustida ishonchli va tartibli bayt oqimini beradigan transport protokoli: tartib raqamlari, tasdiq (ACK) va qayta yuborish bilan ishlaydi, ulanish 3-way handshake bilan boshlanadi."
+  course: cs50
+  lesson: 41
+- term: UDP
+  aliases: [User Datagram Protocol]
+  uz: "Handshake, tasdiq va qayta yuborishsiz ishlaydigan oddiy transport protokoli, sarlavhasi 8 bayt. Kechikish muhim bo'lgan joyda (DNS, ovoz, o'yin) ishlatiladi."
+  course: cs50
+  lesson: 41
+- term: 3-way handshake
+  aliases: [three-way handshake]
+  uz: "TCP ulanishini o'rnatadigan uch segment: SYN, SYN-ACK, ACK. Ikkala tomon boshlang'ich tartib raqamini aytadi va bir-birinikini tasdiqlaydi; bitta RTT vaqt oladi."
+  course: cs50
+  lesson: 41
+- term: DNS
+  aliases: [Domain Name System]
+  uz: "Domen nomlarini IP manzillarga aylantiradigan ierarxik, tarqalgan tizim. Rekursiv resolver root, TLD va authoritative serverlardan so'rab, javobni TTL davomida keshda saqlaydi."
+  course: cs50
+  lesson: 41
+- term: TTL
+  aliases: [time to live]
+  uz: "Ma'lumotning yashash muddati. IP paketida har routerda 1 ga kamayadigan hop hisoblagichi (0 da paket tashlanadi), DNS javobida esa keshda saqlash mumkin bo'lgan soniyalar."
+  course: cs50
+  lesson: 41
+- term: HTTP
+  aliases: [Hypertext Transfer Protocol]
+  uz: "Vebning so'rov-javob protokoli: mijoz metod, path va headerlar bilan so'rov yuboradi, server status kod, headerlar va body bilan javob qaytaradi. Har bir so'rov alohida qayta ishlanadi (stateless)."
+  course: cs50
+  lesson: 42
+- term: URL
+  aliases: [Uniform Resource Locator]
+  uz: "Manbaning to'liq manzili: sxema, host, port, path, query va fragment. Fragment (# dan keyingi qism) serverga yuborilmaydi."
+  course: cs50
+  lesson: 42
+- term: percent-encoding
+  aliases: []
+  uz: "URL da ruxsat etilmagan belgini UTF-8 baytlariga bo'lib, har baytni % va ikki hex raqam bilan yozish: bo'shliq %20, apostrof %27."
+  course: cs50
+  lesson: 42
+- term: status kod
+  aliases: [status code]
+  uz: "HTTP javobidagi uch xonali son, birinchi raqami sinfni bildiradi: 2xx muvaffaqiyat, 3xx yo'naltirish, 4xx mijoz xatosi, 5xx server xatosi."
+  course: cs50
+  lesson: 42
+- term: safe metod
+  aliases: [safe method]
+  uz: "Serverdagi holatni o'zgartirishni so'ramaydigan HTTP metodi. RFC 9110 bo'yicha GET, HEAD, OPTIONS va TRACE safe."
+  course: cs50
+  lesson: 42
+- term: idempotent
+  aliases: []
+  uz: "Bir xil so'rovni bir yoki ko'p marta yuborishning serverdagi holatga ta'siri bir xil bo'lishi. PUT, DELETE va safe metodlar idempotent, POST esa yo'q."
+  course: cs50
+  lesson: 42
+- term: HTTP header
+  aliases: [HTTP headerlar]
+  uz: "So'rov yoki javob haqidagi qo'shimcha ma'lumot qatori, Nom: qiymat ko'rinishida (Content-Type, Content-Length, Location). Nomlari katta-kichik harfga sezgir emas."
+  course: cs50
+  lesson: 42
+- term: MIME type
+  aliases: [media type]
+  uz: "Body formatini bildiruvchi tur/kichik_tur yozuvi, Content-Type headerida keladi: text/html, application/json, image/png."
+  course: cs50
+  lesson: 42
+- term: QUIC
+  aliases: []
+  uz: "UDP ustida ishlaydigan, shifrlash ichiga qurilgan transport protokoli (RFC 9000). HTTP/3 shu ustida ishlaydi va oqimlarni bir-biridan mustaqil tartiblaydi."
+  course: cs50
+  lesson: 42

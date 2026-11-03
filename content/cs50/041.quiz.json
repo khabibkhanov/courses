@@ -1,0 +1,90 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`10.20.0.0/22` tarmog'ida nechta manzil bor va ulardan nechtasini qurilmalarga berish mumkin?",
+      "options": ["22 ta va 20 ta", "1024 ta va 1022 ta", "4096 ta va 4094 ta", "256 ta va 254 ta"],
+      "answer": 1,
+      "why": "Host qismi 32 - 22 = 10 bit: 2^10 = 1024 ta manzil. Tarmoq manzili va broadcast ayriladi: 1022 ta."
+    },
+    {
+      "q": "`172.16.5.9` manzilining ikkinchi okteti (16) binary ko'rinishda qanday yoziladi?",
+      "options": ["00010000", "00001000", "00010110", "10000000"],
+      "answer": 0,
+      "why": "16 = 2^4, ya'ni 8 bitli yozuvda faqat o'ngdan beshinchi bit 1: 00010000."
+    },
+    {
+      "q": "Bitta TCP segmenti ichidagi foydali ma'lumot 1460 bayt. 14 600 bayt yuborilganda yo'lda 3-segment yo'qoldi. Nima bo'ladi?",
+      "options": [
+        "Qabul qiluvchi 3-segmentsiz faylni oladi, ilova xatoni o'zi topishi kerak",
+        "Butun ulanish uziladi va handshake qaytadan boshlanadi",
+        "Jo'natuvchi bu ma'lumot uchun tasdiq olmaydi va uni qayta yuboradi, ilova esa baytlarni to'g'ri tartibda oladi",
+        "Router yo'qolgan segmentni o'z xotirasidan tiklaydi"
+      ],
+      "answer": 2,
+      "why": "TCP tasdiq (ACK) va taymer bilan yo'qotishni payqaydi va qayta yuboradi; tartib raqamlari bo'yicha ilovaga baytlar to'g'ri tartibda beriladi."
+    },
+    {
+      "q": "3-way handshake da mijoz SYN bilan seq=700 yubordi, server SYN-ACK bilan seq=3000 javob berdi. Mijozning uchinchi segmentidagi ack qiymati qancha?",
+      "options": ["701", "3000", "700", "3001"],
+      "answer": 3,
+      "why": "ACK - kutilayotgan keyingi raqam. Serverning SYN i 3000 raqamini egallaydi, shuning uchun mijoz 3001 ni kutadi."
+    },
+    {
+      "q": "Onlayn video qo'ng'iroq ilovasi ovozni UDP orqali yuboradi. Buning eng to'g'ri sababi qaysi?",
+      "options": [
+        "Kechikib kelgan ovoz bo'lagi endi foydasiz, uni kutib qayta yuborishdan ko'ra tashlab ketish yaxshi",
+        "UDP paketlari hech qachon yo'qolmaydi",
+        "UDP ma'lumotni avtomatik shifrlaydi",
+        "TCP ovozli ma'lumotni uzata olmaydi"
+      ],
+      "answer": 0,
+      "why": "UDP handshake va qayta yuborishsiz ishlaydi. Real vaqt ovozida kechikish yo'qotishdan yomonroq, shuning uchun kafolatsiz, lekin tez protokol tanlanadi."
+    },
+    {
+      "q": "Domen egasi serverni yangi IP ga ko'chirdi. DNS yozuvining TTL qiymati 7200 edi. Ko'chirishdan bir daqiqa oldin shu nomni so'ragan foydalanuvchi eng yomon holatda eski manzilni qancha vaqt ko'rishi mumkin?",
+      "options": ["1 daqiqa", "Taxminan 2 soat", "Darhol yangi manzilni ko'radi", "Doimo, kesh hech qachon tozalanmaydi"],
+      "answer": 1,
+      "why": "Resolver javobni TTL = 7200 soniya (2 soat) davomida keshda saqlaydi, shuning uchun eski javob taxminan 2 soat qaytariladi."
+    },
+    {
+      "q": "Rekursiv resolverning keshi bo'sh. U `docs.example.org` ni topish uchun qaysi tartibda so'raydi?",
+      "options": [
+        "Authoritative server, keyin TLD, keyin root",
+        "Faqat root server, u hamma nomlarni biladi",
+        "TLD server, keyin root, keyin authoritative",
+        "Root server, keyin .org TLD server, keyin example.org authoritative server"
+      ],
+      "answer": 3,
+      "why": "DNS ierarxik: root faqat TLD serverlarini, TLD esa domenning authoritative serverlarini biladi; yakuniy javobni authoritative server beradi."
+    },
+    {
+      "q": "Uydagi ikki kompyuter (`192.168.1.10` va `192.168.1.11`) bir vaqtda bitta serverga ulanmoqda, uyda esa bitta public IP bor. Server javobi to'g'ri kompyuterga qanday yetib boradi?",
+      "options": [
+        "Server ikkala kompyuterning private manzilini ko'radi va to'g'ridan-to'g'ri javob beradi",
+        "Router NAT jadvalida har bir ulanish uchun tashqi port va ichki manzil:port mosligini saqlaydi va javobni shu bo'yicha qaytaradi",
+        "Javob ikkala kompyuterga yuboriladi, keraksizi tashlanadi",
+        "DNS qaysi kompyuterga yuborishni aytadi"
+      ],
+      "answer": 1,
+      "why": "NAT chiquvchi paketda private manzil va portni public manzil va bo'sh portga almashtiradi va bu moslikni eslab, javobni ichkaridagi to'g'ri qurilmaga qaytaradi."
+    },
+    {
+      "q": "Nima uchun port raqami 65 535 dan katta bo'la olmaydi?",
+      "options": [
+        "IANA shuncha port ro'yxatga olgan",
+        "Operatsion tizim ko'proq dasturni ishga tushira olmaydi",
+        "TCP va UDP sarlavhalarida port uchun 16 bit ajratilgan: 2^16 - 1 = 65 535",
+        "IPv4 manzil 32 bit bo'lgani uchun portga yarmi qoladi"
+      ],
+      "answer": 2,
+      "why": "Port maydoni 16 bitli unsigned son: 0 dan 2^16 - 1 = 65 535 gacha."
+    },
+    {
+      "q": "`ping` natijasida `ttl=52` ko'rindi. Server javobni TTL = 64 bilan yuborgan deb faraz qilsak, javob paketi nechta routerdan o'tgan?",
+      "options": ["52", "64", "116", "12"],
+      "answer": 3,
+      "why": "Har bir router TTL ni 1 ga kamaytiradi: 64 - 52 = 12 ta router."
+    }
+  ]
+}
