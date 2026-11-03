@@ -6,7 +6,7 @@ summary: "Michael Feathers ta'rifi bo'yicha legacy kod - testlarsiz kod. Bu dars
 duration: 45
 sources:
   - id: welc
-    note: "Legacy kod ta'rifi, Edit and Pray va Cover and Modify, legacy code dilemma va o'zgartirish algoritmi; seam modeli (object, link, preprocessing seam'lar va enabling point); characterization testlar; Sprout Method/Class, Wrap Method/Class; dependency-breaking texnikalar katalogi"
+    note: "Kitob 2004-yilda chiqqan. Web orqali tasdiqlangan: legacy kod ta'rifi (testsiz kod; Feathers 2002-yilgi maqolasi), 4-bob \"The Seam Model\" (seam ta'rifi, enabling point, object/link/preprocessing seam'lar), characterization test jarayoni (Feathers blogi), 25-bob sarlavhasi \"Dependency Breaking Techniques\". Aniq tekshirilmadi: Edit and Pray / Cover and Modify, legacy code dilemma so'zlanishi, o'zgartirish algoritmining aniq qadamlari, Sprout/Wrap tafsilotlari va katalogdagi texnikalar ro'yxati"
 quiz:
   - q: "Feathers bo'yicha seam nima?"
     options:
@@ -204,6 +204,8 @@ Kitob buni **legacy kodni o'zgartirish algoritmi**ga aylantiradi:
 3. Dependency'larni uzish.
 4. Testlarni yozish.
 5. O'zgarish kiritish va refaktoring qilish.
+
+Eslatma: Edit and Pray / Cover and Modify atamalari, dilemma va yuqoridagi besh qadamli algoritm kitobning mazmuniga tayanadi, lekin ularning aniq so'zlanishi bu kurs yozilganda birlamchi matn bilan solishtirilmadi. Feathers 2002-yilgi maqolasida strategiyani biroz boshqacha qadamlar bilan beradi (o'zgarish nuqtalari, inflection point, qoplash, o'zgartirish, refaktoring).
 
 Bu algoritmning markazida ikki tushuncha turadi: **seam** va **characterization test**.
 

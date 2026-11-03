@@ -6,7 +6,7 @@ summary: "Kursning yakuniy loyihasi: transport parki platformasidagi real ko'rin
 duration: 90
 sources:
   - id: welc
-    note: "Legacy kodning ta'rifi (testsiz kod), characterization test, seam'lar va bog'liqliklarni sindirish usullari, o'zgartirish algoritmi"
+    note: "Web orqali tasdiqlangan: legacy kod ta'rifi (testsiz kod), seam ta'rifi (4-bob), characterization test. Legacy code dilemma va o'zgartirish algoritmining aniq qadamlari kitobdan aniq tekshirilmadi (qarang: 79-dars)"
   - id: refactoring
     note: "Refaktoringning ta'rifi (kuzatiladigan xatti-harakatni o'zgartirmasdan), kichik qadamlar, Extract Function, Split Phase, Replace Conditional with Polymorphism va boshqa katalog usullari"
   - id: tidy-first
