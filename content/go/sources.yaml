@@ -596,3 +596,39 @@ pkg-maphash:
   year: 2026
   kind: docs
   url: https://pkg.go.dev/hash/maphash
+w3c-trace-context:
+  title: "Trace Context (W3C Recommendation)"
+  author: W3C
+  year: 2021
+  kind: spec
+  url: https://www.w3.org/TR/trace-context/
+rfc-9110:
+  title: "RFC 9110: HTTP Semantics"
+  author: IETF
+  year: 2022
+  kind: spec
+  url: https://www.rfc-editor.org/rfc/rfc9110.html
+k8s-pod-lifecycle:
+  title: "Pod Lifecycle"
+  author: Kubernetes
+  year: 2026
+  kind: docs
+  url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+pg-sql-insert:
+  title: "PostgreSQL: INSERT"
+  author: PostgreSQL Global Development Group
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/sql-insert.html
+pkg-time:
+  title: "Package time"
+  author: Go team
+  year: 2026
+  kind: docs
+  url: https://pkg.go.dev/time
+go124:
+  title: "Go 1.24 Release Notes"
+  author: Go team
+  year: 2025
+  kind: docs
+  url: https://go.dev/doc/go1.24

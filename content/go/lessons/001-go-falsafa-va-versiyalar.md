@@ -202,7 +202,7 @@ Xulosa: go.mod'dagi `go` qatori faqat "qaysi til xususiyatlari yoqilgan" emas, u
 
 ### 1. Versiya va panicnil default'i
 
-```go
+```go run
 package main
 
 import (

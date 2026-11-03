@@ -205,7 +205,7 @@ Iterator oddiy funksiya, shuning uchun uning `defer`i funksiya qaytishida ishlay
 
 Iterator `false`ni e'tiborsiz qoldirib davom etsa, ish vaqti panic beradi. Go 1.24.7 da:
 
-```go
+```go run
 package main
 
 import (
@@ -254,11 +254,154 @@ Push iterator (`Seq`) o'zi `yield` chaqiradi. Ba'zan qiymatlarni qo'lda, bittada
 
 Hujjat misoli `Pairs` adapterida `defer stop()` ishlatadi. Pull faqat kerak bo'lganda, aks holda `range` yetarli.
 
+### Sikl tanasi, panic va defer: kim qachon ishlaydi
+
+Spetsifikatsiya sikl tanasini iterator ichidan chaqiriladigan `yield` funksiyasi deb tushuntiradi, ammo `panic`, `return` va `defer` bilan o'zaro ta'sirini alohida jadvalda sanamaydi. Quyidagi dastur Go 1.24.7 dagi xatti-harakatni ko'rsatadi; bu bo'lim kuzatuv, spetsifikatsiya kafolati emas, shuning uchun nozik tartibga dastur mantiqini bog'lamang.
+
+Uchta kuzatuv. Birinchisi: sikl tanasida panic bo'lsa, u iterator funksiyasi orqali yuqoriga ko'tariladi va iteratorning `defer`i tashqi `recover` dan oldin ishlaydi (`[iterator defer]` qatori `recover (tashqi)` dan oldin chiqdi). Ya'ni bu tajribada iterator ichidagi resurs tozalash panic holatida ham bajarildi. Ikkinchisi: sikl tanasidagi `defer` iteratsiya yoki iterator tugaganda emas, tanani o'z ichiga olgan funksiya qaytganda ishlaydi, `for` sikli ichidagi oddiy `defer` kabi: `deferInBody` da avval `[iterator defer]`, keyin `sikldan keyin`, keyin tanadagi ikkala `defer` teskari tartibda (1, so'ng 0), oxirida funksiyaning o'z `defer`i. Shu sababli ko'p iteratsiyali siklning tanasiga `defer` qo'ysangiz, ular funksiya tugaguncha to'planadi. Uchinchisi: tanadan `return` qilish `yield` ga `false` qaytaradi, iterator `defer`ni bajarib tugaydi va qiymat tashqi funksiyadan qaytadi (`return: 100`).
+
+Ikkita tuzoq run-time panic bilan ushlanadi, kompilyator esa ularni ko'rmaydi. Agar iterator `yield` ni saqlab qo'ysa va sikl tugagandan keyin chaqirsa, Go 1.24.7 `range function continued iteration after whole loop exit` panic'ini berdi (oldingi bo'limdagi `after function for loop body returned false` xatosining qo'shnisi; spetsifikatsiya iterator `f` qaytgandan keyin `yield` chaqirilishini alohida aytmaydi, xabar run-time'dan olindi). Nil iterator ustidan `range` esa nil pointer dereference panic'i bilan tugadi; spetsifikatsiyaning range bo'limi nil funksiya haqida alohida gapirmaydi, bu kuzatuv.
+
+### Ikki ketma-ketlikni parallel aylanish: Zip
+
+Ikki ketma-ketlikni juftlab o'tish `range` bilan yozilmaydi: ikkalasi ham push, biri o'z siklini boshqaradi, ikkinchisini qo'lda olish kerak. Aynan shu joyda `iter.Pull` kerak. `iter` hujjatida `Pull2` ham bor (`Seq2[K, V]` uchun, `next` uchta qiymat qaytaradi: `K`, `V`, `bool`). `Zip` adapteri bitta ketma-ketlikni `range` bilan, ikkinchisini `Pull` bilan aylanadi, `defer stop()` ikkinchi iteratorni har qanday chiqishda yopadi. Quyidagi to'liq dastur yuqoridagi barcha holatlarni va `Zip` ni ishlatadi (uzunroq `Count(3)` va qisqa ikkinchi ketma-ketlik: `Zip` qisqasi tugagach to'xtaydi, `Count` ning `defer`i esa baribir ishlaydi):
+
+```go run
+package main
+
+import (
+	"fmt"
+	"iter"
+)
+
+func Count(n int) iter.Seq[int] {
+	return func(yield func(int) bool) {
+		defer fmt.Println("  [iterator defer]")
+		for i := 0; i < n; i++ {
+			if !yield(i) {
+				return
+			}
+		}
+	}
+}
+
+// Pairs: ikki ketma-ketlikni parallel aylanish uchun iter.Pull2 emas, Pull ishlatadi.
+func Zip[A, B any](a iter.Seq[A], b iter.Seq[B]) iter.Seq2[A, B] {
+	return func(yield func(A, B) bool) {
+		nb, stop := iter.Pull(b)
+		defer stop()
+		for x := range a {
+			y, ok := nb()
+			if !ok || !yield(x, y) {
+				return
+			}
+		}
+	}
+}
+
+func bodyPanic() {
+	defer func() { fmt.Println("recover (tashqi):", recover()) }()
+	for i := range Count(3) {
+		fmt.Println("tana:", i)
+		panic("tanada xato")
+	}
+}
+
+func deferInBody() {
+	defer fmt.Println("funksiya defer'i")
+	for i := range Count(2) {
+		defer fmt.Println("tanadagi defer", i)
+		fmt.Println("tana:", i)
+	}
+	fmt.Println("sikldan keyin")
+}
+
+func returnFromBody() int {
+	for i := range Count(5) {
+		if i == 1 {
+			return i * 100
+		}
+	}
+	return -1
+}
+
+var saved func(int) bool
+
+func Leaky() iter.Seq[int] {
+	return func(yield func(int) bool) {
+		saved = yield
+		yield(1)
+	}
+}
+
+func main() {
+	bodyPanic()
+	fmt.Println("---")
+	deferInBody()
+	fmt.Println("---")
+	fmt.Println("return:", returnFromBody())
+	fmt.Println("---")
+
+	for a, b := range Zip(Count(3), func(yield func(string) bool) {
+		for _, s := range []string{"x", "y"} {
+			if !yield(s) {
+				return
+			}
+		}
+	}) {
+		fmt.Println(a, b)
+	}
+	fmt.Println("---")
+
+	func() {
+		defer func() { fmt.Println("recover:", recover()) }()
+		for range Leaky() {
+		}
+		saved(2) // sikl tugagandan keyin yield chaqiriladi
+	}()
+
+	func() {
+		defer func() { fmt.Println("recover nil:", recover()) }()
+		var s iter.Seq[int]
+		for range s {
+		}
+	}()
+}
+```
+
+Go 1.24.7 da chiqish:
+
+```text
+tana: 0
+  [iterator defer]
+recover (tashqi): tanada xato
+---
+tana: 0
+tana: 1
+  [iterator defer]
+sikldan keyin
+tanadagi defer 1
+tanadagi defer 0
+funksiya defer'i
+---
+  [iterator defer]
+return: 100
+---
+0 x
+1 y
+  [iterator defer]
+---
+recover: runtime error: range function continued iteration after whole loop exit
+recover nil: runtime error: invalid memory address or nil pointer dereference
+```
+
+`Zip` natijasi `0 x`, `1 y`, so'ng ikkinchi ketma-ketlik tugagani uchun uchinchi element uchun `nb()` `false` qaytaradi, `Zip` `return` qiladi va `Count` ning `[iterator defer]` qatori chiqadi. `Pull` ning narxi haqida bu darsda son bermaymiz: o'lchamadik. Pull faqat ikki ketma-ketlikni bir vaqtda boshqarish kabi `range` bilan ifodalab bo'lmaydigan joyda kerak.
+
 ## Misol: GPS trek, adapterlar va resurs tozalash
 
 Dastur `Track` iteratorini, `Filter` va `Take` adapterlarini, `Seq2` ko'rinishidagi `Enumerate`ni, tozalash bilan `Lines` iteratorini va `iter.Pull`ni ko'rsatadi.
 
-```go
+```go run
 package main
 
 import (

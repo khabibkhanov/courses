@@ -435,7 +435,7 @@ Oltita topilma, kompilyator esa jim. `report` ichidagi `c.n++` nusxa ustida ishl
 
 Va `//go:fix inline` shakli. Quyidagi kod Go 1.24.7 da kompilyatsiya bo'ladi va ishlaydi (direktiva shunchaki izoh), lekin `go fix` ning uni qo'llashi bu darsda ishga tushirilmagan, chunki Go 1.26 toolchain sandbox'da yo'q:
 
-```go
+```go run
 package main
 
 import "fmt"

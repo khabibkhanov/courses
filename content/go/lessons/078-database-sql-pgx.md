@@ -274,7 +274,7 @@ Connection pool (ulanishlar havzasi) tayyor ulanishlarni saqlab, har so'rovda ya
 
 `QueryContext` `*sql.Rows` qaytaradi va ulanishni **ushlab turadi**, `Rows` yopilgunga (yoki sikl oxirigacha o'qilib, Next false qaytarmaguncha) qadar. Quyidagi dastur `MaxOpenConns=2` qilib, ikki `Rows` ni ochiq qoldiradi va uchinchi so'rovni 100 ms muddat bilan yuboradi:
 
-```go
+```go run
 package main
 
 import (
@@ -397,7 +397,7 @@ Hamma metodning `Context` varianti bor (`QueryContext`, `ExecContext`, `BeginTx`
 
 Qo'lda `Begin` / `Commit` / `Rollback` ko'p yo'l hosil qiladi va biri unutilsa ulanish tranzaksiyada qotib qoladi. Odat: bitta yordamchi funksiya. Quyidagisi `sql.DB` ustida yozilgan, jurnal yozuvchi soxta driver bilan sinalgan:
 
-```go
+```go run
 package main
 
 import (
@@ -511,7 +511,139 @@ Mexanika:
 - `sql.TxOptions{Isolation: sql.LevelSerializable}` driverga izolyatsiya darajasini uzatadi (soxta driver `isolation=6` yozdi).
 - Tranzaksiya ichida **faqat `tx`** ishlatiladi, `db` emas: `db` boshqa ulanishdan ishlaydi va tranzaksiya doirasidan chiqib ketadi.
 
-## Chuqurroq: pgx va pgxpool
+## Chuqurroq: Tx, Conn va pgx
+
+### database/sql: Tx va Conn nozikliklari
+
+Tranzaksiya havzadan bitta ulanishni oladi va `Commit` yoki `Rollback` gacha o'zida ushlab turadi. Bundan uchta amaliy oqibat kelib chiqadi.
+
+**Birinchisi: tranzaksiya ichida `db` ishlatish.** `db.QueryContext` boshqa ulanishdan ketadi: u tranzaksiyaning hali commit qilinmagan o'zgarishlarini ko'rmaydi va tranzaksiya ushlab turgan qulflarni kutishi mumkin. Havza kichik bo'lsa, o'zingizni o'zingiz to'sasiz: `MaxOpenConns=1` da tranzaksiya ochiq turganda `db` orqali yuborilgan so'rov bo'sh ulanish kutadi. Muddatsiz context bilan bu cheksiz osilish, muddatli context bilan `context deadline exceeded`.
+
+**Ikkinchisi: context hayoti.** `BeginTx` hujjati: berilgan context tranzaksiya commit yoki rollback qilinguncha ishlatiladi; context bekor qilinsa, `sql` paketi tranzaksiyani o'zi rollback qiladi va `Tx.Commit` xato qaytaradi. Demak `BeginTx` ga so'rov contextini bersangiz, mijoz uzilganda tranzaksiya o'zi tozalanadi (ko'pincha aynan shu kerak), lekin fon ishi uchun alohida context kerak.
+
+**Uchinchisi: `ErrTxDone`.** `Commit` yoki `Rollback` dan keyin tranzaksiya ustidagi har amal `sql.ErrTxDone` bilan tugaydi va driverga yetib bormaydi. Shuning uchun `defer tx.Rollback()` (muvaffaqiyatli commit'dan keyin zararsiz chaqiruv) keng tarqalgan andoza. Quyidagi dastur (soxta driver, Go 1.24.7) to'rtala holatni ko'rsatadi:
+
+```go
+package main
+
+import (
+	"context"
+	"database/sql"
+	"database/sql/driver"
+	"errors"
+	"fmt"
+	"io"
+	"time"
+)
+
+type drv struct {
+	rollbacks, commits int
+	failCommit         bool
+}
+
+func (d *drv) Connect(context.Context) (driver.Conn, error) { return &conn{d}, nil }
+func (d *drv) Driver() driver.Driver                        { return d }
+func (d *drv) Open(string) (driver.Conn, error)             { return &conn{d}, nil }
+
+type conn struct{ d *drv }
+
+func (conn) Prepare(string) (driver.Stmt, error) { return nil, errors.New("yo'q") }
+func (conn) Close() error                        { return nil }
+func (c *conn) Begin() (driver.Tx, error)        { return &tx{c.d}, nil }
+func (c *conn) QueryContext(context.Context, string, []driver.NamedValue) (driver.Rows, error) {
+	return &rows{}, nil
+}
+
+type rows struct{ done bool }
+
+func (*rows) Columns() []string { return []string{"n"} }
+func (*rows) Close() error      { return nil }
+func (r *rows) Next(dst []driver.Value) error {
+	if r.done {
+		return io.EOF
+	}
+	r.done = true
+	dst[0] = int64(1)
+	return nil
+}
+
+type tx struct{ d *drv }
+
+func (t *tx) Commit() error {
+	if t.d.failCommit {
+		return errors.New("serialization failure")
+	}
+	t.d.commits++
+	return nil
+}
+func (t *tx) Rollback() error { t.d.rollbacks++; return nil }
+
+func main() {
+	d := &drv{}
+	db := sql.OpenDB(d)
+	defer db.Close()
+
+	// 1. Commit'dan keyin Rollback: ErrTxDone, driverga yetmaydi.
+	tx1, _ := db.BeginTx(context.Background(), nil)
+	fmt.Println("commit:", tx1.Commit())
+	err := tx1.Rollback()
+	fmt.Println("commit'dan keyin rollback:", err, "| ErrTxDone:", errors.Is(err, sql.ErrTxDone))
+	fmt.Printf("driver: commits=%d rollbacks=%d\n", d.commits, d.rollbacks)
+
+	// 2. Commit xato bersa ham tranzaksiya tugagan hisoblanadi.
+	d.failCommit = true
+	tx2, _ := db.BeginTx(context.Background(), nil)
+	fmt.Println("commit xatosi:", tx2.Commit())
+	fmt.Println("helper shunday qo'shsa:", errors.Join(errors.New("serialization failure"), tx2.Rollback()))
+	d.failCommit = false
+
+	// 3. BeginTx konteksti bekor bo'lsa sql paketi o'zi rollback qiladi.
+	ctx, cancel := context.WithCancel(context.Background())
+	tx3, _ := db.BeginTx(ctx, nil)
+	cancel()
+	time.Sleep(50 * time.Millisecond)
+	fmt.Println("bekor qilingan kontekstda commit:", tx3.Commit())
+	fmt.Printf("driver: commits=%d rollbacks=%d\n", d.commits, d.rollbacks)
+
+	// 4. Tranzaksiya ichida db ishlatilsa, u boshqa ulanish kutadi (MaxOpenConns=1 da bo'sh ulanish yo'q).
+	db.SetMaxOpenConns(1)
+	tx4, _ := db.BeginTx(context.Background(), nil)
+	short, cancel2 := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel2()
+	_, err = db.QueryContext(short, "select 1")
+	fmt.Println("tx ochiq, db.QueryContext:", err)
+	tx4.Rollback()
+	rs, err := db.QueryContext(context.Background(), "select 1")
+	fmt.Println("tx yopilgach:", err)
+	rs.Close()
+	fmt.Println("InUse:", db.Stats().InUse)
+}
+```
+
+```text
+commit: <nil>
+commit'dan keyin rollback: sql: transaction has already been committed or rolled back | ErrTxDone: true
+driver: commits=1 rollbacks=0
+commit xatosi: serialization failure
+helper shunday qo'shsa: serialization failure
+sql: transaction has already been committed or rolled back
+bekor qilingan kontekstda commit: sql: transaction has already been committed or rolled back
+driver: commits=1 rollbacks=1
+tx ochiq, db.QueryContext: context deadline exceeded
+tx yopilgach: <nil>
+InUse: 0
+```
+
+Chiqishdan:
+
+- Muvaffaqiyatli `Commit` dan keyingi `Rollback` driverga yetmadi (`rollbacks=0`) va `ErrTxDone` berdi.
+- `Commit` xato qaytarganda ham tranzaksiya tugagan hisoblanadi: keyingi `Rollback` yana `ErrTxDone` qaytardi. Bundan yuqoridagi `withTx` uchun nozik xulosa: `Commit` xatosidan keyin defer ichidagi `tx.Rollback()` `ErrTxDone` beradi va `errors.Join` uni asl xatoga qo'shadi, ya'ni log va xabarda ortiqcha satr paydo bo'ladi (chiqishning beshinchi va oltinchi qatori). Asl sabab (`serialization failure`) saqlanadi, shuning uchun `errors.Is` ishlayveradi, lekin toza variant: `if rbErr := tx.Rollback(); rbErr != nil && !errors.Is(rbErr, sql.ErrTxDone) { err = errors.Join(err, rbErr) }`.
+- Bekor qilingan contextda `sql` paketi tranzaksiyani o'zi rollback qildi (`rollbacks=1`), keyingi `Commit` xato berdi. Bu dasturda `Commit` aynan `ErrTxDone` qaytardi; hujjat umuman "xato qaytaradi" deydi, aniq qiymat poyga holatiga bog'liq bo'lishi mumkin (tekshirilmagan), shuning uchun xatoni matn bo'yicha emas, faqat `err != nil` deb ishlang.
+- Tranzaksiya ochiq turganda `db.QueryContext` ulanish topolmadi va 100 ms dan keyin tugadi; tranzaksiya yopilgach xuddi shu so'rov o'tdi.
+
+**`db.Conn` va `Stats` hisoblagichlari.** Ba'zan bir nechta so'rov bitta sessiyada bajarilishi kerak (vaqtinchalik jadval, sessiya darajasidagi sozlama, advisory lock). `db.Conn(ctx)` bitta ulanishni ajratib beradi, hujjat bo'yicha unga ketma-ket yuborilgan so'rovlar bir xil ma'lumotlar bazasi sessiyasida bajariladi va `Conn.Close` uni havzaga qaytarishi shart. `Conn` ham `Rows` kabi unutilsa havzani bo'g'adi. `DBStats` da yana uchta hisoblagich bor: `MaxIdleClosed`, `MaxIdleTimeClosed`, `MaxLifetimeClosed`. Birinchisi tez o'sib borsa, bo'sh ulanishlar chegarasi (`SetMaxIdleConns`, hujjatga ko'ra hozircha default 2) yukka kichik: har to'lqinda ortiqcha ulanishlar yopilib, keyin qayta ochiladi. Bir qoida ham bor: `MaxOpenConns` noldan katta va `MaxIdleConns` dan kichik bo'lsa, idle chegarasi avtomatik `MaxOpenConns` ga tushiriladi.
+
+### pgx va pgxpool
 
 `database/sql` umumiy interfeys, pgx esa Postgres'ga xos tabiiy driver: Postgres turlari (massiv, jsonb, UUID), `COPY`, `LISTEN/NOTIFY` va batch'larni qo'llab-quvvatlaydi. `pgxpool` o'zining havzasi. Quyidagi kod pgx v5 hujjatiga tayanadi va sandbox'da **kompilyatsiya qilinmagan** (modul yuklanmaydi):
 
@@ -558,6 +690,10 @@ Eslatmalar (pgx hujjati bo'yicha):
 - `pgx.BeginTxFunc` yordamchimizning analogi: funksiya xato bersa rollback, aks holda commit.
 - Postgres xatolari `*pgconn.PgError` bo'lib keladi: `errors.As` bilan ochiladi, `Code` maydoni SQLSTATE: `23505` (unique_violation, takror kalit), `40001` (serialization_failure, tranzaksiyani qayta urinish kerak). `40001` da butun tranzaksiyani qayta bajarish to'g'ri, faqat oxirgi so'rovni emas.
 - Statement keshlash va PgBouncer: transaction pooling rejimida prepared statement'lar muammo tug'dirishi mumkin; pgx hujjatidagi `QueryExecMode` sozlamasiga qarang.
+- Yuqoridagi raqamlar pkg.go.dev'da ko'rilgan pgx v5.12.0 hujjatiga tegishli. Qo'shimcha: `pgxpool.Config.HealthCheckPeriod` default 1 daqiqa (bo'sh ulanishlarni tekshirish oralig'i); `MinConns` kichik bo'lsa, `MaxConnLifetime` dan keyin havza vaqtincha bo'sh qolishi mumkin va ulanishlar health check paytida qayta yaratiladi.
+- `pgx.ErrNoRows` v5.12.0 manbasida `sql.ErrNoRows` ni o'rovchi xato sifatida e'lon qilingan, shuning uchun `errors.Is(err, sql.ErrNoRows)` bilan ham ishlashini kutish mumkin (bu faqat hujjatdagi e'londan chiqarilgan xulosa, biz kompilyatsiya qilib tekshirmadik). Eng xavfsizi: bitta joyda `errors.Is(err, pgx.ErrNoRows)` ni domen xatosiga o'tkazing.
+- Prepared statement keshi: hujjatga ko'ra standart rejim `QueryExecModeCacheStatement`, ya'ni statement tavsifi keshlanadi va sxema o'zgarsa (masalan `SELECT *` ustunlari) eski kesh xato berishi mumkin. PgBouncer bilan bu rejim hujjatda `max_prepared_statements` noldan katta bo'lgan zamonaviy PgBouncer uchun ko'rsatilgan; eski versiya yoki o'chirilgan sozlamada `ConnConfig.DefaultQueryExecMode` ni almashtirish kerak.
+- SQLSTATE sinflari: `40` ("Transaction Rollback") sinfiga `40001` (serialization_failure) va `40P01` (deadlock_detected) kiradi, `23505` esa unique_violation (Postgres hujjati, xato kodlari ilovasi). Postgres hujjati repeatable read darajasi haqida: bu darajadan foydalanadigan ilova serialization xatolarida tranzaksiyani qayta urinishga tayyor bo'lishi kerak. Qayta urinish mantig'ida `40001` va `40P01` ni bir xil yo'lga qo'yish tabiiy, ammo ikkinchisi uchun ham hujjatdan to'g'ridan-to'g'ri talab olmadik: bu muallifning tavsiyasi.
 
 ## Misol: qayta urinadigan tranzaksiya
 
@@ -613,6 +749,7 @@ band ulanishlar: 0
 - **Katta `MaxOpenConns`**: "ko'proq ulanish tezroq" emas. Postgres uchun ulanish og'ir (jarayon), ortiqcha ulanish kontekst almashinuvini oshiradi. 20 instance x 50 ulanish = 1000 ulanish bazani bo'g'adi; PgBouncer yoki kichik havza ko'pincha yaxshiroq.
 - **Uzoq tranzaksiyalar**: tranzaksiya ichida tarmoq chaqiruvi yoki foydalanuvchi kutishi qulflarni uzoq ushlaydi va havzani bo'g'adi. Tranzaksiya qisqa va faqat ma'lumotlar bilan ishlasin.
 - **`SELECT *` va `Scan` tartibiga tayanish**: ustunlar o'zgarsa sinadi; ustunlarni aniq yozing yoki `RowToStructByName` kabi nom bo'yicha moslashdan foydalaning.
+- **Tranzaksiya ichida `db` yoki ikkinchi `Conn`**: ikkinchi ulanish birinchisi ushlab turgan qulfni kutib, o'zini o'zi to'sishi mumkin (kichik havzada darhol, katta havzada yuk ostida). Tranzaksiya ichida faqat `tx`; bir nechta ulanish kerak bo'lsa, tartibni oldindan loyihalang.
 - **Kontekstsiz chaqiruvlar**: yuqori yuklangan servisda cheksiz kutish zanjirli to'xtashga olib keladi.
 - **Havzani sinov uchun yangidan yaratish**: har testda ulanish ochish sekin; umumiy havza yoki tranzaksiya ichida rollback qiluvchi test yordamchisi ishlating.
 

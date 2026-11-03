@@ -11,6 +11,8 @@ sources:
     note: "DB (ulanishlar puli, bir nechta goroutine uchun xavfsiz), BeginTx, Tx.Rollback va ErrTxDone, SetMaxOpenConns"
   - id: blog-pipelines
     note: "Bosqichlar orasidagi kanallar va bekor qilish: batcher pipeline bosqichi sifatida"
+  - id: pg-sql-insert
+    note: "ON CONFLICT DO UPDATE va command tag count qoidalari."
 quiz:
   - q: "Batcher faqat hajm triggeriga ega (100 ta yig'ilganda yozadi). Kechasi oqim sekinlashib, soatiga 10 ta nuqta keladi. Nima bo'ladi?"
     options:
@@ -252,6 +254,44 @@ Elementlar turli so'rovlardan keladi, batch esa ularning birlashmasi. Flush'ni b
 
 Namunada `time.Timer` ishlatilgan. Hajm bo'yicha flush'dan keyin vaqt triggerini qayta boshlash kerak, aks holda yangi batch to'lmasdan oldingi intervaldan qolgan vaqtda yoziladi. Timer'ni qayta o'rnatishning ehtiyotkor shakli: avval `Stop()`, agar u `false` qaytarsa kanaldan bo'shatish, keyin `Reset()`. Namuna shu shaklni ishlatadi, shuning uchun u Go versiyasidagi timer semantikasidan qat'i nazar to'g'ri.
 
+### Go 1.23 dan oldin va keyin: Reset va eskirgan qiymat
+
+Go 1.23 release notes'i timer kanalining semantikasi o'zgarganini yozadi: `Timer` va `Ticker` kanali endi bufersiz (sig'imi 0), va Go har `Reset` yoki `Stop` chaqiruvidan keyin, chaqiruvdan oldin tayyorlangan eskirgan qiymat yuborilmasligi yoki qabul qilinmasligini kafolatlaydi. Oldingi versiyalarda kanal bir elementli buferga ega edi va shu sabab `Reset` ni to'g'ri ishlatish qiyin edi. Muhim shart: yangi xatti-harakat faqat `go.mod` dagi `go` qatori 1.23.0 yoki yuqori bo'lgan modulda yoqiladi; `GODEBUG=asynctimerchan=1` eski xatti-harakatni qaytaradi. Batcher uchun bu real xavf: taymer ishlab ketgan, lekin batcher shu paytda hajm bo'yicha flush qilayotgan bo'lsa, buferda bitta eskirgan "vaqt keldi" signali qolib, yangi, hali to'lmagan batchni darhol yozdirib yuborishi mumkin. Uch konfiguratsiyada sinadik (Go 1.24.7): taymer ishlaydi, kanaldan o'qilmaydi, keyin `Reset(time.Hour)` chaqiriladi va kanalda qiymat bor-yo'qligi tekshiriladi.
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	t := time.NewTimer(10 * time.Millisecond)
+	time.Sleep(30 * time.Millisecond) // taymer ishladi, hech kim kanaldan o'qimadi
+
+	t.Reset(time.Hour) // oldin bo'shatmasdan qayta o'rnatamiz
+
+	select {
+	case <-t.C:
+		fmt.Println("eskirgan qiymat keldi: flush darhol ishlaydi")
+	default:
+		fmt.Println("kanal bo'sh: eskirgan qiymat yo'q")
+	}
+}
+```
+
+```text
+[go.mod go 1.24]
+kanal bo'sh: eskirgan qiymat yo'q
+[GODEBUG=asynctimerchan=1]
+eskirgan qiymat keldi: flush darhol ishlaydi
+[go.mod go 1.22]
+eskirgan qiymat keldi: flush darhol ishlaydi
+```
+
+Xulosa: kurs namunasidagi `Stop()` + bo'shatish + `Reset()` shakli hamma konfiguratsiyada to'g'ri, oddiy `Reset` esa faqat go.mod 1.23+ bo'lganda xavfsiz. Kutubxona kodida (siz go.mod ni boshqarmaydigan paketda) ehtiyotkor shaklni saqlang. Jamoada go.mod `go` qatorini ko'tarish `GODEBUG` default'larini ham o'zgartirishini eslang (1-dars).
+
 ### Yopish tartibi
 
 Batcher'ning `Close()` kanalni yopadi, shuning uchun u chaqirilganda hech kim `Add` qilmayotgan bo'lishi shart; yopiq kanalga yuborish panic beradi. To'xtatish tartibi doim bir xil: avval ishlab chiqaruvchilarni to'xtatish (HTTP server `Shutdown`), keyin `Close`, keyin bazani yopish (88-dars). 95-dars pipeline'i buni `RWMutex` bilan himoyalaydi.
@@ -277,6 +317,12 @@ n, err := conn.CopyFrom(ctx,
 )
 // so'ng: INSERT INTO points SELECT * FROM points_staging ON CONFLICT (vehicle_id, at) DO NOTHING
 ```
+
+### ON CONFLICT: bitta batch ichidagi takrorlar va qaytgan son
+
+PostgreSQL hujjati (sql-insert) ikkita nozikni aniq yozadi. Birinchisi: `ON CONFLICT DO UPDATE` "deterministik" buyruq, ya'ni u bitta mavjud qatorga bir buyruq ichida ikki marta ta'sir qila olmaydi, bunday holda cardinality violation xatosi ko'tariladi; hujjatning o'zi taklif qilinayotgan qatorlar arbiter indeks bo'yicha bir-birini takrorlamasligi kerakligini aytadi. Telemetriyada qurilma bir xil `(vehicle_id, at)` bilan ikki marta yuborsa va ikkalasi bitta batchga tushsa, `DO UPDATE` varianti butun batchni yiqitishi mumkin. Davo: batchni yozishdan oldin kalit bo'yicha deduplikatsiya qilish (oxirgi qiymatni qoldirish) yoki `DO NOTHING` dan foydalanish. Bu darsda hujjat `DO NOTHING` ning batch ichidagi takrorlardagi xatti-harakatini alohida aytmaydi, shuning uchun uni o'z bazangizda sinab ko'ring. Ikkinchisi: `INSERT` buyrug'i qaytaradigan `count` "kiritilgan yoki yangilangan qatorlar soni". `ExecContext` natijasidagi `RowsAffected` driverga bog'liq, lekin pgx/PostgreSQL bilan bu son shu command tag'dan keladi (bu muallifning xulosasi, drayver hujjatida tekshirilmagan). Amaliy ma'no: 100 qator yuborib 97 qaytsa, 3 tasi takror edi. Bu ko'rsatkichni metrikaga chiqarish dublikat darajasini ko'rsatadi (85-dars).
+
+Jami, batchni yozish kodi uch narsani bilishi kerak: parametr limiti bo'yicha bo'laklash, kalit bo'yicha dedup va takrorlar sonini hisoblash.
 
 ## Misol: Batcher va database/sql
 

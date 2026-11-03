@@ -270,7 +270,7 @@ O'z `Read`ingizni yozsangiz, shartnomaga amal qiling: `len(p) == 0` bo'lsa `0` q
 
 Birinchi dastur: oxirgi bo'lakni `io.EOF` bilan birga qaytaradigan reader. Noto'g'ri tsikl xatoni avval tekshiradi, to'g'risi avval `n` baytni ishlatadi.
 
-```go
+```go run
 package main
 
 import (
@@ -336,7 +336,7 @@ to'g'ri:   "gps:55.7558,37.6173" err=<nil>
 
 Ikkinchi dastur: 70000 baytlik qator va `Scanner` chegarasi.
 
-```go
+```go run
 package main
 
 import (
@@ -392,7 +392,7 @@ Standart `Scanner` birinchi qatordan keyin to'xtadi: `qatorlar=1` va xato `ErrTo
 
 Uchinchi dastur: `bufio.Writer` yozuvlar sonini qanday kamaytiradi va `Flush`dan oldin ma'lumot qayerda turadi.
 
-```go
+```go run
 package main
 
 import (
@@ -441,7 +441,7 @@ Bufersiz holatda 1000 ta yozuv 1000 ta `Write`ga aylandi. Buferli holatda 11000 
 
 To'rtinchi dastur: `io` yordamchilari.
 
-```go
+```go run
 package main
 
 import (

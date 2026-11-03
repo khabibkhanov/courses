@@ -212,7 +212,7 @@ Iteratsiya semantikasi dizaynni murakkablashtirgan: Go spetsifikatsiyasi o'zgart
 
 Quyidagi dastur 1M yozuvli `map[int64]int64` ni to'ldiradi, o'chiradi va heap'ni har qadamda o'lchaydi (`report` map'ni o'lchov davomida tirik ushlab turadi, aks holda kompilyator uni erta bo'shatadi):
 
-```go
+```go run
 package main
 
 import (
@@ -269,9 +269,37 @@ yangi map dan keyin:       len=0        heap=1 KiB
 
 Birinchi qator: 1M yozuv uchun ~37 MB, ya'ni yozuvga ~36 bayt (16 bayt kalit + qiymat va jadval overhead'i). Xuddi shu dasturni `GOEXPERIMENT=noswissmap` bilan ishga tushirsak, bizda 39217 KiB (~38 bayt) chiqdi; farq kichik, va bu bitta mashinadagi bitta o'lchov, umumlashtirmang. Muhimi keyingi uchta qator: `delete` ham, `clear` ham heap'ni kamaytirmadi. Map o'sadi, lekin hech qachon qisqarmaydi (100 Go Mistakes #28), va faqat eskisini tashlab yangi map yaratish xotirani GC ga qaytaradi. Bu o'lchov shuni ko'rsatadi: tirik map ichidagi bo'sh joyni GC qaytarmaydi, faqat butun map ob'ekti tashlanganda yig'iladi.
 
+### Map elementini joyida o'zgartirish: qiymat tipiga bog'liq
+
+Map elementi adreslanmaydi (9-dars), lekin bundan "map elementiga hech qanday yozib bo'lmaydi" degan xulosa chiqmaydi. Ruxsat etilgan va etilmagan shakllar qiymat tipiga bog'liq:
+
+| Ifoda | Natija |
+|---|---|
+| `m[k]++`, `m[k] += v` (qiymat `int`, `string` kabi) | ishlaydi: `m[k] = m[k] + v` ning qisqartmasi |
+| `m[k][i] = x` (qiymat `[]T`) | ishlaydi: slice elementi adreslanadi, yozuv umumiy massivga boradi |
+| `m[k].f = x` (qiymat struct) | kompilyatsiya xatosi: `cannot assign to struct field byVal["a"].Count in map` |
+| `m[k][i] = x` (qiymat `[N]T` massiv) | kompilyatsiya xatosi: `cannot assign to byArr["a"][0] (neither addressable nor a map index expression)` |
+| `m[k].f++` (qiymat `*Struct`) | ishlaydi: pointer ko'rsatayotgan struct o'zgaradi |
+
+Xato matnlari Go 1.24.7 kompilyatoridan olingan. Slice qiymat bilan ishlaydigan variant bir qarashda qulay, lekin jimgina alias beradi: `bySlice["T-1"][0] = 99` boshqa o'zgaruvchi shu slice'ni ushlab turgan bo'lsa, unda ham ko'rinadi (11-dars).
+
+### Map'larni taqqoslash va interface kalit panic'i
+
+Spetsifikatsiyaga ko'ra slice, map va funksiya tiplari taqqoslanmaydi, faqat `nil` bilan solishtirish mumkin. Shuning uchun ikki map'ni `==` bilan solishtirish kompilyatsiya xatosi: `invalid operation: m1 == m2 (map can only be compared to nil)`. Taqqoslash kerak bo'lsa `maps.Equal` yoki test uchun `reflect.DeepEqual` bor (15-dars). Map kaliti `any` bo'lsa, xato kompilyatsiyada emas, ish vaqtida chiqadi: `anyKey[[]int{1}] = 1` Go 1.24.7 da `runtime error: hash of unhashable type []int` panic'ini berdi (bu oddiy, `recover` qilinadigan panic, concurrent yozuvdan farqli). Shuning uchun `map[any]V` kalitlari tashqaridan kelsa (masalan, JSON'dan dekodlangan qiymat), ishonchsiz kalit uchun avval tipni tekshiring.
+
+### Concurrent xato: runtime nimani ushlaydi
+
+Muammo bo'limidagi `concurrent map writes` yagona diagnostika emas. Bitta goroutine yozayotgan paytda boshqasi o'qisa ham runtime programmani to'xtatadi. Go 1.24.7 da bitta yozuvchi va bitta o'quvchi goroutine bilan 1M iteratsiyali dastur quyidagi bilan tugadi:
+
+```text
+fatal error: concurrent map read and map write
+```
+
+Go 1.6 release notes bu aniqlashni "lightweight, best-effort" deb ta'riflaydi: ya'ni runtime har doim ham ushlamaydi, ushlasa dasturni tugatadi va race detector'ni ishga tushirishni tavsiya qiladi. Bu ikki xulosa beradi. Birinchisi: dastur bir necha marta xatosiz ishlaganligi map xavfsizligini isbotlamaydi. Ikkinchisi: bu `fatal error`, `panic` emas, `recover` bilan tiklab bo'lmaydi. Himoya kodda: `sync.RWMutex` yoki goroutine egasi (44 va 47-darslar), tekshiruv esa `go test -race` (43-dars).
+
 ## Misol: map semantikasi bir dasturda
 
-```go
+```go run
 package main
 
 import (
@@ -349,7 +377,7 @@ Qatorlar: nil map'dan o'qish `0 false`, yozish esa panic. `addReading` `stats[id
 
 Tartib masalasi:
 
-```go
+```go run
 package main
 
 import (

@@ -359,7 +359,7 @@ Birinchi qator `go vet`dan, ikkinchisi dastur ishga tushgandagi panic xabari. Sh
 
 `Is` metodi bilan shablon xato:
 
-```go
+```go run
 package main
 
 import (

@@ -11,6 +11,8 @@ sources:
     note: "100go.co bo'yicha tekshirilgan bandlar: #49 xatoni qachon o'rash, #50 xato tipini noto'g'ri solishtirish, #51 xato qiymatini noto'g'ri solishtirish, #52 xatoni ikki marta qayta ishlash"
   - id: code-review-comments
     note: "Error strings va Handle Errors bo'limlari: xatoni e'tiborsiz qoldirmaslik, xabar formati"
+  - id: rfc-9457
+    note: "Problem Details: type/title/detail/instance maydonlari, application/problem+json."
 quiz:
   - q: "JSON so'rovda `{}` kelganda DTO'dagi `Liters float64` maydoni 0 bo'ladi, `{\"liters\": 0}` kelganda ham 0. Maydon yo'qligini 0 qiymatdan ajratish uchun nima qilinadi?"
     options:
@@ -264,6 +266,101 @@ Xulosa: majburiy bo'lmagan maydon uchun ko'rsatichli tip ishlatiladi; `any` ichi
 
 Adapter drayver xatosini domen xatosiga o'girganda asl sababni yo'qotmasligi kerak, aks holda logda kontekst qolmaydi. `fmt.Errorf("%w: %w", ErrDuplicate, err)` ikkala xatoni o'raydi (bir nechta `%w` Go 1.20 dan): `errors.Is(err, ErrDuplicate)` handler uchun, `errors.As(err, &pgErr)` esa log yoki retry qarori uchun ishlaydi. Bu qaror adapter ichida qabul qilinadi, servis esa drayver tiplarini import qilmaydi.
 
+### Parse'ni dekodlash ichiga olish: UnmarshalJSON
+
+Domen tipi o'zining `UnmarshalJSON` metodini bersa, diapazon tekshiruvi JSON o'qilgan zahoti, DTO bosqichisiz bajariladi. `encoding/json` hujjati qoidani shunday beradi: qiymat `Unmarshaler` ni amalga oshirsa, `UnmarshalJSON` chaqiriladi, JSON `null` kelganda ham. Ammo bu pointer maydonlar bilan aralashganda nozik joy bor: maydon `*Liters` bo'lsa, `null` kelganda `Unmarshal` ko'rsatkichni birinchi navbatda nil qiladi va metodni chaqirmaydi (hujjat: pointer holatida avval `null` hal qilinadi). Natijada "yuborilmagan" va "aniq null" ikkalasi ham `nil` bo'ladi va farqlanmaydi; farq kerak bo'lsa, alohida `Set bool` bilan yoki `json.RawMessage` orqali qo'lda ajratiladi. Bir nechta maydon xatosini yig'ish uchun esa Go 1.20 dagi `Unwrap() []error` qulay: bitta `ValidationError` ichida har maydon xatosi saqlanadi va `errors.Is(err, ErrInvalid)` ham, `errors.As(err, &FieldError{})` ham ishlaydi. Tajriba (Go 1.24.7):
+
+```go run
+package main
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"math"
+)
+
+var ErrInvalid = errors.New("yaroqsiz qiymat")
+
+// Liters domen tipi: JSON'dan o'qilganda diapazon darhol tekshiriladi.
+type Liters struct{ v float64 }
+
+func (l Liters) Float() float64 { return l.v }
+
+func (l *Liters) UnmarshalJSON(b []byte) error {
+	var f float64
+	if err := json.Unmarshal(b, &f); err != nil {
+		return fmt.Errorf("liters: %w", err)
+	}
+	if !(f >= 0 && f <= 2000) || math.IsNaN(f) {
+		return fmt.Errorf("liters %v: [0, 2000] oralig'ida bo'lishi kerak: %w", f, ErrInvalid)
+	}
+	l.v = f
+	return nil
+}
+
+// FieldError bitta maydon xatosi.
+type FieldError struct{ Field, Msg string }
+
+func (e FieldError) Error() string { return e.Field + ": " + e.Msg }
+
+// ValidationError bir nechta maydon xatosini yig'adi va ErrInvalid sifatida tanilishi kerak.
+type ValidationError struct{ Errs []error }
+
+func (v *ValidationError) Error() string { return errors.Join(v.Errs...).Error() }
+
+// Unwrap() []error (Go 1.20): errors.Is/As har bir xatoni ichidan topadi.
+func (v *ValidationError) Unwrap() []error {
+	return append([]error{ErrInvalid}, v.Errs...)
+}
+
+type request struct {
+	Device string  `json:"device"`
+	Liters *Liters `json:"liters"`
+}
+
+func main() {
+	for _, body := range []string{
+		`{"device":"gps-7","liters":55.5}`,
+		`{"device":"gps-7"}`,
+		`{"device":"gps-7","liters":null}`,
+		`{"device":"gps-7","liters":-3}`,
+		`{"device":"gps-7","liters":"ko'p"}`,
+	} {
+		var r request
+		err := json.Unmarshal([]byte(body), &r)
+		fmt.Printf("%-36s liters==nil:%-5v err=%v\n", body, r.Liters == nil, err)
+	}
+
+	err := error(&ValidationError{Errs: []error{
+		FieldError{"device", "bo'sh bo'lmasligi kerak"},
+		FieldError{"liters", "yuborilmagan"},
+	}})
+	var fe FieldError
+	fmt.Println("Is ErrInvalid:", errors.Is(err, ErrInvalid))
+	fmt.Println("As FieldError:", errors.As(err, &fe), fe)
+	fmt.Println(err)
+}
+```
+
+```text
+{"device":"gps-7","liters":55.5}     liters==nil:false err=<nil>
+{"device":"gps-7"}                   liters==nil:true  err=<nil>
+{"device":"gps-7","liters":null}     liters==nil:true  err=<nil>
+{"device":"gps-7","liters":-3}       liters==nil:false err=liters -3: [0, 2000] oralig'ida bo'lishi kerak: yaroqsiz qiymat
+{"device":"gps-7","liters":"ko'p"}   liters==nil:false err=liters: json: cannot unmarshal string into Go value of type float64
+Is ErrInvalid: true
+As FieldError: true device: bo'sh bo'lmasligi kerak
+device: bo'sh bo'lmasligi kerak
+liters: yuborilmagan
+```
+
+Bu yondashuvning narxi bor: xato matni dekoderdan chiqadi va qaysi maydonda ekanini o'zingiz xabarga qo'shishingiz kerak; `-3` holatida dekoder xatoni to'xtatuvchi sifatida qaytaradi, ya'ni birinchi xatodayoq to'xtaydi va qolgan maydonlar xatosi yig'ilmaydi. Hamma xatoni birdan ko'rsatish kerak bo'lsa, DTO + `toDomain()` varianti yaxshiroq. Ikkalasini aralashtirish ham mumkin: diapazon qoidasi tipning ichida, majburiylik tekshiruvi `toDomain()` da.
+
+### Xato javobining shakli: RFC 9457
+
+Javob tanasi uchun o'zingiz format o'ylab topmasligingiz mumkin: RFC 9457 (2023-yil iyul, RFC 7807 ni almashtiradi) HTTP API xatolari uchun `application/problem+json` media tipini va "problem details" obyektini belgilaydi. Spetsifikatsiyadagi standart a'zolar: `type` (muammo turini aniqlovchi URI; yo'q bo'lsa `about:blank` deb olinadi), `title` (turning qisqa inson o'qiy oladigan nomi, lokalizatsiyadan tashqari har holatda o'zgarmasligi kerak), `status`, `detail` (aynan shu holatga xos tushuntirish) va `instance` (shu holatni aniqlovchi URI). RFC `detail` haqida ikkita amaliy qoida beradi: u mijozga muammoni tuzatishga yordam berishi kerak, debug ma'lumoti bermasligi kerak, va iste'molchilar `detail` matnini parse qilmasligi kerak; mashina o'qiydigan ma'lumot uchun kengaytma a'zolari (bizning `fields` kabi) mos. Bu bevosita "ichki tafsilotni chiqarmaslik" qoidasi bilan mos keladi. Dars misolidagi `fields` javobi shu shaklga yaqin, lekin RFC bilan to'liq mos emas: uni qabul qilish yoki qilmaslik jamoa qarori, mavjud mijozlar bo'lsa javob shaklini o'zgartirish ularni sindirishi mumkin, shuning uchun yangi shaklni versiyalangan endpoint yoki `Accept` sarlavhasi orqali bosqichma-bosqich kiriting.
+
 ### Ichki tafsilotni chiqarmaslik
 
 Tarjima ikki yo'nalishli: ichki xato mijozga umumiy matn bilan boradi, to'liq zanjir esa logga (so'rov identifikatori bilan) yoziladi. Mijozga tafsilot faqat u tuzata oladigan holatda beriladi: validatsiya xatosi (qaysi maydon, nega) va konflikt. Baza xabari, stack yoki fayl yo'li hech qachon tashqariga chiqmaydi.
@@ -471,6 +568,8 @@ Qatorma-qator:
 - Har qiymat uchun alohida tip (`VehicleID`, `Liters`, `Lat`, `Lon`...) o'qishni og'irlashtirishi mumkin. Tipni xato tarixi yoki muhim qoida bor joyga qo'ying, hamma `string`ni o'rab chiqmang.
 - Har xato holati uchun alohida tip yozmang. Ko'pincha 3-5 sentinel yoki bitta `ValidationError` yetadi. Xatolar soni o'sib ketsa, ular domen xatolari emas, balki tafsilotlardir.
 - Xatoni har qatlamda qayta o'ramang: `a: b: c: d: not found` zanjiri o'qishni qiyinlashtiradi. Kontekst qo'shing, takrorlamang.
+- Har domen tipiga `UnmarshalJSON` yozish: bu metod dekoder ichida yashiringan mantiq, uni xato matni, maydon nomi va `null` holatlari bo'yicha alohida sinash kerak. Faqat qoida haqiqatan tipga tegishli (diapazon, format) bo'lsa va bir nechta DTO'da qayta ishlatilsa foyda beradi; bitta endpoint uchun `toDomain()` oddiyroq.
+- `application/problem+json` ni "standart bor" degani uchun joriy qilish. Ichki xizmatlar orasidagi o'z formatingiz bor va hamma mijoz uni biladigan bo'lsa, o'tish xarajati foydadan katta bo'lishi mumkin; yangi ommaviy API uchun esa tayyor format o'ylab topishdan arzonroq.
 - Validatsiyani hamma qatlamda takrorlamang. Chegarada tekshirib, domen konstruktorida himoyalansangiz, servis va store qayta tekshirishga muhtoj emas.
 
 ## Stack'da: TypeScript bilan solishtirish

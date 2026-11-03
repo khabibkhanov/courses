@@ -212,7 +212,7 @@ Bu yerda Kafka yoki NATS kutubxonalari ishga tushirilmaydi (sandbox'da tashqi mo
 
 Quyidagi model broker (`Receive`, `ExpireInflight` ack kelmagan xabarni navbatga qaytaradi) va hisob (`Ledger`) ni stdlib bilan yozadi. `drain` birinchi xabarda ack yuborishdan OLDIN yiqilishni taqlid qiladi:
 
-```go
+```go run
 package main
 
 import (
@@ -418,7 +418,145 @@ err := withTx(ctx, db, nil, func(tx *sql.Tx) error {
 })
 ```
 
-Relay'ni ishlatish usullari: davriy so'rov (polling, `select ... where sent_at is null order by id limit 100 for update skip locked`), yoki bazaning o'zgarishlar oqimi (CDC). Polling oddiy va ko'p hollarda yetarli; kechikish polling oralig'iga teng. Tartib faqat bitta relay yoki kalit bo'yicha bo'linishda saqlanadi, buni ongli loyihalang.
+Relay'ni ishlatish usullari: davriy so'rov (polling, `select ... where sent_at is null order by id limit 100 for update skip locked`), yoki bazaning o'zgarishlar oqimi (CDC). Polling oddiy va ko'p hollarda yetarli; kechikish polling oralig'iga teng. Postgres hujjatiga ko'ra `SKIP LOCKED` ko'rilmagan holatni beradi (qulflangan qatorlar o'tkazib yuboriladi), shuning uchun u umumiy maqsadli so'rovlar uchun mos emas, lekin navbat ko'rinishidagi jadvalni bir nechta iste'molchi o'qiganda qulf to'qnashuvini kamaytirish uchun hujjatning o'zi shunday ishlatish mumkinligini aytadi. Tartib faqat bitta relay yoki kalit bo'yicha bo'linishda saqlanadi, buni ongli loyihalang.
+
+### Tekshiruv va ta'sir orasidagi poyga
+
+Idempotentlik qoidasi "ID tekshiruvi va ta'sir bitta atomik bosqichda" deydi. Buzilishi qanday ko'rinishini ikki yetkazish bir vaqtda kelgan holda ko'ramiz. Birinchi variantda `seen` va `apply` har biri o'z mutex'ida, lekin ular orasida oraliq bor: ikkala goroutine ham "ko'rmadim" javobini oladi (kod buni to'siq bilan majburan ko'rsatadi), keyin ikkalasi ham qo'llaydi. Ikkinchi variantda tekshiruv va qo'llash bitta kritik bo'limda. Oxirida kalit bo'yicha ishchi tanlash ko'rsatilgan: bir xil kalit doim bir xil ishchiga tushadi.
+
+```go run
+package main
+
+import (
+	"fmt"
+	"hash/fnv"
+	"sync"
+)
+
+type Message struct {
+	ID     string
+	Key    string
+	Amount int
+}
+
+type Ledger struct {
+	mu        sync.Mutex
+	balance   int
+	processed map[string]bool
+}
+
+func NewLedger() *Ledger { return &Ledger{processed: map[string]bool{}} }
+
+// Alohida qadamlar: har biri o'zi mutex ichida, lekin ular orasida oraliq bor.
+func (l *Ledger) seen(id string) bool {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.processed[id]
+}
+
+func (l *Ledger) apply(m Message) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.balance += m.Amount
+	l.processed[m.ID] = true
+}
+
+// ApplyOnce: tekshiruv va ta'sir bitta kritik bo'limda (bazada: bitta tranzaksiya).
+func (l *Ledger) ApplyOnce(m Message) bool {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	if l.processed[m.ID] {
+		return false
+	}
+	l.balance += m.Amount
+	l.processed[m.ID] = true
+	return true
+}
+
+func main() {
+	m := Message{ID: "pay-1", Key: "acc-7", Amount: 100}
+
+	// Check-then-act: ikki yetkazish bir vaqtda keldi.
+	l := NewLedger()
+	var checked, wg sync.WaitGroup
+	checked.Add(2)
+	for range 2 {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			ok := !l.seen(m.ID)
+			checked.Done()
+			checked.Wait() // ikkalasi ham "ko'rmadim" javobini oldi
+			if ok {
+				l.apply(m)
+			}
+		}()
+	}
+	wg.Wait()
+	fmt.Println("alohida tekshiruv va qo'llash, balans:", l.balance)
+
+	l = NewLedger()
+	for range 2 {
+		wg.Add(1)
+		go func() { defer wg.Done(); l.ApplyOnce(m) }()
+	}
+	wg.Wait()
+	fmt.Println("bitta atomik bosqich, balans:", l.balance)
+
+	// Kalit bo'yicha ishchiga yo'naltirish: bir kalit doim bir ishchiga tushadi.
+	const workers = 4
+	for _, key := range []string{"acc-7", "acc-8", "acc-7", "acc-9", "acc-7"} {
+		h := fnv.New32a()
+		h.Write([]byte(key))
+		fmt.Printf("%s -> ishchi %d\n", key, h.Sum32()%workers)
+	}
+}
+```
+
+```text
+alohida tekshiruv va qo'llash, balans: 200
+bitta atomik bosqich, balans: 100
+acc-7 -> ishchi 2
+acc-8 -> ishchi 3
+acc-7 -> ishchi 2
+acc-9 -> ishchi 0
+acc-7 -> ishchi 2
+```
+
+Birinchi variantning "yaxshi" ko'rinishi aldamchi: har bir qadam alohida xavfsiz, `-race` ham hech narsa topmaydi (data race yo'q, mantiqiy poyga bor). Haqiqiy tizimda bu "SELECT processed, keyin INSERT" ketma-ketligiga mos keladi. Bazada atomik bosqich uchun UNIQUE indeks va `insert ... on conflict do nothing` ishlatiladi. Postgres hujjatiga ko'ra `ON CONFLICT DO NOTHING` konflikt bo'lganda qatorni shunchaki qo'shmaydi; ta'sirlangan qatorlar soni (`RowsAffected`) nol bo'lsa, xabar allaqachon ko'rilgan. Quyidagi funksiya `withTx` yordamchisi (78-dars) ustida yozilgan; u `go vet` dan o'tdi, lekin haqiqiy bazada ishga tushirilmagan, shuning uchun jadval sxemasi taxminiy:
+
+```go
+// handle: xabar ID'sini "egallash" va ta'sir bitta tranzaksiyada.
+func handle(ctx context.Context, db *sql.DB, m Message) error {
+	return withTx(ctx, db, nil, func(tx *sql.Tx) error {
+		res, err := tx.ExecContext(ctx,
+			`insert into processed_messages (id) values ($1) on conflict do nothing`, m.ID)
+		if err != nil {
+			return err
+		}
+		if n, err := res.RowsAffected(); err != nil {
+			return err
+		} else if n == 0 {
+			return nil // takror yetkazish: ta'sir allaqachon qo'llangan
+		}
+		_, err = tx.ExecContext(ctx,
+			`update accounts set balance = balance + $1 where id = $2`, m.Amount, "acc-7")
+		return err
+	})
+}
+```
+
+Muhim tafsilot: ID ni "egallash" va ta'sir **bitta** tranzaksiyada. Agar ID alohida commit qilinsa va jarayon ta'sirdan oldin yiqilsa, xabar keyingi yetkazishda "allaqachon ko'rilgan" deb o'tkazib yuboriladi va ta'sir butunlay yo'qoladi: bu at-least-once ni at-most-once ga aylantiradi. Tranzaksiya rollback bo'lsa, ID ham orqaga qaytadi va qayta yetkazish ta'sirni to'g'ri qo'llaydi. Bu yerda tashqi dunyoga ta'sir (email, HTTP) tranzaksiya ichida bajarilmaydi: u rollback'ni ko'tarmaydi (78-darsdagi qoida).
+
+Tartib haqida: kalit bo'yicha ishchi tanlash (`hash(key) % workers`) bir kalit hodisalarini bir ishchida ketma-ket ishlashga majbur qiladi, turli kalitlar esa parallel ketadi. Bu partitsiyalangan brokerlarning ham g'oyasi; qiymat qaysi ishchiga tushishi hash funksiyaga va ishchilar soniga bog'liq (yuqoridagi tanlov faqat shu tajribadagi FNV-1a va 4 ishchi uchun), ishchilar soni o'zgarsa kalitlar qayta taqsimlanadi va o'tish davrida tartib kafolati buziladi.
+
+### Kafka'ning rasmiy kafolatlari: nimaga tayanish mumkin
+
+Apache Kafka dizayn hujjati (Message Delivery Semantics bo'limi, 4.2 hujjati) bizning modelimizdagi qoidalarni brokerning o'z tilida tasdiqlaydi. Producer tomonida: xabar tarmoq xatosidan keyin yuborilsa, producer u commit bo'ldimi yoki yo'qligini bilmaydi, shuning uchun qayta yuborishga majbur va bu at-least-once. 0.11.0.0 dan producer idempotent rejimni qo'llaydi: broker har producer'ga ID beradi va har xabar bilan kelgan tartib raqami bo'yicha takrorni log'ga yozmaydi. Shuningdek 0.11.0.0 dan producer bir nechta partitsiyaga atomik yozish (tranzaksiya) imkoniyatiga ega.
+
+Consumer tomonida hujjat ikki tartibni farqlaydi: avval pozitsiyani saqlab, keyin ishlash (yiqilsa xabarlar o'tkazib yuboriladi, at-most-once), yoki avval ishlab, keyin pozitsiyani saqlash (yiqilsa takror ishlanadi, at-least-once). Bu aynan bizning "ack avval yoki keyin" tanlovimiz. Exactly-once haqida hujjat aniq: Kafka topic'idan o'qib boshqa topic'ga yozishda (masalan Kafka Streams) pozitsiya ichki topic'da saqlanadi va chiqish bilan bitta tranzaksiyada yoziladi; consumer ushbu holatda `read_committed` izolyatsiyasida ishlashi kerak (default `read_uncommitted`, u bekor qilingan tranzaksiya xabarlarini ham ko'rsatadi). Tashqi tizimga (baza) yozishda esa hujjat umumiy yechimni shunday beradi: consumer pozitsiyani chiqish bilan **bir joyda** saqlasin. Bizning `processed_messages` jadvali aynan shu g'oya: "ko'rilgan xabar" belgisi ta'sir bilan bitta bazada, bitta tranzaksiyada. Hujjatning o'z so'zlari bo'yicha, "exactly-once" iboralari ko'pincha chalg'itadi, shuning uchun har da'voda consumer yoki producer yiqilishi, bir nechta consumer va ma'lumot yo'qolishi holatini tekshirish kerak.
+
+Eslatma: bu qism Kafka hujjatidagi bayonga tayanadi, biz Kafka'ni ishga tushirmadik; NATS JetStream va RabbitMQ'ning o'xshash mexanizmlari (deduplikatsiya, ack muddati) uchun ularning hujjatini o'qing: biz ularni bu darsda tekshira olmadik va shuning uchun tavsiflamadik.
 
 ## Misol: iste'molchi ishchilari va graceful shutdown
 
@@ -477,6 +615,7 @@ Muhim qarorlar:
 - **Idempotent bo'lmagan tashqi ta'sirlar**: handler ichida email yoki to'lov chaqirilsa va idempotent qilib bo'lmasa, at-least-once xavfli. Tashqi tizimning idempotency key'idan foydalaning yoki ta'sirni outbox orqali bitta joyga to'plang.
 - **Tartib muhim, parallellik yuqori**: ko'p ishchi tartibni buzadi. Tartib kerak bo'lsa kalit bo'yicha bo'ling (bir kalit bir ishchiga) va parallellikdan voz keching.
 - **Outbox'ni har joyga qo'llash**: har hodisa uchun outbox qo'shimcha jadval, relay va monitoring talab qiladi. Yo'qotish zararsiz bo'lsa (loglar, jonli koordinatalar) oddiy publish yetadi.
+- **ID'ni ta'sirdan alohida commit qilish**: "processed" belgisi bitta tranzaksiyada, ta'sir boshqasida bo'lsa, ular orasidagi yiqilish ta'sirni abadiy yo'qotadi. Bu at-least-once ni jimgina at-most-once ga aylantiradi.
 - **"Exactly-once" va'dasiga ko'r-ko'rona ishonish**: broker kafolati faqat o'z chegarasida amal qiladi; baza yoki tashqi API'ga ta'sir uchun baribir idempotentlik kerak.
 
 ## Stack'da: Node.js/TypeScript bilan solishtirish

@@ -12,7 +12,9 @@ sources:
   - id: 100go
     note: "#12 (Project misorganization): kontekst yoki qatlam bo'yicha guruhlash, nano paketlar va ulkan paketlar, eksportni minimallashtirish; #13 (Creating utility packages)"
   - id: go-mod-ref
-    note: "go.mod ichidagi module direktivasi modul yo'lini belgilaydi (bu darsda faqat shu umumiy fakt ishlatilgan)"
+    note: "go.mod ichidagi module direktivasi modul yo'lini belgilaydi; modul zip fayli ichki modullarni (go.mod bor ichki kataloglarni) o'z ichiga olmaydi"
+  - id: pkg-cmd-go
+    note: "go help packages: '.' va '_' bilan boshlanadigan hamda testdata kataloglari e'tiborsiz; go help build: binary nomi oxirgi major-versiya bo'lmagan komponentdan; go help test: _test qo'shimchali paket alohida kompilyatsiya qilinadi"
 quiz:
   - q: "`example.com/consumer` moduli `example.com/fleet/internal/store` ni import qilmoqchi (replace orqali lokal yo'l). `go build` nima beradi?"
     options:
@@ -241,6 +243,36 @@ Bitta katalogda bitta paket bo'ladi, `package main` bo'lsa u bitta dasturni bild
 
 Go'da import sikliga kompilyatsiya vaqtida ruxsat yo'q. Tajribada ikki paket bir-birini import qilganda: `import cycle not allowed`. Sikl odatda dizayn signali: ikki paket aslida bitta, yoki umumiy qismni uchinchi paketga chiqarish kerak, yoki bog'liqlik yo'nalishi noto'g'ri. Ko'pincha iste'molchi tomonda kichik interfeys e'lon qilish yo'nalishni to'g'rilaydi (37-dars).
 
+### Go vositasi ko'rmaydigan kataloglar
+
+Hamma katalog ham paket emas. `go help packages` hujjati: nomi `.` yoki `_` bilan boshlanadigan katalog va fayllarni, shuningdek `testdata` nomli kataloglarni `go` vositasi e'tiborsiz qoldiradi. Bu `./...` andozasiga ham tegishli. Lokal tajriba (Go 1.24.7): modul ildizida `testdata/fixtures`, `_scratch` va `.hidden` kataloglarida `.go` fayllar bor, `tools/` ichida esa o'z `go.mod` fayli bor. `go list ./...` faqat uchta paketni qaytardi:
+
+```text
+example.com/fleet/cmd/fleetd
+example.com/fleet/orders
+example.com/fleet/store
+```
+
+`testdata`, `_scratch`, `.hidden` ro'yxatda yo'q (ularda `.go` fayllar bor edi). `tools/gen` ham yo'q, chunki o'z `go.mod` fayli bo'lgan katalog alohida modul: u ota modulning paketlar daraxtiga kirmaydi. `go.dev/ref/mod` ham shuni tasdiqlaydi: modul zip fayli ichki modullarni (`go.mod` bor ichki kataloglarni) o'z ichiga olmaydi. Amaliy oqibatlar: test ma'lumotlari va namuna fayllarni `testdata` ga qo'ying (ular `go build ./...` va `go vet ./...` ga tushmaydi); generator yoki yordamchi vositani alohida modul qilsangiz, uning bog'liqliklari asosiy modul `go.mod` ni ifloslantirmaydi, lekin uni `go test ./...` ham ko'rmaydi va alohida yurgizish kerak (bir nechta modulni birga ishlatish uchun 39-darsdagi workspace bor).
+
+### Test paketi va import sikli
+
+Import sikli testda ham taqiqlangan, va bu tuzoq tez-tez uchraydi. `store` paketining testi `orders` ni import qilsa, `orders` esa o'z navbatida `store` ni import qilsa, `package store` ichidagi test tsikl hosil qiladi. Yuqoridagi modulda aynan shunday test yozilganda:
+
+```text
+# example.com/fleet/store
+package example.com/fleet/store
+	imports example.com/fleet/orders from store_test.go
+	imports example.com/fleet/store from orders.go: import cycle not allowed in test
+FAIL	example.com/fleet/store [setup failed]
+```
+
+`go test` hujjatiga ko'ra `_test` qo'shimchali paket nomini e'lon qilgan test fayllar alohida paket sifatida kompilyatsiya qilinadi. Test faylining birinchi qatorini `package store_test` ga o'zgartirib, `store` ni oddiy import qilsak, xato yo'qoldi (`ok  	example.com/fleet/store	0.002s`). Bunday "tashqi test" paketi `store` ga faqat eksport qilingan API orqali qaraydi, ya'ni u mijoz ko'zi bilan yozilgan test. Ikki oqibat: eksport qilinmagan nomlarni sinash kerak bo'lsa, ichki test (`package store`) kerak, va sikl hosil bo'lsa, odatda ham testni, ham dizaynni qayta ko'rish kerak (yuqoridagi "Siklar" bo'limi).
+
+### Binary nomi
+
+`go build ./cmd/fleetd` natijasi `fleetd` nomli fayl bo'ladi. Hujjat (`go help build`): bitta `main` paket kompilyatsiya qilinganda binary paket import yo'lining oxirgi major-versiya bo'lmagan komponenti nomi bilan yoziladi, ya'ni `example.com/foo/v2` uchun `foo`, `v2` emas. Shuning uchun `cmd/` ostidagi katalog nomi binary nomini belgilaydi va uni mayda-chuyda emas, dastur nomi sifatida tanlang (`cmd/fleetd`, `cmd/main` emas). Lokal tajribada `GOBIN=... go install ./cmd/fleetd` ham `fleetd` nomli fayl qoldirdi (bu hujjatda alohida yozilmagan, faqat kuzatuv).
+
 ## Misol: fleet moduli
 
 Telemetriya kutubxonasi va dasturi bir repoda. Ommaviy API ildizda (`fleet`), ichki ombor va normallashtirish `internal/` da, `store` ommaviy paketi o'z ichki `sqlbuild` yordamchisiga ega, dastur `cmd/fleetd` da. Fayllar:
@@ -364,3 +396,4 @@ Ikki xato ham kompilyatsiya vaqtida. Mijoz faqat `example.com/fleet` va `example
 - Bir nechta dastur yoki paket + dastur aralash repoda dasturlar `cmd/<nom>/` ostida; `package main` import qilinmaydi, mantiqni alohida paketga chiqaring.
 - Qo'llanmada `pkg/` yo'q: bu jamoa konvensiyasi, majburiyat emas. `util`/`common` kabi ma'nosiz paket nomlaridan qoching.
 - Import sikli kompilyator xatosi va dizayn signali: umumiy qismni ajrating yoki bog'liqlik yo'nalishini interfeys bilan teskari qiling.
+- Go vositasi `.` va `_` bilan boshlanadigan hamda `testdata` kataloglarini, ichida `go.mod` bor kataloglar esa ota modul paketlaridan chetda qoladi. Sikl testda ham xato: `package x_test` tashqi test paketi uni sindiradi, binary nomi esa `cmd/<nom>` katalogidan olinadi.

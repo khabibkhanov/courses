@@ -294,7 +294,7 @@ Bu faqat diagnostika matni; log tahlilchi regex'laringiz bo'lsa, toolchain yangi
 
 Birinchi dastur har xil panic manbalarini `runtime.Error` va oddiy `error`dan ajratadi (Go 1.24.7, `go vet`dan o'tgan):
 
-```go
+```go run
 package main
 
 import (
@@ -362,7 +362,7 @@ Kuzatuvlar: indeks, nil map va nolga bo'lish `runtime.Error`; `panic(nil)` ham `
 
 Endi `recover` to'g'ridan-to'g'ri chaqirilishi sharti:
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -409,7 +409,7 @@ main: tashqi recover = nested panic
 
 Fon ishlari uchun yordamchi: panic faqat o'sha ishni yiqitadi.
 
-```go
+```go run
 package main
 
 import (
@@ -519,7 +519,7 @@ panic GET /boom: assignment to entry in nil map
 
 Ichki panic'ni parser ichida ishlatib, tashqarida error qaytarish (Go blogidagi json naqshi):
 
-```go
+```go run
 package main
 
 import (

@@ -231,7 +231,7 @@ Aliasdan farqli, `type Timeout time.Duration` yangi tip yaratadi va `time.Durati
 
 ### 1. Defined type, alias va unnamed type
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -337,7 +337,7 @@ Birinchi qator spetsifikatsiya misoli bilan mos: `0xfffffff0`. `int(f)` -3.99 ni
 
 ### 3. string(int) tuzog'i va metod yo'qolishi
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -358,7 +358,7 @@ A
 
 Birinchi qatordagi `string(rune(n))` niyatni aniq ko'rsatadi, ikkinchi `string(n)` esa ogohlantirishga tushadi. Defined type va alias farqi:
 
-```go
+```go run
 package main
 
 import (

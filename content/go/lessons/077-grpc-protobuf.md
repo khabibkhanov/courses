@@ -247,7 +247,7 @@ Maydon **raqami** (`= 1`) kodlashda ishlatiladi, maydon nomi emas. Shuning uchun
 
 Protobuf kodlash hujjatiga ko'ra har maydon `tag` bilan boshlanadi: `tag = (maydon_raqami << 3) | wire_type`. Wire type oltita; uchtasi bu darsda kerak: 0 (VARINT), 1 (I64, 8 bayt) va 2 (LEN, uzunlik-prefiksli). Varint kichik sonlarni kam baytda yozadi (har baytning 7 biti ma'lumot, yuqori biti "davomi bor" belgisi). Quyidagi dastur yuqoridagi `Reading` ni qo'lda kodlaydi va qaytaradi:
 
-```go
+```go run
 package main
 
 import (
@@ -569,6 +569,126 @@ Muhim nuqtalar:
 - **Interceptor'lar** (unary va stream) middleware'ning gRPC'dagi ekvivalenti: loglash, metrika, autentifikatsiya, panic'dan tiklanish (74-dars g'oyasi). Ular `grpc.NewServer(grpc.ChainUnaryInterceptor(...))` bilan ulanadi.
 - **TLS**: ishlab chiqarishda `insecure.NewCredentials()` o'rniga `credentials.NewTLS(cfg)` va 75-darsdagi `tls.Config` ishlatiladi; mTLS ham shu orqali.
 
+### Kodlashning qolgan qoidalari: ZigZag, packed, presence va birlashtirish
+
+Yuqoridagi lokal kodlovchi minimal edi. Production sxemalarni buzadigan to'rtta qoida protobuf kodlash hujjatida (va field presence qo'llanmasida) yozilgan; ularni bir dasturda tekshirdik (Go 1.24.7, faqat stdlib).
+
+1. **ZigZag.** `sint32` va `sint64` manfiy sonlarni "zig-zag" qilib yozadi: hujjatga ko'ra `sint32` uchun `(n << 1) ^ (n >> 31)`. Natijada `-1` bir baytga (`0x1`), `-2` `0x3` ga tushadi. Oddiy `int32` da `-1` 10 bayt oladi (yuqorida ko'rdik). Katta absolyut qiymatda foyda yo'q: eng katta `int32` ham, eng kichik `int32` ham 5 baytlik varint.
+2. **Packed takrorlanuvchi maydonlar.** `repeated int32 e = 5` bitta LEN yozuvi sifatida yoziladi, ichida elementlar ketma-ket. Hujjatdagi `Test4` misoli (`d = "hello"`, `e = 1, 2, 3`) `220568656c6c6f2a03010203` bo'ladi; bizning kodlovchi aynan shu baytlarni berdi. Hujjatga ko'ra Edition 2023 dan boshlab primitiv takrorlanuvchi maydonlar sukut bo'yicha packed; parser packed va packed bo'lmagan shaklni ikkalasini ham o'qiy olishi shart, shuning uchun ular orasidagi o'zgarish mos keladi. String va xabar maydonlari packed bo'lmaydi.
+3. **Implicit presence.** Field presence qo'llanmasiga ko'ra implicit presence maydonlar (proto3 oddiy skalyar maydonlari) standart qiymatga teng bo'lsa serializatsiya qilinmaydi: son uchun 0, string uchun bo'sh qator. Natijada hamma maydoni standart bo'lgan `Reading` 0 bayt bo'ladi, va qabul qiluvchi "`seq` yuborilmadi" bilan "`seq = 0` yuborildi" ni ajrata olmaydi. Qo'llanma proto3 asosiy tiplari uchun `optional` yorlig'ini sukut bo'yicha qo'shishni tavsiya qiladi, chunki u explicit presence beradi (`has_` metodi bilan). Telemetriyada `fuel = 0` (bak bo'sh) va "datchik ma'lumot bermadi" bir narsa emas, shuning uchun bunday maydonlar `optional` bo'lishi kerak.
+4. **Oxirgisi yutadi va birlashtirish.** Bir xil skalyar maydon xabarda ikki marta uchrasa, parser oxirgi qiymatni oladi; ichki xabar maydonlari esa `MergeFrom` kabi birlashtiriladi. Hujjatning xulosasi: ikki kodlangan xabarning birlashtirilgan baytlarini parse qilish, ularni alohida parse qilib birlashtirishga teng.
+
+```go run
+package main
+
+import (
+	"encoding/binary"
+	"fmt"
+)
+
+func tag(field, wire uint64) uint64 { return field<<3 | wire }
+
+// zigzag32 sint32 uchun: (n << 1) ^ (n >> 31).
+func zigzag32(n int32) uint32 { return uint32(n<<1) ^ uint32(n>>31) }
+
+// packedInts takrorlanuvchi int32 maydonni bitta LEN yozuvi sifatida kodlaydi.
+func packedInts(field uint64, vals ...uint64) []byte {
+	var payload []byte
+	for _, v := range vals {
+		payload = binary.AppendUvarint(payload, v)
+	}
+	b := binary.AppendUvarint(nil, tag(field, 2))
+	b = binary.AppendUvarint(b, uint64(len(payload)))
+	return append(b, payload...)
+}
+
+func str(field uint64, s string) []byte {
+	b := binary.AppendUvarint(nil, tag(field, 2))
+	b = binary.AppendUvarint(b, uint64(len(s)))
+	return append(b, s...)
+}
+
+// encodeReading proto3'ning implicit presence qoidasi: standart qiymat yozilmaydi.
+func encodeReading(vehicle string, seq int32) []byte {
+	var b []byte
+	if vehicle != "" {
+		b = append(b, str(1, vehicle)...)
+	}
+	if seq != 0 {
+		b = binary.AppendUvarint(b, tag(3, 0))
+		b = binary.AppendUvarint(b, uint64(uint32(seq)))
+	}
+	return b
+}
+
+// lastSeq xabardan 3-maydonni (varint) oxirgi uchragan qiymat bilan o'qiydi.
+func lastSeq(b []byte) (seq uint64, count int) {
+	for len(b) > 0 {
+		t, n := binary.Uvarint(b)
+		b = b[n:]
+		switch t & 7 {
+		case 0:
+			v, n := binary.Uvarint(b)
+			b = b[n:]
+			if t>>3 == 3 {
+				seq, count = v, count+1
+			}
+		case 2:
+			l, n := binary.Uvarint(b)
+			b = b[n+int(l):]
+		}
+	}
+	return seq, count
+}
+
+func main() {
+	// ZigZag: protobuf hujjatidagi jadval bilan bir xil.
+	for _, n := range []int32{0, -1, 1, -2, 0x7fffffff, -0x80000000} {
+		fmt.Printf("sint32 %d -> 0x%x, varint %d bayt\n", n, zigzag32(n), len(binary.AppendUvarint(nil, uint64(zigzag32(n)))))
+	}
+	minusOne := int64(-1)
+	fmt.Println("int32 -1 oddiy varint:", len(binary.AppendUvarint(nil, uint64(minusOne))), "bayt")
+
+	// Packed: message Test4 { string d = 4; repeated int32 e = 5; }
+	test4 := append(str(4, "hello"), packedInts(5, 1, 2, 3)...)
+	fmt.Printf("Test4: %x\n", test4)
+
+	// Implicit presence: standart qiymatlar yozilmaydi.
+	fmt.Printf("bo'sh Reading: %d bayt\n", len(encodeReading("", 0)))
+	fmt.Printf("seq=0, vehicle=truck-7: % x\n", encodeReading("truck-7", 0))
+
+	// Ikki xabar birlashtirilsa: oxirgi qiymat yutadi.
+	a := encodeReading("truck-7", 1)
+	b := encodeReading("", 2)
+	seq, count := lastSeq(append(append([]byte{}, a...), b...))
+	fmt.Println("a+b: seq =", seq, "| 3-maydon", count, "marta uchradi")
+}
+```
+
+```text
+sint32 0 -> 0x0, varint 1 bayt
+sint32 -1 -> 0x1, varint 1 bayt
+sint32 1 -> 0x2, varint 1 bayt
+sint32 -2 -> 0x3, varint 1 bayt
+sint32 2147483647 -> 0xfffffffe, varint 5 bayt
+sint32 -2147483648 -> 0xffffffff, varint 5 bayt
+int32 -1 oddiy varint: 10 bayt
+Test4: 220568656c6c6f2a03010203
+bo'sh Reading: 0 bayt
+seq=0, vehicle=truck-7: 0a 07 74 72 75 63 6b 2d 37
+a+b: seq = 2 | 3-maydon 2 marta uchradi
+```
+
+ZigZag qatorlari hujjatdagi jadval bilan mos (`0x7fffffff` -> `0xfffffffe`, `-0x80000000` -> `0xffffffff`). `Test4` baytlari hujjatdagi misol bilan bir xil. Kodlovchi `seq = 0` ni yozmadi (oxirgidan oldingi qator: faqat `vehicle` baytlari), ya'ni qabul qiluvchi nolni "yo'q" bilan farqlay olmaydi. Birlashtirishda 3-maydon ikki marta uchradi va `seq = 2` yutdi. Amaliy oqibat: sxema evolyutsiyasida maydon turini o'zgartirmang (masalan `int32` dan `sint32` ga o'tish baytlarni boshqacha izohlaydi va eski ma'lumotni buzadi), va `optional` ni dastlabdan qo'ying: explicit presence generatsiya qilingan API ga `has_` kabi presence tekshiruvini qo'shadi, ya'ni keyin o'zgartirish mijoz kodiga ham tegadi.
+
+### gRPC javob shakllari: Trailers-Only va xabar kodlash
+
+PROTOCOL-HTTP2.md javobni ikki shaklda tasvirlaydi: odatiy `Response-Headers`, nol yoki ko'p `Length-Prefixed-Message` va `Trailers`; yoki `Trailers-Only`, bunda tana umuman yo'q, `:status 200`, `content-type` va `grpc-status` bitta HEADERS blokida keladi. Hujjatga ko'ra `Trailers-Only` darhol xato bergan chaqiruvlar uchun ruxsat etilgan, status esa OK bo'lganda ham `Trailers` da yuborilishi shart. Shu sababli tanasi umuman bo'lmagan javob ham to'g'ri holat; yuqoridagi stdlib modelimiz esa faqat odatiy shaklni (sarlavha, tana, trailer) ko'rsatadi.
+
+`grpc-message` qiymati UTF-8 kodlanib, undan keyin foiz-kodlanadi (percent-encoding): bo'sh joy va `%` dan boshqa ASCII belgilar (`%x20-%x24` va `%x26-%x7E` oralig'i) o'zgarmaydi, qolgani `%XX` bo'ladi. Misoldagi `xabar o'qilmadi` ASCII bo'lgani uchun to'g'ridan-to'g'ri yozildi; kirill yoki boshqa ASCII bo'lmagan matn bo'lsa, qo'lda yozilgan server uni kodlashi kerak (grpc-go da bu qanday bajarilishi bu darsda tekshirilmagan). Hujjat yana uchta narsani aytadi: buzuq xabarni dekodlashda mijoz xato tashlamasligi kerak, `grpc-status-details-bin` faqat status OK bo'lmaganda ruxsat etiladi va u `grpc-status` ga zid bo'lmasligi shart, hamda mijoz javob sarlavhalari va trailer'lar hajmini cheklashi mumkin (tavsiya etilgan sukut 8 KiB).
+
+Xabar hajmi bo'yicha, `pkg.go.dev/google.golang.org/grpc` hujjati: `MaxRecvMsgSize` sozlanmasa grpc-go serveri 4MB sukutni ishlatadi, `MaxSendMsgSize` uchun sukut `math.MaxInt32`. Ya'ni server katta xabarni qabul qilmaydi, lekin jo'natishda o'zini cheklamaydi; klient qabul qilish chegarasi esa alohida sozlanadi va bu darsda tekshirilmagan. Katta natijani bitta xabarga yig'masdan, streaming bilan bo'laklab yuboring.
+
 ### Streaming turlari va ularning narxi
 
 `.proto` da to'rt shakl bor: unary (bitta so'rov, bitta javob), server streaming (`returns (stream Reading)`), client streaming va ikki tomonlama streaming. Protokol darajasida farq faqat shuki, HTTP/2 oqimida bir nechta Length-Prefixed-Message ketma-ket keladi va trailer'lar eng oxirida. Streaming uzoq yashaydi, shuning uchun uchta narsani oldindan o'ylang: oqim ichida `ctx.Done()` ni kuzating (klient ketdi, deadline tugadi), sekin o'quvchi uchun backpressure bor (yozish bloklanadi), va graceful stop paytida ochiq oqimlar tugashini kutish kerak. Oddiy "ma'lumot ber, javob ol" holatlarda unary yetarli; streaming faqat haqiqatan oqim bo'lganda (jonli telemetriya, katta natija bo'laklari) foydali.
@@ -628,3 +748,4 @@ Servis uchun andoza:
 - gRPC oddiy HTTP/2: `POST /Paket.Servis/Metod`, 5 baytli kadr prefiksi, `grpc-timeout` sarlavhasi va natija trailer'larda (`grpc-status`), HTTP status odatda 200.
 - grpc-go da `NewClient` lazy ulanadi, deadline `context` dan keladi, xatolar `status`/`codes` bilan, to'xtatish `GracefulStop` + muddat + `Stop`. grpc-go, protoc va generatsiya kodlari bu darsda kompilyatsiya qilinmagan.
 - Kadr o'quvchisida `io.ReadFull` va uzunlik limiti majburiy. Brauzer, ochiq API va kichik jamoalar uchun gRPC har doim to'g'ri tanlov emas.
+- Sxema qoidalari: manfiy sonlar ko'p bo'lsa `sint32`, nol va "yo'q" farqi muhim bo'lsa `optional`; ikki xabarning birlashtirilgan baytlari parse qilinsa oxirgi qiymat yutadi. gRPC javobi `Trailers-Only` shaklida ham kelishi mumkin, `grpc-message` esa foiz-kodlangan bo'ladi.

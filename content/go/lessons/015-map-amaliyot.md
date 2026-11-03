@@ -193,6 +193,8 @@ Kalit turi taqqoslanuvchi bo'lishi kerak (14-dars). Amaliy tanlov uch toifaga bo
 
 **Boshqa kalitlar:** pointer kalit manzil bo'yicha taqqoslanadi (qiymat bo'yicha emas), interface kalit esa dinamik tipi taqqoslanmasa panic beradi, `float` kalit NaN bilan muammo tug'diradi. Bularni istisno holatlarda ishlating.
 
+UUID kabi 16 baytli identifikatorni 36 belgili matn o'rniga `[16]byte` massiv sifatida saqlash mumkin: massiv taqqoslanuvchi va qiymat semantikasiga ega, va map kaliti sifatida o'lchami qat'iy 16 bayt (satr esa header va matn baytlaridan iborat). Evaziga matn ko'rinishiga o'tkazish (log, API) uchun alohida kod kerak, shuning uchun bunday almashtirish ko'p millionli kalitlar yoki qat'iy ichki format bor joyda foydali, oddiy servisda esa string yetarli.
+
 ### Set naqshi
 
 Go'da to'plam tipi yo'q. Standart usul: `map[T]struct{}`. Bo'sh struct nol bayt egallaydi (quyida o'lchaymiz), shuning uchun qiymat saqlanmaydi, faqat kalit. `map[T]bool` ham ishlaydi, lekin ikkita holat paydo bo'ladi: kalit yo'q va kalit bor-lekin `false`. Mavjudlikni har doim `_, ok := m[k]` bilan tekshiring. Qiymatda `false` bo'lmasligi kerakligiga kelishilgan bo'lsa, `bool` ham ma'qul: `if seen[k]` qisqaroq o'qiladi. `struct{}` varianti tipni `Set` deb nomlab, `Add` va `Has` metodlarini berishga qulay.
@@ -213,7 +215,7 @@ Go'da to'plam tipi yo'q. Standart usul: `map[T]struct{}`. Bo'sh struct nol bayt 
 
 `maps.Clone` map'ning o'zini ajratadi, lekin qiymatlarni "oddiy assignment" bilan ko'chiradi. Qiymat slice, map yoki pointer bo'lsa, nusxa va asl bir ichki ma'lumotni ko'radi. Quyidagi dastur buni ko'rsatadi:
 
-```go
+```go run
 package main
 
 import (
@@ -316,11 +318,97 @@ hint bilan, ajratishlar: 6
 - `map[K]*V`: qiymatni joyida o'zgartirish mumkin (`m[k].Count++`), lekin har yozuv alohida heap ob'ekt (GC yuki, cache yomonlashadi: 66-dars) va nil pointer xavfi bor.
 - `map[K][]V`: guruhlash uchun qulay: yo'q kalit uchun `nil` slice, unga `append` ishlaydi (`m[k] = append(m[k], v)`). Slice'larni tashqariga bermang (12-dars).
 
+### Vaqt kalit sifatida: time.Time tuzog'i
+
+Telemetriyada "vaqt bo'yicha oxirgi pozitsiya" kabi map tabiiy ko'rinadi: `map[time.Time]Position`. `time.Time` taqqoslanuvchi struct, shuning uchun kompilyator ruxsat beradi, lekin pkg.go.dev/time hujjati ogohlantiradi: `==` operatori vaqt lahzasidan tashqari `Location` va monotonic soat ko'rsatkichini ham taqqoslaydi, shu sababli `Time` qiymatlarini map yoki ma'lumotlar bazasi kaliti qilishdan oldin hamma qiymatda bir xil `Location` o'rnatilgani (`UTC` yoki `Local` metodi bilan) va monotonic ko'rsatkich `t = t.Round(0)` bilan olib tashlangani kafolatlanishi kerak. Bir lahzaning ikki yozuvi:
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	// Bir xil lahza, ikki xil Location.
+	utc := time.Date(2026, 11, 3, 7, 0, 0, 0, time.UTC)
+	tashkent := utc.In(time.FixedZone("UZT", 5*3600))
+
+	fmt.Println("Equal:", utc.Equal(tashkent), "| ==:", utc == tashkent)
+
+	m := map[time.Time]string{utc: "pozitsiya-1"}
+	_, found := m[tashkent]
+	fmt.Println("map'da topildimi:", found)
+
+	// Monotonic reading ham == natijasiga ta'sir qiladi.
+	now := time.Now()
+	stripped := now.Round(0)
+	fmt.Println("now == now.Round(0):", now == stripped, "| Equal:", now.Equal(stripped))
+
+	// Xavfsiz kalit: UTC va monotonic'siz.
+	key := func(t time.Time) time.Time { return t.UTC().Round(0) }
+	m2 := map[time.Time]string{key(utc): "pozitsiya-1"}
+	_, found = m2[key(tashkent)]
+	fmt.Println("normallashtirilgan kalit topildimi:", found)
+
+	// Unix nanosekund (int64) kalit sifatida: eng sodda.
+	m3 := map[int64]string{utc.UnixNano(): "pozitsiya-1"}
+	_, found = m3[tashkent.UnixNano()]
+	fmt.Println("UnixNano kalit topildimi:", found)
+}
+```
+
+```text
+Equal: true | ==: false
+map'da topildimi: false
+now == now.Round(0): false | Equal: true
+normallashtirilgan kalit topildimi: true
+UnixNano kalit topildimi: true
+```
+
+Xato jimgina: `Equal` rost, lekin map yozuvni topmaydi, va test faqat UTC qiymatlar bilan o'tgani uchun noto'g'ri xotirjamlik beradi. Ikki to'g'ri yo'l bor: `t.UTC().Round(0)` bilan normallashtirilgan `time.Time` yoki `UnixNano()` (int64). Ikkinchisi sodda, lekin `UnixNano` hujjatiga ko'ra natija int64 ga sig'maydigan sanalar (1678 yildan oldin yoki 2262 yildan keyin) uchun aniqlanmagan, va nol `Time` uchun ham aniqlanmagan; natija `Location` ga bog'liq emas. Telemetriya vaqtlari uchun bu diapazon yetarli, lekin kiruvchi ma'lumotdagi nol yoki bo'sh vaqtni avval tekshiring. Misol Go 1.24.7 da ishga tushirildi.
+
+### Uzun satr kalitlar: unique.Handle
+
+Kalit uzun satr bo'lsa (masalan, to'liq marshrut tavsifi), har qidirishda hash va tenglik tekshiruvi butun satr bo'yicha ishlaydi, va bir xil satrning ko'p nusxasi xotirada turadi. Go 1.23 release notes yangi `unique` paketini qo'shgan: `unique.Make(value)` har qanday taqqoslanuvchi qiymatning kanonik nusxasiga `Handle[T]` beradi. pkg.go.dev hujjatiga ko'ra ikki handle faqat va faqat ular yaratilgan qiymatlar teng bo'lsa teng, handle'larni taqqoslash esa qiymatlarni taqqoslashdan odatda ancha samarali. Ya'ni handle'ni map kaliti qilib, satrni bir marta intern qilsangiz, keyingi qidirishlar qisqa taqqoslashga tayanadi:
+
+```go run
+package main
+
+import (
+	"fmt"
+	"strings"
+	"unique"
+)
+
+func main() {
+	a := unique.Make(strings.Repeat("T-1042/", 100))
+	b := unique.Make(strings.Repeat("T-1042/", 100))
+	c := unique.Make("T-9")
+	fmt.Println("a == b:", a == b, "| a == c:", a == c)
+
+	last := map[unique.Handle[string]]float64{}
+	last[a] = 41.5
+	last[b] = 40.9 // bir xil kalit: ustidan yozilgan
+	fmt.Println("map uzunligi:", len(last), "| qiymat:", last[a])
+	fmt.Println("qiymat satri uzunligi:", len(a.Value()))
+}
+```
+
+```text
+a == b: true | a == c: false
+map uzunligi: 1 | qiymat: 40.9
+qiymat satri uzunligi: 700
+```
+
+Ikki alohida yaratilgan 700 baytli satr bitta handle'ga aylandi va map'da bitta kalit bo'ldi. `Make` har chaqiruvda qiymat uchun kanonik nusxani topishi kerak, shuning uchun handle'ni bir marta yarating va saqlang (masalan, qurilmani ro'yxatdan o'tkazishda), har so'rovda qayta yaratmang. Bir martalik qidiruv uchun oddiy satr kaliti yetarli. Tezlik haqida raqam bermaymiz: biz uni o'lchamadik, o'z yukingizda o'lchang (61-dars).
+
 ## Misol: struct kalit, set va guruhlash
 
 Birinchi dastur ikki o'lchov bo'yicha jami, massiv kalit va guruhlashni ko'rsatadi:
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -375,7 +463,7 @@ Toshkent safarlari: 3 | Samarqand: 1
 
 Ikkinchi dastur to'plam naqshi va kesishma:
 
-```go
+```go run
 package main
 
 import (
@@ -432,6 +520,8 @@ ikkalasida: [T-1 T-3]
 - Tartib muhim bo'lsa, map bilan faqat saralashga tayanmang: har chaqiruvda saralash qimmat. Saralangan slice yoki daraxtni alohida saqlang.
 - `maps.Clone` ni "mustaqil nusxa" deb ishlatmang, agar qiymatlar slice, map yoki pointer bo'lsa.
 - `map[K]*V` ni "qulay" deb tanlayverish ortiqcha allokatsiya beradi: qiymat kichik bo'lsa, `map[K]V` bilan olish-o'zgartir-yoz tezroq bo'lishi mumkin (o'lchang, 70-dars).
+- `time.Time` ni normallashtirmasdan kalit qilmang: `==` `Location` va monotonic ko'rsatkichni ham taqqoslaydi, shu sababli bir lahzaning ikki yozuvi turli kalit bo'ladi. Vaqt kerak bo'lmasa, int64 (`UnixNano`) yoki sana satri kalit bo'lsin.
+- `unique.Handle` ni har kalitga qo'llamang: u uzun, ko'p takrorlanadigan va uzoq yashaydigan kalitlar uchun; qisqa ID satrida intern qilishning o'zi ortiqcha murakkablik.
 - Kalitni string birlashtirish bilan yasamang (`region + ":" + day`): har so'rovda allokatsiya va to'qnashuv xavfi. Struct kalit tipli va allokatsiyasiz.
 
 ## Stack'da: Node.js/TypeScript bilan solishtirish

@@ -289,7 +289,7 @@ Go 1.26 yangi `tracebacklabels` GODEBUG sozlamasini qo'shdi: `1` bo'lsa `runtime
 
 Dastur `metrics.All()` ni, guruhlarni va bir nechta nomning kindini chiqaradi; ro'yxatda hujjatda bor, ammo Go 1.24.7 da yo'q metrikalar ham bor.
 
-```go
+```go run
 package main
 
 import (

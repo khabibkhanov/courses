@@ -247,6 +247,141 @@ handler := cop.Handler(mux) // Go 1.25+: kompilyatsiya qilinmagan
 
 Muhim ogohlantirish (hujjatdan): xavfsiz metodlar (GET) holatni o'zgartirmasligi shart, aks holda bu himoya ularni qamramaydi.
 
+### Tana, kechikkan panic va per-handler muddat: uch tajriba
+
+Middleware'ning uchta nozik xatosini bitta dasturda sinadik (Go 1.24.7, `httptest` serveri).
+
+1. **Tanani o'qiydigan middleware.** `r.Body` oqim: bir marta o'qilgach tugaydi. Logging yoki imzo tekshiruvi uchun tanani `io.ReadAll` bilan o'qigan middleware ichki handler uchun bo'sh tana qoldiradi. Yechim: o'qib bo'lgach `r.Body` ni `io.NopCloser(bytes.NewReader(b))` bilan almashtirish. Hujjat "tanani o'qishdan tashqari handler `Request`ni o'zgartirmasligi kerak" deydi; `Body`ni almashtirish middleware uchun odatiy istisno, lekin hajm cheklovi bilan birga bo'lishi shart (`MaxBytesReader`): cheklovsiz `ReadAll` hamma tanani xotiraga yuklaydi.
+2. **Sarlavha yuborilgandan keyingi panic.** Handler javobning bir qismini yozgach panic qilsa, status allaqachon 200 sifatida ketgan. Recover middleware `http.Error` ni chaqirsa, status o'zgarmaydi: server `http: superfluous response.WriteHeader call` deb log qiladi, xato matni esa oldin yozilgan tananing davomiga qo'shiladi. Mijoz 200 va buzilgan javob oladi. Bu darsdagi "javob allaqachon yozilgan bo'lsa statusni o'zgartirib bo'lmaydi" cheklovining real ko'rinishi.
+3. **Per-request yozish muddati.** `Server.WriteTimeout` hujjatga ko'ra hamma so'rovga bir xil qo'llanadi va handler'ga so'rov bo'yicha qaror qilishga ruxsat bermaydi. `http.NewResponseController(w).SetWriteDeadline(t)` esa muddatni shu handler uchun uzaytiradi (hujjat: nol qiymat muddat yo'qligini bildiradi, o'tib ketgan muddatni keyin uzaytirib bo'lmaydi, shuning uchun muddat uzoq ishdan oldin qo'yiladi).
+
+```go
+package main
+
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"strings"
+	"time"
+)
+
+// logBodyBroken tanani o'qiydi va handler'ga bo'sh tana qoldiradi.
+func logBodyBroken(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		b, _ := io.ReadAll(r.Body)
+		fmt.Printf("middleware o'qidi: %d bayt\n", len(b))
+		next.ServeHTTP(w, r)
+	})
+}
+
+// logBodyFixed tanani o'qib, o'rniga yangi Body qo'yadi.
+func logBodyFixed(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		b, _ := io.ReadAll(http.MaxBytesReader(w, r.Body, 1<<20))
+		fmt.Printf("middleware o'qidi: %d bayt\n", len(b))
+		r.Body = io.NopCloser(bytes.NewReader(b))
+		next.ServeHTTP(w, r)
+	})
+}
+
+func readHandler(w http.ResponseWriter, r *http.Request) {
+	b, _ := io.ReadAll(r.Body)
+	fmt.Fprintf(w, "handler ko'rdi: %d bayt", len(b))
+}
+
+func post(url, body string) string {
+	resp, err := http.Post(url, "text/plain", strings.NewReader(body))
+	if err != nil {
+		return "xato: " + err.Error()
+	}
+	defer resp.Body.Close()
+	b, _ := io.ReadAll(resp.Body)
+	return fmt.Sprintf("%d %q", resp.StatusCode, b)
+}
+
+func main() {
+	srv := httptest.NewServer(logBodyBroken(http.HandlerFunc(readHandler)))
+	fmt.Println("buzuq:", post(srv.URL, `{"fuel":41.5}`))
+	srv.Close()
+	srv = httptest.NewServer(logBodyFixed(http.HandlerFunc(readHandler)))
+	fmt.Println("tuzatilgan:", post(srv.URL, `{"fuel":41.5}`))
+	srv.Close()
+
+	// Sarlavha yuborilgandan keyin panic va "recover" middleware.
+	recoverMW := func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			defer func() {
+				if v := recover(); v != nil {
+					http.Error(w, "ichki xato", http.StatusInternalServerError)
+				}
+			}()
+			next.ServeHTTP(w, r)
+		})
+	}
+	late := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "qisman javob")
+		panic("keyingi bosqichda xato")
+	})
+	srv = httptest.NewUnstartedServer(recoverMW(late))
+	srv.Config.ErrorLog = log.New(os.Stdout, "server log: ", 0)
+	srv.Start()
+	resp, err := http.Get(srv.URL)
+	if err == nil {
+		b, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		fmt.Printf("panic keyin: %d %q\n", resp.StatusCode, b)
+	}
+	srv.Close()
+
+	// ResponseController: handler uchun alohida yozish muddati.
+	slow := func(extend bool) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if extend {
+				rc := http.NewResponseController(w)
+				if err := rc.SetWriteDeadline(time.Now().Add(2 * time.Second)); err != nil {
+					fmt.Println("SetWriteDeadline:", err)
+				}
+			}
+			time.Sleep(300 * time.Millisecond)
+			fmt.Fprint(w, "katta hisobot")
+		})
+	}
+	for _, extend := range []bool{false, true} {
+		s := httptest.NewUnstartedServer(slow(extend))
+		s.Config.WriteTimeout = 100 * time.Millisecond
+		s.Start()
+		c := &http.Client{Timeout: 3 * time.Second}
+		resp, err := c.Get(s.URL)
+		if err != nil {
+			fmt.Printf("SetWriteDeadline=%v: xato: %v\n", extend, err)
+		} else {
+			b, _ := io.ReadAll(resp.Body)
+			resp.Body.Close()
+			fmt.Printf("SetWriteDeadline=%v: %d %q\n", extend, resp.StatusCode, b)
+		}
+		s.Close()
+	}
+}
+```
+
+```text
+middleware o'qidi: 13 bayt
+buzuq: 200 "handler ko'rdi: 0 bayt"
+middleware o'qidi: 13 bayt
+tuzatilgan: 200 "handler ko'rdi: 13 bayt"
+server log: http: superfluous response.WriteHeader call from main.main.main.func1.func6.1 (main.go:62)
+panic keyin: 200 "qisman javobichki xato\n"
+SetWriteDeadline=false: xato: Get "http://127.0.0.1:40869": EOF
+SetWriteDeadline=true: 200 "katta hisobot"
+```
+
+Birinchi ikki qator: buzuq middleware 13 baytni o'qib tugatdi, handler 0 bayt ko'rdi; tuzatilganida ikkalasi 13 bayt. Beshinchi va oltinchi qator: javob `200` va tana `qisman javob` + `ichki xato\n` yopishgan, server logida `superfluous` ogohlantirishi. Oxirgi ikki qator: `WriteTimeout` 100 ms, handler 300 ms ishlaydi; muddat uzaytirilmasa mijoz `EOF` oldi (ulanish serverda uzildi, port har ishga tushirishda boshqacha), uzaytirilgach javob to'liq keldi. Amaliy qoida: tez endpoint'lar uchun qisqa global `WriteTimeout`, sekin hisobot yoki eksport endpoint'lari uchun faqat shu handler'da `SetWriteDeadline`. Recover middleware javob boshlanganini bilishi uchun `statusWriter` wrapper'ining `status != 0` holatidan foydalaning: javob boshlangan bo'lsa `http.Error` chaqirmang, faqat panic'ni log qiling va `http.ErrAbortHandler` bilan ulanishni uzing, shunda mijoz buzilgan javobni to'liq deb qabul qilmaydi (alohida sinovda javobning bir qismi yuborilib, `panic(http.ErrAbortHandler)` qilinganda mijozning `io.ReadAll` chaqiruvi `unexpected EOF` qaytardi).
+
 ### Handler va context
 
 Server so'rovi context'i klient ulanishi uzilganda yoki handler qaytganda bekor bo'ladi (72-dars). Middleware ichida `r.WithContext(...)` yangi `*Request` nusxasini yaratadi: undan keyingi handler'lar yangi nusxani ko'radi. Eslatma: Go 1.23 dan `r.Pattern` ni `ServeMux` o'rnatadi, va u buni o'ziga uzatilgan aynan o'sha `*Request` obyektida qiladi. Agar logging middleware'i `WithContext` qilgan middleware'dan tashqarida tursa, u mux ko'rgan nusxani emas, eski nusxani ushlab turadi va `r.Pattern`ni ko'rmaydi. Misolda `Logging` `RequestID` dan keyin keladi, shuning uchun mux ko'radigan `*Request` bilan bir xil obyektni oladi.
@@ -427,3 +562,4 @@ Servis uchun andoza:
 - Server handler panic'ini o'zi ushlaydi, lekin klient uzilgan ulanish oladi; recover middleware 500 qaytarish, log va metrika beradi, `ErrAbortHandler`ni qayta panic qiladi.
 - `context.WithValue` faqat request doirasidagi ma'lumot (request ID, foydalanuvchi) uchun; bog'liqliklar struct maydonlarida turadi.
 - Handler qaytgach `w` va `r`dan foydalanish yaroqsiz; tana hajmini `MaxBytesReader` bilan cheklang, brauzer so'rovlarini CSRF'dan Go 1.25 dan `CrossOriginProtection` himoya qiladi.
+- Tanani o'qiydigan middleware `r.Body` ni qaytarib qo'ymasa, handler bo'sh tana ko'radi; javob boshlangach panic bo'lsa, `http.Error` statusni o'zgartirmaydi va tanani buzadi; sekin endpoint uchun `ResponseController.SetWriteDeadline` global `WriteTimeout` ni shu handler uchun uzaytiradi.

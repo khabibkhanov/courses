@@ -11,6 +11,10 @@ sources:
     note: "Package reflect hujjati: TypeOf, ValueOf, Kind, CanSet, CanInterface, Elem, FieldByName, MethodByName, DeepEqual, TypeFor"
   - id: go126
     note: "reflect bo'limi: Type.Fields, Type.Methods, Type.Ins, Type.Outs, Value.Fields, Value.Methods iterator metodlari"
+  - id: go-spec
+    note: "Method sets bo'limi: T va *T metod to'plamlari (NumMethod va MethodByName misoli)"
+  - id: pkg-time
+    note: "time.Time taqqoslash: == Location va monotonic ko'rsatkichni ham solishtiradi, Equal tavsiyasi."
 quiz:
   - q: "`reflect.ValueOf(d).FieldByName(\"Fuel\").SetFloat(10)` bu yerda `d` `Device` struct (pointer emas). Natija?"
     options:
@@ -312,9 +316,108 @@ BenchmarkReflectByIndex-2   	200368846	         7.843 ns/op	       0 B/op	      
 
 Kuzatuv: to'g'ridan-to'g'ri yozish 2.6-4.0 ns/op, indeks bo'yicha reflection 6.1-7.8 ns/op, nom bo'yicha 52-63 ns/op. Uchalasida allocation yo'q. Demak, asosiy xarajat reflection'ning o'zida emas, balki nomni qidirishda: `FieldByName` maydonlar ro'yxatini nom bo'yicha qidiradi. Indeks bo'yicha murojaat 8-10 baravar arzonroq. Amaliy xulosa: struct tuzilishini bir marta o'qib (indekslar va teglarni keshlab), keyin indeks bo'yicha ishlang. Mexanizm tafsilotlarini bu kursning manbalari tushuntirmaydi, shuning uchun biz faqat o'lchovni qayd etamiz. Bu mikrobenchmark: bitta mashina, bitta Go versiyasi, oddiy maydon. Kompilyator to'g'ridan-to'g'ri yozuvni optimallashtirishi mumkin, ya'ni 2.6-4.0 ns/op ni mutlaq tezlik emas, o'lchov tartibi sifatida o'qing. Qaror qabul qilishdan oldin o'z kodingizda o'lchang (61-dars).
 
+### Nil, zero Value va metod to'plami
+
+`reflect.TypeOf(x)` nil interface qiymat uchun `nil` qaytaradi (hujjat shunday deydi), `reflect.ValueOf(nil)` esa zero `Value` qaytaradi: `IsValid()` unda `false`, `Kind()` esa `Invalid`. Shu sababli `reflect.TypeOf(x).Kind()` zanjiri `x == nil` bo'lganda nil `Type` ustida metod chaqirib panic beradi, va kirishni `x == nil` bilan oldindan tekshirish kerak. Interface tipidagi o'zgaruvchining statik tipini ko'rish uchun uning manzilidan foydalaniladi: `reflect.ValueOf(&e).Elem()` ning `Kind()` qiymati `interface` (pastdagi birinchi misol).
+
+Metodlar bilan ham nozik joy bor. `Type.NumMethod` hujjatga ko'ra interface bo'lmagan tip uchun faqat eksport qilingan metodlarni sanaydi. Spetsifikatsiya qoidasi: `T` ning metod to'plami `T` qabul qiluvchili metodlardan, `*T` ning to'plami esa `T` va `*T` qabul qiluvchili metodlardan iborat. Shuning uchun `Label` (value receiver), `Reset` (pointer receiver) va eksport qilinmagan `hidden` metodli `Device` uchun `reflect.TypeOf(d).NumMethod()` 1, `reflect.TypeOf(&d).NumMethod()` esa 2 qaytaradi. `MethodByName("Reset")` qiymat tipida topilmaydi va zero `Value` beradi; pointer kerak. Yana bir narsa `MethodByName` hujjatida yozilgan: uni chaqirish linker'ni shu nomli hamma metodni binary'da saqlashga majbur qiladi (nomni aniqlay olmasa, hamma eksport qilingan metodlarni), shuning uchun binary kattalashishi mumkin, bajarilish vaqtiga ta'siri yo'q.
+
+### Struct tuzilishini keshlash
+
+Embedded struct maydonlari tashqi struct'ga "ko'tarilgan" (promoted) bo'ladi: `FieldByName("ID")` ularni topadi, lekin maydon indeksi bitta son emas, yo'l: `Base` embedded bo'lgani uchun `ID` uchun `Index` `[0 0]`. Shu sababli oddiy `t.Field(i)` sikli ko'tarilgan maydonlarni ko'rmaydi (`NumField` faqat birinchi darajani sanaydi: misolda 3). `reflect.VisibleFields(t)` (Go 1.17) hujjatga ko'ra `FieldByName` bilan to'g'ridan-to'g'ri erishiladigan hamma maydonni qaytaradi, shu jumladan embedded struct ichidagilarni va eksport qilinmaganlarni, shuning uchun `IsExported()` bilan filtrlash kerak. Maydonni o'qish uchun `Value.FieldByIndex(index)` ishlatiladi.
+
+Oldingi bo'limdagi o'lchov bu yerda amalga qo'llanadi: bu ro'yxat tip uchun o'zgarmaydi, demak uni har chaqiruvda emas, bir marta qurish kerak. `reflect.Type` qiymatlari taqqoslanadi va hujjatga ko'ra map kaliti bo'la oladi (ikki `Type` faqat bir xil tipni ifodalasa teng), shuning uchun kesh `sync.Map` yoki mutex bilan himoyalangan oddiy map bo'ladi. Teglarni o'qishda `Tag.Get` ham muhim farq yashiradi: u yo'q kalitni ham, bo'sh qiymatni ham `""` deb qaytaradi. `Tag.Lookup` ikkinchi natija (`ok`) bilan ularni ajratadi: `validate:""` yozilgan va umuman yozilmagan maydon boshqa narsa. Pastdagi `describe` misolida `Active` uchun `validate=""` chiqdi, lekin teg yo'q edi; qat'iy validator `Lookup` ishlatishi kerak.
+
+```go
+package main
+
+import (
+	"fmt"
+	"reflect"
+	"sync"
+)
+
+type Base struct {
+	ID string `json:"id"`
+}
+
+type Device struct {
+	Base
+	Fuel   float64 `json:"fuel,omitempty" validate:""`
+	Active bool    `json:"active"`
+}
+
+func (d Device) Label() string  { return "device-" + d.ID }
+func (d *Device) Reset()        { d.Fuel = 0 }
+func (d Device) hidden() string { return "x" }
+
+type fieldInfo struct {
+	Name  string
+	Index []int
+}
+
+// fieldCache har reflect.Type uchun maydonlar ro'yxatini bir marta quradi.
+var fieldCache sync.Map // reflect.Type -> []fieldInfo
+
+func fieldsOf(t reflect.Type) []fieldInfo {
+	if v, ok := fieldCache.Load(t); ok {
+		return v.([]fieldInfo)
+	}
+	var out []fieldInfo
+	for _, sf := range reflect.VisibleFields(t) {
+		if sf.IsExported() && !sf.Anonymous {
+			out = append(out, fieldInfo{sf.Name, sf.Index})
+		}
+	}
+	v, _ := fieldCache.LoadOrStore(t, out)
+	return v.([]fieldInfo)
+}
+
+func main() {
+	var e error
+	fmt.Println(reflect.TypeOf(nil) == nil, reflect.TypeOf(e) == nil)
+	zv := reflect.ValueOf(nil)
+	fmt.Println(zv.IsValid(), zv.Kind())
+	fmt.Println(reflect.ValueOf(&e).Elem().Kind())
+
+	d := Device{Base: Base{ID: "T-9"}}
+	fmt.Println(reflect.TypeOf(d).NumMethod(), reflect.TypeOf(&d).NumMethod())
+
+	sf, _ := reflect.TypeOf(d).FieldByName("Fuel")
+	v1, ok1 := sf.Tag.Lookup("validate")
+	v2, ok2 := sf.Tag.Lookup("db")
+	fmt.Printf("validate=%q %v | db=%q %v\n", v1, ok1, v2, ok2)
+
+	for _, fi := range fieldsOf(reflect.TypeOf(d)) {
+		fmt.Println(fi.Name, fi.Index)
+	}
+	fmt.Println(reflect.ValueOf(d).FieldByIndex([]int{0, 0}))
+}
+```
+
+```text
+true true
+false invalid
+interface
+1 2
+validate="" true | db="" false
+ID [0 0]
+Fuel [1]
+Active [2]
+T-9
+```
+
 ### DeepEqual
 
 `reflect.DeepEqual(a, b)` slice, map va struct'larni chuqur solishtiradi. Hujjat qoidasi: nil slice va bo'sh nil bo'lmagan slice teng emas. Testlarda qulay, lekin `slices.Equal`/`maps.Equal` (29-dars) tezroq va aniqroq bo'lgan joyda ularni afzal ko'ring.
+
+`DeepEqual` "`==` ning rekursiv yumshatilgan shakli" va hujjat o'zi bunda nomuvofiqlik borligini tan oladi. Uchta amaliy oqibat (hammasi Go 1.24.7 da tekshirildi):
+
+- NaN o'ziga teng emas, lekin ikkita slice bir xil birinchi elementga (`&x[0] == &y[0]`) ishora qilsa, hujjatga ko'ra elementlar solishtirilmaydi. Shuning uchun `x := []float64{math.NaN()}` uchun `DeepEqual(x, x)` `true`, bir xil tarkibli alohida slice bilan esa `DeepEqual(x, y)` `false` chiqdi.
+- Func qiymatlari faqat ikkalasi ham nil bo'lsa teng, aks holda o'ziga ham teng emas: `DeepEqual(f, f)` `false`, ikkita nil func uchun `true`.
+- `time.Time` struct'ni maydon-maydon solishtiradi, shu jumladan `Location` ko'rsatkichini. Bir xil lahzani UTC va `UTC+5` zonasida ifodalaydigan ikki qiymat uchun `t1.Equal(t2)` `true`, `reflect.DeepEqual(t1, t2)` esa `false`. `time` hujjati ham `==` bilan bog'liq tuzoqlarni eslatib, ko'p holatda `Equal` ishlatishni tavsiya qiladi. Testda `time.Time` maydonli struct solishtirsangiz, `DeepEqual` o'rniga maydonni alohida `Equal` bilan tekshiring.
+
+Shu uch holat `DeepEqual` ni testlarda ham ehtiyotkorlik bilan ishlatish kerakligini ko'rsatadi: "teng emas" natijasi har doim qiymatlar farq qiladi degani emas.
 
 ## Misol: tekshirish, teglar, chaqirish
 

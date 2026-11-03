@@ -214,7 +214,7 @@ Amaliy ma'no: agar siz o'zgaruvchan o'lchamli `make` ni heap ajratishi deb bilga
 
 Kichik dastur: ikkita kichik funksiya, bitta katta, bittasi `//go:noinline` bilan belgilangan.
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -287,7 +287,7 @@ main.go:50:6: cannot inline main: function too complex: cost 230 exceeds budget 
 
 Dastur ikki narsani o'lchaydi: 10000 ta bloklangan goroutine stack xotirasini, va bitta goroutine'ning 100000 darajali rekursiyasi uni qanchaga o'stirishini. O'lchov `/memory/classes/heap/stacks:bytes` metrikasi orqali. `deep` har kadamda 12 ta int (96 bayt) lokal massiv ushlaydi va `//go:noinline` bilan inline qilinmaydi.
 
-```go
+```go run
 package main
 
 import (

@@ -184,7 +184,7 @@ Spetsifikatsiya interface qiymatining xotirada qanday turishini belgilamaydi. Qu
 
 `unsafe.Sizeof(any(nil))` amd64 da 16, 386 da 8 bayt: ikkita mashina so'zi. Bo'sh bo'lmagan interface (`fmt.Stringer`) ham xuddi shunday. Birinchi so'z dinamik tipni aniqlaydi; ikkinchisi ma'lumotga tegishli. `unsafe` yordamida ikki so'zni o'qib, nimalar haqiqat ekanini tekshirdik:
 
-```go
+```go run
 package main
 
 import (
@@ -279,11 +279,113 @@ kichik int (5), ajratishlar:          0
 
 Katta `int` ni `any` ga solish bitta allokatsiya, pointer nol. Kichik qiymat (5) ham nol berdi: gc kichik butun sonlar uchun optimizatsiya qiladi, bu implementatsiya tafsiloti va aniq chegara hujjatda kafolatlanmagan. Xulosa: issiq yo'lda `any` ga qiymat solish (masalan, `fmt.Println(x)`, `log` argumentlari, `context.WithValue`) alohida allokatsiya narxiga ega bo'lishi mumkin (65-dars).
 
+### Method set interface'ga nima solishni belgilaydi
+
+Spetsifikatsiyaning method set qoidasi: `T` ning method set'i receiver'i `T` bo'lgan metodlardan, `*T` ning method set'i esa receiver'i `*T` yoki `T` bo'lgan metodlardan iborat. Interface'ga solinadigan qiymat shu method set bo'yicha tekshiriladi. Pointer receiver'li `Fill` metodi bor `Meter` qiymatini `Filler` ga solib bo'lmaydi, kompilyator Go 1.24.7 da quyidagini beradi:
+
+```text
+./main.go:11:17: cannot use m (variable of struct type Meter) as Filler value in variable declaration: Meter does not implement Filler (method Fill has pointer receiver)
+./main.go:14:2: cannot assign to b.(Meter).L (neither addressable nor a map index expression)
+```
+
+Ikkinchi xato ham muhim: interface ichidagi qiymat adreslanmaydi, shuning uchun `b.(Meter).L = 5` yozib bo'lmaydi. Qiymatni o'zgartirish kerak bo'lsa, uni ochib (`v := b.(Meter)`), o'zgartirib, qayta interface'ga solasiz yoki boshidan pointer saqlaysiz. Qiymat receiver'li metod esa interface orqali chaqirilganda ham nusxada ishlaydi: quyidagi dasturda `Add` dan keyin interface ichidagi `Liters` 10 bo'lib qoldi, pointer receiver'li `Fill` esa asl `m` ni 15 ga o'zgartirdi. TypeScript'da obyekt har doim havola bo'lgani uchun bunday ajratish yo'q; Go'da receiver turi aynan "nusxa yoki havola" qarorini yuklaydi (9-dars).
+
+### Map kaliti, xato qiymatlari va comparable
+
+Spetsifikatsiyaning "Map types" bo'limi: kalit tipi interface bo'lsa, taqqoslash operatorlari dinamik kalit qiymatlari uchun aniqlangan bo'lishi kerak, aks holda run-time panic. Amalda `map[any]int` ga slice yozish `hash of unhashable type []int` panic'ini beradi, massiv (`[2]int`) esa taqqoslanadigan bo'lgani uchun ishlaydi. Bu xato ko'pincha tashqi manbadan (JSON dan `any` ga o'qilgan qiymat) kalit yasalganda chiqadi.
+
+Xato tiplarida ham shu mexanizm ishlaydi. Qiymat receiver'li `RouteError` struct'i slice maydonga ega, shuning uchun taqqoslanmaydi: `err1 == err2` ikkalasi `error` interface'ida bo'lsa ham run-time panic beradi. `errors.Is` hujjati target taqqoslanadigan bo'lishi kerakligini yozadi; biz Go 1.24.7 da taqqoslanmaydigan target bilan `errors.Is` ni sinab ko'rdik va u panic bermay `false` qaytardi. Bu hujjat kafolati emas, kuzatuv: hujjat talabi esa target taqqoslanadigan bo'lishi. Xato tipini taqqoslanmaydigan maydon bilan yaratsangiz, sentinel sifatida emas, tip (`errors.As`) orqali tekshiring (31-dars).
+
+Generics bilan bog'liq versiya farqi: Go 1.20 release notes'ga ko'ra oddiy interface'lar `comparable` constraint'ini qanoatlantira oladi, garchi ular strictly comparable bo'lmasa ham (taqqoslash run-time'da panic berishi mumkin). Spetsifikatsiya buni shunday ifodalaydi: interface `comparable` ni implement qilmaydi, lekin uni satisfy qiladi. Natija: `eq[any]([]int{1}, []int{1})` kompilyatsiya bo'ladi va faqat bajarilishda qulaydi. Go 1.19 va undan oldingi kodda bunday instantiation kompilyatsiya xatosi edi. Quyidagi dastur yuqoridagi barcha holatlarni tekshiradi:
+
+```go run
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+type Meter struct{ Liters float64 }
+
+func (m Meter) Add(n float64)   { m.Liters += n }
+func (m *Meter) Fill(n float64) { m.Liters += n }
+
+type Adder interface{ Add(float64) }
+type Filler interface{ Fill(float64) }
+
+// RouteError taqqoslanmaydigan maydonga ega xato tipi (qiymat receiver).
+type RouteError struct {
+	Stops []string
+}
+
+func (e RouteError) Error() string { return fmt.Sprint("marshrut xatosi: ", e.Stops) }
+
+func try(name string, f func() any) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("%-28s panic: %v\n", name, r)
+		}
+	}()
+	fmt.Printf("%-28s %v\n", name, f())
+}
+
+func eq[T comparable](a, b T) bool { return a == b }
+
+func main() {
+	// 1. Qiymat receiver: interface ichidagi nusxa o'zgarmaydi
+	m := Meter{10}
+	var a Adder = m
+	a.Add(5)
+	fmt.Println("Add (qiymat receiver) dan keyin:", a.(Meter).Liters, "| asl:", m.Liters)
+
+	// 2. Pointer receiver: *Meter Filler'ni implement qiladi, Meter emas
+	var f Filler = &m
+	f.Fill(5)
+	fmt.Println("Fill (pointer receiver) dan keyin asl:", m.Liters)
+
+	// 3. map kaliti sifatida taqqoslanmaydigan dinamik qiymat
+	try("map[any] kalit []int", func() any {
+		mm := map[any]int{}
+		mm[[]int{1}] = 1
+		return len(mm)
+	})
+	try("map[any] kalit [2]int", func() any {
+		mm := map[any]int{}
+		mm[[2]int{1, 2}] = 1
+		return len(mm)
+	})
+
+	// 4. Xato qiymatlarini == bilan solishtirish va errors.Is
+	var e1 error = RouteError{Stops: []string{"A"}}
+	var e2 error = RouteError{Stops: []string{"A"}}
+	try("e1 == e2", func() any { return e1 == e2 })
+	try("errors.Is(e1, e2)", func() any { return errors.Is(e1, e2) })
+
+	// 5. comparable constraint (Go 1.20 dan any ham mos)
+	try("eq[any]([]int, []int)", func() any { return eq[any]([]int{1}, []int{1}) })
+	try("eq[any](1, 1)", func() any { return eq[any](1, 1) })
+}
+```
+
+Go 1.24.7 da chiqish:
+
+```text
+Add (qiymat receiver) dan keyin: 10 | asl: 10
+Fill (pointer receiver) dan keyin asl: 15
+map[any] kalit []int         panic: runtime error: hash of unhashable type []int
+map[any] kalit [2]int        1
+e1 == e2                     panic: runtime error: comparing uncomparable type main.RouteError
+errors.Is(e1, e2)            false
+eq[any]([]int, []int)        panic: runtime error: comparing uncomparable type []int
+eq[any](1, 1)                true
+```
+
 ## Misol: tenglik va semantika
 
 Quyidagi dastur yuqoridagi qoidalarni bitta joyda ko'rsatadi:
 
-```go
+```go run
 package main
 
 import "fmt"
@@ -348,6 +450,8 @@ Nozik joy: slice va `int` taqqoslash panic bermadi, ikki slice taqqoslash esa be
 - Qiymat tipi oldindan ma'lum bo'lsa, `any` kerak emas. Generics (24-dars) yoki aniq tip tezroq va xavfsizroq: `any` tip tekshiruvini ish vaqtiga suradi va boxing xarajatini qo'shadi.
 - Interface kalitli map (`map[any]V`) va `==` bilan taqqoslash taqqoslanmaydigan qiymat kelganda panic beradi (19-dars). Tashqi manbadan kelgan qiymatni kalit qilishdan oldin tipini cheklang.
 - `reflect.DeepEqual` bilan "hammasini taqqoslash" yechimi qimmat va semantikasi nozik (NaN, funksiya, sikllar); issiq yo'lda ishlatmang.
+- Xato tipiga slice yoki map maydon qo'shayotgan bo'lsangiz, uni `==` bilan taqqoslanadigan sentinel sifatida ishlatmang: qiymat receiver'li bunday tip `err == target` da panic beradi. Pointer receiver (`*RouteError`) bilan taqqoslash pointer manzili bo'yicha ishlaydi va panic bermaydi, ammo bu endi mazmun bo'yicha tenglik emas, identifikatsiya tengligi.
+- Generic funksiyada `comparable` constraint'iga ishonib, interface tipli argument yuborilishi mumkinligini unutmang (Go 1.20 dan): constraint panic'dan himoya qilmaydi.
 - `unsafe` orqali interface so'zlariga tayanmang. Biz uni faqat tuzilmani o'rganish uchun ishlatdik; layout release'lar orasida o'zgarishi mumkin va Go 1 kafolati doirasidan tashqarida (1-dars).
 - Boxing'dan qochish uchun hamma narsani pointer qilmang: pointer GC ishini ko'paytiradi va aliasing xavfini qaytaradi. Avval o'lchang (70-dars).
 
