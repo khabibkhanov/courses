@@ -100,7 +100,7 @@
   lesson: 57
 - term: GOEXPERIMENT
   aliases: []
-  uz: "Toolchain'ni qurish paytida tajribaviy xususiyatlarni yoqish yoki o'chirish o'zgaruvchisi (masalan greenteagc)."
+  uz: "Dastur qurilayotganda (go build) tajribaviy xususiyatlarni yoqish yoki o'chirish o'zgaruvchisi (masalan greenteagc, nogreenteagc)."
   course: go
   lesson: 57
 - term: inlining

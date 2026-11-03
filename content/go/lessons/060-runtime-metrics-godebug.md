@@ -382,7 +382,7 @@ kumulyativ (faqat o'sadigan): 65
 /gc/finalizers/queued:finalizers           bad
 ```
 
-Oxirgi uch nom hujjatning yangi versiyasida tasvirlangan, lekin Go 1.24.7 da yo'q: `Read` ularga `KindBad` qaytardi. Shu sababli monitoring kodi metrikalarni nomi bo'yicha qat'iy o'qimay, yo `All()` bilan, yo `KindBad` ni tashlab, o'qishi kerak. Qiziq tomoni: `/gc/cleanups/*` va `/gc/finalizers/*` 59-darsdagi cleanup va finalizer navbatlari uzunligini baholash uchun hujjatda tavsiya qilinadi (queued minus executed), lekin biz ularni Go 1.24.7 da ishlatib sina olmadik; ular qaysi versiyada paydo bo'lganini ham tekshirmadik.
+Oxirgi uch nom hujjatning yangi versiyasida tasvirlangan, lekin Go 1.24.7 da yo'q: `Read` ularga `KindBad` qaytardi. Shu sababli monitoring kodi metrikalarni nomi bo'yicha qat'iy o'qimay, yo `All()` bilan, yo `KindBad` ni tashlab, o'qishi kerak. Qiziq tomoni: `/gc/cleanups/*` va `/gc/finalizers/*` 59-darsdagi cleanup va finalizer navbatlari uzunligini baholash uchun hujjatda tavsiya qilinadi (`queued` va `executed` hisoblagichlari farqi), lekin biz ularni Go 1.24.7 da ishlatib sina olmadik va ular qaysi versiyada paydo bo'lganini tekshirmadik. `/sched/goroutines/*` (masalan `waiting`) haqida esa Go 1.26 release notes yangi scheduler metrikalari qo'shilganini yozadi.
 
 ### GOTRACEBACK darajalari
 

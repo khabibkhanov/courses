@@ -182,7 +182,7 @@ heap maqsadi = tirik heap + (tirik heap + GC ildizlari) x GOGC / 100
 
 Tirik heap oxirgi sikl belgilab chiqqan hajm. GC ildizlari (roots) goroutine stack'lari va global o'zgaruvchilar. `GOGC=100` bo'lganda heap tirik hajmdan ikki baravar kattagacha o'sadi, `GOGC=200` da uch baravargacha. Bu qiymatlar o'zgarmas emas: GOGC o'zgartirilsa maqsad yangi formulaga ko'ra qayta hisoblanadi. GOGC'ning mantiqiy kelishuvi aniq: ikki baravar ko'p GOGC siklar sonini deyarli ikki baravar kamaytiradi, lekin xotirani ham shunga yarasha oshiradi.
 
-Kichik heap uchun ham minimum bor: gc-guide'ga ko'ra GC umumiy heap 4 MiB dan kam bo'lganda ishga tushmaydi (GOGC=100 da; GOGC bilan miqyoslanadi). Birinchi `gctrace` qatorida `4 MB goal` aynan shu (55-dars).
+Kichik heap uchun ham minimum bor: gc-guide'ga ko'ra GC'ning minimal umumiy heap hajmi 4 MiB: GOGC bergan maqsad bundan past bo'lsa, 4 MiB gacha yuqoriga yaxlitlanadi. (Runtime manba kodida (`mgcpacer.go`, `defaultHeapMinimum`) bu minimum GOGC ga mutanosib miqyoslanadi; bu gc-guide'da yozilmagan.) Birinchi `gctrace` qatorida `4 MB goal` aynan shu (55-dars).
 
 `GOGC=off` (yoki `debug.SetGCPercent(-1)`) bu nisbiy maqsadni o'chiradi. Limit ham bo'lmasa, GC'ni hech narsa ishga tushirmaydi. Bu juda tor holatlar uchun (qisqa umrli CLI utilita).
 

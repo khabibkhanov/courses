@@ -329,7 +329,7 @@ errgroup bilan tez uchraydigan chalkashlik: birinchi xato qaytgach, qolgan gorou
 
 ### Singleflight va birinchi chaqiruvchining ctx si
 
-Bu eng muhim tuzoq. `Do` ga berilgan funksiya bir marta, birinchi chaqiruvchining `ctx` si bilan ishlaydi. Agar o'sha chaqiruvchi bekor qilinsa (mijoz uzildi), funksiya xato bilan tugaydi va bir xil xato 9 ta kutuvchiga tarqaladi, garchi ularning so'rovlari hali tirik bo'lsa ham. Bu muallifning xulosasi (hujjatdagi qoida emas), lekin mexanizmdan to'g'ridan-to'g'ri kelib chiqadi. Amaliy choralar:
+Bu eng muhim tuzoq. `Do` ga berilgan funksiya bir marta, birinchi chaqiruvchining `ctx` si bilan ishlaydi. Agar o'sha chaqiruvchi bekor qilinsa (mijoz uzildi) va funksiya shu `ctx` ni ishlatsa, u xato bilan tugaydi va bir xil xato 9 ta kutuvchiga tarqaladi, garchi ularning so'rovlari hali tirik bo'lsa ham. Bu muallifning xulosasi (hujjatdagi qoida emas), lekin mexanizmdan to'g'ridan-to'g'ri kelib chiqadi. Amaliy choralar:
 
 - ulashiladigan funksiyada chaqiruvchining `ctx` sini emas, mustaqil kontekstni ishlating (masalan, o'z vaqt chegarasi bilan);
 - yoki kutuvchi tomonda `DoChan` va `select` bilan o'z `ctx` sini kuting, shunda har kim o'zi bekor qila oladi;

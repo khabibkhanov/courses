@@ -9,6 +9,8 @@ sources:
     note: "Stacks bo'limi: user stack kichik boshlanadi va dinamik o'sadi/kichrayadi; system stack (g0) o'smaydi; nosplit funksiyalar va morestack prologi"
   - id: diagnostics
     note: "Profiling bo'limi: pprof profil turlari (CPU, heap, goroutine); dars shu vositalar bilan stack va inlining ta'sirini topishni tavsiya qiladi"
+  - id: go125
+    note: "Compiler bo'limi, Faster slices: slice backing store stack'ga ko'proq holatlarda, noto'g'ri unsafe.Pointer ta'siri kuchayishi mumkinligi haqida ogohlantirish, bisect -compile=variablemake va -gcflags=all=-d=variablemakehash=n (birinchi marta shu yerda)"
   - id: go126
     note: "Compiler bo'limi: slice backing store'ni stack'ga joylashtirish ko'proq holatlarda; muammo bo'lsa bisect -compile=variablemake va -gcflags=all=-d=variablemakehash=n"
 quiz:
