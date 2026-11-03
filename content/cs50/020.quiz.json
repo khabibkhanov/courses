@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "`typedef struct { char tag; int votes; char round; } loose;` ning o'lchami brauzer muhitida (wasm32) qancha va nima uchun?",
+      "options": [
+        "6 bayt: 1 + 4 + 1",
+        "8 bayt: maydonlar 4 ga yaxlitlanadi, oxirida padding yo'q",
+        "12 bayt: votes 4-baytdan boshlanishi uchun 3 bayt, oxirida o'lcham 4 ga karrali bo'lishi uchun yana 3 bayt padding",
+        "16 bayt: struct doim 8 ga karrali"
+      ],
+      "answer": 2,
+      "why": "tag 0, padding 1-3, votes 4-7, round 8, jami 9; eng katta alignment 4 bo'lgani uchun 12 ga yaxlitlanadi."
+    },
+    {
+      "q": "`typedef struct { string name; int votes; } candidate;` uchun `sizeof(candidate)` brauzerda va x86-64 da qanday?",
+      "options": [
+        "8 va 16: wasm32 da manzil 4 bayt, x86-64 da 8 bayt va struct 8 ga yaxlitlanadi",
+        "8 va 12",
+        "12 va 12: int va manzil hamma joyda bir xil",
+        "16 va 16"
+      ],
+      "answer": 0,
+      "why": "wasm32: 4 + 4 = 8. x86-64: 8 + 4 = 12, lekin eng katta alignment 8, shuning uchun 16."
+    },
+    {
+      "q": "`void add_vote(candidate c) { c.votes++; }` funksiyasi `add_vote(a)` bilan chaqirildi, `a.votes` oldin 5 edi. Keyin `a.votes` nechaga teng?",
+      "options": [
+        "6: struct manzil bilan uzatiladi",
+        "Aniqlanmagan qiymat",
+        "Kompilyatsiya xatosi: struct'ni funksiyaga uzatib bo'lmaydi",
+        "5: funksiya struct'ning nusxasini oldi"
+      ],
+      "answer": 3,
+      "why": "struct funksiyaga qiymat bo'yicha, to'liq nusxa sifatida uzatiladi. O'zgarishni qaytarish uchun yangi struct'ni return qilish yoki manzilni uzatish kerak."
+    },
+    {
+      "q": "`typedef struct { int ranks[4]; } ballot;` bor. `void f(ballot b) { b.ranks[0] = 99; }` chaqirilgandan keyin asl `b1.ranks[0]` ga nima bo'ladi?",
+      "options": [
+        "99 bo'ladi: massiv har doim manzil sifatida uzatiladi",
+        "O'zgarmaydi: massiv struct ichida bo'lgani uchun struct bilan birga nusxalandi",
+        "0 bo'ladi",
+        "Dastur xotira xatosi bilan to'xtaydi"
+      ],
+      "answer": 1,
+      "why": "Array decay faqat yalang'och massivga taalluqli. Struct ichidagi massiv struct nusxasining bir qismi sifatida 16 bayt bo'lib ko'chiriladi."
+    },
+    {
+      "q": "Nega ikki struct'ni `memcmp(&a, &b, sizeof a) == 0` bilan solishtirish ishonchsiz?",
+      "options": [
+        "memcmp faqat satrlar bilan ishlaydi",
+        "memcmp struct'ni manzil bo'yicha emas, nom bo'yicha solishtiradi",
+        "Padding baytlari aniqlanmagan qiymatga ega bo'lishi mumkin, maydonlar teng bo'lsa ham baytlar farq qiladi",
+        "sizeof a struct uchun noto'g'ri qiymat beradi"
+      ],
+      "answer": 2,
+      "why": "C standarti (6.2.6.1) struct'ga yozilganda padding baytlari unspecified qiymat olishini aytadi. Maydonma-maydon solishtirish kerak."
+    },
+    {
+      "q": "9 saylovchi: 4 tasi \"A, B, C\", 3 tasi \"C, B, A\", 2 tasi \"B, C, A\". Plurality g'olibi, IRV g'olibi va Condorcet g'olibi kim?",
+      "options": [
+        "A, A, A",
+        "A, C, B",
+        "A, B, B",
+        "C, C, B"
+      ],
+      "answer": 1,
+      "why": "Plurality: A 4. IRV: B (2) chiqadi, ovozlari C ga o'tadi, C 5 bilan yutadi. B esa A ni 5-4, C ni 6-3 yutadi - Condorcet g'olibi."
+    },
+    {
+      "q": "IRV raundida qolgan nomzodlarda 4, 3, 1 va 1 ovoz bor, faol byulletenlar 9 ta. Darsdagi qoida bo'yicha nima bo'ladi?",
+      "options": [
+        "4 ovozli nomzod yutadi: u eng ko'p ovoz oldi",
+        "Durang e'lon qilinadi",
+        "Alifbo bo'yicha birinchi 1 ovozli nomzod chiqariladi",
+        "1 ovozli ikkala nomzod birga chiqariladi va keyingi raund boshlanadi"
+      ],
+      "answer": 3,
+      "why": "4 ovoz 9 ning yarmidan (4.5) ko'p emas. Hamma teng emas, shuning uchun eng kam ovozlilarning hammasi birga chiqariladi."
+    },
+    {
+      "q": "Ranked pairs da duellar kuchi bo'yicha saralangan: A yutadi B (7), B yutadi C (5), C yutadi A (3), A yutadi D (2). Qaysi duel tashlanadi va kim yutadi?",
+      "options": [
+        "C yutadi A tashlanadi, chunki A dan B orqali C ga yo'l bor; g'olib A",
+        "A yutadi D tashlanadi; g'olib C",
+        "Hech biri tashlanmaydi; g'olib aniqlanmaydi",
+        "A yutadi B tashlanadi, chunki u sikldagi eng kuchli; g'olib B"
+      ],
+      "answer": 0,
+      "why": "C dan A ga strelka qo'yishdan oldin reaches(A, C) tekshiriladi: A, B, C yo'li bor, sikl yopilardi. Qolgan grafda A ga hech narsa kirmaydi."
+    },
+    {
+      "q": "Lock bosqichida faqat \"teskari strelka allaqachon lock qilinganmi?\" (edge[l][w]) tekshirilsa, qaysi holat o'tkazib yuboriladi?",
+      "options": [
+        "Durang juftliklar",
+        "3 va undan ko'p nomzoddan iborat sikllar, masalan C, A, D, C",
+        "Condorcet g'olibi bor holatlar",
+        "Bir xil kuchli duellar"
+      ],
+      "answer": 1,
+      "why": "Bu tekshiruv faqat 2 tugunli siklni topadi. Uzunroq sikl uchun l dan w ga istalgan uzunlikdagi yo'lni rekursiv qidirish kerak."
+    },
+    {
+      "q": "Arrow teoremasi nimani tasdiqlaydi?",
+      "options": [
+        "Ranked pairs eng yaxshi saylov usuli ekanini",
+        "Ikki nomzodli saylovda ham adolatli usul yo'qligini",
+        "Kamida uch variant bo'lsa, tartiblangan byulletenlardan jamiyat tartibini tuzadigan hech bir qoida bir vaqtda hamma tabiiy shartlarni (Pareto, IIA, diktator yo'qligi va boshqalar) bajara olmasligini",
+        "Plurality har doim Condorcet g'olibini tanlashini"
+      ],
+      "answer": 2,
+      "why": "Arrow (1951) ko'rsatdiki, 3 va undan ko'p variantda bu shartlar birga bajarilmaydi. Shuning uchun har bir usul qaysidir shartdan voz kechadi."
+    }
+  ]
+}

@@ -213,6 +213,23 @@ void __asan_unregister_globals(struct asan_global *g, size_t n) { (void)g, (void
 void __asan_version_mismatch_check_v8(void) {}
 void __asan_handle_no_return(void) {}
 
+/* Katta stack frame'larda instrumentatsiya shadow'ni shu funksiyalar bilan to'ldiradi (addr - shadow manzili). */
+#define SET_SHADOW(v) \
+  void __asan_set_shadow_##v(uintptr_t addr, size_t size) { memset((void *)addr, 0x##v, size); }
+SET_SHADOW(00)
+SET_SHADOW(01)
+SET_SHADOW(02)
+SET_SHADOW(03)
+SET_SHADOW(04)
+SET_SHADOW(05)
+SET_SHADOW(06)
+SET_SHADOW(07)
+SET_SHADOW(f1)
+SET_SHADOW(f2)
+SET_SHADOW(f3)
+SET_SHADOW(f5)
+SET_SHADOW(f8)
+
 static int bad(uintptr_t p) {
   if (p < SHADOW_END) return 1;
   int8_t s = *SHADOW(p);

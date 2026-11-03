@@ -1,0 +1,40 @@
+# CS50 20-dars atamalari.
+- term: struct
+  uz: "C da har biri o'z nomi va tipiga ega maydonlarni bitta yangi tipga yig'adigan tuzilma. Maydonlarga nuqta operatori bilan murojaat qilinadi: a.votes."
+  course: cs50
+  lesson: 20
+- term: padding
+  uz: "Kompilyator struct maydonlari orasiga yoki oxiriga qo'yadigan nomsiz bo'sh baytlar: har maydon to'g'ri tekislanishi uchun. Shu sababli sizeof(struct) maydonlar yig'indisidan katta bo'lishi mumkin."
+  course: cs50
+  lesson: 20
+- term: alignment
+  aliases: [tekislash]
+  uz: "Qiymat o'z o'lchamiga (aniqrog'i, tipining alignment talabiga) karrali manzilda joylashishi talabi: int 4 ga, double 8 ga karrali manzilda."
+  course: cs50
+  lesson: 20
+- term: plurality
+  uz: "Saylov usuli: har saylovchi bitta nomzodga ovoz beradi, eng ko'p ovoz olgan yutadi. Mutlaq ko'pchilikni talab qilmaydi va spoiler effektiga sezgir."
+  course: cs50
+  lesson: 20
+- term: instant runoff
+  aliases: [IRV]
+  uz: "Tartiblangan byulletenli usul: hech kimda yarmidan ko'p ovoz bo'lmasa, eng kam ovozli nomzod chiqariladi va uning byulletenlari keyingi tanlovga o'tadi."
+  course: cs50
+  lesson: 20
+- term: ranked pairs
+  aliases: [Tideman usuli]
+  uz: "Tideman (1987) usuli: har juftlik bellashuvi g'alaba kuchi bo'yicha saralanadi va sikl hosil qilmasa grafga lock qilinadi; g'olib - strelka kirmaydigan nomzod."
+  course: cs50
+  lesson: 20
+- term: Condorcet g'olibi
+  uz: "Juftlik bellashuvlarida qolgan har bir nomzodni yutadigan nomzod. U mavjud bo'lmasligi ham mumkin."
+  course: cs50
+  lesson: 20
+- term: Condorcet paradoksi
+  uz: "Har bir saylovchining afzalliklari izchil bo'lsa ham, ko'pchilik afzalliklari sikl hosil qilishi: A B dan, B C dan, C esa A dan ustun."
+  course: cs50
+  lesson: 20
+- term: spoiler effekti
+  uz: "Yutish imkoni bo'lmagan nomzodning ishtiroki o'xshash saylovchilar ovozini bo'lib, g'olibni boshqa nomzodga almashtirishi."
+  course: cs50
+  lesson: 20
