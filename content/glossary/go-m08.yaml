@@ -103,3 +103,33 @@
   uz: "Hodisani biznes ma'lumot bilan bir tranzaksiyada outbox jadvaliga yozish va alohida relay orqali brokerga yuborish naqshi. Yo'qotishni yo'q qiladi, takrorga yo'l qo'yadi."
   course: go
   lesson: 80
+- term: ErrTxDone
+  aliases: []
+  uz: "database/sql xatosi: tranzaksiya allaqachon Commit yoki Rollback qilingan. Commit xatosidan keyin defer ichidagi Rollback shuni qaytaradi, shuning uchun uni asl xato bilan aralashtirmaslik kerak."
+  course: go
+  lesson: 78
+- term: eviction
+  aliases: ["eviction siyosati"]
+  uz: "Redis xotirasi maxmemory chegarasiga yetganda kalitlarni chiqarib tashlash qoidasi. noeviction yangi yozuvlarni xato bilan rad etadi, allkeys-lru esa eng uzoq ishlatilmagan kalitlarni o'chiradi."
+  course: go
+  lesson: 79
+- term: implicit presence
+  aliases: []
+  uz: "Maydon qiymati default bo'lsa uni simga umuman yozmaydigan protobuf semantikasi: maydon yo'q ekanini va nol qiymatni farqlab bo'lmaydi. Farq kerak bo'lsa optional ishlatiladi."
+  course: go
+  lesson: 77
+- term: ZigZag
+  aliases: ["zigzag"]
+  uz: "Protobuf'da manfiy sonlarni qisqa varint sifatida yozish usuli: kichik absolyut qiymatli sonlar (musbat va manfiy) kichik natural sonlarga o'tkaziladi. sint32 va sint64 shuni ishlatadi."
+  course: go
+  lesson: 77
+- term: packed
+  aliases: ["packed encoding"]
+  uz: "Takrorlanuvchi primitiv maydonning barcha qiymatlarini bitta uzunlik-prefiksli blokka yig'ib yozish usuli; har qiymat uchun alohida teg yozilmaydi."
+  course: go
+  lesson: 77
+- term: check-then-act
+  aliases: []
+  uz: "Avval holatni tekshirib, keyin shunga qarab amal bajarish; tekshiruv va amal orasida holat o'zgarsa poyga paydo bo'ladi. Bunday xato race detektori bilan ham topilmasligi mumkin, chunki xotiraga kirishning o'zi sinxronlangan bo'ladi."
+  course: go
+  lesson: 80

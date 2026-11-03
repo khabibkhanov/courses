@@ -240,7 +240,7 @@ Go 1.4 release notes'ida mexanizm shunday ta'riflangan: `internal` nomli katalog
 main.go:2:8: use of internal package example.com/l91x/internal/service not allowed
 ```
 
-Bu aynan "API'ni buzmasdan qayta tashkil qilish erkinligi"ning texnik asosi. Tuzilma hujjati (go.dev/doc/modules/layout) yana bir aniq tavsiya beradi: server repozitoriyasida ulashishga yaroqli paketlar paydo bo'lsa, ularni alohida modullarga ajratish yaxshiroq, ya'ni `internal` ni "keyin ochamiz" degan vaqtinchalik joy qilib ishlatmang.
+Bu aynan "API'ni buzmasdan qayta tashkil qilish erkinligi"ning texnik asosi. Tuzilma hujjati (go.dev/doc/modules/layout) yana bir aniq tavsiya beradi: server repozitoriyasida ulashishga yaroqli paketlar paydo bo'lsa, ularni alohida modullarga ajratish yaxshiroq, bu muallifning xulosasi: `internal` ni "keyin ochamiz" degan vaqtinchalik joy qilib ishlatmang.
 
 ### Interface qoidalarining ikki kompilyator-darajasidagi oqibati
 

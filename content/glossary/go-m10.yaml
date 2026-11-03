@@ -43,3 +43,8 @@
   uz: "Servisni to'xtatishda yangi so'rovlarni qabul qilishni to'xtatib, ishlayotganlarini tugatish. Odatda readiness o'chiriladi, drain kutiladi, keyin http.Server.Shutdown chaqiriladi."
   course: go
   lesson: 100
+- term: arbiter index
+  aliases: ["arbiter indeks"]
+  uz: "PostgreSQL'ning INSERT ... ON CONFLICT'da to'qnashuvni aniqlash uchun ishlatadigan unique indeksi; DO UPDATE bitta buyruq ichida bir xil arbiter kalitli ikki qatorga tegolmaydi (cardinality violation)."
+  course: go
+  lesson: 94

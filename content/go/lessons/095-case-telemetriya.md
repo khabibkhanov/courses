@@ -284,7 +284,7 @@ veh-0042 -> 1
 shard yuklari: [100 100 698 100]
 ```
 
-Bu sun'iy tajriba (yuklar sintetik), lekin ikki narsani ko'rsatadi. Birinchisi, xesh tartibni kafolatlaydi. Ikkinchisi, narx: bitta "issiq" mashina bitta shard'ni yuklab qo'yadi (698 ga 100), qolgan uch shard esa bo'sh turadi. Shard'langanda "navbat sig'imi" invarianti ham o'zgaradi: endi har shard'ning o'z `pending` hisoblagichi bor, va bitta shard to'lganda boshqalarda joy bo'lsa ham shu mashinaning so'rovi rad etiladi. Hammasi-yoki-hech-narsa qoidasi bilan birga bu murakkablashadi: bir so'rovdagi nuqtalar turli shard'larga tushsa, har shard'dan joy band qilish atomik bo'lishi kerak. Shuning uchun tartib talabi haqiqatan bo'lmasa, umumiy kanal va idempotent yozuv (UNIQUE kalit) oddiyroq yechim.
+Bu sun'iy tajriba (yuklar sintetik), lekin ikki narsani ko'rsatadi. Birinchisi, xesh tartibni kafolatlaydi. Ikkinchisi, narx: bitta "issiq" mashina bitta shard'ni yuklab qo'yadi (698 ga 100), qolgan uch shard esa ancha kam yuklanadi. Shard'langanda "navbat sig'imi" invarianti ham o'zgaradi: endi har shard'ning o'z `pending` hisoblagichi bor, va bitta shard to'lganda boshqalarda joy bo'lsa ham shu mashinaning so'rovi rad etiladi. Hammasi-yoki-hech-narsa qoidasi bilan birga bu murakkablashadi: bir so'rovdagi nuqtalar turli shard'larga tushsa, har shard'dan joy band qilish atomik bo'lishi kerak. Shuning uchun tartib talabi haqiqatan bo'lmasa, umumiy kanal va idempotent yozuv (UNIQUE kalit) oddiyroq yechim.
 
 ## Misol: to'liq servis
 

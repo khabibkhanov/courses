@@ -6,7 +6,7 @@ summary: "Modullarga bo'lishning to'g'ri mezoni ish bosqichlari emas, balki o'zg
 duration: 40
 sources:
   - id: parnas-1972
-    note: "KWIC index tizimining ikki xil modullarga bo'linishi va o'zgarishlarga chidamlilik bo'yicha solishtiruvi"
+    note: "Communications of the ACM 15(12), 1972, 1053-1058: KWIC index tizimining ikki xil modullarga bo'linishi va o'zgarishlarga chidamlilik bo'yicha solishtiruvi (bo'limlar: Comparison of the Two Modularizations, The Criteria, Efficiency and Implementation, Conclusion)"
   - id: aposd
     note: "Information hiding va leakage haqidagi bob: information leakage, temporal decomposition, HTTP server misoli"
 quiz:
@@ -33,7 +33,7 @@ quiz:
       - "Klasslarni yaratilish vaqti bo'yicha tartiblash"
       - "Tizimni operatsiyalar bajariladigan vaqt tartibi bo'yicha bo'lish, chunki bir xil bilim (masalan, fayl formati) bir nechta bosqich moduliga tarqalib ketadi"
     answer: 3
-    explain: "Masalan, \"faylni o'qish\", \"o'zgartirish\", \"yozish\" modullari - har ikkala o'qish va yozish modullari fayl formatini bilishi kerak. Bu information leakage. Bu aynan Parnasning birinchi KWIC modullashtirishidagi xato."
+    explain: "Masalan, \"faylni o'qish\", \"o'zgartirish\", \"yozish\" modullari - har ikkala o'qish va yozish modullari fayl formatini bilishi kerak. Bu information leakage. Bu Parnasning birinchi KWIC modullashtirishidagi xatoga o'xshaydi: ish bosqichlari bo'yicha bo'lish."
   - q: "Quyidagilardan qaysi biri information leakage'ning eng aniq belgisi?"
     options:
       - "Modulda private maydonlar ko'p"
@@ -177,23 +177,23 @@ Modullar bor edi, lekin ular hech narsani yashirmagan edi. Ular faqat kodni ucht
 
 ## Asosiy g'oya
 
-Parnasning "On the Criteria To Be Used in Decomposing Systems into Modules" maqolasi bitta savolni qo'yadi: tizimni modullarga qanday mezon bo'yicha bo'lish kerak? Javob uchun u kichik tizimni ikki xil usulda modullarga bo'ladi va ularni o'zgarishlarga chidamliligi bo'yicha solishtiradi.
+Parnasning "On the Criteria To Be Used in Decomposing Systems into Modules" maqolasi bitta savolni qo'yadi: tizimni modullarga qanday mezon bo'yicha bo'lish kerak? Javob uchun u kichik tizimni ikki xil usulda modullarga bo'ladi va ularni o'zgarishlarga chidamliligi, mustaqil ishlab chiqish va tushunarlilik bo'yicha solishtiradi.
 
 ### KWIC misoli
 
-Tizim - KWIC (Key Word In Context) indeksi. Kirish - satrlar to'plami, har bir satr so'zlardan, so'z belgilardan iborat. Har bir satrni "aylana siljitish" mumkin: birinchi so'zni olib, oxiriga qo'yish va buni takrorlash. Tizim barcha satrlarning barcha aylana siljishlarini alifbo tartibida chiqaradi. Parnas ta'kidlaydiki, bu tizim kichik: yaxshi dasturchi uni bir-ikki haftada yozadi. Misolning qiymati aynan shunda: modullashtirish farqi kichik tizimda ham ko'rinadi.
+Tizim - KWIC (Key Word In Context) indeksi. Kirish - satrlar to'plami, har bir satr so'zlardan, so'z belgilardan iborat. Har bir satrni "aylana siljitish" mumkin: birinchi so'zni olib, oxiriga qo'yish va buni takrorlash. Tizim barcha satrlarning barcha aylana siljishlarini alifbo tartibida chiqaradi. Parnas ta'kidlaydiki, bu tizim kichik: yaxshi dasturchi uni bir-ikki haftada yozadi. Shuning uchun Parnas uni katta loyiha deb hisoblab ko'rishni so'raydi: modullashtirish farqi kichik tizimda ham ko'rinadi.
 
 **Birinchi modullashtirish** an'anaviy, flowchart bo'yicha: Input (satrlarni o'qib xotiraga joylaydi), Circular Shift (siljishlar indeksini tayyorlaydi), Alphabetizing (indeksni tartiblaydi), Output (natijani chop etadi) va Master Control (ketma-ketlikni boshqaradi). Har bir modul jarayonning bir bosqichi. Modullar orasidagi interfeys - xotiradagi umumiy ma'lumot formatlari: satrlar qanday joylashgani, siljishlar indeksi qanday tuzilgani.
 
 **Ikkinchi modullashtirish** boshqacha: Line Storage (satrlar, so'zlar va belgilarga funksiyalar orqali kirish beradi, ularni qanday saqlashni yashiradi), Input, Circular Shifter (siljishlarni xuddi alohida satrlardek beradi, ularni haqiqatan saqlash yoki hisoblashni yashiradi), Alphabetizer (tartiblangan tartibni funksiya orqali beradi, qachon va qanday tartiblashni yashiradi), Output va Master Control.
 
-Ikkala variant ham ishlaydi va hatto bir xil kodga ega bo'lishi mumkin. Farq o'zgarishda ko'rinadi. Parnas bir nechta ehtimoliy o'zgarishni sanaydi: kirish formati; barcha satrlarni xotirada saqlash qarori; belgilarni mashina so'ziga zich joylash; siljishlarni saqlash o'rniga indeks bilan ifodalash; alifbo tartibini bir marta to'liq qilish yoki talab bo'yicha qisman qilish. Birinchi variantda bularning ko'pi deyarli barcha modullarga ta'sir qiladi, chunki ular umumiy ma'lumot formatini bevosita ishlatadi. Ikkinchisida har bir o'zgarish bitta modul ichida qoladi.
+Ikkala variant ham ishlaydi va hatto bir xil kodga ega bo'lishi mumkin. Farq o'zgarishda ko'rinadi. Parnas bir nechta ehtimoliy o'zgarishni sanaydi: kirish formati; barcha satrlarni xotirada saqlash qarori; belgilarni mashina so'ziga zich joylash; siljishlarni saqlash o'rniga indeks bilan ifodalash; alifbo tartibini bir marta to'liq qilish yoki talab bo'yicha qisman qilish. Kirish formatini o'zgartirish ikkala variantda ham bitta modulga tegadi. Lekin satrlarni xotirada saqlash qarori va belgilarni zich joylash birinchi variantda har bir modulga ta'sir qiladi, siljishlarni indeks bilan ifodalash esa alifbolovchi va chiqish modullariga ham tegadi, chunki ular umumiy ma'lumot formatini bevosita ishlatadi. Ikkinchisida bu o'zgarishlarning har biri bitta modul ichida qoladi.
 
 ### Mezon
 
-Parnas xulosasi: ikkinchi variantda har bir modul boshqa modullardan yashiradigan **bitta dizayn qarori** bo'yicha ajratilgan. Modullarga bo'lishni flowchart (ish bosqichlari) asosida boshlash deyarli har doim xato. To'g'ri yo'l - avval qiyin yoki o'zgarishi ehtimoli bor qarorlar ro'yxatini tuzish va har bir modulni shunday qarorni boshqalardan yashiradigan qilib loyihalash. Interfeys esa o'zgarishi ehtimoli kam bo'lgan narsalarni ochishi kerak.
+Parnas xulosasi: ikkinchi variantda har bir modul boshqa modullardan yashiradigan **bitta dizayn qarori** bo'yicha ajratilgan. Modullarga bo'lishni flowchart (ish bosqichlari) asosida boshlash deyarli har doim xato. To'g'ri yo'l - avval qiyin yoki o'zgarishi ehtimoli bor qarorlar ro'yxatini tuzish va har bir modulni shunday qarorni boshqalardan yashiradigan qilib loyihalash. Interfeys esa modulning ichki ishlashi haqida iloji boricha kam narsani ochishi kerak.
 
-Bu "information hiding" atamasining manbai. E'tibor bering: gap `private` kalit so'zi haqida emas. Parnas davrida bunday til imkoniyatlari keng tarqalmagan edi. Gap **bilim** haqida: qaysi modul nimani biladi.
+Parnas bu maqolada "information hiding" atamasini mezon sifatida ishlatadi va uni o'zining 1971-yilgi texnik hisobotiga havola qiladi; atamaning keng tarqalishi shu maqola bilan bog'liq. E'tibor bering: gap `private` kalit so'zi haqida emas. Parnas davrida bunday til imkoniyatlari keng tarqalmagan edi. Gap **bilim** haqida: qaysi modul nimani biladi.
 
 ## Chuqurroq: Ousterhout va leakage
 
@@ -207,7 +207,7 @@ Uning tavsiyasi: agar ikki modul bir xil bilimga ega bo'lsa, ularni bitta modulg
 
 ### Temporal decomposition
 
-Ousterhout leakage'ning eng ko'p uchraydigan sababini **temporal decomposition** deb ataydi: tizimni operatsiyalar bajariladigan vaqt tartibi bo'yicha bo'lish. "Avval o'qiymiz, keyin o'zgartiramiz, keyin yozamiz" - shuning uchun uchta klass. Lekin o'qish va yozish bir xil formatni biladi. Bu aynan Parnasning birinchi KWIC modullashtirishi.
+Ousterhout leakage'ning eng ko'p uchraydigan sababini **temporal decomposition** deb ataydi: tizimni operatsiyalar bajariladigan vaqt tartibi bo'yicha bo'lish. "Avval o'qiymiz, keyin o'zgartiramiz, keyin yozamiz" - shuning uchun uchta klass. Lekin o'qish va yozish bir xil formatni biladi. Bu Parnasning birinchi KWIC modullashtirishidagi xatoning o'zi: ish bosqichlari bo'yicha bo'lish.
 
 Ousterhout talabalarning HTTP server loyihalaridan misol keltiradi: so'rovni tarmoqdan o'qish va uni parse qilish ko'pincha ikki alohida klassga bo'lingan. Lekin so'rovni to'g'ri o'qish uchun (masalan, uning qayerda tugashini bilish uchun) uning katta qismini parse qilish kerak, shuning uchun ikkala klass HTTP so'rovi tuzilishini bilishi kerak bo'lib qoladi. Yechim - ularni birlashtirish.
 

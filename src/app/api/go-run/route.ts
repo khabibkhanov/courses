@@ -1,12 +1,26 @@
-import { fail } from "@/lib/request";
+import { fail, ipHash } from "@/lib/request";
 
 // Go kodi o'quvchi brauzerida ishlamaydi: rasmiy Go Playground (go.dev) ishga tushiradi.
 // go.dev CORS ruxsat bermaydi, shuning uchun so'rov shu route orqali o'tadi.
 const PLAYGROUND = "https://go.dev/_/compile?backend=";
 const CODE_MAX = 20_000;
 const TIMEOUT_MS = 20_000;
+// Oddiy xotiradagi limit: har bir serverless nusxada alohida, suiiste'molni jilovlash uchun yetarli.
+const WINDOW_MS = 60_000;
+const PER_WINDOW = 20;
+const hits = new Map<string, number[]>();
+
+function overLimit(key: string): boolean {
+  const now = Date.now();
+  const recent = (hits.get(key) ?? []).filter((t) => now - t < WINDOW_MS);
+  recent.push(now);
+  hits.set(key, recent);
+  if (hits.size > 5000) for (const [k, v] of hits) if (now - v[v.length - 1] > WINDOW_MS) hits.delete(k);
+  return recent.length > PER_WINDOW;
+}
 
 export async function POST(request: Request) {
+  if (overLimit(ipHash(request.headers))) return fail(429, "Juda ko'p so'rov. Bir daqiqadan keyin urinib ko'ring.");
   const payload = await request.json().catch(() => null);
   const code = typeof payload?.code === "string" ? payload.code : "";
   if (!code.trim() || code.length > CODE_MAX) return fail(400, "Kod bo'sh yoki juda uzun.");

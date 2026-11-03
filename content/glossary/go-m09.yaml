@@ -108,3 +108,8 @@
   uz: "Panic paytida qaysi goroutine'lar stack trace'i chiqarilishini boshqaradigan muhit o'zgaruvchisi (masalan all)."
   course: go
   lesson: 90
+- term: minimization
+  aliases: ["fuzz minimization"]
+  uz: "Fuzzing'da xatoga olib kelgan kirishni xatoni saqlab qolgan holda qisqartirish jarayoni; -fuzzminimizetime bilan boshqariladi."
+  course: go
+  lesson: 83

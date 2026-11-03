@@ -14,6 +14,11 @@
   --warn: #c2412d;
   /* Kurs sahifalarida kurs rangi bilan almashtiriladi (style="--line: ..."). */
   --line: #2a5bd7;
+  /* Bekat taxtasi: ikkala mavzuda ham to'q */
+  --board: #10151c;
+  --board-ink: #e6eaf0;
+  --board-muted: #8b95a3;
+  --board-rule: #262d37;
   --plex-sans: "IBM Plex Sans", system-ui, sans-serif;
   --plex-mono: "IBM Plex Mono", ui-monospace, monospace;
   /* Kod muharriri (CodeMirror) ranglari */
@@ -53,6 +58,10 @@
   --color-done: var(--done);
   --color-warn: var(--warn);
   --color-line: var(--line);
+  --color-board: var(--board);
+  --color-board-ink: var(--board-ink);
+  --color-board-muted: var(--board-muted);
+  --color-board-rule: var(--board-rule);
   --font-sans: var(--plex-sans);
   --font-mono: var(--plex-mono);
 }
