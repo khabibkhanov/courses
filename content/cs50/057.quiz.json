@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Eski commit'dagi bitta faylning bitta baytini o'zgartirib, tarixni \"jimgina\" qayta yozmoqchisiz. Nima uchun buni sezdirmasdan qilib bo'lmaydi?",
+      "options": [
+        "Git har commit'ning nusxasini serverda saqlaydi va har push'da solishtiradi",
+        "Blob hash'i o'zgaradi, u tree hash'ini, tree esa commit hash'ini o'zgartiradi; keyingi commit'lar ota hash'ini saqlagani uchun ulardan keyingi hamma hash'lar ham o'zgaradi",
+        "Git faqat oxirgi commit'ni tahrirlashga ruxsat beradi, eski commit'lar fayl tizimida faqat o'qish uchun",
+        "Commit ichida fayllar orasidagi diff saqlanadi va diff buzilsa, git uni qo'llay olmaydi"
+      ],
+      "answer": 1,
+      "why": "Obyekt nomi mazmunidan hisoblangan hash. Commit ota commit hash'ini o'z ichiga oladi, shuning uchun bitta bayt o'zgarishi zanjir bo'ylab barcha keyingi hash'larni o'zgartiradi."
+    },
+    {
+      "q": "Faylni o'zgartirib `git add` qildingiz. Endi `git diff` (argumentsiz) hech narsa ko'rsatmayapti. Bu nimani bildiradi?",
+      "options": [
+        "O'zgarish yo'qolgan, faylni qayta tahrirlash kerak",
+        "O'zgarish allaqachon commit qilingan",
+        "`git diff` working tree'ni staging area bilan solishtiradi; o'zgarish endi stage'da va uni `git diff --staged` ko'rsatadi",
+        "`git add` faylni `.gitignore` ga qo'shgan"
+      ],
+      "answer": 2,
+      "why": "Argumentsiz diff working tree va staging area farqini ko'rsatadi. Stage qilingan, lekin commit qilinmagan o'zgarishni `--staged` (oxirgi commit bilan solishtirish) ko'rsatadi."
+    },
+    {
+      "q": "Siz `feature` branch'ini yaratganingizdan beri `main` da birorta ham yangi commit bo'lmagan. `main` da turib `git merge feature` qilsangiz nima bo'ladi?",
+      "options": [
+        "Fast-forward: `main` yorlig'i `feature` ning oxirgi commit'iga suriladi, yangi merge commit yaratilmaydi",
+        "Har doim ikki otali yangi merge commit yaratiladi",
+        "Merge conflict chiqadi, chunki ikkala branch bir xil faylni o'z ichiga oladi",
+        "Git `feature` dagi commit'larni nusxalab, ularga yangi hash beradi"
+      ],
+      "answer": 0,
+      "why": "Agar joriy branch ajralgandan beri o'zgarmagan bo'lsa, birlashtiradigan narsa yo'q: yorliq shunchaki oldinga suriladi va tarix to'g'ri chiziq bo'lib qoladi."
+    },
+    {
+      "q": "Merge conflict'ni faylda qo'lda hal qildingiz. Commit qilishdan oldin eng muhim tekshiruv qaysi?",
+      "options": [
+        "`git merge --abort` ni ishga tushirish",
+        "Faylda `<<<<<<<`, `=======`, `>>>>>>>` belgilari qolmaganini tekshirib, testlarni ishga tushirish, keyin `git add` qilish",
+        "Ikkala variantni ham faylda qoldirish, keyin reviewer tanlaydi",
+        "`git push --force` bilan serverdagi versiyani almashtirish"
+      ],
+      "answer": 1,
+      "why": "Qolib ketgan belgilar kodni buzadi, git esa birlashtirilgan mantiq to'g'riligini tekshirmaydi. Belgilarni olib tashlash va testlar - hal qilish to'g'riligining yagona tasdig'i; `git add` faylni hal qilingan deb belgilaydi."
+    },
+    {
+      "q": "`.env` fayli (ichida API kaliti) bir hafta oldin commit qilingan va push qilingan. Hozir uni `.gitignore` ga qo'shdingiz. Yana nima qilish kerak?",
+      "options": [
+        "Hech narsa: `.gitignore` faylni tarixdan ham olib tashlaydi",
+        "Faqat `.env` ni o'chirib yangi commit qilish yetarli",
+        "Repo'ni private qilish yetarli",
+        "`git rm --cached .env` bilan kuzatuvdan chiqarish va eng muhimi - kalitni darhol yangisiga almashtirish, chunki u tarixda qoladi"
+      ],
+      "answer": 3,
+      "why": "gitignore allaqachon kuzatilayotgan fayllarga ta'sir qilmaydi, eski commit'larda esa kalit saqlanib qoladi. Sizib chiqqan sirga qarshi ishonchli himoya - uni almashtirish."
+    },
+    {
+      "q": "unittest natijasida `EF..` chiqdi: `E` - `test_empty_raises`, `F` - `test_even_length`. Bu ikki holat qanday farqlanadi?",
+      "options": [
+        "F - kod javob qaytardi, lekin u kutilganidan farq qildi; E - test ichida kutilmagan exception chiqdi (masalan, ValueError o'rniga IndexError)",
+        "E - test sekin ishladi, F - test tez ishladi",
+        "E va F bir xil narsa, faqat ketma-ketlikni bildiradi",
+        "F - test kodining o'zida sintaksis xatosi bor, E - funksiya to'g'ri ishladi"
+      ],
+      "answer": 0,
+      "why": "FAIL assert metodi yiqilganini bildiradi (3 != 2.5). ERROR esa tekshiruvgacha yetib bormasdan kod exception bilan yiqilganini bildiradi."
+    },
+    {
+      "q": "Foydalanuvchi kiritgan yoshni tekshirish uchun `assert age >= 0` yozildi. Nima uchun bu xavfli?",
+      "options": [
+        "assert faqat butun sonlar bilan ishlaydi",
+        "assert har doim ValueError ko'taradi, uni ushlab bo'lmaydi",
+        "Python `-O` bilan ishga tushirilganda barcha assert'lar o'chadi va tekshiruv umuman bajarilmaydi",
+        "assert faqat test fayllarida ishlaydi, oddiy kodda sintaksis xatosi beradi"
+      ],
+      "answer": 2,
+      "why": "assert `if __debug__:` ichida bajariladi, `-O` esa `__debug__` ni False qiladi. Kiritish tekshiruvi uchun `if ...: raise ValueError(...)` kerak."
+    },
+    {
+      "q": "Unit test o'rtacha 2 ms, end-to-end test 5 soniya. 300 ta holatni faqat end-to-end bilan tekshirsangiz, har commit'dan keyin qancha kutasiz va bu unit testlarga nisbatan necha barobar?",
+      "options": [
+        "150 soniya, 75 barobar",
+        "1500 soniya (25 daqiqa), 2500 barobar",
+        "600 soniya (10 daqiqa), 1000 barobar",
+        "15 soniya, 2,5 barobar"
+      ],
+      "answer": 1,
+      "why": "300 · 5 = 1500 s; unit testlar bilan 300 · 0,002 = 0,6 s; 1500 / 0,6 = 2500. Shuning uchun piramidaning asosi tez unit testlardan iborat."
+    },
+    {
+      "q": "`median` funksiyasi uchun bitta test bor: `median([3, 1, 2]) == 2`. Coverage vositasi 100% ko'rsatmoqda. Qaysi xulosa to'g'ri?",
+      "options": [
+        "Funksiya to'g'ri, chunki har qator kamida bir marta bajarildi",
+        "Coverage 100% bo'lsa, chegaraviy holatlarni tekshirish shart emas",
+        "Test noto'g'ri, chunki coverage 100% dan oshishi kerak",
+        "Har qator bajarilgan, lekin juft uzunlik va bo'sh ro'yxat kabi holatlar tekshirilmagan; coverage xato yo'qligini kafolatlamaydi"
+      ],
+      "answer": 3,
+      "why": "Coverage faqat qaysi qatorlar bajarilganini o'lchaydi, qaysi kirishlar to'g'ri ishlashini emas. Juft uzunlikdagi xato 100% qamrov bilan ham yashaydi."
+    },
+    {
+      "q": "PR'da `db.execute(f\"SELECT * FROM users WHERE name = '{name}'\")` qatorini ko'rdingiz. Qaysi review izohi eng foydali?",
+      "options": [
+        "\"Bu noto'g'ri, qayta yozing.\"",
+        "\"nit: SELECT * o'rniga ustunlarni yozing.\"",
+        "\"[muhim] name f-string bilan SQL'ga qo'yilgan - SQL injection: name = x' OR '1'='1 hamma qatorni qaytaradi. Parametr ishlating: execute('... WHERE name = ?', (name,)), va shu holat uchun test qo'shing.\"",
+        "Izoh yozmaslik: testlar o'tgan bo'lsa, kod xavfsiz"
+      ],
+      "answer": 2,
+      "why": "Yaxshi izoh muammoning muhimligini belgilaydi, nima va nega noto'g'ri ekanini misol bilan ko'rsatadi va aniq yechim taklif qiladi. Funksional testlar injection'ni o'zi topmaydi."
+    }
+  ]
+}

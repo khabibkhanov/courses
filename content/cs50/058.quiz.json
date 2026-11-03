@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Yakuniy loyiha uchun ikki g'oya bor: A - \"o'z oilangiz uchun oylik xarajatlar hisobi\", B - \"mahalliy ijtimoiy tarmoq: lenta, do'stlar, xabarlar, bildirishnomalar\". Muddat 7 hafta, haftasiga 8 soat. Qaysi tanlov va sabab eng to'g'ri?",
+      "options": [
+        "B, chunki kattaroq loyiha har doim yuqori baholanadi",
+        "A, chunki foydalanuvchi va muammo ma'lum, MVP bir jumlada ifodalanadi va hajm muddatga sig'adi; B ning har bir qismi alohida loyiha",
+        "B, chunki ijtimoiy tarmoqda ko'proq texnologiya ishlatiladi",
+        "Farqi yo'q, hajm faqat README uzunligiga ta'sir qiladi"
+      ],
+      "answer": 1,
+      "why": "Muvaffaqiyatli loyiha haqiqiy, o'zingiz biladigan muammoni muddat ichida boshidan oxirigacha yechadi. B ning hajmi 56 soatga sig'maydi va oxirida ishlaydigan oqimsiz qolish xavfi katta."
+    },
+    {
+      "q": "Quyidagilardan qaysi biri to'g'ri yozilgan nofunksional talab?",
+      "options": [
+        "Ilova tez va qulay bo'lsin",
+        "Foydalanuvchi e'lonni yopa olsin",
+        "1000 e'lonli bazada kategoriya sahifasi 200 ms dan tez ochilsin",
+        "Ilovada e'lonlar jadvali bo'lsin"
+      ],
+      "answer": 2,
+      "why": "Nofunksional talab tizim qanday ishlashini aytadi va tekshiriladigan raqamga ega. \"Tez va qulay\" tekshirib bo'lmaydi, e'lonni yopish esa funksional talab."
+    },
+    {
+      "q": "\"Sotuvchi sifatida men e'lonimni yopiq deb belgilashni xohlayman, toki menga ortiqcha qo'ng'iroq qilinmasin.\" Bu hikoyaning \"toki ...\" qismi nima uchun muhim?",
+      "options": [
+        "U sababni saqlaydi: imkoniyat kerakmi va qanday amalga oshirilishini (masalan, yopiq e'londa telefonni yashirish) shu sababdan kelib chiqib hal qilish mumkin",
+        "U faqat grammatik shablon talabi, mazmunga ta'sir qilmaydi",
+        "U ma'lumotlar bazasidagi jadval nomini belgilaydi",
+        "U hikoyani nofunksional talabga aylantiradi"
+      ],
+      "answer": 0,
+      "why": "Sabab qismi talabning maqsadini beradi. Maqsad ma'lum bo'lsa, qabul mezonlari to'g'ri yoziladi va keyin \"bu kerakmi\" degan savolga javob topiladi."
+    },
+    {
+      "q": "Vazifalar baholari jami 38 soat. Zaxira koeffitsienti 1,5, haftasiga 8 soat ajratasiz. Loyiha taxminan necha haftada tugaydi?",
+      "options": [
+        "Taxminan 5 hafta (38 / 8)",
+        "Taxminan 3 hafta (38 / 8 / 1,5)",
+        "Taxminan 12 hafta (38 · 1,5 / 8 · 2)",
+        "Taxminan 8 hafta (38 · 1,5 = 57 soat, 57 / 8 ≈ 7,1, yuqoriga yaxlitlanadi)"
+      ],
+      "answer": 3,
+      "why": "Avval zaxira qo'shiladi: 38 · 1,5 = 57 soat. Keyin haftalik vaqtga bo'linadi: 57 / 8 ≈ 7,1, qisman hafta ham to'liq hafta sifatida rejalashtiriladi."
+    },
+    {
+      "q": "Bitta foydalanuvchi o'z telefonida ishlatadigan, internetsiz ham ishlashi kerak bo'lgan taymer-ilova uchun qaysi texnologiya eng mos?",
+      "options": [
+        "Flask + SQLite, chunki har qanday loyihaga server kerak",
+        "Faqat brauzer: HTML/CSS/JavaScript",
+        "C, chunki taymer tez ishlashi kerak",
+        "Flask + JSON API + fetch"
+      ],
+      "answer": 1,
+      "why": "Ma'lumot boshqa odamlar bilan bo'lishilmaydi va grafik interfeys kerak - server ortiqcha murakkablik va internetga bog'liqlik qo'shadi. Brauzerning o'zi yetarli."
+    },
+    {
+      "q": "Mahalla e'lonlari sxemasida narx `INTEGER` (so'mda) va `NULL` ruxsat etilgan. Nima uchun narx `REAL` emas?",
+      "options": [
+        "SQLite REAL tipini qo'llab-quvvatlamaydi",
+        "INTEGER ustunga NULL yozib bo'lmaydi",
+        "Floating-point qiymatlar o'nli kasrlarni aniq saqlamaydi (0,1 + 0,2 muammosi); so'mda tiyin ishlatilmagani uchun butun son aniq va yetarli",
+        "REAL ustunda indeks yaratib bo'lmaydi"
+      ],
+      "answer": 2,
+      "why": "Pulni floating-point'da saqlash yaxlitlash xatolariga olib keladi. Eng kichik birlikdagi butun son aniq; NULL esa \"kelishiladi\" holatini bildiradi."
+    },
+    {
+      "q": "SQLite prototipida `PRAGMA foreign_keys = ON` yozilmagan. Mavjud bo'lmagan `category_id = 99` bilan e'lon qo'shilsa nima bo'ladi?",
+      "options": [
+        "Qator jimgina qo'shiladi: SQLite'da foreign key tekshiruvi sukut bo'yicha o'chiq, shuning uchun prototip sxemadagi xatoni ko'rsatmaydi",
+        "IntegrityError: FOREIGN KEY constraint failed",
+        "SQLite avtomatik 99-kategoriyani yaratadi",
+        "So'rov sintaksis xatosi bilan rad etiladi"
+      ],
+      "answer": 0,
+      "why": "SQLite'da foreign key'lar har ulanishda alohida yoqiladi. Yoqilmasa, REFERENCES yozuvi tekshirilmaydi va noto'g'ri ma'lumot bazaga tushadi."
+    },
+    {
+      "q": "Loyiha davomida har hafta \"yana bitta kichik imkoniyat\" qo'shilmoqda va MVP 5-haftada ham tayyor emas. Bu hodisa nima deyiladi va unga qarshi eng yaxshi chora qaysi?",
+      "options": [
+        "Refactoring; kodni qayta yozish",
+        "Regressiya; testlar sonini oshirish",
+        "Merge conflict; branch'larni ko'paytirish",
+        "Scope creep; MoSCoW bilan ustuvorlik, ochiq \"Won't\" ro'yxati va MVP tayyor bo'lmaguncha yangi imkoniyat qo'shmaslik"
+      ],
+      "answer": 3,
+      "why": "Hajmning sezdirmasdan o'sishi - scope creep. \"Won't\" ro'yxati va MVP'ni birinchi tugatish qoidasi yangi istaklarni ongli qarorga aylantiradi."
+    },
+    {
+      "q": "Qabul mezoni: \"sarlavha bo'shliqlarsiz 5-80 belgi\". Bu mezon uchun qaysi testlar to'plami eng ko'p xatoni ushlaydi?",
+      "options": [
+        "Faqat \"Bolalar velosipedi\" (oddiy holat)",
+        "4, 5, 80 va 81 belgili sarlavhalar hamda chetida bo'shliqlari bor \"  Velo  \"",
+        "Faqat bo'sh sarlavha",
+        "1000 ta tasodifiy uzunlikdagi sarlavha, natijani tekshirmasdan"
+      ],
+      "answer": 1,
+      "why": "Xatolar chegaralarda: chegaraning ikkala tomoni (4/5 va 80/81) off-by-one'ni, bo'shliqli holat esa strip qilinmaganini ushlaydi. Natijasi tekshirilmagan test hech narsani tasdiqlamaydi."
+    },
+    {
+      "q": "Kutubxona hisobi loyihasida eng katta xavf \"o'quvchi o'zi kitob berishni belgilab qo'yishi\" deb topildi. Rejada bunga qanday javob berish to'g'ri?",
+      "options": [
+        "Kitob berish tugmasini o'quvchi sahifasida yashirish yetarli",
+        "Bu xavfni README'ning cheklovlar bo'limiga yozib, hech narsa qilmaslik",
+        "Rolni session'da saqlash, har holat o'zgartiruvchi route'da bitta umumiy funksiya bilan tekshirish va o'quvchi nomidan POST yuborib 403 kutadigan test yozish",
+        "Ma'lumotlar bazasini faqat o'qish rejimida ochish"
+      ],
+      "answer": 2,
+      "why": "Tugmani yashirish himoya emas: POST so'rovni qo'lda yuborish mumkin. Ruxsat serverda, har route'da tekshirilishi va test bilan tasdiqlanishi kerak."
+    }
+  ]
+}

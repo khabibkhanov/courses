@@ -1,0 +1,86 @@
+# CS50 57-58-darslar atamalari.
+- term: versiya nazorati
+  aliases: [version control]
+  uz: "Fayllar to'plamidagi har bir o'zgarishni kim, qachon va nima uchun qilganini saqlaydigan tizim; oldingi holatga qaytish va parallel ishlashga imkon beradi. Eng keng tarqalgani - git."
+  course: cs50
+  lesson: 57
+- term: staging area
+  aliases: []
+  uz: "Git'da keyingi commit'ga kiradigan holatning qoralamasi: git add fayl holatini shu yerga yozadi, git commit esa shu yerdan surat oladi."
+  course: cs50
+  lesson: 57
+- term: merge conflict
+  aliases: []
+  uz: "Ikki branch bir xil qatorlarni turlicha o'zgartirganda git ularni avtomatik birlashtira olmasligi. Fayl <<<<<<< va >>>>>>> belgilari bilan belgilanadi va odam hal qiladi."
+  course: cs50
+  lesson: 57
+- term: pull request
+  aliases: []
+  uz: "Branch'ni asosiy branch'ga birlashtirish so'rovi: diff, review izohlari va avtomatik testlar natijasi bir joyda ko'rinadi, kod tasdiqlangandan keyin merge qilinadi."
+  course: cs50
+  lesson: 57
+- term: unit test
+  aliases: []
+  uz: "Bitta kichik birlikni (odatda bitta funksiyani) boshqalardan ajratib tekshiradigan avtomatik test; millisekundlarda ishlaydi va xato joyini aniq ko'rsatadi."
+  course: cs50
+  lesson: 57
+- term: test piramidasi
+  aliases: []
+  uz: "Testlarni ko'lami bo'yicha taqsimlash g'oyasi: pastda ko'p tez unit testlar, o'rtada kamroq integratsion testlar, tepada oz va sekin end-to-end testlar."
+  course: cs50
+  lesson: 57
+- term: TDD
+  aliases: [test-driven development]
+  uz: "Kodni testdan boshlab yozish usuli: yiqiladigan test (qizil), uni o'tkazadigan minimal kod (yashil), keyin tartibga keltirish (refactor)."
+  course: cs50
+  lesson: 57
+- term: regressiya testi
+  aliases: []
+  uz: "Bir marta topilgan xato uchun yozilgan test; xato keyingi o'zgarishlarda jimgina qaytmasligini ta'minlaydi."
+  course: cs50
+  lesson: 57
+- term: code review
+  aliases: []
+  uz: "Kod asosiy branch'ga qo'shilishidan oldin uni boshqa dasturchi o'qib chiqishi: to'g'rilik, testlar, xavfsizlik va o'qilishi tekshiriladi, aniq va sababli izohlar yoziladi."
+  course: cs50
+  lesson: 57
+- term: MVP
+  aliases: [minimum viable product]
+  uz: "Asosiy muammoni boshidan oxirigacha yechadigan va foydalanuvchi haqiqatan ishlata oladigan eng kichik versiya; kam funksiya, lekin har biri to'liq ishlaydi."
+  course: cs50
+  lesson: 58
+- term: user story
+  aliases: [foydalanuvchi hikoyasi]
+  uz: "Talabni foydalanuvchi nuqtai nazaridan yozish shakli: [kim] sifatida men [nima qilishni] xohlayman, toki [nima uchun]."
+  course: cs50
+  lesson: 58
+- term: qabul mezonlari
+  aliases: [acceptance criteria]
+  uz: "User story bajarildi deyish uchun tekshiriladigan aniq shartlar ro'yxati; har biri bir yoki bir nechta testga aylanadi."
+  course: cs50
+  lesson: 58
+- term: funksional talab
+  aliases: []
+  uz: "Tizim nima qilishi kerakligi haqidagi talab: e'lon joylash, qidirish, yopish. Odatda user story'lardan chiqadi."
+  course: cs50
+  lesson: 58
+- term: nofunksional talab
+  aliases: []
+  uz: "Tizim qanday ishlashi kerakligi haqidagi talab: tezlik, xavfsizlik, qulaylik, ishonchlilik. Tekshirish mumkin bo'lishi uchun raqam bilan yoziladi."
+  course: cs50
+  lesson: 58
+- term: MoSCoW
+  aliases: []
+  uz: "Talablarni Must (shart), Should (muhim), Could (vaqt qolsa) va Won't (bu safar emas) guruhlariga bo'lib ustuvorlik berish usuli."
+  course: cs50
+  lesson: 58
+- term: scope creep
+  aliases: []
+  uz: "Loyiha davomida yangi istaklar rejaga sezdirmasdan qo'shilib, hajmning nazoratsiz o'sishi; MVP va ochiq Won't ro'yxati bilan oldi olinadi."
+  course: cs50
+  lesson: 58
+- term: wireframe
+  aliases: []
+  uz: "Sahifada qaysi element qayerda turishini ko'rsatadigan ranglar va bezaksiz oddiy chizma; HTML va CSS yozishdan oldin tuziladi."
+  course: cs50
+  lesson: 58
