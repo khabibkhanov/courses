@@ -21,6 +21,8 @@ type Props = PlaygroundSpec & {
 };
 
 type Mode = "run" | "test";
+/** Ishga tushirish vaqtini o'lchash uchun (faqat hodisa ichida chaqiriladi). */
+const now = () => performance.now();
 type TestOutput = Extract<Output, { kind: "test" }>;
 
 /** Darsdagi tahrirlanadigan va ishga tushiriladigan kod bloki; testlar bo'lsa - mashq. */
@@ -39,6 +41,8 @@ export function Playground({ lang, code: initial, tests, stdin, args, files, cou
   // HTML: iframe'ga beriladigan hujjat va shu ishga tushirish tokeni (eski iframe xabarlari aralashmasin).
   const [page, setPage] = useState<{ doc: string; token: string } | null>(null);
   const frame = useRef<HTMLIFrameElement>(null);
+  const pageOutput = useRef<((o: Output) => void) | null>(null);
+  const pageDone = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     if (!page) return;
@@ -50,8 +54,6 @@ export function Playground({ lang, code: initial, tests, stdin, args, files, cou
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
   }, [page]);
-  const pageOutput = useRef<((o: Output) => void) | null>(null);
-  const pageDone = useRef<(() => void) | null>(null);
 
   function edit(value: string) {
     setDraft(value);
@@ -93,7 +95,7 @@ export function Playground({ lang, code: initial, tests, stdin, args, files, cou
       setOutput((prev) => [...(prev ?? []), o]);
     };
     // Vaqt runtime yuklanib bo'lgandan keyin hisoblanadi: birinchi yuklash natijaga qo'shilmaydi.
-    let started = performance.now();
+    let started = now();
     if (lang === "html") {
       handle.current = startPage(m, push);
       await finishRun(m, results, started);
@@ -105,7 +107,7 @@ export function Playground({ lang, code: initial, tests, stdin, args, files, cou
       code,
       push,
       (loading) => {
-        if (!loading) started = performance.now();
+        if (!loading) started = now();
         setState(loading ? "loading" : "running");
       },
       {
@@ -120,7 +122,7 @@ export function Playground({ lang, code: initial, tests, stdin, args, files, cou
 
   async function finishRun(m: Mode, results: Output[], started: number) {
     await handle.current?.done;
-    const ms = Math.round(performance.now() - started);
+    const ms = Math.round(now() - started);
     setOutput((prev) => [...(prev ?? []), { kind: "info", text: `${ms} ms` }]);
     if (m === "test") {
       const checks = results.filter((o): o is TestOutput => o.kind === "test");
