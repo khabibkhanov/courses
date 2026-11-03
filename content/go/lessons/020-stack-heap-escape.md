@@ -516,7 +516,7 @@ runtime: sp=0xc0200e0408 stack=[0xc0200e0000, 0xc0400e0000]
 fatal error: stack overflow
 ```
 
-Nozik joy: `defer` ichidagi `recover()` bu holatni ushlamadi, `recover:` qatori chiqmadi va jarayon 1 kod bilan tugadi. Stack overflow `panic` emas, fatal error: uni `recover` bilan tiklab bo'lmaydi. Node.js'da esa `RangeError: Maximum call stack size exceeded` oddiy exception sifatida `try/catch` ga tushadi. Go'da chuqur rekursiya (daraxt, graf, tashqaridan kelgan ichma-ich JSON) uchun chuqurlik chegarasini o'zingiz qo'ying yoki iterativ yechim yozing; `SetMaxStack` faqat zarar doirasini cheklaydi (hujjat: u cheksiz rekursiyadan zararni kamaytirish uchun foydali).
+Nozik joy: `defer` ichidagi `recover()` bu holatni ushlamadi, `recover:` qatori chiqmadi va jarayon 2 kod bilan tugadi (`go run` orqali ishga tushirganda u o'zi 1 qaytaradi, kompilyatsiya qilingan binary esa 2). Stack overflow `panic` emas, fatal error: uni `recover` bilan tiklab bo'lmaydi. Node.js'da esa `RangeError: Maximum call stack size exceeded` oddiy exception sifatida `try/catch` ga tushadi. Go'da chuqur rekursiya (daraxt, graf, tashqaridan kelgan ichma-ich JSON) uchun chuqurlik chegarasini o'zingiz qo'ying yoki iterativ yechim yozing; `SetMaxStack` faqat zarar doirasini cheklaydi (hujjat: u cheksiz rekursiyadan zararni kamaytirish uchun foydali).
 
 ### Versiyalar farqi: Go 1.25 o'zgaruvchan hajmli slice
 

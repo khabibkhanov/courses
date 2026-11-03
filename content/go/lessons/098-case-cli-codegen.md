@@ -239,14 +239,14 @@ package telemetry
 
 ```text
 $ go generate ./...
-paket=telemetry fayl=doc.go satr=5
+paket=telemetry fayl=doc.go satr=4
 narx: $ 5, uy: 'Q
 birinchi-xato-oldidan
-doc.go:8: running "false": exit status 1
+doc.go:7: running "false": exit status 1
 $ go generate -run 'paket' ./...
-doc.go:5: running "show": exec: "show": executable file not found in $PATH
+doc.go:4: running "show": exec: "show": executable file not found in $PATH
 $ go generate -skip 'false|bu-qator' ./...
-paket=telemetry fayl=doc.go satr=5
+paket=telemetry fayl=doc.go satr=4
 narx: $ 5, uy: 'Q
 birinchi-xato-oldidan
 ```
