@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "WSGI ilova nima?",
+      "options": [
+        "HTTP so'rovlarni portda tinglaydigan server dasturi",
+        "environ dict'i va start_response funksiyasini qabul qilib, javob tanasini baytlar ketma-ketligi sifatida qaytaradigan callable",
+        "Flask shablonlarini HTML ga aylantiradigan modul",
+        "Brauzer va server orasidagi yangi tarmoq protokoli"
+      ],
+      "answer": 1,
+      "why": "PEP 3333 ga ko'ra ilova - ikki argumentli callable. Server environ ni so'rovdan to'ldiradi, ilova start_response bilan status va headerlarni beradi va tanani qaytaradi."
+    },
+    {
+      "q": "Route `@app.route(\"/users/<int:user_id>\")`. `/users/-5` so'ralganda nima bo'ladi?",
+      "options": [
+        "View funksiya user_id = -5 bilan chaqiriladi",
+        "View funksiya user_id = \"-5\" satri bilan chaqiriladi",
+        "Converter mos kelmaydi, view chaqirilmaydi va boshqa route bo'lmasa 404 qaytadi",
+        "Flask 400 Bad Request qaytaradi"
+      ],
+      "answer": 2,
+      "why": "int converter standart holatda faqat musbat butun sonlarni qabul qiladi. Mos kelmagan yo'l uchun route tanlanmaydi, natijada 404."
+    },
+    {
+      "q": "`@app.route(\"/projects/\")` e'lon qilingan. Foydalanuvchi `/projects` (slash'siz) ni ochadi. Natija?",
+      "options": [
+        "308 bilan /projects/ ga yo'naltiriladi",
+        "404 Not Found",
+        "Xuddi /projects/ kabi 200, yo'naltirishsiz",
+        "405 Method Not Allowed"
+      ],
+      "answer": 0,
+      "why": "Oxirida slash bilan e'lon qilingan route papkaga o'xshaydi: slash'siz so'rov kanonik manzilga yo'naltiriladi. Teskari holat (/about e'lon qilingan, /about/ so'ralgan) 404 beradi."
+    },
+    {
+      "q": "Route faqat `methods=[\"GET\"]` bilan e'lon qilingan, forma esa `method=\"post\"` bilan yuboriladi. Brauzer qanday javob oladi?",
+      "options": [
+        "200, lekin request.form bo'sh",
+        "400 Bad Request",
+        "404 Not Found",
+        "405 Method Not Allowed va Allow headerida ruxsat berilgan metodlar"
+      ],
+      "answer": 3,
+      "why": "Yo'l mos keladi, metod esa ro'yxatda yo'q. Flask 405 qaytaradi va Allow headerida GET, HEAD, OPTIONS ni sanaydi."
+    },
+    {
+      "q": "`GET /search?page=abc` so'rovida `request.args.get(\"page\", 1, type=int)` nimani qaytaradi?",
+      "options": [
+        "ValueError otiladi va 500 javob qaytadi",
+        "1 - aylantirib bo'lmagani uchun standart qiymat",
+        "\"abc\" satri",
+        "None"
+      ],
+      "answer": 1,
+      "why": "get ning type parametri qiymatni aylantirishga urinadi, ValueError bo'lsa standart qiymatni qaytaradi. Shuning uchun view'da qo'shimcha try/except kerak emas."
+    },
+    {
+      "q": "View funksiya `return \"yaratildi\", 201, {\"Location\": \"/books/3\"}` qaytaradi. Javob qanday bo'ladi?",
+      "options": [
+        "Status 200, tanada tuple'ning matn ko'rinishi",
+        "Status 302, /books/3 ga yo'naltirish",
+        "Status 201, tana \"yaratildi\", Location: /books/3 headeri bilan",
+        "TypeError, chunki view faqat satr qaytara oladi"
+      ],
+      "answer": 2,
+      "why": "Tuple (tana, status, headerlar) shaklida bo'lsa, Flask har elementni javobning mos qismiga qo'yadi. 201 yo'naltirish emas, Location bu yerda yangi resurs manzili."
+    },
+    {
+      "q": "Nima uchun `\"/books/\" + str(book_id)` o'rniga `url_for(\"book\", book_id=book_id)` yozish afzal?",
+      "options": [
+        "url_for route yo'li o'zgarsa ham to'g'ri URL beradi va maxsus belgilarni kodlaydi",
+        "url_for so'rovni tezroq bajaradi",
+        "url_for avtomatik 404 tekshiruvini qiladi",
+        "Qo'lda yozilgan URL Flask'da ishlamaydi"
+      ],
+      "answer": 0,
+      "why": "url_for endpoint nomi va argumentlardan url_map bo'yicha URL yasaydi. Yo'l bir joyda (route'da) o'zgartiriladi, hamma havolalar avtomatik yangilanadi."
+    },
+    {
+      "q": "Shablon `<p>{{ name }}</p>` render_template_string bilan chiziladi, name = \"<b>Ali</b>\". Javobda nima chiqadi?",
+      "options": [
+        "<p><b>Ali</b></p> va Ali qalin ko'rinadi",
+        "<p>Ali</p> - teglar olib tashlanadi",
+        "Jinja xato beradi",
+        "<p>&lt;b&gt;Ali&lt;/b&gt;</p> va brauzer teglarni matn sifatida ko'rsatadi"
+      ],
+      "answer": 3,
+      "why": "render_template_string da autoescaping barcha satrlar uchun yoqilgan: < va > entity'ga almashtiriladi. Teglar o'chirilmaydi, balki xavfsiz matnga aylanadi."
+    },
+    {
+      "q": "Bola shablon `{% extends \"layout.html\" %}` bilan boshlanadi va `{% block main %}` dan tashqarida `<p>Izoh</p>` yozilgan. Bu paragraf natijada chiqadimi?",
+      "options": [
+        "Ha, sahifa boshida",
+        "Yo'q: bola shablonda faqat bloklar ichidagi matn ishlatiladi, tuzilmani ota shablon belgilaydi",
+        "Ha, sahifa oxirida",
+        "Jinja sintaksis xatosi beradi"
+      ],
+      "answer": 1,
+      "why": "extends bo'lgan shablonda ota shablon chiziladi va bola faqat bloklarni almashtiradi. Bloklardan tashqaridagi matn tashlab yuboriladi."
+    },
+    {
+      "q": "Jamoa a'zosi production serverni `flask run --debug` bilan ishga tushirmoqchi: \"Xatolarni brauzerda ko'rish qulay\". Asosiy e'tiroz qaysi?",
+      "options": [
+        "Debug rejimida sahifalar sekinroq chiziladi",
+        "Debug rejimida Jinja autoescaping o'chadi",
+        "Interaktiv debugger brauzerdan ixtiyoriy Python kodini bajarishga imkon beradi, bu serverni to'liq egallash xavfi",
+        "Debug rejimida 404 sahifalari ishlamaydi"
+      ],
+      "answer": 2,
+      "why": "Flask hujjati ogohlantiradi: debugger PIN bilan himoyalangan bo'lsa ham, ixtiyoriy kod bajarish imkoniyati jiddiy xavf. Development server va debugger productionda ishlatilmaydi."
+    }
+  ]
+}

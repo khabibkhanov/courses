@@ -1,0 +1,81 @@
+# CS50 47-48-darslar atamalari.
+- term: web framework
+  aliases: []
+  uz: "HTTP so'rovni tahlil qilish, routing va javob yasash kabi takroriy ishni o'z zimmasiga oladigan kutubxona. Dasturchi faqat ilovaga xos funksiyalarni yozadi."
+  course: cs50
+  lesson: 47
+- term: WSGI
+  aliases: [Web Server Gateway Interface]
+  uz: "Python web serveri va ilova orasidagi standart (PEP 3333): ilova environ dict'i va start_response funksiyasini qabul qilib, javob tanasini qaytaradigan callable."
+  course: cs50
+  lesson: 47
+- term: routing
+  aliases: [marshrutlash]
+  uz: "So'rov yo'li va metodiga qarab qaysi view funksiya ishlashini aniqlash. Flask'da @app.route qoidalari url_map jadvalida saqlanadi."
+  course: cs50
+  lesson: 47
+- term: view funksiya
+  aliases: [view function]
+  uz: "Route'ga bog'langan va so'rovga javob qaytaradigan funksiya: satr, dict, tuple yoki Response obyekti."
+  course: cs50
+  lesson: 47
+- term: converter
+  aliases: [URL converter]
+  uz: "Route'dagi URL o'zgaruvchisining turi (<int:id>, <path:p>): yo'lni filtrlaydi va qiymatni kerakli tipga aylantiradi."
+  course: cs50
+  lesson: 47
+- term: decorator
+  aliases: [dekorator]
+  uz: "Funksiya ustiga @ bilan yoziladigan va uni qabul qilib, o'zgartirgan yoki ro'yxatga olgan holda qaytaradigan funksiya: @app.route, @wraps."
+  course: cs50
+  lesson: 47
+- term: Jinja
+  aliases: []
+  uz: "Flask ishlatadigan shablon tili: {{ }} qiymat chiqaradi, {% %} if, for, extends va block kabi boshqaruv buyruqlarini bajaradi."
+  course: cs50
+  lesson: 47
+- term: avtomatik escaping
+  aliases: [autoescaping]
+  uz: "Shablonga qo'yilayotgan qiymatdagi <, >, &, qo'shtirnoq va apostrofni HTML entity'ga almashtirish. XSS ning eng oddiy shaklidan himoya qiladi."
+  course: cs50
+  lesson: 47
+- term: shablon merosi
+  aliases: [template inheritance]
+  uz: "Ota shablon umumiy karkasni va block'larni beradi, bola shablon extends bilan undan meros olib, faqat block'larni to'ldiradi."
+  course: cs50
+  lesson: 47
+- term: Post/Redirect/Get
+  aliases: [PRG]
+  uz: "Forma POST bilan muvaffaqiyatli qabul qilingach, sahifani chizish o'rniga 303 bilan GET sahifaga yo'naltirish. Yangilash tugmasi formani qayta yubormaydi."
+  course: cs50
+  lesson: 48
+- term: cookie
+  aliases: []
+  uz: "Server Set-Cookie header bilan bergan va brauzer keyingi so'rovlarda Cookie header orqali qaytaradigan kichik nom=qiymat juftligi. Stateless HTTP ustida holat saqlash vositasi."
+  course: cs50
+  lesson: 48
+- term: HttpOnly
+  aliases: []
+  uz: "Cookie atributi: JavaScript document.cookie orqali bu cookie'ni o'qiy olmaydi, lekin brauzer uni so'rovlarda yuborishda davom etadi."
+  course: cs50
+  lesson: 48
+- term: SameSite
+  aliases: []
+  uz: "Cookie boshqa saytdan boshlangan so'rovlarda yuborilishini boshqaradigan atribut: Strict, Lax yoki None (None faqat Secure bilan)."
+  course: cs50
+  lesson: 48
+- term: imzolangan cookie
+  aliases: [signed cookie]
+  uz: "Qiymati yoniga maxfiy kalit bilan hisoblangan HMAC imzo qo'shilgan cookie. Mijoz uni o'qiy oladi, lekin kalitsiz o'zgartira olmaydi. Flask session shunday ishlaydi."
+  course: cs50
+  lesson: 48
+- term: server-side session
+  aliases: []
+  uz: "Session ma'lumotlari serverdagi omborda (Redis, baza, fayl) saqlanadi, cookie'da esa faqat tasodifiy session identifikatori bo'ladi."
+  course: cs50
+  lesson: 48
+- term: flash xabar
+  aliases: [flash xabarlari, flash message]
+  uz: "Bitta so'rovda yozilib, keyingi sahifada bir marta ko'rsatiladigan va o'chib ketadigan xabar. Flask'da flash() va get_flashed_messages() orqali, session ichida saqlanadi."
+  course: cs50
+  lesson: 48

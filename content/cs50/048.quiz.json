@@ -1,0 +1,115 @@
+{
+  "passScore": 0.8,
+  "questions": [
+    {
+      "q": "Buyurtma formasi POST bilan qabul qilinib, javobda darhol \"Rahmat\" sahifasi chiziladi. Foydalanuvchi F5 ni bosib, tasdiqlaydi. Nima bo'ladi?",
+      "options": [
+        "Brauzer keshdagi sahifani ko'rsatadi, server hech narsa olmaydi",
+        "Brauzer GET /rahmat so'rovini yuboradi",
+        "Brauzer o'sha POST ni qayta yuboradi va buyurtma ikki marta yaratiladi",
+        "Flask takroriy POST ni avtomatik aniqlab rad etadi"
+      ],
+      "answer": 2,
+      "why": "Tarixdagi oxirgi so'rov POST bo'lgani uchun yangilash uni takrorlaydi. Post/Redirect/Get bilan tarixda GET qoladi va bu muammo yo'qoladi."
+    },
+    {
+      "q": "PRG naqshida muvaffaqiyatli POST dan keyin qaysi status kod eng to'g'ri?",
+      "options": [
+        "303 See Other - brauzer Location ga GET bilan boradi",
+        "307 Temporary Redirect",
+        "308 Permanent Redirect",
+        "200 OK va Location header"
+      ],
+      "answer": 0,
+      "why": "303 aniq \"natijani GET bilan ol\" degani. 307 va 308 metodni saqlaydi, ya'ni brauzer yana POST yuboradi; 200 esa yo'naltirmaydi."
+    },
+    {
+      "q": "Validatsiya xatosida nima uchun forma yo'naltirilmasdan, shu POST javobida qayta chiziladi?",
+      "options": [
+        "Yo'naltirish xato statusini qaytara olmaydi",
+        "Yo'naltirishdan keyingi GET so'rov xatolar va kiritilgan qiymatlar haqida hech narsa bilmaydi, ular yo'qoladi",
+        "Brauzer 4xx javobdan keyin yo'naltirishga ruxsat bermaydi",
+        "Flask'da POST dan keyin redirect qilish taqiqlangan"
+      ],
+      "answer": 1,
+      "why": "HTTP stateless: yangi GET so'rovda oldingi POST ma'lumoti yo'q. Shuning uchun xatoda forma shu javobda xatolar va qiymatlar bilan chiziladi."
+    },
+    {
+      "q": "Javobda `Set-Cookie: theme=dark; Max-Age=0` keldi. Brauzer nima qiladi?",
+      "options": [
+        "Cookie'ni muddatsiz saqlaydi",
+        "Cookie'ni brauzer yopilguncha saqlaydi",
+        "Cookie'ni 0 baytli qiymat bilan saqlaydi va yuborishda davom etadi",
+        "theme cookie'sini darhol o'chiradi"
+      ],
+      "answer": 3,
+      "why": "MDN ga ko'ra Max-Age 0 yoki manfiy bo'lsa cookie darhol eskiradi. delete_cookie aynan shu usulda ishlaydi."
+    },
+    {
+      "q": "Saytda XSS zaifligi bor va hujumchi skripti sahifada ishlaydi. Qaysi cookie atributi session cookie'ni `document.cookie` orqali o'g'irlashga to'sqinlik qiladi?",
+      "options": [
+        "HttpOnly",
+        "Secure",
+        "SameSite=Strict",
+        "Path=/"
+      ],
+      "answer": 0,
+      "why": "HttpOnly cookie'ni JavaScript'dan yashiradi, lekin so'rovlarda yuborilishi davom etadi. Secure faqat HTTPS bilan yuborishni, SameSite boshqa saytdan kelgan so'rovlarni boshqaradi."
+    },
+    {
+      "q": "Flask session cookie'si `eyJ1c2VyX2lkIjo0Mn0.aum-AQ.RT2Z...` ko'rinishida. Foydalanuvchi buning ichini qanday ko'ra oladi?",
+      "options": [
+        "Ko'ra olmaydi: ma'lumot SECRET_KEY bilan shifrlangan",
+        "Faqat SECRET_KEY ni bilsa ko'ra oladi",
+        "Birinchi qismni base64 dan dekodlab, kalitsiz ko'ra oladi, lekin o'zgartirsa imzo mos kelmaydi",
+        "Faqat server loglari orqali"
+      ],
+      "answer": 2,
+      "why": "Flask session faqat imzolangan, shifrlanmagan. Birinchi qism base64url bilan kodlangan JSON; imzo esa o'zgartirishni aniqlaydi."
+    },
+    {
+      "q": "Production'dagi SECRET_KEY ochiq repozitoriyga tushib qoldi. Eng to'g'ri birinchi qadam qaysi va uning yon ta'siri qanday?",
+      "options": [
+        "Repozitoriyni private qilish; foydalanuvchilarga ta'sir yo'q",
+        "Kalitni yangi tasodifiy kalitga almashtirish; barcha mavjud session'lar yaroqsiz bo'lib, hamma tizimdan chiqadi",
+        "SESSION_COOKIE_HTTPONLY ni yoqish; session'lar saqlanadi",
+        "Hech narsa: session shifrlangan bo'lgani uchun kalit muhim emas"
+      ],
+      "answer": 1,
+      "why": "Kalitni bilgan odam istalgan session'ni soxtalashtira oladi. Kalitni almashtirish eski imzolarni bekor qiladi, shuning uchun foydalanuvchilar qayta kirishi kerak bo'ladi."
+    },
+    {
+      "q": "View `session[\"cart\"][\"olma\"] += 1` qiladi (cart avvaldan session'da bor). Uch marta ketma-ket chaqirilganda keyingi so'rov qaysi qiymatni ko'radi?",
+      "options": [
+        "Har safar 1 ga oshgan qiymatni",
+        "Flask xato beradi",
+        "Session butunlay tozalanadi",
+        "O'zgarish saqlanmaydi: keyingi so'rov oldingi saqlangan qiymatni ko'radi"
+      ],
+      "answer": 3,
+      "why": "Flask faqat yuqori darajadagi yozuvni sezadi. Ichki dict joyida o'zgarsa, session.modified False qoladi va cookie yangilanmaydi. session[\"cart\"] = cart yoki session.modified = True kerak."
+    },
+    {
+      "q": "Qaysi talab server-side session'ni (Flask-Session) tanlashga eng kuchli sabab?",
+      "options": [
+        "Administrator istalgan foydalanuvchining session'ini darhol bekor qila olishi kerak",
+        "Ilova bitta serverda ishlaydi va session'da faqat user_id bor",
+        "Qo'shimcha infratuzilmasiz eng sodda yechim kerak",
+        "Session cookie'si HttpOnly bo'lishi kerak"
+      ],
+      "answer": 0,
+      "why": "Server-side'da ma'lumot omborda, cookie'da faqat id: yozuvni o'chirish session'ni darhol bekor qiladi. Client-side imzolangan cookie esa muddati tugaguncha yaroqli qoladi."
+    },
+    {
+      "q": "PERMANENT_SESSION_LIFETIME standart qiymati 31 kun. session.permanent = True bo'lganda cookie taxminan necha soniya yashaydi?",
+      "options": [
+        "86 400",
+        "2 678 400",
+        "31 000",
+        "Brauzer yopilguncha"
+      ],
+      "answer": 1,
+      "why": "31 x 24 x 3600 = 2 678 400 soniya. session.permanent False bo'lsa, Expires qo'yilmaydi va cookie brauzer yopilganda o'chadi."
+    }
+  ]
+}
