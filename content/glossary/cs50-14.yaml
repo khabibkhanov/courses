@@ -48,7 +48,7 @@
   lesson: 15
 - term: eng yaxshi holat
   aliases: [best case]
-  uz: "Algoritm eng kam qadam qiladigan kirish, masalan linear search da qiymat birinchi o'rinda turishi. Algoritmni baholashda kam foydali."
+  uz: "Algoritm eng kam qadam qiladigan kirish, masalan linear search da qiymat birinchi o'rinda turishi. Big Omega bilan bir xil narsa emas (16-dars)."
   course: cs50
   lesson: 15
 - term: yarim ochiq oraliq

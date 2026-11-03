@@ -16,21 +16,6 @@
   uz: "Aniq tartib: f(n) = Θ(g(n)), agar f bir vaqtda O(g(n)) va Ω(g(n)) bo'lsa, ya'ni biror n0 dan boshlab c1 · g(n) <= f(n) <= c2 · g(n)."
   course: cs50
   lesson: 16
-- term: worst case
-  aliases: [eng yomon holat]
-  uz: "n o'lchamli barcha kirishlar orasida algoritm eng ko'p qadam bajaradigani. Bu kirish tanlovi; unga O, Ω yoki Θ bilan chegara qo'yiladi."
-  course: cs50
-  lesson: 16
-- term: best case
-  aliases: [eng yaxshi holat]
-  uz: "n o'lchamli barcha kirishlar orasida algoritm eng kam qadam bajaradigani. Big Omega bilan bir xil narsa emas: eng yaxshi holat ham O bilan baholanishi mumkin."
-  course: cs50
-  lesson: 16
-- term: average case
-  aliases: [o'rtacha holat]
-  uz: "Kirishlarning biror taqsimoti bo'yicha kutilgan qadamlar soni, masalan barcha tartiblar teng ehtimolli deb faraz qilinganda. Faraz doim aytilishi kerak."
-  course: cs50
-  lesson: 16
 - term: space complexity
   aliases: [xotira murakkabligi]
   uz: "Algoritm ishlatadigan qo'shimcha xotiraning kirish o'lchami n ga bog'liqligi, vaqt kabi O, Ω, Θ bilan yoziladi. Kirishning o'zi odatda hisobga olinmaydi."
