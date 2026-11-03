@@ -497,7 +497,8 @@ feathers-2002:
 welc-key-points:
   title: "The key points of Working Effectively with Legacy Code"
   author: Nicolas Carlo
-  kind: article
+  year: 2026
+  kind: web
   url: https://understandlegacycode.com/blog/key-points-of-working-effectively-with-legacy-code/
 wiki-solid:
   title: "SOLID (Wikipedia)"
