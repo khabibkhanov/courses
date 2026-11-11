@@ -5,6 +5,8 @@ title: "Server-side template injection"
 summary: "SSTI: foydalanuvchi kiritishi template manbasiga aylanib, engine tomonidan kod sifatida baholanadi. Dars kiritish template'ga o'tadigan uch yo'lni, escaping nega SSTI'dan himoya qilmasligini, minimal render kontekstini, mantiqsiz engine tanlovini va foydalanuvchi template'lari uchun sandbox chegarasini mini engine'da ko'rsatadi."
 duration: 45
 sources:
+  - id: cs-ssti
+    note: "Server Side Template Injection Prevention Cheat Sheet: ta'rif (CWE-1336), kiritish template kodiga o'tadigan uch yo'l, sintaksisni filtrlamaslik, templateni kod deb qarash, ma'lumotni nomlangan o'zgaruvchi sifatida berish, minimal kontekst, kam kuchli engine, auto-escape SSTI'dan himoya qilmasligi, inventar va qidiruv, engine sozlamalari jadvali (Jinja2, Twig, FreeMarker), foydalanuvchi template'lari bo'limi"
   - id: cs-input
     note: "Input Validation Cheat Sheet: ijobiy validatsiya va ma'lumotni kod sifatida ishlatmaslik g'oyasi (umumiy yo'nalish)"
   - id: t10-a05
@@ -162,7 +164,17 @@ Testlashda (WSTG) maqsad kiritilgan qiymat ma'lumot sifatida emas, template sint
 
 ### Node.js engine'larining xususiyati
 
-EJS va Pug kabi engine'lar template'ni JavaScript kodiga kompilyatsiya qiladi va ifodalar ichida JavaScript ishlaydi; shuning uchun manbaga kiritilgan qiymat to'g'ridan-to'g'ri Node.js jarayonida kod bajarilishiga olib kelishi mumkin. Handlebars va Mustache mantiqini cheklaydi, lekin ro'yxatdan o'tkazilgan helper'lar va `{{{ }}}` (escape'siz chiqarish) tufayli chegarani siz boshqarasiz. Bu qism bu dars yozilganda mahalliy manba korpusidan tekshirilmagan: cheat sheet faqat Jinja2, Twig va FreeMarker uchun konfiguratsiya beradi; Node engine'lari uchun o'z hujjatiga qarang.
+EJS va Pug kabi engine'lar template'ni JavaScript kodiga kompilyatsiya qiladi va ifodalar ichida JavaScript ishlaydi; shuning uchun manbaga kiritilgan qiymat to'g'ridan-to'g'ri Node.js jarayonida kod bajarilishiga olib kelishi mumkin. Handlebars va Mustache mantiqini cheklaydi, lekin ro'yxatdan o'tkazilgan helper'lar va `{{{ }}}` (escape'siz chiqarish) tufayli chegarani siz boshqarasiz. Cheat sheet konfiguratsiya jadvalini faqat Jinja2, Twig va FreeMarker uchun beradi; Node engine'lari uchun mantiq bir xil, jadvaldagi kabi tayyor sozlama yo'q, shuning uchun himoyani kod tuzilishiga tayanib quring.
+
+### Cheat sheet'dagi engine sozlamalari
+
+Cheat sheet foydalanuvchi template yozishi shart bo'lgan holat uchun uchta engine bo'yicha cheklovlar jadvalini beradi va dastlab ogohlantiradi: framework'lar engine default qiymatlarini o'zgartirishi mumkin, shuning uchun ilovangizdagi amaldagi sozlamani tekshiring.
+
+- Jinja2: `SandboxedEnvironment` yoki ro'yxat, to'plam va lug'atni o'zgartirishni ham to'sadigan `ImmutableSandboxedEnvironment`. Atributlarni `is_safe_attribute()` ni qayta yozib yanada cheklash va xavfli metodlarni `unsafe()` bilan belgilash mumkin.
+- Twig: engine template'ni ishonchli kod deb qaraydi, shuning uchun ishonchsiz mualliflar uchun yagona chegara uning sandbox'i. Sandbox uchun alohida environment va tag, filter, funksiya, metod va xossalarni ro'yxat bilan ruxsat beradigan qat'iy `SecurityPolicy` kerak; `Sandbox` klassi Twig 3.29 va undan yangisini talab qiladi; sandbox ichida `template_from_string()` ga hech qachon ruxsat berilmaydi.
+- FreeMarker: yuklangan template'lar bo'yicha FAQ'ga amal qilinadi: `?new` class resolver uchun `SAFER_RESOLVER` emas, `ALLOWS_NOTHING_RESOLVER`; `?api` o'chiq (default); a'zolarga kirish `SimpleObjectWrapper` yoki `WhitelistMemberAccessPolicy` bilan cheklanadi; DOM node wrapping o'chiriladi; faqat tasdiqlangan fayllarni yuklaydigan template loader ishlatiladi.
+
+Bu jadvaldan kelib chiqadigan umumiy xulosa: "sandbox bor" degan gap engine'ni xavfsiz qilmaydi, u aniq sozlangan holatda ishonchsiz muallif uchun yagona to'siq bo'ladi. Cheat sheet sinfni CWE-1336 (template engine uchun maxsus elementlarni noto'g'ri neytrallash) deb tasniflaydi; kursning CWE xaritasi bilan ishlash 7-darsda.
 
 ### Sandbox chegarasi
 
@@ -179,6 +191,10 @@ Cheat sheet tavsiyasi: ilovada template render qilinadigan hamma joyni sanab chi
 ### Qidirish
 
 Kod bazasida "satrdan template" API'larini qidiring (cheat sheet misollar sanaydi: Jinja2'ning `from_string()`, Flask'ning `render_template_string()`, Twig'ning `createTemplate()` va `template_from_string()`, FreeMarker'ning `Template` konstruktori va `?interpret`, `?eval`). Node.js'da shunga o'xshash chaqiruvlar engine'ning `compile` va `render` funksiyalari, ularga satr berilgan joylar. Har chaqiruv uchun tasdiqlang: ishonchsiz ma'lumot faqat render o'zgaruvchilariga tushadi va hech bir template uni satrni kod sifatida baholaydigan xususiyatga uzatmaydi.
+
+### LLM prompt shablonlari va boshqa "ko'rinmas" template'lar
+
+Cheat sheet inventarga LLM uchun prompt shablonlarini ham kiritadi. Sabab shunday: prompt matni foydalanuvchi qiymati bilan yig'ilsa, bu yana "ma'lumot va boshqaruv" chegarasini buzadi, faqat interpreter bu holda til modeli. OWASP Top 10:2025 A05 sahifasi buni alohida eslatib o'tadi: shu turdagi in'ektsiyalar OWASP LLM Top 10 da LLM01:2025 Prompt Injection sifatida alohida ko'riladi. Bu darsning mexanizmi (qiymatni manbadan ajratish) ularga ham mos tushadi, lekin LLM uchun to'liq himoya shu kursdan tashqarida. Xat, SMS, PDF va webhook shablonlari esa tez-tez "template" deb hisoblanmaydi, chunki ular kodda oddiy template literal: `` `Salom, ${name}` `` JavaScript'ning o'zida xavfsiz, chunki natija satr bo'lib qoladi va qayta baholanmaydi. Xavf `new Function`, `eval` yoki engine `compile` ga satr berilganda boshlanadi.
 
 ### SSTI va boshqa injection'larning chegarasi
 
@@ -289,7 +305,7 @@ Nima uchun yetarli: invariant "template manbasi hech qachon kiritishdan yig'ilma
 
 ## Stack'da: Node.js
 
-Node.js loyihada server tomonda template ishlatilganda tekshirish ro'yxati shunday: (1) `compile`, `render` kabi chaqiruvlarni qidiring va ularning birinchi argumenti qat'iy doimiy ekanini tekshiring; (2) `render(req.query.x)` kabi nom bo'yicha tanlashni ro'yxatga bog'lang; (3) kontekstni DTO bilan cheklang. Quyidagi kod ishga tushirilmaydi (engine kutubxonasi brauzer worker'ida mavjud emas), faqat TypeScript sintaksisi tekshirilgan. `handlebars` misolida g'oya ko'rsatilgan; API tafsilotlari uchun kutubxona hujjatiga qarang (bu darsda tekshirilmagan).
+Node.js loyihada server tomonda template ishlatilganda tekshirish ro'yxati shunday: (1) `compile`, `render` kabi chaqiruvlarni qidiring va ularning birinchi argumenti qat'iy doimiy ekanini tekshiring; (2) `render(req.query.x)` kabi nom bo'yicha tanlashni ro'yxatga bog'lang; (3) kontekstni DTO bilan cheklang. Quyidagi kod ishga tushirilmaydi (engine kutubxonasi brauzer worker'ida mavjud emas), faqat TypeScript sintaksisi tekshirilgan. `handlebars` misolida g'oya ko'rsatilgan: shablonlar ishga tushishda bir marta kompilyatsiya qilinadi, `strict: true` esa kontekstda yo'q maydonga murojaatni jim bo'sh qoldirish o'rniga xato qiladi.
 
 ```ts
 import Handlebars from "handlebars";

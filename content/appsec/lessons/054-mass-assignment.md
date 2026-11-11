@@ -6,9 +6,17 @@ summary: "Mijoz tanasini to'g'ridan-to'g'ri obyektga bog'lash (mass assignment) 
 duration: 45
 sources:
   - id: api-top10
-    note: "API3:2023 Broken Object Property Level Authorization: 2019 yilgi Excessive Data Exposure va Mass Assignment birlashgani, 'Is the API Vulnerable' va 'How To Prevent' bo'limlari, uchta stsenariy"
+    note: "API3:2023 Broken Object Property Level Authorization: tahdid sxemasi (Exploitability Easy, Prevalence Common, Detectability Easy), 'Is the API Vulnerable' va 'How To Prevent' bo'limlari, uchta stsenariy. 2019 yilgi API3 Excessive Data Exposure va API6 Mass Assignment birlashgani 2023 release notes sahifasida yozilgan"
   - id: t10-a01
     note: "A01:2025 Broken Access Control: elevation of privilege va metadata manipulation bandlari; model darajasida yozuv egaligini majburlash tavsiyasi"
+  - id: cs-mass-assignment
+    note: "Mass Assignment Cheat Sheet: ta'rif va muqobil nomlar (Mass Assignment, Autobinding, Object injection), exploitability, 2012 yilgi GitHub hodisasi, DTO va allowlist yechimi, denylist yagona himoya bo'lmasligi, DTO/allowlist authorization o'rnini bosmasligi"
+  - id: asvs
+    note: "ASVS 5.0.0 V8: 8.2.3 (maydon darajasidagi kirish aniq ruxsati bor iste'molchilarga, BOPLA'ni yopish uchun, 2-daraja); 8.1.2 (maydon darajasidagi o'qish va yozish qoidalari hujjatlashtiriladi, obyekt holatiga bog'liq bo'lishi mumkin)"
+  - id: nextjs-data-security
+    note: "Next.js data security: Data Access Layer xavfsiz minimal DTO qaytaradi (telefon raqami misoli), Server Action to'g'ridan-to'g'ri POST bilan chaqirilishi mumkin, Server Action qaytarish qiymati faqat UI'ga kerakli narsa bo'lishi"
+  - id: nestjs-validation
+    note: "NestJS Validation: ValidationPipe whitelist (noma'lum xossalarni olib tashlaydi) va forbidNonWhitelisted (xato bilan rad etadi)"
   - id: cs-input
     note: "Input Validation Cheat Sheet: objects uchun ruxsat etilgan va majburiy maydonlar qoidasi, JSON schema'da additional properties'ni aniq sozlash, 'bind only intended input', authorization alohida tekshirilishi"
 quiz:
@@ -27,7 +35,7 @@ quiz:
       - "Ikkalasi ham faqat parollarga oid"
       - "Ikkalasining ildizi bitta: obyekt xossasi darajasida authorization yo'q yoki noto'g'ri, bu ma'lumot sizishi yoki ruxsatsiz o'zgartirishga olib keladi"
     answer: 3
-    explain: "Sahifa kategoriya 2019 yilgi Excessive Data Exposure va Mass Assignment'ni birlashtirishini va asosiy sabab sifatida xossa darajasidagi authorization yo'qligini ko'rsatadi. Qolgan variantlar sahifada yo'q."
+    explain: "API Security Top 10 2023 release notes kategoriya 2019 yilgi Excessive Data Exposure va Mass Assignment'ni birlashtirishini va asosiy sabab sifatida xossa darajasidagi authorization yo'qligini ko'rsatadi. Qolgan variantlar manbada yo'q."
   - q: "Quyidagi DTO yondashuvlaridan qaysi biri mass assignment'ni to'g'ri to'sadi?"
     options:
       - "Mijoz yuborgan hamma maydonni qabul qilib, so'ng `tenantId`ni qo'lda o'chirish (denylist)"
@@ -150,7 +158,7 @@ Hammasi ishlaydi. Lekin `vehicle` obyektida formada ko'rinmaydigan maydonlar ham
 
 Teskari tomoni: javob. `res.json(vehicle)` ham butun obyektni, jumladan qurilma kalitini, ichki tannarxni va audit maydonlarini mijozga yuboradi. Frontend ularni ko'rsatmaydi, lekin ular tarmoq javobida turibdi.
 
-API Security Top 10 (2023) bu ikki muammoni bitta kategoriyaga birlashtirgan: API3:2023 Broken Object Property Level Authorization. Sahifa kategoriya 2019 yilgi API3 Excessive Data Exposure va API6 Mass Assignment'ni birlashtirishini va asosiy sababga qaratilganini aytadi: obyekt xossasi darajasida authorization tekshiruvi yo'q yoki noto'g'ri. Oqibat: ma'lumotning ruxsatsiz shaxsga oshkor bo'lishi yoki o'zgartirilishi.
+API Security Top 10 (2023) bu ikki muammoni bitta kategoriyaga birlashtirgan: API3:2023 Broken Object Property Level Authorization. API Security Top 10 2023 release notes sahifasi kategoriya 2019 yilgi API3 Excessive Data Exposure va API6 Mass Assignment'ni birlashtirishini va asosiy sababga qaratilganini aytadi: obyekt xossasi darajasida authorization tekshiruvi yo'q yoki noto'g'ri. Oqibat: ma'lumotning ruxsatsiz shaxsga oshkor bo'lishi yoki o'zgartirilishi. ASVS 5.0.0 da bu 8.2.3 talabi (2-daraja): maydon darajasidagi kirish faqat aniq ruxsati bor iste'molchilarga cheklanadi. 8.1.2 esa bu qoidalar hujjatlashtirilishini talab qiladi va ular obyektning boshqa atributlariga, masalan holat yoki status'ga bog'liq bo'lishi mumkinligini eslatadi: tasdiqlangan buyurtmada `price` o'zgarmaydi, draft'da o'zgaradi.
 
 52-darsda "bu obyekt sizniki" degan savol edi, 53-darsda "bu funksiyani chaqira olasizmi". Bu darsda uchinchi savol: "bu obyektning aynan shu xossasini o'qish yoki o'zgartirish huquqingiz bormi". Uchalasi mustaqil va uchalasi ham kerak.
 
@@ -172,15 +180,23 @@ Sahifaning "How To Prevent" bo'limi to'rt amaliy qoida beradi:
 
 Input Validation Cheat Sheet ham shu yo'nalishda: obyektlar uchun ruxsat etilgan va majburiy maydonlar, shuningdek yo'q yoki `null` qiymatlar qoidalari belgilanadi, "faqat mo'ljallangan kirishni bog'lang" (bind only intended input) degan tamoyil beriladi. Cheat sheet authorization'ni validatsiyadan alohida ko'radi: yaroqli akkaunt identifikatori chaqiruvchining u akkauntga kirishga haqli ekanini bildirmaydi.
 
+### API3 tahdid sxemasi va Mass Assignment Cheat Sheet
+
+API3 sahifasi baholari: exploitability Easy, prevalence Common, detectability Easy, texnik oqibat Moderate. Sahifaga ko'ra API'lar odatda obyektning hamma xossasini qaytaradigan endpoint'larni ochadi, REST'da bu ayniqsa to'g'ri; GraphQL kabi protokollarda esa qaytariladigan xossalarni so'rovda ko'rsatish kerak, shuning uchun maxsus tayyorlangan so'rov talab qilinishi mumkin. Sezgir ma'lumotni topish uchun javoblarni ko'rib chiqish yetarli. Yashirin (hujjatlashtirilmagan) xossalarni topish uchun fuzzing ishlatiladi; xossa o'zgartirilishi mumkinmi, bu so'rov tuzib javobni tahlil qilish masalasi, javobda ko'rinmagan xossa uchun esa yon ta'sir (side-effect) tahlili kerak bo'lishi mumkin. Oqibat: ma'lumot oshkor bo'lishi, yo'qolishi yoki buzilishi, ba'zi hollarda privilege escalation yoki akkauntni to'liq egallash.
+
+Mass Assignment Cheat Sheet bu zaiflikni umumiy tilda ta'riflaydi: freymvork HTTP so'rov parametrlarini dastur o'zgaruvchilari yoki obyektlariga avtomatik bog'lashi mumkin; hujumchi dasturchi mo'ljallamagan yangi parametr yaratib, kodda mo'ljallanmagan o'zgaruvchi yoki obyektni yaratadi yoki ustidan yozadi. Muqobil nomlar: Mass Assignment (Ruby on Rails, NodeJS), Autobinding (Spring MVC, ASP.NET MVC), Object injection (PHP). Cheat sheet'dagi klassik misol: ro'yxatdan o'tish formasi `userid`, `password`, `email` yuboradi, tanaga `isAdmin=true` qo'shilsa va model shu maydonni bog'lasa, hujumchi admin bo'ladi. Real hodisa ham keltirilgan: 2012 yilda GitHub mass assignment orqali buzilgan, foydalanuvchi o'zining public key'ini istalgan tashkilotga yuklay olgan va keyin shu tashkilot repozitoriylarini o'zgartirgan.
+
+Cheat sheet'dagi muhim aniqlashlar: (1) hujumchiga manba kodiga kirish shart emas, maydon nomlari taxmin qilinishi yoki topilishi mumkin; (2) bo'sh konstruktor umumiy shart emas, shuning uchun "bizda setter yo'q" degan fikr ishonchli emas; ichki (nested) obyektlar ham ko'rib chiqilishi kerak; (3) DTO va allowlist yozilishi mumkin bo'lgan xossalarni cheklaydi, lekin so'ralayotgan obyekt va amal uchun authorization o'rnini bosmaydi. Uchinchi band 52-53-darslar bilan bog'laydi: allowlist ichidagi maydon ham begona obyektga yozilishi mumkin.
+
 ## Chuqurroq: allowlist, ko'p qatlam va nozik joylar
 
 ### Denylist ishlamaydi
 
-Birinchi o'ylanadigan yechim: "tenantId, plan, blocked maydonlarni o'chiramiz". Bu denylist. Muammo: ro'yxat bugungi maydonlar uchun yoziladi. Ertaga jamoa `billingStatus` yoki `isVerified` qo'shadi, denylistni yangilashni unutadi va zaiflik tayyor. Allowlist teskari ishlaydi: yozish mumkin bo'lgan maydonlar sanab chiqiladi, qolgani rad etiladi. Cheat sheet ham umumiy qoidada buni aytadi: qabul qilinadigan narsani belgilang va undan tashqarini rad eting, har xavfli qiymatni tanishga urinmang.
+Birinchi o'ylanadigan yechim: "tenantId, plan, blocked maydonlarni o'chiramiz". Bu denylist. Muammo: ro'yxat bugungi maydonlar uchun yoziladi. Ertaga jamoa `billingStatus` yoki `isVerified` qo'shadi, denylistni yangilashni unutadi va zaiflik tayyor. Allowlist teskari ishlaydi: yozish mumkin bo'lgan maydonlar sanab chiqiladi, qolgani rad etiladi. Input Validation Cheat Sheet umumiy qoidada buni aytadi: ilova qabul qiladigan narsani belgilang va qoidadan tashqarini rad eting, har xavfli qiymatni tanishga urinmang. Mass Assignment Cheat Sheet esa aniqroq: block-list yagona himoya bo'lmasin, chunki yangi yoki e'tibordan chetda qolgan sezgir maydon bog'lanadigan bo'lib qoladi. Cheat sheet'ning o'zida block-list misollari (`setDisallowedFields`, `protect: true`) bor, lekin ular mavjud ilovalarda uchraydigan mexanizmni ko'rsatish uchun, tavsiya etilgan dizayn sifatida emas. Allowlist misoli esa Node.js uchun: `_.pick(req.body, safeFields)`.
 
 ### Schema bor, lekin noma'lum maydonlar o'tib ketadi
 
-JSON Schema yoki class-validator ishlatish yetarli emas. Cheat sheet ogohlantiradi: JSON uchun majburiy va qo'shimcha xossalarni aniq sozlash kerak, chunki xossani ro'yxatga yozishning o'zi uni majburiy ham qilmaydi, noma'lum maydonlarni rad ham etmaydi. NestJS'da `ValidationPipe` `whitelist: true` (noma'lum maydonlarni o'chiradi) va `forbidNonWhitelisted: true` (xato beradi) bilan sozlanadi. Sozlanmagan pipe esa DTO bor ko'rinishida hammasini o'tkazib yuboradi. Muallifning tavsiyasi: yozishda jimgina o'chirish emas, rad etishni afzal ko'ring, chunki jimgina o'chirish hujum urinishini yashiradi va mijoz dasturidagi xatoni ko'rsatmaydi.
+JSON Schema yoki class-validator ishlatish yetarli emas. Cheat sheet ogohlantiradi: JSON uchun majburiy va qo'shimcha xossalarni aniq sozlash kerak, chunki xossani ro'yxatga yozishning o'zi uni majburiy ham qilmaydi, noma'lum maydonlarni rad ham etmaydi. NestJS'da `ValidationPipe` `whitelist: true` (noma'lum maydonlarni o'chiradi) va `forbidNonWhitelisted: true` (xato beradi) bilan sozlanadi. Sozlanmagan pipe esa DTO bor ko'rinishida hammasini o'tkazib yuboradi. NestJS hujjatiga ko'ra `whitelist: true` DTO'da dekorator bilan belgilanmagan xossalarni validatsiya qilingan obyektdan olib tashlaydi, `forbidNonWhitelisted: true` qo'shilsa esa so'rov xato javobi bilan rad etiladi. Input Validation Cheat Sheet ham noto'g'ri so'rovni aniq xato bilan rad etishni, qisman validatsiya qilingan ma'lumot bilan davom etmaslikni va faqat mo'ljallangan maydonlarni obyektga bog'lashni aytadi. Shu sababli bu darsdagi tavsiya: yozishda jimgina o'chirish emas, rad etishni afzal ko'ring, chunki jimgina o'chirish hujum urinishini yashiradi va mijoz dasturidagi xatoni ko'rsatmaydi.
 
 ### Rolga bog'liq maydonlar
 
@@ -376,7 +392,7 @@ export class VehiclesController {
 }
 ```
 
-`data` ga dto maydonlari aniq yozilgan, `...dto` ham emas: DTO kelajakda kengaytirilsa ham Prisma'ga yozish ro'yxati ongli o'zgartiriladi. Next.js server action'larida ham xuddi shu: `formData` dan maydonlarni qo'lda o'qing, `Object.fromEntries(formData)` ni to'g'ridan-to'g'ri `update` ga bermang.
+`data` ga dto maydonlari aniq yozilgan, `...dto` ham emas: DTO kelajakda kengaytirilsa ham Prisma'ga yozish ro'yxati ongli o'zgartiriladi. Next.js server action'larida ham xuddi shu: `formData` dan maydonlarni qo'lda o'qing (`data.get('name')`), `Object.fromEntries(formData)` ni to'g'ridan-to'g'ri `update` ga bermang. Next.js hujjati yana ikki narsani aytadi: eksport qilingan Server Action to'g'ridan-to'g'ri POST so'rovi bilan ham chaqirilishi mumkin, shuning uchun har action ichida autentifikatsiya va authorization tekshiriladi; va action qaytarish qiymati serializatsiya qilinib mijozga ketadi, shuning uchun u xom ma'lumotlar bazasi yozuvini emas, faqat UI'ga kerakli narsani (`{ success: true }`) qaytarishi kerak. Bu o'qish tomonidagi excessive data exposure'ning aynan o'zi.
 
 ## Xulosa
 

@@ -6,9 +6,9 @@ summary: "Public-key credential va uning relying party'ga bog'lanishi, registrat
 duration: 50
 sources:
   - id: webauthn
-    note: "Abstract va 1.2 bo'limi: relying party'ga bog'langan (scoped) public key credential'lar; multi-device (sinxronlanadigan) credential'lar va phishing-resistant kirish; Authenticator Data tuzilishi (rpIdHash 32 bayt, flags: UP va UV); Verifying an Authentication Assertion tartibi; 6.1.1 Signature Counter Considerations (authenticator'lar hisoblagichni amalga oshirishi SHOULD); challenge kamida 16 bayt (SHOULD); userVerification standart qiymati preferred"
+    note: "Level 3: Abstract va relying party'ga bog'langan public key credential'lar; Authenticator Data tuzilishi (rpIdHash, flags UP/UV/BE/BS, signCount); 6.1.1 Signature Counter Considerations (per-credential hisoblagich SHOULD, mos kelmaslik klonlash yoki race signali, javob RP ixtiyorida); 6.1.3 Credential Backup State (BE/BS kombinatsiyalari); 7.2 Verifying an Authentication Assertion qadamlari; 13.4.3 Cryptographic Challenges (RP yaratadi, MUST match, kamida 16 bayt SHOULD); userVerification standart qiymati preferred"
   - id: nist-63-4
-    note: "AAL2: ikki faktor va phishing-resistant variantni taklif qilish; AAL3: kriptografik protokol, eksport qilinmaydigan maxfiy kalit va phishing resistance; phishing resistance ta'rifi (sirlarni va yaroqli authenticator chiqishlarini soxta tekshiruvchiga oshkor qilmaslik)"
+    note: "AAL2: ikki faktor va phishing-resistant variantni taklif qilish; AAL3: eksport qilinmaydigan maxfiy kalit va phishing resistance; phishing resistance ta'rifi; Appendix B: sinxronlanadigan authenticator'lar AAL2 da talablar bilan mumkin, AAL3 da taqiqlangan, sinxronlash tizimi AAL2 ga teng MFA bilan himoyalanishi"
   - id: t10-a07
     note: "OWASP Top 10:2025 A07 Authentication Failures: samarasiz MFA va kuchsiz zaxira yo'llar zaiflik sifatida"
 quiz:
@@ -52,14 +52,6 @@ quiz:
       - "Hech qanday muammo yo'q"
     answer: 1
     explain: "Tizimning ishonchi eng zaif kirish yo'li bilan belgilanadi (41-dars). Phishing-resistant authenticator tiklash zaif bo'lsa foydasiz; yangi authenticator qo'shish ham yuqori xavfli harakat bo'lib qayta autentifikatsiya va bildirishnoma talab qiladi (50-dars)."
-  - q: "NIST SP 800-63-4 AAL3 uchun eksport qilib bo'lmaydigan maxfiy kalitli kriptografik authenticator talab qiladi. Bu haqda passkey tanlashda nima deyish to'g'ri?"
-    options:
-      - "Har qanday passkey AAL3'ni qondiradi"
-      - "Passkey AAL darajasiga umuman bog'liq emas"
-      - "AAL3 faqat parol bilan erishiladi"
-      - "AAL3 maqsad qilingan bo'lsa, kalit eksport qilinmaydigan, qurilmaga bog'liq authenticator bo'lishi kerak; buluta nusxalanadigan (sinxronlanadigan) credential'lar uchun bu shartni alohida baholash kerak"
-    answer: 3
-    explain: "Standart AAL3 da eksport qilinmaydigan kalit va phishing resistance talab qiladi. Sinxronlanadigan passkey qulay va AAL2 maqsadlari uchun kuchli, lekin kalit qurilmadan tashqariga nusxalanishi AAL3 sharti bilan qanday muvofiqligini xavf baholash bilan hal qilish kerak (bu muallifning xulosasi)."
   - q: "Passkey ro'yxatdan o'tkazishda `userVerification` ni 'discouraged' qoldirdingiz va server UV flagini tekshirmaydi. Admin amalini faqat shu passkey tasdiqlaydi. Nima yetishmayapti?"
     options:
       - "Hech narsa: kalitga egalik yetarli"
@@ -78,7 +70,7 @@ task:
     - `clientData.origin` aniq `EXPECTED_ORIGIN` ga teng bo'lsin;
     - `clientData.challenge` server bergan va hali ishlatilmagan challenge bo'lsin; muvaffaqiyatli tekshiruvdan keyin u o'chirilsin (qayta ishlatib bo'lmasin);
     - `rpIdHashOk` bo'lsin, `flags.up` va `flags.uv` ikkalasi `true` bo'lsin;
-    - `counter` agar nolga teng bo'lmasa, saqlangan qiymatdan qat'iy katta bo'lsin va muvaffaqiyatdan keyin saqlansin (nol qiymat counter qo'llanmaganini bildiradi, tekshirilmaydi).
+    - `counter`: agar yangi yoki saqlangan qiymatdan kamida biri nolga teng bo'lmasa, yangi qiymat saqlanganidan qat'iy katta bo'lsin va muvaffaqiyatdan keyin saqlansin (ikkalasi ham nol bo'lsa authenticator hisoblagichni qo'llamaydi, tekshirilmaydi).
 
     Imzolarni o'zgartirmang. Kutilgan chiqish: `true`, `false`, `false`, `false`, `false`.
   lang: ts
@@ -131,9 +123,9 @@ task:
       if (!state.challenges.has(c.challenge)) return false;
       if (!a.rpIdHashOk || !a.flags.up || !a.flags.uv) return false;
       const last = state.counters.get(a.credentialId) ?? 0;
-      if (a.counter !== 0 && a.counter <= last) return false;
+      if ((a.counter !== 0 || last !== 0) && a.counter <= last) return false;
       state.challenges.delete(c.challenge);
-      if (a.counter !== 0) state.counters.set(a.credentialId, a.counter);
+      state.counters.set(a.credentialId, a.counter);
       return true;
     }
 
@@ -156,12 +148,12 @@ task:
     - Challenge `Set` dan topiladi va faqat hamma shart bajarilgandan keyin o'chiriladi. Shu sababli bir assertion ikkinchi marta o'tmaydi (uchinchi chiqish `false`: `c1` ishlatilgan).
     - Muvaffaqiyatsiz urinish challenge'ni sarflamaydi. Haqiqiy tizimda challenge'ga muddat ham qo'ying (masalan, bir necha daqiqa; bu qiymat sizning tanlovingiz) va uni sessiyaga bog'lang.
     - UV flagi tekshiriladi: lokal tasdiqlanmagan assertion nozik amal uchun yetarli emas.
-    - Counter nol bo'lsa tekshirilmaydi, chunki ba'zi authenticator'lar hisoblagichni qo'llamaydi. Bu klonlashga qarshi signal, to'liq himoya emas. Imzoning o'zi, credential egaligi va akkauntga bog'lash bu funksiyada tekshirilmaydi.
+    - Counter faqat ikkala qiymat ham nol bo'lsa tekshirilmaydi (ba'zi authenticator'lar hisoblagichni qo'llamaydi). Saqlangan qiymat noldan katta bo'lib, yangisi nol kelsa, bu ham rad etiladi, chunki W3C tartibida ikki qiymatdan biri nolga teng bo'lmasa solishtiriladi. Spetsifikatsiya mos kelmaslikni klonlash, noto'g'ri ishlash yoki race condition signali deb ataydi va javobni relying party'ning xavf bahosiga qoldiradi; bu to'liq himoya emas. Imzoning o'zi, credential egaligi va akkauntga bog'lash bu funksiyada tekshirilmaydi.
   checklist:
     - "Origin aniq tenglik bilan tekshiriladi"
     - "Challenge bir marta ishlatiladi va o'chiriladi"
     - "UP va UV flaglari talab qilinadi"
-    - "Counter nol bo'lmasa o'sishi shart"
+    - "Counter (ikkalasi nol bo'lmasa) o'sishi shart"
     - "Muvaffaqiyatsiz tekshiruv holatni o'zgartirmaydi"
 ---
 
@@ -202,11 +194,15 @@ W3C "Verifying an Authentication Assertion" tartibi relying party uchun ketma-ke
 
 1. `clientDataJSON.type` `webauthn.get`, `challenge` server bergan qiymat, `origin` relying party kutgan origin.
 2. `authData` ichidagi `rpIdHash` kutilgan RP ID'ning SHA-256'iga teng.
-3. UP flagi o'rnatilgan (shartli mediation holatidan tashqari), kerak bo'lsa UV flagi ham.
+3. UP flagi o'rnatilgan; UV flagi esa faqat `userVerification` `required` bo'lganda majburiy tekshiriladi (shuning uchun nozik rol uchun `required` so'rab, serverda ham flagni tekshirish kerak).
 4. Imzo ochiq kalit bilan authenticator data va clientDataJSON hash'i birlashmasi ustida tekshiriladi.
 5. Signature counter tekshiruvi (agar qo'llansa).
 
-Challenge uchun spetsifikatsiya replay'ni to'sish uchun yetarli entropiya talab qiladi va kamida 16 bayt uzunlikni tavsiya qiladi (SHOULD). Challenge sessiyaga bog'lanadi va bir marta ishlatiladi.
+W3C tartibi (Level 3, 7.2) shundan tashqari yana bir necha qadamni nomlaydi. `origin` "relying party kutgan origin" bo'lishi kerak, shuningdek `crossOrigin` va `topOrigin` maydonlari mavjud bo'lsa ularni ham tekshirish kerak: assertion iframe ichidan olingan bo'lsa, tepadagi sahifa kutilgan sahifa ekanini bilmasdan qabul qilmang. Backup flag'lar (BE va BS) uchun qoida: BE o'rnatilmagan bo'lsa BS ham o'rnatilmagan bo'lishi kerak, so'ng joriy qiymatlar saqlangan `backupEligible` bilan solishtiriladi. Imzo tekshirilgach holat yangilanadi: saqlangan `signCount` assertion'dagi qiymatga, `backupState` joriy qiymatga o'zgartiriladi. Tartib muhim: holat faqat imzo tasdiqlangandan keyin yoziladi, aks holda hujumchi tasdiqlanmagan so'rov bilan hisoblagichni oldinga surib, haqiqiy foydalanuvchini kirishdan to'sishi mumkin.
+
+### Challenge: yaratish, saqlash va muddat
+
+Spetsifikatsiyaning xavfsizlik bo'limi (13.4.3) challenge haqida bir nechta alohida gap aytadi. Challenge relying party tomonidan, u ishonadigan muhitda (server tomonda) tasodifiy yaratilishi shart (MUST); mijoz yaratgan challenge qabul qilinmaydi. Qaytgan challenge yaratilgan qiymatga mos kelishi shart. Relying party mijozning xatti-harakatiga tayanmasdan, challenge'ni operatsiya tugaguncha vaqtincha saqlashi kerak (SHOULD). Challenge'ning amal qilish muddati tavsiya etilgan ceremony timeout chegarasiga yaqin bo'lishi kerak (SHOULD), ya'ni "abadiy yaroqli challenge" yo'q. Entropiya taxmin qilishni imkonsiz qiladigan darajada bo'lishi shart (MUST), kamida 16 bayt uzunlik esa tavsiya (SHOULD). 16 bayt bu 128 bit; biz 32 baytdan (256 bit) foydalanamiz, chunki farq deyarli narxsiz (tasodifiy qiymat generatsiyasi haqida 67-dars). Challenge sessiyaga bog'lanadi va bir marta ishlatiladi; ikkala talab ham amalda atomik "o'qib o'chirish" operatsiyasini bildiradi.
 
 ### Aniq origin tekshiruvi
 
@@ -214,9 +210,9 @@ RP ID domen bo'lgani uchun uning har subdomenidagi sahifa ham brauzerdan asserti
 
 ### Signature counter va sinxronlanadigan passkey
 
-Authenticator'lar signature counter amalga oshirishi tavsiya etiladi (SHOULD): har muvaffaqiyatli assertion'da qiymat oshadi. Server saqlangan qiymatdan kichik yoki teng qiymatni ko'rsa, kalit nusxalangan bo'lishi mumkin. Lekin hisoblagich majburiy emas: qo'llamaydigan authenticator doim nol qaytaradi, shunda tekshiruv ma'noga ega emas.
+Authenticator'lar har credential uchun alohida signature counter amalga oshirishi tavsiya etiladi (SHOULD) va hisoblagich tasodifan kamayib ketmasligini ta'minlashi kerak (SHOULD). Umumiy (global) hisoblagich ham mumkin (MAY), lekin u privacy nuqtai nazaridan noqulay: bir nechta credential'ni bir-biriga bog'lab kuzatishga imkon beradi. Server tomonida qoida: saqlangan yoki yangi qiymatdan biri nolga teng bo'lmasa solishtiriladi; yangisi saqlanganidan katta bo'lsa hisoblagich yaroqli, kichik yoki teng bo'lsa kalit nusxalangan bo'lishi mumkin. Spetsifikatsiya muhim cheklovni ham yozadi: mos kelmaslik klonlangan, noto'g'ri ishlayotgan authenticator yoki parallel so'rovlar (race condition) natijasi bo'lishi mumkin va u klon ham, asl nusxa ham ishlatilganini bildirmaydi. Shuning uchun javob (kirishni rad etish, qo'shimcha faktor so'rash, faqat log'ga yozish) relying party'ning xavfga chidamliligiga qoldirilgan. Hisoblagich majburiy emas: qo'llamaydigan authenticator doim nol qaytaradi, shunda tekshiruv ma'noga ega emas. Sinxronlanadigan passkey'larda hisoblagich ko'pincha nol bo'lishi kutiladi, chunki bir nechta qurilma bir hisoblagichni ulashmaydi (bu qism muallifning xulosasi, spetsifikatsiya matnidan tekshirilmagan).
 
-Spetsifikatsiya multi-device credential'larni (sinxronlanadigan passkey) tasvirlaydi: kalit foydalanuvchining bir nechta qurilmasi orasida tiklanadi va telefon yo'qolsa ham kirish saqlanadi. Bu qulaylik, lekin kalit endi bitta qurilmaga bog'langan emas. Spetsifikatsiya authenticator data ichida credential'ning zaxiraga olinishi holatini bildiruvchi flag'lar ham bo'lishini nazarda tutadi (6.1.3 Credential Backup State), shuning uchun server bunday credential'larni ajrata oladi. NIST AAL3 uchun eksport qilib bo'lmaydigan maxfiy kalit talab qiladi, shuning uchun AAL3 maqsad qilinganda qurilmaga bog'liq kalit mantiqiy tanlov; sinxronlanadigan credential bilan muvofiqlikni xavf baholash bilan hal qilish kerak (bu muallifning xulosasi).
+Spetsifikatsiya multi-device credential'larni (sinxronlanadigan passkey) tasvirlaydi: kalit foydalanuvchining bir nechta qurilmasi orasida tiklanadi va telefon yo'qolsa ham kirish saqlanadi. Bu qulaylik, lekin kalit endi bitta qurilmaga bog'langan emas. Spetsifikatsiya authenticator data ichida credential'ning zaxiraga olinishi holatini bildiruvchi ikki flag'ni belgilaydi (6.1.3 Credential Backup State): BE (backup eligible), ro'yxatdan o'tkazishda o'rnatiladi va keyin o'zgarmaydi, hamda BS (backup state), vaqt o'tishi bilan o'zgarishi mumkin. Kombinatsiyalar: BE=0, BS=0 bitta qurilmaga bog'langan credential; BE=1, BS=0 ko'p qurilmali, lekin hozir zaxiralanmagan; BE=1, BS=1 ko'p qurilmali va zaxiralangan; BE=0, BS=1 yaroqsiz kombinatsiya. Relying party eng so'nggi flag qiymatlarini saqlashi tavsiya etiladi. Spetsifikatsiya misol sifatida quyidagilarni keltiradi: BE=0 bo'lsa qo'shimcha authenticator talab qilish; BS 0 dan 1 ga o'tsa parolsiz kirishni taklif qilish; BS 1 dan 0 ga o'tsa foydalanuvchini boshqa faktorlarini tasdiqlashga yo'naltirish (SHOULD). Shu orqali server qaysi credential'lar qurilmadan tashqariga nusxalanishi mumkinligini biladi. NIST SP 800-63B-4 ilovasi (Appendix B) bu masalani aniq hal qiladi: sinxronlash kalitning eksport qilinishini bildiradi, shuning uchun sinxronlanadigan authenticator'lar AAL3 da ishlatilmaydi, AAL2 da esa qo'shimcha talablar bajarilganda qo'llanishi mumkin. Talablarning bir qismi: sinxronlash tizimidagi kalitlarga faqat autentifikatsiya qilingan foydalanuvchi kira olishi va bu kirish AAL2 ga teng MFA bilan himoyalanishi, tiklash jarayoni SP 800-63B bilan mos bo'lishi, yangi authenticator qo'shish AAL2 autentifikatsiyasini talab qilishi, foydalanuvchiga tiklash harakatlari haqida xabar berilishi. AAL3 maqsad qilinsa, qurilmaga bog'liq, kalit eksport qilinmaydigan authenticator tanlanadi. Authentication Cheat Sheet qo'shimcha ogohlantirish beradi: ko'p passkey kalitlari operatsion tizimning xavfsiz kalit menejerida (TPM, Secure Enclave, Android Keystore/StrongBox) saqlanadi, lekin ba'zi authenticator'lar sinxronlash yoki zaxira orqali eksportni qo'llaydi va hamma realizatsiya hardware-backed emas, shuning uchun hardware-backed va eksport qilinmasligini attestatsiya yoki authenticator xossalari orqali tasdiqlamasdan faraz qilmang.
 
 ### Registratsiya parametrlari
 
@@ -236,7 +232,7 @@ const credential = await navigator.credentials.create({
 });
 ```
 
-`userVerification` standart qiymati `preferred`. Nozik rollar (admin) uchun `required` qo'yib, serverda UV flagini ham tekshirish kerak. `residentKey: "required"` parolsiz, foydalanuvchi nomini kiritmasdan kirish (discoverable credential) imkonini beradi.
+`userVerification` standart qiymati `preferred` (spetsifikatsiya namunasidagi izoh: iloji bo'lsa UV ishlatiladi). Bu "agar mumkin bo'lsa" degani: authenticator UV'siz ham assertion qaytarishi mumkin, server esa UV flagini faqat `required` so'ralganda majburiy tekshiradi. Multifactor Authentication Cheat Sheet passkey'ni MFA sifatida ishlatganda user verification'ni talab qilib, qaytgan flagni serverda tekshirishni aytadi va aniq yozadi: faqat tugmani bosish (user presence) ikkinchi faktor emas. Nozik rollar (admin) uchun `required` qo'yib, serverda UV flagini ham tekshirish kerak. `residentKey: "required"` parolsiz, foydalanuvchi nomini kiritmasdan kirish (discoverable credential) imkonini beradi.
 
 ## Misol: assertion tekshiruvi
 
@@ -357,12 +353,12 @@ async function verifyStrong(a: Assertion): Promise<boolean> {
   const flags = a.authData[32];
   if (!(flags & 0x01) || !(flags & 0x04)) return false; // UP va UV
   const ctr = new DataView(a.authData.buffer, a.authData.byteOffset + 33, 4).getUint32(0);
-  if (ctr !== 0 && ctr <= lastCounter) return false;
+  if ((ctr !== 0 || lastCounter !== 0) && ctr <= lastCounter) return false;
   const signed = cat(a.authData, await sha256(enc.encode(a.clientDataJSON)));
   const ok = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, keys.publicKey, a.signature, signed);
   if (!ok) return false;
   pending.delete(c.challenge); // bir martalik
-  if (ctr !== 0) lastCounter = ctr;
+  lastCounter = ctr;
   return true;
 }
 

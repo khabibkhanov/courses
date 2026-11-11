@@ -11,8 +11,14 @@ sources:
     note: "Authentication Cheat Sheet: umumiy autentifikatsiya tamoyillari; WebSocket cheat sheet autentifikatsiya va sessiya uchun shu cheat sheet'larga havola beradi"
   - id: api-top10
     note: "API4:2023 (cheklanmagan resurs sarfi) va API1/API5 (obyekt va funksiya darajasidagi avtorizatsiya): WebSocket kanallariga ham qo'llanadi"
+  - id: nestjs-gateways
+    note: "NestJS Gateways: handleConnection() to'siq emas, Nest uning async tugashini kutmaydi; xabarlargacha rad etish uchun socket.io'da server.use(), WsAdapter bilan @WebSocketGateway() opsiyalaridagi verifyClient; @WebSocketGateway ikkinchi argumenti server opsiyalarini uzatadi"
+  - id: nestjs-ws-guards
+    note: "NestJS WebSockets Guards: HTTP guard'lardan farqi faqat WsException; guard false qaytarsa 'Forbidden resource'; global guard'lar (useGlobalGuards, APP_GUARD) gateway'larga ham qo'llanadi"
+  - id: nestjs-ws-filters
+    note: "NestJS WebSockets Exception filters: global filter'lar (useGlobalFilters, APP_FILTER) gateway'larga qo'llanmaydi, @UseFilters() gateway yoki metod darajasida"
   - id: whatwg-html
-    note: "WebSocket interfeysi shu spetsifikatsiyaga kiradi; bu dars aniq da'volarni WebSocket Security Cheat Sheet'ga tayanib beradi, WHATWG matni bu darsda o'qilmagan"
+    note: "Brauzerdagi WebSocket API shu spetsifikatsiyaning bir qismi; dars xavfsizlik qoidalarini spetsifikatsiyadan emas, WebSocket Security Cheat Sheet va NestJS hujjatiga tayanib beradi"
 quiz:
   - q: "Foydalanuvchi ilovaga kirgan (session cookie bor). U boshqa saytni ochdi va u sayt `new WebSocket('wss://app.fleet.example/live')` ni ishga tushirdi. Server faqat cookie'ni tekshiradi. Nima bo'ladi?"
     options:
@@ -34,10 +40,10 @@ quiz:
     options:
       - "Eng yaxshi usul, chunki oddiy"
       - "Faqat HTTP uchun xavfli"
-      - "Tavsiya etilmaydi: token access log'larga sizib chiqadi"
+      - "Xavfsiz, chunki wss URL'ni ham shifrlaydi va token hech qayerda ko'rinmaydi"
       - "Token'ni birinchi xabarda wss orqali yuborish; autentifikatsiya muvaffaqiyatli bo'lguncha faqat autentifikatsiya xabari qabul qilinadi, himoyalangan ma'lumot yuborilmaydi, xato yoki timeout'da ulanish yopiladi"
     answer: 3
-    explain: "Cheat sheet tokenni URL query'da emas, birinchi xabarda yuborishni, autentifikatsiyagacha faqat auth xabarini qabul qilishni va autentifikatsiyalanmagan ulanishlarni cheklashni aytadi. Token xabar loglariga ham tushmasligi kerak."
+    explain: "Cheat sheet tokenni URL query'da emas (u access log'larga tushishi mumkin), birinchi xabarda yuborishni, autentifikatsiyagacha faqat auth xabarini qabul qilishni va autentifikatsiyalanmagan ulanishlarni cheklashni aytadi. Token xabar loglariga ham tushmasligi kerak."
   - q: "Ulanish autentifikatsiyadan o'tgan. Mijoz `{\"type\":\"subscribe\",\"channel\":\"tenant:beta:vehicles\"}` yubordi, u esa 'alfa' tenant'iga tegishli. Qaysi javob to'g'ri?"
     options:
       - "Qabul qilish, chunki ulanish autentifikatsiyadan o'tgan"
@@ -158,7 +164,7 @@ Avtopark platformasida dispetcher ekrani jonli: mashinalar xaritada harakatlanad
 
 Birinchisi, autentifikatsiya bir marta handshake'da bajariladi, keyin esa ulanish soatlab ochiq turadi. Foydalanuvchi logout qilsa yoki sessiyasi tugasa, ochiq ulanish davom etaveradi. Ikkinchisi, REST'da har so'rov marshrut bo'yicha avtorizatsiyadan o'tadi, WebSocket'da esa xabarlar ichki `type` maydoni bilan ajratiladi va "bu foydalanuvchi shu kanalga obuna bo'la oladimi?" savoli har xabarda qayta berilishi kerak. Uchinchisi, an'anaviy HTTP loglari faqat boshlang'ich upgrade so'rovini ko'radi, xabar trafigini emas.
 
-WebSocket Security Cheat Sheet muammolarni shunday sanaydi: Cross-Site WebSocket Hijacking (CSWSH), autentifikatsiyani chetlab o'tish (o'rnatilgan autentifikatsiya yo'qligi tufayli kirish nazoratini unutish oson), xabarlar orqali injection (XSS, SQL injection va boshqa payload'lar), DoS (doimiy ulanishlar ulanishni tugatish kabi yangi vektorlarni ochadi) va monitoring bo'shliqlari. Cheat sheet haqiqiy hodisalarga ham ishora qiladi: Gitpod'dagi 2023 yilgi CSWSH (yetarli Origin tekshiruvi yo'qligi tufayli hisobni to'liq egallash) va 2018 yilgi Spring STOMP xabarlari orqali kod bajarish zaifligi (CVE-2018-1270). Bu ikki hodisa cheat sheet matnida keltirilgan; biz ularning birlamchi manbalarini alohida ochmadik.
+WebSocket Security Cheat Sheet muammolarni shunday sanaydi: Cross-Site WebSocket Hijacking (CSWSH), autentifikatsiyani chetlab o'tish (o'rnatilgan autentifikatsiya yo'qligi tufayli kirish nazoratini unutish oson), xabarlar orqali injection (XSS, SQL injection va boshqa payload'lar), DoS (doimiy ulanishlar ulanishni tugatish kabi yangi vektorlarni ochadi) va monitoring bo'shliqlari. Cheat sheet haqiqiy hodisalarga ham ishora qiladi: Gitpod'dagi 2023 yilgi CSWSH (yetarli Origin tekshiruvi yo'qligi tufayli hisobni to'liq egallash) va 2018 yilgi Spring STOMP xabarlari orqali kod bajarish zaifligi (CVE-2018-1270). Ikkala hodisa cheat sheet'da advisory havolalari bilan keltirilgan.
 
 Bu dars real-time kanalni uch qatlamda ko'radi: handshake (kim ulanadi va qayerdan), xabar (nima va ruxsat bormi) va resurs (qancha va qancha vaqt).
 
@@ -332,7 +338,7 @@ Yopilmagan narsalar: tokenni aylantirish, sessiya tugashida ulanishni yopish (ul
 
 ## Stack'da: NestJS va ws
 
-NestJS'da WebSocket gateway'lari `@WebSocketGateway` bilan e'lon qilinadi, `@SubscribeMessage` metodlari xabar turiga bog'lanadi. Guard'lar gateway xabarlariga ham qo'llanadi (58-dars), lekin HTTP guard'idagi kabi kontekst boshqa: `context.switchToWs()`. Handshake'dagi Origin tekshiruvini NestJS gateway'ning o'zidan emas, HTTP server darajasidagi `upgrade` hodisasida yoki adapterda bajarish ishonchliroq (cheat sheet `ws` uchun aynan shuni tavsiya qiladi). NestJS hujjatiga ko'ra global exception filter'lar (`useGlobalFilters()` yoki `APP_FILTER`) gateway'larga qo'llanmaydi; WebSocket xatolari uchun filter gateway yoki metod darajasida `@UseFilters()` bilan bog'lanadi, aks holda 78-darsdagi umumiy xato javobi bu kanalda ishlamaydi. Quyidagi parcha xabar darajasidagi tenant avtorizatsiyasini ko'rsatadi; kod ishga tushirilmaydi (NestJS va `ws` bu muhitda yo'q), faqat sintaksis tekshirilgan.
+NestJS'da WebSocket gateway'lari `@WebSocketGateway` bilan e'lon qilinadi, `@SubscribeMessage` metodlari xabar turiga bog'lanadi. Guard'lar gateway xabarlariga ham qo'llanadi (58-dars), lekin HTTP guard'idagi kabi kontekst boshqa: `context.switchToWs()`. NestJS hujjati bir nozik joyni aniq aytadi: `handleConnection()` to'siq emas. Nest uning async tugashini kutmaydi, shuning uchun ulanishni uzishdan oldin kelgan xabarlar baribir qayta ishlanadi. Har xabarni tekshirish uchun guard'larni xabar handler'lariga bog'lang (global guard'lar, ya'ni `app.useGlobalGuards()` yoki `APP_GUARD`, gateway'larga ham qo'llanadi; guard `false` qaytarsa Nest `'Forbidden resource'` xabarli `WsException` tashlaydi). Ulanishni birinchi xabargacha rad etish uchun hujjat connection-level middleware'ni ko'rsatadi: socket.io'da `afterInit()` ichida `server.use()`, `WsAdapter` bilan esa `@WebSocketGateway()` opsiyalaridagi `verifyClient`. Bunda cheat sheet bilan ziddiyat bor: u `ws` uchun Origin'ni HTTP serverning `upgrade` hodisasida, `handleUpgrade` dan oldin tekshirishni aytadi va kutubxona `verifyClient` ni tavsiya etmasligini eslatadi. Amalda Nest hujjatidagi yo'l ishlaydi, lekin uni Origin allowlist bilan birga ishlating va qaysi qatlam qarorni qabul qilishini testda tasdiqlang: begona origin'dan ulanib ko'ring. Yana bir fakt: global exception filter'lar (`useGlobalFilters()` yoki `APP_FILTER`) gateway'larga qo'llanmaydi, filter gateway yoki metod darajasida `@UseFilters()` bilan bog'lanadi, aks holda 78-darsdagi umumiy xato javobi bu kanalda ishlamaydi. Quyidagi parcha xabar darajasidagi tenant avtorizatsiyasini ko'rsatadi; u `WsAdapter` (`ws`) ishlatilgan deb faraz qiladi, shuning uchun `path` va `maxPayload` ws server opsiyalari sifatida beriladi.
 
 ```ts
 import { SubscribeMessage, WebSocketGateway, ConnectedSocket, MessageBody } from "@nestjs/websockets";
@@ -356,7 +362,7 @@ export class LiveGateway {
 }
 ```
 
-`maxPayload` opsiyasi ws adapteriga uzatiladi; aniq nomlarni va qanday uzatilishini NestJS hujjatidan o'zingiz tekshiring (bu dars manbalarida emas). Kanal obunasi yozilgandan keyin xabar tarqatishda ham tenant tekshiruvi qayta bajariladi: obuna ro'yxati xotirada o'zgarmas deb hisoblanmasin. Ko'p instance bo'lsa, ulanishlar xaritasi va xabar tarqatish uchun Redis pub/sub ishlatiladi; Redis kanallari ham tenant prefiksi bilan ajratilishi va Redis'ning o'zi himoyalanishi kerak (89-dars).
+`maxPayload` ws server opsiyasi (cheat sheet ham `maxPayload: 64 * 1024` misolini beradi); socket.io adapterida esa boshqa opsiya nomi ishlatiladi. Kanal obunasi yozilgandan keyin xabar tarqatishda ham tenant tekshiruvi qayta bajariladi: obuna ro'yxati xotirada o'zgarmas deb hisoblanmasin. Ko'p instance bo'lsa, ulanishlar xaritasi va xabar tarqatish uchun Redis pub/sub ishlatiladi; Redis kanallari ham tenant prefiksi bilan ajratilishi va Redis'ning o'zi himoyalanishi kerak (89-dars).
 
 ## Xulosa
 

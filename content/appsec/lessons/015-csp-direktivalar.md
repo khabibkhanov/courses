@@ -6,11 +6,15 @@ summary: "CSP qanday ishlaydi, asosiy direktivalar (script-src, object-src, base
 duration: 45
 sources:
   - id: csp3
-    note: "Content Security Policy Level 3: direktivalar, source expression'lar, nonce, hash va 'strict-dynamic' semantikasi"
+    note: "Content Security Policy Level 3: source expression'lar, nonce va hash, 'strict-dynamic' semantikasi (host va 'unsafe-inline' e'tiborsiz, parser-inserted skriptlar ishonchli emas), Strict CSP ta'rifi va orqaga moslik namunasi"
   - id: mdn-csp
-    note: "MDN CSP qo'llanmasi: direktivalar ro'yxati, Report-Only va meta teg cheklovlari"
+    note: "MDN CSP qo'llanmasi va direktiva sahifalari: frame-ancestors, report-uri va sandbox'ning meta orqali ishlamasligi, Report-Only'ning meta orqali yuborilmasligi, bir nechta siyosat faqat yanada cheklaydi"
+  - id: nextjs-csp
+    note: "Next.js CSP qo'llanmasi: nonce har so'rovda proxy'da yaratiladi, dinamik rendering talab qilinadi, Next.js nonce'ni CSP header'idan olib framework skriptlariga qo'shadi, dev rejimida 'unsafe-eval' kerak"
+  - id: nestjs-helmet
+    note: "NestJS security headers sahifasi: useSecurityHeaders() direktiva qiymatlari faqat satr, ro'yxat, boolean yoki null (nonce funksiyasi yo'q), reportOnly opsiyasi"
   - id: cs-csp
-    note: "OWASP CSP Cheat Sheet: nonce va strict-dynamic asosidagi qat'iy siyosat tavsiyasi, Report-Only orqali joriy qilish"
+    note: "OWASP CSP Cheat Sheet: nonce yoki hash asosidagi Strict CSP, nonce'ni shablon mexanizmi orqali qo'shish (hamma <script> ga nonce qo'yadigan middleware yozmaslik), strict-dynamic, Report-Only orqali joriy qilish"
 quiz:
   - q: "Siyosat: `script-src 'self' 'unsafe-inline'`. Sahifaga XSS orqali `<script>alert(1)</script>` kiritildi. Natija?"
     options:
@@ -163,17 +167,17 @@ Host ro'yxati "skript qayerdan kelishi mumkin" deb javob beradi. XSS hujumchisi 
 
 **Hash**: header'ga skript matnining `'sha256-<base64>'` qiymati qo'yiladi; brauzer matn mos kelgan inline skriptni bajaradi. Statik, o'zgarmas inline skriptlar uchun qulay; matn o'zgarsa hash qayta hisoblanadi.
 
-CSP3 bo'yicha nonce yoki hash berilsa, brauzerlar `'unsafe-inline'` ni e'tiborsiz qoldiradi. Shuning uchun nonce'li siyosatga eski brauzerlar uchun `'unsafe-inline'` fallback qo'shish mumkin: yangi brauzer uni e'tiborsiz qoldiradi, eski brauzer esa (nonce'ni bilmagan) fallbackdan foydalanadi. Bu fallbackning kamchiligi: eski brauzerda himoya yo'q.
+CSP3 bo'yicha nonce yoki hash berilsa, brauzerlar `'unsafe-inline'` ni e'tiborsiz qoldiradi. CSP3 spetsifikatsiyasi shu xossadan orqaga moslik uchun foydalanishni ko'rsatadi: `'unsafe-inline' https: 'nonce-abc' 'strict-dynamic'` siyosati CSP1 brauzerida `'unsafe-inline' https:` kabi, CSP2 brauzerida `https: 'nonce-...'` kabi, CSP3 brauzerida esa `'nonce-...' 'strict-dynamic'` kabi ishlaydi, user-agent aniqlashsiz. Bu fallbackning kamchiligi: eski brauzerda himoya deyarli yo'q, chunki `'unsafe-inline'` va `https:` o'sha yerda amal qiladi.
 
 ### strict-dynamic
 
-Zamonaviy ilova skriptni boshqa skriptdan yuklaydi (bundler, lazy-load, analitika). Har yuklanadigan manzil uchun nonce yozib bo'lmaydi. `'strict-dynamic'` ishonchni zanjir bo'yicha uzatadi: nonce'li (yoki hash'li) skript yaratgan skriptlar ham ishonchli. Shu bilan birga host ro'yxati va `'self'` e'tiborsiz qoldiriladi. Natijada bitta qisqa siyosat yetarli:
+Zamonaviy ilova skriptni boshqa skriptdan yuklaydi (bundler, lazy-load, analitika). Har yuklanadigan manzil uchun nonce yozib bo'lmaydi. `'strict-dynamic'` ishonchni zanjir bo'yicha uzatadi: nonce'li (yoki hash'li) skript yaratgan skriptlar ham ishonchli. Shu bilan birga host ro'yxati va `'self'` e'tiborsiz qoldiriladi. Spetsifikatsiya ikkinchi ta'sirni aniq belgilaydi: skript so'rovlari "parser-inserted" bo'lmagan `<script>` elementlari tomonidan yuborilsa ruxsat etiladi. Spetsifikatsiya misolida nonce'li `script.js` ichida `document.createElement('script')` bilan yaratilgan `dependency.js` yuklanadi, `document.write()` bilan yozilgan skript esa yuklanmaydi, chunki `document.write()` parser-inserted element hosil qiladi. Natijada bitta qisqa siyosat yetarli:
 
 ```
 script-src 'nonce-R4nd0m...' 'strict-dynamic'; object-src 'none'; base-uri 'none'
 ```
 
-OWASP CSP Cheat Sheet qat'iy (Strict) CSP'ni nonce yoki hash va ixtiyoriy `strict-dynamic` bilan tuzishni, hamda `object-src 'none'` va `base-uri 'none'` bilan to'ldirishni misollarida ko'rsatadi. Bu yerda `object-src 'none'` plaginlar orqali kod bajarilishini, `base-uri 'none'` esa `<base>` yordamida nisbiy skript manzillarini hujumchi hostiga burishni to'sadi.
+OWASP CSP Cheat Sheet qat'iy (Strict) CSP'ni nonce yoki hash va ixtiyoriy `strict-dynamic` bilan tuzishni, hamda `object-src 'none'` va `base-uri 'none'` bilan to'ldirishni misollarida ko'rsatadi. CSP3 spetsifikatsiyasi Strict CSP ni shunday ta'riflaydi: `script-src` da faqat nonce va/yoki hash (`strict-dynamic` bilan), `base-uri` esa `'self'` yoki `'none'`. Bu yerda `object-src 'none'` plaginlar orqali kod bajarilishini, `base-uri 'none'` esa `<base>` yordamida nisbiy skript manzillarini hujumchi hostiga burishni to'sadi.
 
 ## Chuqurroq: qaror qanday qabul qilinadi
 
@@ -231,6 +235,14 @@ ishonchli skript yaratgan    zaif: false qat'iy: true
 ```
 
 Birinchi qatorga e'tibor bering: nonce'siz inline skript zaif siyosatda bajariladi, qat'iy siyosatda esa yo'q. Uchinchi qator: zaif siyosat `cdn.example.com` dagi har skriptga ruxsat beradi, qat'iy siyosat host ro'yxatini e'tiborsiz qoldiradi. Oxirgi qatordagi `byTrusted` bayrog'i skriptni ishonchli skript yaratganini bildiradi (model buni bayroq bilan ko'rsatadi, brauzer esa chaqiruv zanjiridan biladi).
+
+### strict-dynamic ning narxi
+
+`'strict-dynamic'` joriy qilishni osonlashtiradi, lekin spetsifikatsiya o'zi ham ehtiyot bo'lishni so'raydi: mumkin bo'lsa undan qochish kerak, chunki runtime'da yaratilgan skriptlar bajariladi. Agar bunday skriptning manzilini hujumchi boshqara olsa (masalan, `script.src = userInput`), siyosat ixtiyoriy skript yuklashga ruxsat beradi. Spetsifikatsiya `strict-dynamic` ishlatuvchilarga parser-inserted bo'lmagan API chaqiruvlarini (`createElement('script')`, `appendChild`) audit qilib, ularga ishonchsiz ma'lumot berilmasligini tekshirishni tavsiya qiladi. Skript manzilini ish vaqtida hisoblaydigan framework va ilovalar buni ayniqsa talab qiladi. Hash yoki nonce bilan ruxsat berilgan statik skriptlar to'plamingiz kichik va barqaror bo'lsa, `strict-dynamic`siz variant (har skriptga nonce) kamroq ishonch yuzasini beradi.
+
+### Bir nechta siyosat
+
+MDN: bir resursga bir nechta CSP berish mumkin (`Content-Security-Policy` header'ini takrorlash, Report-Only va `<meta>` birga). Qo'shimcha siyosat faqat cheklovni kuchaytiradi, hech qachon bo'shatmaydi: birinchisida `connect-src 'none'` bo'lsa, ikkinchisi ruxsat bersa ham ulanish bloklanadi. Shu sababli reverse proxy qo'shgan umumiy siyosat va ilova qo'shgan siyosat birga ishlaganda ikkalasining kesishmasi amal qiladi. Ilovada "nega skript bloklanyapti" degan savolda bu ko'pincha javob bo'ladi: boshqa qatlam qo'shgan header.
 
 ### Report-Only va joriy qilish
 
@@ -410,34 +422,28 @@ Yopilmagani. Birinchidan, nonce'li skriptning o'zida DOM XSS bo'lsa (masalan, `i
 
 ## Stack'da: Next.js va Fastify
 
-Next.js'da nonce'li CSP odatda middleware (yoki proxy) orqali har so'rovda yaratiladi va header'ga qo'yiladi; Next.js framework skriptlariga nonce'ni o'zi qo'shadi. Bu dinamik rendering talab qiladi, ya'ni to'liq statik sahifalar bunday nonce ishlata olmaydi. To'liq joriy qilish 35-darsda. Fastify yoki NestJS'da (server-render shablon bilan) `@fastify/helmet` `contentSecurityPolicy` opsiyasida nonce funksiyasini qabul qiladi. Quyidagi kod ishga tushirilmaydi (kutubxona kerak), sintaksis jihatidan to'g'ri TypeScript.
+Next.js'da nonce'li CSP odatda middleware (yoki proxy) orqali har so'rovda yaratiladi va header'ga qo'yiladi; Next.js framework skriptlariga nonce'ni o'zi qo'shadi. Bu dinamik rendering talab qiladi, ya'ni to'liq statik sahifalar bunday nonce ishlata olmaydi. Next.js hujjatiga ko'ra proxy nonce'ni yaratib, uni `Content-Security-Policy` header'iga va `x-nonce` so'rov header'iga qo'yadi; render vaqtida Next.js header'dagi `'nonce-...'` ni topib, uni framework skriptlari, sahifa bundle'lari va `nonce` prop'li `<Script>` komponentlariga o'zi qo'shadi. Statik sahifalar build vaqtida yaratiladi va so'rov header'lari yo'q, shuning uchun ularda nonce bo'lmaydi. Development'da React `eval` ishlatgani uchun `'unsafe-eval'` kerak, production'da kerak emas. To'liq joriy qilish 35-darsda.
+
+Fastify yoki NestJS'da (server-render shablon bilan) nonce uchun `@fastify/helmet` ishlatiladi: uning `enableCSPNonces: true` opsiyasi har javobga nonce yaratadi va uni `reply.cspNonce.script` hamda `reply.cspNonce.style` orqali beradi. NestJS'ning o'z `app.useSecurityHeaders()` metodi esa CSP direktiva qiymatlari uchun faqat satr, ro'yxat, boolean va `null` ni qabul qiladi, nonce hosil qiladigan funksiyalarni qabul qilmaydi; shuning uchun nonce kerak bo'lsa Helmet'dan to'g'ridan-to'g'ri foydalaniladi. Nest'ning `reportOnly: true` opsiyasi esa Report-Only bosqichi uchun qulay. Quyidagi kod ishga tushirilmaydi (kutubxona kerak), sintaksis jihatidan to'g'ri TypeScript.
 
 ```ts
 import Fastify from "fastify";
 import helmet from "@fastify/helmet";
-import { randomBytes } from "node:crypto";
 
 const app = Fastify();
 
-app.addHook("onRequest", async (req, reply) => {
-  // Har javob uchun yangi nonce (CSPRNG)
-  (reply as any).cspNonce = randomBytes(16).toString("base64");
-});
+// enableCSPNonces: har javob uchun nonce yaratadi (reply.cspNonce)
+await app.register(helmet, { enableCSPNonces: true });
 
-await app.register(helmet, {
-  contentSecurityPolicy: {
-    useDefaults: false,
-    directives: {
-      scriptSrc: ["'strict-dynamic'", (req: any, res: any) => `'nonce-${res.cspNonce}'`],
-      objectSrc: ["'none'"],
-      baseUri: ["'none'"],
-      frameAncestors: ["'none'"],
-    },
-  },
+app.get("/", async (req, reply) => {
+  const nonce = reply.cspNonce.script; // shablonga uzating: <script nonce="...">
+  reply.type("text/html");
+  return `<script nonce="${nonce}">window.__READY__ = true;</script>`;
 });
 ```
 
-Helmet opsiyalarining aniq shakli versiyaga bog'liq; funksiya argumentlari va `reply` obyektidagi nonce xossasi sizning versiyangizda boshqacha bo'lishi mumkin (bu kod parchasi yo'nalishni ko'rsatadi, versiyangiz hujjatini tekshiring). Nonce'ni shablonda `<script nonce="...">` ga qo'yishni unutmang.
+
+`enableCSPNonces` va `reply.cspNonce` @fastify/helmet README'sida bayon qilingan. Hujjatda yaratilgan nonce'ning o'zingiz bergan `directives` ga avtomatik qo'shilishi aniq yozilmagan, shuning uchun o'z `scriptSrc` qatoringizni yozganda javob header'ini integratsiya testi bilan tekshiring: `script-src` da `'nonce-...'` va `'strict-dynamic'` bo'lishi kerak. Yuqoridagi parcha foydalanuvchi ma'lumotini HTML'ga qo'shmaydi; real shablon mexanizmi esa chiqishni escape qilishi shart (32-dars).
 
 ## Xulosa
 

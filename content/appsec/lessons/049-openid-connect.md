@@ -10,7 +10,13 @@ sources:
   - id: rfc9700
     note: "OAuth 2.0 xavfsizlik best practice'lari: redirect URI aniq solishtirish, PKCE, mix-up hujumi va iss parametri; OIDC oqimlariga ham tegishli"
   - id: cs-oauth2
-    note: "OAuth2 Cheat Sheet: OIDC authentication/SSO uchun, OAuth esa API authorization uchun; ID token'ni tekshirish (iss, aud, imzo JWK'lar bo'yicha, exp); OIDC oqimlarida nonce CSRF himoyasini beradi; code grant + PKCE"
+    note: "OAuth2 Cheat Sheet: OAuth API himoyasi standarti va OIDC orqali federativ kirishning asosi; OIDC oqimlarida nonce CSRF himoyasini beradi; bir nechta authorization server bilan ishlaganda iss parametri mix-up'ga qarshi; code grant + PKCE."
+  - id: cs-authn
+    note: "Authentication Cheat Sheet (OIDC bo'limi): authentication/SSO uchun OIDC, API authorization uchun OAuth; RP'da ID token tekshiruvi (iss, aud, provayder JWK'lari bo'yicha imzo, exp); UserInfo qo'shimcha claim'lar uchun; federativ akkaunt bog'lash: (iss, sub) bilan aniqlash, email moslig'i bo'yicha avtomatik bog'lamaslik, qo'shish/olib tashlashdan oldin autentifikatsiyalangan sessiya, bildirishnoma"
+  - id: asvs
+    note: "ASVS 5.0.0 V10: 10.5.1 nonce'ni so'rovdagi qiymat bilan solishtirish (ID token replay), 10.5.2 foydalanuvchini sub bilan aniqlash, 10.5.3 AS metadata issuer'i oldindan sozlangan issuer'ga aniq teng bo'lishi, 10.5.4 aud client_id ga teng, 10.5.5 back-channel logout token tekshiruvi, 10.3.3 (iss, sub) juftligi, 10.3.4 acr/amr/auth_time, 10.6.1 response mode'lar, 10.7 rozilik (consent) boshqaruvi"
+  - id: nist-63-4
+    note: "NIST SP 800-63C-4: RP assertion'ni tekshiradi (imzo, emitent, vaqt, auditoriya, nonce, replay); subject identifier emitent nomlar maydonida ko'riladi, IdP'lar bo'yicha global noyob emas (SHALL NOT); account linking uchun autentifikatsiyalangan sessiya talab qilinadi (SHALL); yangi federativ identifikator qo'shilganda foydalanuvchiga xabar beriladi (SHALL); account resolution'da identifikator foydalanuvchiga tegishli bo'lmasligi kerak"
 quiz:
   - q: "SPA backend'i foydalanuvchini 'tizimga kirgan' deb hisoblash uchun provayderdan olingan access token'ni tekshirdi: imzo to'g'ri, muddati o'tmagan. Nima yetishmayapti?"
     options:
@@ -19,7 +25,7 @@ quiz:
       - "Faqat HTTPS"
       - "Access token API uchun mo'ljallangan va kim kirganini klientga isbotlamaydi; autentifikatsiya uchun ID token (aud=klient, nonce) tekshirilishi kerak"
     answer: 3
-    explain: "OAuth access token resurs serveriga murojaat huquqini beradi va uning formati klient uchun shaffof bo'lmasligi mumkin. OIDC ID token esa aynan klient uchun chiqarilgan autentifikatsiya natijasi: aud, nonce va iss orqali tekshiriladi. Cheat sheet: authentication/SSO uchun OIDC, API authorization uchun OAuth."
+    explain: "OAuth access token resurs serveriga murojaat huquqini beradi va uning formati klient uchun shaffof bo'lmasligi mumkin. OIDC ID token esa aynan klient uchun chiqarilgan autentifikatsiya natijasi: aud, nonce va iss orqali tekshiriladi. ASVS V10: OAuth o'zi foydalanuvchi autentifikatsiyasi uchun mo'ljallanmagan, OIDC unga identifikatsiya qatlamini qo'shadi."
   - q: "RP ID token'ning `aud` claim'ini tekshirmaydi. Hujumchi o'z ilovasida foydalanuvchini OIDC bilan kiritib, olingan ID token'ni sizning ilovangizga yuboradi. Nima bo'ladi?"
     options:
       - "Token boshqa ilova uchun chiqarilgan bo'lsa ham qabul qilinadi; foydalanuvchi sifatida kirib olinadi (token substitution)"
@@ -43,7 +49,7 @@ quiz:
       - "Akkauntni o'chirish"
       - "Tokenni jim e'tiborsiz qoldirish"
     answer: 1
-    explain: "Tasdiqlanmagan email boshqa odamniki bo'lishi mumkin, hujumchi provayderda shu email bilan ro'yxatdan o'tgan bo'lishi mumkin. Hatto email_verified true bo'lsa ham avtomatik bog'lash provayderga to'liq ishonishni bildiradi. Bog'lashni mahalliy akkauntga kirgan foydalanuvchi tasdiqlagani xavfsizroq (muallif tavsiyasi)."
+    explain: "Tasdiqlanmagan email boshqa odamniki bo'lishi mumkin, hujumchi provayderda shu email bilan ro'yxatdan o'tgan bo'lishi mumkin. Hatto email_verified true bo'lsa ham avtomatik bog'lash provayderga to'liq ishonishni bildiradi. NIST 800-63C-4: bog'lash amallari uchun akkauntning autentifikatsiyalangan sessiyasi talab qilinadi (SHALL). Bog'lashni mahalliy akkauntga kirgan foydalanuvchi tasdiqlashi shu talabga mos."
   - q: "`nonce` nima uchun kerak?"
     options:
       - "Tokenni shifrlash uchun"
@@ -169,7 +175,7 @@ task:
 
 "Google bilan kirish" yoki korporativ SSO qo'shilganda ko'pchilik jamoa OAuth 2.0'ni (48-dars) autentifikatsiya sifatida ishlatadi: provayderdan access token oladi, uni bilan foydalanuvchi profilini so'raydi va "kirdi" deb belgilaydi. Bu ishlaydi, lekin xavfsiz emas: OAuth foydalanuvchi kimligini aniqlash uchun mo'ljallanmagan. Access token klientga "bu API'ga kirishing mumkin" deydi, "bu foydalanuvchi hozir bu yerda" demaydi. Boshqa ilovaga berilgan token'ni sizning ilovangizga yuborish (token substitution) tekshirilmasa, hujumchi boshqaning akkauntiga kirib oladi.
 
-OpenID Connect (OIDC) shu bo'shliqni to'ldiruvchi qatlam: OAuth 2.0 ustida ishlaydi va autentifikatsiya natijasini ID token (imzolangan JWT) ko'rinishida beradi. OWASP OAuth2 Cheat Sheet qoidani qisqa qiladi: authentication/SSO uchun OIDC, API authorization uchun OAuth. Biroq OIDC'ni ulash o'z-o'zidan xavfsizlik bermaydi. Amalda uchta xato eng ko'p uchraydi: ID token to'liq tekshirilmaydi (aud, nonce, iss); foydalanuvchi email bo'yicha topiladi va bog'lanadi; ko'p mijozli platformada har mijoz o'z provayderini ulaydi va bu tenant izolyatsiyasini buzadi.
+OpenID Connect (OIDC) shu bo'shliqni to'ldiruvchi qatlam: OAuth 2.0 ustida ishlaydi va autentifikatsiya natijasini ID token (imzolangan JWT) ko'rinishida beradi. ASVS V10 va OWASP Authentication Cheat Sheet qoidani shunday qisqa qiladi: OAuth o'zi foydalanuvchini autentifikatsiya qilish uchun mo'ljallanmagan, authentication/SSO uchun OIDC ishlatiladi, API authorization uchun OAuth. Biroq OIDC'ni ulash o'z-o'zidan xavfsizlik bermaydi. Amalda uchta xato eng ko'p uchraydi: ID token to'liq tekshirilmaydi (aud, nonce, iss); foydalanuvchi email bo'yicha topiladi va bog'lanadi; ko'p mijozli platformada har mijoz o'z provayderini ulaydi va bu tenant izolyatsiyasini buzadi.
 
 Avtopark platformasida bu aniq stsenariy: kompaniyalar (alfa, beta) o'z korporativ provayderi orqali dispetcherlarni kiritmoqchi. Bu mijozlar uchun qulay, lekin har tenant o'z provayderini boshqaradi, demak o'sha provayder istalgan identifikatorni "tasdiqlay" oladi. Bu dars ID token tekshiruvi va identifikatsiya kaliti qanday tanlanishini mexanizm darajasida ko'rsatadi.
 
@@ -182,11 +188,11 @@ Authorization code oqimi (48-dars, PKCE bilan) OIDC'da `scope=openid` qo'shilgan
 - ID token: klient (relying party, RP) uchun. Foydalanuvchi qachon va qanday autentifikatsiyalangani haqida da'vo (`iss`, `sub`, `aud`, `exp`, `iat`, `nonce`, ixtiyoriy profil claim'lari). Uni faqat RP tekshiradi, API'ga yuborilmaydi.
 - Access token: resurs serveri (API) uchun. RP uchun u shaffof (opaque) bo'lishi mumkin.
 
-Qo'shimcha profil ma'lumoti ID token'dan tashqari UserInfo endpoint orqali olinadi. Cheat sheet buni ham qayd etadi: ID token'dan tashqari claim'lar kerak bo'lsa UserInfo'dan foydalaning.
+Qo'shimcha profil ma'lumoti ID token'dan tashqari UserInfo endpoint orqali olinadi (Authentication Cheat Sheet: ID token'dan tashqari claim'lar kerak bo'lsa UserInfo'dan foydalaning). ASVS V10 token turlarini ham ajratadi: ID token'ni faqat authorization oqimini boshlagan klient iste'mol qiladi, refresh token'ni esa faqat uni bergan authorization server. Demak ID token'ni API'ga yoki boshqa servisga uzatmang.
 
 ### ID token tekshiruvi
 
-OIDC Core ID token tekshiruvini sanaydi. Cheat sheet qisqa ro'yxat beradi: emitent (`iss`), auditoriya (`aud`), provayder JWK'lari bo'yicha imzo, muddat (`exp`). Mohiyati:
+OIDC Core ID token tekshiruvini sanaydi (3.1.3.7; bu bo'limning to'liq matnini o'qiy olmadik, quyidagi ro'yxat ASVS 10.5 va NIST 800-63C bilan mos). Authentication Cheat Sheet qisqa ro'yxat beradi: emitent (`iss`), auditoriya (`aud`), provayder JWK'lari bo'yicha imzo, muddat (`exp`). NIST 800-63C-4 RP assertion'ni tekshirganda yettita narsani sanaydi: imzo, emitent, vaqt oynasi, auditoriya, nonce, tranzaksiya shartlari (IAL/AAL/FAL) va assertion identifikatori (replay). Mohiyati:
 
 1. Imzo emitentning ommaviy kalitlari (JWKS) bilan tekshiriladi; algoritm serverda belgilangan ro'yxatdan (47-dars). Kalit manbasi provayder metadata'sidan (discovery), ishonchli konfiguratsiyadan olinadi, token ichidagi URL'dan emas.
 2. `iss` kutilgan emitentga aniq teng.
@@ -194,11 +200,11 @@ OIDC Core ID token tekshiruvini sanaydi. Cheat sheet qisqa ro'yxat beradi: emite
 4. `exp` o'tmagan.
 5. `nonce` autentifikatsiya so'rovida yuborilgan qiymatga teng.
 
-`nonce` mexanikasi: RP har kirish urinishida tasodifiy qiymat yaratadi, uni foydalanuvchi sessiyasida saqlaydi va autentifikatsiya so'rovida yuboradi; provayder uni tokenga o'zgartirmay yozadi. OIDC Core bu qiymatni klient sessiyasini ID token bilan bog'lash va replay'ni kamaytirish uchun belgilaydi. Cheat sheet qo'shadi: OIDC oqimlarida nonce CSRF himoyasini beradi. Shuning uchun boshqa brauzer sessiyasi uchun chiqarilgan token qabul qilinmaydi.
+`nonce` mexanikasi: RP har kirish urinishida tasodifiy qiymat yaratadi, uni foydalanuvchi sessiyasida saqlaydi va autentifikatsiya so'rovida yuboradi; provayder uni tokenga o'zgartirmay yozadi. OIDC Core bu qiymatni klient sessiyasini ID token bilan bog'lash va replay'ni kamaytirish uchun belgilaydi. Cheat sheet qo'shadi: OIDC oqimlarida nonce CSRF himoyasini beradi. ASVS 10.5.1 ham ID token replay'iga qarshi shu solishtirishni misol qiladi, 10.1.2 esa `code_verifier`, `state` va `nonce` oldindan topib bo'lmaydigan, tranzaksiyaga xos va klient hamda brauzer sessiyasiga bog'langan bo'lishini talab qiladi. Shuning uchun boshqa brauzer sessiyasi uchun chiqarilgan token qabul qilinmaydi. Eslatma: OIDC Core code oqimida nonce'ni ixtiyoriy deb belgilashini bilamiz (spetsifikatsiya matnini bu yerda o'qiy olmadik), shuning uchun nonce'ni yoqing va yuborgan bo'lsangiz uning tokenda borligini va tengligini tekshiring.
 
 ### Identifikatsiya kaliti: (iss, sub)
 
-OIDC Core `sub` ni emitent ichida mahalliy noyob va hech qachon qayta berilmaydigan identifikator deb ta'riflaydi. Shuning uchun RP foydalanuvchini `(iss, sub)` juftligi bilan bog'laydi. Email bunday xossaga ega emas: o'zgarishi, kompaniya ichida qayta berilishi, tasdiqlanmagan bo'lishi mumkin. Spetsifikatsiya `email_verified: true` ni provayder email egaligini tasdiqlash choralarini ko'rgan ma'nosida belgilaydi, ya'ni bu provayderning da'vosi, sizning isbotingiz emas.
+OIDC Core `sub` ni emitent ichida mahalliy noyob va hech qachon qayta berilmaydigan identifikator deb ta'riflaydi. Shuning uchun RP foydalanuvchini `(iss, sub)` juftligi bilan bog'laydi. Email bunday xossaga ega emas: o'zgarishi, kompaniya ichida qayta berilishi, tasdiqlanmagan bo'lishi mumkin. Spetsifikatsiya `email_verified: true` ni provayder email egaligini tasdiqlash choralarini ko'rgan ma'nosida belgilaydi, ya'ni bu provayderning da'vosi, sizning isbotingiz emas. NIST 800-63C-4 ham shu mantiqni qat'iy yozadi: subject identifier emitent nomlar maydonida ko'riladi va RP uni turli IdP'lar bo'yicha global noyob deb hisoblamasligi shart (SHALL NOT); shu sabab `(iss, sub)` juftligi kerak. ASVS 10.3.3 ham bir foydalanuvchini aniqlash uchun boshqa foydalanuvchiga qayta berib bo'lmaydigan claim'lar, odatda `iss` va `sub` kombinatsiyasi, ishlatilishini talab qiladi.
 
 ## Chuqurroq: bog'lash va ko'p tenant'li SSO
 
@@ -207,9 +213,9 @@ OIDC Core `sub` ni emitent ichida mahalliy noyob va hech qachon qayta berilmaydi
 Mahalliy akkaunt (email va parol) bor, foydalanuvchi endi "Google bilan kirish"ni bosdi. Ikki yo'l:
 
 - Avtomatik bog'lash: token'dagi email mahalliy akkaunt email'iga teng bo'lsa, shu akkauntga kirgizish. Bu qulay, lekin provayderga to'liq ishonishni talab qiladi; `email_verified` false bo'lsa yoki provayder email tasdiqlashni qat'iy bajarmasa, hujumchi provayderda sizning email'ingiz bilan akkaunt ochib, sizning akkauntingizga kirib oladi (pre-hijacking turi).
-- Aniq bog'lash: foydalanuvchi avval mahalliy akkaunti bilan (parol/passkey) kiradi, so'ng "Provayderni ulash" bosadi. Shundan keyingina `(iss, sub)` shu akkauntga bog'lanadi. Bu muallifning tavsiyasi: biroz noqulay, lekin takeover yo'lini yopadi.
+- Aniq bog'lash: foydalanuvchi avval mahalliy akkaunti bilan (parol/passkey) kiradi, so'ng "Provayderni ulash" bosadi. Shundan keyingina `(iss, sub)` shu akkauntga bog'lanadi. Bu muallifning tavsiyasi: biroz noqulay, lekin takeover yo'lini yopadi. Authentication Cheat Sheet ham shuni aytadi: email, `preferred_username` kabi claim'lar mos kelgani uchun akkauntlarni avtomatik bog'lamang (ular noyob va barqaror kafolatlanmagan, OIDC Core 5.7), bog'lashdan oldin esa mavjud akkauntning autentifikatsiyalangan sessiyasini talab qiling, ulanayotgan identifikatorning ID token'ini tekshirib bog'lashdan oldin saqlang, uzilgan identifikator orqali kirishni yoping. NIST 800-63C-4 shu yo'nalishda: RP bir akkauntga bir nechta federativ identifikator bog'lashga ruxsat bersa, hamma bog'lash amallari uchun akkauntning autentifikatsiyalangan sessiyasini talab qilishi shart (SHALL), va bu sessiya mavjud federativ identifikatorlardan biri bilan autentifikatsiyani talab qilishi tavsiya etiladi (SHOULD). Email bo'yicha avtomatik moslashtirish esa NIST'ning account resolution qoidasiga zid kelishi mumkin: RP akkaunt ma'lumotini foydalanuvchiga tegishli bo'lmagan federativ identifikatorga bog'lamasligi shart (SHALL).
 
-Ikkala holatda ham bog'langan identifikator yangi authenticator hisoblanadi: uni qo'shish yuqori xavfli harakat bo'lib, bildirishnoma va qayta autentifikatsiya talab qiladi (50-dars).
+Ikkala holatda ham bog'langan identifikator yangi authenticator hisoblanadi: uni qo'shish yuqori xavfli harakat bo'lib, bildirishnoma va qayta autentifikatsiya talab qiladi (50-dars). NIST 800-63C-4 yangi federativ identifikator qo'shilganda yoki olib tashlanganda (akkaunt yopilmasa) foydalanuvchiga xabar berishni shart (SHALL) qiladi. Chekka holat ham bor: akkauntda hech qanday federativ identifikator, muqobil authenticator va tiklash yo'li qolmasa, NIST uni o'chirishni yoki yopishni tavsiya etadi (SHOULD), ya'ni provayderni uzgach foydalanuvchi qulflanib qolmasligi uchun muqobil kirish yo'lini oldindan rejalang.
 
 ### Ko'p tenant'li SSO
 
@@ -222,11 +228,17 @@ Platformada har mijoz kompaniya (tenant) o'z provayderini ulaydi (alfa, beta). P
 
 ### Boshqa tuzoqlar
 
-OAuth uchun aytilganlar (redirect URI aniq, PKCE, state, mix-up uchun `iss`; 48-dars) OIDC'da ham amal qiladi. Implicit va hybrid oqimlar o'rniga code + PKCE ishlating. Chiqish (logout) ham alohida mavzu: provayderdagi sessiya va sizning sessiyangiz mustaqil; provayder sessiyasi tugasa sizniki o'zi tugamaydi. Sessiya muddatlari 46-darsdagi qoidalar bilan belgilanadi.
+OAuth uchun aytilganlar (redirect URI aniq, PKCE, state, mix-up uchun `iss`; 48-dars) OIDC'da ham amal qiladi: ASVS 10.5 OIDC klientini OAuth klienti talablariga qo'shimcha sifatida beradi. Implicit va hybrid oqimlar o'rniga code + PKCE ishlating: ASVS 10.6.1 `code` ni afzal ko'radi, hybrid (`id_token code`) ni faqat istisno sifatida qoldiradi va `token` (implicit) ni taqiqlaydi.
+
+Provayder metadata'si (discovery) ham ishonch chegarasi. ASVS 10.5.3: metadata'dagi issuer oldindan sozlangan issuer URL'ga aniq teng bo'lmasa, klient metadata'ni rad etishi kerak; aks holda zararli server boshqa serverni o'zidek ko'rsata oladi. `aud` uchun ASVS 10.5.4 `aud` qiymati klientning `client_id`'siga teng bo'lishini aytadi; massiv `aud` holati OIDC Core'dan keladi va bu darsdagi kod uni `includes` bilan qoplaydi.
+
+Autentifikatsiya kuchi ham token ichida kelishi mumkin: ASVS 10.3.4 resurs serveri aniq kuch yoki yangilikni talab qilsa, `acr`, `amr` va `auth_time` claim'larini tekshirishni misol qiladi. Bu 41-darsdagi step-up bilan bevosita bog'liq: yuqori xavfli amal oldidan `auth_time` yangiligini tekshiring, provayder `amr` da nima aytganiga ishonish uchun uning siyosatini bilishingiz kerak.
+
+Rozilik (consent) ham xavfsizlik qismi. ASVS 10.7: authorization server klientning kimligiga ishonch bo'lmasa har safar aniq rozilik so'rashi, nima uchun rozilik berilayotganini (scope, ilova, muddat) tushunarli ko'rsatishi va foydalanuvchi rozilikni ko'rib chiqa, o'zgartira va bekor qila olishi kerak. Bu 48-darsdagi consent phishing'ga qarshi asosiy choralardan biri. Chiqish (logout) ham alohida mavzu: provayderdagi sessiya va sizning sessiyangiz mustaqil; provayder sessiyasi tugasa sizniki o'zi tugamaydi. Sessiya muddatlari 46-darsdagi qoidalar bilan belgilanadi. Back-channel logout ishlatsangiz, ASVS 10.5.5 logout token'ni tekshirishni talab qiladi: turi `logout+jwt` bo'lishi, to'g'ri `events` claim'i bo'lishi va `nonce` claim'i bo'lmasligi shart (aks holda logout token oddiy ID token bilan aralashib ketadi), qisqa muddat (masalan 2 daqiqa) tavsiya etiladi. Provayder tomoni uchun ASVS 10.6.2 majburiy chiqarishdan DoS'ga qarshi aniq tasdiq yoki `id_token_hint` kabi parametrlarni tekshirishni aytadi.
 
 ## Misol: ID token bilan kirish
 
-Quyidagi model honest provayder (ES256 bilan imzolaydi) va RP'ni ko'rsatadi. JWS ES256 imzosi `r||s` formatida, WebCrypto chiqishi bilan bir xil, shuning uchun modeldagi tekshiruv real formatga mos.
+Quyidagi model halol provayder (ES256 bilan imzolaydi) va RP'ni ko'rsatadi. JWS ES256 imzosi `r||s` formatida, WebCrypto chiqishi bilan bir xil, shuning uchun modeldagi tekshiruv real formatga mos.
 
 ### Zaif kod
 

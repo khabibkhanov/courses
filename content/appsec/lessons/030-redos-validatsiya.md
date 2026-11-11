@@ -7,12 +7,14 @@ duration: 50
 sources:
   - id: cs-input
     note: "Input Validation Cheat Sheet: sintaksis va semantika, allow-list va denylist, xavfsiz parse qilish (o'lcham va chuqurlik cheklovlari), JSON sxema (required va additional properties), regex bo'limi (to'liq moslik, uzunlikni oldindan cheklash, ortiqcha backtracking'dan qochish, timeout), keng tarqalgan xatolar"
-  - id: node-security
-    note: "Node.js Security Best Practices: umumiy; event loop'ni band qilmaslik va ReDoS haqidagi tavsif OWASP Node.js Security Cheat Sheet'dan olingan (Node sahifasi bu dars yozilganda qayta ochilmagan)"
+  - id: mdn-input-validation
+    note: "MDN Input validation: allow-list denylist'dan ishonchliroq (default holatda rad etadi), sintaktik va semantik validatsiya, murakkab regex'lar DoS xavfini tug'dirishi mumkin va yaxshi tanilgan validatsiya kutubxonasi (validator.js) afzalroq"
+  - id: nestjs-validation
+    note: "NestJS Validation: ValidationPipe'ning whitelist (ruxsat etilmagan xususiyatlarni olib tashlash) va forbidNonWhitelisted (istisno tashlash) sozlamalari"
   - id: asvs
     note: "ASVS 5.0.0: 1.3.12 (regex'lar eksponensial backtracking'siz bo'lishi, Level 3), 2.2.1 (allow-list/struktura bilan validatsiya), 2.2.2 (validatsiya ishonchli servis qatlamida; klient tekshiruvi xavfsizlik nazorati emas, Level 1), 2.1.1 (validatsiya qoidalari hujjatlashtirilishi)"
   - id: cs-nodejs
-    note: "OWASP Node.js Security Cheat Sheet: 'Do not block the event loop' va ReDoS bo'limi (misol: ichma-ich takrorlanish va alternation'ning o'zaro kesishishi)"
+    note: "OWASP Node.js Security Cheat Sheet: 'Do not block the event loop' (bitta oqimli arxitektura, CPU-ni band qiladigan ish loop'ni bloklaydi), 'Stay away from evil regexes' (takrorlanish bilan guruhlash va kesishuvchi alternation, misol pattern), 'Monitor the event loop' (toobusy-js va 503)"
 quiz:
   - q: "Quyidagi qaysi regex eksponensial backtracking xavfiga eng ko'p moyil?"
     options:
@@ -49,18 +51,18 @@ quiz:
   - q: "Frontend formada validatsiya bor, backend uni takrorlamaydi. ASVS 5.0.0 nima deydi?"
     options:
       - "Yetarli: frontend validatsiyasi xavfsizlik nazorati"
-      - "Validatsiya ishonchli servis qatlamida bajarilishi kerak; klient tekshiruvi qulaylik uchun, lekin xavfsizlik nazorati sifatida unga tayanib bo'lmaydi (2.2.2)"
       - "Faqat ma'lumotlar bazasida tekshirish yetarli"
       - "Validatsiya shart emas"
-    answer: 1
+      - "Validatsiya ishonchli servis qatlamida bajarilishi kerak; klient tekshiruvi qulaylik uchun, lekin xavfsizlik nazorati sifatida unga tayanib bo'lmaydi (2.2.2)"
+    answer: 3
     explain: "ASVS 2.2.2 serverda validatsiyani talab qiladi. Hujumchi brauzerni chetlab o'tib to'g'ridan-to'g'ri API'ga so'rov yuboradi."
   - q: "JavaScript'da `/^[A-Z]+$/.test(\"AB\\n\")` natijasi?"
     options:
       - "`true`: `$` yangi qatordan oldin ham mos keladi"
-      - "`false`: `m` flagi yo'q bo'lsa `$` faqat qatorning oxirida mos keladi, shuning uchun yakunlovchi yangi qator rad etiladi"
       - "Xato tashlanadi"
+      - "`false`: `m` flagi yo'q bo'lsa `$` faqat qatorning oxirida mos keladi, shuning uchun yakunlovchi yangi qator rad etiladi"
       - "`undefined`"
-    answer: 1
+    answer: 2
     explain: "JavaScript'da `m` flagisiz `$` faqat kiritishning oxirida mos keladi (Python'dagi `$` dan farq qiladi, u yakunlovchi yangi qatordan oldin ham mos keladi). Cheat sheet dvigatellarning yangi qator xatti-harakatini farq qilishini eslatadi: o'z dvigatelingizda sinab ko'ring."
 task:
   title: "Transport kodi validatori: uzunlik va bir ma'noli pattern"
@@ -191,7 +193,7 @@ Umumiy shakl: ichma-ich takrorlanish (`(a+)+`, `(a|aa)+`, `(a*)*`) yoki qo'shni 
 
 OWASP Input Validation Cheat Sheet tavsiyalarini qisqa jamlaymiz:
 
-- Sintaksis va semantika. Sintaksis: kutilgan tur va format. Semantika: qiymat amalga mos keladimi (sanalar tartibi, diapazon). MDN ham xuddi shu ikki turni ajratadi.
+- Sintaksis va semantika. Sintaksis: kutilgan tur va format. Semantika: qiymat amalga mos keladimi (sanalar tartibi, diapazon). MDN ham xuddi shu ikki turni ajratadi (syntactic va semantic).
 - Allow-list. Qabul qilinadiganni belgilab, undan tashqarini rad eting; "har zararli qatorni tanishga" urinmang. Cheat sheet misol keltiradi: apostrofni bloklash qonuniy ismlarni rad etadi, lekin so'rovni xavfsiz qilmaydi. Erkin matn uchun allow-list keng Unicode'ni ruxsat etib, uzunlikni cheklashi mumkin.
 - Parse qilishdan oldin o'lchamni cheklang. So'rov hajmi cheklovlari buferlashdan oldin qo'llanadi; parser cheklovlari (maksimal ichma-ich chuqurlik) sozlanadi. Parse bo'lib bo'lgan resurslarni sxema tekshiruvi himoya qila olmaydi.
 - Sxema bilan tekshirish. JSON uchun required va additional properties'ni aniq sozlash kerak: faqat xususiyatni sanab o'tish uni majburiy qilmaydi va noma'lum maydonlarni rad etmaydi. Ichma-ich obyektlar, massiv uzunligi va har element tekshiriladi.
@@ -214,8 +216,8 @@ JavaScript'da `$` `m` flagisiz faqat satr oxirida mos keladi, `m` flagi bilan es
 
 - Uzunlikni oldindan cheklash (eng arzon).
 - Bir ma'noli pattern yozish: ichma-ich takrorlanish yo'q, qo'shni qismlar bir xil belgilarni qamramaydi.
-- Mavjud kutubxona validatorlaridan foydalanish: MDN murakkab regex'lar xatoga moyil ekanini va ko'pincha yaxshi tanilgan validatsiya kutubxonasini ishlatish ma'qul ekanini yozadi (misol: validator.js). Kutubxona versiyasini yangilab turing.
-- Non-backtracking dvigatel (masalan, RE2 bog'lamalari) yoki regex'ni alohida worker thread'da ishga tushirib, vaqt chegarasidan oshsa to'xtatish. Bu variantlar kursning tavsiyasi: cheat sheet non-backtracking dvigatel yoki timeout "mavjud bo'lsa" deydi, Node uchun aniq paketlarni biz bu yerda tekshirmadik.
+- Mavjud kutubxona validatorlaridan foydalanish: MDN murakkab regex'larni to'g'ri yozish qiyin ekanini, ba'zilari denial of service hujumiga yo'l ochishini va shuning uchun odatda yaxshi tanilgan validatsiya kutubxonasini ishlatish ma'qul ekanini yozadi (misol: validator.js). Kutubxona versiyasini yangilab turing.
+- Non-backtracking dvigatel (masalan, RE2 asosidagi kutubxona) yoki regex'ni alohida worker thread'da ishga tushirib, vaqt chegarasidan oshsa to'xtatish. Cheat sheet ikkalasini ham "qo'llab-quvvatlansa" shartida tavsiya qiladi: JavaScript'ning o'rnatilgan `RegExp` obyektida match timeout yo'q, shuning uchun timeout kerak bo'lsa worker thread yoki tashqi dvigatel ishlatiladi.
 - Foydalanuvchi regex'ni o'zi kiritadigan funksiyalar (qidiruv "regex rejimi") alohida xavf: bunday imkoniyatni bermang yoki non-backtracking dvigatelda bajaring.
 - Event loop monitoringi. Cheat sheet event loop kechikishini kuzatuvchi `toobusy-js` modulini tilga oladi: kechikish chegaradan oshganda `503` qaytarish. U himoyaning o'rnini bosmaydi, lekin ta'sirni cheklaydi.
 
@@ -293,7 +295,7 @@ n=16 ok=false qadamlar=65536
 n=20 ok=false qadamlar=1048576
 ```
 
-Har 4 belgi qo'shilganda qadamlar 16 barobar oshdi: belgi qo'shilishi bilan qadamlar ikki barobar ko'payadi. 20 belgi 1 048 576 qadam beradi. Bu modeldagi o'sish qonuni; haqiqiy dvigatelda optimallashtirishlar farq qilishi mumkin. Shu ichma-ich pattern'ning haqiqiy `RegExp` varianti bilan 26 belgili satr muallifning mashinasida (Node) soniyalar davomida bloklagan; bu o'lchov mashinaga bog'liq, shuning uchun aniq raqam keltirilmaydi.
+Har 4 belgi qo'shilganda qadamlar 16 barobar oshdi: belgi qo'shilishi bilan qadamlar ikki barobar ko'payadi. 20 belgi 1 048 576 qadam beradi. Bu modeldagi o'sish qonuni; haqiqiy dvigatelda optimallashtirishlar farq qilishi mumkin.
 
 ### 3. Tuzatilgan kod
 
@@ -339,12 +341,35 @@ false true
 
 Nima uchun yetarli: invariant "regex hech qachon uzun yoki noto'g'ri turdagi kirishga qo'llanmaydi, qo'llanganda esa chiziqli vaqtda ishlaydi". Uzunlik va tur regex'dan oldin tekshirildi (5000 belgili satr regex'ga yetmadi). Pattern bir ma'noli, shuning uchun `A...A!` kabi satr chiziqli vaqtda rad etiladi. Validator allow-list asosida (noma'lum maydon rad etiladi, `tenant` ro'yxatdan, `fuel` diapazondan) va xato bo'lsa davom etmaydi. Oxirgi qator JavaScript'da `$` ning `m` flagisiz xatti-harakatini ko'rsatadi. Yopilmagan: boshqa regex'lar (har biri alohida tekshiriladi, ASVS 1.3.12), kod haqiqatan mavjudligini semantik tekshirish (bazada), umumiy so'rov hajmi va tezlik (73-dars), tenant qiymatining sessiyadan olinishi (55-dars; bu yerda allow-list faqat misol uchun) hamda validatsiyaning injection himoyasi emasligi: parametrlash va output encoding hamon kerak.
 
+### 4. Mashq: pattern'ni mahkamlash
+
+Quyidagi `isSlug` funksiyasi URL slug'ni tekshirishi kerak: faqat kichik lotin harflari va raqamlar, so'zlar bitta `-` bilan ajratilgan, uzunligi 64 dan oshmaydi. Hozirgi pattern bog'lanmagan (`^` va `$` yo'q), shuning uchun satrning faqat bir qismi mos kelsa ham `true` qaytaradi, tur tekshiruvi esa yo'q. Tuzating: avval tur va uzunlik, so'ng butun qiymatga mos, bir ma'noli pattern (ichma-ich takrorlanishsiz).
+
+```ts run
+// Starter: bog'lanmagan pattern, tur va uzunlik tekshirilmaydi.
+function isSlug(s: unknown): boolean {
+  return /[a-z0-9]+(-[a-z0-9]+)*/.test(String(s));
+}
+```
+
+```ts test
+check("oddiy slug", () => isSlug("video-2026") === true);
+check("bitta so'z", () => isSlug("alfa") === true);
+check("boshida begona belgi rad", () => isSlug("<b>alfa") === false);
+check("oxirida yangi qator rad", () => isSlug("alfa\n") === false);
+check("ikkita defis rad", () => isSlug("a--b") === false);
+check("bosh harf rad", () => isSlug("Alfa") === false);
+check("juda uzun satr rad", () => isSlug("a".repeat(65)) === false);
+check("64 belgi qabul", () => isSlug("a".repeat(64)) === true);
+check("satr bo'lmagan qiymat rad", () => isSlug({ toString: () => "alfa" }) === false);
+```
+
 ## Qachon qo'llamaslik kerak
 
 - Regex'ni har maydon uchun ishlatish shart emas. Aniq enum, UUID, sana yoki raqam uchun tilning tur tekshiruvlari va sxema kutubxonasi regex'dan ishonchli. Regex qisqa tuzilmali maydonlar uchun.
 - Pattern'ni "o'ta qat'iy" qilish ham zarar qilishi mumkin. Ismlar va manzillar uchun qat'iy ASCII pattern haqiqiy foydalanuvchilarni rad etadi. Erkin matnda uzunlik va kodlash tekshiruvi yetarli, qolgan himoya chiqish kontekstida (output encoding, parametrlash).
 - Validatsiya injection himoyasi o'rnini bosmaydi. Cheat sheet uni parametrlangan so'rovlar va kontekstli encoding'dan ajratadi. "Tozalangan" qiymatga ishonib konkatenatsiya qilmang.
-- Vaqt chegarasi bilan o'ralgan har regex'ni "xavfsiz" deb hisoblamang: timeout CPU sarfini cheklaydi, lekin pattern xatosini tuzatmaydi va ortiqcha xato tavsifi bermaydi.
+- Vaqt chegarasi bilan o'ralgan har regex'ni "xavfsiz" deb hisoblamang: timeout CPU sarfini cheklaydi, lekin pattern xatosini tuzatmaydi. Cheat sheet timeout'ni validatsiya muvaffaqiyatsizligi deb hisoblashni aytadi: kiritish rad etiladi.
 - Eski kodda barcha regex'larni birdaniga qayta yozishga urinmang. Avval kirishi foydalanuvchidan keladigan va autentifikatsiyadan oldingi maydonlarni (ro'yxatdan o'tish, login, qidiruv) tekshiring.
 
 ## Stack'da: NestJS, Fastify, zod
@@ -374,7 +399,7 @@ app.put("/vehicles/:id", async (req, reply) => {
 });
 ```
 
-`bodyLimit` Fastify'ning so'rov tanasi hajmini cheklaydigan sozlamasi (aniq nomi va default qiymati versiyaga bog'liq, hujjatni tekshiring: bu darsda tekshirilmagan). Zod'da `max(24)` regex'dan oldin tekshiriladi, shuning uchun uzun satr regex'ga yetmaydi. NestJS'da bir xil g'oya `ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })` bilan; ularning aniq xatti-harakati versiyaga qarab farq qiladi. Hamma xatolarni umumiy `400` bilan qaytaring va tafsilotni logga yozing (78-79-darslar).
+`bodyLimit` Fastify'ning so'rov tanasi hajmini baytlarda cheklaydigan server sozlamasi: chegaradan oshgan tana parse qilinmasdan rad etiladi. Zod'da `max(24)` regex'dan oldin tekshiriladi, shuning uchun uzun satr regex'ga yetmaydi. NestJS'da bir xil g'oya `ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })` bilan: `whitelist` ruxsat etilmagan xususiyatlarni DTO'dan olib tashlaydi, `forbidNonWhitelisted` esa ularni olib tashlash o'rniga istisno tashlaydi. Rad etish tozalashdan afzal bo'lgani uchun ikkinchisini yoqing. Hamma xatolarni umumiy `400` bilan qaytaring va tafsilotni logga yozing (78-79-darslar).
 
 ## Xulosa
 

@@ -6,11 +6,19 @@ summary: "HSTS qanday SSL stripping'ni to'sadi va uning chegaralari, X-Content-T
 duration: 40
 sources:
   - id: rfc6797
-    note: "HSTS spetsifikatsiyasi: Strict-Transport-Security header'i, max-age va includeSubDomains, HTTP orqali kelgan header'ning e'tiborsiz qoldirilishi"
+    note: "HSTS spetsifikatsiyasi: Strict-Transport-Security header'i, max-age va includeSubDomains, xavfsiz bo'lmagan transport orqali kelgan header'ning e'tiborsiz qoldirilishi"
+  - id: mdn-hsts
+    note: "MDN HSTS sahifasi: HTTP orqali kelgan header e'tiborsiz, birinchi tashrif zaifligi, preload shartlari (max-age kamida 1 yil, includeSubDomains), max-age=0, sertifikat xatosini chetlab o'tib bo'lmasligi"
+  - id: mdn-nosniff
+    note: "MDN X-Content-Type-Options sahifasi: script va style so'rovlarida MIME mos kelmasa bloklash, boshqa javoblarda sniffing o'chiriladi"
+  - id: mdn-referrer-policy
+    note: "MDN Referrer-Policy sahifasi: standart qiymat strict-origin-when-cross-origin (2020-yil noyabr o'zgarishi), vergul bilan fallback ro'yxati"
+  - id: mdn-permissions-policy
+    note: "MDN Permissions-Policy sahifasi: allowlist sintaksisi (*, (), self), iframe allow atributi bilan moslik, eksperimental holat, report-to"
   - id: nestjs-helmet
-    note: "NestJS hujjati: Helmet middleware'ni ulash va u HTTP header'larni sozlashi"
+    note: "NestJS hujjati: useSecurityHeaders() (NestJS v12.1 dan), standart header'lar jadvali, opsiyalar, eski versiya va to'g'ridan-to'g'ri Helmet ulash usuli"
   - id: t10-a02
-    note: "A02:2025 Security Misconfiguration: security header'lar yo'qligi yoki noto'g'ri sozlanishi sozlama xatosi sifatida"
+    note: "A02:2025 Security Misconfiguration: server xavfsizlik header'larini yubormasa yoki ular xavfsiz qiymatda bo'lmasa, bu sozlama xatosi sifatida sanaladi"
 quiz:
   - q: "Foydalanuvchi `http://fleet.example` ni birinchi marta ochadi, server HTTPS'ga redirect qiladi va javobda `Strict-Transport-Security: max-age=31536000` beradi. Keyingi haftada u yana `http://fleet.example` ni yozsa nima bo'ladi?"
     options:
@@ -23,11 +31,11 @@ quiz:
   - q: "Hujumchi ochiq Wi-Fi'da `http://fleet.example` so'rovini ushlab, javobga `Strict-Transport-Security: max-age=0` qo'shib qo'ydi. Brauzer nima qiladi?"
     options:
       - "HSTS xotirasini o'chiradi"
-      - "Qabul qilmaydi: HSTS header'i HTTP orqali kelganda e'tiborsiz qoldiriladi"
       - "Siyosatni 0 sekundga o'rnatadi va saytni ochmaydi"
+      - "Qabul qilmaydi: HSTS header'i HTTP orqali kelganda e'tiborsiz qoldiriladi"
       - "Foydalanuvchiga ogohlantirish ko'rsatadi"
-    answer: 1
-    explain: "RFC 6797: HSTS header'i faqat xavfsiz transport (HTTPS) orqali kelgandagina hisobga olinadi. Aks holda ochiq tarmoqdagi hujumchi siyosatni o'zgartira olardi. Shuning uchun max-age=0 HTTP orqali ta'sir qilmaydi."
+    answer: 2
+    explain: "RFC 6797 va MDN: HSTS header'i faqat HTTPS orqali kelgandagina hisobga olinadi, HTTP orqali kelsa brauzer uni e'tiborsiz qoldiradi. Aks holda ochiq tarmoqdagi hujumchi siyosatni o'zgartira olardi. Shuning uchun max-age=0 HTTP orqali ta'sir qilmaydi."
   - q: "Foydalanuvchi yuklagan fayl `Content-Type: text/plain` bilan beriladi, lekin ichida `<script>...</script>` bor. `X-Content-Type-Options: nosniff` nima beradi?"
     options:
       - "Fayl HTML sifatida talqin qilinishining oldini oladi: brauzer e'lon qilingan turga amal qiladi"
@@ -140,11 +148,11 @@ HTTP Strict Transport Security (RFC 6797) serverga brauzerga shu host bilan faqa
 - Sertifikat xatosini foydalanuvchi "baribir davom ettirish" bilan chetlab o'ta olmaydi (MDN: brauzer foydalanuvchiga xatoni chetlab o'tish yo'lini bermaydi).
 - `includeSubDomains` bo'lsa, qoida barcha subdomenlarga ham tarqaladi.
 
-Muhim cheklovlar (RFC 6797):
+MDN joriy qilish tartibini shunday beradi: server `http://` so'rovga doimiy redirect (masalan, 301) qaytaradi va bu redirect javobida HSTS header'i bo'lmasligi kerak, chunki header faqat HTTPS orqali yuborilishi shart. Brauzer redirectga ergashib HTTPS so'rov yuborgach, o'sha javobda `Strict-Transport-Security` bo'ladi va keyingi tashriflar redirectsiz to'g'ridan-to'g'ri HTTPS bo'ladi. Muhim cheklovlar (RFC 6797):
 
 1. HSTS header'i faqat xavfsiz transport orqali kelganda hisobga olinadi. HTTP javobdagi header e'tiborsiz qoldiriladi, aks holda tarmoqdagi hujumchi siyosatni o'zgartira olardi.
 2. Eng birinchi tashrifda brauzer hali HSTS'ni bilmaydi, shuning uchun birinchi so'rov shifrlanmagan ketishi mumkin. Brauzerlar bu bo'shliqni oldindan yuklangan (preload) ro'yxatlar bilan yopadi; preload RFC 6797 ning bir qismi emas, MDN uni nostandart deb belgilaydi: ro'yxatni Google yuritadi (hstspreload.org), kiritish uchun `max-age` kamida bir yil va `includeSubDomains` bo'lishi shart.
-3. `max-age=0` xotirani o'chiradi: noto'g'ri sozlangan siyosatdan chiqish yo'li shu. Lekin preload ro'yxatiga kiritilgan domendan chiqish ancha uzoq jarayon, shuning uchun preload'ga shoshilmang.
+3. `max-age=0` xotirani o'chiradi: noto'g'ri sozlangan siyosatdan chiqish yo'li shu. MDN aniqlashtiradi: `max-age=0` bilan `includeSubDomains` ta'sirsiz, chunki faqat shu domen yozuvi o'chadi, har subdomenning o'z HSTS siyosati o'chmaydi. Lekin preload ro'yxatiga kiritilgan domendan chiqish ancha uzoq jarayon, shuning uchun preload'ga shoshilmang.
 
 Quyidagi `run` bloki HSTS xotirasi va navigatsiya qarorini modellaydi.
 
@@ -200,17 +208,17 @@ console.log("4) muddat o'tgach:", navigate(store, "http://fleet.example/", t0 + 
 
 ### X-Content-Type-Options
 
-`X-Content-Type-Options: nosniff` brauzerga javobdagi `Content-Type` qiymatiga ishonishni va tarkibdan boshqa tur taxmin qilmaslikni buyuradi. Bu foydalanuvchi yuklagan kontent bo'lgan sahifalarda muhim: `text/plain` deb berilgan, lekin ichida HTML yoki skript bo'lgan fayl boshqa tur deb talqin qilinsa, XSS paydo bo'ladi. Sniffing xatti-harakati brauzer va resurs turiga bog'liq; `nosniff` uni o'chiradi. Shu bilan birga to'g'ri `Content-Type` berish asosiy chora, nosniff uni almashtirmaydi (fayl yuklash, 74-dars).
+`X-Content-Type-Options: nosniff` brauzerga javobdagi `Content-Type` qiymatiga ishonishni va tarkibdan boshqa tur taxmin qilmaslikni buyuradi. Bu foydalanuvchi yuklagan kontent bo'lgan sahifalarda muhim: `text/plain` deb berilgan, lekin ichida HTML yoki skript bo'lgan fayl boshqa tur deb talqin qilinsa, XSS paydo bo'ladi. MDN nosniff ning ikki ta'sirini ajratadi. Birinchisi, so'rov maqsadi `script` yoki `style` bo'lsa, javob MIME turi kutilganga (JavaScript MIME turi yoki `text/css`) mos kelmasa brauzer javobni bloklaydi. Ikkinchisi, boshqa javob turlarida (HTML hujjatga navigatsiya ham) brauzer tarkibni tekshirib tur taxmin qilmaydi va e'lon qilingan `Content-Type` ni o'zgartirmasdan ishlatadi: `text/plain` bilan berilgan fayl ichida HTML belgilari bo'lsa ham HTML sifatida talqin qilinmaydi. Amaliy xulosa: `nosniff` yoqilgach, JavaScript fayllaringiz to'g'ri `Content-Type` bilan berilishi shart, aks holda skript yuklanmaydi; shuning uchun uni joriy qilishdan oldin statik fayllarning turlarini tekshiring. Shu bilan birga to'g'ri `Content-Type` berish asosiy chora, nosniff uni almashtirmaydi (fayl yuklash, 74-dars).
 
 ### Referrer-Policy
 
-Brauzer sahifadan boshqa sahifaga o'tganda yoki resurs yuklaganda `Referer` header'ida manba URL'ni yuboradi. `Referrer-Policy` qancha ma'lumot yuborilishini belgilaydi. Asosiy qiymatlar: `no-referrer` (yubormaydi), `same-origin` (faqat shu origin ichida), `strict-origin` (faqat origin, HTTPS'dan HTTP'ga yubormaydi), `strict-origin-when-cross-origin` (shu origin ichida to'liq URL, cross-origin'ga faqat origin, HTTPS'dan HTTP'ga umuman yubormaydi). MDN bo'yicha qiymat berilmasa yoki noto'g'ri bo'lsa standart `strict-origin-when-cross-origin` (2020-yil noyabr spetsifikatsiya o'zgarishidan oldin `no-referrer-when-downgrade` edi). Uni aniq yozib qo'yish xatti-harakatni brauzer versiyasidan mustaqil qiladi.
+Brauzer sahifadan boshqa sahifaga o'tganda yoki resurs yuklaganda `Referer` header'ida manba URL'ni yuboradi. `Referrer-Policy` qancha ma'lumot yuborilishini belgilaydi. Asosiy qiymatlar: `no-referrer` (yubormaydi), `same-origin` (faqat shu origin ichida), `strict-origin` (faqat origin, HTTPS'dan HTTP'ga yubormaydi), `strict-origin-when-cross-origin` (shu origin ichida to'liq URL, cross-origin'ga faqat origin, HTTPS'dan HTTP'ga umuman yubormaydi). MDN bo'yicha qiymat berilmasa yoki noto'g'ri bo'lsa standart `strict-origin-when-cross-origin` (2020-yil noyabr spetsifikatsiya o'zgarishidan oldin `no-referrer-when-downgrade` edi). Uni aniq yozib qo'yish xatti-harakatni brauzer versiyasidan mustaqil qiladi. MDN yana bir imkoniyatni ko'rsatadi: header'ga vergul bilan bir nechta qiymat berish mumkin (`no-referrer, strict-origin-when-cross-origin`), brauzer eng oxirgi tushunadigan qiymatni oladi; shunday qilib yangi qiymatni eskisiga fallback bilan birga yozasiz.
 
 Referer sizib chiqishi URL'da nima borligiga bog'liq: tiklash tokeni, qidiruv so'zi, tenant identifikatori. Asosiy chora sezgir qiymatni URL'ga qo'ymaslik (50-dars); `Referrer-Policy` ikkinchi qatlam.
 
 ### Permissions-Policy
 
-`Permissions-Policy` brauzer imkoniyatlarini (kamera, mikrofon, geolokatsiya va boshqalar) sahifa va uning iframe'lari uchun yoqadi yoki o'chiradi. Sintaksis: `camera=(), geolocation=(self)`: bo'sh ro'yxat hamma uchun taqiqlaydi, `(self)` faqat shu origin'ga ruxsat beradi. Maqsad: ilova ishlatmaydigan imkoniyatni o'chirib, XSS yoki uchinchi tomon iframe'dan suiiste'mol qilishni cheklash. Qaysi imkoniyat nomlari qo'llab-quvvatlanishi brauzerga bog'liq; ro'yxat o'zgarib turadi, MDN'ni tekshiring.
+`Permissions-Policy` brauzer imkoniyatlarini (kamera, mikrofon, geolokatsiya va boshqalar) sahifa va uning iframe'lari uchun yoqadi yoki o'chiradi. Sintaksis: `camera=(), geolocation=(self)`: bo'sh ro'yxat hamma uchun taqiqlaydi, `(self)` faqat shu origin'ga ruxsat beradi. Maqsad: ilova ishlatmaydigan imkoniyatni o'chirib, XSS yoki uchinchi tomon iframe'dan suiiste'mol qilishni cheklash. MDN bu header sahifasini hozircha eksperimental deb belgilaydi, shuning uchun qaysi imkoniyat nomlari qo'llab-quvvatlanishi brauzerga bog'liq va ro'yxat o'zgarib turadi. Sintaksis qoidalari: bir nechta imkoniyat vergul bilan ajratiladi; `*` va `()` faqat yolg'iz yoziladi, `self` esa aniq origin'lar bilan birga bo'lishi mumkin; iframe uchun ekvivalenti `allow` atributi (`()` uchun `'none'`). Header o'z hujjati va ichki iframe'lar uchun siyosatni belgilaydi, iframe'ni joylashtiruvchi sahifa esa `allow` atributi bilan faqat header ruxsat bergan imkoniyatni o'z iframe'iga uzata oladi. Buzilishlarni Reporting API orqali (`report-to`) yig'ish mumkin.
 
 ## Chuqurroq: ma'lumot oshkor qilish va mexanizmlar
 
@@ -439,7 +447,7 @@ Yopilmagani. Eng birinchi tashrifda HSTS hali xotirada yo'q: birinchi so'rov HTT
 
 ## Stack'da: Helmet, NestJS va Next.js
 
-Helmet (Express va Fastify uchun `@fastify/helmet`) bir nechta xavfsizlik header'ini birdan o'rnatadigan middleware. NestJS hujjatiga ko'ra NestJS v12.1 dan boshlab `app.useSecurityHeaders()` Helmet 8 bilan bir xil standart qiymatlarni qo'shimcha paketsiz o'rnatadi (Express va Fastify'da bir xil), `X-Powered-By` ni olib tashlaydi. Hujjatdagi standart jadvalda `Referrer-Policy: no-referrer`, `Strict-Transport-Security: max-age=31536000; includeSubDomains`, `X-Content-Type-Options: nosniff` va `X-XSS-Protection: 0` bor (oxirgisi eski brauzerlarning XSS auditorini o'chiradi, hujjat uni o'zi zaiflik manbai bo'lgan deb izohlaydi). Standart CSP qat'iy emas (`style-src` da `'unsafe-inline'` bor), shuning uchun uni 15-darsdagi siyosat bilan almashtiring. Eski NestJS versiyalarida `helmet` paketini `app.use(helmet())` bilan ulaysiz. Quyidagi kod ishga tushirilmaydi (kutubxona kerak), sintaksis tekshirilgan.
+Helmet (Express va Fastify uchun `@fastify/helmet`) bir nechta xavfsizlik header'ini birdan o'rnatadigan middleware. NestJS hujjatiga ko'ra NestJS v12.1 dan boshlab `app.useSecurityHeaders()` Helmet 8 bilan bir xil standart qiymatlarni qo'shimcha paketsiz o'rnatadi (Express va Fastify'da bir xil), `X-Powered-By` ni olib tashlaydi. Hujjatdagi standart jadvalda `Referrer-Policy: no-referrer`, `Strict-Transport-Security: max-age=31536000; includeSubDomains`, `X-Content-Type-Options: nosniff` va `X-XSS-Protection: 0` bor (oxirgisi eski brauzerlarning XSS auditorini o'chiradi, hujjat uni o'zi zaiflik manbai bo'lgan deb izohlaydi). Standart CSP qat'iy emas (`script-src 'self'`, lekin `style-src` da `'unsafe-inline'` bor), shuning uchun uni 15-darsdagi siyosat bilan almashtiring; hujjatdagi `contentSecurityPolicy.reportOnly` opsiyasi Report-Only bosqichi uchun. Direktiva qiymatlari faqat satr, ro'yxat, boolean yoki `null` bo'lishi mumkin va `;`, `,` belgilari rad etiladi, ya'ni qiymat orqali yangi direktiva qo'shib bo'lmaydi. Hujjat yana ikki amaliy ogohlantirish beradi: `useSecurityHeaders()` ni `NestFactory.create()` dan so'ng darhol chaqiring (undan oldin `app.use()` bilan ro'yxatdan o'tgan middleware o'z javoblarini header'siz yuborishi mumkin), va Fastify'da `reply.removeHeader()` bu metod qo'ygan header'ni o'chira olmaydi. Eski NestJS versiyalarida `helmet` paketini `app.use(helmet())` bilan ulaysiz. Quyidagi kod ishga tushirilmaydi (kutubxona kerak), sintaksis tekshirilgan.
 
 ```ts
 import { NestFactory } from "@nestjs/core";

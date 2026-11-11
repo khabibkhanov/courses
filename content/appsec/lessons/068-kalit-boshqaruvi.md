@@ -8,9 +8,13 @@ sources:
   - id: t10-a04
     note: "A04:2025 tekshiriladigan savollar: default yoki zaif kalitlar, kalitlarning qayta ishlatilishi, kalit boshqaruvi va rotatsiyasi yo'qligi, kalitlarning repozitoriyga tushishi; 'How to prevent': eng sezgir kalitlarni HSM'da saqlash, kalitlar xotirada bayt massivi sifatida"
   - id: cs-secrets
-    note: "Secrets Management cheat sheet 4.2 Envelope & client-side encryption va 7.3: kalitni u shifrlagan sirning yonida saqlamaslik (envelope encryption bundan mustasno), 2.7 Secret Lifecycle (creation, rotation, revocation, expiration)"
+    note: "Secrets Management cheat sheet 4.2.2 (data key secretni, uni esa provayder yoki o'zingizning master kalitingiz shifrlaydi), 7.3 (kalitni u shifrlagan sirning yonida saqlamaslik, shifrlangan bo'lsa bundan mustasno), 4.4 API limits, 2.7 Secret Lifecycle"
   - id: asvs
     note: "ASVS 5.0.0 11.1.1 (kalit boshqaruvi siyosati va hayot sikli, kalitlar ortiqcha ulashilmasligi), 13.3.1-13.3.4 (secrets management, izolyatsiyalangan modul, rotatsiya), Appendix C Key Wrapping (AES-256, KW va KWP)"
+  - id: pg-pgcrypto
+    note: "PostgreSQL pgcrypto, Security Limitations: funksiyalar baza serveri ichida ishlaydi, ma'lumot va parollar klient bilan ochiq matnda o'tadi, shuning uchun lokal yoki SSL ulanish, administratorga ishonish; ishonib bo'lmasa kriptografiya klient ilovada"
+  - id: pg-logging
+    note: "PostgreSQL 19.8 Error Reporting and Logging: log_statement extended query protocol'da Bind parametr qiymatlarini ham yozadi; log_parameter_max_length (standart -1, to'liq) qiymatlarni qisqartiradi yoki 0 bilan o'chiradi"
   - id: cs-key-mgmt
     note: "Key Management cheat sheet: Key Usage (bir kalit bir maqsad), Cryptoperiods and Rotation (misol muddatlar, usage-based limit, KEK re-wrap DEK'ni o'zgartirmasligi), Key Compromise and Recovery"
   - id: cs-crypto-storage
@@ -43,10 +47,10 @@ quiz:
   - q: "Hujumchi KEK'ni o'g'irlagani aniq. Ilovada barcha DEK'lar shu KEK bilan o'ralgan va o'ralgan DEK'lar bazada. Faqat KEK'ni almashtirib re-wrap qilish yetarlimi?"
     options:
       - "Ha, yangi KEK yetarli"
-      - "Yo'q: hujumchi eski KEK bilan o'ralgan DEK nusxalarini ochgan bo'lishi mumkin, shuning uchun DEK'lar ham almashtirilib, ma'lumot qayta shifrlanishi kerak"
-      - "Faqat parollarni o'zgartirish yetadi"
       - "Hech narsa qilish shart emas"
-    answer: 1
+      - "Faqat parollarni o'zgartirish yetadi"
+      - "Yo'q: hujumchi eski KEK bilan o'ralgan DEK nusxalarini ochgan bo'lishi mumkin, shuning uchun DEK'lar ham almashtirilib, ma'lumot qayta shifrlanishi kerak"
+    answer: 3
     explain: "Hujumchi o'ralgan DEK'larning nusxasini olgan bo'lsa, eski KEK uni ochadi, DEK esa ma'lumotni ochadi. Compromise holatida re-wrap yetmaydi: yangi DEK'lar bilan qayta shifrlash kerak (Key Compromise and Recovery)."
   - q: "Servis AES-GCM bilan, tasodifiy 96 bitli nonce'lar bilan bitta DEK ostida juda ko'p yozuvni shifrlayapti. Key Management cheat sheet bo'yicha nimani rejalashtirish kerak?"
     options:
@@ -351,9 +355,9 @@ Shuningdek, cheat sheet ogohlantiradi: KEK va DEK ajratib saqlab bo'lmaydigan od
 
 ## Stack'da: Node.js, NestJS, Prisma, PostgreSQL
 
-Bulut KMS (AWS KMS, GCP KMS, Azure Key Vault) yoki HashiCorp Vault Transit kabi xizmatlar `GenerateDataKey`, `Encrypt/Decrypt` yoki wrap/unwrap operatsiyalarini beradi; aniq API nomlari bu darsda manbadan tekshirilmagan, provayder hujjatiga qarang. NestJS'da `KeyService` interfeysi (`wrapKey`, `unwrapKey`, `currentVersion`) yozing va ilovaning boshqa qismlari faqat shu interfeysga bog'liq bo'lsin: KMS provayderini almashtirish (ASVS 11.2.2) va testda mock qilish osonlashadi. Prisma yoki Kysely'da yozuv jadvaliga `kek_version`, `wrapped_dek`, `ciphertext` ustunlarini qo'shing va format versiyasi bilan saqlang; rotatsiya jobi kichik paketlarda (`wrapped_dek` ni yangilab) ishlaydi, shuning uchun uzun tranzaksiya kerak emas. Rotatsiya qaysi yozuvga tegishini yuqoridagi mashqdagi kabi reja funksiyasi bilan hisoblang, so'ng bajaring.
+Bulut KMS (AWS KMS, GCP KMS, Azure Key Vault) yoki HashiCorp Vault Transit kabi xizmatlar `GenerateDataKey`, `Encrypt/Decrypt` yoki wrap/unwrap operatsiyalarini beradi; operatsiyalar nomi va chegaralari provayderga bog'liq va kurs korpusida yo'q, provayder hujjatiga qarang. NestJS'da `KeyService` interfeysi (`wrapKey`, `unwrapKey`, `currentVersion`) yozing va ilovaning boshqa qismlari faqat shu interfeysga bog'liq bo'lsin: KMS provayderini almashtirish (ASVS 11.2.2) va testda mock qilish osonlashadi. Prisma yoki Kysely'da yozuv jadvaliga `kek_version`, `wrapped_dek`, `ciphertext` ustunlarini qo'shing va format versiyasi bilan saqlang; rotatsiya jobi kichik paketlarda (`wrapped_dek` ni yangilab) ishlaydi, shuning uchun uzun tranzaksiya kerak emas. Rotatsiya qaysi yozuvga tegishini yuqoridagi mashqdagi kabi reja funksiyasi bilan hisoblang, so'ng bajaring.
 
-PostgreSQL'da kalit va ma'lumot bir joyda bo'lmasin: bazada `ciphertext` va `wrapped_dek`, KEK esa KMS'da. Bazadagi `pgcrypto` kabi funksiyalar kalitni SQL so'rovi ichida uzatadi va u so'rov logiga tushishi mumkin; shuning uchun ilova darajasidagi shifrlash ko'pincha xavfsizroq (bu da'vo bu darsda manbadan tekshirilmagan). Next.js'da kalitlarni server tomonida (server action yoki route handler) ishlating; klient bundle'ga hech qachon tushmasin.
+PostgreSQL'da kalit va ma'lumot bir joyda bo'lmasin: bazada `ciphertext` va `wrapped_dek`, KEK esa KMS'da. Bazadagi `pgcrypto` funksiyalari esa qulay, lekin PostgreSQL hujjati ularning "Security Limitations" bo'limida ogohlantiradi: hamma pgcrypto funksiyalari baza serveri ichida ishlaydi, shuning uchun ma'lumot va parollar pgcrypto bilan klient ilova orasida ochiq matnda o'tadi; shu sababli lokal yoki SSL ulanish ishlatish va tizim hamda baza administratoriga ishonish kerak, ishonib bo'lmasa kriptografiyani klient ilovada bajaring. Qo'shimcha xavf: `log_statement` sozlamasi SQL jumlalarini logga yozadi va extended query protocol'da Bind parametrlarining qiymatlarini ham kiritadi, ya'ni kalit SQL parametri sifatida yuborilsa, u baza logiga tushishi mumkin (`log_parameter_max_length` standart `-1`, ya'ni qiymatni to'liq yozadi; `0` parametr yozishni o'chiradi). Shuning uchun kalit va ochiq matn bilan ishlash ilova darajasida (yoki KMS orqali) xavfsizroq. Next.js'da kalitlarni server tomonida (server action yoki route handler) ishlating; klient bundle'ga hech qachon tushmasin.
 
 ## Xulosa
 

@@ -85,7 +85,7 @@
   lesson: 45
 - term: signature counter
   aliases: ["sign count"]
-  uz: "Authenticator har imzoda oshiradigan hisoblagich. Server kutilganidan kichik qiymatni ko'rsa, credential nusxalangan bo'lishi mumkin deb gumon qiladi."
+  uz: "Authenticator har imzoda oshiradigan hisoblagich. Saqlangan qiymatdan oshmaydigan nolga teng bo'lmagan hisoblagich credential nusxalanganining signali bo'lishi mumkin; ko'p sinxronlanadigan passkey'larda hisoblagich doim 0 bo'ladi va tekshiruvga yaramaydi."
   course: appsec
   lesson: 45
 - term: session fixation
@@ -125,7 +125,7 @@
   lesson: 48
 - term: ID token
   aliases: []
-  uz: "OpenID Connect da foydalanuvchi autentifikatsiyasi haqidagi imzolangan JWT. Ilova uni iss, aud, exp va nonce bo'yicha tekshirgandan keyingina ishonadi."
+  uz: "OpenID Connect da foydalanuvchi autentifikatsiyasi haqidagi imzolangan JWT. Ilova uni imzo, iss, aud, exp va nonce bo'yicha tekshirgandan keyingina ishonadi."
   course: appsec
   lesson: 49
 - term: nonce

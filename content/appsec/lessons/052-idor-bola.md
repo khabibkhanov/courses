@@ -13,6 +13,8 @@ sources:
     note: "Authorization Cheat Sheet: 'Ensure Lookup IDs are Not Accessible Even When Guessed' bo'limi, CWE-639, ID'ni yashirish yetarli emasligi va har so'rovda aniq obyekt uchun tekshiruv"
   - id: cs-idor
     note: "IDOR Prevention Cheat Sheet: IDOR'ning uch tarkibiy qismi (obyekt, havola, yetishmayotgan tekshiruv), murakkab identifikator defense in depth ekani, foydalanuvchiga tegishli to'plamdan qidirish, mavjudligi maxfiy bo'lsa ikki holatga bir xil javob, ikki akkaunt bilan tekshirish"
+  - id: prisma-undefined
+    note: "Prisma 'Null and undefined': undefined qiymat yaratilgan so'rovga kiritilmaydi ('do nothing'), strictUndefinedChecks preview xususiyati va Prisma.skip"
   - id: asvs
     note: "ASVS 5.0.0, V8.2.2: ma'lumotga xos kirish aniq ruxsati bor iste'molchilarga cheklanadi (IDOR va BOLA'ni yopish uchun, 1-daraja); V8.3.1: tekshiruv ishonchli servis qatlamida"
 quiz:
@@ -374,6 +376,8 @@ export class TripsController {
   }
 }
 ```
+
+Prisma'da bitta xavfli nozik joy bor. Prisma hujjatiga ko'ra `undefined` qiymat yaratilgan so'rovga kiritilmaydi ("do nothing"), `null` esa oddiy qiymat. Demak `where: { id, tenantId: req.user.tenantId }` da `req.user.tenantId` tasodifan `undefined` bo'lib qolsa (token to'ldirilmagan, maydon nomi xato yozilgan), tenant sharti so'rovdan jimgina tushib ketadi va qidiruv faqat `id` bo'yicha ishlaydi: IDOR qaytib keladi. Hujjatning o'zi bu xatti-harakat "kutilmagan natijalar va ma'lumot yo'qolishiga" olib kelishi mumkinligini aytadi va `strictUndefinedChecks` preview xususiyatini yoqishni tavsiya qiladi: shunda aniq `undefined` runtime xatosi beradi, maydonni ataylab o'tkazib yuborish uchun esa `Prisma.skip` ishlatiladi. Bundan tashqari, tenant identifikatorini so'rovga berishdan oldin o'zingiz tekshiring (`if (!tenantId) throw ...`).
 
 Kysely'da ham shu fikr: `.where("tenant_id", "=", tenantId)` har qidiruvning ajralmas qismi bo'lishi kerak. Buni unutmaslik uchun repository qatlami `tenantId` ni konstruktorda oladi va undan tashqarida `where` yozilmaydi (55-dars).
 

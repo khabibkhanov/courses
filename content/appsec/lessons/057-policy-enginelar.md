@@ -8,7 +8,7 @@ sources:
   - id: cs-authz
     note: "Authorization Cheat Sheet: ABAC siyosat boshqaruvini majburlashdan ajratishga imkon beradi; deny by default; har so'rovda tekshirish"
   - id: asvs
-    note: "ASVS 5.0.0 V8 Authorization: 8.1.1-8.1.2 (authorization hujjatida funksiya, ma'lumot va maydon darajasidagi qoidalar), 8.2.1-8.2.3, 8.3.1-8.3.3 talablari"
+    note: "ASVS 5.0.0 V8 Authorization: 8.1.1-8.1.2 (authorization hujjatida funksiya, ma'lumot va maydon darajasidagi qoidalar), 8.1.3-8.1.4 va 8.2.4 (muhit va kontekst atributlari), 8.2.1-8.2.3, 8.3.1 (ishonchli servis qatlamida majburlash), 8.3.2 (authorization qaroriga ta'sir qiluvchi qiymat o'zgarishi darhol qo'llanishi), 8.3.3 (obyektga kirish dastlabki subyekt huquqiga asoslanishi)"
   - id: t10-a06
     note: "A06:2025 Insecure Design: yo'qolgan yoki samarasiz nazorat dizayni, dizayn va amalga oshirish nuqsonlarining farqi"
   - id: opa-docs
@@ -19,6 +19,10 @@ sources:
     note: "Authorization Policy and Data Distribution Cheat Sheet: siyosat va atributlarning egasi va yangilik talablari, ma'lumot yetkazish usullari, revocation kechikishi"
   - id: cs-authz-decisions
     note: "Authorization Decisions and Output Handling Cheat Sheet: bitta va batch qarorlar, to'plamlarni majburlash usullari, fail closed va keshlash qoidalari"
+  - id: cs-authz-regression
+    note: "Authorization Regression Testing Cheat Sheet: Actor-Resource-Action matritsasi mashina o'qiy oladigan formatda, gorizontal (Multi-User Replay), vertikal (Role Demotion Check) va tenant izolyatsiyasi (Cross-Tenant Boundary Test) regressiya namunalari, authorization testlari CI'da PR'ni to'sadigan majburiy tekshiruv"
+  - id: cs-authz-testing
+    note: "Authorization Testing Automation Cheat Sheet: authorization matritsasi Feature x Logical Role (ba'zan Data) o'lchovlari, matritsani avtomatik testga aylantirish yondashuvi"
 quiz:
   - q: "Servis har so'rovda PDP'ga HTTP chaqiruv yuboradi. PDP vaqtincha javob bermay qoldi (timeout). Cheat sheet tavsiyasiga ko'ra PEP nima qilishi kerak?"
     options:
@@ -62,11 +66,11 @@ quiz:
     explain: "Cheat sheet batch javoblarni so'rovlar bilan moslashtirishni, javobi yo'q, yaroqsiz yoki xatoli elementni rad etishni va bitta element ruxsatini butun batchga tatbiq qilmaslikni aytadi."
   - q: "ASVS 5.0.0 8.1.2 talabi authorization hujjatida nimani talab qiladi?"
     options:
+      - "Maydon darajasidagi (o'qish va yozish) cheklov qoidalarini consumer ruxsatlari va resurs atributlari bo'yicha"
       - "Faqat parol siyosatini"
       - "Faqat tarmoq diagrammasini"
-      - "Maydon darajasidagi (o'qish va yozish) cheklov qoidalarini consumer ruxsatlari va resurs atributlari bo'yicha"
       - "Faqat rol ro'yxatini"
-    answer: 2
+    answer: 0
     explain: "ASVS 8.1.2: authorization hujjati maydon darajasidagi (o'qish va yozish) cheklash qoidalarini consumer ruxsatlari va resurs atributlari asosida belgilashi kerak; bu qoidalar obyektning holatiga ham bog'liq bo'lishi mumkin."
 task:
   title: "PEP: batch qarorini xavfsiz qo'llash"
@@ -161,7 +165,7 @@ Cheat sheet ikki variantni ajratadi:
 
 ### OPA
 
-Open Policy Agent (OPA) hujjatiga ko'ra ochiq kodli, umumiy maqsadli policy engine: siyosat kod sifatida yuqori darajali deklarativ tilda (Rego) yoziladi, dasturlar qaror qabul qilishni OPA'ga topshirish uchun oddiy API'dan foydalanadi. OPA qaror qabul qilishni majburlashdan ajratadi: dastur OPA'ga so'rov yuboradi va tuzilgan ma'lumot (masalan JSON) bilan kirish beradi, OPA kirishni siyosat va ma'lumotga qarshi baholab qaror chiqaradi. Hujjat OPA CNCF graduated loyiha ekanini va uni mikroservislar, Kubernetes, CI/CD va API gateway'larda ishlatish mumkinligini aytadi. Cheat sheet qo'shimcha eslatadi: OPA HTTP, kutubxona va WebAssembly integratsiyasini qo'llaydi, mahsulot nomi bitta deployment rejimini bildirmaydi. Tanlov access control modelidan (RBAC, ABAC, ReBAC) mustaqil: OPA ham, boshqa PDP ham model emas, uni ifodalash vositasi.
+Open Policy Agent (OPA) hujjatiga ko'ra ochiq kodli, umumiy maqsadli policy engine: siyosat kod sifatida yuqori darajali deklarativ tilda (Rego) yoziladi, dasturlar qaror qabul qilishni OPA'ga topshirish uchun oddiy API'dan foydalanadi. OPA qaror qabul qilishni majburlashdan ajratadi: dastur OPA'ga so'rov yuboradi va tuzilgan ma'lumot (masalan JSON) bilan kirish beradi, OPA kirishni siyosat va ma'lumotga qarshi baholab qaror chiqaradi. Hujjat OPA CNCF graduated loyiha ekanini va uni mikroservislar, Kubernetes, CI/CD va API gateway'larda ishlatish mumkinligini aytadi. Cheat sheet qo'shimcha eslatadi: OPA HTTP, kutubxona va WebAssembly integratsiyasini qo'llaydi, mahsulot nomi bitta deployment rejimini bildirmaydi. Authorization Patterns Cheat Sheet uchta deployment variantini ajratadi: embedded kutubxona (masofaviy PDP ulanishisiz baholash davom etadi, lekin siyosat va ma'lumot yangi bo'lishi va har kirish nuqtasida majburlash tekshirilishi kerak), lokal sidecar yoki daemon (umumiy qaror amalga oshirilishi servis yaqinida, lekin API'si cheklanadi va jarayon xatosi boshqariladi; lokal joylashuv o'zi ishonch yaratmaydi) va masofaviy servis (umumiy baholash va markazlashgan boshqaruv, lekin PEP'lar autentifikatsiya va authorize qilinadi, javoblar himoyalanadi, yaroqli qaror bo'lmasa rad etiladi). Qaror va uning majburlanishi qaysi siyosat versiyasi bilan chiqqanini tekshirish uchun yetarli kontekst bilan log qilinadi, sezgir atributlarni oshkor qilmasdan. Tanlov access control modelidan (RBAC, ABAC, ReBAC) mustaqil: OPA ham, boshqa PDP ham model emas, uni ifodalash vositasi.
 
 Quyida bizning avtopark qoidasi Rego'da qanday ko'rinishi mumkin. Bu kod bu darsda ishga tushirilmagan (OPA bu muhitda yo'q), faqat shaklni ko'rsatadi:
 
@@ -181,6 +185,8 @@ allow if {
 
 `default allow := false` qatori deny by default'ning o'zi: boshqa qoida mos kelmasa, javob rad. Lekin qoida to'g'ri yozilgani siyosat to'g'riligini kafolatlamaydi, uni test qilish kerak (pastda).
 
+ASVS 5.0.0 V8.3 bo'limidagi ikki talab policy engine dizayniga bevosita tegadi. 8.3.2 (3-daraja): authorization qarori tayanadigan qiymatlar o'zgarsa, o'zgarish darhol qo'llanishi kerak; darhol qo'llab bo'lmaydigan joyda (masalan, o'zi-o'zini tasdiqlovchi tokenlardagi ma'lumot) iste'molchi endi huquqsiz bo'lib qolgan amalni bajarganda ogohlantiradigan va o'zgarishni qaytaradigan kompensatsion nazorat bo'lishi kerak; ASVS bu muqobil ma'lumot sizishini yopmasligini ham eslatadi. 8.3.3 (3-daraja): obyektga kirish dastlabki subyektning huquqlariga asoslanadi, oraliq servis huquqlariga emas. Misol: iste'molchi token bilan bir servisni chaqirsa va u ikkinchi servisdan ma'lumot so'rasa, ikkinchi servis birinchisining mashina-mashina tokenini emas, iste'molchining tokenini qaror uchun ishlatadi. Bu PDP'ga beriladigan `user` atributlari qayerdan kelishi masalasining ASVS shakli: servislar zanjirida PEP har bo'g'inda dastlabki subyektni uzatishi kerak.
+
 ## Chuqurroq: siyosat, ma'lumot va qarorlar
 
 ### Qarorni qaysi ma'lumotga bog'lash
@@ -196,8 +202,11 @@ Authorization Policy and Data Distribution Cheat Sheet: authorization qarori siy
 | Favqulodda cheklov yoki revocation | Dinamik yangilash yoki ishonchli manbadan tekshirish | Tarqalish chegarasini o'lchash, bajarilmasa tegishli operatsiyalarni rad etish |
 | Rejali, barqaror qoidalar | Versiyalangan deploy yoki dinamik tarqatish | Talab qilingan versiyani muddatdan oldin faollashtirish |
 | Tez o'zgaradigan resurs yoki munosabat ma'lumoti | Ishonchli manbadan sinxronlash yoki tekshirish | Replikatsiya kechikishi va keshlangan qarorlarni hisobga olish |
+| So'rovga xos atributlar | PEP uzatadigan tekshirilgan kontekst | PEP o'zi autentifikatsiya qilinadi va har bir xavfsizlik uchun muhim qiymatning manbai aniq bo'ladi |
 
 Cheat sheet OPA bundle'larini eventual consistency misoli sifatida keltiradi: nashr muvaffaqiyatli bo'lgani har PDP yangilanishni faollashtirganini isbotlamaydi. Replikatsiya qilingan ma'lumot PIP'ni so'rov yo'lidan olib tashlaydi, lekin revocation kechikishini yaratadi; lokal mavjudlikni yangilik kafolati deb atamaslik kerak. O'zgaruvchan hisob holati yoki revocation ma'lumotini tez yangilanmaydigan release ichiga joylash esa tavsiya etilmaydi.
+
+Cheat sheet tarqatish kanalining o'zini ham himoya obyekti deb hisoblaydi. Tarmoqqa ochiq qaror API'lari va siyosat hamda ma'lumotni o'qiydigan yoki o'zgartiradigan API'lar himoyalanadi; PEP'lar va administratorlar autentifikatsiya qilinadi va faqat kerakli tenant va amallar bilan cheklanadi; servis jamoalari tashkilot miqyosidagi cheklovlarni almashtira olmasligi kerak. Bundle'lar uchun ishonchli nashr qiluvchining imzosi talab qilinadi va qamrab olingan hamma fayl tekshiriladi; imzo manba va yaxlitlikni isbotlaydi, siyosat to'g'ri yoki yangi ekanini emas. Joriy qilingan siyosat va sxema versiyalari qayd etiladi va kutilmagan yoki eskirgan revizyon rad etiladi. Jarayon ishga tushganda kerakli siyosat va ma'lumot mavjud va yaroqli bo'lgunicha himoyalangan operatsiyalar xizmat ko'rsatmaydi. Taqsimot xizmati yo'qolishi bilan qaror chiqarish imkoniyatining yo'qolishi farqlanadi: OPA yangi bundle imzo tekshiruvidan o'tmasa mavjud bundle'ni saqlab qoladi, bu mavjudlikni asraydi, lekin eski bundle hali yetarlicha yangi ekanini isbotlamaydi. Aniq chegara: kerakli kirish ma'lumoti yo'q, yaroqsiz yoki ruxsat etilgan muddatdan eski bo'lsa, ta'sirlangan operatsiyalar rad etiladi.
 
 ### To'plamlar: ro'yxat, qidiruv, eksport
 
@@ -215,7 +224,7 @@ Bu darsning markaziy qoidasi, va misol uni ko'rsatadi: PDP xatolari va timeout'l
 
 ### Siyosat testlari
 
-Siyosat kodga o'xshash yozuv, uni ham testlash kerak. Authorization Regression Testing va Testing Automation cheat sheet'lari kurs manbalari ro'yxatida emas, shuning uchun ularning mazmuniga tayanmaymiz. Umumiy fikr: har qoida uchun musbat va manfiy testlar (ruxsat va rad), siyosat o'zgarganda testlarning ishga tushishi. 8.1.3 va 8.1.4 talablari kontekstli atributlar (vaqt, joy, IP, qurilma) qarorlarda qanday qo'llanishi ham hujjatlanishini talab qiladi.
+Siyosat kodga o'xshash yozuv, uni ham testlash kerak. Authorization Regression Testing Cheat Sheet "Day 2" muammosini nomlaydi: boshlang'ich xavfsizlik sinovi ruxsatlarni ishga tushirish paytida tekshiradi, keyin esa yangi endpoint, ma'lumotlar qatlamini refaktoring va servislarni ajratish mavjud mantiqni buzishi mumkin. Tavsiya: Actor-Resource-Action matritsasini jadvalda emas, mashina o'qiy oladigan fayl (YAML yoki JSON) sifatida saqlash, shunda test runner test holatlarini matritsadan generatsiya qiladi. Uch regressiya namunasi: "Multi-User Replay" (A foydalanuvchi resurs yaratadi, aynan shu rolga ega B foydalanuvchi uni o'qish, yangilash va o'chirishga urinadi; kutilgani 403 yoki 404, hech qachon 200 emas), "Role Demotion Check" (admin endpoint'lariga barcha admin bo'lmagan rollar va kirmagan foydalanuvchi bilan urinish) va "Cross-Tenant Boundary Test" (ikki tenant yaratib, birining ma'lumotini ikkinchisi sifatida keng so'rovlar bilan o'qishga urinish; bitta sizib chiqqan yozuv ham jiddiy nosozlik). Authorization testlari CI'da PR'ni to'sadigan majburiy tekshiruv bo'lishi va alohida teg bilan (`authz`) guruhlanib, lokal tez ishga tushirilishi kerak. Authorization Testing Automation Cheat Sheet matritsaning asosiy o'lchovlarini nomlaydi: Feature va Logical Role, ba'zan Data (biznes ma'lumoti darajasida filtrlash uchun) o'lchovi. Bu darsdagi siyosat uchun: har qoidaga musbat va manfiy test, va PDP uchun alohida "PDP o'chiq" testi. Decisions cheat sheet adapter tekshiruvini aniq beradi: filtr tanlagan resurslarni vakillik qiluvchi siyosat holatlari uchun yakka qarorlar bilan solishtiring. 8.1.3 va 8.1.4 talablari kontekstli atributlar (vaqt, joy, IP, qurilma) qarorlarda qanday qo'llanishi ham hujjatlanishini talab qiladi.
 
 ## Misol: PDP ishlamay qolganda
 

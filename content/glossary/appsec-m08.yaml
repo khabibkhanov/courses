@@ -84,3 +84,15 @@
   uz: LLM'ga ortiqcha funksionallik, ruxsat yoki avtonomiya berilishi; manipulyatsiya qilingan chiqish zarar keltiruvchi harakatga aylanadi (OWASP LLM06).
   course: appsec
   lesson: 80
+- term: fail open
+  aliases:
+  - failing open
+  uz: 'Tekshiruvchi mexanizm (masalan, policy xizmati) xato bergan paytda ruxsat berib yuborish. Teskarisi fail closed: natijani aniqlay olmasak, rad etamiz (CWE-636).'
+  course: appsec
+  lesson: 78
+- term: audit trail
+  aliases:
+  - audit izi
+  uz: 'Tranzaksiyalar va muhim harakatlar yozuvlari ketma-ketligi; o''zgartirish yoki o''chirishdan himoyalanishi kerak (append-only jadval, ruxsatlarni cheklash, tamper detection, read-only nusxa).'
+  course: appsec
+  lesson: 79

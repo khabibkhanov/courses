@@ -12,7 +12,7 @@ sources:
   - id: asvs
     note: "ASVS 5.0.0 V13.3: sirlar uchun secrets management yechimi (13.3.1), minimal huquq (13.3.2), sirlarning muddati va rotatsiyasi (13.3.4)"
   - id: nist-ssdf
-    note: "NIST SP 800-218 SSDF lokal korpusda yo'q; dars undan faqat umumiy g'oya (xavfsizlik tekshiruvlarini ishlab chiqish jarayoniga kiritish) sifatida foydalanadi va aniq amaliyot raqamlarini keltirmaydi"
+    note: "NIST SP 800-218 SSDF v1.1: xavfsizlik amaliyotlari (jumladan kodni tahlil qilish va sinash) ishlab chiqish hayot siklining bir qismi bo'lishi kerak degan umumiy g'oya; dars amaliyot raqamlarini keltirmaydi"
 quiz:
   - q: "Dasturchi SMS kalitini commit qildi, keyingi commit'da uni kodda `process.env` ga almashtirdi. Joriy holatda (HEAD) kalit yo'q. Kalit xavfsizmi?"
     options:
@@ -25,26 +25,26 @@ quiz:
   - q: "Secret scanner `fleet_sk_live_` prefiksini tekshiradi va EXAMPLE so'zi bor qiymatlarni o'tkazib yuboradi. Qaysi sirni u o'tkazib yuboradi?"
     options:
       - "Prefiksi bor haqiqiy kalitni"
-      - "Prefiksi yo'q, boshqa servisning tasodifiy tokenini"
       - "Commit tarixidagi kalitni"
       - "Hech qaysini"
-    answer: 1
+      - "Prefiksi yo'q, boshqa servisning tasodifiy tokenini"
+    answer: 3
     explain: "Prefiksga asoslangan qoida faqat ma'lum shaklni ushlaydi. Boshqa formatdagi token uchun entropiya kabi umumiy qoida kerak, u ko'proq false positive beradi. Tarix skanerlash esa alohida masala."
-  - q: "SAST qoidasi `.query(` ichida shablon literal `${...}` qidiradi. Quyidagi kodning qaysi biri qoidadan o'tib ketadi?"
+  - q: "SAST qoidasi `.query(` ichida shablon literal `${...}` qidiradi. Quyidagilardan qaysi biri zaif (foydalanuvchi kiritmasi `col` ga tushadi), lekin qoidadan o'tib ketadi?"
     options:
       - "db.query(`... WHERE id = ${id}`)"
-      - "const q = \"SELECT \" + col + \" FROM t\"; db.query(q)"
       - "db.query(\"... WHERE id = $1\", [id])"
       - "Uchalasi ham ushlanadi"
-    answer: 1
-    explain: "Oddiy naqsh qidirish ma'lumot oqimini kuzatmaydi: so'rov avval o'zgaruvchiga yig'ilsa, qoida uni ko'rmaydi. Bu SAST'ning false negative chegarasi. Parametrlangan so'rov (3-variant) esa to'g'ri kod."
+      - "const q = \"SELECT \" + col + \" FROM t\"; db.query(q)"
+    answer: 3
+    explain: "Oddiy naqsh qidirish ma'lumot oqimini kuzatmaydi: so'rov avval o'zgaruvchiga yig'ilsa, qoida uni ko'rmaydi. Bu SAST'ning false negative chegarasi. Shablonli variant qoidaga tushadi, parametrlangan so'rov esa to'g'ri kod."
   - q: "SAST ko'p false positive beradi va jamoa natijalarni e'tiborsiz qoldira boshladi. Eng to'g'ri chora qaysi?"
     options:
-      - "Skanerni o'chirish"
       - "Faqat yuqori ishonchli qoidalarni PR'ni bloklaydigan qilish, qolganini ma'lumot sifatida ko'rsatish va qoidalarni kuzatuv natijasiga qarab sozlash"
+      - "Skanerni o'chirish"
       - "Barcha topilmalarni avtomatik yopish"
       - "Skanerni faqat chorak oxirida ishga tushirish"
-    answer: 1
+    answer: 0
     explain: "Shovqin ishonchni yo'q qiladi. Bloklaydigan tekshiruv ishonchli bo'lishi kerak; past ishonchli topilmalar ma'lumot sifatida qolsa, ular ham foydalidir, lekin jarayonni to'xtatmaydi."
   - q: "Scanner `// scan:allow` izohi bor qatorlarni o'tkazib yuboradi. Bu mexanizmning asosiy xavfi qaysi?"
     options:
@@ -57,10 +57,10 @@ quiz:
   - q: "Secret scanning va SAST o'rtasidagi asosiy farq qaysi?"
     options:
       - "Ikkalasi bir xil"
-      - "SAST ishga tushirilgan ilovani tekshiradi, secret scanning esa faqat kodni"
       - "Secret scanning kod ichidagi sirlarni (kalit, token) qidiradi, SAST esa kod strukturasi va ma'lumot oqimidagi xavfli naqshlarni (masalan, injection) qidiradi; ikkalasi ham ishga tushirilmagan kodni tekshiradi"
+      - "SAST ishga tushirilgan ilovani tekshiradi, secret scanning esa faqat kodni"
       - "SAST faqat Java uchun"
-    answer: 2
+    answer: 1
     explain: "Ikkalasi statik: kodni ishga tushirmay o'qiydi. Ishga tushirilgan ilovani tekshirish DAST'ga (84-dars) tegishli."
 task:
   title: "Secret scanner: prefiks, entropiya va istisno"
@@ -151,7 +151,7 @@ task:
 
 Kodni qo'lda review qilish zarur, lekin yetmaydi. Review qiluvchi 800 qatorli diff'da bitta `.query(`${id}`)` ni o'tkazib yuboradi va bitta qo'yilgan `API_KEY = "..."` ni ko'rmaydi. Ikkalasi ham mexanik xato: odam charchaydi, mashina charchamaydi. Shu sababli jamoa review'ni avtomatik tekshiruvlar bilan to'ldiradi.
 
-Bu darsda ikkita tur: SAST (Static Application Security Testing), ya'ni kodni ishga tushirmay o'qib, xavfli naqshlarni qidirish, va secret scanning, ya'ni kod va git tarixida kalit, token, parol qidirish. WSTG kirish bo'limi sinov texnikalarini aralashtirishni tavsiya qiladi: threat modeling, manual kod review, penetration testing va avtomatik skanerlash (SAST, DAST, SCA). U avtomatik skanerlashni umumiy, ma'lum zaifliklarni katta hajmda topish uchun deb ta'riflaydi, manual kod review esa vositalar o'tkazib yuboradigan nozik nuqsonlar (biznes mantiq, kriptografik zaifliklar, race condition) uchun deydi. Ya'ni SAST kod review o'rnini bosmaydi, uni to'ldiradi. NIST SSDF (SP 800-218) xavfsizlik tekshiruvlarini ishlab chiqish jarayoniga kiritish g'oyasini umumiy ma'noda qo'yadi (90-dars); SSDF matni lokal korpusda yo'q, shuning uchun uning amaliyot raqamlarini keltirmaymiz.
+Bu darsda ikkita tur: SAST (Static Application Security Testing), ya'ni kodni ishga tushirmay o'qib, xavfli naqshlarni qidirish, va secret scanning, ya'ni kod va git tarixida kalit, token, parol qidirish. WSTG kirish bo'limi sinov texnikalarini aralashtirishni tavsiya qiladi: threat modeling, manual kod review, penetration testing va avtomatik skanerlash (SAST, DAST, SCA). U avtomatik skanerlashni umumiy, ma'lum zaifliklarni katta hajmda topish uchun deb ta'riflaydi, manual kod review esa vositalar o'tkazib yuboradigan nozik nuqsonlar (biznes mantiq, kriptografik zaifliklar, race condition) uchun deydi. Ya'ni SAST kod review o'rnini bosmaydi, uni to'ldiradi. NIST SSDF (SP 800-218) xavfsizlik tekshiruvlarini ishlab chiqish jarayonining oddiy qismi qilish g'oyasini umumiy ma'noda qo'yadi (90-dars).
 
 Og'riqlar ikkita. Birinchisi, sirning commit'ga tushib qolishi: dasturchi sinov uchun kalitni kodga yozadi, keyin uni `process.env` ga ko'chiradi va "tuzatdim" deb o'ylaydi. Ikkinchisi, SAST shovqini: skaner 300 ta topilma beradi, 280 tasi bo'sh, jamoa natijani o'qishni to'xtatadi va 20 ta haqiqiysi ham yo'qoladi.
 
@@ -317,15 +317,15 @@ Nima yopildi: tarixga tushgan va keyin "olib tashlangan" kalit topiladi (`c1`), 
 - Barcha qoidalarni bloklovchi qilish. Past ishonchli qoida PR'ni to'xtatsa, jamoa uni o'chirib qo'yadi yoki istisno bilan o'tkazadi, natijada ishonchli qoidalar ham ahamiyatini yo'qotadi.
 - Tarixni qayta yozishni rotatsiya o'rniga ishlatish. Bu faqat keyingi klonlarga yordam beradi; oldin nusxa olganlar uchun hech narsa o'zgarmaydi.
 - Entropiya chegarasini sinovsiz qo'yish. Test fixture, hash va generatsiya qilingan fayllar ko'p false positive beradi; bunday papkalar uchun alohida konfiguratsiya kerak (va u ham istisno ekanini unutmang).
-- Skanerning topilmasini "xavf yo'q" deb o'qish: skaner yangi shakldagi kalitni bilmasa, topmaydi.
+- Skanerning topilmasini "xavf yo'q" deb o'qish: skaner yangi shakldagi kalitni bilmasa, topmaydi. Shuning uchun qoidalar ro'yxatini yangi servis kalitlari (ularning prefiks va formati) bilan yangilab turing va chorakda bir marta eski commit'larni yangi qoidalar bilan qayta skanerlang.
 
 ## Stack'da: Node.js/TypeScript loyihasi
 
-- Pre-commit hook (lokal) va CI qadami (majburiy): ikkalasi ham secret scanner ishga tushiradi; CI nusxasi bloklaydi. Konkret vositani tanlash va sozlash jamoa qarori: bu darsda hech bir vositaning buyruqlari berilmaydi, chunki korpusda ular tekshirilmagan. Cheat sheet bir nechta vositani birga ishlatib natijalarni solishtirishni maslahat beradi.
+- Pre-commit hook (lokal) va CI qadami (majburiy): ikkalasi ham secret scanner ishga tushiradi; CI nusxasi bloklaydi. Konkret vositani tanlash jamoa qarori; dars hech bir vositaning buyruqlarini bermaydi. Cheat sheet bir nechta vositani birga ishlatib natijalarni solishtirishni maslahat beradi.
 - SAST uchun TypeScript/Node.js'ni tushunadigan vosita tanlang va ilovangizning haqiqiy zaifliklaridan (22, 25-darslar) o'zingiz qoidalar yozing: bu eng arzon "regression" himoyasi.
 - Topilmalarni PR'da annotatsiya sifatida ko'rsating; alohida portal ochilmasa, hech kim ochmaydi.
 - Sirlar `process.env` ga tashqi secret manager'dan keladi (69-dars); koddagi `.env.example` faqat nomlarni saqlasin, qiymatlarni emas.
-- NestJS/Next.js: `NEXT_PUBLIC_` kabi brauzerga chiqadigan o'zgaruvchilarga sir qo'ymang (19, 35-darslar kontekstida), skaner buni nom bo'yicha tekshirishi mumkin.
+- NestJS/Next.js: `NEXT_PUBLIC_` kabi brauzerga chiqadigan o'zgaruvchilarga sir qo'ymang, skaner buni nom bo'yicha tekshirishi mumkin.
 - Topilma bo'lsa tartib (cheat sheet): revocation, rotation, deletion, logging; tarixni tozalash faqat oqibatini bilib qaror qilinadi. Skaner qoidasini yangilang va hodisani 93-darsdagi jarayonga bog'lang.
 
 ## Xulosa

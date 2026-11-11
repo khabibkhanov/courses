@@ -10,9 +10,9 @@ sources:
   - id: rfc7636
     note: "PKCE: code_verifier, code_challenge, S256 = BASE64URL(SHA256(ASCII(code_verifier))); klient S256 ni qo'llay olsa, S256 ishlatishi shart; plain faqat S256 ni qo'llay olmaydigan klient uchun"
   - id: rfc9700
-    note: "Best Current Practice: redirect URI'ni aniq qator solishtirish bilan tekshirish (MUST, localhost portidan tashqari); public klientlar PKCE ishlatishi shart (MUST), confidential klientlar uchun tavsiya; implicit grant (response type token) ishlatilmasligi (SHOULD NOT) va code grant ishlatilishi"
+    note: "Best Current Practice: redirect URI'ni aniq qator solishtirish bilan tekshirish (MUST, localhost portidan tashqari); public klientlar PKCE ishlatishi shart (MUST), confidential klientlar uchun tavsiya (RECOMMENDED); PKCE downgrade'ni yumshatish (MUST); implicit grant (response type token) ishlatilmasligi (SHOULD NOT); password grant (MUST NOT, 2.4); public klientlar refresh token'i sender-constrained yoki rotation (MUST, 2.2.2); access token auditoriyasi (SHOULD, 2.3); mix-up'ga qarshi issuer saqlash va solishtirish (MUST, 4.4.2); code birinchi ishlatilgach bekor qilinadi (MUST, 4.2.4)"
   - id: cs-oauth2
-    note: "OAuth2 Cheat Sheet: authorization code grant + PKCE hamma klient turlari uchun; implicit grant eskirgan; resource owner password credentials grant ishlatilmaydi; PKCE downgrade'ga qarshi code_verifier faqat code_challenge bo'lganda qabul qilinishi; access token auditoriyasi (audience) cheklanishi; open redirector'lar; iss orqali mix-up'ga qarshi"
+    note: "OAuth2 Cheat Sheet: authorization code grant + PKCE hamma klient turlari uchun; implicit grant eskirgan; resource owner password credentials grant ishlatilmaydi; PKCE downgrade'ga qarshi code_verifier faqat code_challenge bo'lganda qabul qilinishi; access token auditoriyasi (audience) cheklanishi; open redirector'lar; iss orqali mix-up'ga qarshi; refresh token'lar sender-constrained (DPoP, mTLS) yoki rotation bilan; PoP token'lar"
 quiz:
   - q: "Authorization server `redirect_uri.startsWith(\"https://app.avtopark.example\")` bilan tekshiradi. Hujumchi qaysi qiymat bilan authorization code'ni o'ziga yo'naltira oladi?"
     options:
@@ -191,7 +191,7 @@ PKCE (Proof Key for Code Exchange, RFC 7636) authorization code'ni ushlab olish 
 3. Server code bilan challenge'ni bog'lab saqlaydi.
 4. Token so'rovida klient `code_verifier` ni yuboradi; server uning hash'i challenge'ga tengligini tekshiradi.
 
-Code'ni ushlagan hujumchi verifier'ni bilmaydi va challenge'dan uni tiklab bo'lmaydi (hash). RFC 7636: klient S256 ni qo'llay olsa, S256 ishlatishi shart; `plain` faqat S256 ni qo'llay olmaydigan klient uchun. RFC 9700: public klientlar PKCE ishlatishi shart (MUST), confidential klientlar uchun tavsiya etiladi. Cheat sheet esa amaliy qoida beradi: barcha klient turlari uchun authorization code grant va PKCE.
+Code'ni ushlagan hujumchi verifier'ni bilmaydi va challenge'dan uni tiklab bo'lmaydi (hash). RFC 7636: klient S256 ni qo'llay olsa, S256 ishlatishi shart; `plain` faqat S256 ni qo'llay olmaydigan klient uchun. RFC 9700: public klientlar PKCE ishlatishi shart (MUST), confidential klientlar uchun tavsiya etiladi. Cheat sheet esa amaliy qoida beradi: barcha klient turlari uchun authorization code grant va PKCE. Bundan tashqari cheat sheet verifier'ni authorization so'rovida oshkor qilmaydigan challenge usullarini tanlashni aytadi, RFC 9700 esa hozircha bunday yagona usul `S256` ekanini ta'kidlaydi. PKCE downgrade'ga qarshi server ikki tomonlama ishlaydi: so'rovda challenge bor bo'lsa token endpoint verifier'ni majburiy talab qiladi, va aksincha, so'rovda challenge bo'lmagan code uchun yuborilgan `code_verifier` qabul qilinmaydi (RFC 9700 2.1.1, cheat sheet 9-band).
 
 Test vektori bilan tekshiramiz. RFC 7636 ilovasidagi verifier va challenge juftligini o'z kodimiz bilan hisoblaymiz (vektor RFC matnidan; qiymat kodning chiqishiga mos kelishi kerak):
 
@@ -219,17 +219,23 @@ boshqa verifier boshqa challenge: true
 
 ### State, nonce va mix-up
 
-Authorization javobi brauzer orqali qaytgani uchun hujumchi o'z code'ini qurbonning klient sessiyasiga "tiqishtirishi" mumkin (login CSRF). Cheat sheet: PKCE'ni qo'llaydigan klientlar PKCE bergan CSRF himoyasiga tayanishi mumkin; OpenID Connect oqimlarida `nonce` shunday himoya beradi; aks holda foydalanuvchi agentiga xavfsiz bog'langan bir martalik `state` qiymati ishlatiladi. Amalda `state` ni ham yuboring: u sessiyaga bog'liq tasodifiy qiymat bo'lsin (36-dars CSRF mantiqi). Klient bir nechta authorization server bilan ishlasa, javobdagi `iss` parametri (yoki ID token'dagi `iss`) yordamida mix-up hujumidan himoyalaning: hujumchi klientni noto'g'ri server code'ini noto'g'ri token endpoint'ga yuborishga undaydi.
+Authorization javobi brauzer orqali qaytgani uchun hujumchi o'z code'ini qurbonning klient sessiyasiga "tiqishtirishi" mumkin (login CSRF). Cheat sheet: PKCE'ni qo'llaydigan klientlar PKCE bergan CSRF himoyasiga tayanishi mumkin; OpenID Connect oqimlarida `nonce` shunday himoya beradi; aks holda foydalanuvchi agentiga xavfsiz bog'langan bir martalik `state` qiymati ishlatiladi. Amalda `state` ni ham yuboring: u sessiyaga bog'liq tasodifiy qiymat bo'lsin (36-dars CSRF mantiqi). Klient bir nechta authorization server bilan ishlasa, javobdagi `iss` parametri (yoki ID token'dagi `iss`) yordamida mix-up hujumidan himoyalaning: hujumchi klientni noto'g'ri server code'ini noto'g'ri token endpoint'ga yuborishga undaydi. RFC 9700 (4.4.2) bunda klientdan mix-up'ni oldini olishni talab qiladi (MUST): har authorization so'rovi uchun so'rov yuborilgan issuer saqlanadi, javob kelganda olingan issuer saqlanganiga aniq solishtiriladi va mos kelmasa oqim to'xtatiladi. `iss` parametri RFC 9207'da tavsiflangan. `iss` o'rniga har authorization server uchun alohida redirect URI ishlatish ham mumkin: cheat sheet buni boshqa choralar bo'lmagandagina ruxsat etilgan variant deb ataydi.
+
+`state` va PKCE bir-birini almashtiradi, lekin shartli. RFC 9700 klientdan CSRF'ning oldini olishni talab qiladi (MUST). PKCE challenge'iga tayanish uchun klient avval authorization server PKCE'ni qo'llashiga ishonch hosil qilishi shart (MUST), aks holda challenge shunchaki e'tiborsiz qoladi. Challenge (yoki `nonce`) har tranzaksiya uchun alohida bo'lishi va tranzaksiya boshlangan klient hamda brauzerga bog'langan bo'lishi kerak; `state` esa klient tomonidan birinchi ishlatilgandan keyin bekor qilinadi (SHOULD).
 
 ### Eskirgan grant'lar
 
 - Implicit grant (`response_type=token`): access token to'g'ridan-to'g'ri authorization javobida (URL fragmentida) keladi. RFC 9700 klientlar uni ishlatmasligi kerakligini aytadi (SHOULD NOT) va code grant'ni tavsiya qiladi. Cheat sheet uni eskirgan deb belgilaydi va barcha klient turlari, shu jumladan SPA, uchun code + PKCE'ni talab qiladi.
-- Resource owner password credentials grant: klient foydalanuvchi parolini ko'radi. Cheat sheet buni ishlatmaslikni aytadi. MFA va passkey (44-45-darslar) bilan ham mos kelmaydi.
+- Resource owner password credentials grant: klient foydalanuvchi parolini ko'radi. RFC 9700 (2.4) buni ishlatmaslikni qat'iy talab qiladi (MUST NOT), cheat sheet ham shuni aytadi. MFA va passkey (44-45-darslar) bilan ham mos kelmaydi.
 - Client credentials grant: foydalanuvchisiz, mashina-mashina. Bu yerda client secret serverda saqlanadi (69-dars) va token'ning huquqlari servis akkauntiga mos minimal bo'lishi kerak.
 
 ### Token'ni cheklash
 
-Access token'ning huquqlari minimal bo'lishi (scope), faqat bitta resource server'ga mo'ljallangani (audience) va har resource server har so'rovda bu auditoriyani tekshirishi cheat sheet tavsiyalari qatorida. Bu 47-darsdagi `aud` tekshiruvining aynan o'zi. Refresh token'lar uzoq yashaydi, shuning uchun RFC 9700 public klientlarda ularning qayta ishlatilishini aniqlash choralarini (sender-constrained token yoki har ishlatishda almashtirish, rotation) talab qiladi (bu bo'limni RFC matnidan tekshirmadik; hujjatning "Refresh Tokens" qismini o'qing).
+Access token'ning huquqlari minimal bo'lishi (scope), faqat bitta resource server'ga mo'ljallangani (audience) va har resource server har so'rovda bu auditoriyani tekshirishi cheat sheet tavsiyalari qatorida. Bu 47-darsdagi `aud` tekshiruvining aynan o'zi. Refresh token'lar uzoq yashaydi, shuning uchun RFC 9700 (2.2.2) public klientlar uchun ularni sender-constrained qilishni yoki refresh token rotation ishlatishni talab qiladi (MUST): har ishlatishda yangi refresh token beriladi, eskisi darrov bekor qilinadi, shunda o'g'irlangan token'ning ikkinchi marta ishlatilishi sezilib qoladi. Cheat sheet sender-constrained usullar sifatida DPoP (RFC 9449) va mTLS (RFC 8705) ni keltiradi va ikkalasini birga qo'llash qatlamli himoya berishini qo'shimcha qiladi. Access token'lar uchun RFC 9700 (2.3) auditoriyani bitta resource server bilan cheklashni tavsiya qiladi (SHOULD).
+
+### Code'ning umri va qayta ishlatilishi
+
+Authorization code token bo'lmagan oraliq qiymat, lekin u token'ga almashadi, shuning uchun uni bir martalik qilish kerak. RFC 9700 (4.2.4): authorization server code'ni token endpoint'da birinchi ishlatilgandan keyin bekor qilishi shart (MUST); code qayta ishlatilsa, server shu code asosida oldin berilgan hamma token'larni bekor qilishi kerak (SHOULD). Tuzatilgan misoldagi `codes.delete(code)` aynan shuni ko'rsatadi. RFC matnining ko'rilgan qismida code'ning eng katta muddati raqam bilan berilmagan; muddatni qisqa (daqiqalar) qilish amaliy tavsiya, aniq qiymat server siyosatiga bog'liq.
 
 ## Misol: authorization server
 

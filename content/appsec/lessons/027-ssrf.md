@@ -10,7 +10,7 @@ sources:
   - id: t10-a01
     note: "OWASP Top 10:2025 A01 Broken Access Control: kategoriyada CWE-918 Server-Side Request Forgery (SSRF) ko'rsatilgan"
   - id: cwe-top25
-    note: "2025 CWE Top 25: SSRF (CWE-918) alohida weakness sifatida; ro'yxatdagi o'rni bu dars yozilganda manbadan tekshirilmagan va matnda berilmaydi"
+    note: "2025 CWE Top 25 ro'yxati: CWE-918 Server-Side Request Forgery 22-o'rinda (2026-11-11 da cwe.mitre.org sahifasidan tekshirilgan)"
 quiz:
   - q: "Webhook URL'ni tekshirish: `url.startsWith(\"http://10.\") || url.startsWith(\"http://192.168.\")` bo'lsa rad etiladi. Qaysi kiritish tekshiruvdan o'tib, ichki manzilga olib boradi?"
     options:
@@ -154,7 +154,7 @@ task:
 
 Avtopark platformasi mijoz ko'rsatgan manzildan nimadir olib kelishi kerak bo'lgan funksiyalarga ega: kompaniya logotipini URL bo'yicha yuklash, webhook yuborish (bu server tomonda chaqiruv), tashqi GPS provayderidan telemetriya olish, hisobotni boshqa servisga uzatish. Har bunday joyda server foydalanuvchi bergan manzilga so'rov yuboradi. Foydalanuvchi esa server qaysi tarmoqda turganini biladi yoki taxmin qiladi: serverning ichki manzillariga, localhost'dagi servislarga, cloud metadata xizmatiga so'rov yuborishni so'raydi. Server bu manzillarga yetib bora oladi, hujumchi esa yetmaydi: so'rov server nomidan, server huquqi bilan ketadi.
 
-Bu SSRF (Server-Side Request Forgery). OWASP Top 10:2025 da u alohida kategoriya emas: A01 Broken Access Control sahifasida CWE-918 SSRF sifatida ko'rsatilgan. Mantiq ravshan: ichki tarmoqning "tashqaridan kirib bo'lmaydi" himoyasi server orqali aylanib o'tiladi. SSRF'ning cloud muhitidagi og'ir oqibati metadata xizmatiga yetib borishdir: OWASP cheat sheet cloud muhitlarda SSRF ko'pincha metadata xizmatlaridan (AWS, Azure, GCP) credential va token olish uchun ishlatilishini yozadi. Real hodisa (Capital One) 97-darsda case study sifatida ko'riladi; bu darsda mexanizm va himoya.
+Bu SSRF (Server-Side Request Forgery). OWASP Top 10:2025 da u alohida kategoriya emas: A01 Broken Access Control sahifasida CWE-918 SSRF sifatida ko'rsatilgan. Mantiq ravshan: ichki tarmoqning "tashqaridan kirib bo'lmaydi" himoyasi server orqali aylanib o'tiladi. MITRE'ning 2025 CWE Top 25 ro'yxatida CWE-918 22-o'rinda (CWE reytinglarini o'qish 7-darsda). SSRF'ning cloud muhitidagi og'ir oqibati metadata xizmatiga yetib borishdir: OWASP cheat sheet cloud muhitlarda SSRF ko'pincha metadata xizmatlaridan (AWS, Azure, GCP) credential va token olish uchun ishlatilishini yozadi. Real hodisa (Capital One) 97-darsda case study sifatida ko'riladi; bu darsda mexanizm va himoya.
 
 Ikkinchi muammo: URL'ni tekshirish ko'rinadigandan qiyinroq. Manzil bir necha shaklda yoziladi (o'nlik, o'n oltilik, IPv6, IPv4-mapped), domen nomi ichki IP'ga resolve bo'lishi mumkin, DNS javobi ikki so'rov orasida o'zgarishi mumkin, redirect tekshirilgan manzildan boshqasiga olib boradi. Satr bilan tekshirish bularning hammasida buziladi.
 
@@ -177,7 +177,7 @@ Interpreter bu yerda server tomondagi HTTP klient (va uning URL parseri, DNS res
 
 ### Manzil shakllari
 
-URL parseri (WHATWG `URL`) turli yozuvlarni bitta kanonik IPv4 ga keltiradi: `http://2852039166/` (o'nlik butun son) `169.254.169.254` bo'ladi. IPv6 ichida IPv4 ko'rinishi (`::ffff:169.254.169.254`, NAT64 `64:ff9b::...`) ham xuddi shu xostga olib borishi mumkin. Cheat sheet buni alohida ta'kidlaydi: manzilni solishtirishdan oldin tabiiy IPv4 shaklga keltiring, aks holda faqat IPv4 qatorlarini solishtiradigan tekshiruvdan o'tib ketadi. Shuning uchun tekshiruv matn ustida emas, tahlil qilingan va kanonik manzil ustida bajariladi. Cheat sheet ham tahlil kutubxonalarining ba'zilari o'nlik, sakkizlik va o'n oltilik shakllarda aldanishini yozadi va faqat tekshirilgan kutubxonadan olingan chiqish qiymatini solishtirishni tavsiya qiladi.
+URL parseri (WHATWG `URL`) turli yozuvlarni bitta kanonik IPv4 ga keltiradi: `http://2852039166/` (o'nlik butun son) `169.254.169.254` bo'ladi. IPv6 ichida IPv4 ko'rinishi (`::ffff:169.254.169.254`, NAT64 `64:ff9b::...`) ham xuddi shu xostga olib borishi mumkin. Cheat sheet buni alohida ta'kidlaydi: manzilni solishtirishdan oldin tabiiy IPv4 shaklga keltiring, aks holda faqat IPv4 qatorlarini solishtiradigan tekshiruvdan o'tib ketadi. Shuning uchun tekshiruv matn ustida emas, tahlil qilingan va kanonik manzil ustida bajariladi. Cheat sheet IP formatini tekshiradigan kutubxonalarni (JavaScript uchun `ip-address`) o'nlik (dword), sakkizlik, o'n oltilik va aralash kodlashdagi aylanib o'tishlarga qarshi sinab chiqqanini yozadi, .NET'dagi `IPAddress.TryParse` esa bunday shakllarda aldanishini, shuning uchun allow-list bilan solishtirishda tekshiruvchi funksiyaning chiqish qiymatini ishlatish kerakligini ta'kidlaydi.
 
 ### Domen nomi ichki IP'ga ko'rsatishi
 
@@ -186,6 +186,10 @@ Hujumchi o'z domenini ichki IP'ga resolve qiladigan qilib sozlashi mumkin. Shuni
 ### DNS rebinding
 
 Tekshiruv paytida domen ommaviy IP beradi, HTTP klient keyin qayta resolve qilganda esa ichki IP. Cheat sheet tavsiyasi: tekshirilgan IP manzillarga, faqat ularga ulaning, va asl domen nomini `Host` sarlavhasi, TLS SNI va sertifikat tekshiruvi uchun saqlang. Qayta urinish (retry) va zaxira ulanishlar ham xuddi shu siyosatdan o'tishi kerak. Ya'ni "tekshir, keyin ishlat" orasidagi bo'shliq yopilishi kerak (TOCTOU, 60-dars).
+
+### To'liq URL qabul qilmaslik va parser kelishmovchiligi
+
+Cheat sheet'ning URL bo'limi eng qat'iy tavsiyani beradi: foydalanuvchidan to'liq URL qabul qilmang, chunki URL'ni tekshirish qiyin va parser turli texnologiyalarda aldanishi mumkin. Tarmoq ma'lumoti kerak bo'lsa, faqat tekshirilgan IP yoki domen nomini oling, uni allow-list bilan solishtiring va so'rovni o'zingiz quring: sxema, port va yo'lni ilovaning o'zi belgilaydi, foydalanuvchi URL'idan faqat host olinsa ham, uning yo'li va query qismi nusxalanmaydi. Ikkinchi qoida parser kelishmovchiligi haqida: `http://example.com\@evil.com` satrini WHATWG URL standartiga mos parser (backslash'ni maxsus sxemada yo'l ajratkichi deb biladi) host `example.com` deb o'qiydi, RFC 3986 grammatikasi esa userinfo ichida backslash'ni umuman ruxsat etmaydi va userinfo'ni oxirgi `@` gacha deb oladigan amalga oshirish hostni `evil.com` deb o'qiydi. Cheat sheet xulosasi: hostni barcha ishtirok etayotgan parser bir xil o'qimasa, URL rad etiladi, kelishmovchilikni "to'g'rilashga" urinilmaydi. Amaliy oqibat: URL bir servisda tekshirilib, satr sifatida boshqasiga uzatilib qayta tahlil qilinsa, tekshiruv bir hostni, ulanish boshqasini ko'rishi mumkin. Shuning uchun URL'ni bir marta tahlil qilib, keyin faqat tahlil natijasini (alohida host, port) uzating.
 
 ### Redirect
 
@@ -197,7 +201,7 @@ SSRF faqat HTTP emas. Cheat sheetga ko'ra, birinchi so'rov odatda HTTP, lekin ik
 
 ### Deny-list: oxirgi chora
 
-Allow-list imkonsiz bo'lsa, deny-list qo'llanadi. Cheat sheet minimal bloklanadigan diapazonlar jadvalini beradi: cloud metadata manzillari (AWS IMDS `169.254.169.254`; GCP `metadata.google.internal`), localhost (`127.0.0.0/8`, `::1`), RFC1918 (`10/8`, `172.16/12`, `192.168/16`), link-local (`169.254.0.0/16`), IPv6 unique local va link-local, multicast, IPv4-mapped IPv6 va NAT64. Ro'yxat to'liq emas va "aylanib o'tishga moyil" degan ogohlantirish bilan keladi.
+Allow-list imkonsiz bo'lsa, deny-list qo'llanadi. Cheat sheet minimal bloklanadigan diapazonlar jadvalini beradi: cloud metadata manzillari (AWS IMDS `169.254.169.254`; GCP `metadata.google.internal`), localhost (`127.0.0.0/8`, `::1`), RFC1918 (`10/8`, `172.16/12`, `192.168/16`), link-local (`169.254.0.0/16`), IPv6 unique local va link-local, multicast, IPv4-mapped IPv6 va NAT64. Jadvalda yana ikki narsa bor: AWS IMDS'ning IPv6 manzili (`fd00:ec2::254`) va link-local diapazon ichidagi ECS vazifa credential'lari (`169.254.170.2`) hamda EKS Pod Identity (`169.254.170.23`) manzillari: `169.254.0.0/16` ni bloklash ularni ham qoplaydi, faqat `169.254.169.254` ni bloklash esa qoplamaydi. Cheat sheet yana bir qoidani qat'iy aytadi: manzilni diapazonlarga solishtirishdan oldin tabiiy IPv4 shaklga keltiring. `::ffff:169.254.169.254` IPv4 shakli bilan bir xil hostga yetadi, NAT64 manzili (`64:ff9b::a9fe:a9fe`) esa NAT64 shlyuzi bor tarmoqlarda; ikkalasi ham faqat IPv4 qatorlarini solishtiradigan tekshiruvdan o'tib ketadi. Ro'yxat to'liq emas va "aylanib o'tishga moyil" degan ogohlantirish bilan keladi.
 
 ### Cloud metadata va IMDSv2
 
@@ -209,11 +213,11 @@ Ba'zi funksiyalarda hujumchi javob matnini ko'rmaydi, faqat "muvaffaqiyatli" yok
 
 ### Webhook va ikkinchi holat
 
-Webhook funksiyasi (75-dars) odatda ikkinchi holatga kiradi: foydalanuvchi o'z URL'ini beradi. Bu yerda amaliy yondashuv: URL'ni ro'yxatdan o'tkazishda va har yuborishda tekshirish (ro'yxatdan o'tgan ommaviy manzil keyin ichki IP'ga ko'rsatib qolishi mumkin, rebinding); chiqish uchun alohida tarmoq segmenti yoki proxy ishlatish; yuboriladigan ma'lumotni imzolash va javobni e'tiborsiz qoldirish. Proxy yondashuvida ichki tarmoqqa chiqish proxy darajasida taqiqlanadi va ilova kodidagi xato ichki servislarga yetmaydi.
+Webhook funksiyasi (75-dars) odatda ikkinchi holatga kiradi: foydalanuvchi o'z URL'ini beradi. Bu yerda amaliy yondashuv: URL'ni ro'yxatdan o'tkazishda va har yuborishda tekshirish (ro'yxatdan o'tgan ommaviy manzil keyin ichki IP'ga ko'rsatib qolishi mumkin, rebinding); chiqish uchun alohida tarmoq segmenti yoki proxy ishlatish; yuboriladigan ma'lumotni imzolash va javobni e'tiborsiz qoldirish. Proxy yondashuvida ichki tarmoqqa chiqish proxy darajasida taqiqlanadi va ilova kodidagi xato ichki servislarga yetmaydi. Cheat sheet ikkinchi holat uchun yana bir himoyani ham tasvirlaydi: qabul qiluvchi tomon so'rov qonuniy boshlanganini isbotlovchi tasodifiy token (masalan, 20 belgili) kutadi va faqat HTTP POST qabul qiladi. Shunda so'rovni ichki servisga qaratgan hujumchi ham tokenni bilmagani uchun amalni bajara olmaydi. Bu yondashuv qabul qiluvchi servislarni o'zgartirishni talab qiladi, shuning uchun ichki servislar uchun ham (oddiy GET orqali ishlaydigan ichki endpoint'lar bo'lmasligi uchun) foydali. Doimiy so'rov oqimi uchun cheat sheet validatsiya tartibini ham beradi: kiritishni formatga tekshirish, so'ng IP yoki domen ommaviy ekanini tekshirish (domen uchun barcha A va AAAA yozuvlari), protokolni `HTTP`/`HTTPS` ro'yxatiga solishtirish, so'rovni faqat tekshirilgan ma'lumotdan yig'ish va tekshirilgan IP'ga ulanish, redirect'ni o'chirish.
 
 ### Tarmoq darajasidagi chegara
 
-Ilova tekshiruvi xato qilishi mumkin, shuning uchun chegara tarmoqda ham bo'lishi kerak. Cloud va Kubernetes muhitida chiquvchi (egress) trafik siyosati ilova podiga faqat kerakli manzillarga chiqishga ruxsat beradi. Metadata servisiga kirish xostda yoki podda cheklanadi (IMDSv2, hop limit va boshqa sozlamalar bo'yicha cloud provayder hujjatiga qarang; bu darsda faqat cheat sheet'dagi IMDSv2 tavsiyasi tekshirilgan). Bunday ikki qatlam hujumchining ishini qiyinlashtiradi: ilova xatosi alohida, tarmoq alohida to'siq.
+Ilova tekshiruvi xato qilishi mumkin, shuning uchun chegara tarmoqda ham bo'lishi kerak. Cloud va Kubernetes muhitida chiquvchi (egress) trafik siyosati ilova podiga faqat kerakli manzillarga chiqishga ruxsat beradi. Metadata servisiga kirish xost yoki pod darajasida ham cheklanishi mumkin; cheat sheet shu qatlamdan AWS uchun IMDSv2 ga o'tish va IMDSv1 ni o'chirishni tavsiya qiladi. Bunday ikki qatlam hujumchining ishini qiyinlashtiradi: ilova xatosi alohida, tarmoq alohida to'siq.
 
 ## Misol: mini tarmoq modelida
 
@@ -398,42 +402,63 @@ Nima uchun yetarli: invariant "ulanish faqat tekshirilgan ommaviy IPv4 manzilga"
 
 ## Stack'da: Node.js
 
-Node.js'da tekshirilgan IP'ga ulanish uchun HTTP klientning `lookup` funksiyasini almashtirish mumkin: har ulanish paytida resolve natijasi tekshiriladi. Quyidagi kod ishga tushirilmaydi (`node:dns`, `node:http` va `undici` brauzer worker'ida mavjud emas), faqat TypeScript sintaksisi jihatidan tekshirilgan. `undici` `Agent`ning `connect.lookup` opsiyasidan foydalanish g'oyasi umumiy; aniq imzo va xatti-harakat versiyaga bog'liq, hujjatni tekshiring (bu darsda tekshirilmagan).
+Node.js'da tekshirilgan IP'ga ulanish uchun `http.request` / `https.request` ning `lookup` opsiyasini almashtirish mumkin: Node hujjati `lookup` ni "custom lookup function" (default `dns.lookup()`) deb ta'riflaydi va ulanish paytida shu funksiya chaqiriladi. Muhim nozik joy: `net.connect` da `autoSelectFamily` yoqilgan bo'lsa, `lookup` ga `all: true` beriladi va u manzillar massivini kutadi; `all: false` bo'lsa bitta manzil va oila. Shuning uchun maxsus `lookup` ikkala shaklni ham qo'llab-quvvatlashi kerak. Quyidagi kod ishga tushirilmaydi (`node:dns` va `node:https` brauzer worker'ida mavjud emas), faqat TypeScript sintaksisi jihatidan tekshirilgan.
 
 ```ts
 import { lookup } from "node:dns";
+import { request } from "node:https";
 import { isIP } from "node:net";
-import { Agent, request } from "undici";
 
 function isPublic(ip: string): boolean {
-  // production'da ipaddr.js kabi tekshirilgan kutubxona; bu yerda g'oya xolos
-  return isIP(ip) === 4 && !/^(0|10|127)\.|^169\.254\.|^192\.168\.|^172\.(1[6-9]|2\d|3[01])\./.test(ip);
+  // production'da tekshirilgan kutubxona (masalan, ip-address); bu yerda g'oya xolos
+  return isIP(ip) === 4 && !/^(0|10|127)\.|^169\.254\.|^192\.168\.|^172\.(1[6-9]|2\d|3[01])\.|^2(2[4-9]|[3-5]\d)\./.test(ip);
 }
 
-const safeAgent = new Agent({
-  connect: {
-    // ulanish aynan shu tekshirilgan manzilga qilinadi: tekshiruv bilan ulanish orasida bo'shliq yo'q
-    lookup: (hostname, options, cb) => {
-      lookup(hostname, { ...options, all: false }, (err, address, family) => {
-        if (err) return cb(err, address, family);
-        if (!isPublic(address)) return cb(new Error("ichki manzilga ruxsat yo'q"), address, family);
-        cb(null, address, family);
-      });
-    },
-  },
-});
+type Cb = (err: Error | null, address?: string | { address: string; family: number }[], family?: number) => void;
+
+// Ulanish aynan shu tekshirilgan manzilga qilinadi: tekshiruv va ulanish orasida ikkinchi resolve yo'q
+function pinnedLookup(hostname: string, options: { all?: boolean }, cb: Cb): void {
+  lookup(hostname, { ...options, all: true }, (err, addrs) => {
+    if (err) return cb(err);
+    if (addrs.length === 0 || !addrs.every((a) => isPublic(a.address))) {
+      return cb(new Error("ichki manzilga ruxsat yo'q"));
+    }
+    if (options.all) return cb(null, addrs);
+    cb(null, addrs[0].address, addrs[0].family);
+  });
+}
 
 const ALLOWED_HOSTS = new Set(["cdn.alfa.test"]);
+const MAX_BYTES = 1_000_000;
 
-export async function importLogo(raw: string) {
+export function importLogo(raw: string): Promise<Buffer> {
   const u = new URL(raw);
-  if (u.protocol !== "https:" || !ALLOWED_HOSTS.has(u.hostname)) throw new Error("manzil ruxsat etilmagan");
-  const res = await request(u, { dispatcher: safeAgent, maxRedirections: 0, headersTimeout: 5_000 });
-  return res.body; // hajmni cheklab o'qing
+  if (u.protocol !== "https:" || !ALLOWED_HOSTS.has(u.hostname)) {
+    return Promise.reject(new Error("manzil ruxsat etilmagan"));
+  }
+  return new Promise((resolve, reject) => {
+    const req = request(u, { lookup: pinnedLookup, timeout: 5_000 }, (res) => {
+      if ((res.statusCode ?? 0) >= 300 && (res.statusCode ?? 0) < 400) {
+        res.resume();
+        return reject(new Error("redirect kuzatilmaydi"));
+      }
+      const chunks: Buffer[] = [];
+      let size = 0;
+      res.on("data", (c: Buffer) => {
+        size += c.length;
+        if (size > MAX_BYTES) return req.destroy(new Error("hajm chegarasi"));
+        chunks.push(c);
+      });
+      res.on("end", () => resolve(Buffer.concat(chunks)));
+    });
+    req.on("timeout", () => req.destroy(new Error("timeout")));
+    req.on("error", reject);
+    req.end();
+  });
 }
 ```
 
-Bu yerda ikki qatlam: allow-list (`ALLOWED_HOSTS`) va ulanish paytidagi IP tekshiruvi, redirect'lar o'chirilgan, vaqt cheklangan. Foydalanuvchi o'zi manzil kiritadigan holatda (ikkinchi holat) allow-list olib tashlanadi, ulanish paytidagi IP tekshiruvi esa qoladi. `maxRedirections: 0` opsiyasi nomi `undici` versiyasiga qarab o'zgarishi mumkin. Kubernetes yoki cloud'da esa bu qatlam tarmoq siyosati bilan (egress cheklovi, 87-dars) to'ldiriladi.
+Bu yerda uch qatlam: allow-list (`ALLOWED_HOSTS`), ulanish paytidagi IP tekshiruvi (`pinnedLookup`) va resurs cheklovlari (vaqt, hajm). `http`/`https` moduli redirect'ni o'zi kuzatmaydi; kod 3xx javobni xato deb hisoblaydi, ya'ni cheat sheet tavsiya qilgan "redirect'ni o'chirish" shu yerda amalga oshgan. TLS sertifikat tekshiruvi va SNI asl host nomi bilan qoladi, chunki `lookup` faqat manzilni almashtiradi, `hostname` o'zgarmaydi. Foydalanuvchi o'zi manzil kiritadigan holatda (ikkinchi holat) allow-list olib tashlanadi, ulanish paytidagi IP tekshiruvi esa qoladi. Kubernetes yoki cloud'da bu qatlam tarmoq siyosati bilan (egress cheklovi, 87-dars) to'ldiriladi. `autoSelectFamily` yoqilganda (Node hujjatiga ko'ra bu opsiya default qiymati `net.getDefaultAutoSelectFamily()` dan olinadi) barcha manzillar tekshirilgani uchun bitta ichki manzil ham ulanishni to'xtatadi.
 
 ## Xulosa
 

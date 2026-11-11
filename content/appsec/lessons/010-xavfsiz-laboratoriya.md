@@ -21,7 +21,7 @@ quiz:
       - "Hech kim: Docker tarmog'i yopiq"
       - "Faqat Docker konteynerlari"
     answer: 1
-    explain: "Host manzili ko'rsatilmasa, Docker port'ni standart bo'yicha barcha interfeyslarda ochadi. Zaif ilovani loopback'ga bog'lash uchun `127.0.0.1:3000:3000` yoziladi (Docker'ning standart xatti-harakati; hujjat bu sessiyada ochilmagan)."
+    explain: "Host manzili ko'rsatilmasa, Docker port'ni standart bo'yicha barcha interfeyslarda ochadi. Zaif ilovani loopback'ga bog'lash uchun `127.0.0.1:3000:3000` yoziladi (Docker hujjati: `-p 8080:80` Docker host'ning istalgan manzilidagi 8080 port'ini konteyner port'iga bog'laydi)."
   - q: "Laboratoriyada real mijoz bazasining nusxasi bilan ishlash nima uchun yomon g'oya?"
     options:
       - "Baza hajmi katta bo'ladi"
@@ -158,14 +158,14 @@ Bu dars kursning ishchi muhitini belgilaydi: qaysi laboratoriya turlaridan foyda
 
 Boshqa `run` tillari ham shu sandbox g'oyasiga tayanadi. Python bloklari brauzerda Pyodide ichida ishlaydi (mahalliy python o'rnatish shart emas), SQL bloklari brauzerdagi SQLite'da, HTML demolari esa sandbox qilingan iframe ichida bajariladi, shuning uchun XSS, CSP va DOM misollari asosiy sahifaga tegmaydi. Bu qulaylik bitta qoida bilan birga keladi: run blokidagi kodni o'zgartirib sinash mumkin, lekin boshqa joydan (forum, chat, noma'lum manba) nusxalangan kodni ishga tushirmang. Brauzer sandbox'i mustahkam to'siq, lekin siz unga nima kiritishni nazorat qilasiz; shu sababli noma'lum kod bu yerda ham noma'lum kod.
 
-Juice Shop ixtiyoriy qo'shimcha: kursning hamma topshirig'i `run` bloklari bilan bajariladi. Uni 91-92 darslarda (kod ko'rib chiqish va o'z ilovani sinash metodikasi) qo'shimcha mashq maydoni sifatida ishlatish mumkin. Ishga tushirish buyrug'i va portini loyihaning GitHub sahifasi va hujjatidan oling: loyiha sahifasida ular berilmagan. Stack'da bo'limida namunaviy konfiguratsiya keltirilgan, lekin u tekshirilmagan umumiy bilimga tayanadi.
+Juice Shop ixtiyoriy qo'shimcha: kursning hamma topshirig'i `run` bloklari bilan bajariladi. Uni 91-92 darslarda (kod ko'rib chiqish va o'z ilovani sinash metodikasi) qo'shimcha mashq maydoni sifatida ishlatish mumkin. Loyihaning GitHub sahifasidagi Docker bo'limi uni `docker run --rm -p 127.0.0.1:3000:3000 bkimminich/juice-shop` buyrug'i bilan ishga tushirishni ko'rsatadi: rasm `bkimminich/juice-shop`, port 3000, va u o'zi ham loopback'ga bog'langan. Stack'da bo'limidagi konfiguratsiya shu buyruqning Compose ko'rinishi.
 
 ### Laboratoriya qoidalari
 
 Zaif ilova bilan ishlashning barcha qoidalari bir tamoyilga qaytadi: ilova ataylab zaif, shuning uchun uning atrofi qattiq bo'lishi kerak.
 
 - Izolyatsiya. Zaif ilovani o'zingizning ish mashinangizda emas, virtual mashina yoki alohida muhitda ishga tushiring. Konteyner foydali qatlam, lekin mutlaq chegara emas: Docker hujjati standart capability va mount'lar to'liq bo'lmagan izolyatsiya berishi mumkinligini, daemon'ni faqat ishonchli foydalanuvchilar boshqarishi kerakligini va host katalogini cheklovsiz konteynerga ulash mumkinligini yozadi.
-- Loopback'ga bog'lash. Zaif ilova portini faqat `127.0.0.1` da oching. Host manzilsiz `3000:3000` yozuvi odatda barcha interfeyslarda ochadi, ya'ni umumiy Wi-Fi tarmog'idagi boshqa qurilma ham ulana oladi (Docker'ning standart xatti-harakati; hujjat bu sessiyada ochilmagan).
+- Loopback'ga bog'lash. Zaif ilova portini faqat `127.0.0.1` da oching. Host manzilsiz `3000:3000` yozuvi Docker host'ning istalgan manzilida ochadi (Docker hujjati `-p 8080:80` misolida shunday yozadi), ya'ni umumiy Wi-Fi tarmog'idagi boshqa qurilma ham ulana oladi. Loopback'ga bog'langan port esa, hujjatga ko'ra, faqat Docker host'ning o'zi uchun ochiq. Hujjat yana bir ogohlantirish beradi: 28.0.0 dan eski versiyalarda localhost'ga e'lon qilingan portlarga bir xil layer 2 segmentdagi boshqa host'lar ham yetib borishi mumkin edi, shuning uchun Docker'ni yangilab turing.
 - Sintetik ma'lumot. Laboratoriyaga real mijoz, haydovchi yoki parolni qo'ymang. Sabab 9-darsda: sizib chiqqan real ma'lumot shaxsga doir ma'lumot muammosiga aylanadi. Deterministik boshlang'ich ma'lumot (seed) laboratoriyani takrorlanadigan qiladi.
 - Qayta tiklash. Laboratoriya bir buyruq bilan boshlang'ich holatga qaytishi kerak (konteynerni o'chirib qayta yaratish yoki VM snapshot'i).
 - Doira. Laboratoriya ruxsati faqat laboratoriyaga tegishli. Uni boshqa tizimni sinash uchun ishlatish yoki laboratoriya skriptini tashqi manzillarga yo'naltirish 9-dars chegarasini buzadi.
@@ -181,7 +181,7 @@ Node.js tomonda `--permission` bayrog'i ishlash vaqtida fayl tizimi, tarmoq, chi
 
 ### Versiyalarni qotirish va tashqi aloqa
 
-Laboratoriya natijasi takrorlanishi uchun uning komponentlari ham qotirilishi kerak. Zaif ilova rasmi uchun `latest` emas, aniq versiya yorlig'ini (yoki rasm digest'ini) yozing: aks holda ertaga boshqa kod ishga tushadi va dars qadamlari mos kelmaydi. Bu yana bir xavfsizlik sabab: rasmni qayerdan olayotganingizni bilish 81-82 darslardagi supply chain mavzusiga bevosita bog'liq. Laboratoriya konteyneridan tashqariga chiqish yo'lini imkon qadar yoping (masalan, firewall qoidasi bilan); shunda zaif ilova yoki unga yuborilgan hujum kodi hisobingizdagi boshqa tizimlarga yetib bormaydi. Bu tavsiya kursning amaliy xulosasi, aniq buyruq esa muhitga bog'liq va bu sessiyada tekshirilmagan.
+Laboratoriya natijasi takrorlanishi uchun uning komponentlari ham qotirilishi kerak. Zaif ilova rasmi uchun `latest` emas, aniq versiya yorlig'ini (yoki rasm digest'ini) yozing: aks holda ertaga boshqa kod ishga tushadi va dars qadamlari mos kelmaydi. Bu yana bir xavfsizlik sabab: rasmni qayerdan olayotganingizni bilish 81-82 darslardagi supply chain mavzusiga bevosita bog'liq. Laboratoriya konteyneridan tashqariga chiqish yo'lini imkon qadar yoping (masalan, firewall qoidasi bilan); shunda zaif ilova yoki unga yuborilgan hujum kodi hisobingizdagi boshqa tizimlarga yetib bormaydi. Bu tavsiya kursning amaliy xulosasi; aniq buyruq muhitga bog'liq (firewall yoki Docker tarmoq sozlamasi).
 
 ### Laboratoriya daftari
 
@@ -228,7 +228,7 @@ Bu misolda "hujumchi" ham, ma'lumot ham sintetik. Kod faqat bizning `exposure` v
 
 ### 1. Zaif kod
 
-Laboratoriya tekshiruvi port ochiq ekanini faqat `localhost` so'zi bo'yicha aniqlaydi:
+Laboratoriya tekshiruvi port yopiqligini faqat `127.0.0.1` va `0.0.0.0` so'zlari bo'yicha aniqlaydi:
 
 ```ts run
 // ZAIF: yozuv ichida "127.0.0.1" so'zi bormi, shuni qidiradi va host qismini tahlil qilmaydi
@@ -309,7 +309,7 @@ Endi invariant: faqat host qismi aniq `127.0.0.1` yoki `[::1]` bo'lgan uch qisml
 
 ## Stack'da: Docker Compose va Node.js
 
-Laboratoriyani Docker Compose bilan ko'targanda, portlarni loopback'ga bog'lash, `privileged` rejimdan voz kechish va host katalogini ulamaslik asosiy qoidalar. Quyida Juice Shop uchun namunaviy `compose.yaml` ko'rsatilgan; rasm nomi va port loyiha hujjatidan tekshiriladi (loyiha sahifasida ular berilmagan, shuning uchun quyidagi qiymatlar muallifning umumiy bilimiga tayanadi va bu sessiyada tekshirilmagan):
+Laboratoriyani Docker Compose bilan ko'targanda, portlarni loopback'ga bog'lash, `privileged` rejimdan voz kechish va host katalogini ulamaslik asosiy qoidalar. Quyida Juice Shop uchun namunaviy `compose.yaml` ko'rsatilgan; rasm nomi va port Juice Shop GitHub sahifasidagi `docker run` buyrug'idan olingan, faqat port loopback'ga bog'langan. Ishlatishdan oldin rasm uchun aniq versiya yorlig'ini yozing (yuqorida aytilgan):
 
 ```yaml
 services:

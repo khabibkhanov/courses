@@ -8,9 +8,9 @@ sources:
   - id: cs-forgot-password
     note: "Forgot Password Cheat Sheet: bir xil xabar va bir xil javob vaqti, side-channel orqali yuborish, token'lar kriptografik xavfsiz generatordan, yetarlicha uzun, xavfsiz saqlangan, bir martalik va muddatli; reset havolasini Host sarlavhasidan qurmaslik; tiklashdan keyin avtomatik kirgizmaslik; mavjud sessiyalarni bekor qilish; tiklashdan keyin foydalanuvchiga xabar; tiklash so'rovlariga akkaunt bo'yicha rate limit; akkauntni qulflamaslik"
   - id: nist-63-4
-    note: "SP 800-63B-4 account recovery usullari: saqlangan recovery code (kamida 64 bit, hash qilingan holda saqlanadi, ishlatilgach bekor qilinib yangisi beriladi), yuboriladigan recovery code (kamida olti o'nlik raqam; amal qilish muddati SMS/ovoz uchun ko'pi bilan 10 daqiqa, email uchun 24 soat), tekshiruv throttling'ga bo'ysunadi, yangi recovery manzil tasdiqlash kodi bilan tasdiqlanadi, tiklash bildirishnoma yuborishga olib keladi; email out-of-band authenticator sifatida ishlatilmaydi"
+    note: "SP 800-63B-4 account recovery usullari: saqlangan recovery code (kamida 64 bit, hash qilingan holda saqlanadi, ishlatilgach bekor qilinib yangisi beriladi), yuboriladigan recovery code (kamida olti o'nlik raqam; amal qilish muddati SMS/ovoz uchun ko'pi bilan 10 daqiqa, email uchun 24 soat), tekshiruv throttling'ga bo'ysunadi, yangi recovery manzil tasdiqlash kodi bilan tasdiqlanadi, tiklash bildirishnoma yuborishga olib keladi; yuborilgan kod muddati: SMS/ovoz 10 daqiqa, email 24 soat, AQSh ichidagi pochta 21 kun, undan tashqari 30 kun; kamida ikkita recovery manzil va ikkita bildirishnoma manzili; AAL2 tiklash: ikkita turli recovery code yoki bitta kod va bog'langan bir faktorli authenticator yoki qayta identity proofing; unutilgan parolni boshqa authenticator bilan almashtirish recovery emas, yangi authenticator bog'lash; buzilgan authenticator darrov to'xtatiladi; email out-of-band authenticator sifatida ishlatilmaydi"
   - id: cs-authn
-    note: "Authentication Cheat Sheet: parolni tiklash javobida mavjud va mavjud bo'lmagan akkaunt uchun bir xil xabar; parolni tiklash kabi yuqori xavfli harakatlardan keyin qayta autentifikatsiya"
+    note: "Authentication Cheat Sheet: parolni tiklash javobida mavjud va mavjud bo'lmagan akkaunt uchun bir xil xabar; parolni tiklash kabi yuqori xavfli harakatlardan keyin qayta autentifikatsiya, sessiyalarni bekor qilish va token'larni almashtirish; email'ni username sifatida ishlatish faqat ro'yxatdan o'tishda tasdiqlansa; email almashtirish jarayoni (MFA bilan va MFA'siz variantlar, ikkita yoki uchta vaqt bilan cheklangan nonce, joriy manzilga ogohlantirish)"
   - id: t10-a07
     note: "OWASP Top 10:2025 A07: kuchsiz yoki samarasiz zaxira yo'llar va sessiyani to'g'ri bekor qilmaslik autentifikatsiya zaifligi sifatida"
 quiz:
@@ -152,7 +152,7 @@ Ikkinchi qism: ro'yxatdan o'tishdagi email tasdiqlash. Email tasdiqlanmagan bo'l
 
 ### Tiklash autentifikatsiya emas, balki boshqa authenticator berish
 
-Tiklash foydalanuvchining authenticator'ini almashtirishga imkon beradi, ya'ni uning o'zi yangi autentifikatsiya dalili yaratadi. Shuning uchun tiklash oqimiga kirish oqimidan kam bo'lmagan e'tibor beriladi. NIST SP 800-63-4 account recovery'ni subscriber kerakli AAL uchun zarur authenticator'lar ustidan nazoratni yo'qotganda tiklanish deb ta'riflaydi va to'rt umumiy usulni tan oladi: saqlangan recovery code, yuboriladigan recovery code, recovery contact va qayta identity proofing. Har qanday tiklash subscriber'ga bildirishnoma yuborilishiga olib kelishi kerak (SHALL).
+Tiklash foydalanuvchining authenticator'ini almashtirishga imkon beradi, ya'ni uning o'zi yangi autentifikatsiya dalili yaratadi. Shuning uchun tiklash oqimiga kirish oqimidan kam bo'lmagan e'tibor beriladi. NIST SP 800-63-4 account recovery'ni subscriber kerakli AAL uchun zarur authenticator'lar ustidan nazoratni yo'qotganda tiklanish deb ta'riflaydi va to'rt umumiy usulni tan oladi: saqlangan recovery code, yuboriladigan recovery code, recovery contact va qayta identity proofing. Har qanday tiklash subscriber'ga bildirishnoma yuborilishiga olib kelishi kerak (SHALL). Muhim ayirma: NIST'ga ko'ra, subscriber boshqa authenticator bilan kira oladigan holatda unutilgan parolni almashtirish account recovery emas, balki yangi authenticator bog'lash hisoblanadi. Ya'ni shu darsdagi "parolni unutdim" oqimi odatda NIST'ning recovery bo'limi emas, authenticator bog'lash qoidalariga tushadi; recovery code'lar esa kirish uchun kerakli authenticator'lar hammasi yo'qolganda ishga tushadi. Ikkala holatda ham xavf bir xil: hujumchi yangi authenticator bog'lab oladi.
 
 ### Reset token talablari
 
@@ -190,6 +190,8 @@ Cheat sheet alohida qism ajratadi: parol almashtirish hisobni to'liq qaytarmasli
 
 NIST saqlangan recovery code'larni quyidagicha tasvirlaydi: ro'yxatdan o'tkazishda beriladi, kamida 64 bit tasodifiy bit generatoridan, hash qilingan holda saqlanadi, ishlatilgach bekor qilinadi va yangisi beriladi; foydalanuvchi ularni oflayn saqlaydi. Kod tekshiruvi throttling'ga bo'ysunadi. MFA yo'qolganda (telefon yo'qolgan) shu kodlar ikkinchi faktor o'rnini bosadi. Bundan tashqari, NIST yangi tiklash manzili qo'shilganda manzilga tasdiqlash kodi yuborilib, to'g'ri kiritilgandan keyingina manzil o'rnatilishini talab qiladi va kamida ikkita tiklash manzili bo'lishiga ruxsat berilishini aytadi. Email out-of-band authenticator sifatida ishlatilmaydi (NIST), lekin tiklash manzili sifatida ishlatilishi mumkin: bu ikkita turli rol.
 
+Tiklash kuchi akkauntning AAL darajasiga bog'liq. NIST AAL2 gacha bo'lgan akkauntni tiklash uchun quyidagilardan birini talab qiladi (SHALL): turli usullardan olingan ikkita recovery code (saqlangan, yuborilgan yoki recovery contact), yoki bitta recovery code va akkauntga bog'langan bir faktorli authenticator, yoki (akkaunt identity-proofing'dan o'tgan bo'lsa) qayta identity proofing. Identity proofing'dan o'tmagan akkaunt uchun qayta proofing imkoni yo'q, tiklash faqat recovery code yoki recovery contact bilan bo'ladi. AAL1 gacha bo'lgan akkauntlar identity-proofing'siz hisoblanadi. Boshqacha aytganda, bitta email havolasi (bitta yuborilgan kod) yuqori AAL akkaunti uchun tiklashga yetmaydi: bu Forgot Password Cheat Sheet'ning "yaqinda o'zgartirilgan tiklash ma'lumotiga yolg'iz tayanmang" qoidasi bilan mos.
+
 Quyidagi kod saqlangan recovery code'ning hayot siklini ko'rsatadi (deterministik namuna: haqiqiy kodlar CSPRNG bilan hosil bo'ladi):
 
 ```ts run
@@ -223,6 +225,22 @@ qayta ishlatish: false
 noto'g'ri kod: false
 qolgan kodlar soni: 1
 ```
+
+Eslatma: bu kodda recovery code uchun oddiy SHA-256 ishlatilgan, bu o'quv soddalashtirishi. NIST saqlangan recovery code'ni 3.1.1.2 bo'limidagi tasdiqlangan bir tomonlama funksiya bilan hash qilishni talab qiladi, ya'ni parol saqlash qoidalari (tuz va cost factor, 42-dars). Sabab arifmetikada: 64 bitlik kod uzun token (256 bit) kabi offlayn brute force'ga chidamli emas, shuning uchun hash'ning o'zi sekin va tuzli bo'lishi kerak. Reset havolasidagi 256 bitlik token uchun tez hash yetarli degan xulosa faqat shu yuqori entropiyaga tegishli.
+
+### Yuborilgan kod: muddatlar va bildirishnoma
+
+Yuborilgan recovery code'ning amal qilish muddati kanalga qarab farq qiladi (NIST, SHALL): matnli xabar yoki ovoz uchun ko'pi bilan 10 daqiqa, email uchun 24 soat, AQShning qit'a qismidagi pochta manzili uchun 21 kun, undan tashqarisi uchun 30 kun. Forgot Password Cheat Sheet SMS orqali yuboriladigan PIN uchun 6 dan 12 gacha raqamni tavsiya etadi va PIN'dan faqat parol almashtirishga ruxsat beradigan cheklangan sessiya yaratishni aytadi: PIN o'zi to'liq kirish bermaydi.
+
+Bildirishnoma ham talab. NIST subscriber akkauntida kamida ikkita bildirishnoma manzili bo'lishini talab qiladi (SHALL) va bildirishnoma pochta manzilidan tashqari hamma manzillarga yuboriladi. Xabarda aniq yo'riqnoma va bog'lanish ma'lumoti bo'lishi shart, ya'ni foydalanuvchi voqeani rad etsa nima qilishini bilsin: "Bu siz bo'lmasangiz, shu yerga murojaat qiling". Tiklashda faqat yuborilgan kod manziliga yuborilgan xabar yetarli emas: agar akkauntdagi yagona boshqa manzil kod yuborilgan manzilning o'zi bo'lsa, NIST pochta manziliga ham xabar yuborishni talab qiladi.
+
+Yo'qolgan yoki buzilgan authenticator'ni NIST darrov to'xtatish, bekor qilish yoki yo'q qilish kerak deb hisoblaydi (SHALL), chunki NIST fikricha buzilgan authenticator'ni bekor qilmaslikning oqibati odatda uni xato bekor qilishdan og'irroq. Shu bois "telefonim yo'qoldi" tugmasi mavjud bo'lishi kerak va u zaxira authenticator (parol yoki fizik authenticator) bilan ishlashi mumkin.
+
+### Email tasdiqlash va email almashtirish
+
+Email tasdiqlash tiklash va bildirishnoma kanalini ishonchli qiladi. Authentication Cheat Sheet email'ni username sifatida ishlatishga ruxsat beradi, lekin ro'yxatdan o'tishda email tasdiqlanishi sharti bilan. Tasdiqlash tokeni reset token'ning o'zidek talablarga bo'ysunishi (CSPRNG, hash saqlash, muddat, bir martalik) va boshqa maqsadga ishlamasligi kerak (bu muallifning tavsiyasi). Tasdiqlanmagan email'ni tiklash kanali sifatida ishlatmang. Tashqi provayder orqali kirishda (49-dars) `email_verified` ni provayderning da'vosi deb biling, o'zingiz tasdiqlagan email o'rnida emas.
+
+Email almashtirish ham tiklash kabi akkauntni egallash yo'li, shuning uchun Authentication Cheat Sheet aniq jarayon beradi. Foydalanuvchi autentifikatsiyalangan bo'lishi kerak; yangi email avval kutilayotgan o'zgarish sifatida saqlanadi. MFA yoqilgan bo'lsa: MFA bilan identifikatsiya, ikkita vaqt bilan cheklangan nonce, joriy manzilga faqat ogohlantiruvchi xabar (shubhali holatni xabar qilish havolasi bilan) va yangi manzilga tasdiqlash xabari. MFA yo'q bo'lsa: joriy parol so'raladi, uchta nonce yaratiladi va tasdiqlash xabari ham joriy, ham yangi manzilga alohida yuboriladi. Ikkala holatda ham o'zgarish ikkala tomon tasdiqlamaguncha amalga oshmaydi. Cheat sheet help-desk xodimlarini ijtimoiy muhandislikka qarshi o'qitishni ham tavsiya etadi.
 
 ## Misol: parolni tiklash oqimi
 

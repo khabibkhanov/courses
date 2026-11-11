@@ -12,7 +12,13 @@ sources:
   - id: cs-logging
     note: "Logging Cheat Sheet: qaysi hodisalarni loglash (ilova xatolari, avtorizatsiya xatolari), interaksiya identifikatori (korrelyatsiya), loglanmaydigan ma'lumotlar (token, parol, ulanish satri)"
   - id: saltzer
-    note: "Saltzer va Schroeder maqolasi: fail-safe defaults tamoyili (default holat ruxsat bermaslik). Bu darsda tamoyil nomi va ma'nosi umumiy tarzda keltirilgan; maqola matni lokal manbada o'qilmagan"
+    note: "Saltzer va Schroeder maqolasi: fail-safe defaults tamoyili. Kirish qarorlari ruxsatga asoslanadi (istisnoga emas), default holat kirish yo'q; ruxsat asosidagi mexanizmdagi xato odatda rad etish tomonga yiqiladi"
+  - id: nestjs-exception-filters
+    note: "NestJS Exception filters: o'rnatilgan global filter HttpException'ni qayta ishlaydi, notanish xatoga `{statusCode: 500, message: Internal server error}` qaytaradi; HttpException'ga berilgan Error serializatsiya qilinmaydi, `cause` log uchun; HttpException logga yozilmaydi; `@Catch()`, `APP_FILTER`, middleware xatolari faqat global filterga tushadi"
+  - id: nestjs-ws-filters
+    note: "NestJS WebSocket exception filters: `useGlobalFilters()` va `APP_FILTER` global filterlari gateway'larga qo'llanmaydi, filter gateway yoki metod darajasida `@UseFilters()` bilan bog'lanadi"
+  - id: prisma-error-reference
+    note: "Prisma xato kodlari: Prisma Client ma'lum so'rov xatosida `PrismaClientKnownRequestError` tashlaydi; P2002 unique constraint buzilishi, P2003 foreign key buzilishi, P2025 kerakli yozuv topilmagani"
 quiz:
   - q: "Policy xizmati javob bermay qoldi va kod `try { allowed = policy(r) } catch {}` bilan yozilgan, `allowed` boshida `true`. Nima bo'ladi?"
     options:
@@ -40,11 +46,11 @@ quiz:
     explain: "Umumiy javob debug'ni qiyinlashtirmasligi uchun interaksiya identifikatori ishlatiladi (Logging Cheat Sheet 'interaction identifier'). Identifikator ichki tafsilotni ochmaydi, lekin logdagi to'liq yozuvga olib boradi."
   - q: "Tranzaksiya o'rtasida xato yuz berdi: kvota kamaytirilgan, xabar esa yuborilmagan. A10:2025 nima deydi?"
     options:
-      - "Davom ettirib, qolgan qadamlarni qayta urinish"
       - "Tranzaksiyaning hamma qismini rollback qilib, boshidan boshlash (failing closed); yarim yo'lda tiklashga urinish ko'pincha tuzatib bo'lmaydigan xatolarga olib keladi"
+      - "Davom ettirib, qolgan qadamlarni qayta urinish"
       - "Xatoni e'tiborsiz qoldirish"
       - "Faqat xatoni yozib qo'yish"
-    answer: 1
+    answer: 0
     explain: "A10:2025 yarim yo'lda tiklashga urinish ko'pincha tuzatib bo'lmaydigan xatolarni keltirib chiqarishini va to'liq rollback kerakligini aytadi. Biz misolda kvotani qaytaramiz."
   - q: "Global exception filter bor. Nega xatolarni yuz bergan joyda ham ushlash kerak?"
     options:
@@ -164,7 +170,7 @@ Uchinchisi, yarim bajarilgan holat. Tranzaksiya o'rtasida xato yuz beradi, avval
 
 **Birinchi qoida: xato tafsiloti serverda qoladi.** Cheat sheet maqsadni shunday ifodalaydi: kutilmagan xato yuz berganda ilova umumiy javob qaytaradi, xato tafsilotlari esa server tomonda tekshiruv uchun loglanadi va mijozga qaytarilmaydi. Mijoz ko'radigan narsa: holat kodi, qisqa umumiy xabar va korrelyatsiya identifikatori. Server loglarida esa o'sha identifikator bilan to'liq tafsilot turadi. Logging Cheat Sheet bu g'oyani "interaction identifier" deb ataydi: bitta foydalanuvchi harakati bilan bog'liq hamma hodisani bog'laydigan belgi. Identifikator tasodifiy bo'lsin va ichki ma'noga ega bo'lmasin, aks holda u o'zi ma'lumot sizdiradi.
 
-**Ikkinchi qoida: xatoda default rad etish.** Saltzer va Schroederning klassik dizayn tamoyillaridan biri fail-safe defaults: kirish qarori ruxsatga emas, rad etishga asoslanadi, ya'ni default holat "kirish yo'q", ruxsat esa aniq berilishi kerak. Xatoga tatbiq etilganda: tekshiruv natijasini aniqlay olmasak, natija "rad". Kodda bu `let allowed = false` bilan boshlash va faqat tekshiruv aniq `true` qaytarganda uni o'zgartirish degani. Bu tamoyil nomi va ma'nosi umumiy tarzda keltirilgan; maqola matni bu kursning lokal manbalarida o'qilmagan.
+**Ikkinchi qoida: xatoda default rad etish.** Saltzer va Schroederning klassik dizayn tamoyillaridan biri fail-safe defaults: kirish qarori ruxsatga emas, rad etishga asoslanadi, ya'ni default holat "kirish yo'q", ruxsat esa aniq berilishi kerak. Maqolada bu "ruxsat asosidagi" qaror deb ifodalanadi: default holat kirish yo'q, loyiha esa ruxsat berish uchun sabablardan boshlanadi, chunki ruxsat asosidagi mexanizmdagi xato odatda rad etish bilan tugaydi (3-dars). Xatoga tatbiq etilganda: tekshiruv natijasini aniqlay olmasak, natija "rad". Kodda bu `let allowed = false` bilan boshlash va faqat tekshiruv aniq `true` qaytarganda uni o'zgartirish degani.
 
 **Uchinchi qoida: yarim holatni qoldirmaslik.** A10 matni: tranzaksiya o'rtasida bo'lsangiz, uning hamma qismini rollback qilib, boshidan boshlash juda muhim (bu ham failing closed deb ataladi); yarim yo'lda tiklashga urinish ko'pincha tuzatib bo'lmaydigan xatolarni yaratadi. Ya'ni "qolgan qadamni qayta urinib ko'raylik" emas, balki "boshlangan hamma narsani bekor qilaylik".
 
@@ -180,7 +186,7 @@ ASVS 5.0.0 bu talablarni bo'limga ajratgan (V16.5). 16.5.1 talabi: kutilmagan yo
 
 Hamma xatoni bir xil ko'rish kerak emas. "Mashina topilmadi" yoki "ruxsat yo'q" kutilgan xatolar: ularning mijozga ko'rsatiladigan matni dasturchi tomonidan oldindan yozilgan va xavfsiz. Ularni maxsus sinf (bizning misolda `AppError`) bilan ajratamiz. Boshqa hamma narsa, ya'ni ma'lumotlar bazasi uzilishi, noma'lum `TypeError`, tashqi xizmat timeout'i, kutilmagan xato: mijozga faqat "ichki xato" va identifikator qaytadi. Muhim nuqta: ajratish "dasturchi qasddan yozgan matn" bilan "tizim o'zi hosil qilgan matn" o'rtasida bo'ladi. Ikkinchisi hech qachon mijozga bormaydi.
 
-Holat kodlari ham xabar beradi. Cheat sheet 5xx'ni "so'rovni bajara olmadim" holatlari uchun ishlatishni, ichki sabablarni esa javobga qo'shmaslikni aytadi. Misollarida u ba'zan 4xx kodlari mosroq bo'lishini ham qayd etadi: mijoz noto'g'ri so'rov yuborganda. Xato tanasi uchun Spring misolida RFC 7807 asosidagi problem details format tilga olinadi (`application/problem+json`); JSON tanada `type`, `title`, `status`, `detail` kabi maydonlar standart. Format tafsilotlari bu darsning manbalarida o'qilmagan, ishlatsangiz aktual spetsifikatsiyani tekshiring.
+Holat kodlari ham xabar beradi. Cheat sheet 5xx'ni "so'rovni bajara olmadim" holatlari uchun ishlatishni, ichki sabablarni esa javobga qo'shmaslikni aytadi. Misollarida u ba'zan 4xx kodlari mosroq bo'lishini ham qayd etadi: mijoz noto'g'ri so'rov yuborganda. Xato tanasi uchun cheat sheet "Problem Details for HTTP APIs" formatiga havola qiladi (RFC 7807, havolalar ro'yxatida RFC 9457) va Spring misolida `application/problem+json` content-type tilga olinadi. Format JSON tanada `type`, `title`, `status`, `detail` kabi standart maydonlarni belgilaydi; ularga ichki ma'lumot yozmang.
 
 ### Xabar orqali enumeration
 
@@ -348,11 +354,11 @@ Yopilmagan narsalar: log yozuvida broker ulanish satri (parol bilan) turibdi. Lo
 
 ## Stack'da: NestJS exception filter
 
-NestJS'da o'rnatilgan exceptions layer ishlov berilmagan barcha xatolarni ushlaydi. Hujjatga ko'ra, o'rnatilgan global filter `HttpException` va uning subclass'larini qayta ishlaydi; tanib bo'lmaydigan xato uchun u `{ statusCode: 500, message: "Internal server error" }` javobini qaytaradi. Ya'ni standart xatti-harakat allaqachon xavfsizroq, ammo uni o'zimizning identifikator va loglash bilan to'ldiramiz.
+NestJS'da o'rnatilgan exceptions layer ishlov berilmagan barcha xatolarni ushlaydi. Hujjatga ko'ra, o'rnatilgan global filter `HttpException` va uning subclass'larini qayta ishlaydi; tanib bo'lmaydigan xato uchun u `{ statusCode: 500, message: "Internal server error" }` javobini qaytaradi. Ya'ni standart xatti-harakat allaqachon xavfsizroq, ammo uni o'zimizning identifikator va loglash bilan to'ldiramiz. Yana bir nuqta: o'rnatilgan filter `HttpException` va uning subclass'larini loglamaydi (ular oddiy oqim deb hisoblanadi), shuning uchun ularni xavfsizlik nuqtai nazaridan kuzatish kerak bo'lsa (masalan, ko'p 403) o'z filteringizda yozing.
 
 Hujjatning yana ikki muhim eslatmasi bor. Birinchisi, `HttpException`'ga `Error` obyektini `response` sifatida berish uni mijozga serializatsiya qilmaydi, asl xatoni log uchun `cause` sifatida uzating. Ikkinchisi, global filterlar (`useGlobalFilters()` yoki `APP_FILTER`) WebSocket gateway'larga qo'llanmaydi, ular uchun filter gateway yoki metod darajasida `@UseFilters()` bilan bog'lanadi (77-dars). Middleware ichidan tashlangan xatolarga faqat global filterlar ta'sir qiladi.
 
-Quyidagi parcha ishga tushirilmaydi (NestJS bu muhitda yo'q), faqat sintaksis tekshirilgan.
+Quyidagi filter global bo'lib ro'yxatdan o'tadi va `@Catch()` bilan hamma xatoni ushlaydi.
 
 ```ts
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Inject, Module } from "@nestjs/common";
@@ -382,7 +388,7 @@ export class SafeExceptionFilter implements ExceptionFilter {
 export class ErrorsModule {}
 ```
 
-Bu yerda `HttpException` xabari dasturchi yozgan deb faraz qilinadi. Agar u tashqi matnni o'z ichiga olsa, mijozga qaytarishdan oldin tekshiring. Prisma yoki boshqa kutubxona xatolarini (masalan, unique constraint) alohida holat kodiga (409) o'girish mumkin, lekin kutubxona xabarini mijozga uzatmang; kutubxonaning aniq xato kodlarini ularning hujjatidan tekshiring (bu dars manbalarida emas).
+Bu yerda `HttpException` xabari dasturchi yozgan deb faraz qilinadi. Agar u tashqi matnni o'z ichiga olsa, mijozga qaytarishdan oldin tekshiring. Kutubxona xatolarini (masalan, unique constraint) alohida holat kodiga o'girish mumkin, lekin kutubxona xabarini mijozga uzatmang. Prisma hujjatiga ko'ra Prisma Client ma'lum so'rov xatosida `PrismaClientKnownRequestError` tashlaydi va `code` maydoni beriladi: `P2002` unique constraint buzilishi, `P2025` kerakli yozuv topilmagani. Birinchisini 409 ga, ikkinchisini 404 ga o'girish mumkin, xato xabari (`message`) esa faqat logga ketadi.
 
 ## Xulosa
 

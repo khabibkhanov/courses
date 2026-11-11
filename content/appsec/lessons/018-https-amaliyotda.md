@@ -8,11 +8,19 @@ sources:
   - id: rfc8446
     note: "TLS 1.3 spetsifikatsiyasi: protokol versiyasi, forward secrecy va handshake'ning umumiy maqsadi (batafsil 65-darsda)"
   - id: rfc6797
-    note: "HSTS: HTTPS'ni majburlash va sertifikat xatosini chetlab o'tishni taqiqlash"
+    note: "HSTS spetsifikatsiyasi: brauzer HTTPS'ni majburlaydi (batafsil 16-darsda)"
   - id: rfc5280
     note: "X.509 sertifikat profili: amal qilish muddati (notBefore, notAfter) va subjectAltName maydoni"
   - id: t10-a04
-    note: "A04:2025 Cryptographic Failures: shifrlashsiz uzatish va eskirgan protokollar kategoriya doirasida"
+    note: "A04:2025 Cryptographic Failures: shifrlashsiz uzatish, eskirgan protokollar va server sertifikati hamda ishonch zanjiri to'g'ri tekshirilmasligi kategoriya savollari qatorida"
+  - id: cs-tls
+    note: "OWASP Transport Layer Security Cheat Sheet: TLS 1.3 standart, 1.0/1.1 o'chiriladi (RFC 8996, 2021-yil mart), AEAD cipher, siqish o'chiq, SAN, wildcard sertifikat, CAA, HTTP redirect va API uchun HTTP'ni o'chirish, Secure cookie"
+  - id: node-tls
+    note: "Node.js tls hujjati: DEFAULT_MIN_VERSION standart TLSv1.2, TLS 1.3 dan (EC)DHE majburiy, checkServerIdentity va rejectUnauthorized"
+  - id: node-cli
+    note: "Node.js CLI hujjati: NODE_TLS_REJECT_UNAUTHORIZED=0 sertifikat validatsiyasini o'chiradi va qat'iy tavsiya etilmaydi; --tls-min-v1.3, NODE_EXTRA_CA_CERTS"
+  - id: mdn-mixed-content
+    note: "MDN Mixed content: rasm, video va audio avtomatik yangilanadi, qolgani bloklanadi, host IP manzil bo'lsa yangilash o'rniga blok"
 quiz:
   - q: "Mijoz kodida `process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'` o'rnatilgan, chunki test serverining sertifikati o'z-o'zidan imzolangan. Production'da shu qoldi. Nima bo'ladi?"
     options:
@@ -37,7 +45,7 @@ quiz:
       - "Hamma subdomen, har qanday chuqurlikda"
       - "app.fleet.example (bitta yorliq), lekin fleet.example yoki a.b.fleet.example emas"
     answer: 3
-    explain: "Wildcard odatda faqat eng chap yorliqni almashtiradi: bitta yorliq. Apex domen (fleet.example) va ko'p yorliqli nomlar mos emas. Bu umumiy qabul qilingan qoida (RFC 6125); soddalashtirilgan 'endsWith' tekshiruvi uni buzadi."
+    explain: "Wildcard odatda faqat eng chap yorliqni almashtiradi: bitta yorliq. Apex domen (fleet.example) va ko'p yorliqli nomlar mos emas. Bu mijozlarning umumiy qoidasi (TLS server identity bo'yicha RFC 6125, uni RFC 9525 almashtirgan); soddalashtirilgan 'endsWith' tekshiruvi uni buzadi."
   - q: "HTTPS sahifa `<script src=\"http://cdn.fleet.example/lib.js\">` yuklamoqchi. Brauzer nima qiladi (MDN bo'yicha)?"
     options:
       - "Sahifani HTTP'ga o'tkazadi"
@@ -135,7 +143,7 @@ task:
 
 "Saytda HTTPS bor" jumlasi uch xil ma'noga ega bo'lishi mumkin: brauzer qulf belgisini ko'rsatadi; server TLS'ni to'g'ri sozlagan; ilova ichidagi barcha so'rovlar (mijoz kodi, mikroservislar, webhook'lar) sertifikatni haqiqatan tekshiradi. Birinchisi eng ko'rinadigani, ikkinchi va uchinchisi esa hujum ko'pincha o'tadigan joy. Production'dagi tipik muammolar: eski TLS versiyalari yoqib qo'yilgan, sertifikat muddati tugab sayt ishdan chiqadi (va jamoa panikaga tushib tekshiruvni o'chiradi), mijoz kodida `rejectUnauthorized: false` "vaqtincha" qolib ketadi, HTTPS sahifada `http://` resurslar yuklanadi, cookie'da `Secure` yo'q.
 
-OWASP Top 10:2025 da A04 Cryptographic Failures kategoriyasi shifrlashsiz uzatish, eskirgan protokollar va noto'g'ri sertifikat tekshiruvini o'z ichiga oladi. TLS 1.3 handshake va PKI mexanizmining ichki tuzilishi 65-66-darslarda; bu yerda dasturchi uchun amaliy tomon: qaysi versiya, qaysi sozlama, qanday xatolar, va sertifikat tekshiruvi aniq nimani tekshiradi.
+OWASP Top 10:2025 da A04 Cryptographic Failures kategoriyasi shifrlashsiz uzatish va eskirgan yoki kuchsiz protokollar haqida savol beradi; uning tekshiruv ro'yxatida server sertifikati va ishonch zanjiri to'g'ri tekshirilayotgani ham bor (CWE-296 ham shu yerda). TLS 1.3 handshake va PKI mexanizmining ichki tuzilishi 65-66-darslarda; bu yerda dasturchi uchun amaliy tomon: qaysi versiya, qaysi sozlama, qanday xatolar, va sertifikat tekshiruvi aniq nimani tekshiradi.
 
 HTTPS uchta narsani kafolatlaydi: maxfiylik (tinglovchi mazmunni ko'rmaydi), yaxlitlik (o'zgartirish sezilib qoladi) va server autentifikatsiyasi (siz aynan kerakli server bilan gaplashayotganingizni). Uchinchisi eng ko'p unutiladigani. Shifrlangan kanal noto'g'ri server bilan bo'lsa, foydasiz: hujumchi sizning nomingizdan "xavfsiz" kanal ochadi. Shu sababli sertifikat tekshiruvi TLS'ning ixtiyoriy emas, asosiy qismi.
 
@@ -145,7 +153,7 @@ HTTPS uchta narsani kafolatlaydi: maxfiylik (tinglovchi mazmunni ko'rmaydi), yax
 
 OWASP Transport Layer Security Cheat Sheet qoidasi aniq: ilova standart holda TLS 1.3 ni ishlatishi, moslik uchun TLS 1.2 ni qoldirishi mumkin; TLS 1.0 va 1.1 rasman eskirgan (RFC 8996, 2021-yil mart) va o'chirilishi kerak; SSLv2 va SSLv3 doim o'chiq. Eski mijoz biznes talabi bo'lsa, ularni sezgir ma'lumotsiz alohida endpoint'ga ajratish, asosiy endpoint'ni zaiflashtirmaslik tavsiya etiladi.
 
-Cipher bo'yicha: TLS 1.3 da standart AEAD suite'lar (AES-GCM, ChaCha20-Poly1305). TLS 1.2 da ham AEAD asosidagilarni tanlang, CBC rejimidan qoching, RSA kalit transporti (`TLS_RSA_*`) va statik Diffie-Hellman'ni o'chiring: ular forward secrecy bermaydi. Node.js hujjatida: TLS 1.2 gacha mukammal forward secrecy ixtiyoriy edi, TLS 1.3 dan boshlab (EC)DHE majburiy. TLS siqish (compression) CRIME hujumi sababli o'chiriladi; TLS 1.3 da u yo'q. Node.js'da `tls.DEFAULT_MIN_VERSION` standart `TLSv1.2` (`--tls-min-v1.3` bayrog'i bilan 1.3 ga ko'tarish mumkin). Konfiguratsiyani qo'lda yig'ishdan ko'ra, OWASP cheat sheet tavsiya qilgan Mozilla generatoridan yoki platformaning (yuklama balanser, CDN) tayyor siyosatidan foydalaning.
+Cipher bo'yicha: TLS 1.3 da standart AEAD suite'lar (AES-GCM, ChaCha20-Poly1305). TLS 1.2 da ham AEAD asosidagilarni tanlang, CBC rejimidan qoching, RSA kalit transporti (`TLS_RSA_*`) va statik Diffie-Hellman'ni o'chiring: ular forward secrecy bermaydi. Node.js hujjatida: TLS 1.2 gacha mukammal forward secrecy ixtiyoriy edi, TLS 1.3 dan boshlab (EC)DHE majburiy. TLS siqish (compression) CRIME hujumi sababli o'chiriladi; TLS 1.3 da u yo'q. Node.js'da `tls.DEFAULT_MIN_VERSION` standart `TLSv1.2` (`--tls-min-v1.3` bayrog'i bilan 1.3 ga ko'tarish mumkin). Cheat sheet yana ikkita amaliy narsani eslatadi: RSA ishlatilsa kalit kamida 2048 bit bo'lishi kerak va TLS 1.2 gacha bo'lgan versiyalarda Diffie-Hellman parametrlarini qo'lda yaratish amaliy muammolarga (DoS, mijoz parametrni tanlay olmasligi) olib kelgan, shu sabab nomlangan standart guruhlardan (ffdhe2048 va undan kattalari) foydalanish tavsiya etiladi. Konfiguratsiyani qo'lda yig'ishdan ko'ra, OWASP cheat sheet tavsiya qilgan Mozilla generatoridan yoki platformaning (yuklama balanser, CDN) tayyor siyosatidan foydalaning.
 
 ### Sertifikat nimani tasdiqlaydi
 
@@ -153,9 +161,9 @@ Sertifikat (RFC 5280 X.509 profili) kalit va nom bog'lanishini ishonchli CA imzo
 
 1. **Zanjir**: sertifikat ishonchli ildiz CA gacha imzolar zanjiri orqali tasdiqlanadi.
 2. **Muddat**: joriy vaqt `notBefore` va `notAfter` oralig'ida.
-3. **Nom**: so'ralgan host sertifikatdagi `subjectAltName` (SAN) nomlaridan biriga mos. OWASP cheat sheet: zamonaviy brauzerlar commonName'ni e'tiborsiz qoldiradi va to'liq nomni SAN'da talab qiladi.
+3. **Nom**: so'ralgan host sertifikatdagi `subjectAltName` (SAN) nomlaridan biriga mos. OWASP cheat sheet: zamonaviy Chrome commonName'ni e'tiborsiz qoldiradi va to'liq nomni SAN'da talab qiladi (moslik uchun asosiy nom CN'da ham, to'liq ro'yxat SAN'da bo'lishi tavsiya etiladi).
 
-Birini tashlab ketish o'rtadagi hujumga eshik ochadi. Misol: nom tekshirilmasa, hujumchi o'z domeni uchun (to'g'ri olingan) sertifikatni sizning domeningiz o'rniga ko'rsatadi, zanjir ham, muddat ham to'g'ri, lekin sertifikat sizniki emas. Quyidagi `run` bloki wildcard moslashtirishini ko'rsatadi: wildcard faqat bitta yorliqni almashtiradi (bu umumiy qabul qilingan qoida, RFC 6125; manbalar ro'yxatimizda yo'q).
+Birini tashlab ketish o'rtadagi hujumga eshik ochadi. Misol: nom tekshirilmasa, hujumchi o'z domeni uchun (to'g'ri olingan) sertifikatni sizning domeningiz o'rniga ko'rsatadi, zanjir ham, muddat ham to'g'ri, lekin sertifikat sizniki emas. Quyidagi `run` bloki wildcard moslashtirishini ko'rsatadi: wildcard faqat bitta yorliqni almashtiradi (bu mijozlarning umumiy qoidasi, TLS server identity bo'yicha RFC 6125 va uni almashtirgan RFC 9525 da bayon etilgan; bu darsning manbalar ro'yxatida emas).
 
 ```ts run
 type Cert = { sans: string[]; notBefore: number; notAfter: number; chainTrusted: boolean };
@@ -196,6 +204,12 @@ APP.Fleet.Example    true
 OWASP cheat sheet wildcard sertifikatni least privilege tamoyilini buzadigan tanlov deb ataydi: bitta kalit hamma subdomen uchun amal qiladi, kalit ko'p tizimda bo'lsa, sizib chiqish ehtimoli oshadi. Tavsiyalar: faqat haqiqiy ehtiyojda ishlating, turli ishonch darajasidagi tizimlar (ommaviy veb-server va ichki server) bitta wildcard'ni ulashmasin, kalit bitta joyda (masalan, TLS tugatuvchi reverse proxy'da) turishi afzal, ACME orqali avtomatik yangilanadigan alohida sertifikatlar esa yaxshiroq alternativa. CAA DNS yozuvlari qaysi CA domen uchun sertifikat bera olishini cheklaydi.
 
 ## Chuqurroq: xatolar va mixed content
+
+### Node.js mijozida tekshiruv qayerda bajariladi
+
+Node.js `tls.connect()` va `https` mijozlarida ikki qatlam bor. Birinchisi, `rejectUnauthorized` (qiymat `false` bo'lmasa, ya'ni standart holatda yoqilgan): zanjir ishonchli CA gacha tekshiriladi. Ikkinchisi, `checkServerIdentity(hostname, cert)`: sertifikat so'ralgan hostga berilganini tekshiradi. Node hujjati aniqlashtiradi: bu funksiya faqat sertifikat boshqa barcha tekshiruvlardan (masalan, ishonchli CA tomonidan berilganlik) o'tgandan keyin chaqiriladi va uni o'z funksiyangiz bilan almashtirish mumkin; almashtiruvchi funksiya standart `tls.checkServerIdentity()` ni chaqirib, qo'shimcha tekshiruv qo'shishi kerak. Demak, `checkServerIdentity: () => undefined` kabi "jimgina o'tkazib yuboruvchi" funksiya host nomi tekshiruvini o'chiradi, `rejectUnauthorized` yoqilgan bo'lsa ham: zanjir to'g'ri, lekin nom tekshirilmaydi. Bu aynan yuqoridagi uch shartdan uchinchisini tashlab ketish. Kod ko'rib chiqishda ikkala nomni ham qidiring.
+
+Node.js hujjati TLS versiyasi haqida ham aniq: `tls.DEFAULT_MIN_VERSION` standart qiymati `'TLSv1.2'`; `--tls-min-v1.3` bayrog'i uni `'TLSv1.3'` ga ko'taradi, `--tls-min-v1.0` va `--tls-min-v1.1` esa pasaytiradi (bir nechta bayroq berilsa eng past qiymat ishlatiladi). Ya'ni jamoa "moslik uchun" bitta bayroq qo'shsa, butun jarayonning minimal versiyasi tushib ketishi mumkin; bayroqlarni deployment konfiguratsiyasida tekshiring.
 
 ### Tekshiruvni o'chirish
 
@@ -240,7 +254,7 @@ Mixed content'ga umidvor bo'lmang: `upgrade-insecure-requests` CSP direktivasi (
 
 ### HTTPS joriy qilish ro'yxati
 
-OWASP cheat sheet asosida: butun saytda TLS (faqat login sahifasi emas), HTTP faqat 301 redirect uchun (foydalanuvchi manzilni qo'lda yozganda), keyin HSTS; API-only endpoint'larda HTTP umuman o'chiq yoki HTTP so'rovga redirect emas, xato qaytsin; barcha cookie'larda `Secure`; mixed content yo'q; sertifikat uchun kamida 2048 bitli RSA (yoki zamonaviy EC kalit) va SHA-256, kalit fayl tizimida ruxsatlar bilan himoyalangan; sertifikat yangilash avtomatlashtirilgan (ACME) va muddat tugashi monitoring qilinadi.
+OWASP cheat sheet asosida: butun saytda TLS (faqat login sahifasi emas), HTTP faqat 301 redirect uchun (foydalanuvchi manzilni qo'lda yozganda), keyin HSTS; API-only endpoint'larda HTTP umuman o'chiq yoki HTTP so'rovga redirect emas, xato qaytsin; barcha cookie'larda `Secure` (cheat sheet yana `__Secure-` prefiksini talab qiladi, o'rtadagi hujumchi HTTP orqali cookie'ni o'zgartira olmasligi uchun; 13-darsdagi `__Host-` undan qat'iyroq); mixed content yo'q; sertifikat uchun kamida 2048 bitli RSA (yoki zamonaviy EC kalit) va SHA-256, kalit fayl tizimida ruxsatlar bilan himoyalangan; sertifikat yangilash avtomatlashtirilgan (ACME) va muddat tugashi monitoring qilinadi.
 
 ## Misol: noto'g'ri host uchun to'g'ri sertifikat
 

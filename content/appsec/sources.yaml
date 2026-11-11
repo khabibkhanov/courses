@@ -88,7 +88,7 @@ wstg:
   author: "OWASP Foundation"
   year: 2026
   kind: web
-  url: https://owasp.org/www-project-web-security-testing-guide/
+  url: https://owasp.org/projects/web-security-testing-guide
 samm:
   title: "OWASP SAMM (Software Assurance Maturity Model)"
   author: "OWASP Foundation"
@@ -907,3 +907,360 @@ cs-mass-assignment:
   year: 2026
   kind: web
   url: https://cheatsheetseries.owasp.org/cheatsheets/Mass_Assignment_Cheat_Sheet.html
+
+cs-credential-stuffing:
+  title: "Credential Stuffing Prevention Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Credential_Stuffing_Prevention_Cheat_Sheet.html
+
+cs-mfa:
+  title: "Multifactor Authentication Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Multifactor_Authentication_Cheat_Sheet.html
+nestjs-cookies:
+  title: "Cookies | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/http/cookies
+prisma-undefined:
+  title: "Null and undefined | Prisma ORM Documentation"
+  author: "Prisma"
+  year: 2026
+  kind: docs
+  url: https://www.prisma.io/docs/orm/v7/prisma-client/special-fields-and-types/null-and-undefined
+nestjs-validation:
+  title: "Validation | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/application/validation
+nestjs-cors:
+  title: "CORS | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/security/cors
+prisma-ext-query:
+  title: "Query extensions | Prisma ORM Documentation"
+  author: "Prisma"
+  year: 2026
+  kind: docs
+  url: https://www.prisma.io/docs/orm/v7/prisma-client/client-extensions/query
+pg-libpq-ssl:
+  title: "PostgreSQL Documentation: 32.19. SSL Support (libpq)"
+  author: "PostgreSQL Global Development Group"
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/libpq-ssl.html
+redis-tls:
+  title: "TLS | Redis Docs"
+  author: "Redis"
+  year: 2026
+  kind: docs
+  url: https://redis.io/docs/latest/operate/oss_and_stack/management/security/encryption/
+cs-code-review:
+  title: "Secure Code Review Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Secure_Code_Review_Cheat_Sheet.html
+cs-privacy:
+  title: "User Privacy Protection Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/User_Privacy_Protection_Cheat_Sheet.html
+lex-pdp-1125:
+  title: "O'RQ-1125-son 26.03.2026. Shaxsga doir ma'lumotlar to'g'risida qonunga o'zgartirish va qo'shimchalar kiritish haqida (O'zbekiston Respublikasining Qonuni)"
+  author: "O'zbekiston Respublikasi"
+  year: 2026
+  kind: spec
+  url: https://lex.uz/uz/docs/-8099215
+cs-ssti:
+  title: "Server Side Template Injection Prevention Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Template_Injection_Prevention_Cheat_Sheet.html
+cs-deser:
+  title: "Deserialization Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html
+cs-proto:
+  title: "Prototype Pollution Prevention Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Prototype_Pollution_Prevention_Cheat_Sheet.html
+pg-create-policy:
+  title: "PostgreSQL Documentation: CREATE POLICY"
+  author: "PostgreSQL Global Development Group"
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/sql-createpolicy.html
+pg-create-view:
+  title: "PostgreSQL Documentation: CREATE VIEW"
+  author: "PostgreSQL Global Development Group"
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/sql-createview.html
+mdn-fetch-metadata:
+  title: "Fetch metadata request headers | MDN"
+  author: "MDN contributors"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Fetch_metadata
+mdn-corp:
+  title: "Cross-Origin Resource Policy (CORP) implementation | MDN"
+  author: "MDN contributors"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/CORP
+mdn-hsts:
+  title: "Strict-Transport-Security header | MDN"
+  author: "MDN contributors"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security
+mdn-nosniff:
+  title: "X-Content-Type-Options header | MDN"
+  author: "MDN contributors"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Content-Type-Options
+mdn-referrer-policy:
+  title: "Referrer-Policy header | MDN"
+  author: "MDN contributors"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referrer-Policy
+mdn-permissions-policy:
+  title: "Permissions-Policy header | MDN"
+  author: "MDN contributors"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Permissions-Policy
+nestjs-graphql-other:
+  title: "Other features (GraphQL) | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/graphql/other-features
+nestjs-graphql-complexity:
+  title: "Complexity (GraphQL) | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/graphql/complexity
+nestjs-graphql-quickstart:
+  title: "Quick start (GraphQL) | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/graphql/quick-start
+nestjs-file-upload:
+  title: "File upload | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/http/file-upload
+nestjs-raw-body:
+  title: "Raw body | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/faq/raw-body
+node-crypto:
+  title: "Crypto | Node.js API documentation"
+  author: "Node.js"
+  year: 2026
+  kind: docs
+  url: https://nodejs.org/api/crypto.html
+cs-micro-frontend:
+  title: "Micro-Frontend Security Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Micro_Frontend_Security_Cheat_Sheet.html
+cs-authz-regression:
+  title: "Authorization Regression Testing Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Regression_Testing_Cheat_Sheet.html
+cs-authz-testing:
+  title: "Authorization Testing Automation Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Testing_Automation_Cheat_Sheet.html
+
+cs-jwt:
+  title: "JSON Web Token Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_Cheat_Sheet.html
+mdn-window-postmessage:
+  title: "Window: postMessage() method - Web APIs | MDN"
+  author: "Mozilla"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage
+mdn-csp-sandbox:
+  title: "Content-Security-Policy: sandbox directive - HTTP | MDN"
+  author: "Mozilla"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/sandbox
+mdn-input-validation:
+  title: "Input validation - Security | MDN"
+  author: "Mozilla"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Input_validation
+pg-pgcrypto:
+  title: "PostgreSQL Documentation: F.26. pgcrypto - cryptographic functions"
+  author: "PostgreSQL Global Development Group"
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/pgcrypto.html
+pg-logging:
+  title: "PostgreSQL Documentation: 19.8. Error Reporting and Logging"
+  author: "PostgreSQL Global Development Group"
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/runtime-config-logging.html
+cs-tls:
+  title: "Transport Layer Security Cheat Sheet - OWASP Cheat Sheet Series"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html
+mdn-mixed-content:
+  title: "Mixed content | MDN"
+  author: "MDN contributors"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Mixed_content
+node-tls:
+  title: "TLS (SSL) | Node.js API documentation"
+  author: "OpenJS Foundation"
+  year: 2026
+  kind: docs
+  url: https://nodejs.org/api/tls.html
+node-cli:
+  title: "Command-line API | Node.js API documentation"
+  author: "OpenJS Foundation"
+  year: 2026
+  kind: docs
+  url: https://nodejs.org/api/cli.html
+nestjs-gateways:
+  title: "Gateways | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/websockets/gateways
+nestjs-ws-guards:
+  title: "Guards (WebSockets) | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/websockets/guards
+nestjs-ws-filters:
+  title: "Exception filters (WebSockets) | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/websockets/exception-filters
+nestjs-authorization:
+  title: "Authorization | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/security/authorization
+nestjs-exception-filters:
+  title: "Exception filters | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/exception-filters
+prisma-error-reference:
+  title: "Error message reference | Prisma ORM Documentation"
+  author: "Prisma"
+  year: 2026
+  kind: docs
+  url: https://www.prisma.io/docs/orm/v7/reference/error-reference
+pci-dss-v401:
+  title: "Just Published: PCI DSS v4.0.1"
+  author: "PCI Security Standards Council"
+  year: 2024
+  kind: web
+  url: https://blog.pcisecuritystandards.org/just-published-pci-dss-v4-0-1
+pci-future-dated:
+  title: "Now is the Time for Organizations to Adopt the Future-Dated Requirements of PCI DSS v4.x"
+  author: "PCI Security Standards Council"
+  year: 2025
+  kind: web
+  url: https://blog.pcisecuritystandards.org/now-is-the-time-for-organizations-to-adopt-the-future-dated-requirements-of-pci-dss-v4-x
+iso-27001-overview:
+  title: "ISO/IEC 27001 - Information security management systems (ISO overview page)"
+  author: "ISO"
+  year: 2026
+  kind: web
+  url: https://www.iso.org/isoiec-27001-information-security.html
+aicpa-soc2-ed:
+  title: "AICPA Proposes Update of SOC 2 Trust Services Criteria to Enhance the Relevance, Usability and Value of CPAs' Reports"
+  author: "AICPA"
+  year: 2026
+  kind: web
+  url: https://www.aicpa-cima.com/news/article/aicpa-proposes-update-of-soc-2-r-trust-services-criteria-to-enhance-the-relevance-usability-and-value-of-cpas-reports
+mdn-http-caching:
+  title: "HTTP caching | MDN"
+  author: "Mozilla"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching
+cs-logging-vocab:
+  title: "Logging Vocabulary Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Vocabulary_Cheat_Sheet.html
+pg-grant:
+  title: "GRANT | PostgreSQL Documentation"
+  author: "PostgreSQL"
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/sql-grant.html
+pg-privileges:
+  title: "Privileges | PostgreSQL Documentation"
+  author: "PostgreSQL"
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/ddl-priv.html
+pg-explicit-locking:
+  title: "PostgreSQL Documentation: Explicit Locking"
+  author: "PostgreSQL Global Development Group"
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/explicit-locking.html
+pg-serialization-failure:
+  title: "PostgreSQL Documentation: Serialization Failure Handling"
+  author: "PostgreSQL Global Development Group"
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/mvcc-serialization-failure-handling.html
+kysely-src:
+  title: "Kysely: InsertResult and UpdateResult sources (v0.29.8)"
+  author: "Kysely contributors"
+  year: 2026
+  kind: docs
+  url: https://github.com/kysely-org/kysely/blob/master/src/query-builder/insert-result.ts

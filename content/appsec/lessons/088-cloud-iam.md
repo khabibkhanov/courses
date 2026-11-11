@@ -12,15 +12,15 @@ sources:
   - id: cs-cloudarch
     note: "OWASP Secure Cloud Architecture Cheat Sheet: IAM access (workload identity yoki federated role orqali qisqa muddatli credential, doimiy kalit emas), signed URL va public storage kamchiliklari, shared responsibility (IaaS/PaaS/SaaS), logging"
   - id: occ-capital-one
-    note: "OCC 2020 press-relizi (Capital One jarimasi): sahifa mazmuni o'qilmadi, dars faqat voqea mavjudligini eslatadi; tafsilotlar tekshirilmagan deb belgilangan"
+    note: "OCC press-relizi (2020-08-06): $80 million civil money penalty; sabab sifatida public cloud'ga o'tishdan oldin samarali risk assessment jarayonlari yaratilmagani va kamchiliklar o'z vaqtida tuzatilmagani ko'rsatiladi. Texnik zanjir bu relizda emas, uni 97-dars birlamchi manbalar bilan ko'radi"
 quiz:
   - q: "Ilova roliga `storage:*` huquqi va `*` resurs berildi, 'har ehtimolga qarshi'. Bu qaysi tamoyilga zid?"
     options:
       - "Defense in depth"
-      - "Least privilege (deny by default): ruxsat faqat kerakli amal va resurs uchun beriladi"
       - "Fail open"
+      - "Least privilege (deny by default): ruxsat faqat kerakli amal va resurs uchun beriladi"
       - "Separation of concerns"
-    answer: 1
+    answer: 2
     explain: "A01:2025 least privilege'ni deny by default deb ataydi: ommaviy resurslardan tashqari, ruxsat aniq kerakli imkoniyat, rol yoki foydalanuvchi uchun beriladi. Keng wildcard buning aksi."
   - q: "OWASP Secure Cloud Architecture Cheat Sheet ilovaning storage'ga kirishi uchun qaysi yo'lni tavsiya qiladi?"
     options:
@@ -57,10 +57,10 @@ quiz:
   - q: "Hujumchi static (muddatsiz) kalitni o'g'irladi. Qisqa muddatli credential bilan taqqoslaganda asosiy farq?"
     options:
       - "Farq yo'q"
-      - "Static kalit hujumchida muddatsiz ishlaydi, temp credential esa TTL tugagach o'zi yaroqsiz bo'ladi"
       - "Temp credential kuchliroq huquq beradi"
       - "Static kalit tezroq ishlaydi"
-    answer: 1
+      - "Static kalit hujumchida muddatsiz ishlaydi, temp credential esa TTL tugagach o'zi yaroqsiz bo'ladi"
+    answer: 3
     explain: "Qisqa muddatli credential o'g'irlansa ham tezda amal qilmay qoladi. Static kalit rotatsiya qilinmaguncha (yoki bekor qilinmaguncha) ishlaydi; shuning uchun zarar oynasi keskin farq qiladi."
 task:
   title: "IAM policy linter"
@@ -140,7 +140,7 @@ Oldingi darslarda zaiflik asosan kod yoki konteyner ichida edi. Bulutda esa ko'p
 
 Ilova muhandisi uchun bu ikki xavfli narsani anglatadi. Birinchisi, "kod toza" degan ishonch yolg'on tinchlik beradi: SQL injection yo'q ilova ham, uning roli butun storage'ni o'qiy olsa, bitta SSRF yoki bitta oshkor bo'lgan kalit orqali ma'lumotini yo'qotadi. Ikkinchisi, bu xatolar kod review'da ko'rinmaydi, chunki ular infratuzilma konfiguratsiyasida: Terraform, CloudFormation, konsol bosishlari. Shuning uchun dars ilova bilan bulut orasidagi chegarani, ya'ni identitet va ruxsatni, o'rganadi.
 
-Qamrov haqida ochiq gap: har bulut provayderining (AWS, Azure, GCP) policy tili, rol modeli va xizmat nomlari har xil, va bu dars ularning birortasining hujjatini o'qib chiqmagan. Quyida keltirilgan hamma tamoyil OWASP manbalaridan, kod esa provayderga bog'liq bo'lmagan o'quv modeli. Konkret provayderda sintaksis va imkoniyatlarni uning rasmiy hujjatidan tekshiring.
+Har bulut provayderining policy tili, rol modeli va xizmat nomlari har xil, shuning uchun dars provayderdan mustaqil: tamoyillar OWASP manbalaridan, kod esa o'quv modeli. Konkret provayderda sintaksis va imkoniyatlar uning rasmiy hujjatiga ko'ra yoziladi.
 
 ## Asosiy g'oya
 
@@ -152,7 +152,7 @@ Yana bir muhim jihat: nazorat ishonchli joyda bajarilishi kerak. A01:2025 bu haq
 
 ### Doimiy kalit o'rniga qisqa muddatli credential
 
-OWASP Secure Cloud Architecture Cheat Sheet ilova storage'ga kirishining uch yo'lini sanaydi: ichki IAM siyosatlari, kriptografik imzolangan URL va to'g'ridan-to'g'ri public storage. IAM yo'li uchun tavsiya aniq: servisni workload identity yoki federated role bilan autentifikatsiya qilish va qisqa muddatli credential olish, doimiy access key joylashtirmaslik. Misol sifatida AWS'ning IAM rollari yoki federatsiyadan olingan vaqtinchalik credential'larni tavsiya qilishi keltiriladi (bu iborani cheat sheet o'zi shunday keltiradi, biz AWS sahifasini o'qimadik). Servis ruxsatlari kerakli storage amallari va resurslari bilan cheklanadi.
+OWASP Secure Cloud Architecture Cheat Sheet ilova storage'ga kirishining uch yo'lini sanaydi: ichki IAM siyosatlari, kriptografik imzolangan URL va to'g'ridan-to'g'ri public storage. IAM yo'li uchun tavsiya aniq: servisni workload identity yoki federated role bilan autentifikatsiya qilish va qisqa muddatli credential olish, doimiy access key joylashtirmaslik. Cheat sheet misol sifatida AWS hujjatiga havola beradi: ilova kirishi uchun IAM rollari yoki federatsiyadan olingan vaqtinchalik credential'lar tavsiya etiladi. Servis ruxsatlari kerakli storage amallari va resurslari bilan cheklanadi.
 
 Cheat sheet bu yondashuvning o'z jadvalini ham beradi. Afzalliklari: ma'lumotga to'g'ridan-to'g'ri kirish yo'q, foydalanuvchi storage'ni ko'rmaydi, kirish aniqlanadigan va loglanadigan. Kamchiliklari: keng IAM policy ishlatilishi mumkin, o'g'irlangan credential unga ruxsat etilgan resurslarni ochadi, credential kodga qattiq yozilgan bo'lishi mumkin. Yondashuv sezgir foydalanuvchi ma'lumoti uchun maqbul, lekin qat'iy kodlash va bulut amaliyotlariga rioya qilish sharti bilan. Ya'ni "IAM ishlatdik" deyish yetarli emas: policy qanchalik tor va credential qanchalik qisqa yashashi hal qiladi.
 
@@ -176,7 +176,7 @@ Logging: cheat sheet nazorat qilinadigan bulut muhitida nima bo'layotganini aniq
 
 ### Voqea: Capital One
 
-Kurs ro'yxatida bu darsga Capital One voqeasi bog'langan (OCC 2020-yilgi press-relizi). Bu sahifaning mazmunini men o'qimadim va korpusda ham yo'q, shuning uchun tafsilotlarni (summa, texnik zanjir) bu yerda keltirmayman. Umumiy ma'lum narsa: u bulutdagi noto'g'ri sozlangan ruxsatlar va ilova zaifligi birgalikda katta ma'lumot oqishiga olib kelishi mumkinligining mashhur misoli sifatida o'rganiladi; aniq faktlar uchun OCC sahifasi va boshqa birlamchi manbalarni o'qing.
+Kurs ro'yxatida bu darsga OCC (AQSh Valyuta nazorati idorasi) 2020-yil 6-avgustdagi press-relizi bog'langan. Relizda $80 million civil money penalty e'lon qilingan va sabab sifatida bankning public cloud muhitiga muhim IT operatsiyalarini ko'chirishdan oldin samarali risk assessment jarayonlarini yaratmagani hamda kamchiliklarni o'z vaqtida tuzatmagani aytilgan. Darsga bu ikki xulosa yetadi: bulutga o'tish ruxsatlar va konfiguratsiya xavfini baholashni talab qiladi, va topilgan kamchilik tuzatilmasa, javobgarlik texnik chegaradan tashqariga chiqadi. Reliz texnik zanjirni tasvirlamaydi; ma'lumot qanday oqib chiqqanini SSRF va cloud IAM case study'sida (97-dars) birlamchi manbalar bilan ko'ramiz.
 
 ## Misol: keng rol va o'g'irlangan kalit
 
@@ -327,13 +327,13 @@ KUTILGAN 6
 
 ## Stack'da: NestJS/Next.js servislari
 
-- Storage va boshqa bulut resurslariga kirish uchun doimiy access key'ni `.env` ga yozmang. Servis ishlayotgan platformaning workload identity yoki federated role mexanizmidan foydalaning va ilova SDK'si credential'ni undan olsin (aniq usul provayderga bog'liq; hujjatidan tekshiring).
+- Storage va boshqa bulut resurslariga kirish uchun doimiy access key'ni `.env` ga yozmang. Servis ishlayotgan platformaning workload identity yoki federated role mexanizmidan foydalaning va ilova SDK'si credential'ni undan olsin (aniq usul provayderga bog'liq).
 - Har servis uchun alohida rol: `api`, `worker`, `migrator` har biri o'z minimal policy'siga ega. Umumiy "app" roli bir buzilishni hammasiga aylantiradi.
 - Foydalanuvchi yuklagan fayllar uchun alohida bucket yoki prefiks, yuklash va yuklab olish amallari alohida ruxsatlarga ega. Yuklab olishda signed URL ishlatilsa, muddat qisqa bo'lsin va URL log'ga tushmasin.
 - Terraform yoki boshqa infratuzilma kodidagi policy'larni CI'da linter (yuqoridagi kabi, yoki tayyor vosita) bilan tekshiring va o'zgarishlarni pull request orqali kiriting (85-dars).
 - Bulut sozlamalari uchun muntazam tekshiruv: A02:2025 storage ruxsatlarini ko'rib chiqishni patch management jarayonining bir qismi qilishni tavsiya qiladi.
 - Log: rol qabul qilish va storage murojaatlarini ruxsat berilgan sxema bilan yozing, credential va token'larni log'ga kiritmang.
-- SSRF'ni (27-dars) bulut metama'lumot xizmatiga chiqish yo'lini yopish bilan birga o'ylang: egress siyosati va tor rol bir-birini to'ldiradi. Metadata xizmatining aniq sozlamalari provayderga bog'liq va bu darsda tekshirilmagan.
+- SSRF'ni (27-dars) bulut metama'lumot xizmatiga chiqish yo'lini yopish bilan birga o'ylang: egress siyosati va tor rol bir-birini to'ldiradi. Metadata xizmatining sozlamalari provayderga bog'liq.
 
 ## Xulosa
 
@@ -343,4 +343,4 @@ KUTILGAN 6
 - Signed URL anonim kirish beradi; public storage'dagi ma'lumot oshkor deb hisoblanadi.
 - Shared responsibility: provayder qatlamlarni boshqarsa ham, ruxsatlar va ma'lumot sizniki.
 - Rol qabul qilish va resursga murojaatlarni loglang, credential va token'larni emas.
-- Bu dars OWASP manbalariga tayanadi; konkret provayder hujjati va Capital One voqeasi tafsilotlari tekshirilmagan.
+- Capital One misolida regulyator (OCC) bulutga o'tishdan oldingi risk assessment va kamchiliklarni o'z vaqtida tuzatmaslikni asosiy sabab deb ko'rsatgan.

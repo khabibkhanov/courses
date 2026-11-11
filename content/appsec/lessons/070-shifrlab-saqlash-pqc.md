@@ -11,6 +11,10 @@ sources:
     note: "FIPS 204: ML-DSA (Module-Lattice-Based Digital Signature Algorithm). Post-quantum imzo standarti (Post-Quantum Cryptography cheat sheet'dagi havola orqali)"
   - id: t10-a04
     note: "A04:2025: transportda forward secrecy va quantum-safe kalit almashinuvini qo'llab-quvvatlash, PQC'ga hozirdan tayyorlanish (yuqori xavfli tizimlar 2030 oxiridan kech bo'lmay xavfsiz), A04 tekshiriladigan savollar"
+  - id: node-crypto
+    note: "Node.js crypto: ML-KEM va ML-DSA kalitlari qo'llab-quvvatlanadi (ml-kem-768, ml-dsa-65 va boshqalar), lekin bu algoritmlar OpenSSL 3.5 yoki undan yangisini talab qiladi va Node versiyasiga bog'liq"
+  - id: node-tls
+    note: "Node.js tls: ecdhCurves sozlamasida X25519MLKEM768 kabi nomni ko'rsatish mumkin"
   - id: asvs
     note: "ASVS 5.0.0 11.1.2-11.1.4 (inventar, discovery, PQC migratsiya rejasi), 11.2.2 (crypto agility), 11.3.x (AEAD va nonce), Appendix C (Post-Quantum Encryption Standards)"
   - id: cs-crypto-storage
@@ -256,7 +260,7 @@ const iv = crypto.getRandomValues(new Uint8Array(16));
 const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-CBC", iv }, key, enc.encode(known)));
 const stored = new Uint8Array([...iv, ...ct]);
 
-// Hujumchi: kalit yo'q, faqat ochiq matn tuzilishini taxmin qiladi. IV'ni o'zgartiradi.
+// Hujumchi: kalit yo'q, faqat ochiq matn tuzilishini biladi deb faraz qilinadi. IV'ni o'zgartiradi.
 const wanted = "rol=admin;t=alfa";
 const forged = stored.slice();
 const a = enc.encode(known);
@@ -358,7 +362,7 @@ PQC migratsiyasi ham har joyda bir xil shoshilinch emas. Bir necha daqiqa yoki k
 
 ## Stack'da: Node.js, PostgreSQL, TLS va KMS
 
-Node.js'da shifrlash uchun `crypto` va WebCrypto bor; PQC algoritmlarining hozirgi qo'llab-quvvatlanishi Node versiyasiga bog'liq, shuning uchun ishlatadigan versiya hujjatini tekshiring (bu darsda Node'ning PQC API'lari manbadan tekshirilmagan). Kodni `seal`/`open` interfeysi orqasida yozing va formatni bitta joyda saqlang: algoritm almashganda faqat shu modul o'zgaradi (ASVS 11.2.2). Prisma yoki Kysely'da yozuv jadvaliga `enc_version`, `kek_id` va `ciphertext` ustunlarini qo'shing yoki bitta `bytea` ustunda header bo'lsin; fon job kichik paketlarda eski yozuvlarni ko'chirib, qancha qolganini o'lchaydi.
+Node.js'da shifrlash uchun `crypto` va WebCrypto bor; ML-KEM va ML-DSA kalitlari `crypto`da va WebCrypto'da bor, lekin hujjatga ko'ra ular OpenSSL 3.5 yoki undan yangisini talab qiladi, shuning uchun qo'llab-quvvatlash Node versiyasiga bog'liq. `tls` sozlamalarida esa `ecdhCurves` qiymatida `X25519MLKEM768` nomini ko'rsatish mumkin. Ishlatadigan versiya hujjatini tekshiring. Kodni `seal`/`open` interfeysi orqasida yozing va formatni bitta joyda saqlang: algoritm almashganda faqat shu modul o'zgaradi (ASVS 11.2.2). Prisma yoki Kysely'da yozuv jadvaliga `enc_version`, `kek_id` va `ciphertext` ustunlarini qo'shing yoki bitta `bytea` ustunda header bo'lsin; fon job kichik paketlarda eski yozuvlarni ko'chirib, qancha qolganini o'lchaydi.
 
 Transportda eng amaliy qadam: TLS terminatsiya qiladigan qatlam (reverse proxy, load balancer, CDN yoki bulut provayder) hybrid kalit almashinuvini qo'llab-quvvatlaydimi, shuni tekshirish va faqat ularning qo'llab-quvvatlanadigan sozlamasidan foydalanish. TLS cheat sheet'da X25519MLKEM768 post-quantum uchun "hozirgi vaqtda ishlatiladi" deb qayd etilgan, lekin u formal ma'noda group emas. Sertifikat va hostname tekshiruvi yoqilgan qolishi kerak. Bulut KMS va HSM uchun provayderning PQC yo'l xaritasini so'rang va DEK'ni o'rash algoritmini inventarga yozing (68-dars).
 

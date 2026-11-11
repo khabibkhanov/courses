@@ -20,11 +20,11 @@ sources:
 quiz:
   - q: "Namespace'ga faqat `pod-security.kubernetes.io/warn: restricted` label'i qo'yildi. Privileged konteynerli pod yaratilsa nima bo'ladi?"
     options:
-      - "Pod rad etiladi"
       - "Pod qabul qilinadi, foydalanuvchiga ogohlantirish chiqadi"
+      - "Pod rad etiladi"
       - "Pod qabul qilinadi va audit logga annotatsiya yoziladi, ogohlantirish yo'q"
       - "Namespace o'chiriladi"
-    answer: 1
+    answer: 0
     explain: "warn rejimi buzilishda foydalanuvchiga ogohlantirish ko'rsatadi, lekin pod'ga ruxsat beradi. Rad etish faqat enforce rejimida; audit esa audit log annotatsiyasi uchun."
   - q: "Deployment yaratildi, namespace'da enforce: restricted. Deployment shabloni restricted'ga mos kelmaydi. Nima rad etiladi?"
     options:
@@ -53,10 +53,10 @@ quiz:
   - q: "NetworkPolicy resursi yaratildi, lekin klasterda NetworkPolicy'ni qo'llaydigan network plugin yo'q. Natija?"
     options:
       - "Pod'lar baribir izolyatsiyalanadi"
-      - "Policy hech narsa qilmaydi: resurs yaratish yetarli emas, plugin uni enforce qilishi kerak"
       - "Barcha trafik bloklanadi"
       - "API server policy'ni rad etadi"
-    answer: 1
+      - "Policy hech narsa qilmaydi: resurs yaratish yetarli emas, plugin uni enforce qilishi kerak"
+    answer: 3
     explain: "OWASP cheat sheet: plugin enforce qilmasa, resurs ta'sirsiz. Default holatda pod'lar ingress va egress uchun izolyatsiyalanmagan, shuning uchun policy'ni har yo'nalish uchun alohida yozish va enforcement'ni tekshirish kerak."
   - q: "Ilova Kubernetes API bilan gaplashmaydi, lekin pod'ga service account token avtomatik ulangan. Nima qilish kerak?"
     options:
@@ -302,7 +302,7 @@ const pod: Pod = { containers: [{ name: "api" }, { name: "sidecar" }] };
 
 console.log("buzilishlar:", baseline(pod).length);
 console.log("enforce baseline:", admit(pod, { enforce: "baseline" }));
-console.log("qoldiq: baseline runAsNonRoot, capability va seccomp'ni talab qilmaydi (restricted talab qiladi)");
+console.log("qoldiq: baseline runAsNonRoot va capability drop ALL ni talab qilmaydi, seccomp profilini ham talab qilmaydi (faqat Unconfined'ni taqiqlaydi); restricted talab qiladi");
 ```
 
 ```text
@@ -311,11 +311,75 @@ enforce baseline: QABUL QILINDI
 qoldiq: baseline runAsNonRoot, capability va seccomp'ni talab qilmaydi (restricted talab qiladi)
 ```
 
-Nima yopildi: privileged konteyner va host namespace'ga chiqish yo'li enforce darajasida rad etiladi. Nima yopilmadi: Baseline root jarayon, qoldirilgan capability'lar va seccomp'ni talab qilmaydi; buning uchun Restricted kerak (quyidagi topshiriq shu qoidalarni yozishni so'raydi). Admission pod spetsifikatsiyasini tekshiradi, ilovadagi zaiflikni emas, RBAC, Secret'lar va tarmoqni ham emas.
+Nima yopildi: privileged konteyner va host namespace'ga chiqish yo'li enforce darajasida rad etiladi. Nima yopilmadi: Baseline root jarayonni, tashlanmagan capability'larni va seccomp profilining yo'qligini taqiqlamaydi; buning uchun Restricted kerak (quyidagi topshiriq shu qoidalarni yozishni so'raydi). Admission pod spetsifikatsiyasini tekshiradi, ilovadagi zaiflikni emas, RBAC, Secret'lar va tarmoqni ham emas.
+
+### Mustahkamlangan manifest
+
+Yuqoridagi nazoratlar real manifestda shunday ko'rinadi (ishga tushirilmaydigan YAML; `fleet-api:1.0.0` o'quv image nomi):
+
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tracker-alfa
+  labels:
+    pod-security.kubernetes.io/enforce: baseline     # buzilsa pod rad etiladi
+    pod-security.kubernetes.io/warn: restricted      # restricted'ga o'tishdan oldin buzilishlarni ko'rsatadi
+    pod-security.kubernetes.io/audit: restricted
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fleet-api
+  namespace: tracker-alfa
+automountServiceAccountToken: false                  # ilova Kubernetes API bilan gaplashmaydi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fleet-api
+  namespace: tracker-alfa
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: fleet-api }
+  template:
+    metadata:
+      labels: { app: fleet-api }
+    spec:
+      serviceAccountName: fleet-api
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001                              # raqamli UID
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: api
+          image: fleet-api:1.0.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: tracker-alfa
+spec:
+  podSelector: {}
+  policyTypes: ["Ingress", "Egress"]
+```
+
+Namespace label'lari: `enforce: baseline` hozirning o'zida privileged va host namespace'larni rad etadi, `warn` va `audit` esa `restricted` bilan keyingi qadam uchun buzilishlarni yig'adi. Deployment'dagi `securityContext` Restricted'ning hamma konteyner talablarini bajaradi: non-root raqamli UID, `allowPrivilegeEscalation: false`, seccomp `RuntimeDefault`, `drop: ["ALL"]`; `readOnlyRootFilesystem` Restricted talabi emas, 86-darsdagi `--read-only` ning ekvivalenti, `emptyDir` esa yozish joyini `/tmp` bilan cheklaydi. `automountServiceAccountToken: false` ServiceAccount darajasida qo'yilgan. Bo'sh `podSelector` va ikkala `policyTypes` bilan NetworkPolicy namespace'dagi hamma pod uchun ingress va egress'ni yopadi; kerakli oqimlar (masalan DNS, PostgreSQL) alohida policy bilan ochiladi va klaster NetworkPolicy'ni qo'llaydigan plugin ishlatishi shart. Qoldiq risk: bu manifest ilovadagi zaiflikni, RBAC'dagi keng huquqlarni va etcd'dagi Secret'larni hal qilmaydi.
 
 ### Restricted qoidalarini yozish
 
-Topshiriqda Restricted qoidalarini qo'shasiz. Boshlang'ich kod Baseline'ning bir qismini tekshiradi va to'rt pod'ni baholaydi; hozir ular hammasi `OK` yoki 2 buzilish, to'g'risi esa boshqacha:
+Topshiriqda Restricted qoidalarini qo'shasiz. Boshlang'ich kod Baseline'ning bir qismini tekshiradi va to'rt pod'ni baholaydi. Hozirgi chiqishda `baselineOnly` va `rootUser` noto'g'ri `OK` bo'lib chiqadi, ular Restricted'ni buzadi:
 
 ```ts run
 type Container = {
@@ -368,7 +432,7 @@ rootUser       restricted: OK
 
 ## Stack'da: NestJS/Next.js deployment
 
-- Deployment spetsifikatsiyasida `securityContext`: `runAsNonRoot: true`, `allowPrivilegeEscalation: false`, `seccompProfile: { type: RuntimeDefault }`, `capabilities: { drop: ["ALL"] }`. 86-darsdagi image `USER node` bilan mos bo'lishi kerak (UID raqami bilan, chunki `runAsNonRoot` nomni emas, raqamni tekshiradi; bu qism hujjatdan emas, amaliy qayd).
+- Deployment spetsifikatsiyasida `securityContext`: `runAsNonRoot: true`, `allowPrivilegeEscalation: false`, `seccompProfile: { type: RuntimeDefault }`, `capabilities: { drop: ["ALL"] }`. 86-darsdagi image `USER node` bilan mos bo'lishi kerak. Image'da nomli `USER` bo'lsa, kubelet uning root emasligini tekshira olmaydi, shuning uchun `runAsUser` bilan raqamli UID bering.
 - Namespace'lar: har tenant yoki muhit uchun alohida namespace, label'lar `enforce: baseline` (yoki restricted), `warn` va `audit` uchun `restricted`.
 - Servis hisoblari: har servis uchun alohida ServiceAccount, API ishlatilmasa `automountServiceAccountToken: false`.
 - Secret'lar: tashqi secrets manager va ilova runtime'da oladi (69-dars); etcd'da encryption at rest klaster administratori bilan kelishilgan.

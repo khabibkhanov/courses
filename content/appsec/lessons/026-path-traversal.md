@@ -8,7 +8,7 @@ sources:
   - id: t10-a01
     note: "A01 Broken Access Control: kategoriyaga CWE-22 (Path Traversal), CWE-23 (Relative Path Traversal) va CWE-36 (Absolute Path Traversal) kiritilgan; CWE-918 SSRF ham shu kategoriyada"
   - id: node-security
-    note: "Node.js Security Best Practices va path hujjati: `path.join` normallashtiradi, `path.resolve` mutlaq yo'l hosil qiladi (xatti-harakat tavsifi kursning talqini)"
+    note: "Node.js path hujjati: path.join segmentlarni birlashtirib normallashtiradi, path.resolve o'ngdan chapga mutlaq yo'l hosil bo'lguncha ishlaydi (mutlaq segment oldingilarini tashlaydi), path.normalize `..` ni hisobga oladi va bu tizim yo'lni boshqacha hal qilishini o'zgartirishi mumkinligini yozadi, path.relative, Windows va POSIX farqi; fs.realpath hujjati. Node Security Best Practices umumiy manba"
   - id: cs-input
     note: "Input Validation Cheat Sheet: ijobiy validatsiya va noto'g'ri kiritishni rad etish"
 quiz:
@@ -148,10 +148,21 @@ Himoya formulasi: (1) kiritishni bir marta dekodlab kanonik shaklga keltirish; (
 | Kodlangan | `%2e%2e%2f` | Framework dekodlagandan keyin `../` bo'ladi; ikki marta dekodlansa yana |
 | Almashtirishni aldaydigan | `....//` | Bir marta `../` o'chirilsa `../` qoladi |
 | Qo'shni papka | `../alfa-evil/a` | `startsWith(root)` tekshiruvidan o'tadi |
-| Platformaga xos | `..\x`, `C:\x`, NUL | Windows ajratkichlari va eski API'larda NUL yo'lni kesishi |
+| Platformaga xos | `..\x`, `C:\x`, NUL | Windows'da `\` ajratkich, POSIX'da oddiy belgi; NUL: C tilidagi fayl API'lari satrni NUL'da tugatadi, tekshiruv va tizim ko'rgan yo'l farq qilishi mumkin |
 | Symlink | `link -> /etc` | Satr tekshiruvi fayl tizimini ko'rmaydi |
 
 ## Chuqurroq: nozik holatlar
+
+### Node `path` modulining hujjatlangan xatti-harakati
+
+Himoya yo'l funksiyalari aynan nima qilishiga tayanadi, shuning uchun hujjatdagi qoidalarni bilish kerak:
+
+- `path.join` segmentlarni platformaga xos ajratkich bilan birlashtirib, natijani normallashtiradi; uzunligi nol segmentlar e'tiborga olinmaydi. Hujjat misoli: `path.join('/foo', 'bar', 'baz/asdf', 'quux', '..')` natijasi `/foo/bar/baz/asdf`, ya'ni oxirgi `..` bir daraja ortga qaytardi. Segmentlardan biri satr bo'lmasa `TypeError` tashlanadi: `name` satr ekani oldindan tekshirilmasa, JSON'dan kelgan obyekt 500 xato beradi.
+- `path.resolve` segmentlarni o'ngdan chapga qayta ishlaydi va mutlaq yo'l hosil bo'lguncha oldingi segmentlarni qo'shib boradi. Hujjat misoli: `path.resolve('/foo', '/bar', 'baz')` natijasi `/bar/baz`. Demak mutlaq `name` ildizni butunlay tashlab yuboradi: `path.resolve(ROOT, "/etc/hosts")` `/etc/hosts` beradi. Mutlaq yo'lni oldindan rad etish (yoki `path.isAbsolute` bilan tekshirish) shu sababdan kerak.
+- `path.normalize` `.` va `..` segmentlarini hal qiladi va ketma-ket ajratkichlarni bittaga keltiradi. Hujjat yana bir narsani ta'kidlaydi: `..` segmentlarini olib tashlash tizimning yo'lni hal qilish usulini o'zgartirishi mumkin. Bu symlink bilan bog'liq: satr darajasida `link/..` papkaning ota papkasiga teng, fayl tizimida esa `link` ko'rsatgan joyning ota papkasiga olib borishi mumkin. Shuning uchun normalizatsiya natijasi haqiqiy diskdagi yo'l emas, faqat satr.
+- `path.relative(from, to)` ikkala yo'lni `resolve` qilib, nisbiy yo'lni qaytaradi. Bu ildiz tekshiruvining prefiksdan ishonchli varianti: natija `..` bilan boshlanmasa va `path.isAbsolute` bo'lmasa, `to` ildiz ichida. Ikkala yo'l ham mutlaq bo'lgani ma'qul: nisbiy yo'l joriy ishchi papkaga nisbatan hal qilinadi.
+- `node:path` operatsion tizimga qarab Windows yoki POSIX qoidalarini tanlaydi. POSIX'da `\` oddiy fayl nomi belgisi, Windows'da esa ajratkich. Windows'da yozilgan va sinalgan tekshiruv Linux'da boshqacha ishlashi mumkin va aksincha. Tekshiruv o'zi ishlaydigan platformaga mos bo'lsin yoki kiritishdagi teskari slesh umuman rad etilsin (topshiriqdagi yechim shunday qiladi); aniq platformani tanlash kerak bo'lsa `path.posix` yoki `path.win32` ishlatiladi.
+- `fs.realpath` symlink'larni hal qilib, kanonik mutlaq yo'lni beradi; yo'l mavjud bo'lmasa `ENOENT` xatosi qaytadi. Shuning uchun u mavjud bo'lmagan fayl yaratish (yozish) oldidan to'g'ridan-to'g'ri ishlamaydi: bunda mavjud ota papkaga `realpath` qo'llanadi, fayl nomi esa alohida segment sifatida tekshiriladi.
 
 ### Qora ro'yxat nega buziladi
 
@@ -328,11 +339,33 @@ for (const n of ["a.txt", "../../secrets/keys.env", "....//....//secrets/keys.en
 
 Nima uchun yetarli: invariant "ochiladigan yo'l normallashtirilgan holda ildiz + `/` bilan boshlanadi" hisoblangan natijaga nisbatan tekshirildi, shuning uchun hujum qanday shaklda yozilganidan qat'i nazar (`../`, `....//` oxirida `..` ga aylanadigan variantlar) hisoblangan yo'l ildizdan chiqsa rad etiladi. Qo'shni papka prefiks `/` bilan to'xtatildi. Absolut yo'l, NUL va teskari slesh alohida rad etiladi. `....//` kiritishi hech qanday maxsus ishlov talab qilmadi: normalizatsiya uni oddiy nom segmenti `....` deb o'qidi (u fayl nomi sifatida bor-yo'q bo'lishi mumkin, lekin ildiz ichida qoladi). Yopilmagan: symlink (haqiqiy yo'l), tekshiruv/ochish vaqt oralig'i (60-dars), kiritishni oldin ikki marta dekodlash, tenant bo'yicha ruxsat tekshiruvi (51-58-darslar) va Windows xususiyatlari (drayv harflari, zahiralangan nomlar) bu modelda yo'q.
 
+### Mashq: ildiz ichidami?
+
+Quyidagi `isInside(root, full)` ikkala yo'l allaqachon normallashtirilgan mutlaq yo'l deb faraz qiladi va `full` ildiz papka ichidagi fayl yo'limi, shuni aytadi. Hozir u klassik prefiks xatosini takrorlaydi. Tuzating: qo'shni papka, ildizning o'zi va ildiz oxiridagi ortiqcha `/` to'g'ri hal qilinsin. "Run" tugmasi testlarni ishga tushiradi.
+
+```ts run
+// root va full - normallashtirilgan mutlaq yo'llar (".." yo'q).
+// full root papkasining ICHIDAGI yo'l bo'lsagina true. root'ning o'zi ichida emas.
+function isInside(root: string, full: string): boolean {
+  return full.startsWith(root);
+}
+```
+
+```ts test
+check("ildiz ichidagi fayl", () => isInside("/srv/clips/alfa", "/srv/clips/alfa/a.mp4") === true);
+check("chuqur ichki fayl", () => isInside("/srv/clips/alfa", "/srv/clips/alfa/2026/a.mp4") === true);
+check("qo'shni papka (alfa-evil) ichida emas", () => isInside("/srv/clips/alfa", "/srv/clips/alfa-evil/x.mp4") === false);
+check("ildizning o'zi ichida emas", () => isInside("/srv/clips/alfa", "/srv/clips/alfa") === false);
+check("ota papka ichida emas", () => isInside("/srv/clips/alfa", "/srv/clips") === false);
+check("ildiz oxirida / bo'lsa ham ishlaydi", () => isInside("/srv/clips/alfa/", "/srv/clips/alfa/a.mp4") === true);
+check("ildiz oxirida / bo'lsa qo'shni papka baribir rad", () => isInside("/srv/clips/alfa/", "/srv/clips/alfa-evil/x.mp4") === false);
+```
+
 ## Qachon qo'llamaslik kerak
 
 - Allow-list nomlar yetarli bo'lsa, yo'l tekshiruvi ortiqcha. Agar fayl nomlari bazadan olingan UUID'lar bo'lsa, `UUID` regexi bilan tekshirish yo'l tekshiruvidan oddiyroq.
 - Satr bo'yicha tekshiruvga to'liq ishonmang, agar ildiz ichida foydalanuvchi symlink yarata olsa. Bunday muhitda (umumiy papka, arxiv ochish) `realpath` va symlink'ni taqiqlash kerak. Faqat satr tekshiruvi yetarli deb hisoblash noto'g'ri.
-- Statik fayllar uchun yo'lni qo'lda tekshirmang: Express `express.static`, `res.sendFile(name, { root })` va Fastify static plagini bunday tekshiruvni o'zi bajaradi (ularning xatti-harakati versiyaga bog'liq; hujjatni tekshiring, bu darsda tekshirilmagan). O'z tekshiruvingiz faqat ularning o'rniga yozilganda kerak.
+- Statik fayllar uchun yo'lni qo'lda tekshirmang: Express `express.static`, `res.sendFile(name, { root })` va Fastify static plagini bunday tekshiruvni o'zi bajaradi (ular yo'lni ildizga nisbatan hal qiladi va undan chiqib ketadigan so'rovni rad etadi). O'z tekshiruvingiz faqat ularning o'rniga yozilganda kerak.
 - Qora ro'yxat filtrini ikkinchi qatlam sifatida ham yozmang. U noto'g'ri ishonch beradi va yo'lga qarab xato ishlaydi.
 
 ## Stack'da: Express, Fastify, Next.js

@@ -28,11 +28,11 @@ quiz:
     explain: "Socket Docker daemon'ning asosiy API kirish nuqtasi va daemon root huquqi bilan ishlaydi. OWASP cheat sheet unga kirishni host'ga cheklanmagan root kirishiga tenglashtiradi; socketni :ro qilish API'ni faqat o'qishga aylantirmaydi."
   - q: "Dockerfile'da `USER node` bor, lekin `COPY . /app` oddiy. Nima uchun ilova fayllarni yoza olmasligi yoki huquq muammosi bo'lishi mumkin va xavfsizlik uchun bu nimani anglatadi?"
     options:
-      - "COPY hamma fayllarni node egaligida qoldiradi"
       - "COPY fayllarni default root egaligida qo'yadi; to'g'ri ish: COPY --chown=node:node va fayllarni kerak darajada o'qish-yozish huquqi bilan berish"
+      - "COPY hamma fayllarni node egaligida qoldiradi"
       - "USER faqat ENV bilan ishlaydi"
       - "USER buyrug'i ishlamaydi"
-    answer: 1
+    answer: 0
     explain: "USER faqat jarayon egasini o'zgartiradi. Fayl egaligi COPY --chown bilan beriladi. Maqsad: jarayon minimal huquq bilan ishlasin, lekin ilova fayllari yozilishi mumkin bo'lmagan (read-only) holatda bo'lsin."
   - q: "Build vaqtida npm token kerak. Qaysi usul token'ni image'da qoldirmaydi?"
     options:
@@ -61,7 +61,7 @@ quiz:
   - q: "`--read-only` fayl tizimi nima himoya qiladi va nima himoya qilmaydi?"
     options:
       - "RCE'ni to'liq yopadi"
-      - "Sirlarni xotiradan o'chiradi"
+      - "Sirlarni RAM'dan o'chiradi"
       - "Tarmoq kirishini bloklaydi"
       - "Hujumchi konteyner fayl tizimiga zararli fayl qoldirishini qiyinlashtiradi, lekin RCE'ning o'zini, xotiradagi kodni va tarmoq orqali chiqishni yopmaydi"
     answer: 3
@@ -135,7 +135,7 @@ task:
   solutionNotes: |
     - Qoidalar Docker hujjatiga mos: tag'lar o'zgaruvchan, digest pin takrorlanuvchi build beradi; ARG/ENV qiymatlari final image'da saqlanadi; USER bo'lmasa konteyner default root bilan ishlaydi (qo'shimcha: tashqi image `USER` ni o'zi o'rnatgan bo'lishi mumkin).
     - Linter satr naqshiga tayanadi: ko'p qatorli RUN, multi-stage'dagi bir nechta FROM, `USER root` dan keyin `USER node` kabi holatlar to'liq tahlil qilinmaydi. Real vosita Dockerfile'ni parse qiladi.
-    - Nom bo'yicha sirni topish ham taxmin: `ARG API_URL` ushlanmaydi, `ARG TOKEN_TTL` esa soxta ogohlantirish beradi.
+    - Nom bo'yicha sirni topish ham ehtimoliy: `ARG API_URL` ushlanmaydi, `ARG TOKEN_TTL` esa soxta ogohlantirish beradi.
     - Linter yo'q topilma image xavfsiz degani emas: image tarkibidagi paketlar skaner (cheat sheet: CI'da container scanning) vazifasi.
   checklist:
     - "FROM digest bilan qotirilmagan satr topiladi"
@@ -280,6 +280,41 @@ qoldiq: ilovaning o'zidagi RCE, tarmoq kirishi va ilova ma'lumotlari bu model ta
 ```
 
 Nima yopildi: konteynerdan hostga o'tish yo'llari (socket, privileged), konteyner ichida huquq oshirish va fayl qoldirish. Nima yopilmadi: ilovadagi RCE'ning o'zi; hujumchi ilova huquqi bilan ilova ma'lumotlarini o'qiy oladi va tarmoq orqali chiqa oladi; yadro zaifliklari konteyner izolyatsiyasini baribir chetlab o'tishi mumkin. Shuning uchun "0 imkoniyat" model ichidagi natija, haqiqiy xavfsizlik isboti emas.
+
+### Mustahkamlangan Dockerfile va ishga tushirish
+
+Yuqoridagi qoidalar real Dockerfile'da shunday ko'rinadi. Bu ishga tushirilmaydigan namuna: `<digest>` o'rniga tanlagan base image'ingizning haqiqiy digest'ini qo'yasiz, `npmrc` esa build vaqtida `--secret id=npmrc,src=...` bilan beriladi.
+
+```dockerfile
+# syntax=docker/dockerfile:1
+FROM node:22-alpine@sha256:<digest> AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci
+COPY . .
+RUN npm run build
+
+FROM node:22-alpine@sha256:<digest>
+ENV NODE_ENV=production
+WORKDIR /app
+COPY --chown=node:node package.json package-lock.json ./
+RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci --omit=dev
+COPY --chown=node:node --from=build /app/dist ./dist
+USER node
+CMD ["node", "dist/server.js"]
+```
+
+Ishga tushirishda qolgan nazoratlar beriladi:
+
+```bash
+docker run --read-only --tmpfs /tmp \
+  --cap-drop all \
+  --security-opt=no-new-privileges \
+  --memory 512m --cpus 1 \
+  fleet-api:1.0.0
+```
+
+Nima uchun shunday: base image digest bilan qotirilgan (best practices hujjati); token faqat `RUN` davomida fayl sifatida mount qilinadi va qatlamga yozilmaydi, `ARG`/`ENV` esa final image'da qolardi; ikkinchi bosqich faqat build natijasi va production bog'liqliklarini oladi; fayllar `--chown=node:node` bilan, jarayon `USER node` bilan ishlaydi; `--read-only` yozishni `--tmpfs /tmp` bilan cheklaydi (cheat sheet misoli), `--cap-drop all` va `no-new-privileges` yuqorida ko'rilgan. Qoldiq risk: `npm ci` bu yerda install skriptlarini ishga tushiradi (81-darsdagi trade-off), digest yangilanmasa base image eskiradi, va image ichidagi paketlar skanerlanishi kerak.
 
 ### Dockerfile linter
 

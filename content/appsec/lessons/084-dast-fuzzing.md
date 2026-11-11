@@ -8,17 +8,17 @@ sources:
   - id: wstg
     note: "WSTG: Testing Framework bo'limi (DAST vositalari ilovani crawl va fuzz qiladi; penetration testing exploitability'ni tasdiqlaydi; staging yoki production'da bo'lishi mumkin; CI/CD bosqichlari), Appendix D Fuzzing (wordlist asosida so'rov fuzzing, ZAP passiv va faol skan), Kirish bo'limi (hech bir texnika yetarli emas)"
   - id: nist-ssdf
-    note: "NIST SP 800-218 SSDF lokal korpusda yo'q; dars undan faqat umumiy g'oya (sinovni ishlab chiqish jarayoniga kiritish) sifatida foydalanadi"
+    note: "NIST SP 800-218 SSDF v1.1: xavfsizlik sinovini ishlab chiqish jarayonining oddiy qismi qilish g'oyasi (umumiy ma'noda); dars amaliyot raqamlarini keltirmaydi"
   - id: asvs
-    note: "ASVS 5.0.0: sinov topilmasini talab raqamiga bog'lash uchun ishlatiladi (masalan V15.2.2 resurs talab qiladigan funksiyalardan mavjudlikni himoya qilish); boshqa bo'limlar tekshirilmagan"
+    note: "ASVS 5.0.0: sinov topilmasini talab raqamiga bog'lash uchun ishlatiladi; masalan V15.2.2 (2-daraja) vaqt yoki resurs talab qiladigan funksiyalar sabab mavjudlik yo'qolishidan himoyani talab qiladi"
 quiz:
   - q: "DAST va SAST orasidagi farq qaysi gapda to'g'ri?"
     options:
-      - "DAST kodni ishga tushirmay o'qiydi, SAST ishlayotgan ilovaga so'rov yuboradi"
       - "DAST ishlayotgan ilovaga tashqaridan so'rov yuborib javobni baholaydi, SAST kodni ishga tushirmay tahlil qiladi"
+      - "DAST kodni ishga tushirmay o'qiydi, SAST ishlayotgan ilovaga so'rov yuboradi"
       - "Ikkalasi bir xil, faqat nomi boshqa"
       - "DAST faqat ma'lumotlar bazasini, SAST faqat frontend'ni tekshiradi"
-    answer: 1
+    answer: 0
     explain: "DAST ishlayotgan tizimning tashqi xatti-harakatini ko'radi (konfiguratsiya, autentifikatsiya, javob). SAST esa ishga tushirmay kod strukturasini tahlil qiladi (83-dars)."
   - q: "Fuzz harness'da faqat 'funksiya xato tashlamadimi' tekshiriladi, invariant tekshirilmaydi. Qaysi xatti-harakat o'tib ketadi?"
     options:
@@ -47,10 +47,10 @@ quiz:
   - q: "Fuzz natijasida 2000 kirishdan 0 ta crash chiqdi. To'g'ri xulosa qaysi?"
     options:
       - "Funksiya xavfsiz"
-      - "Berilgan kirish taqsimoti va invariantlar bo'yicha 2000 ta sinovda nuqson topilmadi; boshqa kirishlar va boshqa invariantlar sinalmagan"
       - "Funksiya hech qachon xato tashlamaydi"
+      - "Berilgan kirish taqsimoti va invariantlar bo'yicha 2000 ta sinovda nuqson topilmadi; boshqa kirishlar va boshqa invariantlar sinalmagan"
       - "Fuzzing kerak emas"
-    answer: 1
+    answer: 2
     explain: "Fuzzing nuqson borligini isbotlashi mumkin, yo'qligini isbotlay olmaydi. Natija generatorning sifatiga va tekshirilgan invariantlarga bog'liq."
   - q: "Parser kirishning 80% ini darhol rad etadi (format mos kelmaydi), qolgan 20% haqiqiy mantiqqa yetadi. Fuzz generatori sof tasodifiy belgilardan iborat. Nima bo'ladi?"
     options:
@@ -177,7 +177,7 @@ task:
 
 SAST (83-dars) kodni ishga tushirmay o'qiydi. Ammo ko'p nuqsonlar kodning o'zida ko'rinmaydi: ular ilova ishga tushganda, muayyan konfiguratsiya va ma'lumot bilan paydo bo'ladi. Header noto'g'ri sozlangan, bitta endpoint autentifikatsiyasiz qolgan, parser kutilmagan kirishda yiqiladi. Bunday nuqsonlarni topishning yagona yo'li ilovani ishlatib ko'rish.
 
-Bu darsda ikki usul: DAST (Dynamic Application Security Testing), ya'ni ishlayotgan ilovaga tashqaridan so'rov yuborib javoblarni baholash, va fuzzing, ya'ni funksiya yoki servisga ko'p miqdordagi avtomatik yaratilgan kirish berib, kutilmagan xatti-harakatni qidirish. OWASP WSTG'ning Testing Framework bo'limi dinamik sinovni shunday ta'riflaydi: statik tahlil yoki qo'lda review o'tkazib yuborgan nuqsonlarni topish uchun ishlayotgan ilovani sinash; DAST vositalari (ZAP, Burp Suite) ilovani crawl qiladi va fuzz qiladi, manual penetration testing esa exploitability'ni tasdiqlaydi va biznes mantiqni sinaydi. WSTG shuningdek hech bir texnika yetarli emasligini yozadi: yetuk dastur threat modeling, manual kod review, penetration testing va avtomatik skanerlashni (SAST, DAST, SCA) birga ishlatadi. NIST SSDF xavfsizlik sinovlarini ishlab chiqish jarayoniga kiritishni umumiy g'oya sifatida qo'yadi (90-dars); SSDF matni lokal korpusda yo'q, shuning uchun uning amaliyot raqamlarini keltirmaymiz.
+Bu darsda ikki usul: DAST (Dynamic Application Security Testing), ya'ni ishlayotgan ilovaga tashqaridan so'rov yuborib javoblarni baholash, va fuzzing, ya'ni funksiya yoki servisga ko'p miqdordagi avtomatik yaratilgan kirish berib, kutilmagan xatti-harakatni qidirish. OWASP WSTG'ning Testing Framework bo'limi dinamik sinovni shunday ta'riflaydi: statik tahlil yoki qo'lda review o'tkazib yuborgan nuqsonlarni topish uchun ishlayotgan ilovani sinash; DAST vositalari (ZAP, Burp Suite) ilovani crawl qiladi va fuzz qiladi, manual penetration testing esa exploitability'ni tasdiqlaydi va biznes mantiqni sinaydi. WSTG shuningdek hech bir texnika yetarli emasligini yozadi: yetuk dastur threat modeling, manual kod review, penetration testing va avtomatik skanerlashni (SAST, DAST, SCA) birga ishlatadi. NIST SSDF xavfsizlik sinovlarini ishlab chiqish jarayoniga kiritishni umumiy g'oya sifatida qo'yadi (90-dars).
 
 Ikkita tipik og'riq bor. Birinchisi, "testlar o'tdi, demak xavfsiz": unit testlarni biz yozamiz va kutilgan kirishlarni sinaymiz; hujumchi esa kutilmagan kirishlarni yuboradi. Ikkinchisi, "DAST skaneri 400 ta topilma berdi": ko'pi shovqin, jamoa o'qimay qo'yadi, yoki skaner production'ga ruxsatsiz yuboriladi va real ma'lumotni buzadi.
 
@@ -241,7 +241,7 @@ WSTG CI/CD pipeline uchun bosqichma-bosqich bo'linishni tavsiya qiladi: build va
 
 ### DAST'ni xavfsiz ishlatish
 
-DAST faol sinov: u POST/PUT/DELETE so'rovlar yuborishi, yozuv yaratishi, bildirishnoma jo'natishi, yuklamani oshirishi mumkin. Shuning uchun uni ruxsatsiz va real ma'lumot bilan production'da yuborish xato; WSTG production sinovini istisno qilmaydi, lekin kelishilgan doira va ehtiyotni talab qiladi. Amaliy qoidalar: alohida staging muhit, sinov uchun yaratilgan akkauntlar va tenant, yozma ruxsat, so'rovlar tezligi cheklangan, sinovdan keyin ma'lumotni tozalash. WSTG DAST va penetration testing staging yoki production muhitida bo'lishi mumkinligini, ichki jamoa, tashqi konsultant yoki bug bounty dasturi orqali o'tkazilishini yozadi. Ya'ni production sinovi mumkin, lekin faqat kelishilgan doira, ruxsat va ehtiyot bilan; ruxsatsiz sinash qonuniy javobgarlik keltirib chiqarishi mumkin (9-dars). Bu kursdagi sinovlar faqat o'zingizning yoki o'quv laboratoriyasidagi ilovaga qarshi. Bu kursdagi barcha sinovlar faqat o'zingizning yoki o'quv laboratoriyasidagi ilovaga qarshi.
+DAST faol sinov: u POST/PUT/DELETE so'rovlar yuborishi, yozuv yaratishi, bildirishnoma jo'natishi, yuklamani oshirishi mumkin. Shuning uchun uni ruxsatsiz va real ma'lumot bilan production'da yuborish xato. Amaliy qoidalar: alohida staging muhit, sinov uchun yaratilgan akkauntlar va tenant, yozma ruxsat, so'rovlar tezligi cheklangan, sinovdan keyin ma'lumotni tozalash. WSTG DAST va penetration testing staging yoki production muhitida bo'lishi mumkinligini, ichki jamoa, tashqi konsultant yoki bug bounty dasturi orqali o'tkazilishini yozadi. Ya'ni production sinovi mumkin, lekin faqat kelishilgan doira, ruxsat va ehtiyot bilan (bu ehtiyot qoidalari muallifning tavsiyasi, WSTG matni emas); ruxsatsiz sinash qonuniy javobgarlik keltirib chiqarishi mumkin (9-dars). Bu kursdagi barcha sinovlar faqat o'zingizning yoki o'quv laboratoriyasidagi ilovaga qarshi.
 
 ## Misol: xato tashlaydigan va noto'g'ri qabul qiladigan parser
 
@@ -374,7 +374,7 @@ Amaliy qoida: fuzz natijasi takrorlanishi uchun har ishga tushirishda seed va to
 - Validatsiya funksiyalari (72-dars: sxema validatsiya) va parserlar uchun property-based/fuzz testlar: kirish xato bermasligi va natija invariantda qolishi. Bu test `ts` fayl sifatida unit test infratuzilmangizda ishlaydi.
 - NestJS DTO validatsiyasi va Next.js route handler kirishlari uchun xuddi shunday harness: noto'g'ri tipdagi body, juda uzun satr, ichma-ich ob'ekt.
 - DAST uchun staging muhit: alohida tenant va sinov ma'lumotlari, autentifikatsiya qilingan sinov akkaunti bilan, chunki ko'p zaiflik login'dan keyin paydo bo'ladi.
-- Topilma ASVS talabiga bog'lansin (8-dars): "bu talab bajarilmayapti" ko'rinishida qayd qilinsa, tuzatish va qayta tekshirish aniq bo'ladi.
+- Topilma ASVS talabiga bog'lansin (8-dars): "bu talab bajarilmayapti" ko'rinishida qayd qilinsa, tuzatish va qayta tekshirish aniq bo'ladi. Masalan, fuzz topgan cheksiz tsikl yoki juda sekin kirish ASVS V15.2.2 (resurs talab qiladigan funksiyalar sabab mavjudlik yo'qolishidan himoya) bilan bog'lanadi.
 - Topilgan crash kirishi regression testga qo'shiladi: seed yoki to'g'ridan-to'g'ri kirish bilan.
 
 ## Xulosa

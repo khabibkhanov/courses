@@ -6,11 +6,13 @@ summary: "Kirishni qo'lda if'lar bilan emas, sxema bilan tekshirish: sintaksis v
 duration: 40
 sources:
   - id: cs-input
-    note: "Input Validation Cheat Sheet: validatsiya sintaksis va semantikani tekshiradi; maydon turiga qarab qoidalar (fixed choices, numbers, strings, objects, arrays); allowlist va denylist farqi; validatsiya parametrlangan so'rov, output encoding va avtorizatsiyani almashtirmaydi"
+    note: "Input Validation Cheat Sheet: validatsiya sintaksis va semantikani tekshiradi; maydon turiga qarab qoidalar (fixed choices, numbers, strings, objects, arrays); allowlist va denylist farqi; so'rov hajmi chegarasi parse qilishdan oldin qo'yilishi; JSON uchun required va additional properties aniq sozlanishi; validatsiya parametrlangan so'rov, output encoding va avtorizatsiyani almashtirmaydi"
   - id: api-top10
     note: "API4:2023 'How To Prevent': kiruvchi parametr va payload'lar uchun maksimal o'lcham (satr uzunligi, massiv elementlari soni, fayl hajmi) va qaytariladigan yozuvlar sonini boshqaruvchi parametrni server tomonda tekshirish; API3:2023 xossa darajasidagi avtorizatsiya"
   - id: asvs
-    note: "ASVS 5.0.0 V2 Validation and Business Logic va V4 API and Web Service bo'limlari (nomlar repozitoriydagi fayl nomlaridan); aniq talab raqamlari bu darsda keltirilmaydi"
+    note: "ASVS 5.0.0 V2 Validation and Business Logic va V4 API and Web Service bo'limlari mavzuga yaqin; dars aniq talab raqamlarini keltirmaydi"
+  - id: nestjs-validation
+    note: "NestJS Validation: ValidationPipe opsiyalari (whitelist, forbidNonWhitelisted, forbidUnknownValues, transform, disableErrorMessages); auto-transformation primitiv turlarni o'giradi; Zod sxemalari uchun z.object strip, z.strictObject rad etish, z.looseObject saqlash"
 quiz:
   - q: "Kiruvchi JSON'da `{\"vehicleId\":\"v1\",\"fuel\":55,\"tenantId\":\"beta\"}` bor, sxemada `tenantId` yo'q. Eng xavfsiz xatti-harakat qaysi?"
     options:
@@ -35,7 +37,7 @@ quiz:
       - "Denylist faqat JavaScript'da ishlamaydi"
       - "SQL injection faqat raqam maydonlarida bo'ladi"
     answer: 1
-    explain: "Cheat sheet'ga ko'ra tilanadigan yondashuv: nima qabul qilinishini belgilash, zararli satrlarni tanishga urinmaslik. Apostrof bloklansa, legitim ismlar rad etiladi, so'rov esa baribir xavfsiz bo'lmaydi. SQL uchun himoya parametrlash (22-dars)."
+    explain: "Cheat sheet yondashuvi: nima qabul qilinishini belgilash va undan tashqarisini rad etish, zararli satrlarni tanishga urinmaslik. Apostrof bloklansa, legitim ismlar rad etiladi, so'rov esa baribir xavfsiz bo'lmaydi. SQL uchun himoya parametrlash (22-dars)."
   - q: "`limit` parametri tekshirildi: butun son va 1..100. Lekin `GET /vehicles/:id` da `id` uchun faqat 'bo'sh emas' tekshiriladi. Qaysi xavf qoladi?"
     options:
       - "Hech qaysi, chunki `limit` tekshirilgan"
@@ -57,9 +59,9 @@ quiz:
       - "Chunki o'zgartirish ilovani sekinlashtiradi"
       - "Chunki o'zgartirish JSON'ni buzadi"
       - "Chunki kutubxonalar tur o'zgartirmaydi"
-      - "Chunki o'zgartirilgan qiymat kiruvchi qiymatdan farq qiladi va chegara tekshiruvlari, imzo yoki kesh kalitlari kutilmagan ishlashi mumkin; sozlamani hujjatdan tekshirib, kerak bo'lmasa o'chiring"
+      - "Chunki o'zgartirilgan qiymat kiruvchi qiymatdan farq qiladi va chegara tekshiruvlari, imzo yoki kesh kalitlari kutilmagan ishlashi mumkin; kerak bo'lmasa o'girishni o'chiring"
     answer: 3
-    explain: "Coercion qabul qilinadigan kirishlar to'plamini kengaytiradi: kod `\"55\"` ni ham, `55` ni ham ko'radi. Qaysi kutubxonada nima standart ekanini hujjatdan tekshirish kerak; qat'iy sxema sizning API shartnomangizni aniq qiladi."
+    explain: "Coercion qabul qilinadigan kirishlar to'plamini kengaytiradi: kod `\"55\"` ni ham, `55` ni ham ko'radi. NestJS hujjatiga ko'ra, auto-transformation yoqilganda `ValidationPipe` path va query parametrlarini e'lon qilingan turga o'giradi, coercing sxema (`z.coerce.number()`) ham xuddi shunday. Qat'iy sxema API shartnomangizni aniq qiladi."
 task:
   title: "Telemetriya paketini qat'iy sxema bilan tekshirish"
   prompt: |
@@ -161,7 +163,7 @@ Cheat sheet yana bir muhim chegarani aniq qo'yadi: validatsiya qo'shimcha himoya
 
 ### Noma'lum maydonlar
 
-Sxema kutilgan maydonlarni tavsiflaydi, lekin kiruvchi obyektda ko'proq kalit bo'lishi mumkin. Uch xatti-harakat bor: noma'lum maydonni o'tkazib yuborish (kod keyin `...body` qilsa, mass assignment), jimgina tashlab yuborish (strip) va rad etish. Birinchisi eng xavfli. Strip ko'p kutubxonada standart, chunki u mijozlarni sindirmaydi; rad etish esa xatoni ko'rinadigan qiladi va hujum belgisi sifatida logga yozish imkonini beradi (79-dars). Qaysi biri standart ekanini ishlatayotgan kutubxona hujjatidan tekshiring: bu darsning manbalarida kutubxonaga xos hujjat yo'q, shuning uchun sozlama nomlarini kafolatlamaymiz. Qoida xavfsiz tomonga: xavfli maydonlar (`tenantId`, `role`, `isAdmin`, `createdBy`) hech qachon kiruvchi tanadan olinmaydi, ular autentifikatsiya kontekstidan keladi (54-dars).
+Sxema kutilgan maydonlarni tavsiflaydi, lekin kiruvchi obyektda ko'proq kalit bo'lishi mumkin. Uch xatti-harakat bor: noma'lum maydonni o'tkazib yuborish (kod keyin `...body` qilsa, mass assignment), jimgina tashlab yuborish (strip) va rad etish. Birinchisi eng xavfli. Strip mijozlarni sindirmaydi, rad etish esa xatoni ko'rinadigan qiladi va hujum belgisi sifatida logga yozish imkonini beradi (79-dars). Cheat sheet bu yerda aniq: JSON uchun required va additional properties ni ochiq sozlang, chunki xossani sxemada sanash uni majburiy ham, noma'lum maydonlarni rad etuvchi ham qilmaydi. NestJS'da bu `ValidationPipe` ning `whitelist: true` (dekoratorsiz xossalarni olib tashlaydi) va unga qo'shimcha `forbidNonWhitelisted: true` (olib tashlash o'rniga xato beradi) sozlamalari; Zod'da `z.object()` noma'lum xossani olib tashlaydi, `z.strictObject()` rad etadi, `z.looseObject()` saqlab qoladi (NestJS hujjati, validation bo'limi). Qoida xavfsiz tomonga: xavfli maydonlar (`tenantId`, `role`, `isAdmin`, `createdBy`) hech qachon kiruvchi tanadan olinmaydi, ular autentifikatsiya kontekstidan keladi (54-dars).
 
 ### Type coercion
 
@@ -169,7 +171,13 @@ Ko'p kutubxona ("qulaylik uchun") `"55"` ni `55` ga o'zgartiradi. Query string'd
 
 ### Chegara va ichma-ich
 
-Sxema tekshiruvi ham resurs sarflaydi: 100 000 elementli massivni element-element tekshirish ham CPU yeydi. Shuning uchun tana hajmi cheklovi parser darajasida (tekshiruvdan oldin), massiv va satr chegaralari esa sxema ichida bo'ladi. Chuqur ichma-ich obyektlar uchun chuqurlik chegarasi ham mantiqiy (bu muallifning tavsiyasi, manbada aniq raqam yo'q). Regex'li maydonlarda esa ReDoS xavfi bor: murakkab regex'ni kirishga qo'llashdan oldin 30-darsga qarang.
+Sxema tekshiruvi ham resurs sarflaydi: 100 000 elementli massivni element-element tekshirish ham CPU yeydi. Shuning uchun tana hajmi cheklovi parser darajasida (tekshiruvdan oldin), massiv va satr chegaralari esa sxema ichida bo'ladi. Cheat sheet parser chegaralarini, masalan ichma-ich chuqurlikning maksimumini, sozlashni ham aytadi; aniq raqamni esa biznes talabi va parser belgilaydi. Regex'li maydonlarda esa ReDoS xavfi bor: murakkab regex'ni kirishga qo'llashdan oldin 30-darsga qarang.
+
+### Avval parse, keyin validatsiya
+
+Cheat sheet tartibni aniq qo'yadi: so'rov hajmi chegarasi tanani buferga olish yoki parse qilishdan oldin qo'llanadi. Parse qilingandan keyingi sxema tekshiruvi allaqachon resursini tugatgan parserni qutqara olmaydi. Parser'dan keyin esa qiymat qaysi shaklda ishlatilsa, aynan shu shaklni tekshiring: protokol bo'yicha decode qilinadi, keyin qoidalar qo'llanadi va keyingi qatlamda qayta decode qilinmaydi, aks holda bir qatlam "toza" deb bilgan qiymatni boshqa qatlam o'zgartirib yuboradi. Yana bir qoida: matnni butun songa o'girish faqat turni belgilaydi, qabul qilinadigan miqdorni emas, shuning uchun `Number(x)` dan keyin ham min/max kerak.
+
+Rad etilgan so'rov bilan nima qilinishi ham muhim. Cheat sheet aniq xato bilan rad etishni va qisman tekshirilgan ma'lumot bilan ishni davom ettirmaslikni talab qiladi. Rad etilgan kirishni logga yozganda esa uni so'zma-so'z yozmang: xato turi va metama'lumotni yozing, saqlanadigan begona qiymatlarni log formatiga mos escape qiling, aks holda log injection ochiladi (79-dars). Va tekshiruvlarni sinashda faqat noto'g'ri sintaksisni emas, rad etilishi kerak bo'lgan diapazonlarni, yetishmayotgan maydonlarni, ichki elementlardagi xatoni va juda katta massivni ham yuboring.
 
 ### Chiqish ham sxema bilan
 
@@ -329,15 +337,15 @@ check("limit='10' (satr) rad etiladi", () => parsePage({ limit: "10" }).ok === f
 
 ## Stack'da: NestJS, Fastify va Prisma
 
-NestJS'da kirish DTO va global `ValidationPipe` orqali tekshiriladi; `class-validator` dekoratorlari sxema vazifasini bajaradi. Pipe'ning noma'lum maydonlarni olib tashlash yoki rad etish sozlamalari bor, ularning aniq nomi va standart qiymatini NestJS hujjatidan tekshiring (bu darsning manbalarida ular yo'q). Fastify JSON Schema bilan ishlaydi: sxema route'ga beriladi, tekshiruvdan o'tmagan so'rov handler'ga yetmaydi. Fastify va Zod kabi kutubxonalarning coercion va additional properties standartlari turlicha, shuning uchun uni o'zingiz test bilan tasdiqlang: noma'lum maydon, satr o'rniga son va juda uzun massivni yuborib, nima bo'lishini ko'ring.
+NestJS'da kirish DTO va `app.useGlobalPipes(new ValidationPipe(...))` orqali tekshiriladi; pipe `class-validator` va `class-transformer` ustida ishlaydi, dekoratorlar esa sxema vazifasini bajaradi. Xavfsizlik uchun muhim sozlamalar: `whitelist: true` (dekoratorsiz xossalar olib tashlanadi), `forbidNonWhitelisted: true` (olib tashlash o'rniga xato), `transform: true` (payload DTO sinfiga aylanadi va primitiv turlar o'giriladi; bu coercion, ya'ni uni bilib yoqing). `disableErrorMessages: true` validatsiya xabarlarini mijozga qaytarmaydi (78-dars). `forbidUnknownValues` esa noma'lum obyektni tekshirishga urinish darhol muvaffaqiyatsiz bo'lishini belgilaydi. NestJS hujjati Zod kabi Standard Schema sxemalari uchun alohida pipe ham beradi. Fastify JSON Schema bilan ishlaydi: sxema route'ga beriladi, tekshiruvdan o'tmagan so'rov handler'ga yetmaydi; uning Ajv standart sozlamalari tur o'girish va qo'shimcha xossalarni olib tashlashni yoqadi, shuning uchun o'z shartnomangizga mos holda test yozing: noma'lum maydon, satr o'rniga son va juda uzun massiv yuboring.
 
 ```ts
-import { IsInt, IsString, Max, MaxLength, Min, ValidateNested, ArrayMaxSize, ArrayNotEmpty } from "class-validator";
+import { IsInt, IsNumber, IsString, Max, MaxLength, Min, ValidateNested, ArrayMaxSize, ArrayNotEmpty } from "class-validator";
 import { Type } from "class-transformer";
 
 class PointDto {
-  @Min(-90) @Max(90) lat!: number;
-  @Min(-180) @Max(180) lon!: number;
+  @IsNumber() @Min(-90) @Max(90) lat!: number;
+  @IsNumber() @Min(-180) @Max(180) lon!: number;
 }
 
 export class CreateGeofenceDto {
@@ -350,7 +358,7 @@ export class CreateGeofenceDto {
 }
 ```
 
-Bu kod ishga tushirilmaydi: `class-validator` va `class-transformer` bu muhitda yo'q, parcha faqat sintaksis jihatidan tekshirilgan. `tenantId` DTO'da yo'q: u controller'da `req.user` dan olinadi va servisga alohida argument sifatida beriladi. Prisma bilan ishlaganda ham DTO'dan olingan obyektni `data` ga to'g'ridan-to'g'ri `...dto` qilib bermang, maydonlarni ro'yxatdan aniq ko'chiring.
+`tenantId` DTO'da yo'q: u controller'da `req.user` dan olinadi va servisga alohida argument sifatida beriladi. Prisma bilan ishlaganda ham DTO'dan olingan obyektni `data` ga to'g'ridan-to'g'ri `...dto` qilib bermang, maydonlarni ro'yxatdan aniq ko'chiring.
 
 ## Xulosa
 

@@ -9,32 +9,34 @@ sources:
     note: "NIST SP 800-61 Rev. 3 sahifasi: 2025-yil aprelda e'lon qilingan, SP 800-61 Rev. 2 (08/06/2012) o'rnini bosadi; abstract: incident response tavsiyalarini NIST CSF 2.0 bo'yicha risk boshqaruviga kiritishga yordam beradi"
   - id: cs-logging
     note: "Logging Cheat Sheet: 'Which events to log' (autentifikatsiya muvaffaqiyat va xatolari, avtorizatsiya xatolari va h.k.; 'alarm fog' haqida ogohlantirish) va 'Data to exclude' (parol, token, session identifikator, connection string va boshqalar log'ga to'g'ridan-to'g'ri yozilmaydi)"
+  - id: asvs
+    note: "ASVS 5.0.0 V16 (Security Logging and Error Handling): 16.1.1 log inventari, 16.2.1 har yozuvda when/where/who/what metadata, 16.2.2 vaqt manbalari sinxron va UTC, 16.2.5 sezgir ma'lumotni himoya darajasiga qarab loglash, 16.3.1 va 16.3.2 autentifikatsiya va avtorizatsiya hodisalari, 16.4.1-16.4.3 log injection, loglarni o'zgartirishdan himoya va alohida tizimga uzatish"
   - id: t10-a09
     note: "A09:2025 Security Logging & Alerting Failures: 9-o'rinda saqlanib qolgan, nomga alerting qo'shilgan; CWE-117, CWE-532, CWE-778 kiradi; CVE/CVSS ma'lumotida 723 CVE; alerting va response siz logging kamdan-kam foyda beradi"
 quiz:
   - q: "Ertalab monitoring bitta mijoz akkauntidan nostandart hududdan kirishni ko'rsatdi. Birinchi harakat qaysi?"
     options:
       - "Darhol butun serverni o'chirib, hamma loglarni o'chirish"
-      - "Voqeani qayd etish, ta'sir doirasini baholash va dalillarni (loglar, session ma'lumoti) saqlab qo'yib, so'ng cheklash choralarini ko'rish"
       - "Mijozga hech narsa demasdan, faqat parolni o'zgartirish"
+      - "Voqeani qayd etish, ta'sir doirasini baholash va dalillarni (loglar, session ma'lumoti) saqlab qo'yib, so'ng cheklash choralarini ko'rish"
       - "Avval post-incident review yozish"
-    answer: 1
+    answer: 2
     explain: "Cheklash kerak, lekin dalillar yo'qolmasligi shart: loglar va holat tahlil uchun kerak. Hamma narsani o'chirish dalilni ham yo'q qiladi. Mijoz bilan aloqa ham reja qismi. Review esa hodisadan keyin."
   - q: "Log qatori: `login failed for aziz@alfa.example password=Qwerty123`. Asosiy muammo nima?"
     options:
-      - "Qator juda qisqa"
       - "Parol (hatto xato parol ham) logga yozilmoqda; xato parol ko'pincha foydalanuvchining boshqa joydagi haqiqiy paroli yoki unga yaqin"
+      - "Qator juda qisqa"
       - "Log inglizcha emas"
       - "Muammo yo'q: login xatosi, demak parol yaroqsiz"
-    answer: 1
+    answer: 0
     explain: "Logging Cheat Sheet parollarni logga yozmaslikni aytadi. Foydalanuvchi ko'pincha xato terilgan haqiqiy parolini kiritadi, shuning uchun bunday qator CWE-532 (logga maxfiy ma'lumot yozish) hisoblanadi."
   - q: "Quyidagilardan qaysi biri incident paytida eng kam foyda beradigan log yozuvi?"
     options:
       - "Vaqt, foydalanuvchi, tenant, IP va so'rov identifikatori bilan `login_failed`"
-      - "Faqat `error occurred` matni, boshqa maydon yo'q"
-      - "Avtorizatsiya rad etilgani: kim, qaysi resurs, qachon"
       - "Admin amali: kim, nimani, qachon o'zgartirgani"
-    answer: 1
+      - "Avtorizatsiya rad etilgani: kim, qaysi resurs, qachon"
+      - "Faqat `error occurred` matni, boshqa maydon yo'q"
+    answer: 3
     explain: "Kim, qachon, qayerdan va nima bo'lganini aytmaydigan yozuv tahlilga yaramaydi. Boshqa uch variant aynan tahlilchi so'raydigan savollarga javob beradi."
   - q: "Credential stuffing aniqlash qoidasi: 'bir IP'dan 60 soniyada 5 ta xato kirish'. Uning kamchiligi qaysi?"
     options:
@@ -47,18 +49,18 @@ quiz:
   - q: "Hodisa yopildi. Post-incident review qanday o'tkazilganda eng foydali?"
     options:
       - "Aybdor topilib, jazolanadi"
-      - "Hodisa vaqt chizig'i, aniqlash qancha vaqtda bo'lgani, nima ishlagani va nima ishlamagani muhokama qilinadi; tuzatish vazifalari egasi va muddati bilan yoziladi; ayb emas, tizim sabablari qidiriladi"
-      - "Review o'tkazilmaydi: hodisa tugadi"
       - "Faqat mijozga xat yuboriladi"
-    answer: 1
+      - "Review o'tkazilmaydi: hodisa tugadi"
+      - "Hodisa vaqt chizig'i, aniqlash qancha vaqtda bo'lgani, nima ishlagani va nima ishlamagani muhokama qilinadi; tuzatish vazifalari egasi va muddati bilan yoziladi; ayb emas, tizim sabablari qidiriladi"
+    answer: 3
     explain: "Review maqsadi takrorlanmasligini ta'minlash. Ayblash odamlarni voqeani yashirishga undaydi. Vazifasi egasi va muddati yo'q xulosa amalda bajarilmaydi."
   - q: "Hodisa paytida kompromet qilingan foydalanuvchi akkaunti uchun nima to'g'ri cheklash choralari to'plami?"
     options:
-      - "Faqat parolni o'zgartirish: eski session'lar baribir amal qiladi"
       - "Parolni o'zgartirish va barcha faol session va refresh token'larni bekor qilish, API kalitlarini ko'rib chiqish"
+      - "Faqat parolni o'zgartirish: eski session'lar baribir amal qiladi"
       - "Akkauntni o'chirib tashlash, hech narsa saqlamaslik"
       - "Hech narsa qilmaslik, hujumchi o'zi to'xtaydi"
-    answer: 1
+    answer: 0
     explain: "Parol almashishi mavjud session'larni bekor qilmaydi (agar ilova shunday qurilmagan bo'lsa); hujumchi kirib turishda davom etadi. Akkauntni o'chirish dalilni yo'qotadi."
 task:
   title: "Credential stuffing'ni aniqlash: oyna va muvaffaqiyat sharti"
@@ -157,7 +159,7 @@ Bu dars ilova jamoasi uchun minimal, ammo amaliy incident response modelini bera
 
 ### Rasmiy yo'riqnoma nima deydi
 
-NIST SP 800-61 Rev. 3 2025-yil aprelda e'lon qilingan va 2012-yilgi Rev. 2 ni almashtiradi. Abstract'ga ko'ra hujjat incident response tavsiyalarini NIST Cybersecurity Framework (CSF) 2.0 doirasidagi kiberxavfsizlik risk boshqaruvi faoliyatlariga kiritishga yordam beradi. Maqsadlar: incident'larga tayyorlanish, ularning soni va ta'sirini kamaytirish, aniqlash, javob berish va tiklash samaradorligini oshirish. Bu yerda muhim fikr: incident response alohida "yong'in o'chirish" funksiyasi emas, risk boshqaruvining davomiy qismi. Hujjatning to'liq tuzilmasini (bo'limlar va faoliyatlar tafsilotini) bu dars o'qib chiqmagan; quyida bayon qilingan bosqichlar kursning ishchi modeli, standart bo'limlarining nusxasi emas.
+NIST SP 800-61 Rev. 3 2025-yil aprelda e'lon qilingan va 2012-yilgi Rev. 2 ni almashtiradi. Abstract'ga ko'ra hujjat incident response tavsiyalarini NIST Cybersecurity Framework (CSF) 2.0 doirasidagi kiberxavfsizlik risk boshqaruvi faoliyatlariga kiritishga yordam beradi. Maqsadlar: incident'larga tayyorlanish, ularning soni va ta'sirini kamaytirish, aniqlash, javob berish va tiklash samaradorligini oshirish. NIST CSF 2.0 o'zi oltita funksiyadan iborat (Govern, Identify, Protect, Detect, Respond, Recover): incident response ularning Detect, Respond va Recover qismlariga tegadi, lekin Govern (rollar, siyosat) va Protect (oldindan qilingan himoya) ham hodisa oqibatini belgilaydi. Bu yerda muhim fikr: incident response alohida "yong'in o'chirish" funksiyasi emas, risk boshqaruvining davomiy qismi. Hujjatning to'liq tuzilmasini (bo'limlar va faoliyatlar tafsilotini) bu dars o'qib chiqmagan; quyida bayon qilingan bosqichlar kursning ishchi modeli, standart bo'limlarining nusxasi emas.
 
 ### Ilova jamoasi uchun besh bosqich
 
@@ -182,6 +184,14 @@ Tahlilchi har hodisadan kamida shu savollarga javob olishi kerak: qachon, kim (f
 Cheat sheet "Data to exclude" bo'limida quyidagilar odatda log'ga to'g'ridan-to'g'ri yozilmasligini, balki olib tashlanishi, maskalanishi, hash qilinishi yoki shifrlanishi kerakligini aytadi: autentifikatsiya parollari, access token'lar, session identifikatorlari (kerak bo'lsa hash bilan almashtirish mumkin), database connection string'lar, shifrlash kalitlari va boshqa asosiy sirlar, to'lov kartasi ma'lumoti, maxfiy shaxsiy ma'lumotlar. Bundan tashqari qonuniy asosi bo'lmagan ma'lumotni yig'ish ham taqiqlangan (94-dars). A09 kategoriyasi buni CWE-532 (maxfiy ma'lumotni log'ga yozish) sifatida, log'ga chiqishda kodlash xatosini CWE-117, yetarli loglamaslikni CWE-778 sifatida mapped qiladi.
 
 Yana bir nozik joy: cheat sheet "ishonchli" foydalanuvchilardan (ichki tizimlar, auditorlar, pentesterlar) kelgan hodisalarni log'dan chiqarib tashlamaslikni, ularni alohida belgi bilan yozishni tavsiya qiladi.
+
+### Log nima uchun incident qurboni bo'ladi
+
+A09 kategoriyasining tavsifi "log bor" degan fikr yetarli emasligini aniq sanaydi. Kategoriya quyidagi holatlarni nuqson hisoblaydi: login, muvaffaqiyatsiz login va yuqori qiymatli tranzaksiya kabi hodisalar loglanmaydi yoki nomuvofiq loglanadi (masalan faqat muvaffaqiyatli kirish yoziladi); ogohlantirish va xatolar uchun log yo'q yoki tushunarsiz; log yaxlitligi o'zgartirishdan himoyalanmagan; log faqat lokal saqlanadi va zaxira nusxasi yo'q; ogohlantirish chegaralari va eskalatsiya jarayoni belgilanmagan; pentest va DAST skanerlari hech qanday alert qo'zg'amaydi; soxta ijobiy alertlar haqiqiy alertni ko'mib yuboradi; use case uchun playbook yo'q yoki eskirgan. Sahifadagi birinchi misol shu: bolalar sog'liqni saqlash rejasi provayderining veb-saytida kuzatuv va log bo'lmagani sababli buzilish aniqlanmagan, tashqi tomon xabar bergan, hujumchi 3,5 milliondan ortiq bolaning yozuvlariga kirgan va o'zgartirgan, buzilish 2013-yildan beri davom etgan bo'lishi mumkin edi. Mexanizm oddiy: aniqlash bo'lmasa, incident response boshlanmaydi.
+
+ASVS 5.0.0 V16 bo'limi buni tekshiriladigan talablarga aylantiradi. 16.1.1 qaysi qatlamda nima loglanishi, qayerda saqlanishi, kimga ochiqligi va qancha turishini hujjatlashtirilgan inventarni talab qiladi. 16.2.1 har yozuvda "qachon, qayerda, kim, nima" metadata bo'lishini, 16.2.2 barcha log komponentlarida vaqt manbalari sinxronlashganini va vaqt tamg'alari UTC yoki aniq zona siljishi bilan berilishini talab qiladi (tarqoq tizimda vaqt chizig'ini tiklash uchun bu shart). 16.3.1 va 16.3.2 autentifikatsiya urinishlari (muvaffaqiyatli va muvaffaqiyatsiz) hamda rad etilgan avtorizatsiya loglanishini, 16.4.1 log injection oldini olishni, 16.4.2 loglarning ruxsatsiz kirish va o'zgartirishdan himoyasini, 16.4.3 esa loglar mantiqan alohida tizimga uzatilishini talab qiladi, shunda ilova buzilsa ham loglar buzilmaydi. Bizning misolimizdagi `AuthEvent` shakli 16.2.1 va 16.3.1 ga mos, "log yig'uvchi alohida bo'lishi kerak" gapi esa 16.4.3 dan.
+
+Logging Cheat Sheet ham log himoyasini alohida bo'lim sifatida beradi: saqlangan holatda tamper detection (yozuv o'zgartirilgani yoki o'chirilganini bilish), loglarni imkon qadar tez read-only vositaga nusxalash, loglarga har kirishni yozib borish va kirish huquqini davriy ko'rib chiqish; uzatishda esa ishonchsiz tarmoq orqali xavfsiz protokol ishlatish. Cheat sheet loglash to'xtab qolganini aniqlash jarayonini ham talab qiladi: hujumchi loglarni to'xtatishga yoki o'chirishga urinishi mumkin, shuning uchun "log kelmayapti" ham alert bo'lishi kerak. A09 qo'shimcha g'oya beradi: bazaga yoki ma'lumotga honeytoken (oddiy biznes jarayonda hech ishlatilmaydigan soxta yozuv yoki identifikator) qo'yish; unga har qanday murojaat deyarli soxta ijobiysiz alert beradi.
 
 ## Misol: log'siz hodisa va log bilan hodisa
 

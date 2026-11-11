@@ -8,9 +8,9 @@ sources:
   - id: t10-a03
     note: "A03:2025 Software Supply Chain Failures: ta'rif (build, distribution, update jarayonidagi buzilishlar), 'how to prevent' ro'yxati (SBOM, tranzitiv bog'liqliklar, bosqichma-bosqich rollout) va Scenario #3 (Shai-Hulud npm qurti)"
   - id: cisa-npm-2025
-    note: "CISA alert (2025-09-23); OWASP A03 Scenario #3 aynan shu alertga havola beradi. Alertning o'z matni bu darsda o'qilmagan, shuning uchun faktlar OWASP A03 dan olingan"
+    note: "CISA alert (2025-09-23) npm ekotizimidagi keng ko'lamli buzilish haqida; OWASP A03 Scenario #3 shu alertga havola beradi. Darsdagi hodisa tafsilotlari (500 dan ortiq paket versiyasi, post-install skript, token) OWASP A03 matnidan"
   - id: node-security
-    note: "Node.js Learn xavfsizlik amaliyotlari sahifasi umumiy havola; bu darsning aniq da'volari boshqa manbalarga (npm hujjati, OWASP NPM cheat sheet, ASVS) tayanadi"
+    note: "Node.js Learn xavfsizlik amaliyotlari sahifasi: Node.js ilovalari uchun umumiy xavfsizlik tavsiyalari (qo'shimcha o'qish; darsning aniq da'volari boshqa manbalarga tayanadi)"
   - id: npm-ci
     note: "npm-ci hujjati: lockfile majburiy, package.json bilan mos kelmasa xato, lockfile va package.json'ga yozmaydi, node_modules oldin o'chiriladi"
   - id: npm-scripts
@@ -173,9 +173,9 @@ task:
 
 Avtopark platformangizning `package.json` faylida 25 ta bog'liqlik bor deb faraz qiling. `node_modules` papkasini ochsangiz, yuzlab, ba'zan minglab paket chiqadi. Siz yozmagan, o'qimagan va hech qachon audit qilmagan kod sizning serveringiz bilan bir jarayonda, bir xil huquq bilan ishlaydi: `process.env`, ma'lumotlar bazasi ulanishi, fayl tizimi, tarmoq. Kutubxona sizning kodingiz emas, lekin sizning xavfsizlik chegarangiz ichida.
 
-Bu muammo OWASP Top 10:2025 da alohida kategoriya bo'ldi: A03 Software Supply Chain Failures (kategoriya nomi va tartib raqami rasmiy sahifada). Kategoriya nomi "supply chain" bo'lgani uchun gap faqat ma'lum zaifliklar haqida emas, zanjirning har bir bo'g'ini haqida deb o'qiymiz: manba, registry, build, yetkazib berish (bu kursning talqini). Bu darsda zanjirning birinchi bo'g'ini, ya'ni npm bog'liqliklari bilan shug'ullanamiz; build va yetkazib berish keyingi darslarda (82 va 85-darslar).
+Bu muammo OWASP Top 10:2025 da alohida kategoriya bo'ldi: A03 Software Supply Chain Failures. Kategoriya nomi "supply chain" bo'lgani uchun gap faqat ma'lum zaifliklar haqida emas, zanjirning har bir bo'g'ini haqida deb o'qiymiz: manba, registry, build, yetkazib berish (bu kursning talqini). Bu darsda zanjirning birinchi bo'g'ini, ya'ni npm bog'liqliklari bilan shug'ullanamiz; build va yetkazib berish keyingi darslarda (82 va 85-darslar).
 
-Real hodisalar bu xavfni nazariyadan chiqargan. OWASP A03:2025 3-stsenariyda 2025 yildagi Shai-Hulud hujumini keltiradi va uni birinchi muvaffaqiyatli o'z-o'zidan tarqaladigan npm qurti deb ataydi. Tavsifga ko'ra hujumchilar mashhur paketlarning zararli versiyalarini joylagan; ular post-install skript orqali sezgir ma'lumotlarni yig'ib, ommaviy GitHub repozitoriylariga chiqargan; zararli kod muhitda npm token'larni topib, ular orqali ochiq bo'lgan boshqa paketlarning zararli versiyalarini avtomatik yuborgan; qurt npm tomonidan to'xtatilguncha 500 dan ortiq paket versiyasiga yetgan. OWASP bu hujum dasturchi mashinalarini nishonga olgani uchun dasturchilarning o'zi endi supply chain hujumlarining asosiy nishoni ekanini ta'kidlaydi. A03 shu stsenariyda CISA alertiga (2025-09-23) havola beradi; alertning o'z matnini biz bu yerda o'qimadik, shuning uchun faktlar OWASP tavsifidan olingan. Hodisaning batafsil tahlili 98-darsda.
+Real hodisalar bu xavfni nazariyadan chiqargan. OWASP A03:2025 3-stsenariyda 2025 yildagi Shai-Hulud hujumini keltiradi va uni birinchi muvaffaqiyatli o'z-o'zidan tarqaladigan npm qurti deb ataydi. Tavsifga ko'ra hujumchilar mashhur paketlarning zararli versiyalarini joylagan; ular post-install skript orqali sezgir ma'lumotlarni yig'ib, ommaviy GitHub repozitoriylariga chiqargan; zararli kod muhitda npm token'larni topib, ular orqali ochiq bo'lgan boshqa paketlarning zararli versiyalarini avtomatik yuborgan; qurt npm tomonidan to'xtatilguncha 500 dan ortiq paket versiyasiga yetgan. OWASP bu hujum dasturchi mashinalarini nishonga olgani uchun dasturchilarning o'zi endi supply chain hujumlarining asosiy nishoni ekanini ta'kidlaydi. A03 shu stsenariyda CISA alertiga (2025-09-23) havola beradi. Hodisaning batafsil tahlili 98-darsda.
 
 Bu hodisada ikkala eshik ham ishlagan: post-install skript va token. Keyingi bo'limlar shu mexanizmlarni ajratadi.
 
@@ -387,4 +387,4 @@ Nima yopildi: kecha tekshirilgan versiya o'rniga yangisi jimgina tanlanmaydi; bi
 - Lockfile versiyani, integrity tarkibni qotiradi; CI'da `npm ci` shuni majburlaydi. Qoldiq risk: lockfile'ga allaqachon kirgan zararli paket.
 - Install skriptlari kod import qilinmasa ham ishlaydi; ularni ruxsat ro'yxatiga olish yoki o'chirish trade-off.
 - Typosquatting filtri yordamchi nazorat, yagona himoya emas; yangi bog'liqlik PR'da review qilinadi. Ichki paketlar uchun scoped nomlar dependency confusion'ni yopadi.
-- Shai-Hulud tavsifi (OWASP A03) ikkala eshikni ko'rsatadi: post-install skript va CI/dasturchi muhitidagi token. CISA alertining o'z matni bu darsda o'qilmagan.
+- Shai-Hulud tavsifi (OWASP A03) ikkala eshikni ko'rsatadi: post-install skript va CI/dasturchi muhitidagi token.

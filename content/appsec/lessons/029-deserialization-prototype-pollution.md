@@ -8,7 +8,11 @@ sources:
   - id: t10-a08
     note: "A08 Software or Data Integrity Failures: kategoriya notable CWE'lari orasida CWE-502 (Deserialization of Untrusted Data) va CWE-915 (Improperly Controlled Modification of Dynamically-Determined Object Attributes); insecure deserialization misoli"
   - id: node-security
-    note: "Node.js Security Best Practices: umumiy xavfsizlik tavsiyalari; prototype pollution bo'yicha aniq tavsiyalar quyidagi OWASP cheat sheet va ASVS dan olingan (Node sahifasi bu dars yozilganda qayta ochilmagan)"
+    note: "Node.js Security Best Practices, Prototype Pollution Attacks (CWE-1321) bo'limi: Node.js yadrosi zaifligi emas, lekin ilova va bog'liqliklar uchun jiddiy xavf; tavsiyalar: xavfsiz bo'lmagan rekursiv merge'dan qochish, JSON Schema validatsiyasi, Object.create(null), prototiplarni muzlatish, --disable-proto, Object.hasOwn"
+  - id: cs-deser
+    note: "Deserialization Cheat Sheet: ta'rif (serialization/deserialization), JSON hozir eng keng tarqalgan format, native formatlar ko'proq imkon beradi va ishonchsiz ma'lumotda zararli maqsadda ishlatilishi mumkin (DoS, kirish nazorati, RCE); pickle va PyYAML unsafe loader misollari; Java uchun class allow-list va serialization filtering"
+  - id: cs-proto
+    note: "Prototype Pollution Prevention Cheat Sheet: Set/Map ishlatish, Object.create(null) va {__proto__: null}, Object.freeze (shallow) va Object.seal (mavjud qiymatlar o'zgarishini to'smaydi), --disable-proto=delete defense in depth, constructor.prototype orqali baribir mumkin"
   - id: cs-input
     note: "Input Validation Cheat Sheet: bog'lanadigan maydonlarni faqat mo'ljallanganlar bilan cheklash (Mass Assignment bilan bog'liq) va rad etish"
   - id: asvs
@@ -165,7 +169,7 @@ ASVS 15.3.6 shu g'oyani talabga aylantiradi: JavaScript kodi prototype pollution
 
 ### Qaysi kod pollution'ga olib keladi
 
-Xavfli andozalar: rekursiv merge yoki deep clone funksiyalari kalitni filtrlashsiz qabul qiladi; `obj[a][b] = c` kabi dinamik yo'l bo'yicha yozish (`lodash.set` ga o'xshash, `a` va `b` foydalanuvchidan); query string parser'lari (`?a[__proto__][x]=1`) obyektga aylantirganda; konfiguratsiya birlashtirish. Bog'liqliklarda ham shunday zaifliklar uchragan: bu 81-darsda ko'riladigan supply chain mavzusiga tegadi. Bu darsda ma'lum kutubxonalarni nomlamaymiz, chunki ularning zaif versiyalarini manbadan tekshirmadik.
+Xavfli andozalar: rekursiv merge yoki deep clone funksiyalari kalitni filtrlashsiz qabul qiladi; `obj[a][b] = c` kabi dinamik yo'l bo'yicha yozish (`lodash.set` ga o'xshash, `a` va `b` foydalanuvchidan); query string parser'lari (`?a[__proto__][x]=1`) obyektga aylantirganda; konfiguratsiya birlashtirish. Node.js Security Best Practices sahifasi ham xavfni shunday baholaydi: kirish ma'lumotiga bog'liq prototype pollution Node.js yadrosining zaifligi emas, ilova va bog'liqliklar uchun jiddiy xavf. Sahifa xavfsiz bo'lmagan rekursiv merge'dan qochish, ishonchsiz kirishni JSON Schema bilan tekshirish, `Object.create(null)`, prototiplarni muzlatish, `--disable-proto` bayrog'i va kalitni `Object.hasOwn(obj, key)` bilan tekshirishni sanaydi. Node.js loyihasining o'z xavfsizlik siyosati ham (SECURITY.md) shuni aytadi: Node.js ilova kodi bergan kirishga ishonadi, uni tozalash ilovaning vazifasi, shuning uchun foydalanuvchi kiritishini boshqarishni talab qiladigan stsenariy Node.js zaifligi hisoblanmaydi. Bog'liqliklarda ham shunday zaifliklar uchragan: bu 81-darsda ko'riladigan supply chain mavzusiga tegadi.
 
 ### Pollution oqibati
 
@@ -348,7 +352,7 @@ export function groupByVehicle(rows: { vehicleId: string; fuel: number }[]) {
 }
 ```
 
-`.strict()` ruxsat etilmagan kalitlarni xato qiladi; sxema kutubxonasi versiyasiga qarab `__proto__` kalitiga munosabati farq qilishi mumkin, shuning uchun sxemaga ishonib qolmay, kirishni sinab ko'ring (bu darsda kutubxonaning aniq xatti-harakati tekshirilmagan). `groupByVehicle` misoli: foydalanuvchi bergan ID obyekt kaliti bo'lib qolgan joyda `Map` ishlating. Next.js'da server action va route handler kirishlariga ham xuddi shu qoida qo'llanadi (58-dars). Bog'liqliklar ichidagi pollution zaifliklari uchun `npm audit` va yangilash (81-82-darslar).
+`.strict()` sxemada ko'rsatilmagan kalitlarni xato qiladi. Shunga qaramay sxema kutubxonasi o'rniga o'z testingizni yozing: `__proto__` va `constructor` kalitli JSON'ni sxemaga bering va natija (yoki xato) kutilganidek ekanini, keyin yangi `{}` da kutilmagan xususiyat yo'qligini tekshiring. `groupByVehicle` misoli: foydalanuvchi bergan ID obyekt kaliti bo'lib qolgan joyda `Map` ishlating. Next.js'da server action va route handler kirishlariga ham xuddi shu qoida qo'llanadi (58-dars). Bog'liqliklar ichidagi pollution zaifliklari uchun `npm audit` va yangilash (81-82-darslar).
 
 ## Xulosa
 

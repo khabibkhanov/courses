@@ -59,7 +59,7 @@ quiz:
       - "Faqat o'qish operatsiyalariga ta'sir qiladi"
       - "Faqat Mongo shell'da ishlaydi"
     answer: 1
-    explain: "Server tomonda JS ifodasi baza ichida bajariladi, shuning uchun ifodaga kiritilgan qiymat filtr emas, kodning bir qismi. Sababiy chora: JS ifodalardan voz kechish (tegishli server sozlamasi) va oddiy so'rov operatorlaridan foydalanish. Aniq sozlama nomi uchun MongoDB hujjatiga qarang (bu darsda tekshirilmagan)."
+    explain: "Server tomonda JS ifodasi baza ichida bajariladi, shuning uchun ifodaga kiritilgan qiymat filtr emas, kodning bir qismi. Sababiy chora: JS ifodalardan voz kechish (MongoDB serverda JavaScript'ni butunlay o'chirish imkonini beradi) va oddiy so'rov operatorlaridan foydalanish."
 task:
   title: "Redis kalit quruvchi: ajratkich va glob belgilari"
   prompt: |
@@ -146,7 +146,7 @@ Ba'zi kutubxonalar kirish obyektidan `$` bilan boshlanadigan kalitlarni olib tas
 
 ### `$where` va server tomonda JavaScript
 
-MongoDB'ning ba'zi operatorlari (`$where`) ifodani baza ichida JavaScript sifatida bajaradi. Bunday ifodaga kiritilgan qiymat filtr emas, kod bo'lib qoladi: oddiy operator in'ektsiyasidan ko'ra kengroq imkoniyat. Tavsiya: bunday operatorlardan foydalanmang va server tomonda JS ifodalarini o'chirish sozlamasini baza hujjatidan tekshiring (bu darsda tekshirilmagan).
+MongoDB'ning ba'zi operatorlari (`$where`) ifodani baza ichida JavaScript sifatida bajaradi. Bunday ifodaga kiritilgan qiymat filtr emas, kod bo'lib qoladi: oddiy operator in'ektsiyasidan ko'ra kengroq imkoniyat. Tavsiya: bunday operatorlardan foydalanmang, ilova ularga muhtoj bo'lmasa server tomonda JavaScript'ni butunlay o'chiring.
 
 ### Redis: kalit kollizyasi va `KEYS`
 
@@ -156,13 +156,17 @@ Qismlarni `:` bilan birlashtirish qaytarilmas (non-injective) kodlash: `("a:b", 
 
 Ilovada injection bo'lmasa ham, tarmoqdan ochiq Redis hujumchi uchun tayyor interfeys. Hujjat: Redis'ni ishonchli tarmoqda saqlash, kerakli interfeysga bog'lash (`bind 127.0.0.1`), protected mode (3.2.0 dan, default sozlama va parolsiz holat uchun), autentifikatsiya va ACL bilan klient huquqlarini cheklash. `CONFIG` buyrug'i orqali ish papkasi va dump fayl nomini o'zgartirib RDB faylini ixtiyoriy yo'lga yozish mumkinligi hujjatda alohida xavf sifatida ko'rsatilgan; `rename-command` usuli eskirgan, o'rniga ACL qoidalari tavsiya etiladi. SSRF orqali ichki Redis'ga so'rov yuborish ehtimoli 27-darsda ko'riladi.  Aniq direktivalar 89-darsda.
 
+### Zararli kiritish va Redis'ning o'z ichki algoritmlari
+
+Redis hujjati injection'dan tashqari yana bir sinfni alohida tilga oladi: hujumchi Redis'ga kirishsiz ham, veb-forma orqali yuborilgan ma'lumot bilan ichki ma'lumot tuzilmalarini yomon holatga keltirishi mumkin. Misol: bir xil hash bucket'ga tushadigan satrlar to'plami hash jadvalida kutilgan O(1) ni O(N) ga aylantiradi va CPU'ni to'ldiradi. Redis bunga qarshi har ishga tushirishda tasodifiy seed ishlatadi. Lekin `SORT` buyrug'i qsort algoritmi bilan amalga oshirilgan va hujjatga ko'ra u tasodifiylashtirilmagan: kirishni maxsus tanlab kvadratik yomon holatni chaqirish mumkin. Amaliy xulosa: foydalanuvchi boshqaradigan ma'lumotni `SORT` ga uzatadigan endpoint'larda elementlar soni va so'rov chastotasi cheklanadi (73-dars).
+
 ### Redis ACL bilan zararni cheklash
 
-Redis hujjatida ACL qoidalari tavsiflangan: foydalanuvchi uchun buyruq toifalari (`+@<category>`, `-@<category>`) va kalit naqshlari (`~<pattern>`) beriladi. Standart `default` foydalanuvchi parolsiz va hamma kalit va buyruqqa ruxsat bilan keladi (`on nopass ~* &* +@all`). Ilova uchun alohida foydalanuvchi yarating: faqat kerakli kalit naqshlari va buyruq toifalari, xavfli toifalar (`-@dangerous`) yopilgan. Misol (hujjatdagi qoida sintaksisiga mos, qiymatlarni o'zingizga moslang): `ACL SETUSER app on >parol ~cache:* +get +set +del`. Shunda ilova xatosi (yoki injection) bo'lsa ham, jarayon `cache:` bo'lmagan kalitlarga yoki `FLUSHALL` kabi buyruqlarga yetmaydi. Sessiya va keshni alohida foydalanuvchilar yoki instanslarga ajratish bu g'oyani kuchaytiradi.
+Redis hujjatida ACL qoidalari tavsiflangan: foydalanuvchi uchun buyruq toifalari (`+@<category>`, `-@<category>`) va kalit naqshlari (`~<pattern>`) beriladi. Standart `default` foydalanuvchi parolsiz va hamma kalit va buyruqqa ruxsat bilan keladi (`on nopass ~* &* +@all`). Ilova uchun alohida foydalanuvchi yarating: faqat kerakli kalit naqshlari va buyruq toifalari, xavfli toifalar (`-@dangerous`) yopilgan. Misol (hujjatdagi qoida sintaksisiga mos, qiymatlarni o'zingizga moslang): `ACL SETUSER app on >parol ~cache:* +get +set +del`. Shunda ilova xatosi (yoki injection) bo'lsa ham, jarayon `cache:` bo'lmagan kalitlarga yoki `FLUSHALL` kabi buyruqlarga yetmaydi. Sessiya va keshni alohida foydalanuvchilar yoki instanslarga ajratish bu g'oyani kuchaytiradi. Redis 7.0 dan boshlab kalit naqshini faqat o'qish (`%R~<pattern>`) yoki faqat yozish (`%W~<pattern>`) bilan cheklash mumkin: kesh o'qiydigan, lekin yozmaydigan komponent uchun bu foydali. Eslatma: ACL naqshi ham glob uslubida (`KEYS` bilan bir xil), shuning uchun `~cache:*` kabi qoida kalit prefiksi to'g'ri yasalishiga tayanadi. Autentifikatsiya haqida ham aniq gap bor: `AUTH` buyrug'i ham boshqalari kabi shifrlanmay yuboriladi, shuning uchun u tarmoqni tinglovchidan himoya qilmaydi; kanal uchun TLS kerak. Eski `requirepass` bitta umumiy parol beradi va hujjat uni ACL foydalanuvchilari bilan almashtirishni tavsiya qiladi.
 
 ### Mongo uslubidagi bazalarda qo'shimcha qatlamlar
 
-Operator hujumiga qarshi asosiy chora tur tekshiruvi, ammo unga qo'shimcha qatlamlar bor. Bazaga ulanish roli faqat kerakli to'plamlarga o'qish va yozish huquqiga ega bo'lishi; `$where` va server tomonda JavaScript ishlatadigan operatorlar o'chirilgan bo'lishi; so'rovlarga `maxTimeMS` kabi vaqt chegarasi qo'yilishi (aniq nomlar uchun baza hujjatiga qarang, bu darsda tekshirilmagan). Bu choralar ham ilova darajasidagi tur tekshiruvini almashtirmaydi: ular zararni cheklaydi, tekshiruv esa hujumning o'zini to'xtatadi.
+Operator hujumiga qarshi asosiy chora tur tekshiruvi, ammo unga qo'shimcha qatlamlar bor. Bazaga ulanish roli faqat kerakli to'plamlarga o'qish va yozish huquqiga ega bo'lishi; `$where` va server tomonda JavaScript ishlatadigan operatorlar o'chirilgan bo'lishi; so'rovlarga vaqt chegarasi qo'yilishi (MongoDB'da `maxTimeMS`). Bu choralar ham ilova darajasidagi tur tekshiruvini almashtirmaydi: ular zararni cheklaydi, tekshiruv esa hujumning o'zini to'xtatadi.
 
 ### Kalitni kodlash va kalit maydoni
 
@@ -353,7 +357,7 @@ export async function remember(tenantId: string, name: string, value: string) {
 }
 ```
 
-Mongoose'da `strictQuery` va `sanitizeFilter` kabi sozlamalar bor (aniq xatti-harakat versiyaga bog'liq, hujjatni tekshiring: bu yerda tekshirilmagan). Ular qo'shimcha qatlam; asosiy chora `zod` kabi sxema bilan tur va shakl tekshiruvi. Redis uchun `username/password` ACL foydalanuvchisi, ilova roli esa faqat kerakli buyruqlar va kalit naqshlariga cheklanadi.
+Mongoose'da `sanitizeFilter` sozlamasi bor: u filtr ichida `$` bilan boshlanadigan kalitli ichki obyektlarni `$eq` ichiga o'raydi, shunda `{ "$ne": null }` operator emas, oddiy qiymat sifatida solishtiriladi. Bu qo'shimcha qatlam; asosiy chora `zod` kabi sxema bilan tur va shakl tekshiruvi. Redis uchun `username/password` ACL foydalanuvchisi, ilova roli esa faqat kerakli buyruqlar va kalit naqshlariga cheklanadi.
 
 ## Xulosa
 

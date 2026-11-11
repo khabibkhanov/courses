@@ -356,6 +356,53 @@ redis app, parol bilan: 1/3
 
 Nima yopildi: hujumchi superuser sifatida kira olmaydi (hech bir holatda), SSLsiz kirish yo'q, boshqa subnet'dan kirish yo'q (mos yozuv yo'q), Redis'da `FLUSHALL` va `CONFIG` ACL bilan yopiq. Nima yopilmadi: ilova hisobining parolini bilgan hujumchi (masalan, ilova ichida RCE orqali parolni o'qigan) shu hisob doirasidagi ishni qiladi; shuning uchun hisob huquqlari torligi va credential saqlash (83-dars) muhim. Modelda haqiqiy TLS, SCRAM va CIDR yo'q.
 
+### Haqiqiy konfiguratsiya
+
+Model o'rniga real fayl va buyruqlar. Birinchisi `pg_hba.conf`: ustunlar ketma-ketligi hujjatdagi (turi, baza, foydalanuvchi, manzil, usul), superuser va SSLsiz ulanishlar ruxsat yozuvlaridan oldin rad etiladi, ilova hisobi esa faqat o'z subnet'idan SSL bilan kiradi. Subnet va hisob nomlari shartli.
+
+```text
+# TYPE      DATABASE  USER            ADDRESS         METHOD
+host        all       postgres        0.0.0.0/0       reject
+host        all       postgres        ::/0            reject
+hostnossl   all       all             0.0.0.0/0       reject
+hostssl     fleet     fleet_app       10.0.1.0/24     scram-sha-256
+hostssl     fleet     fleet_migrator  10.0.2.10/32    scram-sha-256
+```
+
+`postgresql.conf` da `ssl = on` va `password_encryption = 'scram-sha-256'` bo'lishi shart (aks holda `hostssl` yozuvlari ishlamaydi, yuqorida ko'rdik). Mos yozuvi bo'lmagan hamma narsa, masalan boshqa subnet yoki IPv6, oxirida rad etiladi. Redis tomonida `redis-cli` orqali beriladigan ACL buyruqlari (sintaksis Redis ACL hujjatidagi `ACL SETUSER` misollariga mos):
+
+```text
+ACL SETUSER default off
+ACL SETUSER fleet-app on >long-random-redis-pw ~session:* +get +set +del
+ACL GETUSER fleet-app
+```
+
+`default off` parolsiz default foydalanuvchini o'chiradi (hujjat: u bo'lmasa yangi ulanish autentifikatsiyasiz boshlanadi va hech narsa qila olmaydi). Yangi foydalanuvchi `~session:*` kalitlari va uchta buyruq bilan cheklangan; Redis 7.0 dan Pub/Sub kanallari default holatda yopiq. Qoldiq risk: parol `redis-cli` tarixiga va klient konfiguratsiyasiga tushadi, ACL'ni qayta ishga tushirishdan keyin saqlash uchun `aclfile` yoki konfiguratsiyaga yozish kerak, va ulanish TLS siz bo'lsa parol tarmoqda ochiq ketadi.
+
+### Mashq: Redis ACL tekshiruvi
+
+Quyidagi `allowed` Redis ACL qoidasini modellashtiradi, lekin ikkita xatosi bor: kalit andozasini `includes` bilan tekshiradi (prefiks emas), va buyruq ro'yxatini umuman ko'rmaydi. "Tekshirish" tugmasi bilan qaysi testlar o'tmayotganini ko'ring va tuzating. Qoidalar: foydalanuvchi `on` bo'lishi shart; kalit `session:*` kabi andozaning prefiksiga mos kelishi kerak; buyruq ro'yxatda bo'lishi kerak (buyruq nomi katta-kichik harfga befarq).
+
+```ts run
+type AclUser = { on: boolean; keys: string[]; cmds: string[] };
+
+// Redis ACL: foydalanuvchi yoqilgan, kalit andozaga mos va buyruq ruxsat etilgan bo'lsa true
+function allowed(u: AclUser, cmd: string, key: string): boolean {
+  if (!u.on) return false;
+  return u.keys.some((p) => key.includes(p.replace("*", "")));
+}
+```
+
+```ts test
+const app: AclUser = { on: true, keys: ["session:*"], cmds: ["get", "set", "del"] };
+check("session:42 GET ruxsat etiladi", () => allowed(app, "GET", "session:42") === true);
+check("FLUSHALL ro'yxatda yo'q: rad", () => allowed(app, "FLUSHALL", "session:42") === false);
+check("boshqa prefiks (user:1) rad", () => allowed(app, "GET", "user:1") === false);
+check("andoza o'rtada bo'lsa rad (x:session:1)", () => allowed(app, "GET", "x:session:1") === false);
+check("o'chirilgan foydalanuvchi hech narsa qila olmaydi", () => allowed({ ...app, on: false }, "GET", "session:42") === false);
+check("buyruq nomi katta-kichik harfga befarq", () => allowed(app, "get", "session:42") === true);
+```
+
 ### Topshiriq mantig'i
 
 Topshiriqdagi `authenticate` boshlang'ich holatda zaxira mantig'i bilan yozilgan: yozuvlarni birma-bir ko'radi va birortasi ruxsat bersa kiritadi. Bu `reject` yozuvini va birinchi mos yozuv qoidasini buzadi. Quyida uni ishga tushiring va xato holatlarni ko'ring:

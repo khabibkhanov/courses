@@ -9,18 +9,24 @@ sources:
     note: "Logging Cheat Sheet: qaysi hodisalarni loglash, 'qachon, qayerda, kim, nima' atributlari, interaksiya identifikatori, loglanmaydigan ma'lumotlar, log injection (unstructured format xavfi, structured JSON, qiymat hajmini cheklash), logni himoyalash (tamper detection, ruxsatlarni cheklash), monitoring"
   - id: t10-a09
     note: "A09:2025 Security Logging and Alerting Failures: nomdagi 'Alerting' urg'usi; kategoriya belgilari (muvaffaqiyatsiz kirishni yozmaslik, log yaxlitligi, monitoring yo'qligi, alert chegaralari yo'qligi, PII loglash, log injection); oldini olish (audit trail va append-only, fail closed, honeytoken, SOC playbook, incident response rejasi)"
+  - id: cs-logging-vocab
+    note: "Logging Vocabulary Cheat Sheet: xavfsizlik hodisalari uchun standart nomlar (`authn_login_fail`, `authz_fail`, `input_validation_fail` kabi), shunda monitoring va alert shu nomlar bo'yicha ishlaydi; sanalar ISO 8601 formatida UTC siljishi bilan"
   - id: nist-61r3
-    note: "NIST SP 800-61 Rev. 3 (hodisaga javob tavsiyalari): A09 matni NIST 800-61r2 yoki undan keyingi versiyaga o'xshash hodisaga javob rejasini tavsiya qiladi. Bu darsda faqat shu umumiy bog'lanish aytilgan; hujjat matni lokal manbada o'qilmagan"
+    note: "NIST SP 800-61 Rev. 3 (2025 yil aprel): Rev. 2 ning o'rnini bosgan hodisaga javob tavsiyalari, NIST Cybersecurity Framework 2.0 uchun community profile. A09 ham NIST 800-61r2 yoki undan keyingi reja tavsiya qiladi"
   - id: nestjs-logger
-    note: "NestJS Logger hujjati: ConsoleLogger'da `json` opsiyasi va log darajalarini sozlash"
+    note: "NestJS Logger hujjati: `ConsoleLogger` da `json: true` (har yozuv bitta qator, `JSON.stringify()` bilan), xabardan keyingi obyektlar `params` ostida (NestJS v12), `maxStringLength` json rejimida e'tiborga olinmaydi, `logger: ['error', 'warn']` darajalari"
+  - id: pg-grant
+    note: "PostgreSQL GRANT: ega standart bo'yicha barcha huquqlarga ega; obyektni o'zgartirish yoki o'chirish huquqi egaga xos va berilmaydi, olinmaydi; ega o'z huquqlarini bekor qilishi mumkin; `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE` alohida huquqlar"
+  - id: pg-privileges
+    note: "PostgreSQL Privileges: jadvallar uchun PUBLIC'ga standart huquq berilmaydi; `TRUNCATE` alohida huquq"
 quiz:
   - q: "Ilova login xatosini `INFO login fail user=${username}` shaklida matn sifatida yozadi. Hujumchi foydalanuvchi nomi sifatida `x\\n10:00:01 INFO login ok user=admin` yubordi. Qanday himoya asosiy?"
     options:
-      - "Log faylini boshqa diskka ko'chirish"
       - "Structured (JSON) formatga o'tish, qiymat hajmini cheklash: JSON seriyalash yangi qator belgisini qochiradi va soxta yozuv paydo bo'lmaydi"
+      - "Log faylini boshqa diskka ko'chirish"
       - "Foydalanuvchi nomini hech qachon yozmaslik"
       - "Loglarni faqat ERROR darajasida yozish"
-    answer: 1
+    answer: 0
     explain: "Logging Cheat Sheet unstructured matn formatlari CR/LF orqali log injection'ga moyil ekanini, structured format (JSON) ishlatishni va log xabari uchun foydalanuvchi qiymati hajmini cheklashni aytadi."
   - q: "Quyidagilardan qaysi biri A09:2025 bo'yicha 'log yetarli emas' belgisi?"
     options:
@@ -139,17 +145,17 @@ task:
 
 Avtopark platformasida kimdir bir tenant'ning mashina ma'lumotlarini eksport qildi. Bu qachon, kim tomonidan va qaysi hisob orqali sodir bo'lganini aniqlash kerak. Agar tizim muhim hodisalarni yozmagan bo'lsa, javob yo'q. Agar yozgan bo'lsa-yu, hech kim ularni ko'rmagan bo'lsa, javob keyin keladi: hujum tugagach, boshqa odam xabar bergandan keyin.
 
-OWASP Top 10:2025 bu holatni A09, Security Logging and Alerting Failures deb ataydi. Kategoriya 9-o'rinda saqlanib qolgan, nomi esa alerting funksiyasini ta'kidlash uchun biroz o'zgargan: loglash faqat yozish emas, tegishli hodisalar harakatga undashi kerak. Matnga ko'ra, bu kategoriya testlash juda qiyin va CVE ma'lumotlarida kam vakil qilingan, lekin ko'rinish (visibility), hodisa haqida ogohlantirish va forensika uchun juda katta ta'sir qiladi. Unga kiruvchi muammolar: log fayllariga chiqarishda kodlashni noto'g'ri bajarish (CWE-117), log fayllariga maxfiy ma'lumot kiritish (CWE-532) va yetarli darajada loglamaslik/monitoring qilmaslik.
+OWASP Top 10:2025 bu holatni A09, Security Logging and Alerting Failures deb ataydi. Kategoriya 9-o'rinda saqlanib qolgan, nomi esa alerting funksiyasini ta'kidlash uchun biroz o'zgargan: loglash faqat yozish emas, tegishli hodisalar harakatga undashi kerak. Matnga ko'ra, bu kategoriya testlash juda qiyin va CVE ma'lumotlarida kam vakil qilingan, lekin ko'rinish (visibility), hodisa haqida ogohlantirish va forensika uchun juda katta ta'sir qiladi. Unga kiruvchi muammolar: log fayllariga chiqarishda kodlashni noto'g'ri bajarish (CWE-117), log fayllariga maxfiy ma'lumot kiritish (CWE-532) va yetarli darajada loglamaslik (CWE-778).
 
 Matn "yetarli emas" holatlarini sanaydi. Eng muhimlari: audit qilinadigan hodisalar (loginlar, muvaffaqiyatsiz loginlar, yuqori qiymatli tranzaksiyalar) yozilmaydi yoki izchil yozilmaydi (masalan faqat muvaffaqiyatli loginlar yoziladi, urinishlar yozilmaydi); ogohlantirish va xatolar yetarli yoki tushunarli xabar bermaydi; loglar yaxlitligi o'zgartirishdan himoyalanmagan; ilova va API loglari shubhali faoliyat uchun kuzatilmaydi; loglar faqat lokal saqlanadi va zaxiralanmaydi; alert chegaralari va eskalatsiya jarayonlari yo'q yoki samarasiz; penetration test va DAST skanerlari alert chiqarmaydi; loglar o'zi maxfiy ma'lumot oqib chiqadigan manbaga aylangan yoki kodlanmagani uchun injection'ga ochiq.
 
-A09 ssenariylaridan biri ahamiyatli: bolalar sog'liqni saqlash rejasi provayderi veb-saytida monitoring va logging yo'qligi sababli buzilishni aniqlay olmagan; tashqi tomon xabar bergan, hujumchi 3,5 milliondan ortiq bolaning yozuvlariga kirgan va o'zgartirgan, buzilish 2013 yildan beri, ya'ni yetti yildan ortiq davom etgan bo'lishi mumkin edi. Logsiz tizimda "hujum bo'lmadi" va "hujumni ko'rmadik" ning farqini bilib bo'lmaydi.
+A09 ssenariylaridan biri ahamiyatli: bolalar sog'liqni saqlash rejasi provayderi veb-saytida monitoring va logging yo'qligi sababli buzilishni aniqlay olmagan; tashqi tomon xabar bergan, hujumchi 3,5 milliondan ortiq bola ro'yxatidagi minglab maxfiy sog'liq yozuvlariga kirgan va ularni o'zgartirgan, buzilish 2013 yildan beri, ya'ni yetti yildan ortiq davom etgan bo'lishi mumkin edi. Logsiz tizimda "hujum bo'lmadi" va "hujumni ko'rmadik" ning farqini bilib bo'lmaydi.
 
 ## Asosiy g'oya
 
 ### Loglash: ikki xil maqsad
 
-Logging Cheat Sheet loglarni ikki toifada ko'radi: operatsion (xatolarni topish, ishlashni kuzatish) va xavfsizlik (hujumni aniqlash, hodisani tergov qilish, audit). Bu dars xavfsizlik tomonini ko'radi, lekin ular bitta tizimda yashaydi. Cheat sheet "bir o'lchamga hamma mos" yechim yo'qligini va ko'r-ko'rona ro'yxat yondashuvi keraksiz "alarm fog" ga olib kelib, haqiqiy muammolarni yashirishini aytadi. Nimani yozishni loyihalash bosqichida xavf darajasiga qarab belgilash kerak.
+Logging Cheat Sheet loglarni ikki toifada ko'radi: operatsion (xatolarni topish, ishlashni kuzatish) va xavfsizlik (hujumni aniqlash, hodisani tergov qilish, audit). Bu dars xavfsizlik tomonini ko'radi. Cheat sheet jarayon monitoringi, audit va tranzaksiya izlari odatda xavfsizlik hodisalaridan boshqa maqsadda yig'ilishini va shuning uchun ko'pincha alohida saqlanishini ham aytadi. Cheat sheet "bir o'lchamga hamma mos" yechim yo'qligini va ko'r-ko'rona ro'yxat yondashuvi keraksiz "alarm fog" ga olib kelib, haqiqiy muammolarni yashirishini aytadi. Nimani yozishni loyihalash bosqichida xavf darajasiga qarab belgilash kerak.
 
 ### Nimani yozish
 
@@ -168,6 +174,8 @@ A09 qo'shimcha talab: xavfsizlik nazorati bo'lgan ilovaning har bir qismi, muvaf
 ### Har yozuvda nima bo'lishi kerak
 
 Cheat sheet: log yozuvi "qachon, qayerda, kim va nima" ga javob berishi kerak. Qachon: log vaqti, hodisa vaqti va interaksiya identifikatori. Qayerda: ilova nomi/versiyasi, xost, servis, URL va HTTP metod, kod joyi. Kim: manba manzili, autentifikatsiyalangan foydalanuvchi identifikatori. Nima: hodisa turi, jiddiylik darajasi, xavfsizlikka oid ekanini bildiruvchi belgi, tavsif. Qo'shimcha foydali maydonlar: harakat, obyekt, natija holati (success/fail/defer), sabab, foydalanuvchi turi (oddiy foydalanuvchi, monitoring tizimi, pentester).
+
+Hodisa nomlarini har jamoa o'ylab topmasligi uchun Logging Vocabulary Cheat Sheet standart nomlarni taklif qiladi: `authn_login_fail`, `authz_fail`, `input_validation_fail` va boshqalar. Maqsad: monitoring va alert shu nomlarga qarab ishlasin. U sanalarni ISO 8601 formatida, UTC siljishi bilan yozishni ham aytadi.
 
 "Interaksiya identifikatori" bitta foydalanuvchi harakatiga tegishli barcha hodisalarni bog'laydi. Bu 78-darsdagi xato identifikatori bilan bir g'oya: mijoz umumiy xato javobida `e-17` ni ko'radi, siz esa logda shu identifikator bilan hamma bog'liq yozuvlarni topasiz.
 
@@ -190,8 +198,8 @@ Muhim: log injection faqat chiroyli ko'rinish masalasi emas. Alertlar va tergov 
 Cheat sheet loglarga hujumlarni to'rt o'qda tasniflaydi.
 
 - **Maxfiylik:** loglarda foydalanuvchilarning shaxsiy ma'lumotlari yoki parollar kabi texnik sirlar bo'lsa, hujumchi loglarni o'qib, keyingi hujum uchun ishlatadi. Log o'zi qiymatli ma'lumot manbai, shuning uchun uni o'qish huquqi cheklangan va davriy tekshiriladi.
-- **Yaxlitlik:** logga yozish huquqi bo'lgan hujumchi iz qoldirmaslik uchun yozuvni o'zgartiradi yoki o'chiradi. Himoya: o'zgartirish aniqlash (tamper detection), loglarni imkon qadar tez read-only vositaga nusxalash, loglarga har qanday kirishni yozish va kuzatish.
-- **Mavjudlik:** hujumchi log fayllarini to'ldirib, boshqa tizim qismlari uchun disk joyini tugatadi (log va ma'lumotlar bazasi bir diskda bo'lsa) yoki keyingi loglar uchun joy qoldirmaydi. Chora: log hajmini boshqarish, alohida disk, takroriy xatolarni statistikaga aylantirish (78-dars).
+- **Yaxlitlik:** kim nimani o'zgartira olishi masalasi. Cheat sheet misollari: o'qish huquqi bor hujumchi loglardan sirlarni oladi; hujumchi log platformasining zaif tomonlariga hujum qiladi, masalan syslog orqali payload yuborib out-of-bounds write chaqiradi. Saqlangan yozuvlar uchun himoya: o'zgartirilgan yoki o'chirilganini bilish uchun tamper detection, loglarni imkon qadar tez read-only vositaga nusxalash, loglarga har qanday kirishni yozish va kuzatish.
+- **Mavjudlik:** hujumchi log fayllarini to'ldirib, boshqa tizim qismlari uchun disk joyini tugatadi (log va ma'lumotlar bazasi bir diskda bo'lsa) yoki keyingi loglar uchun joy qoldirmaydi; bitta yozuv bilan boshqa yozuvlarni yo'q qilishi yoki log kodining sekinligi orqali ilovani sekinlashtirishi mumkin. Chora: logni alohida bo'limga (partition) yozish, hajmni boshqarish, takroriy xatolarni statistikaga aylantirish (78-dars).
 - **Javobgarlik:** hujumchi yozuvni to'xtatadi, yozuvni buzadi yoki noto'g'ri identifikatorni yozdirib o'z izini yashiradi.
 
 A09 audit trail uchun alohida talab qo'yadi: barcha tranzaksiyalar audit izi bilan, uni o'zgartirish yoki o'chirishdan himoyalovchi yaxlitlik nazoratlari (masalan, append-only ma'lumotlar bazasi jadvallari) bilan birga bo'lsin. Bizning misolimizda shunday nazoratning bir ko'rinishi, hash zanjiri, sinab ko'riladi.
@@ -208,7 +216,7 @@ A09 yana bir aniq vosita tavsiya qiladi: honeytoken'lar, ya'ni ma'lumotlar bazas
 
 ### Hodisaga javob rejasi
 
-A09 hodisaga javob va tiklanish rejasini (NIST 800-61r2 yoki undan keyingisi kabi) yaratishni va dasturchilarga ilovaga hujum qanday ko'rinishini o'rgatishni tavsiya qiladi. Manba ro'yxatidagi NIST SP 800-61 Rev. 3 hodisaga javob tavsiyalariga bag'ishlangan hujjat; uning ichki tuzilishi bu darsda keltirilmaydi, chunki lokal manbada o'qilmagan. Dasturchi uchun amaliy xulosa: alert kimga boradi, ularga qanday ma'lumot kerak (loglardagi yozuvlar shu uchun) va hodisa vaqtida qanday amallar bajariladi, oldindan belgilangan bo'lishi kerak.
+A09 hodisaga javob va tiklanish rejasini (NIST 800-61r2 yoki undan keyingisi kabi) yaratishni va dasturchilarga ilovaga hujum qanday ko'rinishini o'rgatishni tavsiya qiladi. NIST SP 800-61 Rev. 3 (2025 yil aprel) Rev. 2 ning o'rnini bosgan va hodisaga javob tavsiyalarini NIST Cybersecurity Framework 2.0 doirasidagi risklarni boshqarishga kiritadi. Dasturchi uchun amaliy xulosa: alert kimga boradi, ularga qanday ma'lumot kerak (loglardagi yozuvlar shu uchun) va hodisa vaqtida qanday amallar bajariladi, oldindan belgilangan bo'lishi kerak.
 
 ## Misol: hodisalar logi
 
@@ -311,18 +319,18 @@ o'zgartirilgandan keyin, birinchi buzilgan indeks: 1
 
 Invariantlar: har hodisa aynan bitta qator (JSON yangi qatorni qochiradi), shuning uchun foydalanuvchi nomidagi soxta qator yozuv emas, shunchaki bitta maydonning matni; allowlist'da bo'lmagan maydonlar (parol) logga umuman tushmaydi; qiymat uzunligi cheklangan; yozuvni o'zgartirish keyingi tekshiruvda indeks bilan aniqlanadi.
 
-Yopilmagan narsalar. Birinchisi: hash zanjiri o'zgartirishni aniqlaydi, lekin yozishni to'sib qo'ymaydi. Agar tajovuzkor zanjirning oxirgi yozuvlarini o'chirsa yoki butun zanjirni qayta hisoblasa, oxirgi hash tashqarida saqlanmagan bo'lsa buni bilib bo'lmaydi. Shuning uchun oxirgi hash'ni alohida joyga yoki read-only nusxaga yozish, ulanishda yozuv huquqini cheklash va append-only jadval kerak (A09, Logging Cheat Sheet). Ikkinchisi: allowlist faqat belgilangan maydonlarni saqlaydi, ularning ichidagi maxfiy ma'lumot (masalan, `user` maydoniga parol yozib yuborilgan) hamon o'tib ketadi; maydon mazmuni uchun alohida qoidalar kerak. Uchinchisi: bir jarayon ichidagi massiv real log emas; haqiqiy tizimda log markaziy joyga yuboriladi va u bilan aloqa himoyalanadi (cheat sheet transit uchun xavfsiz protokolni tavsiya qiladi). To'rtinchisi: hodisa vaqti (`ts`) mijoz manbasidan olinmasligi kerak.
+Yopilmagan narsalar. Birinchisi: hash zanjiri o'zgartirishni aniqlaydi, lekin yozishni to'sib qo'ymaydi. Agar tajovuzkor zanjirning oxirgi yozuvlarini o'chirsa yoki butun zanjirni qayta hisoblasa, oxirgi hash tashqarida saqlanmagan bo'lsa buni bilib bo'lmaydi. Shuning uchun oxirgi hash'ni alohida joyga yoki read-only nusxaga yozish, ulanishda yozuv huquqini cheklash va append-only jadval kerak (A09, Logging Cheat Sheet). Ikkinchisi: allowlist faqat belgilangan maydonlarni saqlaydi, ularning ichidagi maxfiy ma'lumot (masalan, `user` maydoniga parol yozib yuborilgan) hamon o'tib ketadi; maydon mazmuni uchun alohida qoidalar kerak. Uchinchisi: bir jarayon ichidagi massiv real log emas; haqiqiy tizimda log markaziy joyga yuboriladi va u bilan aloqa himoyalanadi (cheat sheet transit uchun xavfsiz protokolni tavsiya qiladi). To'rtinchisi: cheat sheet log vaqti va hodisa vaqtini alohida yozishni va serverlarda vaqtni sinxronlashni aytadi; `ts` ni ishonchsiz mijoz soatidan olmang.
 
 ## Qachon qo'llamaslik kerak
 
 - Hamma narsani yozish yaxshi emas. Cheat sheet ko'r-ko'rona ro'yxatlar "alarm fog" ga olib kelishini aytadi. Yuqori chastotali telemetriya (har soniya GPS nuqtalari) xavfsizlik logi emas; uni xavfsizlik hodisalari bilan aralashtirmang, aks holda signal shovqinda yo'qoladi.
-- Shaxsiy ma'lumotni log uchun to'plash qonuniy cheklovlarga bog'liq. Cheat sheet qonuniy ruxsat etilmagan ma'lumotni yozmaslikni aytadi. Lokal qonunchilik (masalan, O'zbekistonda shaxsiy ma'lumotlar to'g'risidagi qonun) talablarini bu darsda tekshirmadik; loyihada yuristlar bilan hal qiling.
+- Shaxsiy ma'lumotni log uchun to'plash qonuniy cheklovlarga bog'liq. Cheat sheet qonuniy ruxsat etilmagan ma'lumotni umuman yozmaslikni aytadi. Mahalliy qonunchilik talablari 94-darsda ko'riladi.
 - Hash zanjiri to'liq audit tizimi emas. Yuqori talabli sohalarda tashqi vaqt tamg'asi, WORM saqlash yoki alohida audit servisi kerak bo'lishi mumkin. Oddiy ilovada append-only jadval va ruxsatlarni cheklash ko'pincha yetarli.
 - Alert har holatda ham odamni uyg'otmasligi kerak. Past xavfli hodisalar kunlik hisobotga, yuqori ishonchli hodisalar (honeytoken'ga murojaat) darhol ogohlantirishga boradi. Hamma alertni bir xil deb hisoblash odamlarni charchatadi.
 
 ## Stack'da: NestJS va Postgres
 
-NestJS o'rnatilgan `ConsoleLogger` ni `json` opsiyasi bilan JSON chiqaradigan qilib sozlash mumkin; hujjatga ko'ra bu har bir yozuvni bitta qator mashina o'qiy oladigan JSON sifatida chiqaradi va konteyner platformalari uni qo'shimcha bog'liqliksiz yig'adi. Log darajalarini `logger: ['error', 'warn']` kabi sozlash ham mumkin. Hujjatda so'rov bilan bog'lash uchun trace id mexanizmi ham tilga olingan. Quyidagi parcha ishga tushirilmaydi (NestJS bu muhitda yo'q), faqat sintaksis tekshirilgan.
+Hujjatga ko'ra `ConsoleLogger` `json: true` bilan yaratilsa, har yozuv bitta qatorda JSON bo'lib chiqadi (`level`, `pid`, `timestamp`, `message`, `context` maydonlari) va `JSON.stringify()` bilan seriyalanadi, ya'ni qiymatdagi yangi qator belgisi qochiriladi. Metadata (foydalanuvchi id, davomiylik) xabardan keyingi oddiy obyekt sifatida beriladi va JSON'da `params` kaliti ostiga tushadi (hujjatda bu imkoniyat NestJS v12 dan deb ko'rsatilgan). Cheklov: `maxStringLength` opsiyasi json rejimida (standart `colors` va `compact` bilan) e'tiborga olinmaydi, shuning uchun qiymat hajmini o'zingiz cheklaysiz; quyidagi `redact` shuni qiladi. Log darajalari `logger: ['error', 'warn']` kabi sozlanadi.
 
 ```ts
 import { ConsoleLogger, Injectable, Module } from "@nestjs/common";
@@ -340,11 +348,11 @@ function redact(meta: Record<string, unknown>): Record<string, unknown> {
 
 @Injectable()
 export class SecurityLog {
-  private readonly logger = new ConsoleLogger("security", { json: true });
+  private readonly logger = new ConsoleLogger({ json: true });
 
   event(name: string, meta: Record<string, unknown>) {
-    // structured: maydonlar alohida, matn qatoriga qo'shilmaydi
-    this.logger.warn({ event: name, ...redact(meta) });
+    // structured: metadata alohida obyekt, matn qatoriga qo'shilmaydi (JSON'da `params`)
+    this.logger.warn(name, redact(meta));
   }
 }
 
@@ -352,7 +360,7 @@ export class SecurityLog {
 export class SecurityLogModule {}
 ```
 
-`redact()` kalit nomiga qaraydi; qiymat ichidagi sirlarni (masalan, URL ichida parol) ushlamaydi, shuning uchun u to'liq himoya emas. Postgres tomonda audit jadvalini append-only qilishning bir usuli: ilova roliga `INSERT` va `SELECT` berib, `UPDATE` va `DELETE` bermaslik (53 va 56-darslardagi huquqlar g'oyasi, 89-dars). Bu usulning aniq GRANT sintaksisini PostgreSQL hujjatidan tekshiring (bu dars manbalarida emas). Ilova rolidan alohida administrator roli log jadvalini o'zgartira olmasligi ham ko'rib chiqiladi.
+`redact()` kalit nomiga qaraydi; qiymat ichidagi sirlarni (masalan, URL ichida parol) ushlamaydi, shuning uchun u to'liq himoya emas. Postgres tomonda audit jadvalini append-only qilishning bir usuli: ilova roliga faqat `GRANT INSERT, SELECT ON audit_events TO app_rw` berish va `UPDATE`, `DELETE`, `TRUNCATE` bermaslik (`TRUNCATE` alohida huquq, uni ham unutmang). Ikki shart bor. Birinchisi, jadval egasi ilovaning o'zi bo'lmasligi kerak: hujjatga ko'ra ega standart bo'yicha barcha huquqlarga ega, jadvalni o'zgartirish yoki o'chirish huquqi esa egaga xos bo'lib, berib ham, olib ham bo'lmaydi. Shuning uchun jadvalni migratsiya roli yaratadi va unga egalik qiladi, ilova roli faqat yuqoridagi ikki huquqni oladi. Ikkinchisi, jadvallarga PUBLIC orqali standart huquq berilmaydi, lekin qo'lda berilgan huquqlarni tekshirib turing. Cheat sheet ham logni bazaga yozishda faqat log yozish uchun ishlatiladigan, juda cheklangan huquqli alohida hisob ishlatishni tavsiya qiladi (huquqlar haqida 56 va 89-darslar).
 
 ## Xulosa
 

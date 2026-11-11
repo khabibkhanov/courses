@@ -6,27 +6,29 @@ summary: "O'RQ-547 (Shaxsga doir ma'lumotlar to'g'risida) va O'RQ-764 (Kiberxavf
 duration: 50
 sources:
   - id: lex-pdp
-    note: "O'RQ-547 (02.07.2019) lex.uz'dagi joriy tahrir, 2026-11-11 da o'qilgan: 4-modda (asosiy tushunchalar), 5 (prinsiplar), 15 (transchegaraviy uzatish), 16 (egasizlantirish), 19 (ishlov berish talablari), 21 (rozilik), 27 (himoya kafolatlari), 27-1 (saqlash va ishlov berishning alohida shartlari), 31 (mulkdor va operator majburiyatlari), 33 (javobgarlik); 20-moddaning birinchi qismi O'RQ-1125 (26.03.2026) tahririda"
+    note: "O'RQ-547 (02.07.2019) lex.uz'dagi hujjat, 2026-11-11 da o'qilgan: 4-modda (asosiy tushunchalar), 5 (prinsiplar), 15 (transchegaraviy uzatish), 16 (egasizlantirish), 17 (yo'q qilish), 19 (ishlov berish talablari), 21 (rozilik), 25-26 (maxsus, biometrik va genetik ma'lumotlar), 27 (himoya kafolatlari), 30 (subyekt huquqlari), 31 (mulkdor va operator majburiyatlari), 33 (javobgarlik: faqat 'belgilangan tartibda javobgar' degan umumiy norma). Sahifaning asosiy matni 01.10.2019 holatida ko'rsatiladi; joriy tahrir ro'yxatida 12.09.2026 gacha tahrirlar bor, ularning faqat O'RQ-1125 bilan kiritilgani (27-1 va 20-modda) quyidagi manbadan tekshirilgan"
+  - id: lex-pdp-1125
+    note: "O'RQ-1125 (26.03.2026, 27.03.2026 da e'lon qilingan, e'lon kunidan kuchga kirgan): O'RQ-547 ga o'zgartirishlar. Yangi 27-1 modda: fuqarolarning ma'lumotlari qonun prinsiplariga rioya qilingan holda saqlanadi; biometrik va genetik ma'lumotlar hamda O'zbekistonda faoliyat yurituvchi telekommunikatsiya operatorlari xizmatidan foydalanuvchilar ma'lumotlari O'zbekiston hududida saqlanishi shart; boshqa ma'lumotlar chet elda saqlanishi mumkin, agar uchta shartdan biri bajarilsa (bir xil himoya qiluvchi davlat, tasdiqlangan standart shartnomaviy shartlar yoki majburiy korporativ qoidalar, tasdiqlangan xalqaro standartlar); 20-modda shu bazalar ro'yxatdan o'tkazilishini aytadi"
   - id: lex-cyber
-    note: "O'RQ-764 (15.04.2022) lex.uz'dagi joriy matn, 2026-11-11 da o'qilgan: 3-modda (kiberxavfsizlik hodisasi ta'rifi), 16 (kiberxavfsizlik subyektlarining huquq va majburiyatlari, hodisa haqida vakolatli organni xabardor qilish va raqamli izlarni saqlash), 23-24 (hodisalar bo'yicha choralar va axborotni oshkor qilish), 37 (javobgarlik)"
-  - id: nist-ssdf
-    note: "Umumiy ramka: xavfsiz dasturiy ta'minot yaratish amaliyotlari. Bu dars SSDF'dan aniq amaliyot raqamlarini keltirmaydi (bu qism tekshirilmagan)"
+    note: "O'RQ-764 (15.04.2022) lex.uz'dagi matn, 2026-11-11 da o'qilgan: 3-modda (kiberxavfsizlik hodisasi ta'rifi), 16 (kiberxavfsizlik subyektlarining huquq va majburiyatlari: hodisa va kiberjinoyatlar haqida vakolatli organni xabardor qilish, raqamli izlar yo'qolishiga yo'l qo'ymaslik, tahlil uchun ma'lumotni saqlash), 23 (hodisalar bo'yicha choralar), 24 (hodisa haqidagi axborotni oshkor qilish), 37 (javobgarlik: 'belgilangan tartibda'); sahifa 2022-yil 15-aprel sanasini ko'rsatadi, keyingi tahrir sanasi ko'rsatilmagan"
+  - id: cs-privacy
+    note: "User Privacy Protection Cheat Sheet: foydalanuvchi maxfiyligi uchun texnik choralar: kuchli kriptografiya (uzatishda va saqlashda, parollar hash), HSTS, remote session invalidation (yo'qolgan yoki musodara qilingan qurilma sessiyalarini ko'rish va uzish), uchinchi tomon kontentidan IP manzil sizishining oldini olish, halollik va shaffoflik (huquqiy yoki texnik himoya yetarli bo'lmasa, foydalanuvchiga ochiq aytish)"
 quiz:
   - q: "Platformada haydovchining ismi, telefon raqami va uning boshqargan mashinasining GPS izi saqlanadi. O'RQ-547 4-moddasidagi ta'rifga ko'ra bu 'shaxsga doir ma'lumotlar'mi?"
     options:
-      - "Yo'q: GPS izi mashinaga tegishli, odamga emas"
       - "Ha, agar ma'lumot muayyan jismoniy shaxsga taalluqli bo'lsa yoki uni identifikatsiya qilish imkonini bersa; haydovchiga bog'langan iz shunday bo'lishi mumkin (yuridik baho uchun yurist kerak)"
+      - "Yo'q: GPS izi mashinaga tegishli, odamga emas"
       - "Faqat pasport raqami shaxsga doir ma'lumot"
       - "Faqat qog'ozdagi ma'lumot"
-    answer: 1
+    answer: 0
     explain: "Ta'rif keng: muayyan jismoniy shaxsga taalluqli yoki uni identifikatsiya qilish imkonini beradigan axborot, elektron, qog'oz yoki boshqa moddiy jismda qayd etilgan. Haydovchiga bog'langan GPS izi shu ta'rifga tushishi mumkin. Aniq yuridik xulosa yurist ishi."
   - q: "Foydalanuvchi ma'lumotlarini 'xizmatni ko'rsatish' maqsadida yig'ib, keyin marketing uchun ishlatishga qaror qildingiz. O'RQ-547 19-moddasiga ko'ra nima kerak?"
     options:
       - "Hech narsa, ma'lumot allaqachon sizda"
-      - "Ishlov berish maqsadi o'zgargan taqdirda subyektning o'zgargan maqsadga muvofiq roziligini olish kerak"
       - "Faqat saytga e'lon qo'yish"
+      - "Ishlov berish maqsadi o'zgargan taqdirda subyektning o'zgargan maqsadga muvofiq roziligini olish kerak"
       - "Faqat ma'lumotni shifrlash"
-    answer: 1
+    answer: 2
     explain: "19-modda: maqsad yig'ish chog'ida bildirilgan maqsadlarga mos bo'lishi kerak va maqsad o'zgarsa, o'zgargan maqsad uchun rozilik olinadi. Shifrlash maqsad cheklovini almashtirmaydi."
   - q: "Dasturchi sifatida 'maqsadga muvofiq proyeksiya' (purpose-based projection) qanday ishlaydi?"
     options:
@@ -39,10 +41,10 @@ quiz:
   - q: "O'RQ-547 27-1-moddasi (joriy matn) biometrik ma'lumotlar haqida nimani belgilaydi?"
     options:
       - "Ular istalgan mamlakatda saqlanishi mumkin"
-      - "Jismoniy shaxslarning biometrik va genetik ma'lumotlari O'zbekiston hududida saqlanishi shart (shuningdek telekommunikatsiya operatorlaridagi foydalanuvchi ma'lumotlari)"
-      - "Biometrik ma'lumot yig'ish butunlay taqiqlangan"
       - "Faqat davlat organlari saqlay oladi"
-    answer: 1
+      - "Biometrik ma'lumot yig'ish butunlay taqiqlangan"
+      - "Jismoniy shaxslarning biometrik va genetik ma'lumotlari O'zbekiston hududida saqlanishi shart (shuningdek telekommunikatsiya operatorlaridagi foydalanuvchi ma'lumotlari)"
+    answer: 3
     explain: "Moddaning ikkinchi qismi shu uch toifani O'zbekiston hududida saqlanishi shartligini aytadi. Qolgan ma'lumotlar uchun chet elda saqlash alohida shartlardan biri bajarilganda mumkin. Bu dars yuridik maslahat emas: loyihangizga tatbiq etish uchun yurist kerak."
   - q: "Saqlash muddati tugagan GPS yozuvlarini 'anonimlashtirish' deganda nimani tushunamiz, O'RQ-547 16-moddasi ruhida?"
     options:
@@ -55,10 +57,10 @@ quiz:
   - q: "O'RQ-764 16-moddasiga ko'ra kiberxavfsizlik subyektlari hodisa sodir bo'lganda, boshqa narsalar qatori, nima qilishlari kerak?"
     options:
       - "Hodisa haqida hech kimga bildirmaslik"
-      - "Hodisa va kiberjinoyatlar haqida vakolatli davlat organini xabardor qilish, tegishli raqamli izlar yo'qolishiga yo'l qo'ymaslik va tahlil uchun zarur ma'lumotlar saqlanishini ta'minlash"
       - "Faqat mijozlarga xat yuborish"
+      - "Hodisa va kiberjinoyatlar haqida vakolatli davlat organini xabardor qilish, tegishli raqamli izlar yo'qolishiga yo'l qo'ymaslik va tahlil uchun zarur ma'lumotlar saqlanishini ta'minlash"
       - "Barcha loglarni o'chirish"
-    answer: 1
+    answer: 2
     explain: "16-modda aynan shuni sanaydi: vakolatli organni xabardor qilish, raqamli izlarni saqlash va ma'lumotlarning doimiy saqlanishini ta'minlash. Kompaniyangiz 'kiberxavfsizlik subyekti' ta'rifiga kirishini aniqlash yurist ishi; 93-darsdagi dalilni saqlash tamoyili shu bilan mos."
 task:
   title: "Maqsad bo'yicha proyeksiya: ortiqcha shaxsiy ma'lumotni qaytarmaslik"
@@ -179,7 +181,15 @@ Misol: avtopark platformasi haydovchi yuzini tanish (biometrik ma'lumot bo'lishi
 
 31-moddaga ko'ra mulkdor va operator, boshqa narsalar qatori: qonunchilikka rioya etadi; subyekt murojaati bo'yicha uning ma'lumotlariga ishlov berish haqida axborot beradi; o'z vazifalarini bajarish uchun zarur va yetarli ma'lumotlar tarkibini tasdiqlaydi; ishlov berish maqsadiga erishilganda yoki qonunda belgilangan boshqa hollarda ma'lumotlarni yo'q qilish choralarini ko'radi; zarur hollarda rozilik olinganligi dalilini taqdim etadi; ishonchli hujjatlar bilan tasdiqlansa, ma'lumotlarni o'zgartiradi yoki to'ldiradi, imkoni bo'lmasa yo'q qiladi; ishlov berish shartlari buzilganligi haqida axborot bo'lsa, ishlov berishni vaqtincha to'xtatadi yoki ma'lumotlarni yo'q qiladi. 27-modda mulkdor, operator va uchinchi shaxs ma'lumotlarni himoya qilish bo'yicha huquqiy, tashkiliy va texnik choralar ko'rishini, shu jumladan ma'lumotlarning yaxlitligi, maxfiyligi va qonunga xilof ishlov berilishining oldini olish kafolatlanishini yozadi. Bu aynan CIA triadasi (1-dars) tili.
 
-33-modda qonunchilikni buzganlik uchun belgilangan tartibda javobgarlikni nazarda tutadi; lex.uz sharhi Ma'muriy javobgarlik to'g'risidagi kodeksning 46-2-moddasi va Jinoyat kodeksining 141-2-moddasiga havola beradi (bu darsda ularning mazmuni o'qilmagan).
+33-modda qisqa: qonun hujjatlarini buzishda aybdor shaxslar belgilangan tartibda javobgar bo'ladi. Aniq jazo turi va miqdori bu moddada emas; ular boshqa qonun hujjatlarida (bu darsda o'qilmagan), shuning uchun javobgarlik darajasini yurist aniqlaydi.
+
+### Yo'q qilish, maxsus ma'lumotlar va subyekt huquqlari
+
+17-modda ma'lumotni yo'q qilishni qayta tiklab bo'lmaydigan harakatlar deb ta'riflaydi va yo'q qilish kerak bo'ladigan holatlarni sanaydi: ishlov berish maqsadiga erishilganda, rozilik chaqirib olinganda, rozilik muddati tugaganda va sud qarori qonuniy kuchga kirganda. Dasturchi uchun bu "o'chirish" funksiyasi bazadagi qatorni `deleted_at` bilan belgilashdan ko'proq ekanini bildiradi: zaxira nusxalar, kesh, qidiruv indeksi va log'dagi nusxalar ham ko'rib chiqilishi kerak (saqlash jadvali yurist bilan kelishiladi). Bu 16-moddadan farq qiladi: egasizlantirishda ma'lumot qoladi, lekin muayyan subyektga bog'lanmaydi, yo'q qilishda esa ma'lumot tiklanmaydi. 16-modda statistik, tarixiy, sotsiologik yoki ilmiy tadqiqot uchun ishlatiladigan ma'lumotni egasizlantirishni talab qiladi.
+
+25-modda maxsus shaxsga doir ma'lumotlarni (irqiy yoki ijtimoiy kelib chiqish, siyosiy, diniy va dunyoqarash e'tiqodlari, partiya yoki kasaba uyushmasi a'zoligi, jismoniy yoki ruhiy salomatlik, shaxsiy hayot, sudlanganlik) alohida toifa qilib, ularga ishlov berishni umumiy qoida bo'yicha taqiqlaydi va istisnolarni (masalan yozma rozilik) sanaydi. 26-modda biometrik va genetik ma'lumotni shaxsni identifikatsiya qilish uchun faqat subyektning roziligi bilan qayta ishlashga ruxsat beradi, shartnoma, sud va huquqni muhofaza qilish kabi qonunda nazarda tutilgan istisnolar bundan mustasno. Haydovchining tibbiy ko'rik natijasi yoki yuz bilan identifikatsiya shu toifaga tushishi mumkin; bunday maydonni alohida toifa sifatida tasniflang (bu bizning talqinimiz).
+
+30-modda subyekt huquqlarini sanaydi: o'zi haqida ma'lumot mavjudligini va uning tarkibini bilish; ishlov berish haqida axborot so'rash; vakolatli organga yoki sudga shikoyat qilish; rozilik berish va uni chaqirib olish; ma'lumot ochiq manbalarda e'lon qilinishiga rozilik berish; ma'lumot to'liq emas, eskirgan, noaniq, qonunga xilof olingan yoki kerak bo'lmasa, ishlov berishni vaqtincha to'xtatishni so'rash. Aynan shu ro'yxat "subyekt so'rovi" funksiyalarining texnik talabi: qidirish, eksport, to'xtatish bayrog'i va o'chirish.
 
 ### O'RQ-764: kiberxavfsizlik hodisalari
 
@@ -310,19 +320,23 @@ console.log(storageAllowed("telekom", { country: "UZ" }));
 
 Bu funksiya hukm chiqarmaydi: asos (`basis`) ning haqiqatan mavjudligini, davlat ro'yxatini yoki shartnoma tasdiqlanganini tekshirmaydi. U faqat xato konfiguratsiyani erta (CI yoki deploy vaqtida) ushlaydi.
 
+## Foydalanuvchi himoyasi: cheat sheet nima qo'shadi
+
+Qonun "nima kerak" ni aytadi, User Privacy Protection Cheat Sheet esa foydalanuvchini himoya qiluvchi texnik choralarni beradi. Avtopark platformasi uchun ahamiyatlilari: shaxsiy ma'lumot uzatishda va saqlashda kriptografiya bilan himoyalanadi, parollar kuchli hash bilan saqlanadi (42-dars), HSTS yoqiladi (16-dars). Remote session invalidation haydovchi telefoni yo'qolsa yoki musodara qilinsa, foydalanuvchi o'z faol sessiyalarini ko'rishi va uzishi kerakligini aytadi; bu 93-darsdagi cheklash mexanizmining foydalanuvchiga ochiq shakli (46-dars). Uchinchi tomon kontentidan IP manzil sizishi: ilova tashqi domendan rasm yuklasa, o'sha domen egasi so'rovlardan foydalanuvchi IP manzilini ko'radi; foydalanuvchiga tashqi kontentni bloklash imkonini berish tavsiya qilinadi. Halollik va shaffoflik: ilova ma'lumotni yetarli himoyalay olmasa (masalan loglarning ortiqcha ochiqligi), buni foydalanuvchiga tushunarli tilda aytish kerak.
+
 ## Qachon qo'llamaslik kerak
 
 Hamma maydonni majburan shifrlash yoki hamma ma'lumotni chekka holatgacha cheklash ish jarayonini buzishi mumkin: support xodimi telefon raqamsiz mijozga yordam bera olmaydi. Maqsad yo'qlik emas, mutanosiblik: har maqsad uchun zarur va yetarli ma'lumot.
 
 Anonimlashtirish ba'zan ish uchun mumkin emas: moliyaviy yoki huquqiy talab ma'lum muddat identifikatsiya qilinadigan yozuvni saqlashni talab qilsa, o'chirish qonunga zid bo'lishi mumkin. Bunday ziddiyatlarni dasturchi o'zi hal qilmaydi: yurist va ma'lumotlar mas'uli bilan saqlash jadvali kelishiladi.
 
-Texnik nazorat qonuniy muvofiqlikni kafolatlamaydi. Rozilik matni, huquqiy asos, davlat reyestrida ro'yxatdan o'tish va xabar berish majburiyatlari yurist bilan hal etiladi. Bu darsda qonunning faqat yuqorida keltirilgan moddalari o'qildi; qolgan moddalar (masalan 30-modda: subyektning huquq va majburiyatlari, 17-modda: yo'q qilish) va ularga bog'liq qarorlar o'qilmagan.
+Texnik nazorat qonuniy muvofiqlikni kafolatlamaydi. Rozilik matni, huquqiy asos, davlat reyestrida ro'yxatdan o'tish va xabar berish majburiyatlari yurist bilan hal etiladi. Bu darsda qonunning faqat yuqorida keltirilgan moddalari o'qildi; qolgan moddalar (masalan 6-8 va 22-24 moddalar, vakolatli organ va ma'lumot berish tartiblari), Vazirlar Mahkamasi qarorlari va ularga bog'liq qarorlar o'qilmagan.
 
 Qonunlar o'zgaradi. Bu darsdagi matn 2026-11-11 da lex.uz'dan o'qilgan va unda 2026-yil tahrirlari borligi ko'rindi (masalan, 20-moddaning birinchi qismi O'RQ-1125 (26.03.2026) tahririda). Loyihada qonun matnini hujjat sifatida emas, havola va o'qilgan sana bilan yozing va davriy qayta tekshiring.
 
 ## Stack'da: Prisma, PostgreSQL va NestJS
 
-Maydon tasnifi uchun schema'da izoh yoki alohida metadata jadvali (`column_classification`) ishlatiladi va CI testi yangi ustun tasniflanmaganini topadi. Proyeksiya Prisma'da `select` bilan so'rov darajasida bajariladi (ma'lumot xotiraga ham kelmaydi), NestJS'da esa har maqsad uchun alohida DTO/serializer: serializatsiyada `@Exclude()` faqat belgilangan maydonni olib tashlaydi (default-allow, yangi maydon sizib chiqishi mumkin), `@Expose()` va `@SerializeOptions({ excludeExtraneousValues: true })` esa faqat e'lon qilingan maydonlarni qaytaradi (NestJS serialization hujjatidagi ogohlantirishga ko'ra). Saqlash muddati uchun jadval darajasida `retention` job (cron) va anonimlashtirish SQL'da `UPDATE` bilan (identifikatorlarni NULL qilish). PostgreSQL'da shaxsiy maydonlarni alohida jadvalga ajratib, rol huquqini cheklash va tenant izolyatsiyasi uchun RLS (56-dars) ishlatish mumkin. Quyidagi parcha Prisma `select` yondashuvini ko'rsatadi (ishga tushirilmaydi: Prisma mijozi bazaga ulanishni talab qiladi; sintaksis tekshirilgan):
+Maydon tasnifi uchun schema'da izoh yoki alohida metadata jadvali (`column_classification`) ishlatiladi va CI testi yangi ustun tasniflanmaganini topadi. Proyeksiya Prisma'da `select` bilan so'rov darajasida bajariladi (ma'lumot xotiraga ham kelmaydi), NestJS'da esa har maqsad uchun alohida DTO/serializer: serializatsiyada `@Exclude()` faqat belgilangan maydonni olib tashlaydi (default-allow, yangi maydon sizib chiqishi mumkin). `@SerializeOptions({ type })` bilan javob `type` klassi bo'yicha shakllanadi; NestJS serialization hujjatidagi ogohlantirishga ko'ra `type` klassiga mansub bo'lmagan qiymat oddiy obyekt kabi o'zgartiriladi, o'z klassining `@Exclude()` si e'tiborsiz qoladi, `type` e'lon qilmagan maydonlar esa o'zgarishsiz ko'chadi. Faqat e'lon qilingan maydonlar chiqishi uchun `type` klassining har maydoni `@Expose()` bilan belgilanadi va shu dekoratorga `excludeExtraneousValues: true` qo'shiladi (default-deny). Saqlash muddati uchun jadval darajasida `retention` job (cron) va anonimlashtirish SQL'da `UPDATE` bilan (identifikatorlarni NULL qilish). PostgreSQL'da shaxsiy maydonlarni alohida jadvalga ajratib, rol huquqini cheklash va tenant izolyatsiyasi uchun RLS (56-dars) ishlatish mumkin. Quyidagi parcha Prisma `select` yondashuvini ko'rsatadi (ishga tushirilmaydi: Prisma mijozi bazaga ulanishni talab qiladi; sintaksis tekshirilgan):
 
 ```ts
 import { PrismaClient } from "@prisma/client";

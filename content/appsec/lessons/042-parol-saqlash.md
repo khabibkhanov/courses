@@ -6,7 +6,7 @@ summary: "Parol bazasi sizib chiqqanda hujumchi nima qila olishi, tuz (salt), is
 duration: 45
 sources:
   - id: cs-password
-    note: "Password Storage Cheat Sheet: tavsiya etilgan eng kam parametrlar (Argon2id 19 MiB / 2 iteratsiya / 1 parallelism; scrypt 2^17, r=8, p=1; bcrypt work factor 10 va 72 bayt chegarasi; FIPS talab qilinsa PBKDF2-HMAC-SHA-256 uchun 600 000 iteratsiya) va pepper haqidagi eslatma"
+    note: "Password Storage Cheat Sheet: eng kam parametrlar (Argon2id 19 MiB / t=2 / p=1 va unga teng boshqa kombinatsiyalar; scrypt N=2^17, r=8, p=1; bcrypt work factor 10 va 72 bayt chegarasi; PBKDF2 uchun HMAC-SHA-256 600 000, SHA-512 220 000 iteratsiya), pepper talablari, work factor'ni kirishda yangilash va eski hash'larni yangilash usullari"
   - id: rfc9106
     note: "Argon2 parametrlarini tanlash tartibi: birinchi tavsiya (Argon2id, t=1, p=4, m=2^21 ya'ni 2 GiB) va xotira kam bo'lganda ikkinchi tavsiya (t=3, p=4, m=2^16 ya'ni 64 MiB); salt 128 bit, tag 256 bit"
   - id: nist-63-4
@@ -51,7 +51,7 @@ quiz:
       - "Eski hash'ni to'g'ridan-to'g'ri Argon2id bilan almashtirish, chunki hash'lar mos"
       - "Migratsiya mumkin emas"
     answer: 1
-    explain: "Kirishda parol ochiq holda qisqa vaqt mavjud: shu paytda tekshirib, yangi algoritm bilan qayta hash qilinadi. Faol bo'lmagan akkauntlar uchun eski hash'ni yangi funksiya bilan o'rash mumkin. Majburiy tiklash mumkin, lekin yagona yo'l emas. Hash'larni 'mos' almashtirish mumkin emas."
+    explain: "Kirishda parol ochiq holda qisqa vaqt mavjud: shu paytda tekshirib, yangi algoritm bilan qayta hash qilinadi. Faol bo'lmagan akkauntlar uchun eski hash'ni yangi funksiya bilan o'rash mumkin, lekin bunday qatlamlash hash'ni sindirishni osonlashtirishi mumkin va keyingi kirishda to'g'ridan-to'g'ri hash bilan almashtirilishi kerak. Majburiy tiklash mumkin, lekin yagona yo'l emas. Hash'larni 'mos' almashtirish mumkin emas."
   - q: "OWASP'ga ko'ra pepper (server tomonidagi umumiy maxfiy qiymat) haqida qaysi gap to'g'ri?"
     options:
       - "Pepper tuz o'rnini bosadi"
@@ -407,7 +407,7 @@ Hamma narsa uchun parol hash'i kerak emas. API kalitlari va tasodifiy tokenlar u
 
 ## Stack'da: Node.js, NestJS va PostgreSQL
 
-NestJS'da hash va tekshiruv alohida `PasswordService` ichida bo'lsin: controller va guard'lar bevosita kutubxona chaqirmasin. Bu alohida modulni almashtirishni (Argon2id'ga o'tish, parametr oshirish) bitta joyda qiladi. PostgreSQL'da `password_hash text` ustuni algoritm identifikatori va parametrlari bilan to'liq qatorni saqlasin; alohida `salt` ustuni kerak emas. Parametrlarni sozlashda serveringizdagi parallel kirishlar sonini hisoblang. Event loop'ni bloklamaslik uchun native kutubxona asinxron ishlaydi (worker thread'da), lekin RAM baribir sarflanadi. Hash'ni log, xato xabari va Sentry kabi servislarga yubormaslik uchun login so'rovi body'sini log filtrlariga qo'shing (79-dars). Native kutubxona (`argon2`) Node runtime'ni talab qiladi, shuning uchun parol tekshiruvini Node runtime'dagi route handler'da bajaring (bu muallifning amaliy tavsiyasi, Next.js hujjatidan tekshirilmagan).
+NestJS'da hash va tekshiruv alohida `PasswordService` ichida bo'lsin: controller va guard'lar bevosita kutubxona chaqirmasin. Bu alohida modulni almashtirishni (Argon2id'ga o'tish, parametr oshirish) bitta joyda qiladi. PostgreSQL'da `password_hash text` ustuni algoritm identifikatori va parametrlari bilan to'liq qatorni saqlasin; alohida `salt` ustuni kerak emas. Parametrlarni sozlashda serveringizdagi parallel kirishlar sonini hisoblang. Event loop'ni bloklamaslik uchun asinxron API ishlatilganda hisoblash alohida thread'da bajariladi, lekin RAM baribir sarflanadi. Hash'ni log, xato xabari va Sentry kabi servislarga yubormaslik uchun login so'rovi body'sini log filtrlariga qo'shing (79-dars). Native kutubxona (`argon2`) Node runtime'ni talab qiladi, shuning uchun parol tekshiruvini Node runtime'dagi route handler'da bajaring (bu muallifning amaliy tavsiyasi, Next.js hujjatidan tekshirilmagan).
 
 ## Xulosa
 

@@ -122,7 +122,7 @@ task:
   solutionNotes: |
     - `seq` faqat imzo tekshiruvidan keyin yangilanadi. Aks holda hujumchi noto'g'ri imzoli xabar bilan katta `seq` yuborib, haqiqiy qurilmani to'sib qo'yishi mumkin (DoS).
     - Imzo `seq` va `fuel` ni qamraydi, shuning uchun ularni almashtirish imzoni buzadi (`forged` rad etiladi).
-    - Taqqoslash `===` bilan oddiy satr solishtirish. Real kodda doimiy vaqtli solishtirish (`crypto.subtle.verify` yoki `timingSafeEqual`) ishlatiladi (62-dars); bu o'quv soddalashtirishi.
+    - Taqqoslash `===` bilan oddiy satr solishtirish. Real kodda imzo `crypto.subtle.verify` bilan tekshiriladi yoki Node'da `crypto.timingSafeEqual` ishlatiladi (62-dars); bu o'quv soddalashtirishi.
     - Bu hali egallangan qurilmaning o'z kalitidan foydalanishini va `lastSeq` ni xotirada saqlash bilan qayta ishga tushganda yo'qolishini qoplamaydi: real tizimda u bazada saqlanadi.
   checklist:
     - "Replay (eski seq) rad etiladi"
@@ -142,7 +142,7 @@ Bu darsning vazifasi 4-darsdagi usulni to'liq avtopark platformasiga qo'llash va
 
 ### Jarayon: qadamma-qadam
 
-Threat Modeling Cheat Sheet jarayonni to'rt bosqichga bo'ladi: tizimni modellash (DFD eng keng tarqalgan usul), tahdidlarni aniqlash (STRIDE bilan), javob choralari (mitigate, eliminate, transfer, accept) va ko'rib chiqish hamda tekshirish. Sahifa tahdidlarni ehtimollik va ta'sir ko'paytmasi bo'yicha tartiblashni ham tilga oladi va buning o'zi qiyin bo'lishi mumkinligini aytadi; shuningdek tekshirish bosqichida modelni faqat dasturchilar emas, hamma manfaatdor tomonlar ko'rib chiqishi kerakligini yozadi. Cheat sheet qabul qilingan javoblarni NIST SP 800-218 ning PW.1.2 amaliyotiga havola bilan yangilab turishni tavsiya qiladi (SSDF matni bu sessiyada ochilmagan). Amalda yetti qadamga ajratish qulay (bu kursning ishchi tartibi):
+Threat Modeling Cheat Sheet jarayonni to'rt bosqichga bo'ladi: tizimni modellash (DFD eng keng tarqalgan usul), tahdidlarni aniqlash (STRIDE bilan), javob choralari (mitigate, eliminate, transfer, accept) va ko'rib chiqish hamda tekshirish. Sahifa tahdidlarni ehtimollik va ta'sir ko'paytmasi bo'yicha tartiblashni ham tilga oladi va buning o'zi qiyin bo'lishi mumkinligini aytadi; shuningdek tekshirish bosqichida modelni faqat dasturchilar emas, hamma manfaatdor tomonlar ko'rib chiqishi kerakligini yozadi. Cheat sheet qabul qilingan javoblarni NIST SP 800-218 ning PW.1.2 amaliyotiga havola bilan yangilab turishni tavsiya qiladi. Amalda yetti qadamga ajratish qulay (bu kursning ishchi tartibi):
 
 1. Chegarani belgilang: modelga nima kiradi, nima kirmaydi.
 2. Aktivlarni yozing: nimani himoya qilamiz.
@@ -216,11 +216,19 @@ Ro'yxatdan ikki xulosa chiqadi. Birinchisi, sakkiz tahdiddan uchtasi (T1, T2, T3
 
 Jadvalning oxirgi ustuni - qaror. "Qabul qilish" ham qaror, lekin kim, qachon va nima uchun qabul qilgani yozilishi kerak (masalan, "T8 hozircha qabul qilindi, audit log 79-darsdagi rejaga kiradi"). Nazorat qo'shilgach, uni tekshirish yo'li ham belgilanadi: test, kod ko'rib chiqish yoki ASVS talabiga moslik. "Ishimiz yetarlimi?" savoli ro'yxatning oxirida emas, har tuzatishdan keyin beriladi: tuzatish aynan shu tahdidni qoplaydimi va qanday yangi tahdid yaratdi.
 
+### Replay himoyasining dizayn savollari
+
+Tartib raqami oddiy ko'rinadi, lekin dizayn qarorlari talab qiladi. Birinchisi, raqam imzoga kiradi: aks holda hujumchi eski xabarning raqamini oshirib yuboradi va imzo hamon to'g'ri bo'ladi (mashqdagi `forged` xabar shu holat). Ikkinchisi, holat faqat imzo tekshirilgandan keyin yangilanadi, aks holda noto'g'ri imzoli xabar katta raqam bilan haqiqiy qurilmani o'chirib qo'yadi, ya'ni himoya o'zi DoS vektoriga aylanadi. Uchinchisi, qat'iy o'sish (`seq` oldingisidan katta) sodda, lekin xabarlar navbat yoki tarmoq tufayli tartibsiz kelsa, haqiqiy xabarlar ham rad etiladi. Bunday kanalda kichik "oyna" (masalan, ko'rilgan raqamlar to'plami) yoki xabar vaqti bilan birga tekshirish ishlatiladi, lekin har variant holat va murakkablik qo'shadi: ingest kanalingiz tartib kafolati berishini oldin aniqlang. To'rtinchisi, qurilma qayta ishga tushganda hisoblagich nolga qaytsa, hamma yangi xabar replay deb rad etiladi; hisoblagich doimiy xotirada saqlanishi yoki sessiya boshida yangi qiymat kelishilishi kerak. Beshinchisi, taqqoslash: Node hujjatiga ko'ra `crypto.timingSafeEqual` konstant-vaqtli algoritm bilan baytlarni solishtiradi, HMAC digest'larni solishtirish uchun mos, lekin ikkala qiymat bir xil uzunlikda bo'lishi shart, aks holda xato tashlaydi. Shuning uchun Fastify parchasida uzunlik oldin tekshiriladi va uzunligi boshqacha imzo xato emas, rad etish bo'ladi.
+
+Bu qarorlarning hech biri STRIDE jadvalida yozilmaydi: ular tahdid "replay" deb nomlangandan keyin kelib chiqadigan muhandislik tafsilotlari. Model tahdidni topadi, tafsilotlarni esa nazoratni loyihalash va testlash bosqichi hal qiladi. Mashqdagi to'rt chiqish (`true, false, false, true`) aynan shu qarorlarning eng kichik tekshiruvi: haqiqiy xabar, replay, soxtalashtirilgan xabar va undan keyingi haqiqiy xabar.
+
 ### Model bilan ishlash tartibi
 
 Modelni bitta odam yolg'iz yozsa, u shu odamning bilgan tahdidlari bilan cheklanadi. Seansga kamida uchta rol taklif qiling: tizimni biladigan dasturchi, infratuzilmani biladigan odam va mahsulot egasi (aktivlarning biznes qiymatini u biladi). Dasturchi "bu yerda tekshiruv bor" deganda, uni diagrammadagi aniq oqim va aniq kod joyi bilan tasdiqlang: "bor" degan fikr tekshiruv emas. Seans oxirida har tahdidning egasi (kim tuzatadi) va muddati yozilsin; egasiz tahdid backlog'da yo'qoladi.
 
 Model hujjati kod ombori ichida, matn va diagramma kodi (masalan Markdown va Mermaid) ko'rinishida saqlansa, uni o'zgarish bilan birga review qilish mumkin. Eslatma: bu amaliy tavsiya, rasmiy talab emas.
+
+Seans oxirida Threat Modeling Cheat Sheet'dagi tekshiruv savollarini o'z modelingizga qo'llang. DFD haqiqiy tizimni aks ettiradimi, ya'ni diagrammada bor navbat va webhook kodda ham bormi? Har tahdid uchun javob kelishilganmi? Kamaytirish tanlangan joylarda qolgan risk qabul qilinadigan darajadami? Kelishilgan nazoratni test bilan sinab ko'rish mumkinmi? Oxirgi savolga "yo'q" javobi odatda nazorat noaniq yozilganini bildiradi: uni qayta yozing.
 
 ## Misol: qurilma identifikatoriga ishonadigan ingest
 
@@ -285,7 +293,7 @@ const lastSeq = new Map<string, number>();
 const fuel = new Map<string, number>([["v1", 60], ["v2", 45]]);
 const vehicleOf: Record<string, string> = { "dev-1": "v1", "dev-2": "v2" };
 
-// Server tomoni: tekshirish (crypto.subtle.verify doimiy vaqtda solishtiradi)
+// Server tomoni: tekshirish (imzoni solishtirishni crypto.subtle.verify o'zi bajaradi)
 async function ingest(m: Msg): Promise<string> {
   if (!keys[m.deviceId] || !/^[0-9a-f]{64}$/.test(m.mac)) return "rad: noma'lum qurilma yoki format";
   const ok = await crypto.subtle.verify("HMAC", await importKey(m.deviceId, ["verify"]), unhex(m.mac), payload(m.deviceId, m.seq, m.fuel));
@@ -324,7 +332,7 @@ Invariant: bazaga faqat shu qurilmaning kaliti bilan imzolangan, oldingisidan ya
 
 ## Stack'da: Fastify va PostgreSQL
 
-Ingest gateway Node.js'da Fastify bilan yozilishi mumkin. Imzo tekshiruvi `preHandler` hook'ida bajariladi, va u xom so'rov tanasidan hisoblangan imzoga tayanadi, ya'ni JSON qayta serializatsiya qilinmaydi. Quyidagi kod ishga tushirilmaydi (Fastify va Node `crypto` brauzer worker'ida yo'q) va faqat sintaksis jihatidan to'g'ri:
+Ingest gateway Node.js'da Fastify bilan yozilishi mumkin. Imzo tekshiruvi so'rov qayta ishlanishining boshida (hook yoki handler boshida) bajariladi, va u xom so'rov tanasidan hisoblangan imzoga tayanadi, ya'ni JSON qayta serializatsiya qilinmaydi. Quyidagi kod ishga tushirilmaydi (Fastify va Node `crypto` brauzer worker'ida yo'q) va faqat sintaksis jihatidan to'g'ri:
 
 ```ts
 import Fastify from "fastify";

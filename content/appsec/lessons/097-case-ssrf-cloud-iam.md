@@ -8,17 +8,17 @@ sources:
   - id: occ-capital-one
     note: "OCC news release 2020-101 (2020-08-06): Capital One, N.A. va Capital One Bank (USA), N.A. ga 80 million dollarlik civil money penalty; sabab: public cloud'ga muhim IT operatsiyalarni ko'chirishdan oldin samarali risk baholash jarayonlari o'rnatilmagani va kamchiliklar o'z vaqtida tuzatilmagani; 12 C.F.R. Part 30, Appendix B bilan nomuvofiqlik; OCC mijozlarni xabardor qilish va tuzatish harakatlarini ijobiy hisobga olgan"
   - id: occ-capital-one-order
-    note: "Consent Order (2020-yil 5-avgustda imzolangan, AA-EC-20-51; PDF qisqartirilgan xulosa orqali o'qildi, to'liq matn qo'lda tekshirilmagan): network security, data loss prevention, alertlarni qayta ishlash va internal audit bo'yicha kamchiliklar; bank aybni tan olmaydi va rad etmaydi; matnda SSRF, IAM roli, 2019-yilgi hodisa tafsilotlari yoki ta'sirlangan mijozlar soni qayd etilmagan"
+    note: "Consent Order PDF (OCC vakili 2020-yil 5-avgustda imzolagan, direktorlar kengashi imzolari 30-iyuldan 1-avgustgacha; sarlavhada AA-EC-20-51): II modda Comptroller's Findings - cloud'ga o'tishdan oldin samarali risk baholash jarayonlari o'rnatilmagani; network security, data loss prevention va alertlarni qayta ishlash (dispositioning) bo'yicha risk boshqaruvi yetarli emasligi; internal audit ko'plab nazorat kamchiliklarini aniqlamagani va audit qo'mitasiga samarali yetkazmagani; kengash ayrim internal audit xavotirlari bo'yicha rahbariyatni javobgar qilmagani; bank 'neither admits nor denies'; III modda - civil money penalty; matnda SSRF, IAM, 2019-yilgi hodisa tafsilotlari yoki ta'sirlangan mijozlar soni yo'q"
   - id: cs-ssrf
-    note: "SSRF Prevention Cheat Sheet: SSRF ilovani ichki/tashqi tarmoq yoki mashinaning o'ziga murojaat qilish uchun suiiste'mol qilish vektori; cloud muhitida SSRF ko'pincha metadata xizmatlaridan credential va token olish uchun ishlatiladi; IMDSv2 qo'shimcha defense-in-depth sifatida; deny-list bypass'ga moyil, allowlist afzal; application va network qatlamlarida himoya"
+    note: "SSRF Prevention Cheat Sheet: SSRF ilovani ichki/tashqi tarmoq yoki mashinaning o'ziga murojaat qilish uchun suiiste'mol qilish vektori; SSRF HTTP bilan cheklanmaydi (ikkinchi so'rov boshqa protokol va sxemalarda bo'lishi mumkin); ikki holat: ishonchli ichki ilovalarga so'rov (allowlist) va ixtiyoriy tashqi manzilga so'rov (deny-list so'nggi chora); domen allowlist'i DNS rebinding'ni to'xtatmaydi, ulanish tekshirilgan IP'ga bog'lanishi kerak; redirect'ni o'chirish; IMDSv2 qo'shimcha defense-in-depth (ayrim holatlarni yumshatadi); IPv4-mapped IPv6 normalizatsiya; metadata va private diapazonlar jadvali; application va network qatlamlarida himoya"
 quiz:
   - q: "Bu dars manbalaridan (OCC news release va consent order) kelib chiqib, qaysi gap tasdiqlangan?"
     options:
       - "Hodisa SSRF orqali, IAM rolining ortiqcha huquqi tufayli sodir bo'lgan"
-      - "OCC risk baholash jarayonlari cloud'ga o'tishdan oldin samarali o'rnatilmagani va kamchiliklar o'z vaqtida tuzatilmagani uchun 80 million dollar jarima qo'ygan"
       - "Hodisada ma'lum miqdordagi mijoz ma'lumoti sizgan"
+      - "OCC risk baholash jarayonlari cloud'ga o'tishdan oldin samarali o'rnatilmagani va kamchiliklar o'z vaqtida tuzatilmagani uchun 80 million dollar jarima qo'ygan"
       - "Jarima hodisani yashirgani uchun qo'yilgan"
-    answer: 1
+    answer: 2
     explain: "Release aynan shu sababni yozadi. SSRF, IAM roli va mijozlar soni OCC manbalarida yo'q, shuning uchun ularni bu manbalarga nisbat berib bo'lmaydi. Hodisani yashirish haqida ham gap yo'q: OCC mijozlarni xabardor qilish va tuzatish harakatlarini ijobiy hisobga olgan."
   - q: "Cloud muhitida SSRF nima uchun alohida xavfli?"
     options:
@@ -31,34 +31,34 @@ quiz:
   - q: "Ilova URL'ning hostname satrini '169.254' bilan boshlanishiga tekshiradi. Hujumchi `http://2852039166/` yubordi. Nima bo'ladi?"
     options:
       - "Tekshiruv uni to'xtatadi"
-      - "Hostname normalizatsiyadan keyin `169.254.169.254` bo'ladi; satr tekshiruvi normalizatsiyadan oldin bajarilsa, o'tib ketadi. Tekshirish ajratilgan (parse va resolve qilingan) IP ustida bo'lishi kerak"
-      - "URL noto'g'ri, so'rov bajarilmaydi"
       - "Faqat IPv6 manzillar muammo"
-    answer: 1
+      - "URL noto'g'ri, so'rov bajarilmaydi"
+      - "Hostname normalizatsiyadan keyin `169.254.169.254` bo'ladi; satr tekshiruvi normalizatsiyadan oldin bajarilsa, o'tib ketadi. Tekshirish ajratilgan (parse va resolve qilingan) IP ustida bo'lishi kerak"
+    answer: 3
     explain: "WHATWG URL parser o'nlik shakldagi IPv4 hostni nuqtali shaklga o'tkazadi. Normalizatsiyadan oldingi matn bo'yicha tekshiruv aylanib o'tiladi. Bundan tashqari domen nomi ichki IP'ga resolve bo'lishi mumkin, shuning uchun resolve qilingan IP tekshiriladi."
   - q: "Servis roliga faqat o'z prefiksidagi obyektlarni o'qish huquqi berilgan. SSRF orqali uning credential'lari o'g'irlandi. Least privilege bu holatda nimani beradi?"
     options:
-      - "Hech narsa: credential o'g'irlangan bo'lsa, hammasi ochiq"
       - "Zarar rolning huquqi bilan cheklanadi: hujumchi faqat o'sha prefiksni o'qiy oladi, boshqa tenant ma'lumotiga yetmaydi"
+      - "Hech narsa: credential o'g'irlangan bo'lsa, hammasi ochiq"
       - "Credential'lar avtomatik bekor bo'ladi"
       - "SSRF endi ishlamaydi"
-    answer: 1
+    answer: 0
     explain: "Least privilege SSRF'ni to'xtatmaydi, lekin uning oqibatini (blast radius) kamaytiradi. Bu defense in depth: har qatlam alohida, boshqasi yiqilganda ham zararni cheklaydi."
   - q: "Deny-list: ilova `169.254.169.254` va `localhost` hostname'larini bloklaydi. Nima uchun bu yetarli emas?"
     options:
       - "Yetarli"
-      - "Boshqa shakllar (o'nlik/oltilik IP, ichki IP'ga resolve bo'ladigan domen, redirect) ro'yxatdan chetlab o'tadi; SSRF Cheat Sheet deny-list'ni so'nggi chora deb ataydi va allowlist'ni afzal ko'radi"
       - "Faqat HTTPS'da ishlamaydi"
+      - "Boshqa shakllar (o'nlik/oltilik IP, ichki IP'ga resolve bo'ladigan domen, redirect) ro'yxatdan chetlab o'tadi; SSRF Cheat Sheet deny-list'ni so'nggi chora deb ataydi va allowlist'ni afzal ko'radi"
       - "Deny-list tezlikni sekinlashtiradi, xolos"
-    answer: 1
+    answer: 2
     explain: "Cheat sheet 'deny-lists are bypass-prone, prefer allow-lists' deydi. Ro'yxat ham ishlaydigan bo'lsa, resolve qilingan IP ustida ishlashi, redirect'ni o'chirishi va tarmoq darajasida ham to'sishi kerak."
   - q: "Case study yozayotganda faqat birlamchi manbada tasdiqlanmagan texnik tafsilotni (masalan, aniq hujum zanjirini) darsga kiritish kerakmi?"
     options:
-      - "Ha: hamma biladi, shuning uchun yozish mumkin"
       - "Yo'q: manbada yo'q narsani shu manbaga nisbat bermang; umumiy mexanizmni alohida o'quv modeli sifatida ko'rsating va nima tasdiqlanganini ajrating"
+      - "Ha: hamma biladi, shuning uchun yozish mumkin"
       - "Ha, agar ehtimol bo'lsa"
       - "Faqat sarlavhada yozish mumkin"
-    answer: 1
+    answer: 0
     explain: "Kurs qoidasi: haqiqiy hodisa haqida faqat birlamchi manbada tasdiqlangan narsa yoziladi. Mexanizm sifatida SSRF va rol zanjiri mustaqil o'quv modelida ko'rsatiladi, hodisaning tafsiloti sifatida emas."
 task:
   title: "SSRF himoyasi: resolve qilingan IP bo'yicha tekshiruv"
@@ -140,9 +140,9 @@ Bu darsda ikki xil material bor va ularni aralashtirmaslik muhim. Birinchisi, re
 
 OCC news release 2020-101 (2020-yil 6-avgust) sarlavhasi: OCC Capital One'ga 80 million dollarlik civil money penalty qo'ydi. Release'ga ko'ra OCC Capital One, N.A. va Capital One Bank (USA), N.A. ga qarshi bu choralarni bankning muhim axborot texnologiyalari operatsiyalarini public cloud muhitiga ko'chirishdan oldin samarali risk baholash jarayonlarini o'rnatmagani va kamchiliklarni o'z vaqtida tuzatmagani sababli ko'rgan. OCC bu kamchiliklarni xavfli yoki nosog'lom amaliyot (unsafe or unsound practices) deb baholagan va 12 C.F.R. Part 30, Appendix B ("Interagency Guidelines Establishing Information Security Standards") ga rioya qilinmaganini aytgan. Shuningdek OCC jarimani belgilashda bankning mijozlarni xabardor qilish va tuzatish harakatlarini ijobiy hisobga olgani yozilgan.
 
-Consent order (2020-yil 5-avgustda imzolangan) bankning ayblarni tan olmasligi va rad etmasligini ("neither admits nor denies") qayd etadi. Bu dars order'ni qisqartirilgan xulosa orqali o'qidi, to'liq PDF matnini qo'lda tekshirmadi; shu xulosaga ko'ra order'da quyidagi kamchiliklar sanalgan: ayrim network security nazoratlarining dizayni va joriy qilinishi, data loss prevention, alertlarni qayta ishlash (dispositioning), shuningdek internal audit nazorat kamchiliklarini aniqlamagani va audit qo'mitasiga yetkazmagani. Order'da SSRF, IAM roli, 2019-yilgi hodisaning texnik tafsilotlari yoki ta'sirlangan mijozlar soni qayd etilmagan. Shuning uchun bu darsda hodisaning texnik sababi haqida hech narsa da'vo qilinmaydi.
+Consent order (2020-yil 5-avgustda imzolangan) bankning ayblarni tan olmasligi va rad etmasligini ("neither admits nor denies") qayd etadi. Order II moddasida (Comptroller's Findings) quyidagilar sanalgan: bank cloud'ga o'tishdan oldin samarali risk baholash jarayonlarini o'rnatmagan; cloud muhitida risk boshqaruvi, jumladan network security nazoratlari, data loss prevention nazoratlari va alertlarni qayta ishlash (dispositioning of alerts) yetarli bo'lmagan; internal audit ko'plab nazorat kamchiliklarini aniqlamagan va ularni audit qo'mitasiga samarali yetkazmagan; kengash ayrim internal audit xavotirlari bo'yicha rahbariyatni javobgar qilish uchun samarali choralar ko'rmagan. III modda jarimani belgilaydi. Order'da SSRF, IAM roli, 2019-yilgi hodisaning texnik tafsilotlari yoki ta'sirlangan mijozlar soni qayd etilmagan. Shuning uchun bu darsda hodisaning texnik sababi haqida hech narsa da'vo qilinmaydi.
 
-Dasturchi uchun xulosa: regulyator nuqtai nazaridan asosiy gap bitta zaiflik emas, jarayon: cloud'ga o'tishdan oldin riskni baholash, nazoratlarning dizayni, alertlarning haqiqatan ko'rib chiqilishi va mustaqil auditning kamchiliklarni aniqlashi.
+Dasturchi uchun xulosa: regulyator nuqtai nazaridan asosiy gap bitta zaiflik emas, jarayon: cloud'ga o'tishdan oldin riskni baholash, nazoratlarning dizayni, alertlarning haqiqatan ko'rib chiqilishi va mustaqil auditning kamchiliklarni aniqlashi. Bu to'rt narsani kurs amaliyotlariga bog'lash mumkin (bu bizning talqinimiz, OCC matni emas): cloud'ga o'tishdan oldingi risk baholash threat modeling'ga (4-dars) to'g'ri keladi, alertlarni qayta ishlash incident response va security logging'ga (93 va 79-darslar), mustaqil nazorat esa kodni ko'rish va sinashga (91 va 92-darslar). Shuni ham ta'kidlash kerakki, order jarayon nuqsonlarini sanaydi; hodisaning texnik sababi bu hujjatlarda yo'q.
 
 ### Mexanizm: zanjir va uning bo'g'inlari
 
@@ -163,6 +163,14 @@ Har bo'g'in alohida yopiladi va birining yiqilishi qolganlarini bekor qilmaydi. 
 Cheat sheet allowlist'ni afzal ko'radi: ilova qaysi ichki ilovalarga murojaat qilishi aniq bo'lsa, faqat shularga ruxsat. Ilova ixtiyoriy tashqi URL'ga so'rov yuborishi kerak bo'lsa (masalan, webhook), allowlist ishlamaydi va deny-list so'nggi chora bo'ladi; cheat sheet deny-list'larning bypass'ga moyil ekanini aniq yozadi. Minimal bloklanadigan diapazonlar sifatida metadata manzillari (`169.254.169.254` va AWS uchun IPv6 `fd00:ec2::254`), localhost (`127.0.0.0/8`), RFC1918 xususiy tarmoqlar (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`) va link-local (`169.254.0.0/16`) ko'rsatilgan. Tekshiruv hostname satrida emas, URL parse qilinib resolve qilingan IP ustida bo'lishi, so'rov esa aynan tekshirilgan IP'ga yuborilishi va redirect'lar o'chirilishi kerak (cheat sheet misolidagi oxirgi qadam redirect'ni o'chirishni eslatadi).
 
 URL parser normalizatsiyasi ham tuzoq: WHATWG URL `http://2852039166/` ni `169.254.169.254` hostiga aylantiradi (quyidagi misolda ko'rasiz), shuning uchun satr bo'yicha tekshiruv normalizatsiyadan oldin bajarilsa o'tkazib yuboradi. IPv4-mapped IPv6 shakli esa boshqa ko'rinishga (`[::ffff:a9fe:a9fe]`) keladi; shu sababli IPv6 manzillarni umuman rad etish yoki to'liq ishlashni yozish kerak.
+
+### SSRF'ning ikki holati va qo'shimcha tuzoqlar
+
+SSRF Prevention Cheat Sheet SSRF'ni ikki holatga ajratadi, chunki himoya shunga bog'liq. Birinchi holat: ilova faqat aniq ma'lum va ishonchli ichki ilovalarga so'rov yuboradi. Bunda allowlist ishlaydi: domen yoki IP aniq ro'yxat bilan qat'iy (registrga sezgir) taqqoslanadi. Ikkinchi holat: ilova ixtiyoriy tashqi IP yoki domenga so'rov yuborishi kerak (webhook, rasm manzili). Bunda allowlist mumkin emas va deny-list so'nggi chora bo'ladi; cheat sheet uning ilovada nega qiyin ekanini yozadi: ilova xususiy tarmoq diapazonlari, localhost va IPv4/IPv6 link-local manzillarni kodda aniqlashi kerak, har SDK buni qilmaydi, ichki domen nomlari uchun esa markazlashgan xizmat kerak.
+
+Cheat sheet'ning uchta kamroq esga olinadigan nuqtasi bor. Birinchisi: SSRF faqat HTTP emas. Birinchi so'rov odatda HTTP bo'ladi, lekin ikkinchi so'rovni ilovaning o'zi yuborsa, u boshqa protokol va sxemalarda (FTP, SMB, SMTP, `file://`, `gopher://` va h.k.) bo'lishi mumkin; shuning uchun sxema ham allowlist qilinadi (bizning kodimizda faqat `http:` va `https:`). Ikkinchisi: domen allowlist'i yagona o'zi DNS rebinding'dan himoya qilmaydi. Cheat sheet tekshirishdan keyin ikkinchi, tekshirilmagan DNS so'rovi himoyani chetlab o'tishi mumkinligini aytadi va yechimni beradi: HTTP klient faqat tekshirilgan IP'ga ulanadi, shu bilan birga asl hostname `Host` header'i, TLS SNI va sertifikat tekshiruvi uchun saqlanadi; xuddi shu siyosat qayta urinishlar va fallback ulanishlarga ham qo'llanadi. Uchinchisi: IPv4-mapped IPv6 manzil (`::ffff:169.254.169.254`) o'sha xostga yetadi, shuning uchun manzil diapazonlar bilan solishtirishdan oldin o'zining asl IPv4 shakliga keltiriladi (normalizatsiya).
+
+Cheat sheet qabul qiluvchi tomondan ham himoya g'oyasini beradi: so'rovni qabul qiluvchi ichki ilova tasodifiy token (masalan 20 belgili) yaratadi va chaqiruvchi uni so'rovda yuborishi kerak, endpoint esa faqat POST qabul qiladi. Shunda ilova ichki xizmatga uning "legitimligini isbotlamasdan" murojaat qila olmaydi. Bizning o'quv modelimizdagi `x-metadata-token` sarlavhasi shu g'oyaning soddalashtirilgan ko'rinishi, IMDSv2 ning ham asosida o'xshash fikr bor.
 
 ### Metadata xizmati
 

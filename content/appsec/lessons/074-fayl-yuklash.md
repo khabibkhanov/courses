@@ -6,11 +6,13 @@ summary: "Fayl yuklash nima uchun xavfli: kengaytma va Content-Type'ga ishonish,
 duration: 40
 sources:
   - id: cs-upload
-    note: "File Upload Cheat Sheet: xavfsiz yuklash tamoyillari (ruxsat etilgan kengaytmalar ro'yxati, Content-Type'ga ishonmaslik, ilova yaratgan fayl nomi, nom uzunligi va hajm limiti, avtorizatsiya, alohida server yoki webroot'dan tashqarida saqlash, antivirus yoki sandbox, CDR, CSRF himoyasi); tahdidlar (parser zaifliklari, ZIP/XML bomba, fayl ustiga yozish, client-side faol kontent); kengaytma bypass usullari (qo'sh kengaytma, null bayt, registr); 'no silver bullet' va defense in depth"
+    note: "File Upload Cheat Sheet: xavfsiz yuklash tamoyillari (ruxsat etilgan kengaytmalar ro'yxati, Content-Type'ga ishonmaslik, ilova yaratgan fayl nomi, nom uzunligi va hajm limiti, avtorizatsiya, alohida server yoki webroot'dan tashqarida saqlash, antivirus yoki sandbox, CDR, CSRF himoyasi); tahdidlar (parser zaifliklari, ZIP/XML bomba, fayl ustiga yozish, client-side faol kontent); kengaytma bypass usullari (qo'sh kengaytma, null bayt, registr, muqobil kengaytmalar, NTFS stream); signature tekshiruvi yolg'iz ishlatilmasligi; rasmni qayta kodlash; saqlash joyi ketma-ketligi; arxiv ochilgandan keyingi hajm; 'no silver bullet' va defense in depth"
   - id: t10-a05
-    note: "A05:2025 Injection kategoriyasi: fayl nomi yoki tarkibi interpreter'ga (buyruq, yo'l, so'rov) uzatilsa, fayl yuklash injection yuzasiga aylanadi. Kategoriya nomi tekshirilgan; fayl yuklash haqida aniq da'vo sahifadan olinmagan"
+    note: "A05:2025 Injection kategoriyasi: ishonchsiz ma'lumot interpreter'ga uzatilishi. Sahifada fayl yuklash alohida aytilmagan; fayl nomi va tarkibini ishlovga uzatishni shu mantiqqa bog'lash kurs talqini"
   - id: asvs
-    note: "ASVS 5.0.0 da alohida V5 File Handling bo'limi bor (nom repozitoriydagi fayl nomidan tekshirilgan); aniq talab raqamlari bu darsda keltirilmaydi"
+    note: "ASVS 5.0.0 da alohida V5 File Handling bo'limi bor; dars aniq talab raqamlarini keltirmaydi"
+  - id: nestjs-file-upload
+    note: "NestJS File upload: multer asosidagi interceptor'lar, standart xotira storage'i va limits.fileSize, ParseFilePipe bilan MaxFileSizeValidator va FileTypeValidator (magic number), diskStorage, @fastify/multipart standartlari"
 quiz:
   - q: "Mijoz `report.png` nomi va `Content-Type: image/png` bilan fayl yukladi. Server faqat shu ikkitasini tekshirib, faylni qabul qildi. Nega bu yetarli emas?"
     options:
@@ -27,7 +29,7 @@ quiz:
       - "Hech qanday xavf yo'q, chunki '.png' bor"
       - "SQL injection"
     answer: 1
-    explain: "Qo'sh kengaytma tekshiruvni aldaydi, server esa oxirgi kengaytma (.html) bo'yicha Content-Type beradi. Cheat sheet qo'sh kengaytma va registr manipulyatsiyasini ma'lum bypass sifatida sanaydi. Himoya: nomni ilova o'zi yaratadi."
+    explain: "Qo'sh kengaytma tekshiruvni aldaydi, server (bu misolda) oxirgi kengaytma (.html) bo'yicha Content-Type beradi. Cheat sheet qo'sh kengaytma va registr manipulyatsiyasini ma'lum bypass sifatida sanaydi. Himoya: nomni ilova o'zi yaratadi."
   - q: "Fayl PNG signature (89 50 4E 47 ...) bilan boshlanadi va ichida HTML bor (polyglot). Magic byte tekshiruvidan o'tdi. Qaysi qo'shimcha nazorat ishlaydigan himoya beradi?"
     options:
       - "Yana bir bor kengaytmani tekshirish"
@@ -47,11 +49,11 @@ quiz:
   - q: "Quyidagilardan qaysi biri yuklash endpoint'ining resurs xavfini (mavjudlik) kamaytiradi?"
     options:
       - "Magic byte tekshiruvi"
-      - "Hajm limiti, kiruvchi oqimni o'qishni to'xtatish va arxivlar uchun ochilgandan keyingi hajm chegarasi"
       - "Fayl nomini kichik harfga o'tkazish"
       - "Faqat HTTPS"
-    answer: 1
-    explain: "Cheat sheet ZIP bomba, XML bomba va juda katta fayllarni disk va resurs xavfi sifatida sanaydi va hajm limitini talab qiladi. Magic byte tur haqida, hajm haqida emas. Limit tarkibni to'liq xotiraga o'qishdan oldin qo'llanishi kerak."
+      - "Hajm limiti, kiruvchi oqimni o'qishni to'xtatish va arxivlar uchun ochilgandan keyingi hajm chegarasi"
+    answer: 3
+    explain: "Cheat sheet ZIP bomba, XML bomba va juda katta fayllarni saqlash va mavjudlik xavfi sifatida sanaydi va hajm limitini, arxivlar uchun ochilgandan keyingi hajmni hisobga olishni aytadi. Magic byte tur haqida, hajm haqida emas. Limit tarkibni to'liq xotiraga o'qishdan oldin qo'llanishi kerak."
   - q: "Jamoa `.exe`, `.php`, `.js` kengaytmalarini bloklaydigan blocklist yozdi. Cheat sheet bu yondashuvga nisbatan nima deydi?"
     options:
       - "Blocklist eng ishonchli usul"
@@ -169,7 +171,7 @@ ASVS 5.0.0 da fayl bilan ishlash alohida V5 File Handling bo'limiga ajratilgan; 
 
 ### Nima uchun nom va header'ga ishonib bo'lmaydi
 
-Mijoz yuborgan multipart qismida uchta mustaqil qiymat bor: fayl nomi (`filename=`), qism Content-Type'i va baytlarning o'zi. Server birinchi ikkitasini "yorliq" deb o'qiydi, lekin bu yorliqlar baytlarga bog'liq emas. Hujumchi `image/png` yozib, HTML yuborishi mumkin. Cheat sheet kengaytma tekshiruvidagi uchta ma'lum bypass'ni sanaydi: qo'sh kengaytma (`.jpg.php`, `\.jpg` regex'ini aldaydi), null bayt (`.php%00.jpg`, `.jpg` kesilib `.php` qoladi) va registr (`.pHp`, `.phP`, registrga sezgir blocklist'ni aylanib o'tadi). Cheat sheet tekshiruv fayl nomi dekodlangandan keyin bajarilishini ham ta'kidlaydi.
+Mijoz yuborgan multipart qismida uchta mustaqil qiymat bor: fayl nomi (`filename=`), qism Content-Type'i va baytlarning o'zi. Server birinchi ikkitasini "yorliq" deb o'qiydi, lekin bu yorliqlar baytlarga bog'liq emas. Hujumchi `image/png` yozib, HTML yuborishi mumkin. Cheat sheet kengaytma tekshiruvidagi ma'lum bypass'larni sanaydi: qo'sh kengaytma (`.jpg.php`, `\.jpg` regex'ini aldaydi), null bayt (`.php%00.jpg`, `.jpg` kesilib `.php` qoladi), registr (`.pHp`, `.phP`, registrga sezgir blocklist'ni aylanib o'tadi), konfiguratsiyaga qarab bir xil interpreter'ga bog'lanadigan muqobil kengaytmalar (`.phtml`, `.php5`, `.pht`; `.jspx`, `.aspx`), Windows NTFS Alternate Data Stream (`shell.php::$DATA`; ikki nuqta bor nomni rad etish tavsiya qilinadi) va yaxshi sinalmagan o'zimiz yozgan regex. Tekshiruv fayl nomi dekodlangandan keyin bajarilishi ham ta'kidlanadi.
 
 ## Chuqurroq: qatlamlar
 
@@ -183,19 +185,19 @@ Uch usulning ishonchliligi har xil:
 | Content-Type header | Mijoz | Yo'q; soxtalashtiriladi |
 | File signature (magic bytes) | Fayl tarkibi | O'rta; faqat boshini tekshiradi, polyglot o'tib ketadi |
 
-Cheat sheet'da signature tekshiruvi alohida bo'lim sifatida bor. Uning chegarasi: u faylning boshidagi baytlarni ko'radi. PNG yoki PDF signature bilan boshlanib, ichida brauzer HTML sifatida ham o'qiy oladigan matn bo'lgan fayl (polyglot) shu tekshiruvdan o'tadi. Shuning uchun keyingi qatlam kerak: xavfsiz berish va, imkon bo'lsa, tarkibni qayta kodlash (rasmni qayta rasterlash, PDF'ni tozalash; cheat sheet CDR ni shu uchun tilga oladi).
+Cheat sheet'da signature tekshiruvi alohida bo'lim sifatida bor va u yolg'iz ishlatilmasligi aytilgan, chunki uni aylanib o'tish keng tarqalgan va oson. Uning chegarasi: u faylning boshidagi baytlarni ko'radi. PNG yoki PDF signature bilan boshlanib, ichida brauzer HTML sifatida ham o'qiy oladigan matn bo'lgan fayl (polyglot) shu tekshiruvdan o'tadi. Shuning uchun keyingi qatlam kerak: xavfsiz berish va, imkon bo'lsa, tarkibni qayta kodlash. Cheat sheet rasmlar uchun ruxsat etilgan formatga decode va re-encode qilishni, keraksiz metadata'ni aniq olib tashlashni aytadi; lekin qayta yozish barcha zararli tarkib yo'qolishini kafolatlamaydi va rasm protsessorining o'zi ham ishonchsiz kirish bilan ishlaydi, shuning uchun yangilangan kutubxona, cheklangan formatlar, resurs limitlari va sandbox kerak. PDF, DOCX kabi turlarda CDR tilga olinadi. ZIP fayllar tavsiya etilmaydi, chunki ular har xil turdagi fayllarni olib kirishi mumkin. Ommaviy xizmat esa noqonuniy kontent haqida xabar berish yo'lini ham berishi kerak.
 
 ### Nom va yo'l: path traversal
 
-Mijoz nomini fayl tizimi yo'liga qo'shish (`uploads/${name}`) path traversal'ning klassik manbai: `../../app/config.js` kabi nom saqlash katalogidan chiqib ketadi. Cheat sheet bu tahdidni "mavjud faylni ustiga yozish" sifatida sanaydi va yechim sifatida ilova yaratgan nomni ko'rsatadi. `..` ni qidirib o'chirish ishonchsiz (kodlash variantlari va rekursiv almashtirishlar bor); eng sodda va ishonchli yo'l: mijoz nomini fayl tizimiga umuman bermaslik. Asl nom kerak bo'lsa (yuklab olishda ko'rsatish uchun), uni bazada metadata sifatida uzunligi cheklangan va chiqish paytida kodlangan holda saqlang. Path traversal alohida darsda chuqur ko'riladi (26-dars).
+Mijoz nomini fayl tizimi yo'liga qo'shish (`uploads/${name}`) path traversal'ning klassik manbai: `../../app/config.js` kabi nom saqlash katalogidan chiqib ketadi. Cheat sheet bu tahdidni "mavjud faylni ustiga yozish" sifatida sanaydi va yechim sifatida ilova yaratgan nomni ko'rsatadi. `..` ni qidirib o'chirish ishonchsiz (kodlash variantlari va rekursiv almashtirishlar bor); eng sodda va ishonchli yo'l: mijoz nomini fayl tizimiga umuman bermaslik. Cheat sheet tasodifiy nom (UUID/GUID) ni muhim deb ataydi. Asl nom biznesga kerak bo'lsa (yuklab olishda ko'rsatish uchun), uni bazada metadata sifatida saqlang va quyidagi qoidalarni qo'llang: maksimal uzunlik, ruxsat etilgan belgilar to'plami (harf-raqam, defis, bo'shliq, nuqta), bosh nuqta (yashirin fayl) va ketma-ket nuqtalarni (directory traversal) rad etish, bosh defis yoki bo'shliqni rad etish (shell skriptlarda xavfsizroq ishlash uchun). Windows/NTFS'da uzun nomning 8.3 qisqa alias'i bo'lishi mumkin: faqat uzun nomni tekshiradigan overwrite tekshiruvi alias orqali aylanib o'tilishi mumkin, nomni serverda yaratish bu xavfni yo'qotadi. Path traversal alohida darsda chuqur ko'riladi (26-dars).
 
 ### Saqlash joyi va berish
 
-Saqlash joyini ijro etilmaydigan qiling: webroot'dan tashqarida yoki alohida server/obyekt storage'da; fayl tizimi huquqlari ham minimal (cheat sheet "File Storage Location" va "Filesystem Permissions" bo'limlarini ajratadi). Faylni foydalanuvchiga berishda server o'zi Content-Type'ni belgilaydi (signature'dan chiqarilgan), `X-Content-Type-Options: nosniff` qo'yadi (16-dars) va aralash kontent uchun `Content-Disposition: attachment` ishlatadi. Rasmni sahifada ko'rsatish kerak bo'lsa, ilovaning asosiy originidan emas, alohida domen (origin) dan bering: shunda polyglot ichidagi skript ilova cookie'lari va storage'iga yetmaydi (12-dars). Ommaviy fayllar uchun cheat sheet ID bo'yicha handler (`someid` dan `file.ext`) tavsiya qiladi; bu ham bashorat qilinadigan ID ga qarshi avtorizatsiyani talab qiladi (52-dars).
+Cheat sheet saqlash joylarini xavfsizlik ustuvorligi bo'yicha tartiblaydi: eng yaxshisi boshqa host, keyin webroot'dan tashqarida (faqat ma'muriy kirish), eng oxirgi webroot ichida faqat yozish huquqi bilan (o'qish kerak bo'lsa nazorat shart). Bazada saqlash ham mumkin, lekin performans, zaxira va SQL injection xavfi bilan keladi. Yana bir tahdid: hujumchi `.htaccess` yoki `web.config` kabi server konfiguratsiya faylini yuklashi mumkin; upload katalogida per-directory override'larni o'chirish ikkinchi qatlam. Fayl tizimi huquqlari ham eng kam imtiyoz tamoyilida bo'lsin. Berish qoidalari cheat sheet'da emas, ular 16-dars va umumiy veb xavfsizlik amaliyotidan: faylni foydalanuvchiga berishda server o'zi Content-Type'ni belgilaydi (signature'dan chiqarilgan), `X-Content-Type-Options: nosniff` qo'yadi (16-dars) va aralash kontent uchun `Content-Disposition: attachment` ishlatadi. Rasmni sahifada ko'rsatish kerak bo'lsa, ilovaning asosiy originidan emas, alohida domen (origin) dan bering: shunda polyglot ichidagi skript ilova cookie'lari va storage'iga yetmaydi (12-dars). Ommaviy fayllar uchun cheat sheet ID bo'yicha handler (`someid` dan `file.ext`) tavsiya qiladi; bu ham bashorat qilinadigan ID ga qarshi avtorizatsiyani talab qiladi (52-dars).
 
 ### Hajm, arxivlar va xotira
 
-Hajm limiti ikki joyda bo'lishi kerak. Birinchisi, HTTP so'rov darajasida (reverse proxy yoki framework): limitdan oshganda oqim o'qilishi to'xtatiladi. Ikkinchisi, ishlov bosqichida: ZIP yoki XML ochilgandan keyingi hajm. Cheat sheet "Upload and Download Limits" bo'limini ajratadi. Katta faylni `Buffer` ga to'liq yuklash serverning xotirasini bir so'rov bilan tugatishi mumkin: oqim (stream) bilan to'g'ridan-to'g'ri storage'ga yozing. Bu API4 (resurs iste'moli) ning aniq ko'rinishi.
+Hajm limiti ikki joyda bo'lishi kerak. Birinchisi, HTTP so'rov darajasida (reverse proxy yoki framework): limitdan oshganda oqim o'qilishi to'xtatiladi. Ikkinchisi, ishlov bosqichida: ZIP yoki XML ochilgandan keyingi hajm. Cheat sheet "Upload and Download Limits" bo'limida arxiv ochilgandan keyingi hajmni hisobga olishni va ZIP hajmini xavfsiz usullar bilan hisoblashni aytadi; yuklab olish xizmati uchun ham so'rov limitlari kerak. Katta faylni `Buffer` ga to'liq yuklash serverning xotirasini bir so'rov bilan tugatishi mumkin: oqim (stream) bilan to'g'ridan-to'g'ri storage'ga yozing. Bu API4 (resurs iste'moli) ning aniq ko'rinishi.
 
 ### Ichki tarkib va ishlov
 
@@ -305,7 +307,9 @@ Yopilmagan narsalar: PNG signature bilan boshlanuvchi polyglot o'tib ketadi. Ung
 
 ## Stack'da: NestJS, Fastify va Prisma
 
-NestJS'da `FileInterceptor` ichida multer ishlatiladi; multer opsiyalarida `limits.fileSize` (bayt) va `limits.files` bor, shuningdek storage tanlanadi. Memory storage hajmi katta fayllarda xotirani to'ldiradi, shuning uchun disk yoki to'g'ridan-to'g'ri obyekt storage'ga stream qiling. Fastify'da `@fastify/multipart` limitlar bilan ishlaydi; aniq nomlarni hujjatdan tekshiring (bu darsning manbalarida ular yo'q).
+NestJS fayl yuklashni multer ustida quradi (Express adapteri); Fastify adapterida xuddi shu interceptor'lar `@fastify/multipart` ustida ishlaydi. Xavfsizlik uchun hujjatdan muhim faktlar: multer standart holda xotira storage'idan foydalanadi, ya'ni har yuklangan fayl to'liq `Buffer` sifatida xotiraga o'qiladi, va hujjat ogohlantiradi: Multer standart holda fayl hajmini cheklamaydi, shuning uchun xotirada saqlanganda `limits.fileSize` ni doim qo'ying. Limit oshsa Nest 413 qaytaradi (boshqa limitlar uchun 400) va handler chaqirilmaydi. Hujjat farqni ham aytadi: `MaxFileSizeValidator` butun fayl qabul qilingandan keyin ishlaydi, `limits.fileSize` esa Multer fayl saqlashni limitga yetgan zahoti to'xtatadi. Xotira sarfi fayl hajmiga bog'liq bo'lmasligi uchun `diskStorage()` ishlating; `dest` opsiyasi fayllarni tasodifiy nom bilan yozadi. Diskdagi fayllar handler tugagandan keyin avtomatik o'chirilmaydi, ularni `unlink()` bilan o'zingiz o'chirasiz (hujjatga ko'ra NestJS v12.2 dan boshlab pipe so'rovni rad etsa, saqlangan fayllar xato javobi yuborilgandan keyin o'chiriladi).
+
+Tur uchun `ParseFilePipe` ichida `FileTypeValidator` bor va u standart holda MIME turini fayl tarkibining magic number'idan aniqlaydi (client yuborgan turdan emas), `MaxFileSizeValidator` esa bayt hisobida hajmni tekshiradi. Bu cheat sheet'dagi signature tekshiruviga to'g'ri keladi, shuning uchun u polyglot'ni to'xtatmaydi. `@fastify/multipart` Multer'dan qattiqroq standartga ega: `fileSize` Fastify `bodyLimit` ga (standart 1 MiB) teng, qismlar soni 1000, Multer esa ikkalasini ham cheklamaydi. Fastify'da faqat stream bilan ishlaydigan `FileStreamInterceptor` bor; fayl buferlanmagani uchun `MaxFileSizeValidator` va `FileTypeValidator` magic number tekshiruvi unga qo'llanmaydi, lekin `fileSize` limiti saqlanadi.
 
 ```ts
 import { BadRequestException, Controller, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
@@ -329,7 +333,7 @@ export class PhotosController {
 }
 ```
 
-Bu kod ishga tushirilmaydi (NestJS va multer bu muhitda yo'q), faqat sintaksis tekshirilgan. Tekshiruvlar tartibiga e'tibor bering: avtorizatsiya (mashina egaligi) tur tekshiruvidan oldin yoki u bilan birga bo'lishi kerak, chunki ruxsati yo'q foydalanuvchining fayliga ishlov berish resurs sarflaydi va xabarlar orqali ma'lumot sizdiradi.
+Tekshiruvlar tartibiga e'tibor bering: avtorizatsiya (mashina egaligi) tur tekshiruvidan oldin yoki u bilan birga bo'lishi kerak, chunki ruxsati yo'q foydalanuvchining fayliga ishlov berish resurs sarflaydi va xabarlar orqali ma'lumot sizdiradi.
 
 ## Xulosa
 

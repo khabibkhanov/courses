@@ -8,9 +8,17 @@ sources:
   - id: asvs
     note: "ASVS 5.0.0 (lokal korpus): talablar bo'limlar bo'yicha tuzilgan; daraja (L1, L2, L3) tashkilot riskiga qarab tanlanadi; verifikatsiya hisoboti qamrov, tekshirilgan talablar, istisnolar va hal qilish yo'riqnomasini o'z ichiga oladi (99-dars bilan bir xil bo'lim)"
   - id: nist-ssdf
-    note: "NIST SP 800-218 (SSDF) v1.1: xavfsiz dasturiy ta'minot ishlab chiqish amaliyotlari to'plami; to'rt guruh: tashkilotni tayyorlash, dasturni himoya qilish, himoyalangan dastur ishlab chiqarish, zaifliklarga javob berish. Bu manba lokal korpusda yo'q, shuning uchun faqat umumiy tuzilma keltiriladi va tekshirilmagan deb belgilanadi"
+    note: "NIST SP 800-218 (SSDF) v1.1, nashr sanasi 2022-02-03: abstract'ga ko'ra mavjud SDLC modellari xavfsizlikni yetarli chuqurlikda qamramaydi, shuning uchun istalgan SDLC'ga qo'shiladigan 'yuqori darajadagi xavfsiz ishlab chiqish amaliyotlarining asosiy to'plami' tavsiya etiladi; maqsad: chiqarilgan dasturdagi zaifliklarni kamaytirish, aniqlanmagan zaifliklar ta'sirini cheklash va takrorlanishning ildiz sabablarini bartaraf etish; xaridorlar uchun yetkazib beruvchilar bilan umumiy til beradi. NIST sahifasi amaliyot guruhlarini sanamaydi: dars to'rt guruh nomini umumiy ma'lumot sifatida keltiradi"
   - id: samm
-    note: "OWASP SAMM: yetuklik modeli; beshta biznes funksiya (Governance, Design, Implementation, Verification, Operations) va har funksiya amaliyotlari yetuklik darajalariga ega. Bu manba lokal korpusda yo'q, shuning uchun faqat umumiy tuzilma keltiriladi va tekshirilmagan deb belgilanadi"
+    note: "OWASP SAMM (owaspsamm.org): dasturiy ta'minot xavfsizligi jarayonlarini baholash va yaxshilash uchun yetuklik modeli; darsda beshta biznes funksiya (Governance, Design, Implementation, Verification, Operations) umumiy ma'lumot sifatida keltiriladi. Sayt bu sessiyada o'qilmadi, shuning uchun darsda modelning tafsilotlari (amaliyotlar soni, daraja ta'riflari) berilmaydi"
+  - id: cs-sqli
+    note: "SQL Injection Prevention Cheat Sheet: parametrlanmaydigan tuzilma qismlari (jadval va ustun nomlari, tartib yo'nalishi) uchun foydalanuvchi tanlovini qat'iy allowlist orqali ilovaga tegishli qat'iy qiymatlarga xaritalash; parametr belgilari ma'lumot qiymatini bildiradi, ustun nomi yoki ASC/DESC kalit so'zini emas"
+  - id: cs-logging
+    note: "Logging Cheat Sheet, 'Data to exclude': parollar, access token'lar, sessiya identifikatorlari, ulanish satrlari, kriptografik kalitlar va to'lov kartasi ma'lumotlari logga to'g'ridan-to'g'ri yozilmasligi, olib tashlanishi, maskalanishi, hashlanishi yoki shifrlanishi kerak"
+  - id: cs-html5
+    note: "HTML5 Security Cheat Sheet (CORS): Access-Control-Allow-Origin da faqat tanlangan ishonchli domenlarga ruxsat berish; '*' ishlatmaslik va Origin sarlavhasini tekshirmasdan qaytarmaslik"
+  - id: wstg
+    note: "WSTG-ATHZ-01 (Directory Traversal File Include): fayllar bilan ishlaydigan ilovada yomon loyihalangan kirish validatsiyasi hujumchiga ildiz katalogdan tashqaridagi fayllarga yo'l ochishi"
 quiz:
   - q: "Capstone'da servis to'rtta nuqsonni tuzatgandan keyin barcha probe'lar o'tdi. Keyingi eng to'g'ri qadam qaysi?"
     options:
@@ -27,7 +35,7 @@ quiz:
       - "Placeholder sekin"
       - "Yetarli, muammo yo'q"
     answer: 0
-    explain: "SQL placeholder'lari qiymatlar uchun mo'ljallangan. Ustun nomi, jadval yoki yo'nalish so'rov tuzilishining bir qismi, ularni ruxsat etilgan ro'yxatdan kodning o'zi tanlashi kerak (91-dars)."
+    explain: "SQL placeholder'lari qiymatlar uchun mo'ljallangan. Ustun nomi, jadval yoki yo'nalish so'rov tuzilishining bir qismi, ularni ruxsat etilgan ro'yxatdan kodning o'zi tanlashi kerak (22 va 23-darslar)."
   - q: "Hisobotdagi topilma: 'path traversal, fayl nomi tekshirilmaydi'. Eng ishonchli tuzatish qaysi?"
     options:
       - "Nomdagi `..` ni bo'sh satr bilan almashtirish"
@@ -152,9 +160,17 @@ To'rt topilma bir xil og'irlikda emas va bir xil narxda ham emas. Fayl nomi allo
 
 Capstone servisida autentifikatsiya, sessiya, parol saqlash va ma'lumotlar bazasi bor deb faraz qilinmaydi: ular alohida modullarda ko'rilgan. Hisobotda aynan shuni yozing: bu ish to'rt sinfni qamraydi, qolganlari (masalan, 41-46 va 52-55-darslar mavzulari) boshqa tekshiruvlarga qoldirilgan. Bu 99-darsdagi qoida: tekshirilmagan soha "xavfsiz" degani emas, "ko'rilmagan" degani.
 
+### Har sinfning birlamchi manbasi
+
+To'rt sinfning har biri uchun kursda alohida dars bor va tuzatish naqshi birlamchi manbada ham shunday. Fayl yo'llari: WSTG-ATHZ-01 yomon loyihalangan kirish validatsiyasi hujumchiga ildiz katalogdan tashqaridagi fayllarga yo'l ochishini yozadi (26-dars). SQL identifikatorlari: SQL Injection Prevention Cheat Sheet parametr belgilari ma'lumot qiymatini bildirishini, jadval va ustun nomlari yoki `ASC` va `DESC` kabi kalit so'zlarni emas, shuning uchun tuzilma qismlari qat'iy allowlist orqali ilovaga tegishli qiymatlarga xaritalanishini aytadi (22 va 23-darslar). Log: Logging Cheat Sheet parollar, access token'lar, sessiya identifikatorlari, ulanish satrlari va kalitlarni logga to'g'ridan-to'g'ri yozmaslikni, ularni olib tashlash, maskalash, hashlash yoki shifrlashni talab qiladi (79-dars). CORS: HTML5 Security Cheat Sheet faqat tanlangan ishonchli domenlarga ruxsat berishni, `*` ishlatmaslikni va `Origin` sarlavhasini tekshirmasdan qaytarmaslikni tavsiya qiladi (14-dars). Ya'ni to'rttalasida ham xulosa bir: ruxsat etilganlar ro'yxati kodda turadi, foydalanuvchi esa ro'yxatdan tanlaydi.
+
+### Tuzatishni qanday sinash kerak
+
+Har tuzatish uchun kamida uch xil kirish bilan probe yozing. Birinchisi, odatiy to'g'ri qiymat: u ishlashda davom etishi kerak (regressiya). Ikkinchisi, asl hujum qiymati: u rad etilishi kerak. Uchinchisi, yondosh qiymat: masalan `....//`, `%2e%2e`, `a\..\b` kabi shakl o'zgargan variant yoki ustun nomi o'rniga bo'sh satr. Tuzatilgan koddagi `readReport` va `corsHeaders` misollarida to'g'ri qiymat va hujum qiymati yonma-yon chiqarilgan; yondosh shakllarni probe majmuasiga o'zingiz qo'shasiz. Bunday juft sinov tuzatish "hamma narsani rad etib" ham probe'dan o'tib ketishining oldini oladi: agar tuzatish `q1.csv` ni ham rad etsa, regressiya probe'i yiqiladi.
+
 ### Jarayon doiralari: SSDF va SAMM
 
-Kurs oxirida o'zingizdan so'rang: bitta servis tuzatildi, keyin nima? Bu savol amaliyot darajasidan jarayon darajasiga o'tadi. NIST SSDF xavfsiz dasturiy ta'minot ishlab chiqish amaliyotlarini to'rt guruhga ajratadi: tashkilotni tayyorlash, dasturni himoya qilish, himoyalangan dastur ishlab chiqarish va zaifliklarga javob berish. OWASP SAMM esa beshta biznes funksiya bo'yicha yetuklikni baholaydi: Governance, Design, Implementation, Verification, Operations. Bu ikki manba lokal korpusda tekshirilmagan; faqat umumiy tuzilma keltirilgan. Ularning foydasi qoidada emas, xaritada: ayting, kurs qaysi sohalarni qamraydi (kod ko'rish, sinash, hodisa), qaysilari sizning jamoada yo'q (masalan, rasmiy tahdid modeli yoki dasturchilar o'qitishi), va keyingi chorakda qaysi birini kuchaytirasiz.
+Kurs oxirida o'zingizdan so'rang: bitta servis tuzatildi, keyin nima? Bu savol amaliyot darajasidan jarayon darajasiga o'tadi. NIST SSDF xavfsiz dasturiy ta'minot ishlab chiqish amaliyotlarini to'rt guruhga ajratadi: tashkilotni tayyorlash, dasturni himoya qilish, himoyalangan dastur ishlab chiqarish va zaifliklarga javob berish. OWASP SAMM esa beshta biznes funksiya bo'yicha yetuklikni baholaydi: Governance, Design, Implementation, Verification, Operations. NIST'ning o'z tavsifiga ko'ra SSDF istalgan SDLC'ga qo'shiladigan yuqori darajadagi amaliyotlar to'plami; uning maqsadi chiqarilgan dasturdagi zaifliklarni kamaytirish, aniqlanmaganlarining ta'sirini cheklash va ildiz sabablarni bartaraf etish, hamda xaridor va yetkazib beruvchi uchun umumiy tilni berish. Guruh nomlari va SAMM funksiyalari bu yerda umumiy tuzilma sifatida keltirilgan, ularning tafsiloti darsda berilmaydi. Ularning foydasi qoidada emas, xaritada: ayting, kurs qaysi sohalarni qamraydi (kod ko'rish, sinash, hodisa), qaysilari sizning jamoada yo'q (masalan, rasmiy tahdid modeli yoki dasturchilar o'qitishi), va keyingi chorakda qaysi birini kuchaytirasiz.
 
 ## Misol: zaif servis
 

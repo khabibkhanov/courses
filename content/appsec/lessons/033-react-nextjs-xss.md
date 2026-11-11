@@ -6,11 +6,11 @@ summary: "React avtomatik kodlash nimani qoplaydi va nimani qoplamaydi: dangerou
 duration: 45
 sources:
   - id: cs-xss
-    note: "Umumiy mazmun: framework avtomatik kodlashi va undan chetga chiqadigan 'escape hatch' API'lar xavfi; bo'lim raqamlari keltirilmaydi"
+    note: "Framework xavfsizligi bo'limi: avtomatik kodlash va escape hatch'lar (React'ning dangerouslySetInnerHTML'i, Angular bypassSecurityTrustAs*, Lit unsafeHTML), React 19 javascript: URL'larni src va href'da bloklashi va bu ilovaga xos URL validatsiyasini almashtirmasligi"
   - id: nextjs-data-security
-    note: "Next.js ma'lumot xavfsizligi qo'llanmasi: server va klient chegarasi, Server Action'lar va ma'lumotni klientga uzatishda ehtiyot bo'lish haqida umumiy mazmun"
+    note: "Next.js ma'lumot xavfsizligi qo'llanmasi: Data Access Layer va DTO, Client Component'ga uzatiladigan props'ni cheklash, React taint API (experimental), server-only moduli, Server Action'ga to'g'ridan-to'g'ri POST bilan murojaat mumkinligi"
   - id: nextjs-csp
-    note: "Next.js CSP qo'llanmasi: CSP chuqur himoya qatlami sifatida (batafsil 35-darsda)"
+    note: "Next.js CSP qo'llanmasi: nonce har so'rovda yangi bo'lishi va shu uchun dinamik render talab qilinishi (batafsil 35-darsda)"
 quiz:
   - q: "React komponentida `<p>{comment.text}</p>` yozilgan, `comment.text` = `<img src=x onerror=alert(1)>`. Nima bo'ladi?"
     options:
@@ -36,14 +36,14 @@ quiz:
       - "Chiqishdan oldin ishonchli sanitizer (cheklangan allowlist) bilan tozalash yoki o'tkazgichda xom HTML'ni o'chirish"
     answer: 3
     explain: "Markdown ko'p implementatsiyada xom HTML'ni o'tkazib yuboradi, shuning uchun natija ishonchsiz HTML. Regex-filtr ishonchsiz (31-dars), bazaga yozishdagi escape esa boshqa kontekstlarni buzadi. Allowlist asosidagi sanitizer (34-dars) yoki xom HTML o'chirilgan renderer to'g'ri yo'nalish."
-  - q: "Next.js sahifasida `<a href={user.website}>` yozilgan. Qaysi kiritish xavfli bo'lib qoladi?"
+  - q: "Next.js sahifasida `<a href={user.website}>` yozilgan. OWASP Cheat Sheet React 19 `src` va `href` dagi `javascript:` URL'larni bloklashini aytadi, lekin bu ilovaga xos URL validatsiyasini almashtirmasligini ham qo'shadi. Bu nimani anglatadi?"
     options:
-      - "`https://example.com`"
-      - "`javascript:alert(1)`"
-      - "`/mashinalar/7`"
-      - "`mailto:info@example.com`"
+      - "React 19 dan keyin URL tekshiruvi kerak emas"
+      - "Blok framework versiyasiga va aniq atribut hamda sxemaga bog'liq; qaysi sxema va manzillar ruxsat etilishini ilovaning o'zi allowlist bilan belgilaydi"
+      - "Blok faqat server-renderda ishlaydi"
+      - "`javascript:` xavfli emas, shuning uchun hech narsa kerak emas"
     answer: 1
-    explain: "JSX atribut qiymatini kodlaydi, lekin sxemani tekshirmaydi: javascript: URL'da kodlanadigan belgi yo'q. Sxema allowlist bilan tekshirilishi kerak (32-dars). Boshqa uch qiymat odatiy va xavfsiz."
+    explain: "Framework bloki umumiy tarmoq: u ma'lum atribut va bitta xavfli sxemani ushlaydi. Qaysi sxemalar (masalan faqat http, https, mailto) va qaysi manzillar sizning mahsulotingizga mos ekanini framework bilmaydi, shuning uchun allowlist asosidagi tekshiruv (32-dars) saqlanadi. Bu blok React 19 dan keladi, undan oldingi versiyalarga tayanmang."
   - q: "Server Component foydalanuvchi obyektini (parol hash maydoni bilan) to'liq Client Component'ga props sifatida uzatdi. Bu XSS'ga qanday aloqador?"
     options:
       - "Aloqasi yo'q: props kodlanadi"
@@ -175,13 +175,13 @@ Bu dars shu nuqtalar xaritasi. Qoida ikki yarmidan iborat: framework nimani avto
 
 ## Asosiy g'oya
 
-React DOM matn va atribut qiymatlarini kodlashi framework tuzilishidan keladigan xususiyat: virtual DOM obyektlari, matn alohida, tag alohida. Shuning uchun "ma'lumot va kod chegarasi" (21-dars) bu yerda dizayn bilan saqlanadi. XSS faqat chegara ataylab o'chiriladigan yoki framework ko'rmaydigan joylarda paydo bo'ladi. Eslatma: Next.js haqidagi da'volar lokal hujjat nusxasiga solishtirilgan (klientga uzatiladigan props'ni cheklash, taint API, Server Action'ga to'g'ridan-to'g'ri POST bilan murojaat). React'ning ichki xatti-harakatlari (masalan, `javascript:` URL'lar uchun ogohlantirish yoki bloklash) versiyaga qarab o'zgargan va bu dars ularni kafolat deb qabul qilmaydi; sizning React versiyangiz xatti-harakatini o'zingiz tekshiring.
+React DOM matn va atribut qiymatlarini kodlashi framework tuzilishidan keladigan xususiyat: virtual DOM obyektlari, matn alohida, tag alohida. Shuning uchun "ma'lumot va kod chegarasi" (21-dars) bu yerda dizayn bilan saqlanadi. XSS faqat chegara ataylab o'chiriladigan yoki framework ko'rmaydigan joylarda paydo bo'ladi. Cheat Sheet buni aniq yozadi: zamonaviy framework'lar shablon va avtomatik escape orqali XSS'ni kamaytiradi, lekin dasturchi framework'ning escape hatch'laridan foydalansa muammo qaytadi. Ro'yxatda React'ning sanitizatsiyasiz `dangerouslySetInnerHTML`'i, Angular'ning `bypassSecurityTrustAs*` funksiyalari, Lit'ning `unsafeHTML`'i, Polymer'ning `inner-h-t-m-l` atributi, shablon injection va eskirgan plagin yoki komponentlar bor. Bu dars React va Next.js nuqtalarini oladi, boshqa framework'larda ham g'oya bir xil: avtomatik kodlash faqat standart yo'lni qoplaydi.
 
 Ro'yxat qisqa va yodlanadigan: React/Next.js'da XSS quyidagi eshiklardan kiradi.
 
 1. `dangerouslySetInnerHTML`: nomi ataylab qo'rqituvchi. Sink xom HTML.
 2. Props yoyish: `{...obj}` da `obj` ichidagi kalitlar (jumladan `dangerouslySetInnerHTML`) ham ma'lumot.
-3. URL atributlari: `href`, `src`, `action`, `formAction`. Kodlash sxemani tekshirmaydi.
+3. URL atributlari: `href`, `src`, `action`, `formAction`. Kodlash sxemani tekshirmaydi; React 19 `src` va `href` dagi `javascript:` ni bloklaydi, lekin bu ilovaga xos validatsiyani almashtirmaydi.
 4. `ref` orqali DOM'ga to'g'ridan-to'g'ri yozish: `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`.
 5. Dinamik element turi: `React.createElement(userType, ...)` yoki `const Tag = data.tag; <Tag />`. Tur ham ma'lumot bo'lmasligi kerak.
 6. Uchinchi tomon komponentlari: markdown, boy matn muharriri, "HTML renderer" kutubxonalar ichida xom HTML sink bor.
@@ -196,11 +196,11 @@ Prop ichidagi `__html` qiymati kodlashsiz DOM'ga yoziladi. Xavf `dangerouslySetI
 
 ### Props yoyish
 
-`<div {...attrs}>` da `attrs` tashqi manbadan kelsa (API javobi, URL parametrlaridan tuzilgan obyekt, CMS bloki), hujumchi prop nomini o'zi tanlaydi. React qiymatlarni atribut sifatida kodlaydi, shuning uchun `title` yoki `className` zararsiz. Lekin kalit `dangerouslySetInnerHTML` bo'lsa, qiymati `{__html: "..."}` obyekt va natija xom HTML. Voqea prop'lari (`onClick`) JSON'da funksiya bo'la olmaydi, lekin atribut sifatida satr berilsa, ayrim muhit va kutubxonalarda xavf paydo bo'ladi. Qora ro'yxat yetarli emas, chunki React va brauzer atributlari soni katta (masalan, `srcDoc` iframe uchun, `formAction` tugma uchun). Qoida: ma'lumotdan faqat nomi aniq ro'yxatda bo'lgan prop'lar olinadi (allowlist), qiymat turi va URL sxemasi tekshiriladi.
+`<div {...attrs}>` da `attrs` tashqi manbadan kelsa (API javobi, URL parametrlaridan tuzilgan obyekt, CMS bloki), hujumchi prop nomini o'zi tanlaydi. React qiymatlarni atribut sifatida kodlaydi, shuning uchun `title` yoki `className` zararsiz. Lekin kalit `dangerouslySetInnerHTML` bo'lsa, qiymati `{__html: "..."}` obyekt va natija xom HTML. Voqea prop'lari (`onClick`) JSON'da funksiya bo'la olmaydi va React ularga funksiya kutadi, shuning uchun JSON orqali kelgan satr handler bo'lib ulanmaydi; lekin bu himoya faqat React DOM yo'lida, atributni to'g'ridan-to'g'ri DOM'ga yozadigan kod uchun u yo'q. Qora ro'yxat yetarli emas, chunki kod yoki HTML sifatida talqin qilinadigan prop'lar ko'p (masalan, `srcDoc` iframe uchun, `formAction` tugma uchun). Qoida: ma'lumotdan faqat nomi aniq ro'yxatda bo'lgan prop'lar olinadi (allowlist), qiymat turi va URL sxemasi tekshiriladi.
 
 ### URL atributlari
 
-JSX `href={url}` qiymatni kodlaydi (tirnoqdan chiqib ketmaydi), lekin `javascript:alert(1)` da maxsus belgi yo'q. Brauzer havola bosilganda sxemani bajaradi. Bu bir xil ravishda `<a href>`, `<iframe src>`, `<form action>`, `<button formAction>`, `<object data>` uchun amal qiladi. Himoya: URL'ni parser bilan tahlil qilish va sxemani allowlist bilan tekshirish (32-dars). Next.js'ning `<Link href={...}>` komponenti ham foydalanuvchi bergan qiymatni to'g'ridan-to'g'ri `href` ga olib boradi; uni ham tekshiring. Tashqi havolalarga `rel="noopener noreferrer"` qo'shish alohida masala (`window.opener` va referrer), XSS himoyasi emas.
+JSX `href={url}` qiymatni kodlaydi (tirnoqdan chiqib ketmaydi), lekin `javascript:alert(1)` da maxsus belgi yo'q va brauzer havola bosilganda sxemani bajaradi. Cheat Sheet React 19 `src` va `href` dagi `javascript:` URL'larni bloklashini yozadi, shu bilan birga bu ilovaga xos URL validatsiyasini almashtirmasligini ta'kidlaydi: blok bitta sxemani va ma'lum atributlarni qamraydi, mahsulotingizda qaysi sxema va manzillar ruxsat etilishini u bilmaydi. Versiyangizdagi xatti-harakatni shunga ishonib qoldirmang, tekshiruvni o'zingiz yozing. Bu bir xil ravishda `<a href>`, `<iframe src>`, `<form action>`, `<button formAction>`, `<object data>` uchun amal qiladi. Himoya: URL'ni parser bilan tahlil qilish va sxemani allowlist bilan tekshirish (32-dars). Next.js'ning `<Link href={...}>` komponenti ham foydalanuvchi bergan qiymatni to'g'ridan-to'g'ri `href` ga olib boradi; uni ham tekshiring. Tashqi havolalarga `rel="noopener noreferrer"` qo'shish alohida masala (`window.opener` va referrer), XSS himoyasi emas.
 
 ### ref va to'g'ridan-to'g'ri DOM
 
@@ -210,9 +210,17 @@ Komponent `useEffect` ichida `ref.current.innerHTML = html` yozsa, bu `dangerous
 
 Next.js App Router'da Server Component serverda ishlaydi va natija sifatida HTML hamda klient komponentlari uchun serializatsiya qilingan ma'lumot yuboradi. Client Component'ga uzatilgan props brauzerga yetib boradi, ya'ni sahifa manbasida ko'rinadi. Next.js ma'lumot xavfsizligi qo'llanmasi shu yo'nalishda: klientga faqat kerakli maydonlarni uzating, serverga mansub ma'lumotlarni ajrating. Bu to'g'ridan-to'g'ri XSS emas, lekin ta'siri XSS bilan bog'liq: hujumchi skripti brauzerda sahifada bor hamma narsani o'qiy oladi. Parol hash, ichki identifikatorlar, boshqa tenant belgilari klientga uzatilmagan bo'lsa, XSS orqali ularni olib bo'lmaydi. Server Action'lar ham oddiy HTTP endpoint ekanini unutmang: ularda autentifikatsiya va avtorizatsiya alohida tekshiriladi (58-dars).
 
+### Data Access Layer, DTO va taint
+
+Next.js ma'lumot xavfsizligi qo'llanmasi yangi loyihalar uchun Data Access Layer (DAL) tavsiya qiladi: faqat serverda ishlaydigan, avtorizatsiya tekshiradigan va xavfsiz, minimal Data Transfer Object (DTO) qaytaradigan ichki kutubxona. Sabab shu bilan bog'liq: hujumchi kodi brauzerda sahifa ko'rgan hamma narsani o'qiydi, shuning uchun DTO qancha kichik bo'lsa, XSS bo'lganda ham oqadigan narsa shuncha kam. Qo'llanma komponent ichida to'g'ridan-to'g'ri so'rov yozish (prototiplar uchun) ortiqcha ma'lumotni klientga o'tkazib yuborishni osonlashtirishini ham ko'rsatadi: Server Component bazadan butun qatorni olib, `<Profile user={userData} />` deb Client Component'ga bersa, hamma maydon klientga ketadi. Yaxshi yo'l: Client Component props interfeysini faqat kerakli maydonlar bilan cheklash.
+
+Qo'shimcha to'siqlar bor. React'ning taint API'lari (`experimental_taintObjectReference`, `experimental_taintUniqueValue`) `experimental.taint` sozlamasi bilan yoqiladi va belgilangan ob'yekt yoki qiymatning klientga o'tishiga yo'l qo'ymaydi, lekin qo'llanma buni qo'shimcha qatlam deb ataydi: DAL'da ma'lumotni baribir filtrlash kerak. `server-only` paketini import qilgan modul klient muhitida import qilinsa, build xato beradi. Funksiya va class'lar Client Component'ga standart bo'yicha o'tmaydi. Va muhim farq: standart bo'yicha muhit o'zgaruvchilari faqat serverda mavjud, `NEXT_PUBLIC_` prefiksi esa ularni klientga ochadi, shuning uchun prefiks bilan boshlanadigan o'zgaruvchiga sir qo'yish alohida xato.
+
+Server Action'lar haqida ham aniq gap bor: eksport qilingan Server Action UI orqali emas, to'g'ridan-to'g'ri POST so'rov bilan ham chaqirilishi mumkin. Next.js shifrlangan action ID'lar beradi va ishlatilmagan action'larni klient bundle'idan olib tashlaydi, lekin qo'llanma baribir har action ichida autentifikatsiya va avtorizatsiyani qayta tekshirishni talab qiladi, chunki sahifa darajasidagi tekshiruv uning ichidagi action'ga tarqalmaydi. Bu XSS emas, lekin ta'siri ulashadi: XSS orqali kelgan kod ham oddiy foydalanuvchi sifatida shu action'larni chaqira oladi, shuning uchun action'dagi avtorizatsiya hujum qamrovini cheklaydigan oxirgi to'siq.
+
 ### Content Security Policy
 
-React/Next.js'da CSP ikkinchi qatlam: kodlashdagi bitta unutilgan joyni to'sib qolishi mumkin. Next.js hujjatlari nonce asosidagi CSP'ni tavsiflaydi va u har so'rovda dinamik render talab qiladi (statik optimizatsiya buziladi). Batafsil joriy qilish 35-darsda.
+React/Next.js'da CSP ikkinchi qatlam: kodlashdagi bitta unutilgan joyni to'sib qolishi mumkin. Next.js hujjatlari nonce asosidagi CSP'ni tavsiflaydi: nonce har so'rovda yangi bo'lishi kerak, shuning uchun sahifa dinamik render qilinadi, chunki statik sahifa build vaqtida yaratiladi va u paytda so'rov ham, sarlavha ham yo'q. Batafsil joriy qilish 35-darsda.
 
 ## Misol: Badge komponenti va API'dan kelgan atributlar
 
@@ -369,7 +377,7 @@ function safeHref(url: string): string {
 }
 ```
 
-Amaliy tavsiyalar: `eslint-plugin-react`'ning `react/no-danger` qoidasi `dangerouslySetInnerHTML` ishlatilgan har joyni belgilaydi; `react/jsx-no-script-url` qoidasi `javascript:` URL'larni tutadi (qoidalar mavjudligini o'z loyihangiz konfiguratsiyasida tekshiring). `ref.current.innerHTML` va `insertAdjacentHTML` uchun alohida qidiruv (grep yoki lint) qo'shing. `next.config` va middleware'da CSP sozlash 35-darsda. Server Action va Route Handler'larda kirishni sxema bilan tekshirish (72-dars) hamda har chaqiruvda avtorizatsiya (58-dars) kerak.
+Amaliy tavsiyalar: `eslint-plugin-react`'ning `react/no-danger` qoidasi `dangerouslySetInnerHTML` ishlatilgan har joyni belgilaydi; `react/jsx-no-script-url` qoidasi `javascript:` URL'larni tutadi. `ref.current.innerHTML` va `insertAdjacentHTML` uchun alohida qidiruv (grep yoki lint) qo'shing. CSP'ni Next.js'da sozlash 35-darsda. Server Action va Route Handler'larda kirishni sxema bilan tekshirish (72-dars) hamda har chaqiruvda avtorizatsiya (58-dars) kerak.
 
 ## Xulosa
 

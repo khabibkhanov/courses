@@ -6,9 +6,13 @@ summary: "Frontend proxy va backend so'rov chegarasini turlicha topganda yuzaga 
 duration: 45
 sources:
   - id: rfc9112
-    note: "HTTP/1.1: xabar chegarasini Content-Length va Transfer-Encoding bilan aniqlash, ikkalasi birga kelganda xavfsizlik mulohazalari"
+    note: "HTTP/1.1: 5.1 (nom va ikki nuqta orasidagi bo'shliq: 400), 6.1 (CL va TE birga: server rad etishi mumkin, har holda ulanishni yopishi shart), 6.3 (chunked bilan tugamaydigan TE)"
   - id: rfc9110
-    note: "HTTP Semantics: cache va Vary semantikasi hamda header maydonlarini qayta ishlash qoidalari"
+    note: "HTTP Semantics: header maydonlari va Vary semantikasi (kesh qoidalari RFC 9111 da, bu darsda MDN orqali)"
+  - id: mdn-http-caching
+    note: "MDN HTTP caching: private va shared kesh, Cache-Control: private, Vary va uning narxi (User-Agent), heuristik keshlash, no-store'ning kamchiliklari"
+  - id: node-cli
+    note: "Node.js --insecure-http-parser: yoqilsa parser CL va TE birga kelgan xabarni, noto'g'ri header qiymatlarini va chunked'dan keyingi qo'shimcha kodlashlarni qabul qiladi"
   - id: t10-a02
     note: "A02:2025 Security Misconfiguration: qatlamlararo noto'g'ri sozlama sinfi"
   - id: wstg
@@ -32,7 +36,7 @@ quiz:
     explain: "Parser nomuvofiqligi: proxy uchun smuggled bayt body, backend uchun alohida so'rov. Proxy tekshiruvi faqat u ko'rgan so'rovga tegishli, shuning uchun backend'ga yetgan ikkinchi so'rov tekshiruvdan o'tmaydi."
   - q: "Quyidagilardan qaysi biri smuggling'ga qarshi eng ishonchli tuzatish?"
     options:
-      - "Backend va proxy'ni bir xil kutubxonaga o'tkazmasdan, ikkalasida ham noaniq xabarlarni (CL va TE birga, takrorlangan CL, nom va ikki nuqta orasida bo'shliq) rad etish, hamda imkon bo'lsa proxy va backend orasida HTTP/2 yoki alohida ulanishdan foydalanish"
+      - "Proxy va backend ikkalasida ham noaniq xabarni (CL va TE birga, farqli takroriy CL, nom va ikki nuqta orasida bo'shliq) 400 bilan rad etish va ulanishni yopish; komponentlarni yangilab turish"
       - "Content-Length header'ini loglash"
       - "Faqat WAF qoidasi qo'shish"
       - "Backend'da keep-alive'ni yoqish"
@@ -144,9 +148,11 @@ Dars hujum usullarini real tizimlarga qarshi qo'llash uchun emas; mexanizmni o'q
 
 ### Xabar chegarasi
 
-HTTP/1.1 da bir TCP ulanishida ketma-ket ko'p so'rov o'tishi mumkin. Parser har so'rovning body uzunligini ikki usuldan biri bilan biladi: `Content-Length` (aniq bayt soni) yoki `Transfer-Encoding: chunked` (bo'laklar ketma-ketligi, `0` bo'lagi bilan tugaydi). RFC 9112 ikkalasi birga kelganda xavfsizlik xavfini alohida ta'kidlaydi va bunday xabarni xato deb qarashni, kamida jo'natuvchining `Content-Length`ni olib tashlashini talab qiladi. Amalda eski yoki nostandart komponentlar bu qoidani turlicha qo'llaydi. Frontend `Content-Length`ni, backend `Transfer-Encoding`ni tanlasa, hammasi birga chegarani turli joyda ko'radi.
+HTTP/1.1 da bir TCP ulanishida ketma-ket ko'p so'rov o'tishi mumkin. Parser har so'rovning body uzunligini ikki usuldan biri bilan biladi: `Content-Length` (aniq bayt soni) yoki `Transfer-Encoding: chunked` (bo'laklar ketma-ketligi, `0` bo'lagi bilan tugaydi). RFC 9112 (6.1-bo'lim) ikkalasi birga kelganda xavfsizlik xavfini alohida ta'kidlaydi: server bunday so'rovni rad etishi (`MAY`) yoki faqat `Transfer-Encoding` bo'yicha qayta ishlashi mumkin, lekin har holda javob bergach ulanishni yopishi shart (`MUST`). Ya'ni standart rad etishni ixtiyoriy qoldiradi, ulanishni yopishni esa majburiy qiladi. Shu sababli "ulanishni yopish" qadami muhim: u bo'lmasa, o'qilmay qolgan baytlar keyingi so'rov sifatida talqin qilinadi. Amalda eski yoki nostandart komponentlar bu qoidani turlicha qo'llaydi. Frontend `Content-Length`ni, backend `Transfer-Encoding`ni tanlasa, hammasi birga chegarani turli joyda ko'radi.
 
-WSTG ikki klassik variantni sanaydi: **CL.TE** (frontend Content-Length, backend Transfer-Encoding) va **TE.CL** (aksincha). Zamonaviy arxitekturalarda qo'shimcha vektorlar ham bor: HTTP/2 dan HTTP/1.1 ga tarjima (downgrade), H2C upgrade, header normalizatsiyasi farqlari va ulanishlarni protokol chegarasi orqali qayta ishlatish. Qo'shimcha holat: nom va ikki nuqta orasidagi bo'shliq (`Transfer-Encoding : chunked`) kabi buzilgan header'ni bir parser tan oladi, boshqasi e'tiborsiz qoldiradi; RFC 9112 bunday xabarni 400 bilan rad etishni talab qiladi (11-dars).
+WSTG ikki klassik variantni sanaydi: **CL.TE** (frontend Content-Length, backend Transfer-Encoding) va **TE.CL** (aksincha). Zamonaviy arxitekturalarda qo'shimcha vektorlar ham bor: HTTP/2 dan HTTP/1.1 ga tarjima (downgrade), H2C upgrade, header normalizatsiyasi farqlari va ulanishlarni protokol chegarasi orqali qayta ishlatish. Qo'shimcha holat: nom va ikki nuqta orasidagi bo'shliq (`Transfer-Encoding : chunked`) kabi buzilgan header'ni bir parser tan oladi, boshqasi e'tiborsiz qoldiradi; RFC 9112 (5.1-bo'lim) bunday xabarni 400 bilan rad etishni talab qiladi (11-dars). `Transfer-Encoding` qiymati tanilmasa, server 501 bilan javob berishi kerak (`SHOULD`), `chunked` bilan tugamaydigan so'rov body'si esa 400 oladi (6.3-bo'lim), chunki uzunlikni aniqlab bo'lmaydi.
+
+MDN yana ikki amaliy fakt beradi. `Transfer-Encoding` hop-by-hop header: ko'p tugunli ulanishning har bir qismi o'z qiymatini ishlatishi mumkin, shu sababli frontend va backend orasida u turlicha bo'lishi tabiiy. HTTP/2 esa bu header'ni butunlay taqiqlaydi, shuning uchun HTTP/2 dan HTTP/1.1 ga tarjima paytida proxy uni qayta yasamasligi yoki tashqaridan kelganini o'tkazib yubormasligi kerak. WSTG ham HTTP/2 downgrade o'zi zaiflik emasligini, xavf tarjima mantig'i RFC kutganidan chetga chiqqanda paydo bo'lishini yozadi.
 
 ### Nega bu og'ir
 
@@ -221,7 +227,7 @@ Frontend bitta so'rov ko'rdi va `/admin` ACL'idan o'tkazdi; backend ikkita so'ro
 
 ### Cache kaliti
 
-Umumiy (shared) cache javobni "kalit" bo'yicha saqlaydi; odatda kalit metod va URL (host va yo'l) dan iborat. Javob so'rovdagi boshqa header'ga bog'liq bo'lsa, server `Vary` bilan bu header'ni kalitga qo'shishni buyuradi (MDN Caching: `Vary: Accept-Language` misolida, til bo'yicha alohida nusxa saqlanadi). Muammo: javobga ta'sir qiladi, lekin kalitga kirmaydi, ya'ni **unkeyed** kiritma. Tipik misol: ilova havolani `X-Forwarded-Host` dan quradi (11-dars xatosi). Quyidagi blok shuni ko'rsatadi.
+Umumiy (shared) cache javobni "kalit" bo'yicha saqlaydi; odatda kalit metod va URL (host va yo'l) dan iborat. Javob so'rovdagi boshqa header'ga bog'liq bo'lsa, server `Vary` bilan bu header'ni kalitga qo'shishni buyuradi (MDN HTTP caching: `Vary: Accept-Language` misolida, til bo'yicha alohida nusxa saqlanadi). Muammo: javobga ta'sir qiladi, lekin kalitga kirmaydi, ya'ni **unkeyed** kiritma. Tipik misol: ilova havolani `X-Forwarded-Host` dan quradi (11-dars xatosi). Quyidagi blok shuni ko'rsatadi.
 
 ```ts run
 type Req = { path: string; headers: Record<string, string> };
@@ -272,7 +278,8 @@ Zaif variantda hujumchi bitta so'rov bilan zararli javobni cache'ga joyladi, qur
 1. **Javobni unkeyed kiritmaga bog'lamang.** Eng yaxshi yo'l: bazaviy URL kabi qiymatlar konfiguratsiyadan olinadi, so'rov header'idan emas.
 2. **Bog'liqlik zarur bo'lsa, uni kalitga qo'shing**: `Vary` yoki CDN'ning kalit sozlamasi bilan. MDN ogohlantiradi: `Vary: User-Agent` kabi juda xilma-xil qiymat kesh samaradorligini yo'q qiladi.
 3. **Shaxsiy kontentni umumiy cache'dan ajrating.** MDN: cookie bilan shaxsiy kontentni qayta ishlatishdan saqlanish uchun Vary'da cookie emas, `Cache-Control: private` ishlating. Autentifikatsiyalangan javoblarga `private` yoki `no-store` qo'ying.
-4. **Cache-Control ni aniq yozing.** Dinamik, foydalanuvchiga xos javobga aniq direktiva bermasangiz, ba'zi CDN uni heuristik keshlashi mumkin.
+4. **Cache-Control ni aniq yozing.** MDN: `Cache-Control` bo'lmasa ham javob saqlanib qayta ishlatilishi mumkin (heuristik keshlash, masalan, `Last-Modified` asosida taxmin qilingan muddat), va deyarli hamma javobga `Cache-Control` ni aniq yozish kerak. `private` shaxsiy javobni faqat brauzer keshida saqlashga ruxsat beradi, shared keshda emas. Faqat cookie borligi javobni shaxsiy qilmaydi: ilova nima shaxsiy ekanini o'zi bildirishi kerak.
+5. **`no-store` ni ehtiyotkor ishlating.** U javob saqlanishini to'sadi, lekin shu URL uchun allaqachon saqlangan eski javobni o'chirmaydi. Uni hamma joyga qo'yish brauzerning back/forward cache kabi imkoniyatlarini ham yo'qotadi; MDN umumiy holda `no-cache` ni `private` bilan birga ishlatishni tavsiya qiladi.
 
 ### Smuggling'dan himoya
 
@@ -497,12 +504,12 @@ Yopilmagani. Birinchidan, bu faqat CL va TE birga kelgan holat va modeldagi head
 
 ## Stack'da: Node.js, Fastify va reverse proxy
 
-Node.js HTTP parserining noaniq xabarlarga munosabati versiyaga bog'liq (bu darsda tekshirilmagan), shuning uchun Node.js ni yangilab turing va changelog'dagi HTTP parser tuzatishlarini kuzating. Ilova darajasida: `trustProxy` ni to'g'ri sozlang (11-dars), javobga `Cache-Control` va `Vary` ni aniq yozing, va bazaviy URL'ni konfiguratsiyadan oling. Quyidagi kod ishga tushirilmaydi (server kerak), sintaksis jihatidan to'g'ri TypeScript.
+Node.js hujjatiga ko'ra `insecureHTTPParser` standart `false`, ya'ni qat'iy parser yoqilgan. `--insecure-http-parser` (yoki server/mijoz opsiyasi) uni bo'shatadi: parser `Transfer-Encoding` va `Content-Length` birga kelgan xabarni, noto'g'ri header qiymatlarini, `chunked` dan keyingi qo'shimcha kodlashlarni va `\r\n` o'rniga `\n` ajratgichni ham qabul qiladi. Hujjat o'zi "ishlatmaslik kerak" deydi; eski qurilmalar uchun kerak bo'lsa ham, uni faqat alohida, proxy orqasidagi izolyatsiyalangan servisda yoqing va Node.js ni yangilab turing. Ilova darajasida: `trustProxy` ni to'g'ri sozlang (11-dars), javobga `Cache-Control` va `Vary` ni aniq yozing, va bazaviy URL'ni konfiguratsiyadan oling. Quyidagi kod ishga tushirilmaydi (server kerak), sintaksis jihatidan to'g'ri TypeScript.
 
 ```ts
 import Fastify from "fastify";
 
-const app = Fastify({ trustProxy: 1 });
+const app = Fastify({ trustProxy: "10.0.0.0/8" }); // proxy manzillari oralig'i (11-dars)
 
 // Shaxsiy javoblar umumiy cache'ga tushmasin
 app.addHook("onSend", async (req, reply) => {

@@ -8,7 +8,7 @@ sources:
   - id: t10-a05
     note: "A05 Injection: OS command injection oilaga kiradi; sahifadagi uchinchi stsenariy buyruq satriga qo'shilgan domen orqali ixtiyoriy buyruq bajarilishini ko'rsatadi"
   - id: node-security
-    note: "Node child_process hujjati (mahalliy korpusdan): exec shell ishga tushiradi, execFile va spawn default shell'siz, shell opsiyasi bilan ishonchsiz kiritishni uzatmaslik ogohlantirishi; Node Security Best Practices umumiy manba"
+    note: "Node child_process hujjati va deprecations (DEP0190): exec shell ishga tushiradi va ishonchsiz kiritishni bermaslik ogohlantirishi, execFile va spawn default shell'siz, shell bilan args massivi escape qilinmay probel bilan ulanadi; timeout default 0, maxBuffer default 1 MiB, Windows'da .bat/.cmd. Node Security Best Practices umumiy manba"
   - id: cs-input
     note: "Input Validation Cheat Sheet: ijobiy (allow-list) validatsiya va rad etish g'oyasi"
   - id: asvs
@@ -146,7 +146,7 @@ Node.js `child_process` API'lari ikki guruhga bo'linadi:
 | `spawn`, `spawnSync` | Default yo'q (`shell: false`) | Massiv | Past; `shell: true` bilan yuqori |
 | `fork` | Yo'q | Massiv (Node skript) | Past; argumentlar skriptga boradi |
 
-Bu jadval Node `child_process` hujjatiga mos: `exec` shell ishga tushiradi va hujjat unga ishonchsiz kiritishni hech qachon bermaslikni aytadi; `execFile` va `spawn` default holda shell'siz. Hujjatda `shell` opsiyasi bilan `args` uzatish eskirgan (deprecated) deb belgilangan, `shell` opsiyasi tavsiya etilmaydi (DEP0190).
+Bu jadval Node `child_process` hujjatiga mos: `exec` shell ishga tushiradi va hujjat unga ishonchsiz kiritishni hech qachon bermaslikni, shell metabelgilari ixtiyoriy buyruq bajartirishi mumkinligini aytadi; `execFile` va `spawn` default holda shell'siz. `fork` ham `shell` opsiyasini qo'llamaydi: u berilsa e'tiborga olinmaydi.
 
 ### Himoya ierarxiyasi
 
@@ -162,7 +162,7 @@ ASVS 5.0.0 ning 1.2.5 talabi (Level 1) ham shuni so'raydi: ilova OS command inje
 
 ### `shell: true` yashirin shell
 
-`spawn(cmd, args, { shell: true })` shell orqali ishlaydi, shuning uchun massiv ko'rinishi himoya qilmaydi. Node'da `shell` opsiyasi hujjatlangan; uni `true` qilish uchun yagona asos chindan shell xususiyatlari (pipe, glob) kerak bo'lishi, bunday hollarda esa har qiymat allow-list orqali o'tishi kerak. Oddiy qoida: `shell: true` ni code review'da to'xtatuvchi belgi deb qarang.
+`spawn(cmd, args, { shell: true })` shell orqali ishlaydi, shuning uchun massiv ko'rinishi himoya qilmaydi. Node deprecation ro'yxatidagi DEP0190 aynan shu holatni tasvirlaydi: `execFile` yoki `spawn` ga `args` massivi `{ shell: true }` (yoki shell yo'li) bilan berilsa, qiymatlar escape qilinmaydi, faqat probel bilan ulanadi va bu shell injection'ga olib kelishi mumkin. Node 24.0.0 dan bu runtime deprecation, ya'ni kod ishga tushganda ogohlantirish chiqadi. Node'da `shell` opsiyasi hujjatlangan; uni `true` qilish uchun yagona asos chindan shell xususiyatlari (pipe, glob) kerak bo'lishi, bunday hollarda esa har qiymat allow-list orqali o'tishi kerak. Oddiy qoida: `shell: true` ni code review'da to'xtatuvchi belgi deb qarang.
 
 ### Argument injection
 
@@ -178,7 +178,11 @@ Foydalanuvchi muhit o'zgaruvchisini (`PATH`, `NODE_OPTIONS`, `LD_PRELOAD` kabi) 
 
 ### Windows
 
-Windows'da `.cmd` va `.bat` fayllar `cmd.exe` orqali ishlaydi va qo'shtirnoq qoidalari Unix'dan farq qiladi. Bu qismning aniq tafsilotlari bu darsda tekshirilmagan: Windows uchun ishlab chiqilgan kod bo'lsa, Node `child_process` hujjatidagi tegishli bo'limni o'qing.
+Node hujjati "execFile shell'siz ishlaydi" qoidasi Windows'da o'zgarishini alohida yozadi: `.bat` va `.cmd` fayllar terminalsiz bajarilmaydi, shuning uchun ularni `execFile` bilan ishga tushirib bo'lmaydi. Ular `exec` bilan, `cmd.exe /c` ni to'g'ridan-to'g'ri `spawn` qilish bilan yoki `spawn` ga `shell` opsiyasini berish bilan ishga tushiriladi (oxirgisi DEP0190 sababli tavsiya etilmaydi). Ya'ni Windows'da skript chaqirish shell'ga tushib qolishi mumkin va allow-list talabi kuchayadi: bunday chaqiruvga foydalanuvchi qiymatini hech qachon bermang, skript nomi va argumentlari kodda qat'iy bo'lsin.
+
+### Jarayonga resurs chegarasi
+
+Hujjatga ko'ra `exec` va `execFile` uchun `timeout` default qiymati `0`, ya'ni chegara yo'q: `timeout` berilmasa osilib qolgan bolaga hech narsa tegmaydi. `timeout` noldan katta bo'lsa, ota jarayon vaqt tugagach `killSignal` (default `SIGTERM`) yuboradi. `maxBuffer` default 1 MiB: stdout yoki stderr undan oshsa bola jarayon to'xtatiladi va chiqish qirqiladi. Bu ikki sozlamani ochiq yozing, aks holda bitta og'ir so'rov (masalan, katta klipni arxivlash) mavjudlikni buzadi (rate limit va resurs chegaralari 73-darsda). `spawn` bilan ishlaganda stdout oqimini o'qimasangiz, hujjatga ko'ra quvur (pipe) to'lib, bola jarayon blokirovka bo'ladi; chiqish kerak bo'lmasa `{ stdio: 'ignore' }` ishlating. Yana bir nozik joy: `env` berilganda dastur nomi shu `env.PATH` bo'yicha qidiriladi, `env` PATH'siz berilsa Unix'da default qidiruv yo'li (`/usr/bin:/bin`) ishlatiladi. Shuning uchun mutlaq yo'l ham, `env` ham aniq berilgani ma'qul. `uid` opsiyasi bola jarayon foydalanuvchi identifikatorini o'zgartirish imkonini beradi: jarayon Node ilovasidan kamroq huquq bilan ishlaydi.
 
 ### Ma'lumotni argument o'rniga stdin orqali
 

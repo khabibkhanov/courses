@@ -6,7 +6,7 @@ summary: "Artefakt qayerdan va qanday yig'ilgani isbotlanadigan bo'lishi: proven
 duration: 45
 sources:
   - id: slsa
-    note: "SLSA spetsifikatsiyasi (lokal korpusdagi nusxa Working Draft; unda Build L0-L4 va Source Track): provenance ta'rifi, build track darajalari. Rasmiy v1.1 matni korpusda yo'q, shuning uchun daraja tuzilmasi draftdan olingan"
+    note: "SLSA v1.1 (slsa.dev/spec/v1.1/levels): Build track L0-L3 (L1 provenance mavjud, L2 hosted platforma va imzolangan provenance, L3 mustahkamlangan build) va har darajaning himoya doirasi; v1.1 da L4 yo'q. Provenance terminologiyasi korpusdagi SLSA matniga mos"
   - id: npm-provenance
     note: "npm provenance mavzusi; aniq buyruq matni korpusda yo'q. Verified: npm audit signatures provenance attestation'larni ham tekshiradi (npm-audit hujjati) va trusted publishing provenance'ni avtomatik yaratadi (OWASP NPM cheat sheet)"
   - id: t10-a03
@@ -60,9 +60,9 @@ quiz:
     options:
       - "Eng yuqori darajani birdaniga talab qilish"
       - "Darajani jamoa tushunmagan holda ham e'lon qilish"
-      - "Hozirgi holatni aniqlash, bir daraja yuqorisi uchun aniq nazoratni (masalan, imzolangan provenance) kiritish va siyosatni deploy'da tekshirish"
       - "Darajalarni e'tiborsiz qoldirish"
-    answer: 2
+      - "Hozirgi holatni aniqlash, bir daraja yuqorisi uchun aniq nazoratni (masalan, imzolangan provenance) kiritish va siyosatni deploy'da tekshirish"
+    answer: 3
     explain: "Daraja maqsad emas, yo'l xaritasi: har qadam aniq tekshiriladigan nazorat bilan. Deploy'da tekshirilmagan provenance esa bezak."
 task:
   title: "SBOM'dan zaiflik ta'siri: tranzitiv bog'liqlik yo'li"
@@ -152,7 +152,7 @@ Ko'p jamoada bu savollarga javob "bilmaymiz, ammo ehtimol shundaydir" bo'ladi. A
 
 OWASP Top 10:2025 ning A03 Software Supply Chain Failures kategoriyasi aynan shu yaxlit tasvirni talab qiladi: gap faqat bog'liqlik ro'yxatida emas, zanjirning har bir bo'g'inini tekshirishda. Bu darsda uch vositani ko'ramiz: provenance (artefaktning kelib chiqishi), SBOM (tarkib inventari) va SLSA (shu kafolatlarni darajalarga ajratuvchi framework).
 
-Eslatma: lokal korpusdagi SLSA nusxasi Working Draft (v1.1 dan keyingi qoralama). Unda Build track L0 dan L4 gacha, hamda v1.2 dan boshlab Source track bor; kurs manbalari ro'yxatidagi v1.1 ning o'z matni korpusda yo'q. Shuning uchun daraja jadvalini draft asosida beramiz va v1.1 bilan farqi mumkinligini ochiq aytamiz.
+Bu darsda SLSA v1.1 ga tayanamiz: unda faqat Build track bor, darajalari L0 dan L3 gacha. Keyingi versiya (v1.2) Source track qo'shgan; ushbu dars uni qamramaydi.
 
 ## Asosiy g'oya
 
@@ -177,17 +177,16 @@ SBOM ikkita narsani bermaydi. Birinchi, u komponent xavfsiz ekanini aytmaydi: fa
 
 SLSA (Supply-chain Levels for Software Artifacts) o'zini supply chain xavfsizligini bosqichma-bosqich yaxshilash uchun spetsifikatsiya deb ta'riflaydi; u o'sib boruvchi kafolatlarni darajalar bilan tasvirlaydi. SLSA'da provenance deganda artefaktni murakkab zanjir orqali manbagacha kuzatish mumkin bo'lgan tekshiriladigan ma'lumot tushuniladi: u qayerda, qachon va qanday ishlab chiqarilganini tasvirlaydi. Build provenance build natijasini uni hosil qilgan manba kodga bog'laydi.
 
-Draftdagi Build track jadvali:
+SLSA v1.1 Build track jadvali:
 
 | Daraja | Talab | Nimaga qarshi |
 |---|---|---|
 | Build L0 | yo'q | yo'q |
-| Build L1 | build qanday bajarilgani haqida provenance mavjud | xatolar, hujjatlashtirish |
+| Build L1 | build platformasi avtomatik hosil qilgan provenance mavjud | release xatolari (masalan, upstream'da yo'q commit'dan yig'ish) |
 | Build L2 | hosted build platformasi hosil qilgan imzolangan provenance | build'dan keyingi o'zgartirish |
 | Build L3 | mustahkamlangan build platformasi | build davomidagi o'zgartirish |
-| Build L4 | build platformasi majburlaydigan to'liq bog'liqlik provenance'i | noma'lum yoki qayd etilmagan build bog'liqliklari |
 
-Spetsifikatsiya L1 haqida ochiq yozadi: u xatolarning oldini olishga yetadi, lekin chetlab o'tish yoki soxtalashtirish oson. L2 da provenance'ni soxtalashtirish yoki tekshiruvdan qochish uchun aniq "hujum" kerak, garchi bu oson bo'lishi mumkin. L3 da esa platformaning o'zida zaiflikdan foydalanish kerak bo'ladi, ya'ni ko'pchilik hujumchilar imkoniyatidan tashqarida. L3 ning ikkita muhim talabi: build'lar bir-biriga ta'sir qilmasligi (hatto bitta loyiha ichida), va provenance'ni imzolash uchun ishlatiladigan maxfiy material foydalanuvchi build qadamlariga ochiq bo'lmasligi. Iste'molchi tomonida L2 dan boshlab provenance'ning haqiqiyligini tekshirish talab qilinadi: yig'ib qo'yilgan, lekin tekshirilmagan provenance daraja bermaydi.
+Spetsifikatsiya L1 haqida ochiq yozadi: u xatolarning oldini olishga yordam beradi, lekin chetlab o'tish yoki soxtalashtirish oson va buzishdan himoya qilmaydi. L2 da provenance'ni soxtalashtirish yoki tekshiruvdan qochish uchun aniq hujum kerak; shu sababli u oddiy hujumchilarni to'xtatadi. L3 da esa provenance'ni soxtalashtirish ko'pchilik hujumchilar qodir bo'lmagan, platformadagi zaiflikdan foydalanishni talab qiladi. L3 ning ikkita muhim talabi: build'lar bir-biriga ta'sir qilmasligi (hatto bitta loyiha ichida), va provenance'ni imzolash uchun ishlatiladigan maxfiy material foydalanuvchi build qadamlariga ochiq bo'lmasligi. Iste'molchi tomonida L2 dan boshlab provenance'ning haqiqiyligini tekshirish talab qilinadi: yig'ib qo'yilgan, lekin tekshirilmagan provenance daraja bermaydi.
 
 ## Chuqurroq: SBOM bilan ta'sirni baholash va chegaralar
 
@@ -341,7 +340,7 @@ Nima yopildi: attestation'siz artefakt, boshqa baytlarga ko'chirilgan attestatio
 
 ## Stack'da: GitHub Actions, npm, Docker
 
-- Paketni e'lon qilsangiz: OIDC asosidagi trusted publishing va u hosil qiladigan provenance (yuqorida). Iste'molchi tomonida `npm audit signatures` CI qadami sifatida. Qaysi provayderlar va runner'lar qo'llab-quvvatlanishi o'zgarib turadi: OWASP cheat sheet joriy ro'yxat uchun npm trusted publishing hujjatiga yo'naltiradi, bu hujjat korpusda yo'q.
+- Paketni e'lon qilsangiz: OIDC asosidagi trusted publishing va u hosil qiladigan provenance (yuqorida). Iste'molchi tomonida `npm audit signatures` CI qadami sifatida. OWASP cheat sheet qaysi CI provayderlar qo'llab-quvvatlanishini npm trusted publishing hujjatidan tekshirishni aytadi.
 - CI tomonida artefaktni yig'ish va imzolash bitta, ruxsati cheklangan pipeline'da bo'lishi kerak (85-dars); deploy esa shu pipeline'dan kelmagan artefaktni qabul qilmasligi kerak.
 - Docker image'lar uchun SBOM image darajasida olinadi (86-dars), chunki OS paketlari lockfile'da ko'rinmaydi.
 - Zaiflik oqimi (90-dars): SBOM → "qaysi servis" → KEV/EPSS bilan ustuvorlik → tuzatish.
@@ -353,4 +352,4 @@ Nima yopildi: attestation'siz artefakt, boshqa baytlarga ko'chirilgan attestatio
 - Provenance'ni deploy tekshirmasa, u hech narsani himoya qilmaydi. To'rt qadam: mavjudlik, imzo, digest, siyosat (builder va repo).
 - Haqiqiy imzo "to'g'ri manba" degani emas: siyosat alohida tekshiriladi.
 - SBOM zaiflik kunida tezlik beradi, lekin to'liqligi qaerdan olinganiga bog'liq va zararsizlikni kafolatlamaydi.
-- SLSA darajalari yo'l xaritasi: L1 xatolar uchun, L2 build'dan keyingi o'zgartirish uchun (imzolangan provenance, hosted platforma), L3 build davomidagi o'zgartirish uchun (draft jadvali; v1.1 bilan farqi mumkin).
+- SLSA darajalari yo'l xaritasi: L1 xatolar uchun, L2 build'dan keyingi o'zgartirish uchun (imzolangan provenance, hosted platforma), L3 build davomidagi o'zgartirish uchun (SLSA v1.1 Build track).

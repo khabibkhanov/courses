@@ -6,9 +6,9 @@ summary: "Threat modeling to'rt savoli, data flow diagram elementlari, trust bou
 duration: 45
 sources:
   - id: ms-stride
-    note: "Microsoft Threat Modeling Tool tahdid ro'yxati: STRIDE kategoriyalari bo'yicha tahdidlar guruhlanadi"
+    note: "Microsoft Threat Modeling Tool tahdid ro'yxati sahifasi: STRIDE modelining olti kategoriyasi (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege) ta'riflari; element bo'yicha jadval sahifada yo'q"
   - id: cs-threat-model
-    note: "Threat Modeling Cheat Sheet: threat modeling'ni tizimni modellash, tahdidlarni topish, javob choralarini belgilash va tekshirish bosqichlari sifatida tushuntiradi"
+    note: "Threat Modeling Cheat Sheet: to'rt savol va to'rt bosqich (tizimni modellash, tahdidlarni topish va tartiblash, javob choralari, tekshirish), STRIDE jadvali va uni boshqa usullar bilan solishtirish, Shostack javob variantlari"
   - id: t10-a06
     note: "A06:2025 Insecure Design: threat modeling dizayn bosqichida ishlatiladigan amaliyot sifatida"
 quiz:
@@ -51,7 +51,7 @@ quiz:
       - "Faqat Elevation of privilege"
       - "Hech qaysi, chunki baza ichki"
     answer: 0
-    explain: "Data store'ga yozish yaxlitlikni, o'qish maxfiylikni, to'lib ketish yoki bloklash mavjudlikni buzadi. Jadvalning bu varianti keng tarqalgan; manbadagi aniq variant bilan farq qilishi mumkin."
+    explain: "Data store'ga yozish yaxlitlikni, o'qish maxfiylikni, to'lib ketish yoki bloklash mavjudlikni buzadi. Bu STRIDE-per-element ishchi qoidasi."
   - q: "Threat modeling qachon eng foydali?"
     options:
       - "Production'ga chiqqandan keyin, hodisa yuz berganda"
@@ -170,7 +170,7 @@ STRIDE CIA triadasini (1-dars) kengaytiradi: maxfiylik, yaxlitlik va mavjudlikka
 
 ### STRIDE-per-element
 
-Hamma element hamma kategoriyaga duch kelmaydi. Keng tarqalgan variant (STRIDE-per-element) elementga qarab savollarni cheklaydi. Quyidagi jadval shu variantning umumiy ko'rinishi; Microsoft manbasidagi aniq jadval bilan farq qilishi mumkin, shuning uchun uni ishchi qoida deb qabul qiling:
+Hamma element hamma kategoriyaga duch kelmaydi. Keng tarqalgan variant (STRIDE-per-element) elementga qarab savollarni cheklaydi. Quyidagi jadval shu yondashuvning keng tarqalgan ishchi qoidasi (Shostack metodikasidagi variant). Kurs manbalari element bo'yicha jadvalni o'zi bermaydi, shuning uchun uni qat'iy standart emas, savollarni qisqartirish uchun boshlang'ich nuqta deb qabul qiling:
 
 | Element | S | T | R | I | D | E |
 |---|---|---|---|---|---|---|
@@ -219,6 +219,14 @@ fuel-provider  entity   SR
 ```
 
 Natijada ikki oqim chegaradan o'tadi (brauzer va webhook): ularda eng ko'p e'tibor kerak. `api` jarayoni oltita kategoriyaning hammasi uchun ko'rib chiqiladi. Bu birinchi o'tish; keyingi darsda (5-dars) shu usulni to'liq platformaga qo'llaymiz.
+
+### Tahdidlarni tartiblash va usulni tanlash
+
+Tahdidlar topilgach, jamoa ularni odatda tartiblaydi. Cheat sheet nazariy jihatdan tartib ehtimollik va ta'sir ko'paytmasiga asoslanishini aytadi, lekin ikkalasini hisoblash qiyin va ular tuzatish mehnatini hisobga olmaydi. Shu sababli ba'zilar tuzatish narxini ham bitta tartiblashga qo'shishni taklif qiladi. Bu 1-darsdagi risk register cheklovlari bilan bir xil gap: ball tartib beradi, qarorni almashtirmaydi.
+
+STRIDE har savolga javob bermaydi. Cheat sheet texnik dizayn uchun STRIDE bilan boshlashni, doira boshqa ko'rinishni talab qilsa boshqa usulni tanlashni tavsiya qiladi. Hujumchining aniq maqsadi va ko'p bosqichli hujum uchun attack tree (maqsaddan boshlab unga olib boradigan yo'llar bo'laklarga ajratiladi); to'g'ri ishlaydigan oqim yoki biznes qoidasini suiste'mol qilish uchun misuse va abuse case (amallar noto'g'ri tartibda, takror, bir vaqtda yoki kutilmagan natija uchun bajariladi); maxfiylik zararlari uchun LINDDUN; biznes ta'siri bilan bog'liq ilova tahdidlari uchun PASTA; tashkilot darajasidagi risk uchun OCTAVE. Sahifaning ogohlantirishi: usulni modelni "to'liq ko'rsatish" uchun qo'shmang, har usul nima uchun doiraga mos ekanini va u nimani qamramasligini yozing. Avtopark platformasida bu shunday ko'rinadi: ingest va API chegaralari uchun STRIDE, "mijoz eksportni takror va parallel chaqirsa nima bo'ladi" savoli uchun abuse case (59 va 60-darslar), haydovchi joylashuvi bilan bog'liq maxfiylik uchun LINDDUN kabi privacy usuli.
+
+Oxirgi bosqich, review, ko'pincha unutiladi. Cheat sheet modelni faqat dasturchilar yoki xavfsizlik jamoasi emas, barcha manfaatdor tomonlar ko'rib chiqishini yozadi va tekshiruv savollarini beradi: DFD tizimni to'g'ri aks ettiradimi, hamma tahdid topildimi, har tahdid uchun javob kelishilganmi, kamaytirish tanlangan joyda risk qabul qilinadigan darajaga tushadimi, model hujjatlashtirilgan va "bilish kerak" bo'lganlar uchun ochiqmi, kelishilgan nazoratlarni sinab, muvaffaqiyat yoki muvaffaqiyatsizligini o'lchash mumkinmi. Oxirgi savol eng amaliysi: "begona tenant ma'lumotini olib bo'lmaydi" tahdid javobi test sifatida yozilmasa, u xohish bo'lib qoladi.
 
 ### Tahdiddan nazoratga
 

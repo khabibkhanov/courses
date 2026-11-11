@@ -6,9 +6,9 @@ summary: "Cross-site request forgery mexanizmi: brauzer cookie'ni avtomatik yubo
 duration: 45
 sources:
   - id: cs-csrf
-    note: "OWASP CSRF Prevention Cheat Sheet: token asosidagi himoya, SameSite va Origin/Fetch Metadata tekshiruvi, va XSS hamma CSRF himoyasini chetlab o'tishi haqida umumiy mazmun; bo'lim raqamlari keltirilmaydi"
+    note: "OWASP CSRF Prevention Cheat Sheet: synchronizer token va imzolangan double-submit cookie (oddiy variant tavsiya etilmaydi), Fetch Metadata siyosati va fallback, Origin tekshiruvi, SameSite cheklovlari, custom header, client-side CSRF, XSS hamma CSRF himoyasini yengishi"
   - id: rfc6265bis
-    note: "Cookie spetsifikatsiyasi qoralamasi: SameSite atributi va 'site' tushunchasi; qoralama bo'lgani uchun brauzer xatti-harakatini alohida tekshiring"
+    note: "Cookie qoralamasi: SameSite atributi (Strict, Lax, None) shu hujjatda ta'riflangan. Matn lokal korpusda yo'q, shuning uchun Lax xatti-harakati va cross-site POST'da Lax-allowing-unsafe oynasi haqidagi da'volar OWASP cheat sheet'ning shu qoralamaga havolalariga tayanadi"
   - id: fetch-metadata
     note: "W3C Fetch Metadata: Sec-Fetch-Site, Sec-Fetch-Mode, Sec-Fetch-Dest sarlavhalari va ularning qiymatlari"
 quiz:
@@ -43,7 +43,7 @@ quiz:
       - "Hech narsa qilmaslik"
       - "Faqat Referer'ga tayanish"
     answer: 1
-    explain: "Brauzer-tomon sarlavhalar bo'lmasa, tekshiruv fail-open bo'lmasligi kerak (3-dars). Zaxira: Origin sarlavhasi (POST'da odatda yuboriladi) yoki token. Referer ko'p holatda yashirilishi mumkin va ishonchsizroq."
+    explain: "Brauzer-tomon sarlavhalar bo'lmasa, tekshiruv fail-open bo'lmasligi kerak (3-dars). Zaxira: Origin sarlavhasi (POST'da odatda yuboriladi) yoki token. Referer Origin yo'q bo'lganda zaxira bo'lishi mumkin, lekin yolg'iz unga tayanish yetarli emas: sarlavhalar yo'q yoki `Origin: null` bo'lsa, bu same-origin dalili emas."
   - q: "Ilovada CSRF token to'g'ri joriy qilingan, lekin saytda stored XSS bor. Hujumchi CSRF tokenni qanday aylanib o'tadi?"
     options:
       - "O'tolmaydi: token kriptografik himoya"
@@ -54,12 +54,12 @@ quiz:
     explain: "XSS kodi ilova origin'ida ishlaydi va same-origin siyosati unga sahifa va token'ni o'qishga ruxsat beradi. Shu sababli XSS CSRF himoyalarining hammasini yengadi: avval XSS yopiladi (31-35 darslar)."
   - q: "Ilovada `GET /api/vehicle/7/block` mashinani bloklaydi. Nima uchun bu dizayn xavfli?"
     options:
-      - "GET so'rovlar xavfsiz metod hisoblanadi: ular cross-site navigatsiya, `<img>` va Lax cookie bilan ham yuboriladi, shuning uchun holat o'zgartirmasligi kerak"
+      - "GET xavfsiz metod hisoblanadi: uni cross-site havola, `<img>` va navigatsiya yuboradi, Lax cookie esa top-level GET navigatsiyada qo'shiladi, shuning uchun GET holat o'zgartirmasligi kerak"
       - "GET sekin"
       - "GET'da body yo'q"
       - "Bloklash uchun POST ishlatish shart emas"
     answer: 0
-    explain: "HTTP'da GET xavfsiz metod bo'lishi kerak (11-dars). Cross-site `<a>`, `<img>` va navigatsiyalar GET yuboradi; Lax cookie ham top-level GET'da qo'shiladi. Holatni o'zgartiruvchi amal POST/PUT/DELETE bo'lib, CSRF himoyasi ostida bo'lishi kerak."
+    explain: "HTTP'da GET xavfsiz metod bo'lishi kerak (11-dars). Cross-site `<a>`, `<img>` va navigatsiyalar GET yuboradi, Lax cookie esa top-level GET navigatsiyada qo'shiladi. Cheat Sheet buni SameSite himoyasi amalda eng ko'p buziladigan joy deb ataydi. Holatni o'zgartiruvchi amal POST/PUT/DELETE bo'lib, CSRF himoyasi ostida bo'lishi kerak."
 task:
   title: "Origin va Fetch Metadata asosidagi CSRF tekshiruvi"
   prompt: |
@@ -134,7 +134,7 @@ Oqibat doirasi: hujumchi javobni o'qiy olmaydi (same-origin policy, 12-dars), sh
 
 ## Asosiy g'oya
 
-OWASP CSRF Prevention Cheat Sheet CSRF himoyasini bir necha mustaqil qatlam sifatida beradi. Eslatma: da'volar OWASP CSRF Prevention Cheat Sheet'ning lokal nusxasiga solishtirib tekshirilgan; RFC6265bis qoralamasining o'zi lokal korpusda yo'q va undan to'g'ridan-to'g'ri da'vo olinmagan.
+OWASP CSRF Prevention Cheat Sheet CSRF himoyasini bir necha mustaqil qatlam sifatida beradi. Uning ketma-ketligi: avval framework'ning o'z CSRF himoyasi bor-yo'qligini tekshiring va undan foydalaning; yo'q bo'lsa holat o'zgartiruvchi har so'rovga token qo'ying; faqat zamonaviy brauzerlar nishonda bo'lsa Fetch Metadata va fallback bilan to'sish mumkin; shundan tashqari kamida bitta chuqur himoya (defense in depth) qatlamini qo'shing. Go 1.25 dan standart kutubxonada `CrossOriginProtection` turi bor, u ham aynan Fetch Metadata asosidagi himoyani amalga oshiradi.
 
 Himoyaning mohiyati: server so'rovning foydalanuvchi niyatidan kelganini tasdiqlovchi, hujumchi bilmaydigan yoki soxtalashtira olmaydigan belgi talab qiladi. Variantlar:
 
@@ -159,6 +159,24 @@ Synchronizer token: server sessiya ichida tasodifiy qiymat saqlaydi va HTML form
 ### Origin va Fetch Metadata
 
 Brauzer cross-origin POST'da `Origin` yuboradi. Server uni `APP_ORIGIN` bilan aniq tenglik bilan solishtiradi (`startsWith` yoki `includes` emas: `https://app.example.evil.com` ham shunday boshlanadi). `Sec-Fetch-Site` qiymatlari: `same-origin`, `same-site`, `cross-site`, `none`. Server holat o'zgartiruvchi so'rovlarda faqat `same-origin` (va kerak bo'lsa `none`) ni qabul qiladi. Bu tekshiruv token holatini saqlamaydi (stateless), lekin faqat zamonaviy brauzerlarda mavjud. Sarlavhalar yo'q bo'lsa, Origin yoki token zaxira, hech biri bo'lmasa rad etish (fail closed).
+
+### Fetch Metadata siyosati: aniq qoidalar va joriy qilish
+
+Cheat Sheet `Sec-Fetch-Site` ni asosiy signal deb ataydi va siyosatni shunday beradi: sarlavha bor bo'lsa, `cross-site` bilan kelgan xavfsiz bo'lmagan metodlar (POST, PUT, PATCH, DELETE) rad etiladi; `same-origin` ruxsat; `same-site` faqat sibling subdomenlarga ishonsangiz ruxsat, aks holda ehtiyotkor ishlov; `none` foydalanuvchi o'zi boshlagan top-level navigatsiya (xatcho'p, yozilgan URL). Sarlavha umuman yo'q bo'lsa, ikki yo'l: fail-safe (nozik endpoint'lar uchun tavsiya, so'rovni bloklash) yoki fail-open (moslik birinchi o'rinda bo'lsa, Origin tekshiruvi va token bilan zaxira). Spetsifikatsiyada ro'yxatda yo'q qiymat kelsa, oldinga moslik uchun sarlavhani e'tiborsiz qoldirish tavsiya etiladi. Qo'shimcha: cross-site GET navigatsiyani (`Sec-Fetch-Mode: navigate`, `Sec-Fetch-Dest` `object` yoki `embed` emas) o'tkazish kerak, aks holda sizga tashqi havola ishlamay qoladi, va ataylab cross-origin ishlaydigan endpoint'lar (CORS JSON API, webhook) global rad etishdan alohida istisno qilinib, o'z autentifikatsiyasi bilan himoyalanadi.
+
+Joriy qilish shartlari ham bor. Fetch Metadata sarlavhalari faqat potentially trustworthy URL'larga (https, wss, localhost) yuboriladi, shuning uchun butun ilova HTTPS bo'lishi va HSTS yoqilgan bo'lishi kerak. Cheat Sheet Safari 16.4+ ni qo'shib, zamonaviy brauzerlarda 98% dan ortiq qamrovni yozadi, lekin proksi va gateway'lar `Origin` yoki `Sec-*` sarlavhalarini olib tashlashi mumkin, shu sababli fallback majburiy. Prerender va prefetch kabi speculative navigatsiya sarlavhalari yakuniy navigatsiyaga mos kelmasligi ham mumkin. Javob sarlavhalar bo'yicha o'zgarsa, `Vary: Sec-Fetch-Site, Origin` qo'yiladi, bu himoya emas, kesh to'g'riligi uchun. Va avval "log only" rejimida ishga tushiring: bloklanadigan so'rovlarni yozib, noto'g'ri ijobiylarni ko'rib chiqing, keyin enforce qiling.
+
+### Soddalarni taqiqlash va custom header
+
+HTML `<form>` brauzer preflight qilmaydigan "oddiy" so'rov yuboradi, uning content type'i `application/x-www-form-urlencoded`, `multipart/form-data` yoki `text/plain`. Shuning uchun JSON API `text/plain` ni ham qabul qilsa, CSRF'ga ochiq qoladi; oddiy tuzatish: server shu uch turni rad etadi. Custom sarlavhali yondashuvda (`X-CSRF-Token`) API sarlavha borligini tekshiradi; brauzerlar custom sarlavhali so'rovni preflight qiladi, demak sarlavha bor so'rov preflight'dan o'tgan. Bu faqat CORS to'g'ri sozlangan bo'lsa ishlaydi: credentials bilan faqat o'zingiz nazorat qiladigan aniq origin'lar ruxsat etilishi kerak, `*.example.com` kabi regex subdomen egallansa bypass bo'ladi. Cheat Sheet ogohlantiradi: brauzer xatosi tufayli preflight majburlanmasa, bu himoya buziladi, shuning uchun token qo'shimcha qatlam beradi.
+
+### Token amaliyoti: nimani qilmaslik kerak
+
+Cheat Sheet synchronizer token'ni sessiya ichida saqlashni, formada yashirin maydon yoki custom sarlavha orqali qaytarishni tavsiflaydi va tokenni cookie ichida uzatmaslikni aytadi (cookie validatsiya xavfsiz emas: brauzer cookie'ni cross-site so'rovda o'zi qo'shadi). Sarlavha orqali yuborilgan token yashirin form maydonidan xavfsizroq, chunki custom sarlavhali so'rovlar same-origin siyosatiga bo'ysunadi. Oddiy (naive) double-submit cookie bypass qilinadi: sibling subdomen, DNS takeover yoki oddiy HTTP orqali cookie yozishi mumkin bo'lgan hujumchi mos cookie qo'yib, soxta so'rov yasaydi; cheat sheet uni tavsiya etmaydi. Imzolangan variantda HMAC-SHA-256 sessiyaga bog'liq qiymat (server sessiya ID, lekin uni tokenda ochiq qoldirmasdan) va anti-collision tasodifiy qiymat ustida hisoblanadi; solishtirish doimiy vaqtli funksiya bilan. Ikki keng tarqalgan noto'g'ri tushuncha ham sanalgan: token ichiga vaqt tamg'asi qo'yib muddat berish (CSRF token access token emas, yangi sessiya yangi token beradi) va tokenni har so'rovda almashtirish (xavfsizlikni sezilarli oshirmaydi, "Back" tugmasi kabi foydalanish tajribasini buzadi). Quyidagi misoldagi token soddalashtirilgan: u faqat sessiyaga bog'liq HMAC, anti-collision qiymatsiz.
+
+### Client-side CSRF
+
+Cheat Sheet alohida ta'kidlaydigan yangi variant: hujumchi kodni emas, sizning klient JavaScript'ingizni boshqaradi. Agar sahifa skripti URL hash'idan, window name'dan, `document.referrer`dan yoki `postMessage` dan request manzili va metodini o'qib `fetch` qilsa, hujumchi tayyorlagan havola sahifaning o'z kodini hujum so'rovini yuborishga majburlaydi. Bu so'rov same-origin, tokenni sahifa o'zi qo'shadi, cookie ham same-site sifatida ketadi, shu sababli token ham, SameSite ham himoya bermaydi. Server nuqtai nazaridan so'rov "niyatli" ko'rinadi. Tuzatish klientda: so'rov manzili va metodini hech qachon tashqi kirishdan olmang, imkon bo'lmasa format va qiymatni qat'iy tekshiring (masalan faqat GET va oldindan belgilangan prefiks), yoki JavaScript ichida oldindan belgilangan xavfsiz so'rovlar ro'yxatidan indeks bo'yicha tanlang. Bu 31-darsdagi DOM XSS bilan bir xil ildiz: ishonchsiz source xavfli sink'ga (bu yerda `fetch`) kodlash yoki tekshiruvsiz yetadi.
 
 ### Login CSRF va boshqa yon holatlar
 
@@ -329,7 +347,7 @@ app.post("/api/vehicle/:id/limit", async (req) => {
 });
 ```
 
-Next.js hujjatiga ko'ra Server Action'lar `Origin` sarlavhasini `Host` (yoki `X-Forwarded-Host`) bilan solishtiradi va mos kelmasa rad etadi; reverse proxy orqasida `serverActions.allowedOrigins` sozlanadi. Sozlama hujjati yana bir nozik joyni aytadi: `Origin` sarlavhasi umuman yo'q so'rov ogohlantirish bilan o'tkaziladi, rad etilmaydi. Route Handler'lar uchun esa bunday avtomatik himoya haqida hujjatda da'vo topilmadi, shuning uchun handler boshida Fetch Metadata yoki token tekshiruvini umumiy funksiyaga chiqaring. NestJS'da bu global guard yoki interceptor sifatida joylashadi (58-dars). Cookie atributlarini (`HttpOnly`, `Secure`, `SameSite`, `__Host-` prefiksi) 13-darsdagi tartibda sozlang.
+Next.js hujjatiga ko'ra Server Action'lar faqat POST bilan chaqiriladi va `Origin` sarlavhasi `Host` (yoki `X-Forwarded-Host`) bilan solishtiriladi, mos kelmasa rad etiladi; reverse proxy yoki CDN domenlari uchun `experimental.serverActions.allowedOrigins` ro'yxati sozlanadi. Sozlama hujjati yana bir nozik joyni aytadi: umuman `Origin` sarlavhasi yo'q so'rov rad etilmaydi, ogohlantirish bilan o'tkaziladi, ya'ni Cheat Sheet'dagi fail-closed qoidasidan farq qiladi. Bu tekshiruv hujjatda Server Action'lar uchun tasvirlangan; Route Handler'lar uchun unga tayanmang va handler boshida Fetch Metadata yoki token tekshiruvini umumiy funksiyaga chiqaring. NestJS'da bu global guard yoki interceptor sifatida joylashadi (58-dars). Cookie atributlarini (`HttpOnly`, `Secure`, `SameSite`, `__Host-` prefiksi) 13-darsdagi tartibda sozlang.
 
 ## Xulosa
 

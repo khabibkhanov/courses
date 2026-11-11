@@ -11,6 +11,8 @@ sources:
     note: "ASVS 5.0.0 bo'limlari: V2 Validation and Business Logic, V4 API and Web Service, V8 Authorization, V16 Security Logging and Error Handling; API xavflari shu bo'limlar bilan kesishadi"
   - id: t10-a01
     note: "A01:2025 Broken Access Control: API1 va API5 ning veb ilova darajasidagi hamkasbi sifatida ishlatiladi"
+  - id: nestjs-guards
+    note: "NestJS Guards: APP_GUARD token'i bilan global guard ro'yxatdan o'tkazish; ro'yxatga olingan har guard har so'rovda ishlaydi"
 quiz:
   - q: "Mijoz `GET /api/trips/8841` ga `8842` ni yozib, boshqa tenant'ning reysini oldi. Foydalanuvchi tizimga kirgan, token to'g'ri. Qaysi kategoriya?"
     options:

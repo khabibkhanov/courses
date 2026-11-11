@@ -6,13 +6,19 @@ summary: "Sertifikat nima bog'laydi (ochiq kalit va nom), ishonch zanjiri va yo'
 duration: 50
 sources:
   - id: rfc5280
-    note: "RFC 5280: 4.1.2.5 Validity, 4.2.1.6 Subject Alternative Name, 4.2.1.9 Basic Constraints (cA va pathLenConstraint), 4.2.1.12 Extended Key Usage, 6.1 va 6.1.3 yo'lni tekshirish"
+    note: "RFC 5280: 4.1.2.5 Validity, 4.2.1.6 Subject Alternative Name (identifikatorlarni sub'ektga bog'lash), 4.2.1.9 Basic Constraints (cA va pathLenConstraint), 4.2.1.12 Extended Key Usage, 6.1 va 6.1.3 yo'lni tekshirish. Bo'lim raqamlari va qoidalar darslik darajasida keltirilgan"
   - id: rfc8446
     note: "RFC 8446 4.4.2 va 4.4.3: Certificate va CertificateVerify xabarlari; mijoz sertifikat bilan autentifikatsiya qilsa CertificateVerify yuborishi shart"
   - id: t10-a04
     note: "A04:2025 tekshiriladigan savollar: server sertifikati va ishonch zanjiri to'g'ri tekshirilyaptimi; eng sezgir kalitlarni HSM'da saqlash; LetsEncrypt kabi xizmatlar sertifikat boshqaruvini soddalashtirgani"
   - id: cs-key-mgmt
-    note: "Key Management cheat sheet: CA imzo kaliti oshkor bo'lsa soxta sertifikat va CRL yaratish mumkinligi; sertifikatni yangilash kalit juftligini avtomatik almashtirmasligi (cryptoperiods)"
+    note: "Key Management cheat sheet: CA imzo kaliti oshkor bo'lsa soxta sertifikat va CRL yaratish mumkinligi; Cryptoperiods and Rotation: TLS server sertifikati muddati CA/Browser Forum talablari bo'yicha rejalanadi, sertifikatni yangilash kalit juftligini almashtirishi shart emas"
+  - id: pg-libpq-ssl
+    note: "PostgreSQL libpq SSL Support: verify-ca va verify-full farqi, wildcard nom faqat nuqtadan boshqa belgilarga mos keladi (subdomenlarga mos kelmaydi); mijoz tomonida server sertifikatini tekshirish"
+  - id: pg-auth
+    note: "PostgreSQL Client Authentication: hostssl yozuvlarida clientcert=verify-ca yoki verify-full mijozdan ishonchli sertifikat talab qiladi, verify-full qo'shimcha ravishda CN ni foydalanuvchi nomiga bog'laydi"
+  - id: redis-tls
+    note: "Redis TLS sahifasi: standart holatda mutual TLS (tls-auth-clients), tls-ca-cert-file ishonchli ildiz sifatida"
 quiz:
   - q: "Zanjir tekshiruvi har bir sertifikat imzosini, muddatini va issuer nomini tekshiradi, lekin issuer sertifikatida `cA` belgisini tekshirmaydi. Hujumchi nima qila oladi?"
     options:
@@ -29,22 +35,22 @@ quiz:
       - "U sertifikat bog'laydigan identifikatorlarni (DNS nomi, IP, email, URI) beradi; mijoz ulanayotgan nomni aynan shu bilan solishtiradi"
       - "U CA ro'yxatini saqlaydi"
     answer: 2
-    explain: "RFC 5280: identifikatorlarni sertifikatga bog'lashda SAN kengaytmasi ishlatilishi kerak. Zanjir to'g'ri bo'lsa ham, nom mos kelmasa, sertifikat boshqa host uchun berilgan."
+    explain: "RFC 5280 4.2.1.6: SAN kengaytmasi identifikatorlarni sertifikat sub'ektiga bog'laydi (DNS nomi, IP, email, URI). Zanjir to'g'ri bo'lsa ham, nom mos kelmasa, sertifikat boshqa host uchun berilgan."
   - q: "mTLS yoqilgan ichki API serveri mijoz sertifikatini zanjir bo'yicha tekshirdi va ulanishga ruxsat berdi. Nima yetishmayapti?"
     options:
-      - "Hech narsa: autentifikatsiya avtorizatsiyani ham hal qiladi"
       - "Sertifikat identifikatori (SAN/URI)ni so'ralayotgan operatsiyaga ruxsati bor servislar ro'yxati bilan solishtirish, ya'ni avtorizatsiya"
+      - "Hech narsa: autentifikatsiya avtorizatsiyani ham hal qiladi"
       - "Faqat TLS versiyasini oshirish"
       - "Sertifikatni brauzerga o'rnatish"
-    answer: 1
+    answer: 0
     explain: "mTLS 'bu qaysi servis' savoliga javob beradi, 'unga nima mumkin' savoliga emas. Ishonchli zanjirdan chiqqan har qanday servis sertifikati hamma endpoint'ga kira olmasligi kerak (51-58 darslar)."
-  - q: "Servis sertifikati kuniga muddati tugagani uchun yangilandi, lekin yangi sertifikat eski kalit juftligi bilan chiqarildi. Qaysi xulosa to'g'ri?"
+  - q: "Servis sertifikati muddati tugagani uchun yangilandi, lekin yangi sertifikat eski kalit juftligi bilan chiqarildi. Qaysi xulosa to'g'ri?"
     options:
       - "Kalit endi yangi, eski kalit yo'qoldi"
-      - "Sertifikat yangilanishi kalit juftligini avtomatik almashtirmaydi: kalit cryptoperiod bo'yicha alohida almashtiriladi"
-      - "Kalit abadiy xavfsiz"
       - "Eski sertifikat avtomatik bekor qilinadi"
-    answer: 1
+      - "Kalit abadiy xavfsiz"
+      - "Sertifikat yangilanishi kalit juftligini avtomatik almashtirmaydi: kalit cryptoperiod bo'yicha alohida almashtiriladi"
+    answer: 3
     explain: "Key Management cheat sheet: sertifikat yangilanishi kalit juftligini almashtirishi shart emas; kalit almashtirish jadvali alohida belgilanadi. Kalit sizib chiqqan bo'lsa, faqat sertifikatni yangilash yetmaydi."
   - q: "Klient `rejectUnauthorized: false` bilan ichki servisga ulanyapti, chunki 'sertifikat self-signed'. Bu xavfni nima deb baholaysiz?"
     options:
@@ -136,7 +142,7 @@ task:
     - Katta-kichik harf farqi `toLowerCase` bilan olib tashlanadi: DNS nomlari harfga sezgir emas.
     - Qoidalar mustaqil tekshiriladi va hammasi qaytariladi: bitta muammo topilganda to'xtab qolmaslik uchun (uchinchi holatda `muddati tugagan` va `bekor qilingan` birga chiqadi). Real kutubxona birinchi xatodan to'xtashi mumkin, lekin audit uchun to'liq ro'yxat foydali.
     - Bu faqat leaf sertifikat siyosati. Zanjir tekshiruvi (imzo zanjiri, CA belgisi, pathLen) alohida; `sigOk` bu yerda tayyor bayroq. Real tizimda tekshirishni TLS kutubxonasi qiladi, siz uni o'chirmaysiz, nom va maqsad siyosatini esa sozlaysiz.
-    - Wildcard qoidasi bu darsning o'quv qoidasi: real mijozlarning wildcard xulq-atvori standart va kutubxonaga bog'liq, bu darsda manba bilan tekshirilmagan.
+    - Wildcard qoidasi bu yerda o'quv qoidasi: chap label o'rniga bitta label. PostgreSQL libpq hujjati ham wildcard faqat nuqtadan boshqa belgilarga mos kelishini va subdomenlarga mos kelmasligini yozadi; boshqa kutubxonalarning aniq xatti-harakati bu darsda manba bilan tekshirilmagan.
   checklist:
     - "Har bir qoida o'z matni va tartibi bilan chiqadi"
     - "Wildcard aynan bitta label'ni almashtiradi, katta-kichik harf farq qilmaydi"
@@ -149,7 +155,7 @@ task:
 
 64-darsda ko'rdik: ECDH ikki tomonga umumiy sir beradi, lekin kim bilan gaplashayotganini aytmaydi. Imzo kimligini isbotlaydi, lekin faqat "bu ochiq kalitning egasi shu" deb; ochiq kalit esa kimniki ekanini hali bilmaymiz. Ochiq kalitni nomga (masalan `gps.fleet.test`) bog'lash va bu bog'lanishga ishonish kerak. Sertifikat va PKI (Public Key Infrastructure) shu muammoni hal qiladi.
 
-Amaliy og'riq ikki xil. Birinchisi, sertifikat tekshiruvi xato yoki o'chirilgan: dasturchi self-signed sertifikatga duch kelib, "ishlasin" deb `rejectUnauthorized: false` yozadi, va kod prodakshnga o'tib ketadi. Ikkinchisi, tekshiruv bor, lekin to'liq emas: zanjir tekshiriladi, lekin CA belgisi, nom yoki maqsad tekshirilmaydi. Tarixda bunday tekshiruv xatolari amalda ishlatilgan; biz esa o'quv modelida mexanizmni ko'rsatamiz.
+Amaliy og'riq ikki xil. Birinchisi, sertifikat tekshiruvi xato yoki o'chirilgan: dasturchi self-signed sertifikatga duch kelib, "ishlasin" deb `rejectUnauthorized: false` yozadi, va kod prodakshnga o'tib ketadi. Ikkinchisi, tekshiruv bor, lekin to'liq emas: zanjir tekshiriladi, lekin CA belgisi, nom yoki maqsad tekshirilmaydi. Bu xato sinfi alohida nomlangan: OWASP A04 CWE ro'yxatida CWE-296 (sertifikat ishonch zanjiriga noto'g'ri amal qilish) bor. Biz o'quv modelida mexanizmni ko'rsatamiz.
 
 Uchinchi masala servislar orasidagi aloqa. Mikroservis arxitekturasida avtopark platformasining 20 ta servisi bir-biri bilan gaplashadi. Ichki tarmoq "ishonchli" degan taxmin A04 tekshiruv ro'yxatida ham, 3-darsdagi defense in depth tamoyilida ham qo'llab-quvvatlanmaydi. Qaror: har servis o'z sertifikati bilan tanishtiradi (mTLS), lekin sertifikatning o'zi avtorizatsiya emas. Bu darsda sertifikat nima bog'laydi, yo'l qanday tekshiriladi, mTLS qayerda yordam beradi va qayerda yetmaydi.
 
@@ -159,7 +165,7 @@ Uchinchi masala servislar orasidagi aloqa. Mikroservis arxitekturasida avtopark 
 
 X.509 sertifikati ochiq kalitni bir yoki bir nechta identifikatorga bog'laydigan va CA (Certification Authority) tomonidan imzolangan ma'lumot. RFC 5280 profilidagi muhim maydonlar:
 
-- Subject va Subject Alternative Name (SAN): sertifikat kimni (qaysi DNS nomi, IP, email yoki URI'ni) bildiradi. RFC 5280 4.2.1.6: identifikatorlar sertifikatga bog'lanayotganda SAN kengaytmasi ishlatilishi kerak. Mijoz ulanayotgan nomni SAN bilan solishtiradi.
+- Subject va Subject Alternative Name (SAN): sertifikat kimni (qaysi DNS nomi, IP, email yoki URI'ni) bildiradi. RFC 5280 4.2.1.6: SAN kengaytmasi identifikatorlarni sertifikat sub'ektiga bog'laydi va ular subject maydonidagi nomga qo'shimcha yoki uning o'rniga kelishi mumkin; aniqlangan turlar: email, DNS nomi, IP manzil va URI. Mijoz ulanayotgan nomni SAN bilan solishtiradi.
 - Validity (notBefore va notAfter): CA shu davr ichida sertifikat holati haqida ma'lumot yuritishga kafolat beradi (4.1.2.5).
 - Basic Constraints: sertifikat sub'ekti CA ekanligini (`cA` belgisi) va undan keyingi zanjir chuqurligi chegarasini (`pathLenConstraint`) bildiradi. Agar bu kengaytma yo'q yoki `cA` tasdiqlanmagan bo'lsa, sertifikatdagi ochiq kalit sertifikat imzolarini tekshirish uchun ishlatilmasligi shart (4.2.1.9).
 - Extended Key Usage (EKU): sertifikat qaysi maqsadlarda ishlatilishi mumkin (masalan server autentifikatsiyasi yoki mijoz autentifikatsiyasi). Kengaytma bor bo'lsa, sertifikat faqat sanalgan maqsadlardan biri uchun ishlatiladi (4.2.1.12).
@@ -394,9 +400,9 @@ Shuningdek, sertifikatni ishonch ro'yxatiga "tezroq ishlashi uchun" qo'shib qo'y
 
 ## Stack'da: Node.js, NestJS, Kubernetes, PostgreSQL
 
-Node.js'da `https`/`tls` modullari sertifikat tekshiruvini standart holatda yoqilgan holda ishlatadi; o'z CA'ngiz bo'lsa uni `ca` opsiyasi orqali qo'shing, tekshiruvni o'chirmang. Review qoidasi: kodda `rejectUnauthorized: false` yoki `NODE_TLS_REJECT_UNAUTHORIZED=0` ko'rinsa, bu avtomatik blokirovka. mTLS uchun server tomonida mijoz sertifikati so'raladi va ulanish uchun `socket.getPeerCertificate()` kabi interfeys orqali sertifikat identifikatori olinadi; NestJS'da buni guard'da servis ruxsatlari ro'yxati bilan solishtirasiz (58-dars).
+Node.js'da `https`/`tls` modullari sertifikat tekshiruvini standart holatda yoqilgan holda ishlatadi; o'z CA'ngiz bo'lsa uni `ca` opsiyasi orqali qo'shing, tekshiruvni o'chirmang. Review qoidasi: kodda `rejectUnauthorized: false` yoki `NODE_TLS_REJECT_UNAUTHORIZED=0` ko'rinsa, bu avtomatik blokirovka. Node.js `tls` hujjatiga ko'ra mijoz tomonida `rejectUnauthorized` standart `true`, ya'ni server sertifikati berilgan CA ro'yxatiga qarshi tekshiriladi. mTLS uchun server tomonida `requestCert: true` beriladi (standart `false`), shundan so'ng `rejectUnauthorized` (standart `true`) ishonchsiz mijozlarni rad etadi; u `requestCert` bo'lmasa ta'sir qilmaydi. Hujjat shuni ham ogohlantiradi: `tlsSocket.authorized` `false` bo'lsa ham, server sozlamasiga qarab ishonchsiz ulanish qabul qilinishi mumkin, shuning uchun bu bayroqni kodda tekshiring. Sertifikat identifikatori `socket.getPeerCertificate()` orqali olinadi; NestJS'da buni guard'da servis ruxsatlari ro'yxati bilan solishtirasiz (58-dars).
 
-Odatda mTLS ilovada emas, platformada hal qilinadi: Kubernetes'da service mesh yoki sidecar sertifikatlarni berib, avtomatik yangilaydi (87-dars), ilova esa sertifikat identifikatorini sarlavha yoki kontekst orqali oladi. Bunda ham ilova ishonishi kerak bo'lgan narsa: identifikator faqat mesh'dan keladi, tashqi mijoz uni o'zi qo'ya olmaydi. PostgreSQL va Redis ulanishlari uchun ham server sertifikatini tekshiradigan rejim kerak (22 va 24-darslarda manbalar bilan); bu darsda ularning sozlama nomlari tekshirilmagan.
+Odatda mTLS ilovada emas, platformada hal qilinadi: Kubernetes'da service mesh yoki sidecar sertifikatlarni berib, avtomatik yangilaydi (87-dars), ilova esa sertifikat identifikatorini sarlavha yoki kontekst orqali oladi. Bunda ham ilova ishonishi kerak bo'lgan narsa: identifikator faqat mesh'dan keladi, tashqi mijoz uni o'zi qo'ya olmaydi. PostgreSQL va Redis ulanishlari uchun ham server sertifikatini tekshiradigan rejim kerak: libpq'da `sslmode=verify-full` (zanjirni ham, server nomini ham tekshiradi) va `sslrootcert`, Redis'da `tls-ca-cert-file` bilan ishonchli ildiz (65-dars). mTLS ni ma'lumotlar bazasiga ham qo'llash mumkin: PostgreSQL `pg_hba.conf` dagi `hostssl` yozuvida `clientcert=verify-ca` yoki `verify-full` mijozdan ishonchli sertifikat talab qiladi, `verify-full` esa sertifikatdagi Common Name'ni foydalanuvchi nomiga (yoki mapping'ga) ham bog'laydi. Redis server tomonida standart holatda mijozdan sertifikat talab qiladi, `tls-auth-clients no` buni o'chiradi. Ikkala holatda ham sertifikat faqat autentifikatsiya: baza foydalanuvchisining huquqlari alohida (56-dars, 89-dars).
 
 ## Xulosa
 

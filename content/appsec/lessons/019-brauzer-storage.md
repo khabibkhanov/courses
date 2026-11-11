@@ -9,6 +9,8 @@ sources:
     note: "Session Management Cheat Sheet: localStorage va sessionStorage'da autentifikatsiya token'larini saqlamaslik, HttpOnly cookie yoki BFF tavsiyasi, Web Workers bo'limi"
   - id: mdn-cookies
     note: "MDN Cookies: HttpOnly va Secure atributlari, cookie'ning brauzer tomonidan avtomatik yuborilishi"
+  - id: mdn-sop
+    note: "MDN Same-origin policy: Web Storage va IndexedDB origin bo'yicha ajratiladi, shu origin'dagi JavaScript ularni o'qiy oladi"
   - id: t10-a07
     note: "A07:2025 Authentication Failures: sessiya identifikatorlarini noto'g'ri boshqarish autentifikatsiya nuqsonlari qatorida"
 quiz:
@@ -155,6 +157,8 @@ Jadvaldagi `localStorage` va `sessionStorage` xususiyatlari (same-origin kirish,
 
 `HttpOnly` skriptdan cookie qiymatini o'qishni to'sadi (13-dars). Token o'g'irlanmaydi, ya'ni hujumchi uni boshqa qurilmaga ko'chirib, keyinroq ishlata olmaydi. Lekin cheat sheet aniq yozadi: HttpOnly faqat cookie maxfiyligini himoya qiladi; XSS bor sahifada skript so'rov yubora oladi va brauzer cookie'ni qo'shadi. Ya'ni HttpOnly zararni "hujumchi doimiy kirish oladi" dan "hujumchi foydalanuvchi sahifada ekan harakat qiladi" ga tushiradi. Bu katta farq, lekin XSS tuzatilmaydi.
 
+Cheat sheet afzal cookie shaklini `HttpOnly; Secure; SameSite=Strict` deb beradi, va sessiya cookie uchun `__Host-` prefiksli misol keltiradi: `Set-Cookie: __Host-SessionID=<value>; Secure; HttpOnly; SameSite=Strict; Path=/`. Prefiks cookie'ni faqat Secure, `Path=/` va `Domain`siz o'rnatishga majbur qiladi (13-dars). `Strict` boshqa saytdan kelgan havola bosilganda cookie'ni yubormaydi, shuning uchun foydalanuvchi sizning saytingizga tashqi havoladan kirganda dastlab tizimga kirmagandek ko'rinishi mumkin; bu holda `Lax` amaliy kelishuv, lekin CSRF himoyasini boshqa qatlamlar bilan to'ldirish kerak. Cheat sheet yana bir muhim ogohlantirish beradi: XSS CSRF bilan birga ishlatilsa ham, so'rovlar sessiya cookie'sini olib ketadi, chunki brauzer cookie'ni doim qo'shadi.
+
 Cookie ishlatilganda CSRF himoyasi talab qilinadi: `SameSite` (13-dars), Fetch Metadata (17-dars) va token (36-dars). Bu `Authorization` header'li yondashuvda yo'q muammo, shuning uchun almashtirish bepul emas, lekin XSS'dan keyingi zararni kamaytirish uchun sinalgan kelishuv.
 
 ### BFF
@@ -209,9 +213,15 @@ Birinchi rejimda skript tokenni o'qib oldi (`exfiltrated`) va hujumchi uni istal
 
 Tokenni faqat JS o'zgaruvchisida tutish va sahifa yangilanganda qayta olish (masalan, cookie bilan refresh) yondashuvi bor. Cheat sheet Web Worker haqida alohida bo'lim beradi: worker sirni xotirada ushlab, asosiy oynaga qaytarmasa, mavjud sirga to'g'ridan-to'g'ri kirish kamayadi, lekin bu XSS'dan himoya qilmaydi, chunki zararli kod worker orqali sirga bog'liq amallarni so'rab, natijani o'qiy oladi. Brauzer kodiga sir kerak bo'lmasa, HttpOnly cookie yoki sirni backend ushlashi afzal.
 
+Cheat sheet worker haqida yana bir cheklovni qayd etadi: refresh token'ni alohida ajratib qo'yish zararli kodning boshqa authorization oqimi orqali yangi token olishiga to'sqinlik qilmaydi (OAuth brauzer ilovalari ko'rsatmasi, 8.3-bo'lim). Worker faqat brauzer kodiga sirga bog'liq amallar haqiqatan kerak bo'lganda mantiqli; bunda xabar interfeysini tor qiling va ruxsatni serverda tekshiring. Worker sirni sahifa yangilanganda saqlamaydi, shuning uchun uni faqat qayta tiklanishi shart bo'lmagan sirlar uchun ishlating.
+
 ### Boshqa storage turlari
 
-IndexedDB, Cache API va service worker kabi mexanizmlar ham same-origin skriptlar uchun ochiq; XSS nuqtai nazaridan localStorage bilan bir xil sinfga kiradi. Shu sababli sezgir tokenni "murakkabroq" storage'ga ko'chirish himoya bermaydi. Brauzer hujumchi nazoratidagi kod ishlayotgan muhit sifatida qaralishi kerak.
+MDN Same-origin policy hujjatiga ko'ra Web Storage va IndexedDB origin bo'yicha ajratiladi: har bir origin'ning o'z saqlagichi bor va boshqa origin'dagi JavaScript uni o'qiy olmaydi. Lekin bu ajratish aynan origin darajasida: shu origin'da ishlayotgan har qanday skript, jumladan XSS orqali kiritilgani, IndexedDB'ni ham localStorage kabi o'qiydi. Shu sababli sezgir tokenni "murakkabroq" storage'ga ko'chirish himoya bermaydi. Brauzer hujumchi nazoratidagi kod ishlayotgan muhit sifatida qaralishi kerak.
+
+### Storage'ning boshqa xususiyatlari
+
+Cheat sheet storage'ning xavfsizlikka bevosita tegmaydigan, lekin tanlovga ta'sir qiladigan tomonlarini ham aytadi. `localStorage` brauzer sessiyalaridan keyin ham saqlanadi, shuning uchun ma'lumot boshqa tizim foydalanuvchilariga uzoqroq muddat ochiq qoladi, va standart diskda shifrlashni talab qilmaydi. Bir nechta oyna yoki thread bir vaqtda yozishi mumkin, shu sababli u lock'siz hisoblanadi va race condition xavfi bor. `sessionStorage` tab yopilganda yo'qoladi, lekin tab qayta ishlatilsa yoki ochiq qoldirilsa, bu kirishni to'xtatmaydi; ma'lumot garbage collection bo'lguncha xotirada ham qolishi mumkin. WHATWG `localStorage`ni oynalar va sessiyalar bo'ylab kerak bo'ladigan, hajmi katta ma'lumot uchun, `sessionStorage`ni esa bitta ish oqimiga tegishli ma'lumot uchun (masalan, bilet band qilish tafsilotlari) taklif qiladi. Ikkalasi ham sir uchun emas, tema, til va forma qoralamasi kabi ma'lumot uchun mos.
 
 ### Hayot sikli
 

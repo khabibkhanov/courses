@@ -9,38 +9,36 @@ sources:
     note: "A04:2025 tekshiriladigan savollar: IV'ning e'tiborsiz qoldirilishi yoki takrorlanishi, ECB kabi xavfsiz bo'lmagan rejim, autentifikatsiyalangan shifrlash o'rniga oddiy shifrlash, parol kalit sifatida; 'How to prevent': IV bir kalit bilan ikki marta ishlatilmasin, har doim authenticated encryption"
   - id: asvs
     note: "ASVS 5.0.0 V11.3 (11.3.1-11.3.5) va Appendix C: shifrlar, AES rejimlari (GCM/CCM approved, CBC legacy, ECB/CTR/CFB/OFB disallowed) va AEAD mexanizmlari jadvali"
-  - id: node-security
-    note: "Node.js Security Best Practices: crypto moduli va timing-safe taqqoslash haqidagi tavsiyalar; shifrlash API'larini o'zingiz yig'masdan tayyor funksiyalardan foydalanish uchun umumiy asos"
   - id: cs-crypto-storage
     note: "Cryptographic Storage cheat sheet: algoritmlar va cipher modes bo'limlari (AES, GCM/CCM birinchi tanlov, ECB ishlatilmaydi), defense in depth"
   - id: cs-key-mgmt
-    note: "Key Management cheat sheet, Cryptoperiods and Rotation: 96 bitli tasodifiy IV bilan AES-GCM'da bir kalit bilan 2^32 operatsiyadan oshmaslik tavsiyasi"
+    note: "Key Management cheat sheet: Cryptoperiods and Rotation bo'limida 96 bitli tasodifiy IV bilan AES-GCM'da bir kalit ostida (shu kalitni ishlatadigan hamma qurilmalar bo'yicha) 2^32 shifrlash operatsiyasidan oshmaslik; NIST tavsiyasiga tayanib bitta kalit bitta maqsad uchun ishlatilishi"
   - id: rfc8446
     note: "RFC 8446 1.2 va 5.3: TLS 1.3 faqat AEAD algoritmlarini qoldirgan; yozuv nonce'si ketma-ketlik raqamidan hosil qilinadi"
 quiz:
   - q: "Telemetriya maydoni AES-256-CBC bilan shifrlanadi, kalit to'g'ri saqlanadi, IV tasodifiy. Yaxlitlik tekshiruvi yo'q. Bazaga yozish huquqiga ega hujumchi nima qila oladi?"
     options:
-      - "Hech narsa: kalitsiz shifrmatnni o'qib bo'lmaydi, shuning uchun o'zgartirib ham bo'lmaydi"
       - "Shifrmatnni o'zgartiradi va ilova buni sezmay, o'zgargan ochiq matnni qabul qiladi (maxfiylik bor, yaxlitlik yo'q)"
+      - "Hech narsa: kalitsiz shifrmatnni o'qib bo'lmaydi, shuning uchun o'zgartirib ham bo'lmaydi"
       - "Kalitni shifrmatndan tiklaydi"
       - "Faqat IV'ni ko'radi, boshqa narsani emas"
-    answer: 1
+    answer: 0
     explain: "Shifrlash maxfiylik beradi, yaxlitlik emas. Autentifikatsiyasiz rejimda shifrmatn o'zgarishi aniqlanmaydi (ASVS 11.3.3 va A04 'authenticated encryption' talabi). Kalitni tiklash bu hujum uchun shart emas."
   - q: "AES-GCM bilan ikki xabar bir kalit va bir xil nonce bilan shifrlandi. Hujumchi birinchi xabarning ochiq matnini biladi. Natija nima?"
     options:
       - "Hech narsa, GCM nonce takrorini kechiradi"
-      - "Ikkinchi xabar ochiq matnini (birinchi xabar uzunligi doirasida) ochadi, chunki ikki shifrmatn XOR'i ikki ochiq matn XOR'iga teng"
       - "Faqat tegni buzadi, ochiq matnga ta'sir qilmaydi"
+      - "Ikkinchi xabar ochiq matnini (birinchi xabar uzunligi doirasida) ochadi, chunki ikki shifrmatn XOR'i ikki ochiq matn XOR'iga teng"
       - "Kalitni to'liq tiklaydi"
-    answer: 1
+    answer: 2
     explain: "GCM ichida hisoblagich rejimi bor: nonce takrorlansa kalit oqimi takrorlanadi. Ma'lum ochiq matn orqali ikkinchisi ochiladi. ASVS 11.3.4 nonce'ni bir kalit va ma'lumot elementi juftligi uchun takrorlamaslikni talab qiladi."
   - q: "`associated data` (AAD) AEAD'da nima qiladi?"
     options:
       - "Ma'lumotni qo'shimcha shifrlaydi"
-      - "Shifrlanmaydi, lekin teg hisobiga kiradi: noto'g'ri kontekstda ochishga urinish tegni buzadi"
-      - "Nonce'ni almashtiradi"
       - "Kalitni uzaytiradi"
-    answer: 1
+      - "Nonce'ni almashtiradi"
+      - "Shifrlanmaydi, lekin teg hisobiga kiradi: noto'g'ri kontekstda ochishga urinish tegni buzadi"
+    answer: 3
     explain: "AAD ochiq qoladi, lekin autentifikatsiya qilinadi. Tenant, mashina va maydon nomini AAD'ga qo'ysangiz, bir qatordagi shifrmatnni boshqa qatorga ko'chirish ochishda xatoga olib keladi."
   - q: "ASVS 5.0.0 Appendix C AES rejimlari jadvaliga ko'ra qaysi variant to'g'ri?"
     options:
@@ -52,19 +50,19 @@ quiz:
     explain: "Jadvalda GCM va CCM approved, CBC legacy, CCM-8, ECB, CFB, OFB va CTR disallowed. CTR autentifikatsiyasizligi uchun alohida MAC bo'lmasa yaramaydi, AEAD ichidagi hisoblagich rejimi esa ichki mexanizm."
   - q: "Servis har kuni millionlab yozuvni AES-GCM bilan, har yozuv uchun yangi tasodifiy 96 bitli nonce bilan, bitta kalit ostida shifrlaydi. Qaysi xulosa to'g'ri?"
     options:
-      - "Tasodifiy nonce hech qachon to'qnashmaydi, cheklov yo'q"
       - "Bir kalit ostidagi operatsiyalar soni cheklanishi kerak (Key Management cheat sheet 2^32 ni tavsiya etadi), shuning uchun kalit rotatsiyasi rejalashtiriladi"
+      - "Tasodifiy nonce hech qachon to'qnashmaydi, cheklov yo'q"
       - "Nonce 8 bit bo'lsa ham yetarli"
       - "Nonce faqat birinchi yozuvda kerak"
-    answer: 1
+    answer: 0
     explain: "96 bitli tasodifiy nonce uchun tug'ilgan kun to'qnashuvi ehtimoli operatsiyalar soni oshgan sari ortadi. Cheat sheet bir kalit uchun 2^32 chegarasini beradi; chora - rotatsiya yoki hisoblagichga asoslangan nonce."
   - q: "Parolni to'g'ridan-to'g'ri AES kaliti sifatida ishlatish (`key = padTo32(password)`) nega xato?"
     options:
       - "AES parol uzunligini qabul qilmaydi"
-      - "Parol past entropiyali: parol asosidagi kalit hosil qiluvchi KDF (sekin, salt'li) kerak, aks holda kalit sanab ochiladi"
       - "Parol faqat HMAC uchun yaroqli"
+      - "Parol past entropiyali: parol asosidagi kalit hosil qiluvchi KDF (sekin, salt'li) kerak, aks holda kalit sanab ochiladi"
       - "Parol kalit bo'la olmaydi, hech qachon"
-    answer: 1
+    answer: 2
     explain: "A04 'parollar KDF'siz kalit sifatida ishlatilyaptimi' deb tekshirishni aytadi. Parolda entropiya kam; ASVS 11.4.4 parol asosida kalit chiqarishda kalit cho'zish parametrli tasdiqlangan KDF'ni talab qiladi."
 task:
   title: "Maydon shifrlash: tasodifiy nonce va kontekstga bog'lash"
@@ -222,9 +220,15 @@ Nonce'ni hosil qilishning ikki odatiy yo'li bor. Tasodifiy nonce (CSPRNG'dan 12 
 
 AAD shifrlanmaydi, lekin teg hisobiga kiradi. Shifrlangan maydonni qaysi tenant, qaysi mashina va qaysi ustunga tegishli ekani haqida kontekst bilan bog'lasangiz, shifrmatnni boshqa qatorga ko'chirish ochishda xatoga aylanadi. Bu "ko'chirish hujumi"ni yopadi va kriptografik darajadagi qo'shimcha qatlam beradi. Lekin Cryptographic Storage cheat sheet yozganidek, shifrlangan ma'lumot ham access control bilan himoyalanishi kerak; AAD tenant ajratishining o'rnini bosmaydi.
 
+### WebCrypto'da AES-GCM parametrlari
+
+Darsdagi kod `crypto.subtle` bilan yozilgan, shuning uchun uning parametrlarini bilish kerak (MDN, `AesGcmParams`). `iv` - majburiy; AES-GCM spetsifikatsiyasi 96 bit (12 bayt) tavsiya qiladi. MDN IV'ning bir kalit bilan har shifrlashda noyob bo'lishi shartini, ya'ni uni qayta ishlatmaslikni aniq yozadi; IV sir emas va shifrmatn bilan ochiq yuborilishi mumkin. `additionalData` ixtiyoriy: u autentifikatsiya qilinadi, lekin shifrlanmaydi va `decrypt` ga aynan o'sha qiymat berilmasa, ochish xato tashlaydi. `tagLength` ixtiyoriy, bitlarda; ruxsat etilgan qiymatlar 32, 64, 96, 104, 112, 120 va 128, standart 128. NIST faqat 96 va undan yuqorisini tavsiya qiladi, shuning uchun uni o'zgartirmang: qisqa teg soxta shifrmatnni topish ehtimolini oshiradi (ASVS Appendix C ham 64 bitli teg beradigan CCM-8'ni shu sababli disallowed deb belgilaydi). `encrypt` natijasida teg shifrmatn oxiriga qo'shilgan bo'ladi, bu yuqoridagi mashqda `13 + 16 + 12` uzunlikda ko'rinadi (ochiq matn, teg, nonce). Kalit `generateKey({ name: "AES-GCM", length: 256 }, false, [...])` bilan yaratilsa va `extractable` `false` bo'lsa, JavaScript kodi uning baytlarini o'qiy olmaydi.
+
+Node.js'da ChaCha20-Poly1305 ham `node:crypto` orqali bor; WebCrypto'ning standart ro'yxatida u yo'q, shuning uchun brauzer va Edge runtime uchun AES-GCM odatiy tanlov.
+
 ### Kalit bir maqsad uchun
 
-Key Management cheat sheet NIST tavsiyasiga tayanib, bitta kalit bitta maqsad uchun ishlatilishini yozadi: shifrlash, autentifikatsiya, kalit o'rash yoki imzo uchun alohida kalitlar. Sabab: bir kalitning ikki jarayonda ishlatilishi birining xavfsizligini susaytirishi mumkin va kalit oshkor bo'lsa zarar kattalashadi. Amalda bir "ota" kalitdan HKDF kabi KDF bilan har maqsad uchun alohida kalit chiqariladi (68-dars).
+Key Management cheat sheet NIST'ga tayanib, odatda bitta kalit faqat bitta maqsad uchun ishlatilishini yozadi (shifrlash, autentifikatsiya, kalit o'rash, tasodifiy bit generatsiyasi yoki raqamli imzo). Sabab: bir kalitning ikki jarayonda ishlatilishi birining xavfsizligini susaytirishi mumkin va kalit oshkor bo'lsa zarar kattalashadi. Amalda bir "ota" kalitdan HKDF kabi KDF bilan har maqsad uchun alohida kalit chiqariladi (68-dars).
 
 ## Misol: qat'iy nonce bilan telefon maydonlari
 

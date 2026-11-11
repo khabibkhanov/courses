@@ -5,28 +5,30 @@ title: "Case study: supply chain hujumlari"
 summary: "Ikki hodisa birlamchi yozuvlar bo'yicha: xz/liblzma (2024, release tarball va git repozitoriy farqi) va npm ekotizimidagi 2025-yil sentabrdagi o'z-o'zidan ko'payuvchi hujum (CISA alert). SLSA build track nimani yopishi va nimani yopmasligi, tarball tekshiruvi va xavfsiz versiyaga pin qilish o'quv modelida."
 duration: 45
 sources:
+  - id: t10-a03
+    note: "OWASP Top 10:2025 A03 (Software Supply Chain Failures): kategoriya 2013 dagi 'bilinadigan zaifliklar bilan komponentlar' dan butun zanjirga kengaygan; 'ehtimol zaifsiz' belgilari (tranzitiv bog'liqliklarni kuzatmaslik, CI/CD tizimi build qiladigan tizimdan kuchsizroq, vazifalar ajratilmagan); oldini olish (SBOM, rasmiy manbalar va imzolangan paketlar, bosqichma-bosqich rollout); 3-stsenariyda Shai-Hulud tavsifi"
   - id: xz-openwall
     note: "Andres Freund, oss-security (2024-03-29): upstream xz repozitoriysi va tarball'lar backdoor qilingani; build-to-host.m4 dagi qator faqat tarball'larda (5.6.0 va 5.6.1) bor, git manbada yo'q; configure oxirida obfuscated skript ishlashi; repozitoriyda tests/files ostidagi 'test' fayllari; shartlar (x86-64 Linux, gcc va GNU ld, Debian yoki RPM paket build); sshd libsystemd orqali liblzma'ga bog'lanishi; muallifning o'z o'lchovlari"
   - id: cisa-npm-2025
-    note: "CISA alert (2025-09-23): 'Shai-Hulud' nomi bilan ommaga ma'lum o'z-o'zidan ko'payuvchi hujum 500 dan ortiq paketni kompromet qilgan; GitHub PAT va AWS/GCP/Azure API kalitlarini qidirgan; kompromet qilingan dasturchi sifatida npm'ga autentifikatsiya qilib boshqa paketlarga kod kiritgan; tavsiyalar: dependency review, lockfile tekshiruvi, 2025-09-16 dan oldingi xavfsiz versiyalarga pin, kredensiallarni almashtirish, phishing-resistant MFA"
+    note: "CISA alert (2025-09-23): 'Shai-Hulud' nomi bilan ommaga ma'lum o'z-o'zidan ko'payuvchi hujum 500 dan ortiq paketni kompromet qilgan; o'g'irlangan ma'lumotlar 'Shai-Hulud' nomli ommaviy GitHub repozitoriysiga yuklangan; GitHub PAT va AWS/GCP/Azure API kalitlarini qidirgan; kompromet qilingan dasturchi sifatida npm'ga autentifikatsiya qilib boshqa paketlarga kod kiritgan; tavsiyalar: dependency review, lockfile tekshiruvi, 2025-09-16 dan oldingi xavfsiz versiyalarga pin, kredensiallarni almashtirish, phishing-resistant MFA"
   - id: slsa
-    note: "SLSA v1.1 (hozir 'Retired', joriy versiya v1.2): Build track L0-L3; L1 provenance mavjud (xato va hujjatlashtirishga qarshi), L2 imzolangan provenance hosting build platformadan (build'dan keyingi tampering), L3 hardened build platform (build paytidagi tampering); provenance kim, qaysi jarayon va qaysi kirishlardan build qilganini aytadi"
+    note: "SLSA v1.1 (hozir 'Retired', joriy tasdiqlangan versiya v1.2, unda Source Track qo'shilgan): Build track L0-L3; L1 provenance mavjud (xato va hujjatlashtirishga qarshi, uni aylanib o'tish yoki soxtalashtirish oson), L2 imzolangan provenance hosting build platformadan (build'dan keyingi tampering), L3 hardened build platform (build paytidagi tampering); provenance kim, qaysi jarayon va qaysi kirishlardan build qilganini aytadi"
 quiz:
   - q: "Freund xabariga ko'ra xz backdoor'ining bir qismi 'faqat tarball'larda' bo'lgan. Bu dasturchi uchun qanday amaliy xulosa beradi?"
     options:
-      - "Git repozitoriysini tekshirish yetarli: tarball doim git bilan bir xil"
       - "Release artefakti (tarball) va uning manba repozitoriysi bir-biridan farq qilishi mumkin; artefaktni manba bilan solishtirish yoki manbadan o'zi build qilish kerak"
+      - "Git repozitoriysini tekshirish yetarli: tarball doim git bilan bir xil"
       - "Tarball'dan foydalanish taqiqlangan"
       - "Faqat Debian paketlariga tegishli"
-    answer: 1
+    answer: 0
     explain: "Xabarga ko'ra build-to-host.m4 dagi qator tarball'larda bor, git manbada yo'q (GitHub 'source code' havolalari repozitoriydan generatsiya qilingani uchun ularda yo'q). Artefakt va manba orasidagi farq hujumchi ishlatadigan bo'shliq. Hamma tarball'ni taqiqlash esa amaliy emas: generatsiya qilingan fayllar farq qilishi normal, ularni ko'rib chiqish kerak."
   - q: "SLSA Build L2 nimani yaxshilaydi?"
     options:
       - "Manba kodidagi mantiqiy xatolarni topadi"
-      - "Hosting build platformasi tomonidan imzolangan provenance: build'dan keyin artefakt yoki provenance'ni o'zgartirishga qarshi"
-      - "Dependency'lardagi zaifliklarni avtomatik tuzatadi"
       - "Hech narsani, u faqat hujjat"
-    answer: 1
+      - "Dependency'lardagi zaifliklarni avtomatik tuzatadi"
+      - "Hosting build platformasi tomonidan imzolangan provenance: build'dan keyin artefakt yoki provenance'ni o'zgartirishga qarshi"
+    answer: 3
     explain: "SLSA v1.1 L2 ni imzolangan provenance, hosting platformadan, 'tampering after the build' ga qarshi deb ta'riflaydi. U manbaning o'zi zararli ekanini aniqlamaydi: provenance 'qanday build qilingan' ni aytadi, 'manba yaxshimi' ni emas."
   - q: "xz holatida manbaning o'zida (repozitoriyda) zararli fayllar bor edi. SLSA provenance bunday hodisani avtomatik to'xtata oladimi?"
     options:
@@ -39,10 +41,10 @@ quiz:
   - q: "CISA alertiga ko'ra npm hujumi qanday ko'paygan?"
     options:
       - "Foydalanuvchi o'zi har paketni qo'lda yuklab"
-      - "Zararli kod muhitdagi kredensiallarni qidirgan va kompromet qilingan dasturchi sifatida npm'ga autentifikatsiya qilib, boshqa paketlarga kod kiritib, kompromet qilingan versiyalarni nashr etgan"
       - "npm serveri o'chirilgan"
+      - "Zararli kod muhitdagi kredensiallarni qidirgan va kompromet qilingan dasturchi sifatida npm'ga autentifikatsiya qilib, boshqa paketlarga kod kiritib, kompromet qilingan versiyalarni nashr etgan"
       - "Hujumchi har paketga qo'lda kirgan"
-    answer: 1
+    answer: 2
     explain: "Alert mexanizmni shunday tasvirlaydi: kredensial yig'ish (GitHub PAT va cloud API kalitlari), tashqariga chiqarish va o'z-o'zidan ko'payish. Natijada hujum o'z dasturchi akkauntlari orqali tarqaladi, shuning uchun MFA va kredensiallarni almashtirish tavsiyada."
   - q: "CISA tavsiyalaridan qaysi biri to'g'ri?"
     options:
@@ -55,10 +57,10 @@ quiz:
   - q: "Tarball tekshiruvi 'tarball'da git'da yo'q fayl bor' deb signal berdi. To'g'ri munosabat qaysi?"
     options:
       - "Doim zararli: build to'xtatiladi va qaytarilmaydi"
-      - "Har signal tekshiriladi: autotools kabi generatsiya qilingan fayllar (configure) normal farq beradi, shuning uchun allowlist bilan ajratiladi, qolgan farqlar qo'lda ko'riladi"
-      - "Signal e'tiborsiz qoldiriladi"
       - "Tekshiruvni o'chirish kerak"
-    answer: 1
+      - "Signal e'tiborsiz qoldiriladi"
+      - "Har signal tekshiriladi: autotools kabi generatsiya qilingan fayllar (configure) normal farq beradi, shuning uchun allowlist bilan ajratiladi, qolgan farqlar qo'lda ko'riladi"
+    answer: 3
     explain: "Generatsiya qilingan fayllar tarball'larda ko'pincha bo'ladi, shuning uchun tekshiruv allowlist va insoniy review bilan ishlaydi. Hamma farqni rad etish yoki e'tiborsiz qoldirish ikkalasi ham xato."
 task:
   title: "Release tarball'ni git daraxti bilan solishtirish"
@@ -164,7 +166,7 @@ Muallifning gumoni (uning fikri, tasdiqlangan fakt emas): faoliyat bir necha haf
 
 ### Hodisa 2: npm, 2025-yil sentabr
 
-CISA alerti (2025-09-23) ommaga "Shai-Hulud" nomi bilan tanilgan o'z-o'zidan ko'payuvchi hujum npm.com ro'yxatidagi 500 dan ortiq paketni kompromet qilganini yozadi. Alertda tasvirlangan mexanizm: dastlabki kirishdan keyin zararli dastur muhitdagi maxfiy kredensiallarni qidirgan, xususan GitHub Personal Access Token'lari va cloud (AWS, GCP, Azure) API kalitlarini. Keyin uni tashqi endpointga chiqargan, shuningdek GitHub API orqali ommaviy repozitoriyga yuklagan va kompromet qilingan dasturchi sifatida npm'ga autentifikatsiya qilib, boshqa paketlarga kod kiritgan hamda kompromet qilingan versiyalarni nashr etgan. Ya'ni bu "paket zararli bo'lib qoldi" emas, dasturchi akkaunti orqali zanjir bo'ylab tarqaladigan jarayon.
+CISA alerti (2025-09-23) ommaga "Shai-Hulud" nomi bilan tanilgan o'z-o'zidan ko'payuvchi hujum npm registry'dagi 500 dan ortiq paketni kompromet qilganini yozadi. Alertda tasvirlangan mexanizm: dastlabki kirishdan keyin zararli dastur muhitdagi maxfiy kredensiallarni qidirgan, xususan GitHub Personal Access Token'lari va cloud (AWS, GCP, Azure) API kalitlarini. Keyin uni tashqi endpointga chiqargan, shuningdek GitHub API orqali ommaviy repozitoriyga yuklagan va kompromet qilingan dasturchi sifatida npm'ga autentifikatsiya qilib, boshqa paketlarga kod kiritgan hamda kompromet qilingan versiyalarni nashr etgan. Ya'ni bu "paket zararli bo'lib qoldi" emas, dasturchi akkaunti orqali zanjir bo'ylab tarqaladigan jarayon.
 
 CISA tavsiyalari: barcha npm ishlatadigan dasturiy ta'minotda dependency review; `package-lock.json` yoki `yarn.lock` bo'yicha ta'sirlangan paketlarni (tranzitiv ham) topish; artefakt repozitoriylari va cache'larda ta'sirlangan versiyalarni qidirish; 2025-yil 16-sentabrdan oldingi ma'lum xavfsiz versiyalarga pin qilish; barcha dasturchi kredensiallarini darhol almashtirish; GitHub va npm kabi muhim platformalarda phishing-resistant MFA majburiy qilish; anomal tarmoq xatti-harakatlarini kuzatish; GitHub sozlamalarini mustahkamlash (keraksiz GitHub App va OAuth ilovalarni olib tashlash, webhook va secret'larni audit qilish, branch protection, Secret Scanning va Dependabot security updates).
 
@@ -176,6 +178,14 @@ Bu ikki hodisaga qanday tegishli? Quyidagi xulosalar bu darsning tahlili, SLSA m
 
 - xz holatidagi "tarball va git farqi" artefakt va manba orasidagi aloqa uzilishi. Artefaktning aynan qaysi manbadan va qanday jarayonda yaratilgani tekshiriladigan bo'lsa (provenance, reproducible build), farq ko'rinadi. Biroq manbaning o'zidagi zararli fayllar (repozitoriydagi "test" fayllari) provenance orqali tasdiqlangan toza build bilan ham artefaktga tushadi: provenance niyatni baholamaydi.
 - npm holatida asosiy zaiflik dasturchi kredensiallari edi. Provenance (82-dars) paketni qaysi repozitoriy va workflow nashr etganini ko'rsatishi mumkin, lekin kredensial o'g'irlangan va hujumchi nashr etish huquqiga ega bo'lsa, boshqa nazoratlar kerak: phishing-resistant MFA, qisqa muddatli token'lar, nashr etish huquqini cheklash. Kompromet qilingan akkaunt paketni qonuniy yo'l bilan nashr etadi.
+
+SLSA v1.2 xz holatiga yaqinroq narsa qo'shgan: Source Track. Spetsifikatsiyaga ko'ra u ishlab chiqaruvchi va iste'molchiga manba kodiga ortib boruvchi ishonch beradi va manba revizyasi qanday yaratilganini tasvirlaydi; revizyaning kutilgan jarayonini repozitoriy egasi (tashkilot) belgilaydi va texnik nazoratlar bilan majburlaydi, iste'molchi esa attestatsiyalarni ko'rib, revizyaning o'z talablariga mos kelishini tekshiradi. Bu zararli commit'ni o'zi topmaydi, lekin "bu o'zgarish ikkinchi odam ko'rigidan o'tdimi" degan savolga tekshiriladigan javob beradi.
+
+### OWASP A03 nima deydi
+
+Top 10:2025 A03 kategoriyasi 2013-yilda "bilinadigan zaifliklar bilan komponentlar" sifatida paydo bo'lgan va endi build, tarqatish va yangilash jarayonidagi har qanday buzilishni qamraydi. Tavsif zaiflik belgilari sifatida, jumladan, quyidagilarni sanaydi: tranzitiv bog'liqliklar ham kuzatilmaydi; zanjirdagi o'zgarishlar (IDE kengaytmalari, repozitoriy, artefakt saqlash joyi) hujjatlashtirilmaydi; zanjir tizimlarida vazifalar ajratilmagan, ya'ni bitta odam kodni yozib, ikkinchi odam ko'rigisiz production'ga olib chiqa oladi; CI/CD pipeline u build qiladigan tizimlardan zaifroq himoyalangan. Oldini olish ro'yxatida: butun dasturiy ta'minot uchun SBOM'ni markaziy yaratish va boshqarish, faqat rasmiy manbalardan xavfsiz kanal orqali olish va imzolangan paketlarni afzal ko'rish, versiyani ongli tanlash, CI/CD va IDE vositalarini muntazam yangilash, hamda yangilanishni hamma tizimga bir vaqtda emas, bosqichma-bosqich (staged rollout, canary) chiqarish, shunda ishonchli vendor kompromet bo'lsa ta'sir cheklanadi. Shai-Hulud hodisasi Top 10 matnida ham keltirilgan va unda dasturchilarning o'zi endi supply chain hujumlarining asosiy nishoni ekani ta'kidlanadi: dasturchi mashinasi va uning token'lari zanjirning bir qismi.
+
+Bu ro'yxatni ikki hodisaga qo'ysak: xz holatiga eng yaqin nazoratlar "ikkinchi odam ko'rigi" va manba hamda artefakt orasidagi aloqani tekshirish; npm holatiga eng yaqinlari kredensial gigienasi, bosqichma-bosqich yangilash va yangi chiqqan versiyani darhol emas, tekshiruvdan keyin qabul qilish.
 
 Shuning uchun supply chain himoyasi qatlamli: manba review, artefakt tekshiruvi, dasturchi akkauntlari xavfsizligi, lockfile va yangilanish siyosati (82 va 85-darslar).
 

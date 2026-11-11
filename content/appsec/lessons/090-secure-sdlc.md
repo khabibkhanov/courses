@@ -10,13 +10,13 @@ sources:
   - id: cs-vulndeps
     note: "OWASP Vulnerable Dependency Management Cheat Sheet: loyiha boshidan avtomatik tahlil, transitive bog'liqlikda to'g'ridan-to'g'ri bog'liqlik ustida ish, patch bor/yo'q holatlari (Case 1-5), tool tanlash mezonlari, maintained backports"
   - id: samm
-    note: "OWASP SAMM: dastur etukligini baholash modeli (Top 10:2025 tavsiyasi bo'yicha); sahifaning o'zi o'qilmadi, faqat Top 10 hujjatidagi ta'rif"
+    note: "OWASP SAMM (Software Assurance Maturity Model): OWASP Top 10:2025 dastur bo'limi uni mavjud dastur etukligini baholash va SDLC jarayonini yaxshilash modeli sifatida tavsiya qiladi (DSOMM bilan birga)"
   - id: nist-ssdf
-    note: "NIST SP 800-218 SSDF: manba korpusda yo'q, o'qilmadi; dars faqat umumiy ma'lum maqsadni aytadi (xavfsiz dasturiy ta'minot amaliyotlari to'plami), tafsilot keltirilmaydi"
+    note: "NIST SP 800-218 SSDF v1.1: har qanday SDLC ga qo'shiladigan yuqori darajadagi xavfsiz ishlab chiqish amaliyotlari to'plami; ishlab chiqaruvchilar zaifliklarni kamaytirish uchun, xaridorlar esa yetkazib beruvchi bilan umumiy til sifatida foydalanadi. Dars amaliyot guruhlari raqamlarini keltirmaydi"
   - id: kev
-    note: "CISA KEV katalogi: korpusda yo'q, o'qilmadi; dars uni faqat umumiy ta'rifda eslatadi"
+    note: "CISA Known Exploited Vulnerabilities katalogi: ekspluatatsiya qilinayotgani ma'lum zaifliklar ro'yxati; dars uni ustuvorlikdagi signal sifatida faqat shu ma'noda eslatadi"
   - id: epss
-    note: "FIRST EPSS: korpusda yo'q, o'qilmadi; dars uni faqat umumiy ta'rifda eslatadi"
+    note: "FIRST EPSS: e'lon qilingan CVE keyingi 30 kunda real hujumda ekspluatatsiya qilinish ehtimolini 0 dan 1 gacha baholaydi (har kuni har CVE uchun); darsdagi `epss` maydoni shu qiymatni modellaydi"
 quiz:
   - q: "OWASP Top 10:2025 hujjati ko'ra, mavjud AppSec dasturi bor jamoa uning etukligini nima bilan baholashi mumkin?"
     options:
@@ -135,7 +135,7 @@ task:
   solutionNotes: |
     - Tier qoidalari o'quv modeli. Haqiqiy tashkilotda ular o'z tavakkal modeliga (aktiv muhimligi, ma'lumot turi, kompensatsion nazoratlar) moslanadi.
     - `reachable` va `exposed` bayroqlarini qaysidir vosita yoki tahlil beradi (call graph, deployment ma'lumoti); bu modelda ular tayyor kelgan, amalda esa ularni aniqlash qiyin va xato qilish mumkin. Noaniq bo'lsa, ehtiyotkor tomonga (yetib boriladi deb) ketish xavfsizroq.
-    - `exploited` va `epss` bayroqlari KEV va EPSS kabi tashqi signallardan keladi. Ularning real kataloglari va formati bu darsda tekshirilmagan.
+    - `exploited` va `epss` bayroqlari KEV va EPSS kabi tashqi signallardan keladi; bu modelda ular tayyor qiymat, real tizimda ularni katalog va API'dan yangilab turish kerak.
     - SLA kunlari (2, 7, 30, 90) misol uchun, hech bir manbadan olinmagan.
   checklist:
     - "Ekspluatatsiya signali severity'dan yuqori turadi"
@@ -148,7 +148,7 @@ task:
 
 Module davomida biz alohida nazoratlarni ko'rdik: bog'liqliklar, SAST, DAST, CI/CD, konteyner, Kubernetes, bulut va bazalar. Ularni birlashtiruvchi savol bor: bularning hammasi qaysi tartibda, kim tomonidan va nima bilan o'lchanib bajariladi? Jamoalar odatda ikki yo'ldan xato qiladi. Birinchisi, xavfsizlikni oxirgi bosqichga, ya'ni release oldidagi pentest'ga qoldirish. OWASP Top 10:2025 ning dastur bo'limi aksini aytadi: xavfsizlikni keyin qo'shishdan ko'ra uni boshidan loyihalash ancha arzon. Ikkinchisi, skanerlar topgan yuzlab zaiflik oldida nima tuzatishni bilmaslik: hamma narsani qizil deb belgilash hech narsani ustuvor qilmaydi.
 
-Dars shu ikki masalani ko'radi. Birinchi qism: xavfsizlikni SDLC (software development life cycle) bosqichlariga qanday joylash, OWASP hujjati bo'yicha. Ikkinchi qism: zaifliklar oqimini qanday boshqarish, ustuvorlash va muddatlar belgilash. Eslatma: NIST SSDF (SP 800-218) matni, CISA KEV katalogi va FIRST EPSS hujjatlari mahalliy korpusda yo'q va men ularni o'qiy olmadim. Shu sababli ularning tafsilotini keltirmayman; faqat umumiy ma'lum maqsadini bir jumla bilan aytaman va bu faktlar tekshirilmagan deb belgilangan.
+Dars shu ikki masalani ko'radi. Birinchi qism: xavfsizlikni SDLC (software development life cycle) bosqichlariga qanday joylash, OWASP hujjati bo'yicha. Ikkinchi qism: zaifliklar oqimini qanday boshqarish, ustuvorlash va muddatlar belgilash. NIST SSDF (SP 800-218) ham shu yo'nalishda: u har qanday SDLC ga qo'shiladigan yuqori darajadagi xavfsiz ishlab chiqish amaliyotlari to'plami; ishlab chiqaruvchilar zaifliklarni kamaytirish uchun, xaridorlar esa yetkazib beruvchi bilan umumiy til sifatida foydalanadi. Bu dars SSDF amaliyot guruhlarini sanamaydi, OWASP hujjati bilan ishlaydi.
 
 ## Asosiy g'oya
 
@@ -186,7 +186,7 @@ Vositalar: cheat sheet vosita tanlash mezonini beradi: bir nechta ishonchli kiri
 
 Skaner natijasidagi severity ball odatda zaiflikning o'zining og'irligini ifodalaydi. Lekin tuzatish navbati uchun savol boshqacha: bu zaiflik bizning tizimimizda ekspluatatsiya qilinishi mumkinmi va qilinsa qanchalik zarar? Shu savolga javob beruvchi uchta o'q bor. Birinchisi, yetib borish (reachable): zaif funksiya bizning kodimizdan chaqiriladimi (cheat sheet shuni ekspluatatsiya sharoitlarini aniqlash qadami deydi). Ikkinchisi, ochiqlik (exposed): komponent tashqi hujumchiga yetadigan joydami. Uchinchisi, real dunyo signali: zaiflik haqiqatda ekspluatatsiya qilinayotganmi yoki qilinish ehtimoli qancha.
 
-Uchinchi signal uchun ikki umumiy ma'lum manba bor, lekin ular korpusda yo'q va men ularni o'qiy olmadim: CISA KEV (Known Exploited Vulnerabilities) katalogi, ya'ni ekspluatatsiya qilinayotgani ma'lum zaifliklar ro'yxati, va FIRST EPSS (Exploit Prediction Scoring System), ya'ni zaiflik ekspluatatsiya qilinish ehtimolining bahosi. Ularning aniq kataloglari, maydonlari va yangilanish tartibi bu yerda tekshirilmagan; ishlatishdan oldin rasmiy sahifalarini o'qing. Darsdagi model ularni oddiy `exploited` va `epss` maydonlari sifatida ifodalaydi.
+Uchinchi signal uchun ikki manba bor. CISA KEV (Known Exploited Vulnerabilities) katalogi ekspluatatsiya qilinayotgani ma'lum zaifliklar ro'yxati: zaiflik unda bo'lsa, u nazariy emas, amalda ishlatilmoqda. FIRST EPSS (Exploit Prediction Scoring System) esa e'lon qilingan CVE keyingi 30 kunda real hujumda ekspluatatsiya qilinish ehtimolini har kuni 0 dan 1 gacha baholaydi. Ikkalasi ham ehtimoliy signal, yetib borish va ochiqlikni almashtirmaydi: KEV'da yo'q zaiflik xavfsiz degani emas, EPSS esa sizning muhitingizni emas, umumiy statistikani aks ettiradi. Darsdagi model ularni oddiy `exploited` va `epss` maydonlari sifatida ifodalaydi.
 
 Misol sifatida SLA: har tierga muddat belgilanadi. Hujjat umuman "xavfsizlik xatolarini tuzatish uchun SLA'lar" kerakligini aytadi, lekin aniq muddatlarni bermaydi. Quyidagi 2, 7, 30 va 90 kun faqat misol qiymatlar, hech bir manbadan olinmagan; jamoa ularni o'z tavakkal modeliga va regulyator talablariga moslashtiradi.
 
@@ -311,6 +311,33 @@ tartib: A,D,C,B,F,E
 KUTILGAN B,C,F,E,A,D
 ```
 
+### Mashq: noaniq yetib borish
+
+Real tizimda `reachable` va `exposed` har doim ma'lum emas: tahlil vositasi javob bera olmasligi mumkin (`null`). Quyidagi `tier` noaniq qiymatni "yetib bo'lmaydi" deb hisoblaydi va ekspluatatsiya qilinayotgan zaiflikni P3 ga yashirib qo'yadi, chegara qiymat `epss = 0.1` ni ham noto'g'ri tasniflaydi. "Tekshirish" tugmasi bilan qaysi testlar o'tmayotganini ko'ring va tuzating. Qoidalar: noaniq (`null`) yetib borish yoki ochiqlik ehtiyotkorlik uchun `true` deb olinadi; tier qoidalari yuqoridagi bilan bir xil, `epss >= 0.1` P1 chegarasiga kiradi.
+
+```ts run
+type Finding = { exploited: boolean; epss: number; reachable: boolean | null; exposed: boolean | null };
+
+// P0: ekspluatatsiya qilinayotgan va yetib boriladigan; P1: yetib boriladigan, ochiq, epss >= 0.1;
+// P2: yetib boriladigan; P3: yetib bo'lmaydigan. Noaniq (null) - ehtiyotkor tomon: true.
+function tier(f: Finding): string {
+  if (f.exploited && f.reachable) return "P0";
+  if (f.reachable && f.exposed && f.epss > 0.1) return "P1";
+  if (f.reachable) return "P2";
+  return "P3";
+}
+```
+
+```ts test
+check("ekspluatatsiya + yetib boriladi: P0", () => tier({ exploited: true, epss: 0.9, reachable: true, exposed: true }) === "P0");
+check("ekspluatatsiya + noaniq yetib borish: P0 (ehtiyotkor)", () => tier({ exploited: true, epss: 0.9, reachable: null, exposed: true }) === "P0");
+check("yetib borish noaniq, ochiq, epss 0.35: P1", () => tier({ exploited: false, epss: 0.35, reachable: null, exposed: true }) === "P1");
+check("epss aynan 0.1 chegarada: P1", () => tier({ exploited: false, epss: 0.1, reachable: true, exposed: true }) === "P1");
+check("ochiqlik noaniq, epss 0.2: P1", () => tier({ exploited: false, epss: 0.2, reachable: true, exposed: null }) === "P1");
+check("yetib boriladi, ochiq emas: P2", () => tier({ exploited: false, epss: 0.5, reachable: true, exposed: false }) === "P2");
+check("yetib bo'lmaydi (aniq false): P3", () => tier({ exploited: true, epss: 0.9, reachable: false, exposed: true }) === "P3");
+```
+
 ## Qachon qo'llamaslik kerak
 
 - Tavakkalga asoslangan ustuvorlikni yetib borishni tekshirmasdan qo'llash. "Yetib bo'lmaydi" degan noto'g'ri xulosa zaiflikni P3 ga yashirib qo'yadi. Noaniq bo'lsa, ehtiyotkor tomonga (yetib boriladi deb) ketish xavfsizroq.
@@ -327,7 +354,7 @@ KUTILGAN B,C,F,E,A,D
 - Kod: repoda SAST, secret scanning, bog'liqlik skaneri va IaC linter (83-85-darslar) PR'da avtomatik; natijalar dasturchi ko'radigan joyda (PR izohi), alohida hisobotda emas.
 - Bog'liqliklar: `package-lock.json` va `npm ci` (81-82-dars), Renovate yoki shunga o'xshash vosita bilan muntazam yangilash, testlar yetarli bo'lishi (Case 1 sharti), SBOM invetari.
 - Ustuvorlik: skaner topilmalarini yuqoridagi tier modeliga o'xshash qoida bilan saralang; qoidani hujjatlashtiring va chorakda bir marta qayta ko'rib chiqing.
-- Operatsiya: SLA'lar, xatolar haqida xabar berish yo'li (masalan, `security.txt` bilan, bu qism hujjatdan emas, amaliy qayd), hodisaga javob rejasi va muntazam skanerlash jadvali.
+- Operatsiya: SLA'lar, xatolar haqida xabar berish yo'li (masalan, RFC 9116 dagi `security.txt` fayli bilan), hodisaga javob rejasi va muntazam skanerlash jadvali.
 - Dastur: kichik jamoa uchun SAMM kabi modelning hammasi ortiqcha bo'lishi mumkin; 3-5 ta faoliyatni tanlab, har chorakda yana bir-ikkitasini qo'shing.
 
 ## Xulosa
@@ -339,4 +366,4 @@ KUTILGAN B,C,F,E,A,D
 - Severity yetarli emas: yetib borish, ochiqlik va ekspluatatsiya signali (KEV, EPSS kabi) ustuvorlikni belgilaydi.
 - Yetib bo'lmaydigan zaiflik yo'qolmaydi, qayta baholanadi.
 - SLA va tier qiymatlari jamoa qarori; bu darsdagi raqamlar misol.
-- NIST SSDF, KEV va EPSS manbalari korpusda yo'q va tekshirilmagan.
+- KEV (ekspluatatsiya faktini bildiradi) va EPSS (30 kunlik ehtimol bahosi) ustuvorlikka signal beradi, lekin yetib borish va ochiqlikni almashtirmaydi.

@@ -3,11 +3,6 @@
   uz: "Kodni xavfsizlik nuqtai nazaridan o'qish: foydalanuvchi kirishidan (source) xavfli joyga (sink) boradigan yo'lni kuzatish va har endpoint uchun kim, qaysi obyekt, qanday kirish, qayerga va nima chiqishini tekshirish."
   course: appsec
   lesson: 91
-- term: allowlist
-  aliases: ["ruxsat etilganlar ro'yxati"]
-  uz: "Faqat oldindan ruxsat etilgan qiymatlarni qabul qilib, qolganini rad etadigan nazorat. Identifikatorlar (ustun nomi, tartib yo'nalishi) uchun placeholder o'rniga ishlatiladi."
-  course: appsec
-  lesson: 91
 - term: WSTG
   aliases: ["Web Security Testing Guide"]
   uz: "OWASP veb-ilovalarni xavfsizlik bo'yicha sinash qo'llanmasi: sinov toifalari va usullari to'plami (autentifikatsiya, avtorizatsiya, sessiya, xatolar va boshqalar)."

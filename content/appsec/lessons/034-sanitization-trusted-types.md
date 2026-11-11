@@ -6,11 +6,11 @@ summary: "Foydalanuvchi HTML kiritishi kerak bo'lganda kodlash o'rniga allowlist
 duration: 45
 sources:
   - id: trusted-types
-    note: "W3C Trusted Types: TrustedHTML/TrustedScript/TrustedScriptURL turlari va policy mexanizmi; spetsifikatsiya umumiy mazmuni, bo'lim raqamlari keltirilmaydi"
+    note: "W3C Trusted Types: policy va default policy, require-trusted-types-for hamda trusted-types direktivalari (policy nomlari ro'yxati, 'none', 'allow-duplicates'), default policy null qaytarsa CSP buzilishi va faqat o'tish davri uchun mo'ljallanishi; sink va tur ro'yxati MDN Trusted Types API sahifasida"
   - id: cs-xss
-    note: "Umumiy mazmun: HTML kiritish kerak bo'lganda ishonchli kutubxona bilan sanitization tavsiyasi; bo'lim raqamlari keltirilmaydi"
+    note: "HTML Sanitization bo'limi: foydalanuvchi HTML yozishi kerak bo'lganda DOMPurify tavsiyasi, sanitizatsiyadan keyin o'zgartirish himoyani yo'qotishi, kutubxonani muntazam yangilash; Trusted Types qo'shimcha nazorat sifatida, u o'zi sanitizatsiya qilmaydi"
   - id: csp3
-    note: "CSP Level 3: require-trusted-types-for va trusted-types direktivalari CSP orqali beriladi (aniq sintaksis 35-darsda ko'riladi)"
+    note: "CSP Level 3: eval, Function() va satr bilan setTimeout/setInterval 'unsafe-eval' va 'trusted-types-eval' kalit so'zlari bilan nazorat qilinishi; Trusted Types direktivalarining o'zi Trusted Types spetsifikatsiyasida ta'riflangan"
 quiz:
   - q: "Jamoa izohlardagi xavfli teglarni `html.replace(/<script.*?>.*?<\\/script>/gi, '')` bilan o'chirishga qaror qildi. Eng aniq tanqid qaysi?"
     options:
@@ -133,7 +133,7 @@ Ikkinchi qatlam muammosi tashkiliy: katta kod bazasida `innerHTML` yozilgan yuzl
 
 ### Sanitization nima
 
-Sanitization: ishonchsiz HTML'ni qabul qilib, undan xavfli qismlarni olib tashlab, xavfsiz HTML qaytarish. Kodlashdan farqi: kodlash hamma narsani matnga aylantiradi, sanitization esa ruxsat etilgan markup'ni saqlaydi. OWASP XSS cheat sheet'ning umumiy tavsiyasi: HTML kiritish kerak bo'lsa, o'zingiz sanitizer yozmasdan, ishonchli va doimiy yangilanadigan kutubxona (masalan DOMPurify) ishlating. Eslatma: DOMPurify tavsiyasi, uni muntazam yangilash zarurligi va Trusted Types haqidagi da'volar OWASP XSS Prevention Cheat Sheet'ning lokal nusxasiga solishtirilgan; brauzer qo'llab-quvvatlash jadvallari tekshirilmagan va keltirilmaydi.
+Sanitization: ishonchsiz HTML'ni qabul qilib, undan xavfli qismlarni olib tashlab, xavfsiz HTML qaytarish. Kodlashdan farqi: kodlash hamma narsani matnga aylantiradi, sanitization esa ruxsat etilgan markup'ni saqlaydi. OWASP XSS cheat sheet'ning tavsiyasi: foydalanuvchi HTML yozishi kerak bo'lgan joyda (masalan WYSIWYG muharrir) kodlash formatni buzadi, shuning uchun HTML sanitization ishlatiladi va OWASP buning uchun DOMPurify'ni tavsiya qiladi. MDN ham sanitizatsiya, kodlash kabi, to'g'ri bajarish qiyin ekanini aytib, ishonchli uchinchi tomon kutubxonasini maslahat beradi. O'zingiz sanitizer yozmang.
 
 Sanitizer ishining tuzilmasi:
 
@@ -151,9 +151,13 @@ Sanitizer satrni DOM'ga aylantiradi, tozalaydi, so'ng yana satrga aylantiradi (s
 
 Mudofaa tamoyillari: (1) o'zingiz sanitizer yozmang; (2) imkon bo'lsa tozalangan natijani satrga qaytarmasdan, DOM tuguni (`DocumentFragment`) sifatida qo'ying, shunda qayta tahlil bosqichi bo'lmaydi; (3) allowlist'ni minimal saqlang, murakkab kontekstlar (`svg`, `math`) kerak bo'lmasa ruxsat bermang; (4) tozalangan natijani CSP (35-dars) va Trusted Types ikkinchi qatlami bilan himoyalang.
 
+### Sanitizerdan keyin nima qilmaslik kerak
+
+Cheat Sheet ikki tuzoqni alohida aytadi. Birinchisi: sanitizatsiyadan keyin satrni o'zgartirsangiz (masalan, havolalarga atribut qo'shsangiz, uzunligini kessangiz, matn almashtirsangiz), butun himoyani bekor qilishingiz mumkin, chunki o'zgartirilgan satr endi sanitizer ko'rgan satr emas. Ikkinchisi: tozalangan satrni boshqa kutubxonaga uzatsangiz, u kutubxona satrni ichida o'zgartirmasligini tekshiring; o'zgartirsa, yana xuddi shu muammo. Shuning uchun tartib qat'iy: sanitizer eng oxirgi qadam, undan keyin natija bevosita sink'ga boradi. Uchinchi qoida tashkiliy: DOMPurify kabi kutubxonalarni muntazam yangilash kerak, chunki brauzerlar xatti-harakati o'zgaradi va bypass'lar muntazam topiladi. Sanitizer versiyasi `package.json` da qotib qolgan loyiha vaqt o'tishi bilan zaiflashadi.
+
 ### Trusted Types
 
-Trusted Types brauzer xususiyati (W3C spetsifikatsiyasi) bo'lib, DOM XSS sink'larini qulflaydi. U uchta tur kiritadi: `TrustedHTML` (`innerHTML`, `insertAdjacentHTML`, `document.write` uchun), `TrustedScript` (`eval`, `script.text` uchun) va `TrustedScriptURL` (skript manzillari uchun). Yoqilganda (CSP orqali) bu sink'larga oddiy satr yozish rad etiladi va faqat policy yaratgan turlangan qiymat qabul qilinadi.
+Trusted Types brauzer xususiyati (W3C spetsifikatsiyasi) bo'lib, DOM XSS sink'larini qulflaydi. MDN sink'larni uch guruhga ajratadi va ularga uchta tur mos keladi: `TrustedHTML` HTML sifatida talqin qiluvchi sink'lar uchun (`innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, `DOMParser.parseFromString`, iframe `srcdoc`, `Range.createContextualFragment`, `setHTMLUnsafe`), `TrustedScript` JavaScript sifatida bajaradigan sink'lar uchun (`eval`, `Function()`, `script.text` va `script.textContent`, kod argumentli `setTimeout`/`setInterval`), `TrustedScriptURL` skript manzili sifatida o'qiladigan sink'lar uchun (`script.src`, `Worker()` konstruktori, `importScripts`, `serviceWorker.register`). Yoqilganda (CSP orqali) bu sink'larga oddiy satr yozish `TypeError` bilan rad etiladi va faqat policy yaratgan turlangan qiymat qabul qilinadi. Muhim: Trusted Types API o'zi hech qanday policy yoki sanitizatsiya funksiyasi bermaydi, ularni dasturchi yozadi.
 
 Yoqish uchun CSP sarlavhasida (batafsil 35-darsda) ikki direktiva ishlatiladi: `require-trusted-types-for 'script'` sink'larda majburlashni yoqadi, `trusted-types nom1 nom2` esa qaysi nomlar bilan policy yaratish mumkinligini cheklaydi. Policy kodda yaratiladi:
 
@@ -169,15 +173,19 @@ const policy = (window as any).trustedTypes?.createPolicy("komment-sanitizer", {
 // el.innerHTML = policy.createHTML(userHtml);
 ```
 
-Tekshirilgan xatti-harakat (ushbu darsni yozishda Chromium'da sinab ko'rilgan): sahifada `require-trusted-types-for 'script'` bo'lsa, `el.innerHTML = "<b>salom</b>"` yozuvi `TypeError` bilan rad etiladi ("This document requires 'TrustedHTML' assignment"), `trusted-types` ro'yxatida bo'lmagan nom bilan `createPolicy` ham `TypeError` beradi. Policy ichidagi funksiya esa sizniki: u nimani qaytarsa, sink shuni qabul qiladi.
+Spetsifikatsiya `trusted-types` direktivasining ma'nosini aniq beradi: `trusted-types one two` faqat shu ikki nomli policy yaratishga ruxsat beradi; bo'sh qiymat yoki `'none'` policy yaratishni butunlay taqiqlaydi, ya'ni majburlash yoqilgan sahifada hech qanday DOM XSS sink'idan foydalanib bo'lmaydi; `'allow-duplicates'` bir nomni qayta ishlatishga imkon beradi. Ro'yxatda bo'lmagan nom bilan `createPolicy` chaqirsangiz, MDN bo'yicha istisno tashlanadi: bu begona kod (masalan, uchinchi tomon skripti) o'zining ruxsat beruvchi policy'sini yaratib qo'yishining oldini oladi.
 
-Muhim cheklov: Trusted Types xavfsiz kodni kafolatlamaydi. U sink'larga "kirish eshiklarini" bir necha policy'ga qisqartiradi, audit sirtini kamaytiradi va yangi koddagi tasodifiy `innerHTML = string` ni to'xtatadi. Policy `createHTML: (s) => s` bo'lsa, qatlam shakldan iborat, himoya yo'q. Brauzer qo'llab-quvvatlashi bir xil emas: qo'llab-quvvatlamaydigan brauzerda `trustedTypes` obyekti bo'lmaydi va kodingiz uni tekshirishi kerak (yuqoridagi `?.`). Joriy qo'llab-quvvatlash jadvalini MDN yoki caniuse'dan o'zingiz tekshiring.
+Muhim cheklov: Trusted Types xavfsiz kodni kafolatlamaydi. U sink'larga "kirish eshiklarini" bir necha policy'ga qisqartiradi, audit sirtini kamaytiradi va yangi koddagi tasodifiy `innerHTML = string` ni to'xtatadi. Policy `createHTML: (s) => s` bo'lsa, qatlam shakldan iborat, himoya yo'q. Brauzer qo'llab-quvvatlashi bir xil bo'lmasligi mumkin: qo'llab-quvvatlamaydigan brauzerda `trustedTypes` obyekti bo'lmaydi va kodingiz uni tekshirishi kerak (yuqoridagi `?.`). Cheat Sheet polyfill yoki tinyfill policy kodini qayta ishlatishga yordam berishini, lekin brauzer darajasidagi sink majburlashini bermasligini ta'kidlaydi, MDN esa tinyfill'ning mantig'ini tushuntiradi: kodni majburlash yoqilgan qo'llab-quvvatlovchi brauzerda sinab chiqsangiz, hamma ma'lumot policy funksiyasidan o'tishi isbotlanadi va qo'llab-quvvatlamaydigan brauzerda ham xuddi shu yo'l ishlaydi. Maqsadli brauzerlar ro'yxatini MDN compatibility jadvalidan tekshiring.
 
 Joriy qilish tartibi: avval faqat hisobot rejimida (`Content-Security-Policy-Report-Only`) yoqing, violation hisobotlaridan qaysi kod `innerHTML` ga satr yozayotganini toping, ularni tuzating yoki policy'dan o'tkazing va keyin majburlashga o'ting. Uchinchi tomon kutubxonalari (grafik, xarita, editor) ko'pincha shu bosqichda to'siq bo'ladi; ba'zilari Trusted Types'ni qo'llab-quvvatlaydi, ba'zilari yo'q va ularga alohida default policy yoki almashtirish kerak.
 
-### Platforma API: setHTML
+### Default policy: o'tish davri vositasi
 
-Brauzerlar xavfsiz HTML kiritish uchun o'rnatilgan Sanitizer API ustida ishlamoqda (`Element.setHTML()`). Uning qo'llab-quvvatlash holati va sintaksisi tez o'zgargan, ushbu darsda u tekshirilmagan, shuning uchun u haqida da'vo yozilmaydi; ishlatishdan oldin MDN va brauzer hujjatlarida joriy holatni tekshiring. Hozircha production uchun tekshirilgan kutubxona + Trusted Types yo'nalishi kafolatliroq.
+Nomi `default` bo'lgan policy maxsus: majburlash yoqilgan sahifada sink'ga satr berilsa, brauzer uni shu policy'dan o'tkazadi, xato bermaydi. Maqsad eski kodni birdaniga buzmasdan, satr yozayotgan joylarni topish (policy ichida log yozib) va ularni asta-sekin aniq policy'ga o'tkazish. Agar default policy mos `create*` funksiyasida `null` yoki `undefined` qaytarsa, CSP buzilishi sodir bo'ladi: majburlash rejimida xato tashlanadi, report-only rejimda esa asl qiymat ishlatiladi. Spetsifikatsiya ogohlantiradi: bo'sh, hech narsa tekshirmaydigan default policy Trusted Types'ning butun foydasini yo'qotadi, shuning uchun uni faqat o'tish davrida ishlating va keyin olib tashlang.
+
+### Bilvosita sink'lar
+
+MDN yana bir nozik joyni ko'rsatadi. Matn tuguni (`createTextNode`) yaratganda brauzer uni Trusted Types manbai deb hisoblamaydi, shuning uchun u yerda tekshiruv bo'lmaydi. Tekshiruv skript elementi bajariladigan bo'lgan paytda, masalan `document.body.appendChild(script)` chaqirilganda amalga oshadi. Script matnini `TrustedScript`siz o'zgartiradigan har qanday operatsiya uni ishonchsiz qiladi; majburlash yoqilgan bo'lsa va default policy `TrustedScript` bermasa, operatsiya istisno tashlaydi. Amaliy xulosa: Trusted Types "to'g'ridan-to'g'ri sink" ro'yxatidagi API'larni qoplaydi, lekin ilovangiz dasturiy yo'l bilan skript yig'sa, bu yo'lni alohida ko'rib chiqing.
 
 ## Misol: izoh sanitizeri
 
@@ -292,7 +300,7 @@ export function Comment({ html }: { html: string }) {
 }
 ```
 
-Server-renderda DOMPurify uchun DOM muhiti kerak (Node'da jsdom kabi qatlam); ko'p loyihalar sanitizeni klient tomonida yoki alohida paket orqali bajaradi. Sozlamani va ishlatilish usulini kutubxona hujjatidan tekshiring. Trusted Types uchun Next.js'da CSP sarlavhasi `require-trusted-types-for 'script'` bilan sozlanadi (35-dars), policy nomlari esa klient kodingizda bir joyda ro'yxatga olinadi. DOMPurify Trusted Types bilan ishlash opsiyalariga ega ekanini hujjatdan tekshiring (bu dars uni tekshirmagan).
+DOMPurify brauzer DOM'iga tayanadi, shuning uchun server-renderda (Node) unga jsdom kabi DOM muhiti kerak bo'ladi; ko'p loyihalar sanitizatsiyani klient tomonida bajaradi. Trusted Types bilan bog'lash MDN namunasidagi kabi: `createPolicy("nom", { createHTML: (input) => DOMPurify.sanitize(input) })`. Next.js'da `require-trusted-types-for 'script'` CSP sarlavhasi orqali beriladi (35-dars), policy nomlari esa klient kodida bir joyda ro'yxatga olinadi va `trusted-types` ro'yxati bilan mos bo'lishi kerak.
 
 Amaliy tavsiyalar: sanitizerni ko'rsatish joyida chaqiring; sozlamani bitta fayldagi bitta funksiyada saqlang (DRY); lint qoidasi bilan `dangerouslySetInnerHTML` faqat shu funksiyadan keladigan qiymatlar bilan ishlatilishini tekshiring; kutubxona yangilanishini `npm audit` va dependabot (81-dars) bilan kuzating.
 

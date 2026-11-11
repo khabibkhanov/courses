@@ -12,7 +12,9 @@ sources:
   - id: mdn-cookies
     note: "MDN Cookies bo'yicha qo'llanma: atributlar, SameSite qiymatlari va prefikslar amaliyoti"
   - id: cs-session
-    note: "OWASP Session Management Cheat Sheet: session cookie atributlari bo'yicha tavsiyalar"
+    note: "OWASP Session Management Cheat Sheet: session cookie atributlari (Secure, HttpOnly, SameSite aniq yozilishi, __Host- prefiksi, Domain'ni bermaslik) bo'yicha tavsiyalar"
+  - id: nestjs-cookies
+    note: "NestJS Cookies sahifasi: adapter setCookie() metodi, maxAge sekundlarda ekani va Path'dan boshqa atributlarning standart qiymati yo'qligi (httpOnly ham)"
 quiz:
   - q: "Session cookie'da `HttpOnly` bor, `Secure` va `SameSite` yo'q. Saytda XSS topildi. Hujumchi nimaga erisha olmaydi?"
     options:
@@ -132,7 +134,7 @@ Server `Set-Cookie: nom=qiymat; atribut; atribut` yuboradi. Brauzer uni saqlab, 
 
 - Server brauzerning faqat `nom=qiymat` juftini ko'radi, atributlarni (Secure, Path, Domain) emas. Shu sababli server cookie qayerdan o'rnatilganini bila olmaydi.
 - Cookie origin emas, host (va Domain bo'lsa, uning subdomenlari) bilan bog'lanadi. RFC 6265 cookie'lar port va sxema bo'yicha izolyatsiya qilinmasligini o'zining xavfsizlik mulohazalarida yozadi: `http://app.fleet.example` va `https://app.fleet.example` bir cookie'ni ulashishi mumkin (Secure bo'lmasa).
-- Bir nomdagi cookie turli Domain/Path bilan bir vaqtda bir nechta bo'lishi mumkin; brauzer hammasini yuboradi, tartib kafolatlanmaydi.
+- Bir nomdagi cookie turli Domain/Path bilan bir vaqtda bir nechta bo'lishi mumkin; brauzer hammasini yuboradi. RFC 6265 uzunroq `Path` li cookie'ni oldinroq qo'yishni belgilaydi, lekin server bu tartibga tayanmasligi kerak: qaysi biri o'qilishi framework'ga bog'liq.
 
 Bu cookie'larni origin chegarasiga tayanadigan SOP (12-dars) dan farqli qiladi. Cookie modeli tarixan oldin paydo bo'lgan va shuning uchun sxema, port va subdomen bo'yicha "yumshoq". Hozirgi atributlar shu bo'shliqlarni to'ldirishga urinadi.
 
@@ -166,6 +168,8 @@ Cookie nomining boshiga `__Secure-` yoki `__Host-` qo'yilsa, brauzer nom bo'yich
 - `__Secure-`: cookie `Secure` atributi bilan va xavfsiz (HTTPS) sahifadan o'rnatilgan bo'lishi shart.
 - `__Host-`: yuqoridagi shartlarga qo'shimcha, `Domain` atributi bo'lmasligi va `Path=/` bo'lishi shart. Natijada cookie qat'iy host-only bo'ladi.
 
+MDN yana ikki prefiksni sanaydi: `__Http-` (cookie `Secure` va `HttpOnly` bo'lishi shart, ya'ni JavaScript uni o'rnata olmaydi) va `__Host-Http-` (ikkalasining birikmasi). Ular yangiroq va brauzer qo'llab-quvvatlashi har xil, shuning uchun bu darsda `__Host-` ga tayanamiz. Server cookie nomini prefiks bilan to'liq tekshirishi shart: brauzer prefiksni qirqib yubormaydi, `Cookie` header'ida `__Host-sid` bo'lib keladi. Ilova `sid` nomini o'qisa, prefiksli himoya umuman ishlamaydi.
+
 Nima uchun bu muhim: prefiksli cookie'ni subdomen yoki HTTP sahifa o'rnata olmaydi. Hujumchi nomni bilsa ham, brauzer uning `Set-Cookie`ini rad etadi. Bu keyingi bo'limdagi hujumni yopadi.
 
 ## Chuqurroq: cookie tossing va qoldiq risklar
@@ -173,6 +177,18 @@ Nima uchun bu muhim: prefiksli cookie'ni subdomen yoki HTTP sahifa o'rnata olmay
 ### Cookie tossing
 
 Faraz qiling, `blog.fleet.example` da kichik XSS yoki tashlab ketilgan subdomen bor. Hujumchi u yerdan `Set-Cookie: sid=attacker; Domain=fleet.example` yoza oladi. Brauzer buni qabul qiladi, chunki subdomen o'z ota-domeni uchun cookie yoza oladi. Endi `app.fleet.example` ga ketadigan so'rovda ikki `sid` cookie bo'ladi. Server qaysi birini o'qishi framework'ga bog'liq. Hujumchi session fixation (46-dars) yoki CSRF token almashtirish uchun foydalanishi mumkin: foydalanuvchi hujumchi bergan sessiyaga kirib qoladi. Bunday hujumni SameSite to'xtatmaydi, chunki so'rov same-site. `__Host-` prefiksi esa to'xtatadi: u uchun Domain atributi taqiqlangan, ya'ni subdomen ota-domen ostida bunday cookie yoza olmaydi.
+
+### Strict yoki Lax
+
+OWASP Session Management Cheat Sheet session cookie uchun `SameSite=Strict` ni afzal ko'radi va `Lax` ni qabul qilinadigan variant sifatida beradi; `SameSite=None` ni `Secure`siz ishlatmaslikni va brauzer standartiga tayanmaslikni (u brauzer va versiyaga qarab farq qiladi) aytadi. Dars tanlovi `Lax`: sabab shuki, `Strict` bilan email yoki messenjerdagi havola orqali kirgan foydalanuvchining birinchi so'rovi cookie'siz ketadi va u tizimga kirmagandek ko'rinadi. Amaliy yechim ikki cookie: umumiy sessiya `Lax`, sezgir amallar (to'lov, rol o'zgartirish) uchun qisqa muddatli `Strict` cookie yoki qayta autentifikatsiya. Muhim: `SameSite` CSRF'ga qarshi chuqur himoya qatlami, token o'rnini bosuvchi emas (OWASP ham shunday yozadi).
+
+### Cookie'ni o'chirish va yangilash
+
+Brauzer cookie'ni faqat `Path` va `Domain` o'rnatilgandagi qiymatlar bilan mos kelganda o'chiradi (`Max-Age=0` yoki o'tmishdagi `Expires` bilan). Logout kodida bu atributlarni tashlab ketsangiz, cookie brauzerda qoladi va foydalanuvchi chiqib ketgan deb o'ylaydi. NestJS hujjatiga ko'ra `clearCookie()` ham shu qoidaga bo'ysunadi: o'rnatishda ishlatilgan `path` va `domain` ni bering. Server tomonda esa logout sessiyani bekor qilishi shart (46-dars), aks holda o'g'irlangan cookie amal qilaveradi.
+
+### Cookie va DNS
+
+OWASP yana bir narsani eslatadi: cookie DNS spoofing yoki hijacking hujumlariga ochiq, chunki hujumchi host nomini o'ziga yo'naltirsa, brauzer cookie'ni shu hostga yuboradi. `Secure` va HSTS (16-dars) bu xavfni kamaytiradi: sertifikat bo'lmasa HTTPS ulanishi o'rnatilmaydi, demak cookie ham ketmaydi.
 
 ### Xavfsiz sozlama ham yetarli emas
 
@@ -369,7 +385,7 @@ Yopilmagani: XSS'ning o'zi (hujumchi sahifadan so'rov yubora oladi), `SameSite` 
 
 ## Stack'da: Fastify, NestJS va Next.js
 
-Fastify'da `@fastify/cookie`, Next.js'da `cookies()` API (`next/headers`) cookie atributlarini beradi. Qoida bitta: sessiya cookie'sini bitta joyda yig'ing va atributlarni konfiguratsiyaga chiqarmang (atribut qo'shishni unutish qiyin bo'lishi uchun). Quyidagi parcha ishga tushirilmaydi (framework kerak); faqat sintaksis jihatidan tekshirilgan.
+Fastify'da `@fastify/cookie`, Next.js'da `cookies()` API (`next/headers`) cookie atributlarini beradi. NestJS esa adapterning `setCookie(res, nom, qiymat, opsiyalar)` metodini taqdim etadi (platformadan mustaqil: Express va Fastify javob obyektlari bilan ishlaydi). NestJS hujjatiga ko'ra `maxAge` sekundlarda (Express'ning `res.cookie()` metodi esa millisekundda: ko'chirib o'tkazilgan qiymat cookie'ni 1000 marta uzoqroq yashatadi) va `Path`dan boshqa hech bir atributning standart qiymati yo'q, `httpOnly` ham. Demak sessiya cookie'sida `httpOnly`, `secure` va `sameSite` ni har safar aniq yozish kerak. Qoida bitta: sessiya cookie'sini bitta joyda yig'ing va atributlarni bitta yordamchi funksiyaga chiqaring (atribut qo'shishni unutish qiyin bo'lishi uchun). Quyidagi parcha ishga tushirilmaydi (framework kerak); faqat sintaksis jihatidan tekshirilgan.
 
 ```ts
 import Fastify from "fastify";
@@ -396,7 +412,7 @@ app.post("/auth/login", async (req, reply) => {
 declare function createSession(input: { email: string; password: string }): Promise<string>;
 ```
 
-`@fastify/cookie` opsiyalarining aniq nomlari va qiymatlari versiyaga qarab o'zgarishi mumkin: o'rnatilgan versiya hujjatini tekshiring. Express'dagi `cookie-session` va `express-session` paketlari ham xuddi shu atributlarni oladi, lekin standart qiymatlari turlicha, shuning uchun hamma atributni aniq yozing.
+Kod parchasida `maxAge` sekundda berilgan, bu NestJS hujjatidagi `setCookie()` jadvali bilan mos. Express'dagi `cookie-session` va `express-session` paketlari ham xuddi shu atributlarni oladi, lekin standart qiymatlari turlicha, shuning uchun hamma atributni aniq yozing.
 
 ## Xulosa
 

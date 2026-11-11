@@ -8,9 +8,11 @@ sources:
   - id: api-top10
     note: "API4:2023 Unrestricted Resource Consumption: resurslar (tarmoq, CPU, xotira, saqlash) va per-request to'lanadigan xizmatlar (email, SMS, qo'ng'iroq, biometrik tekshiruv); 'How To Prevent': resurs chegaralari, payload o'lchami, chastota limiti, bir operatsiyani takrorlash limiti (OTP, parol tiklash), spending limit yoki billing alert; API6:2023 biznes oqimlarni avtomatlashtirish"
   - id: nestjs-rate-limit
-    note: "NestJS Rate Limiting: @nestjs/throttler, ThrottlerModule.forRoot ichida ttl (millisekund) va limit, bir nechta nomli throttler (short, medium, long), ThrottlerGuard'ni global bog'lash, proxy ortida 'trust proxy' sozlash, WebSocket uchun ThrottlerGuard'ni kengaytirish"
+    note: "NestJS Rate Limiting: @nestjs/throttler, ThrottlerModule.forRoot ichida ttl (millisekund) va limit, bir nechta nomli throttler (short, medium, long), blockDuration, @Throttle va @SkipThrottle, ThrottlerGuard'ni global bog'lash, proxy ortida trust proxy / trustProxy sozlash (Fastify'da son qiymati haqida ogohlantirish), standart xotira storage'i va custom storage, WebSocket uchun ThrottlerGuard'ni kengaytirish"
   - id: redis-security
-    note: "Redis security: Redis ishonchli muhitdagi ishonchli mijozlar uchun mo'ljallangan, uni to'g'ridan-to'g'ri internetga ochish tavsiya etilmaydi; ishonchsiz mijozlar bilan Redis o'rtasida ACL va kirishni tekshiradigan qatlam turishi kerak; Redis portiga faqat ishonchli mijozlar kira olsin (bu dars hisoblagich saqlanadigan Redis'ning o'zini ham himoyalash zarurligiga tayanadi)"
+    note: "Redis security: Redis ishonchli muhitdagi ishonchli mijozlar uchun mo'ljallangan, uni to'g'ridan-to'g'ri internetga ochish tavsiya etilmaydi; ishonchsiz mijoz bilan Redis o'rtasida ACL, kirishni tekshirish va amalni tanlash qatlami turishi kerak; Redis portiga faqat ishonchli mijozlar kira olsin. Dars shundan hisoblagich saqlanadigan Redis'ning o'zini ham himoyalash zarurligini xulosa qiladi"
+  - id: t10-a10
+    note: "A10:2025 Mishandling of Exceptional Conditions: tranzaksiya o'rtasidagi xatoda hammasini qaytarish (fail closed) va rate limiting, resurs kvotalari, throttling qo'yish; IT'da hech narsa cheksiz bo'lmasligi kerak"
 quiz:
   - q: "Fixed window limiti: daqiqada 100 so'rov. Mijoz 59-soniyada 100 ta, 61-soniyada yana 100 ta yubordi. Nima bo'ldi?"
     options:
@@ -32,9 +34,9 @@ quiz:
     options:
       - "Parol ro'yxatlari ishlamay qoladi, boshqa muammo yo'q"
       - "Limit sekinlashadi"
-      - "Hujumchi ataylab xato parol yuborib, boshqa odam akkauntini bloklashi mumkin (DoS); limitni IP, qurilma belgisi yoki progressiv kechikish bilan birlashtirish kerak"
       - "Foydalanuvchi parolni tiklay olmaydi, chunki IP o'zgaradi"
-    answer: 2
+      - "Hujumchi ataylab xato parol yuborib, boshqa odam akkauntini bloklashi mumkin (DoS); limitni IP, qurilma belgisi yoki progressiv kechikish bilan birlashtirish kerak"
+    answer: 3
     explain: "Faqat akkaunt kaliti qurbonning akkauntini bloklash vositasiga aylantiradi. Kalitlarni birlashtirish yoki bloklash o'rniga kechikishni oshirish (43-dars) ikkala xavfni kamaytiradi."
   - q: "Redis'da hisoblagich `INCR key` keyin alohida `EXPIRE key 60` bilan yuritiladi. Qaysi nuqson bor?"
     options:
@@ -59,7 +61,7 @@ quiz:
       - "Barcha endpoint'larni abadiy bloklash"
       - "Redis xatosini e'tiborsiz qoldirish"
     answer: 1
-    explain: "OWASP A09 va A10 fail closed tamoyilini qo'yadi, lekin butun platformani limiter nosozligi sabab o'chirib qo'yish ham mavjudlikka zarar. Xavfi yuqori endpoint (login, OTP) uchun yopiq, qolgani uchun mahalliy zaxira limit bilan ochiq qaror odatiy kelishuv (bu muallifning tavsiyasi)."
+    explain: "OWASP A10:2025 tranzaksiya o'rtasidagi xatoda hammasini qaytarish (fail closed) ni talab qiladi, limiter uzilishiga uni to'g'ridan-to'g'ri qo'llash esa kursning talqini. Lekin limiter nosozligi sabab butun platformani o'chirib qo'yish ham mavjudlikka zarar. Xavfi yuqori endpoint (login, OTP) uchun yopiq, qolgani uchun mahalliy zaxira limit bilan ochiq qaror odatiy kelishuv (bu muallifning tavsiyasi)."
 task:
   title: "Sliding window log limiter"
   prompt: |
@@ -167,7 +169,7 @@ Eng keng tarqalgan xato: kalit sifatida `X-Forwarded-For` header'ining birinchi 
 Instance'lar bir nechta bo'lsa, hisoblagich umumiy storage'da turishi kerak, odatda Redis. Eng ko'p uchraydigan xato: `INCR key`, so'ng natija 1 bo'lsa `EXPIRE key ttl`. Ikki buyruq orasida jarayon uzilsa yoki ulanish uzilsa, kalit TTL'siz qoladi va foydalanuvchi doimiy bloklanadi. Yechim: ikkala amalni bitta atomik skriptda bajarish.
 
 ```ts
-// Redis Lua skripti: INCR va PEXPIRE bitta atomik amalda (ishga tushirilmaydi, Redis kerak)
+// Redis Lua skripti: INCR va PEXPIRE bitta atomik amalda (Redis kerak)
 export const FIXED_WINDOW_LUA = `
 local c = redis.call('INCR', KEYS[1])
 if c == 1 then redis.call('PEXPIRE', KEYS[1], ARGV[1]) end
@@ -185,7 +187,7 @@ export async function hit(
 }
 ```
 
-Bu parcha Redis kerak bo'lgani uchun ishga tushirilmaydi. Hisoblagich Redis'ning o'zi ham aktiv: Redis hujjatiga ko'ra u ishonchli muhitdagi ishonchli mijozlar uchun mo'ljallangan va uni to'g'ridan-to'g'ri internetga ochish tavsiya etilmaydi; ochiq Redis'da hujumchi hisoblagichlarni o'zi nolga tushirishi mumkin (89-dars).
+Redis skriptni bitta atomik amal sifatida bajaradi, shuning uchun hisoblagich va muddat doim birga o'rnatiladi. Hisoblagich Redis'ning o'zi ham aktiv: Redis hujjatiga ko'ra u ishonchli muhitdagi ishonchli mijozlar uchun mo'ljallangan va uni to'g'ridan-to'g'ri internetga ochish tavsiya etilmaydi; ochiq Redis'da hujumchi hisoblagichlarni o'zi nolga tushirishi mumkin (89-dars).
 
 ### Xato holatida nima qilish
 
@@ -193,7 +195,7 @@ Limiter storage'i (Redis) uzilsa ikkita yo'l bor: hamma so'rovni o'tkazish (fail
 
 ### Javob va mijoz bilan muloqot
 
-Limit oshganda odatda 429 status qaytariladi (bu RFC 6585 dagi kod, kursimizning manbalar ro'yxatida u yo'q, shuning uchun shunchaki eslatamiz) va qayta urinish vaqtini bildiruvchi `Retry-After` header'i beriladi. Javob matnida qaysi limit oshgani haqida ortiqcha ichki tafsilot (kalit tuzilishi, boshqa tenant limitlari) chiqarmang. Mijoz SDK'lari eksponensial kechikish bilan qayta urinishi kerak, aks holda ular o'zlarining limit buzishlari bilan to'lqinni kuchaytiradi.
+Limit oshganda odatda 429 Too Many Requests status (RFC 6585) qaytariladi va qayta urinish vaqtini bildiruvchi `Retry-After` header'i beriladi. Javob matnida qaysi limit oshgani haqida ortiqcha ichki tafsilot (kalit tuzilishi, boshqa tenant limitlari) chiqarmang. Mijoz SDK'lari eksponensial kechikish bilan qayta urinishi kerak, aks holda ular o'zlarining limit buzishlari bilan to'lqinni kuchaytiradi.
 
 ### Narx asosidagi limit va parallellik
 
@@ -323,7 +325,7 @@ Yopilmagan narsalar: bu tuzatish ko'p IP'dan keladigan taqsimlangan hujumni (bot
 
 ## Stack'da: NestJS Throttler, Fastify va Redis
 
-NestJS'da `@nestjs/throttler` paketi `ThrottlerModule.forRoot` ichida `ttl` (millisekundda) va `limit` qabul qiladi. Hujjatda bir nechta nomli throttler (masalan, `short`: 1 soniyada 3, `medium`: 10 soniyada 20, `long`: 1 daqiqada 100) tasvirlangan; ularga `@Throttle()` va `@SkipThrottle()` dekoratorlari bilan route darajasida murojaat qilinadi. `ThrottlerGuard` global bog'lanadi (`APP_GUARD`). Quyidagi sozlama shu qismlarni ko'rsatadi; kod ishga tushirilmaydi (NestJS bu muhitda yo'q).
+NestJS'da `@nestjs/throttler` paketi `ThrottlerModule.forRoot` ichida `ttl` (millisekundda) va `limit` qabul qiladi. Hujjatda bir nechta nomli throttler (masalan, `short`: 1 soniyada 3, `medium`: 10 soniyada 20, `long`: 1 daqiqada 100) tasvirlangan; ularga `@Throttle()` va `@SkipThrottle()` dekoratorlari bilan route darajasida murojaat qilinadi. `ThrottlerGuard` global bog'lanadi (`APP_GUARD`). Quyidagi sozlama shu qismlarni ko'rsatadi.
 
 ```ts
 import { Module } from "@nestjs/common";
@@ -353,7 +355,7 @@ export class AuthController {
 }
 ```
 
-Uch narsani unutmang. Birinchisi, proxy ortida adapterda `trust proxy` sozlash shart, aks holda hamma so'rov proxy manzilidan keladi va bitta kalitga aylanadi. Ikkinchisi, WebSocket gateway uchun hujjatga ko'ra `ThrottlerGuard` ni kengaytirib `handleRequest()` ni o'zgartirish kerak (77-dars). Uchinchisi, ko'p instance uchun umumiy storage tanlash kerak; NestJS hujjatining Storages bo'limi taqsimlangan serverlar uchun Redis'ga asoslangan hamjamiyat storage provayderini ko'rsatadi; paket va versiya mosligini o'zingiz tekshiring. Fastify'da shu g'oyani rasmiy rate-limit plagini beradi, uning sozlamalari ham hujjatdan tekshirilishi kerak.
+Uch narsani unutmang. Birinchisi, proxy ortida adapterda `trust proxy` sozlash shart (Express'da `app.set('trust proxy', ...)`, Fastify va Node adapterida `trustProxy` opsiyasi), aks holda hamma so'rov proxy manzilidan keladi va bitta kalitga aylanadi. NestJS hujjati ogohlantiradi: Fastify v5.12.1 va undan keyingi versiyalarda `trustProxy` ga son (hop soni, masalan `1`) berilsa, Fastify hech bir proxy'ga ishonmaydi, `request.ip` proxy manzili bo'lib qoladi va throttler proxy ortidagi barcha mijozni bitta deb sanaydi; shuning uchun proxy manzili yoki diapazonini yozing. Hujjat Fastify'da standart tracker (`request.ip`) ni saqlashni tavsiya qiladi. Ikkinchisi, WebSocket gateway uchun hujjatga ko'ra `ThrottlerGuard` ni kengaytirib `handleRequest()` ni o'zgartirish kerak (77-dars). Uchinchisi, ko'p instance uchun umumiy storage kerak. Ichki storage xotirada turadigan kesh, shuning uchun u har instance uchun alohida hisoblaydi; `storage` opsiyasiga `ThrottlerStorage` interfeysini amalga oshiruvchi sinf berish mumkin va taqsimlangan serverlar uchun hujjat hamjamiyat Redis storage provayderini ko'rsatadi. Qo'shimcha opsiyalar: `blockDuration` (limitga yetgandan keyin so'rovlar bloklanadigan millisekundlar, standart qiymati `ttl`), `getTracker()` (kalitni o'zgartirish) va `skipIf`. Aynan `getTracker()` kalit tanlashni boshqaradi: unda autentifikatsiyalangan foydalanuvchi bo'lsa uning identifikatorini, bo'lmasa `req.ip` ni qaytarish mumkin. Fastify'ning o'z rate-limit plagini (`@fastify/rate-limit`) bor; uning sozlamalari bu darsning manbalarida yo'q, shuning uchun bu yerda tavsiflanmaydi.
 
 ## Xulosa
 

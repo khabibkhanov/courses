@@ -6,19 +6,27 @@ summary: "Uch mashhur compliance ramkasi nima ekani, nimasi bilan farq qilishi, 
 duration: 40
 sources:
   - id: pci-dss
-    note: "PCI SSC PCI DSS sahifasi (2026-11-11 da o'qilgan): to'lov kartasi hisobi ma'lumotlarini himoya qilish uchun texnik va operatsion talablarning bazaviy to'plami; auditoriya: kartochka egasi ma'lumoti (CHD) va/yoki sezgir autentifikatsiya ma'lumotini (SAD) saqlaydigan, qayta ishlaydigan yoki uzatadigan yoki CDE xavfsizligiga ta'sir qila oladigan tashkilotlar; QSA baholovchilar va ASV tashqi skanerlash; sahifada 'PCI DSS v4.x' deb belgilangan"
-  - id: iso-27001
-    note: "ISO sahifasi o'qib bo'lmadi (403, JavaScript/cookie talab qilinadi), shuning uchun ISO/IEC 27001 haqidagi gaplar bu darsda manbadan tekshirilmagan va matnda shunday belgilangan"
+    note: "PCI SSC PCI DSS sahifasi (2026-11-11 da o'qilgan): to'lov kartasi hisobi ma'lumotlarini himoya qilish uchun texnik va operatsion talablarning bazaviy to'plami; auditoriya: kartochka egasi ma'lumoti (CHD) va/yoki sezgir autentifikatsiya ma'lumotini (SAD) saqlaydigan, qayta ishlaydigan yoki uzatadigan yoki CDE xavfsizligiga ta'sir qila oladigan tashkilotlar; QSA baholovchilar va ASV tashqi skanerlash; muvofiqlik majburiyati to'lov brendlari va acquirer'lar qaroriga bog'liq ekani aytilgan; sahifada 'PCI DSS v4.x' deb belgilangan"
+  - id: pci-dss-v401
+    note: "PCI SSC blogi, 2024-yil 11-iyun: v4.0.1 'limited revision' (matn va format tuzatishlari, ayrim talablarni aniqlashtirish, yangi yoki o'chirilgan talab yo'q); v4.0 2024-yil 31-dekabrda nafaqaga chiqadi; future-dated talablar sanasi (2025-yil 31-mart) o'zgarmaydi"
+  - id: pci-future-dated
+    note: "PCI SSC blogi: v4.0 64 ta yangi talab qo'shgan, ularning 51 tasi future-dated bo'lib 2025-yil 31-martdan majburiy; v3.2.1 2024-yil 31-martda nafaqaga chiqqan; misollar: rol va mas'uliyatlarni hujjatlashtirish, yillik qamrovni tasdiqlash (12.5.2), SAQ A e-commerce savdogarlari uchun choraklik ASV skaneri (11.3.2)"
+  - id: iso-27001-overview
+    note: "ISO umumiy sahifasi (2026-11-11 da o'qilgan): ISO/IEC 27001 axborot xavfsizligi boshqaruv tizimlari (ISMS) uchun eng mashhur standart, ISO/IEC 27000 oilasida; har sohadagi va har kattalikdagi tashkilot uchun; qog'oz, cloud va raqamli ma'lumotni qamraydi; sertifikatlash ixtiyoriy; ISO o'zi sertifikatlamaydi; sahifada 2022 nashri ko'rsatilgan, nima o'zgargani yozilmagan. Standart matni pullik va o'qilmagan"
   - id: aicpa-soc
-    note: "AICPA SOC sahifasi (2026-11-11): SOC 2 nashrining sarlavhasi 'Reporting on an Examination of Controls at a Service Organization Relevant to Security, Availability, Processing Integrity, Confidentiality, or Privacy'; sahifada 2027 uchun SOC 2 Trust Services Criteria loyihasi (exposure draft, 2026-10-26) e'lon qilingani ko'rsatilgan"
+    note: "AICPA SOC sahifasi (2026-11-11): SOC - CPA'lar ko'rsatadigan xizmatlar to'plami (xizmat ko'rsatuvchi tashkilotdagi tizim darajasidagi yoki boshqa tashkilotlardagi entity darajasidagi nazoratlar); SOC 2 nashrining sarlavhasi 'Reporting on an Examination of Controls at a Service Organization Relevant to Security, Availability, Processing Integrity, Confidentiality, or Privacy'; 2027 uchun SOC 2 Trust Services Criteria va Description Criteria exposure draft'lari e'lon qilingani ko'rsatilgan"
+  - id: aicpa-soc2-ed
+    note: "AICPA yangiligi (2026-10-28): 2027 SOC 2 Trust Services Criteria yangilash taklifi: mezonlarni birlashtirish, ba'zilarini olib tashlash, aniqlik kerak joyda qo'shish, qayta yozish; sun'iy intellekt uchun points of focus (AI governance, model monitoring, prompt manipulation, data poisoning va h.k.); izoh muddati 2027-yil 15-yanvar; tasdiqlansa, 2027-yil 31-dekabrda yoki undan keyin boshlangan engagement'larga qo'llanadi, erta qo'llash mumkin"
+  - id: asvs
+    note: "ASVS 5.0.0 'Assessment and Certification' bo'limi: OWASP hech kimni sertifikatlamaydi; verifikatsiya hisoboti qamrov, tekshirilgan talablar, istisnolar va hal qilish yo'riqnomasini o'z ichiga olishi kerak; avtomatik asbobni ishga tushirish talabni tekshirish degani emas ('testable using automation != running an off-the-shelf tool')"
 quiz:
   - q: "Mijoz sizdan 'SOC 2 hisobotingiz bormi' deb so'radi. Bu savol aslida nimani so'raydi?"
     options:
       - "Dasturingiz xatosiz ekanini"
-      - "Mustaqil auditor xizmat ko'rsatuvchi tashkilotdagi nazoratlarni (xavfsizlik, mavjudlik, qayta ishlash yaxlitligi, maxfiylik, privacy mezonlari doirasida) tekshirib hisobot berganmi"
-      - "Sizda ISO sertifikati bor-yo'qligini"
       - "Kodingiz ochiq manbami"
-    answer: 1
+      - "Sizda ISO sertifikati bor-yo'qligini"
+      - "Mustaqil auditor xizmat ko'rsatuvchi tashkilotdagi nazoratlarni (xavfsizlik, mavjudlik, qayta ishlash yaxlitligi, maxfiylik, privacy mezonlari doirasida) tekshirib hisobot berganmi"
+    answer: 3
     explain: "AICPA sahifasi SOC 2 ni xizmat ko'rsatuvchi tashkilotdagi nazoratlarni Security, Availability, Processing Integrity, Confidentiality yoki Privacy bo'yicha tekshirish sifatida tasvirlaydi. Bu mustaqil auditorning hisoboti; dasturning xatosizligi haqida emas."
   - q: "PCI DSS qaysi tashkilotlarga tegishli, PCI SSC sahifasiga ko'ra?"
     options:
@@ -30,19 +38,19 @@ quiz:
     explain: "Sahifa auditoriyani shunday belgilaydi va savdogarlar, qayta ishlovchilar, ekvayerlar, emitentlar va xizmat ko'rsatuvchilarni kiritadi. Platformangiz kartani qayta ishlamasa ham, CDE xavfsizligiga ta'sir qilsa, kirishi mumkin: shu sababli qamrovni (scope) kamaytirish muhim."
   - q: "Compliance hisobotida 'MFA hamma admin uchun yoqilgan: implemented' deb yozilgan, haqiqiy konfiguratsiyada 5 adminning 3 tasida MFA bor. Bu nimani ko'rsatadi?"
     options:
-      - "Hamma narsa yaxshi: nazorat mavjud"
       - "Declared (e'lon qilingan) holat bilan haqiqiy holat orasidagi og'ish (drift); nazorat dalil bilan tasdiqlanmasa, hisobot ishonchsiz"
+      - "Hamma narsa yaxshi: nazorat mavjud"
       - "MFA kerak emas"
       - "Auditor xato qilgan"
-    answer: 1
+    answer: 0
     explain: "Qo'lda to'ldirilgan status haqiqiy holatni ko'rsatmaydi. Nazorat o'lchanadigan predikat va dalil bilan tekshirilishi kerak, aks holda hisobot o'zini aldaydi."
   - q: "Quyidagilardan qaysi biri 'compliance = xavfsizlik' degan xulosaning xatosini to'g'ri aytadi?"
     options:
       - "Compliance hech qachon xavfsizlikka foyda bermaydi"
-      - "Ramka minimal bazaviy talablar va dalil jarayonini beradi; u sizning o'ziga xos riskingizni (masalan, tenant izolyatsiyasi mantig'i yoki biznes logika nuqsonlari) to'liq qoplamaydi, shuning uchun muvofiqlik bo'lgan tizim ham buzilishi mumkin"
       - "Compliance faqat qog'oz ish, texnik talab yo'q"
+      - "Ramka minimal bazaviy talablar va dalil jarayonini beradi; u sizning o'ziga xos riskingizni (masalan, tenant izolyatsiyasi mantig'i yoki biznes logika nuqsonlari) to'liq qoplamaydi, shuning uchun muvofiqlik bo'lgan tizim ham buzilishi mumkin"
       - "Faqat sertifikatli tizimlar xavfsiz"
-    answer: 1
+    answer: 2
     explain: "PCI DSS sahifasi o'zini 'baseline' (bazaviy) talablar deb ataydi. Baza yetarli bo'lishi shart emas. Foyda ham bor (strukturani beradi), lekin ramka sizning kodingizdagi har nuqsonni oldindan ko'rmaydi."
   - q: "'Bir nazorat, ko'p ramka' yondashuvi nimani anglatadi?"
     options:
@@ -55,19 +63,19 @@ quiz:
   - q: "Istisno (exception) ro'yxatida 'eski kutubxonani yangilamaymiz' degan yozuv muddatsiz turibdi. Muammo nimada?"
     options:
       - "Muammo yo'q"
-      - "Muddatsiz istisno vaqtinchalik qarorni doimiy qiladi; istisnoning egasi, sababi, kompensatsiya nazorati va tugash sanasi bo'lishi va muddati o'tganda nazorat 'yiqilgan' hisoblanishi kerak"
-      - "Istisnolar taqiqlangan"
       - "Istisno faqat auditorga ko'rsatiladi"
-    answer: 1
+      - "Istisnolar taqiqlangan"
+      - "Muddatsiz istisno vaqtinchalik qarorni doimiy qiladi; istisnoning egasi, sababi, kompensatsiya nazorati va tugash sanasi bo'lishi va muddati o'tganda nazorat 'yiqilgan' hisoblanishi kerak"
+    answer: 3
     explain: "Muddatsiz istisno sezdirmay riskni qabul qilishdir. Muddat, egasi va kompensatsiya nazorati bilan u boshqariladigan qarorga aylanadi."
   - q: "SOC 2 Trust Services Criteria 2027 uchun yangilanish loyihasi (exposure draft) e'lon qilingani nimani anglatadi?"
     options:
+      - "Bu hali taklif: AICPA tasdiqlansa, u 2027-yil 31-dekabrda yoki undan keyin boshlangan engagement'larga qo'llanadi; amaldagi mezonlar o'zgarmagan, shuning uchun reja versiyani yozib qo'yishi va loyihani kuzatishi kerak"
       - "Mezonlar allaqachon o'zgargan va majburiy"
-      - "AICPA sahifasiga ko'ra 2026-10-26 da loyiha hujjati chiqqan; bu hali taklif, aniq o'zgarishlar bu darsda tekshirilmagan, shuning uchun amaldagi mezonlarni AICPA'dan tekshirish kerak"
       - "SOC 2 bekor qilingan"
       - "Faqat Privacy toifasi qoladi"
-    answer: 1
-    explain: "Exposure draft taklif hujjati. Sahifada faqat uning mavjudligi ko'rinadi, mazmuni o'qilmagan. Ramkalar o'zgarib turadi: muvofiqlik rejasi versiyani yozib qo'yishi kerak."
+    answer: 0
+    explain: "Exposure draft taklif hujjati: AICPA yangiligiga ko'ra izoh muddati 2027-yil 15-yanvar, tasdiqlansa mezonlar 2027-yil 31-dekabrdan boshlangan engagement'larga qo'llanadi va erta qo'llash mumkin. Ramkalar o'zgarib turadi: muvofiqlik rejasi versiyani yozib qo'yishi kerak."
 task:
   title: "Declared holat va haqiqiy holat: drift hisoboti"
   prompt: |
@@ -157,23 +165,29 @@ Mijoz, ayniqsa yirik tashkilot, sizdan "SOC 2 hisobotingiz bormi", "ISO 27001 se
 
 Ikkinchi muammo: ramkalar ko'p va dasturchi qaysi biri nimani talab qilishini bilmaydi. Natijada har ramka uchun alohida ish bajariladi, bir xil nazorat uch marta hujjatlashtiriladi. Uchinchi muammo: compliance'ni xavfsizlikning o'zi deb hisoblash. Muvofiqlik kerakli, lekin yetarli emas.
 
-Bu dars uch ramkaning o'zagini (nimani tasdiqlaydi, kimga tegishli, qaysi o'zgarishlar kutilmoqda) va dasturchi uchun amaliy usulni beradi: nazoratni o'lchanadigan predikat va dalil sifatida kodga aylantirish. Dars ramka matnini qayta bayon qilmaydi: PCI DSS, ISO/IEC 27001 va SOC 2 talablari pullik yoki ro'yxatdan o'tgandan keyin olinadigan hujjatlarda, ularning aniq talab raqamlari bu darsda keltirilmaydi.
+Bu dars uch ramkaning o'zagini (nimani tasdiqlaydi, kimga tegishli, qaysi o'zgarishlar kutilmoqda) va dasturchi uchun amaliy usulni beradi: nazoratni o'lchanadigan predikat va dalil sifatida kodga aylantirish. Dars ramka matnini qayta bayon qilmaydi: ISO/IEC 27001 matni pullik, PCI DSS va SOC 2 mezonlari to'liq hujjat sifatida alohida yuklab olinadi, shuning uchun bu darsda faqat ochiq sahifalarda va ramka egalarining yangiliklarida yozilgan narsalar keltiriladi, talab matnlari emas.
 
 ## Asosiy g'oya
 
 ### PCI DSS: to'lov kartasi ma'lumoti
 
-PCI Security Standards Council sahifasiga ko'ra PCI DSS to'lov kartasi hisobi ma'lumotlarini himoya qilish uchun mo'ljallangan texnik va operatsion talablarning bazaviy (baseline) to'plami. Standart kartochka egasi ma'lumoti (CHD) va/yoki sezgir autentifikatsiya ma'lumoti (SAD) ni saqlaydigan, qayta ishlaydigan yoki uzatadigan, yoki kartochka egasi ma'lumoti muhiti (CDE) xavfsizligiga ta'sir qila oladigan hamma tashkilotga tegishli: savdogarlar, qayta ishlovchilar, ekvayerlar, emitentlar va xizmat ko'rsatuvchilar. Sahifada ikki turdagi malakali ishtirokchi qayd etilgan: Qualified Security Assessor (QSA), PCI DSS baholashlarini o'tkazadigan mustaqil tashkilot, va Approved Scanning Vendor (ASV), tashqi zaiflik skanerlash xizmatini ko'rsatuvchi. Sahifa standartni "PCI DSS v4.x" deb belgilaydi.
+PCI Security Standards Council sahifasiga ko'ra PCI DSS to'lov kartasi hisobi ma'lumotlarini himoya qilish uchun mo'ljallangan texnik va operatsion talablarning bazaviy (baseline) to'plami. Standart kartochka egasi ma'lumoti (CHD) va/yoki sezgir autentifikatsiya ma'lumoti (SAD) ni saqlaydigan, qayta ishlaydigan yoki uzatadigan, yoki kartochka egasi ma'lumoti muhiti (CDE) xavfsizligiga ta'sir qila oladigan hamma tashkilotga tegishli: savdogarlar, qayta ishlovchilar, ekvayerlar, emitentlar va xizmat ko'rsatuvchilar. Sahifada ikki turdagi malakali ishtirokchi qayd etilgan: Qualified Security Assessor (QSA), PCI DSS baholashlarini o'tkazadigan mustaqil tashkilot, va Approved Scanning Vendor (ASV), tashqi zaiflik skanerlash xizmatini ko'rsatuvchi. Sahifa standartni "PCI DSS v4.x" deb belgilaydi. Sahifa yana bir muhim narsani aytadi: muvofiqlik majburiyati bormi-yo'qmi, to'lov brendlari va acquirer'lar kabi muvofiqlik dasturlarini yurituvchi tashkilotlar ixtiyorida. Ya'ni PCI DSS ning majburiyligi asosan to'lov brendlari va acquirer'lar dasturi orqali keladi.
+
+PCI SSC blogidagi ma'lumotlarga ko'ra v3.2.1 2024-yil 31-martda nafaqaga chiqqan; v4.0.1 2024-yil 11-iyunda e'lon qilingan "limited revision" bo'lib, yangi yoki o'chirilgan talab qo'shmagan, faqat tuzatish va aniqlashtirishlar kiritgan; v4.0 2024-yil 31-dekabrda nafaqaga chiqqan. v4.0 64 ta yangi talab qo'shgan, ularning 51 tasi future-dated bo'lib, 2025-yil 31-martdan majburiy bo'lgan. Blogdagi misollar bu talablarning ko'pi jarayonga tegishli ekanini ko'rsatadi: rollar va mas'uliyatlarni hujjatlashtirish va yangilab turish, yillik qamrovni tasdiqlash, SAQ A toifasidagi e-commerce savdogarlari uchun ASV orqali choraklik skanerlash. Xulosa: ramka versiyasi muddati bor hujjat; reja "qaysi versiya va qaysi sanadagi talablar" deb yozilishi kerak.
 
 Dasturchi uchun asosiy amaliy xulosa qamrov (scope): karta ma'lumoti qayerdan o'tsa, o'sha tizim talabga tushadi. Karta ma'lumotini umuman saqlamaslik va o'zingizga olib kelmaslik (to'lov provayderi hosting qilgan to'lov formasi) qamrovni keskin kamaytiradi. Buning usullari va qaysi hollarda qamrov qanday o'zgarishi aniq PCI SSC hujjatlarida ko'rsatiladi (bu darsda o'qilmagan).
 
 ### ISO/IEC 27001
 
-ISO rasmiy sahifasi (iso.org) bu dars yozilganda o'qilmadi (403, JavaScript va cookie talab qildi), shuning uchun quyidagi umumiy ma'lumot manbadan tekshirilmagan va umumiy bilimga tayanadi: ISO/IEC 27001:2022 axborot xavfsizligi boshqaruv tizimi (ISMS) uchun talablarni belgilaydi, ya'ni bu texnik nazoratlar ro'yxatidan ko'ra tashkilot darajasidagi boshqaruv tizimi (risk baholash, siyosatlar, ichki audit, doimiy yaxshilash). Sertifikatni akkreditatsiyadan o'tgan sertifikatsiya organi beradi. Standartning ilovasida (Annex A) nazoratlar ro'yxati bor, ammo ularning soni, guruhlanishi va qo'llanish bayonoti (Statement of Applicability) tafsilotini ISO matnidan tekshiring.
+ISO'ning umumiy sahifasi ISO/IEC 27001 ni axborot xavfsizligi boshqaruv tizimlari (ISMS) uchun eng mashhur standart deb ataydi; u ISO/IEC 27000 oilasiga kiradi va har sohadagi, har kattalikdagi tashkilot uchun mo'ljallangan. Sahifaga ko'ra standart moliyaviy axborot, intellektual mulk, xodimlar ma'lumoti va uchinchi tomon ishonib topshirgan axborot kabi aktivlar xavfsizligini boshqarishga yordam beradi va qog'oz, cloud hamda raqamli ma'lumotni qamraydi. Sertifikatlash ixtiyoriy: ba'zi tashkilotlar standartni faqat yaxshi amaliyot sifatida joriy qiladi, boshqalari mijozlarni ishontirish uchun sertifikat oladi. ISO o'zi sertifikatlamaydi. Sahifada 2022 nashri ko'rsatilgan, lekin u avvalgi nashrdan nima bilan farq qilishi yozilmagan.
+
+Standartning o'zi pullik, shuning uchun bu dars uning talab matni, ilova (Annex A) tuzilmasi va sertifikatsiya jarayonining tafsilotlarini keltirmaydi. Umumiy tushuncha darajasida ISMS texnik nazoratlar ro'yxatidan ko'ra tashkilot darajasidagi boshqaruv tizimi ekanini bilish yetarli: risk baholash, siyosatlar, ichki audit va doimiy yaxshilash. Aniq talablarni ISO matnidan oling.
 
 ### SOC 2
 
-AICPA sahifasida SOC 2 nashrining nomi shunday: "Reporting on an Examination of Controls at a Service Organization Relevant to Security, Availability, Processing Integrity, Confidentiality, or Privacy". Ya'ni SOC 2 xizmat ko'rsatuvchi tashkilotdagi nazoratlarni shu beshta mezon toifasi bo'yicha mustaqil auditor tomonidan tekshirilishini (examination) tasvirlaydi. Bu sertifikat emas, auditor hisoboti: u nazoratlar qanday ta'riflangani va auditor ularni qanday baholagani haqida. Sahifada 2026-yil 26-oktabrda "2027 SOC 2 Trust Services Criteria va Description Criteria" bo'yicha taklif (exposure draft) e'lon qilingani ham ko'rinadi; uning mazmuni o'qilmagan, shuning uchun amaldagi mezonlarni AICPA'dan tekshirish kerak. Hisobotning turlari (nazoratning ma'lum sanadagi dizayni va ma'lum davr davomidagi samaradorligi farqi) mavjud, lekin bu darsda ularning rasmiy ta'rifi o'qilmagan.
+AICPA sahifasida SOC 2 nashrining nomi shunday: "Reporting on an Examination of Controls at a Service Organization Relevant to Security, Availability, Processing Integrity, Confidentiality, or Privacy". Ya'ni SOC 2 xizmat ko'rsatuvchi tashkilotdagi nazoratlarni shu beshta mezon toifasi bo'yicha mustaqil auditor tomonidan tekshirilishini (examination) tasvirlaydi. Bu sertifikat emas, auditor hisoboti: u nazoratlar qanday ta'riflangani va auditor ularni qanday baholagani haqida. Sahifa SOC'ni umuman CPA'lar ko'rsatadigan xizmatlar to'plami deb tasvirlaydi: ular xizmat ko'rsatuvchi tashkilotdagi tizim darajasidagi yoki boshqa tashkilotlardagi entity darajasidagi nazoratlarga tegishli bo'lishi mumkin. Sahifada 2027 uchun "SOC 2 Trust Services Criteria va Description Criteria" exposure draft'lari e'lon qilingani ko'rinadi (sahifada sana 2026-yil 26-oktabr deb ko'rsatilgan).
+
+AICPA yangiligi (2026-yil 28-oktabr) taklifni batafsilroq tasvirlaydi: mezonlar birlashtiriladi, ba'zilari olib tashlanadi, aniqlik kerak joyda yangilari qo'shiladi va har mezon maqsadi qisqa va izchil qayta yoziladi. Loyiha sun'iy intellekt uchun yangi points of focus ham qo'shadi: AI governance, model monitoring, prompt manipulation, data poisoning, AI chiqishlarining shaffofligi, training data boshqaruvi va avtomatlashtirilgan qaror qabul qilish xavflari. Izoh berish muddati 2027-yil 15-yanvar; 2027-yilda tasdiqlansa, mezonlar 2027-yil 31-dekabrda yoki undan keyin boshlangan engagement'larga qo'llanadi, erta qo'llash mumkin. Bu hali taklif, shuning uchun amaldagi mezonlar o'zgarmagan. Umumiy bilim sifatida (AICPA sahifalaridan tekshirilmagan): Type 1 hisobot nazoratlar dizaynini ma'lum sanada, Type 2 esa shu dizayn bilan birga uning ma'lum davr davomidagi ishlashini baholaydi; mijoz odatda Type 2 ni so'raydi. Rasmiy ta'rifni AICPA hujjatidan tekshiring.
 
 ## Chuqurroq: ramkalar bilan texnik nazoratlarni bog'lash
 
@@ -203,6 +217,12 @@ Hamma nazorat hamma tizimda bajarilmaydi. Istisno bo'lishi mumkin, lekin u boshq
 ### Compliance va xavfsizlik
 
 Ramkalar bazaviy talablar va dalil jarayonini beradi. Sizning aniq riskingiz (masalan 55-darsdagi tenant izolyatsiyasi, 59-darsdagi biznes logika nuqsonlari) ramka ro'yxatida alohida band sifatida bo'lmasligi mumkin. Shu sababli muvofiqlik dasturi threat modeling (4-dars) va code review (91-dars) bilan to'ldirilishi kerak.
+
+### Uch ramkaning tabiati
+
+Uchala ramka bir-biridan qaysi savolga javob berishi bilan farq qiladi. PCI DSS aniq ma'lumot turini (karta hisobi ma'lumoti) himoya qilish talablari, uni baholovchilar (QSA) va tashqi skanerlovchilar (ASV) bor, majburiyat shartnoma zanjiri orqali keladi. ISO/IEC 27001 boshqaruv tizimi standarti: sertifikat tashkilotning ISMS ishlashini ko'rsatadi, lekin ISO sahifasiga ko'ra u ixtiyoriy. SOC 2 CPA hisoboti: u sertifikat emas, auditor yozgan xulosa, shuning uchun undagi tizim tavsifi, mezonlar va qamrov muhim. Shu sababli bitta jamoa uchun javoblar turlicha: to'lov sahifasini o'zingiz yozsangiz PCI DSS savol bo'ladi, korporativ mijoz ISO yoki SOC 2 so'raydi, katta korxonalar esa ko'pincha ikkalasini ham. Qaysi ramka kerakligini sotuv (mijoz talabi), shartnoma va qonun belgilaydi, dasturchi emas.
+
+ASVS ham shu nuqtai nazardan foydali taqqoslash. ASVS 5.0.0 "Assessment and Certification" bo'limi OWASP hech kimni sertifikatlamasligini aytadi va ASVS asosidagi "sertifikat" da'volaridan ehtiyot bo'lishni tavsiya qiladi. Verifikatsiya hisoboti esa nima bo'lishi kerakligini aniq beradi: qamrov, tekshirilgan talablar xulosasi, istisnolar va ularni hal qilish yo'riqnomasi; chunki faqat xatolarni sanaydigan pentest hisoboti nima tekshirilganini aytmaydi. Bu talab har qanday compliance hisobotiga ham mos: "hammasi yaxshi" degan gap qamrovsiz ma'noga ega emas. ASVS yana bir nuqtani aytadi: avtomatlashtirish bilan tekshirish mumkin degani tayyor asbobni ishga tushirish degani emas. Murakkabroq talablar uchun ilovaga xos tekshiruvlar yoziladi, ular odatdagi unit va integratsiya testlariga o'xshaydi. Bizning `check` predikatlarimiz aynan shu g'oyaning compliance'dagi ko'rinishi.
 
 ## Misol: e'lon qilingan holat va haqiqiy holat
 
@@ -365,9 +385,9 @@ describe("compliance controls", () => {
 
 ## Xulosa
 
-- PCI DSS to'lov kartasi ma'lumoti bilan ishlaydigan yoki uning muhitiga ta'sir qila oladigan tashkilotlar uchun bazaviy talablar; asosiy dasturchi qarori qamrovni kamaytirish.
-- SOC 2 mustaqil auditorning Security, Availability, Processing Integrity, Confidentiality va Privacy bo'yicha nazoratlar hisoboti; mezonlar yangilanishi mumkin (2027 loyihasi e'lon qilingan).
-- ISO/IEC 27001 haqidagi gaplar bu darsda manbadan tekshirilmagan (sahifa o'qilmadi); tafsilotni ISO matnidan tekshiring.
+- PCI DSS to'lov kartasi ma'lumoti bilan ishlaydigan yoki uning muhitiga ta'sir qila oladigan tashkilotlar uchun bazaviy talablar (hozirgi nashr v4.0.1); majburiyat to'lov brendlari va acquirer'lar orqali keladi; asosiy dasturchi qarori qamrovni kamaytirish.
+- SOC 2 mustaqil auditorning Security, Availability, Processing Integrity, Confidentiality va Privacy bo'yicha nazoratlar hisoboti; 2027 mezonlari loyiha bosqichida (izoh muddati 2027-yil 15-yanvar).
+- ISO/IEC 27001 ISMS standarti, sertifikatlash ixtiyoriy; standart matni pullik va bu darsda o'qilmagan, talablar ISO matnidan olinadi.
 - Nazoratni bir marta joriy qilib, dalilini avtomatik yig'ing va ramka talablariga aniq matn bilan bog'lang ("bir nazorat, ko'p ramka").
 - Declared holat bilan haqiqiy holat orasidagi og'ishni predikat va snapshot bilan toping; istisnolarga egasi, kompensatsiya va muddat bering.
 - Compliance xavfsizlikning o'zi emas: o'z riskingiz uchun threat model va kod review bilan to'ldiring.

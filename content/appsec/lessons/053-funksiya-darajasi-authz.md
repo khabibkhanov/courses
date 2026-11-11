@@ -6,9 +6,13 @@ summary: "Broken Function Level Authorization: admin va oddiy funksiyalar orasid
 duration: 45
 sources:
   - id: api-top10
-    note: "API5:2023 Broken Function Level Authorization: tavsif va tahdid sxemasi (legitim API chaqiruvi, admin funksiyalar asosiy nishon, rol/guruh murakkabligi)"
+    note: "API5:2023 Broken Function Level Authorization: tahdid sxemasi (Exploitability Easy, Prevalence Common, Detectability Easy, Technical Severe), 'Is the API Vulnerable' savollari (admin endpoint, GET'dan DELETE'ga almashtirish, URL'ni taxmin qilish), admin endpoint'ni URL yo'liga qarab ajratmaslik, 'How To Prevent' bandlari (yagona authorization moduli, deny all by default, admin abstract controller)"
   - id: cs-authz
     note: "Authorization Cheat Sheet: har so'rovda tekshirish, global konfiguratsiya, deny by default, client-side tekshiruvga tayanmaslik, xato holatini xavfsiz boshqarish"
+  - id: asvs
+    note: "ASVS 5.0.0 V8: 8.2.1 (funksiya darajasidagi kirish faqat aniq ruxsati bor iste'molchilarga, 1-daraja), 8.3.1 (ishonchli servis qatlamida majburlash), 8.4.2 (administrativ interfeys uchun ko'p qatlamli himoya, tarmoq joylashuvi yagona omil emas, 3-daraja)"
+  - id: nestjs-guards
+    note: "NestJS Guards: guard middleware'dan keyin, interceptor va pipe'dan oldin ishlaydi; canActivate() true bo'lsa so'rov qayta ishlanadi, false bo'lsa Nest rad etadi (ForbiddenException, 403); useGlobalGuards() va APP_GUARD; metadata uchun Reflector va @SetMetadata(); getAllAndOverride()"
   - id: t10-a01
     note: "A01:2025 Broken Access Control: force browsing, POST/PUT/DELETE uchun nazorat yo'qligi, 2- va 3-stsenariylar (admin sahifa va faqat frontendda access control)"
 quiz:
@@ -138,7 +142,9 @@ task:
 
 52-darsda biz obyektni ID bo'yicha himoyaladik: "bu mashina sizniki". Boshqa savol: foydalanuvchi umuman shu **funksiyani** chaqirishga haqlimi. Haydovchi o'z mashinasini ko'ra oladi, lekin mijoz kompaniyasining barcha foydalanuvchilari ro'yxatini ko'rishi, rollarni o'zgartirishi yoki hisobotni eksport qilishi kerak emas. Bu funksiyalar ko'pincha alohida endpoint: `/admin/users`, `/reports/export`, `/vehicles/:id/firmware`.
 
-API Security Top 10 (2023) buni API5:2023 Broken Function Level Authorization deb nomlaydi. Sahifa sababni aniq yozadi: murakkab access control siyosatlari, ierarxiyalar, guruhlar va rollar hamda administrativ va oddiy funksiyalar orasidagi noaniq ajratish authorization xatolariga olib keladi. Bunday xatolardan foydalanib hujumchi boshqa foydalanuvchilar resurslariga yoki administrativ funksiyalarga ega bo'ladi. Hujum uchun maxsus texnika kerak emas: sahifaga ko'ra hujumchi ruxsat etilmagan endpoint'ga qonuniy API chaqiruvi yuboradi. Administrativ funksiyalar bunday hujumning asosiy nishoni, oqibatda ma'lumot ochilishi, yo'qolishi yoki buzilishi va xizmat uzilishi mumkin. Sahifa API'larni topish osonligini ham ta'kidlaydi: ular tuzilgan va funksiyalarga murojaat oldindan taxmin qilinadigan bo'ladi.
+API Security Top 10 (2023) buni API5:2023 Broken Function Level Authorization deb nomlaydi. Sahifa sababni aniq yozadi: murakkab access control siyosatlari, ierarxiyalar, guruhlar va rollar hamda administrativ va oddiy funksiyalar orasidagi noaniq ajratish authorization xatolariga olib keladi. Bunday xatolardan foydalanib hujumchi boshqa foydalanuvchilar resurslariga yoki administrativ funksiyalarga ega bo'ladi. Hujum uchun maxsus texnika kerak emas: sahifaga ko'ra hujumchi ruxsat etilmagan endpoint'ga qonuniy API chaqiruvi yuboradi. Administrativ funksiyalar bunday hujumning asosiy nishoni, oqibatda ma'lumot ochilishi, yo'qolishi yoki buzilishi va xizmat uzilishi mumkin. Sahifa API'larni topish osonligini ham ta'kidlaydi: ular tuzilgan va funksiyalarga murojaat oldindan taxmin qilinadigan bo'ladi. Uch baho: exploitability Easy, prevalence Common (API1'dagi Widespread emas), detectability Easy; texnik oqibat Severe.
+
+ASVS 5.0.0 da bu 8.2.1 talabi (1-daraja): ilova funksiya darajasidagi kirishni aniq ruxsati bor iste'molchilarga cheklashi kerak. 8.2.2 (52-dars) ma'lumotning o'ziga, 8.2.3 (54-dars) maydonlarga tegishli, 8.2.1 esa "bu amalni chaqirish mumkinmi" savoliga.
 
 A01:2025 sahifasidagi ikkinchi stsenariy xuddi shu hodisani oddiy tilda beradi: admin huquqi talab qilinadigan sahifa bor (`.../admin_getappInfo`), va agar autentifikatsiyasiz foydalanuvchi yoki admin bo'lmagan foydalanuvchi unga kira olsa, bu zaiflik. Sahifa bunday hujumni force browsing, ya'ni URL'larni taxmin qilib ochish deb ataydi.
 
@@ -152,6 +158,12 @@ Funksiya darajasidagi authorization uchta savolga javob beradi: bu funksiya mavj
 
 **Frontend nazorat emas.** A01 sahifasining 3-stsenariysida butun access control frontendda: admin sahifasiga havola JavaScript bilan yashirilgan. Hujumchi buyruq qatoridan `curl` bilan o'sha manzilni to'g'ridan-to'g'ri ochadi va yashirilgan tugma ahamiyatsiz bo'ladi. Cheat sheet ham mijoz tomonidagi tekshiruvlar foydalanuvchi qulayligi uchun ruxsat etilishi mumkin, lekin ruxsat berish yoki rad etishning hal qiluvchi omili bo'lmasligi kerakligini yozadi.
 
+### API5 sahifasi nimani so'raydi
+
+API5 sahifasi zaiflikni topish uchun uchta savol beradi. Oddiy foydalanuvchi administrativ endpoint'ga kira oladimi? Foydalanuvchi shunchaki HTTP metodini o'zgartirib (`GET` dan `DELETE` ga) o'zi huquqsiz sezgir amalni (yaratish, o'zgartirish, o'chirish) bajara oladimi? X guruhi foydalanuvchisi faqat Y guruhiga mo'ljallangan funksiyani endpoint manzilini taxmin qilib (sahifa misoli `/api/v1/users/export_all`) chaqira oladimi? Uchala savol ham kodga emas, matritsaga javob so'raydi: rol x funksiya x metod.
+
+Sahifadagi birinchi stsenariy ko'rgazmali. Ilova faqat taklif etilganlarni ro'yxatdan o'tkazadi; mobil klient `GET /api/invites/{invite_guid}` ni chaqiradi va javobda taklif tafsilotlari (rol, email) bor. Hujumchi so'rovni nusxalab, metod va yo'lni `POST /api/invites/new` ga o'zgartiradi: bu endpoint faqat admin konsoli uchun mo'ljallangan, lekin funksiya darajasidagi tekshiruv yo'q. U `role: admin` bilan taklif yaratadi va keyin shu taklif orqali admin akkaunt ochadi. Bu hujumda ID almashtirilmagan, bitta obyekt ham "begona" emas: muammo faqat funksiya mavjudligida va unga hech kim chegara qo'ymaganida.
+
 ## Chuqurroq: funksiyalar chegarasi qayerda buziladi
 
 ### Metod bo'yicha tekshiruv
@@ -162,13 +174,17 @@ Funksiya darajasidagi authorization uchta savolga javob beradi: bu funksiya mavj
 
 Funksiya darajasidagi xatolarning eng nozik turi: tekshiruv yo'lning bir ko'rinishiga, ish bajaruvchi router boshqa ko'rinishiga tayanadi. Misol: guard `req.url.startsWith("/admin")` ni qidiradi, router esa yo'lni kichik harfga o'tkazib, ortiqcha slash'larni olib tashlab, admin handler'ini topadi. `/Admin/users` guard'dan o'tadi, lekin router uchun `/admin/users`. Xuddi shunday muammo URL-encoding (`%2e`), nuqta segmentlari (`/./`), oxirgi slash va parametr ajratgichlarda ham bo'lishi mumkin. Yechim: siyosatni xom satrga emas, routing tomonidan tanlangan route yozuviga bog'lash. Ya'ni "qaysi handler ishga tushadi" aniqlangandan keyin "unga kim kiradi" savoli beriladi. Routing komponentlari orasidagi bunday farqlar 11-darsda (HTTP parser farqlari) ham uchraydi.
 
+### Admin endpoint'ni URL'ga qarab tanimang
+
+API5 sahifasi aniq ogohlantiradi: endpoint oddiymi yoki administrativmi, buni URL yo'liga qarab taxmin qilmang. Dasturchilar ko'pincha administrativ endpoint'larning ko'pini `/api/admins` kabi alohida nisbiy yo'l ostiga qo'yadi, lekin ularni oddiy endpoint'lar bilan birga, masalan `/api/users` ostida topish juda keng tarqalgan. Natija ikkita xato: admin funksiyaga "yo'li admin emas" deb tekshiruv qo'yilmaydi (masalan `/api/users/export_all`), va aksincha, tekshiruv `/admin/*` prefiksiga bog'lanib, prefiksdan tashqaridagi admin funksiya himoyasiz qoladi. Shuning uchun siyosat funksiyaning o'ziga biriktiriladi, uning manziliga emas.
+
 ### Admin funksiyalari uchun qo'shimcha qatlam
 
-Admin endpoint'i ishonchsiz foydalanuvchiga ko'rinmasligi bilan emas, uni chaqirishga haqi borligi bilan himoyalanadi. Qo'shimcha qatlamlar mantiqiy: admin API'ni alohida servisga yoki alohida ichki tarmoqqa chiqarish, kuchli autentifikatsiya talab qilish (44-45-darslar), har admin amalini audit logga yozish (79-dars). Cheat sheet loglash haqida alohida eslatadi: access control bilan bog'liq logging to'g'ri sozlanmasa, authorization buzilishlari sezilmay qolishi yoki aniq shaxsga bog'lanmay qolishi mumkin.
+Admin endpoint'i ishonchsiz foydalanuvchiga ko'rinmasligi bilan emas, uni chaqirishga haqi borligi bilan himoyalanadi. API5 sahifasi ikki aniq tavsiya beradi: barcha administrativ controller'lar guruh/rolga qarab tekshiruv bajaradigan administrativ abstract controller'dan meros olsin, va oddiy controller ichidagi administrativ funksiyalar ham foydalanuvchi guruhi va roliga qarab tekshiruv qilsin. Ikkinchi band birinchisiga qo'shimcha, chunki admin funksiya hamma vaqt alohida controller'da turmaydi. ASVS 8.4.2 (3-daraja) esa administrativ interfeysga kirish ko'p qatlamli bo'lishini talab qiladi: davomli identifikatsiya tekshiruvi, qurilma holati va kontekstual risk tahlili, va tarmoq joylashuvi yoki "ishonchli" endpoint yagona omil bo'lmasligi kerak, garchi ular ehtimolni kamaytirsa ham. Ya'ni "faqat ichki tarmoqdan ochiq" admin panel uchun yetarli himoya emas. Qo'shimcha qatlamlar mantiqiy: admin API'ni alohida servisga yoki alohida ichki tarmoqqa chiqarish, kuchli autentifikatsiya talab qilish (44-45-darslar), har admin amalini audit logga yozish (79-dars). Cheat sheet loglash haqida alohida eslatadi: access control bilan bog'liq logging to'g'ri sozlanmasa, authorization buzilishlari sezilmay qolishi yoki aniq shaxsga bog'lanmay qolishi mumkin.
 
 ### Rollar murakkablashganda
 
-API5 sahifasi sababi sifatida murakkab rol va guruh ierarxiyalarini aytadi. Misol: "dispetcher", "katta dispetcher", "filial menejeri", "analitik" va ularning uyg'unligi. Har funksiya uchun ruxsat etilgan rollarni kod ichida `if (role === 'a' || role === 'b' || ...)` ko'rinishida yozish ishonchsiz (51-dars: role explosion va mustahkamlik). Siyosat jadvali ma'lumot sifatida, bir joyda turishi kerak: shunda "kim nimaga kira oladi" savoliga kodni o'qimay javob berish va test yozish mumkin.
+API5 sahifasi sababi sifatida murakkab rol va guruh ierarxiyalarini aytadi. Misol: "dispetcher", "katta dispetcher", "filial menejeri", "analitik" va ularning uyg'unligi. Har funksiya uchun ruxsat etilgan rollarni kod ichida `if (role === 'a' || role === 'b' || ...)` ko'rinishida yozish ishonchsiz (51-dars: role explosion va mustahkamlik). Siyosat jadvali ma'lumot sifatida, bir joyda turishi kerak: shunda "kim nimaga kira oladi" savoliga kodni o'qimay javob berish va test yozish mumkin. API5 sahifasining "How To Prevent" qismi ham xuddi shuni aytadi: authorization moduli izchil va tahlil qilishga oson bo'lsin, barcha biznes funksiyalardan chaqirilsin; ko'pincha bunday himoyani ilovadan tashqaridagi komponentlar beradi; ijro mexanizmi standart bo'yicha hammasini rad etsin va har funksiya uchun muayyan rollarga aniq ruxsat talab qilsin. Bu 57-darsdagi markazlashgan policy qatlamining asosi.
 
 ### Xato holatlari
 
@@ -301,7 +317,7 @@ Endi guard va router orasida farq qiladigan ikki ko'rinish yo'q: avval route top
 
 ## Stack'da: NestJS va Next.js
 
-NestJS'da bu g'oya global guard bilan amalga oshadi. Rasmiy hujjatga ko'ra guard barcha middleware'dan keyin, lekin har qanday interceptor yoki pipe'dan oldin ishga tushadi, `canActivate()` boolean qaytaradi: `true` bo'lsa so'rov qayta ishlanadi, `false` bo'lsa Nest uni rad etadi. Guard controller, metod yoki global darajada bog'lanishi mumkin. Deny-by-default uchun global guard barcha route'larga qo'llanadi va ochiq route'lar maxsus metadata bilan belgilanadi (58-darsda to'liq). Bu kod ishga tushirilmaydi (NestJS moduli brauzer worker'ida yo'q), faqat sintaksis tekshirilgan:
+NestJS'da bu g'oya global guard bilan amalga oshadi. Rasmiy hujjatga ko'ra guard barcha middleware'dan keyin, lekin har qanday interceptor yoki pipe'dan oldin ishga tushadi, `canActivate()` boolean qaytaradi: `true` bo'lsa so'rov qayta ishlanadi, `false` bo'lsa Nest uni rad etadi. Guard controller, metod yoki global darajada bog'lanishi mumkin. Deny-by-default uchun global guard barcha route'larga qo'llanadi va ochiq route'lar maxsus metadata bilan belgilanadi (58-darsda to'liq). Ikkita nozik joy bor. Birinchisi: hujjatdagi `RolesGuard` namunasi `roles` metadata'si bo'lmasa `true` qaytaradi, ya'ni siyosati yozilmagan route ochiq qoladi. Bu namuna guard mexanikasini ko'rsatish uchun yozilgan; production'da aynan shu satr fail-open bo'ladi, quyidagi guard esa uni `false` ga almashtiradi. Ikkinchisi: `false` qaytarilganda freymvork `ForbiddenException` tashlaydi va standart javob 403 `Forbidden resource` bo'ladi; boshqa javob kerak bo'lsa guard o'z exception'ini tashlaydi. Metadata controller va metod darajasida berilishi mumkin, `getAllAndOverride()` esa targetlarni berilgan tartibda tekshirib birinchi aniqlangan qiymatni qaytaradi, shuning uchun metod belgisi controller belgisini bosib o'tadi. Bu kod ishga tushirilmaydi (NestJS moduli brauzer worker'ida yo'q), faqat sintaksis tekshirilgan:
 
 ```ts
 import { CanActivate, ExecutionContext, Injectable, SetMetadata } from "@nestjs/common";

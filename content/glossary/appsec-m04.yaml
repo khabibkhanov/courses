@@ -33,19 +33,9 @@
   uz: "Brauzer imkoniyati: xavfli DOM sink'lariga oddiy string o'rniga faqat policy yaratgan maxsus turdagi qiymat berilishini majburlaydi."
   course: appsec
   lesson: 34
-- term: CSP
-  aliases: ["Content Security Policy"]
-  uz: "Brauzerga qaysi manbalardan skript, stil va boshqa resurslar yuklash mumkinligini aytadigan sarlavha; XSS ta'sirini kamaytiruvchi qo'shimcha qatlam."
-  course: appsec
-  lesson: 35
-- term: nonce
-  aliases: ["CSP nonce"]
+- term: CSP nonce
+  aliases: []
   uz: "Har so'rovda yangidan yaratiladigan tasodifiy qiymat; faqat shu qiymatli skriptlarga CSP bajarishga ruxsat beradi."
-  course: appsec
-  lesson: 35
-- term: strict-dynamic
-  aliases: ["'strict-dynamic'"]
-  uz: "CSP kalit so'zi: nonce yoki xesh bilan ishonch berilgan skript yuklagan boshqa skriptlarga ham avtomatik ishonch beriladi."
   course: appsec
   lesson: 35
 - term: CSRF
@@ -53,19 +43,9 @@
   uz: "Foydalanuvchi brauzeri avtomatik yuboradigan cookie'dan foydalanib, uning nomidan kutilmagan so'rov yuborishga majburlash hujumi."
   course: appsec
   lesson: 36
-- term: SameSite
-  aliases: ["SameSite cookie"]
-  uz: "Cookie atributi: cookie cross-site so'rovlarga qo'shilish-qo'shilmasligini boshqaradi (Strict, Lax, None); CSRF'ga qarshi birinchi qatlam."
-  course: appsec
-  lesson: 36
 - term: double-submit cookie
   aliases: ["signed double-submit"]
   uz: "CSRF tokenini cookie va so'rovda ikki marta yuborib solishtirish usuli; imzolangan variantida token sessiyaga bog'lanadi."
-  course: appsec
-  lesson: 36
-- term: Fetch Metadata
-  aliases: ["Sec-Fetch-Site"]
-  uz: "Brauzer yuboradigan Sec-Fetch-* sarlavhalari: so'rov qaerdan va qanday kelganini ko'rsatadi, server cross-site so'rovlarni rad etishi mumkin."
   course: appsec
   lesson: 36
 - term: clickjacking

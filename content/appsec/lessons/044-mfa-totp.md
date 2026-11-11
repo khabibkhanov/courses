@@ -8,9 +8,11 @@ sources:
   - id: rfc6238
     note: "TOTP = HOTP(K, T), vaqt qadami standarti 30 soniya, HMAC-SHA-1 asosli HOTP; kalitlar tasodifiy va HMAC chiqishi uzunligida bo'lishi (SHOULD); tekshiruvchi muvaffaqiyatli tekshirilgan OTP'ning ikkinchi urinishini qabul qilmasligi (MUST NOT); tarmoq kechikishi uchun ko'pi bilan bir qadam oyna tavsiyasi; Appendix B test vektorlari"
   - id: nist-63-4
-    note: "Out-of-band autentifikatsiyada email ishlatilmasligi; PSTN (SMS/ovozli qo'ng'iroq) cheklangan (restricted) authenticator ekani va uni qabul qilish tashkilot riskni baholab qabul qilishini talab qilishi; push bildirishnoma yuboradigan verifier'lar yuborish soni/tezligini cheklashi (SHOULD); look-up secret kamida olti o'nlik raqam"
+    note: "SP 800-63B-4: out-of-band autentifikatsiyada email ishlatilmasligi; PSTN cheklangan (restricted) authenticator ekani, qabul qilish shartlari (alternativ, ogohlantirish, migratsiya rejasi) va SIM almashtirish kabi risk belgilari; out-of-band sir kamida olti o'nlik raqam, 10 daqiqa, bir martalik, yangi sir urinishlar hisobini nolga tushirmasligi; OTP verifier replay va rate limiting talablari; push yuborish tezligi/sonini cheklash (SHOULD); look-up secret kamida olti o'nlik raqam"
   - id: cs-authn
     note: "Authentication Cheat Sheet: ko'p faktorli autentifikatsiya bo'limi va yuqori xavfli harakatlar (akkaunt tiklash, parol almashtirish) uchun qayta autentifikatsiya talabi"
+  - id: cs-mfa
+    note: "Multifactor Authentication Cheat Sheet: OTP gigiyenasi (TTL, bir martalik, urinishlar limiti, OTP hash'ining sababi), faktorni almashtirish va MFA'ni tiklash, push fatigue, SIM swap, real vaqtli phishing va MFA downgrade mitigatsiyalari"
 quiz:
   - q: "Foydalanuvchi TOTP kodini bir marta muvaffaqiyatli kiritdi. Hujumchi kodni yelkadan ko'rib, 10 soniyadan keyin xuddi shu kodni yuboradi. Server kod hali oynada ekanini tekshiradi, xolos. Natija?"
     options:
@@ -217,13 +219,85 @@ Parolni hash qilsangiz bo'ladi, TOTP secret'ni esa yo'q: har tekshiruvda server 
 
 Ikkinchi faktor yo'qolsa, kirish usuli kerak. NIST SP 800-63-4 look-up secret (oldindan berilgan kodlar ro'yxati) authenticator turini tasniflaydi va uning kamida olti o'nlik raqam bo'lishini talab qiladi. Amalda: 8-10 ta bir martalik kod, tasodifiy, parol kabi hash qilib saqlanadi, ishlatilgach o'chiriladi. Foydalanuvchi ularni xavfsiz joyda saqlashi kerak. Bu kodlar birinchi faktor emas, ikkinchi faktor o'rnini bosadi, shuning uchun ular ham throttling'dan o'tadi.
 
+### Faktorni almashtirish va MFA'ni tiklash
+
+MFA'ning eng zaif joyi ko'pincha faktorning o'zi emas, uni almashtirish oqimi. Cheat sheet bu haqda aniq: faktor almashtirishni yuqori xavfli amal deb qarang, o'zgarishdan oldin allaqachon ro'yxatdan o'tgan faktor bilan qayta autentifikatsiya talab qiling, faqat ochiq sessiyaga tayanmang (sessiya o'g'irlangan bo'lishi mumkin), o'zgarish haqida alohida kanal orqali (email yoki push) xabar bering, yuqori qiymatli akkauntlarda esa kechikish yoki qo'shimcha tekshiruv qo'shing. Shunda sessiyani qo'lga kiritgan hujumchi egasining faktorini jimgina o'zinikiga almashtirib, uni akkauntdan chiqarib yubora olmaydi. Tiklash usullari ro'yxati ham cheat sheet'da: ro'yxatdan o'tishda berilgan bir martalik recovery kodlar, bir nechta turdagi faktorni majburan ro'yxatdan o'tkazish, qo'llab-quvvatlash xizmati orqali qat'iy identifikatsiya, boshqa ishonchli foydalanuvchining kafolati. "Eng yaxshi" yo'l yo'q: tanlov ilovaning xavfi va foydalanuvchilar ustidan nazoratga bog'liq (50-dars). Parol to'g'ri, lekin ikkinchi faktor muvaffaqiyatsiz bo'lsa, foydalanuvchiga vaqt, brauzer va joylashuv ko'rsatilgan xabar yuboring: bu yo faktor yo'qolgani, yo parol sizgani.
+
 ### SMS va ovozli qo'ng'iroq
 
 NIST SP 800-63-4 PSTN orqali out-of-band tasdiqlashni cheklangan (restricted) authenticator deb belgilaydi. Standart "xavf vaqt o'tishi bilan ortishi mumkin" deb yozadi va tashkilot riskni baholab, qabul qilib, yumshatish usullarini belgilashini talab qiladi; agar xavf qabul qilib bo'lmasa, boshqa authenticator ishlatilishi shart. Shuningdek email out-of-band authenticator sifatida ishlatilmaydi: parol bilan kirib olingan pochta qutisi, pochta serverlaridagi uzatish va yo'naltirish hujumlari sabab. Mexanizm: SMS kodi telefon raqamiga bog'liq, raqamni o'g'irlash yoki yo'naltirish (SIM almashtirish) kodni hujumchiga yetkazadi. Telefon tarmog'iga qarshi aniq hujum statistikasini bu yerda keltirmaymiz, chunki tekshirilmagan.
 
+### Bir martalik kodlar uchun NIST va OWASP gigiyenasi
+
+Kodni SMS yoki boshqa out-of-band kanal bilan yuborsangiz, NIST SP 800-63B-4 verifier uchun aniq talablar qo'yadi. Autentifikatsiya sirri tasodifiy bit generatori bilan yaratilgan kamida olti o'nlik raqam (yoki unga teng) bo'lishi kerak. Javob 10 daqiqa ichida kelmasa, autentifikatsiya yaroqsiz hisoblanadi. Berilgan sir amal qilish muddatida faqat bir marta qabul qilinadi (replay resistance). Sir 64 bitdan qisqa bo'lgani uchun (olti raqam 20 bitga yetmaydi) akkaunt bo'yicha muvaffaqiyatsiz urinishlarni cheklovchi rate limiting majburiy (SHALL), va muhim detal: yangi kod yaratish muvaffaqiyatsiz urinishlar hisobini nolga tushirmaydi. Aks holda hujumchi "kodni qayta yuborish" tugmasini bosib, har safar yangi urinishlar to'plamiga ega bo'ladi. TOTP uchun ham shu mantiq: vaqt kodining amal qilish muddati soat siljishi va kiritish kechikishiga qarab belgilanadi, kod ikkinchi marta qabul qilinmaydi, chiqishi 64 bitdan qisqa bo'lgani uchun urinishlar cheklanadi.
+
+Multifactor Authentication Cheat Sheet shu qoidalarni amaliy ro'yxatga aylantiradi. OTP uchun qisqa TTL, bir martalik foydalanish, qat'iy urinishlar limiti va muvaffaqiyatli tekshiruvdan keyin yaroqsiz qilish minimal talab. OTP qiymatini log'ga yozmang va uzoq muddat ochiq matnda saqlamang. Kriptografik xavfsiz generator ishlating, usability ruxsat bersa 8 raqam yoki undan uzun kodni ko'rib chiqing, "qayta yuborish"da esa eski yozuvni yangi kod bilan almashtiring. OTP'ni hash qilish tavsiya etiladi, lekin parol hash'idan boshqa sababli: 6 raqamli kodning kalit bo'shlig'i atigi bir million atrofida, shuning uchun bazaga kirgan hujumchi hash'ni zumda sindiradi. Hash faqat qisqa muddatli ta'sirdan (log, metrika, qisqa vaqt bazaning ochilib qolishi) saqlaydi, uzoq muddatli maxfiylikni bermaydi. Quyidagi mashqda shu qoidalar bitta kichik funksiyada: yarim tuzatilgan versiyani to'ldiring.
+
+```ts run
+type Challenge = { code: string; issuedAt: number; used: boolean };
+type Account = { fails: number; ch: Challenge | null };
+const TTL_MS = 10 * 60 * 1000;
+const MAX_FAILS = 5;
+
+function issue(acc: Account, code: string, now: number): void {
+  acc.ch = { code, issuedAt: now, used: false };
+  acc.fails = 0; // ZAIF: qayta yuborish urinishlar hisobini nolga tushiradi
+}
+
+function verify(acc: Account, code: string, now: number): boolean {
+  return acc.ch?.code === code; // ZAIF: muddat, bir martalik va urinishlar limiti yo'q
+}
+
+const acc: Account = { fails: 0, ch: null };
+issue(acc, "482913", 0);
+console.log("to'g'ri kod:", verify(acc, "482913", 1000));
+console.log("xuddi shu kod yana:", verify(acc, "482913", 2000));
+console.log("11 daqiqadan keyin:", verify(acc, "482913", 11 * 60 * 1000));
+```
+
+```ts test
+const mk = (): Account => ({ fails: 0, ch: null });
+check("to'g'ri kod muddat ichida qabul qilinadi", () => {
+  const a = mk(); issue(a, "111111", 0);
+  return verify(a, "111111", 60_000) === true;
+});
+check("noto'g'ri kod rad etiladi", () => {
+  const a = mk(); issue(a, "111111", 0);
+  return verify(a, "222222", 1000) === false;
+});
+check("10 daqiqadan keyin kod yaroqsiz", () => {
+  const a = mk(); issue(a, "111111", 0);
+  return verify(a, "111111", TTL_MS + 1) === false;
+});
+check("kod ikkinchi marta o'tmaydi", () => {
+  const a = mk(); issue(a, "111111", 0);
+  return verify(a, "111111", 1000) === true && verify(a, "111111", 2000) === false;
+});
+check("5 ta xatodan keyin to'g'ri kod ham rad etiladi", () => {
+  const a = mk(); issue(a, "111111", 0);
+  for (let i = 0; i < 5; i++) verify(a, "000000", 1000 + i);
+  return verify(a, "111111", 2000) === false;
+});
+check("qayta yuborish xatolar hisobini nolga tushirmaydi", () => {
+  const a = mk(); issue(a, "111111", 0);
+  for (let i = 0; i < 3; i++) verify(a, "000000", 1000 + i);
+  issue(a, "333333", 5000);
+  for (let i = 0; i < 2; i++) verify(a, "000000", 6000 + i);
+  return verify(a, "333333", 7000) === false;
+});
+check("yangi kod chiqarilgach eski kod o'tmaydi", () => {
+  const a = mk(); issue(a, "111111", 0); issue(a, "333333", 1000);
+  return verify(a, "111111", 2000) === false;
+});
+```
+
 ### Push va charchatish
 
 Push-tasdiq foydalanuvchiga qulay, lekin bir tugma bilan tasdiqlanadi. Hujumchi parolni bilsa, ko'p marta kirishga urinib, foydalanuvchini tasdiqlashga undashi mumkin. NIST push yuboradigan verifier'larga muvaffaqiyatli autentifikatsiyadan beri yuborilgan pushlar tezligi yoki umumiy soniga oqilona chek qo'yishni tavsiya etadi. Muallif tavsiyasi: tasdiqlash uchun so'rov kontekstini (joy, qurilma) ko'rsating va foydalanuvchidan ekrandagi kodni kiritishni talab qiling.
+
+Multifactor Authentication Cheat Sheet charchatish hujumiga qarshi uchta chorani sanaydi: challenge-response push (masalan, ekranda ko'rsatilgan raqamni telefonda tanlash: "number matching"), push'larni tezlik yoki son bo'yicha cheklash va qisqa vaqt ichida ko'p push yoki yangi qurilma tokenini qayta ishlatish kabi anomaliyalarni kuzatish. Bundan tashqari cheat sheet yana ikki hujum naqshini ajratadi. Birinchisi, SIM almashtirish va raqamni o'g'irlash: tavsiya shuki, SMS/ovozli OTP o'rniga phishing-resistant authenticator yoki TOTP afzal, raqam egasi operator hisobiga PIN yoki port-out himoyasini yoqsin, ilova esa telefon raqami yoki SIM kutilmaganda o'zgarishini kuzatsin; NIST ham PSTN orqali kod yuborishdan oldin qurilma almashishi, SIM o'zgarishi, raqam ko'chirilishi kabi risk belgilarini hisobga olishni tavsiya etadi (SHOULD). Ikkinchisi, MFA downgrade: hujumchi MFA talab qilmaydigan eski protokol yoki zaxira oqim orqali kiradi. Mitigatsiya: MFA'ni bir xil majburlay olmaydigan legacy endpoint'larni o'chirish va phishing-resistant authenticator'dan zaifroq usulga o'tishga hujjatlashtirilgan siyosatsiz ruxsat bermaslik.
+
+SMS'ni qabul qilgan tashkilot uchun NIST qo'shimcha majburiyatlar ham yozadi: kamida bitta cheklanmagan alternativ authenticator taklif qilish, foydalanuvchiga xavf haqida aniq ogohlantirish berish, xavfni o'z risk baholashiga kiritish va cheklangan authenticator kelajakda qabul qilinmay qolsa, migratsiya rejasini tayyorlash. Telefon qamrovi zaif hududdagi foydalanuvchi SMS ololmasligi mumkin, shuning uchun alternativ barcha foydalanuvchilarga mavjud bo'lishi shart (SHALL).
 
 Va nihoyat, bu usullarning hech biri origin'ga bog'lanmagan. Foydalanuvchi TOTP kodini yoki SMS kodini soxta saytga kiritsa, hujumchi uni real vaqtda haqiqiy saytga uzatadi. Shuning uchun NIST AAL2 da phishing-resistant variantni taklif qilishni talab qiladi, passkey esa shu xossani beradi (45-dars).
 

@@ -12,11 +12,17 @@ sources:
   - id: asvs
     note: "ASVS 5.0 V2: 2.3.3 (biznes darajasidagi tranzaksiyalar: operatsiya to'liq bajariladi yoki oldingi holatga qaytariladi), 2.3.4 (cheklangan resurslar ikki marta bron qilinmasligi uchun qulflash)"
   - id: wstg
-    note: "WSTG Business Logic Testing: WSTG-BUSL-05 (funksiyani necha marta ishlatish chegarasi) va WSTG-BUSL-04 (process timing)"
+    note: "WSTG Business Logic Testing: BUSL-05 (funksiyani necha marta ishlatish chegarasi), BUSL-04 (process timing: bron qilingan slotni to'lovsiz ushlab turish), BUSL-06 (Method 3: bog'liq amallarni parallel bajarib ketma-ketlik tekshiruvini aylanib o'tish)"
   - id: pg-mvcc
-    note: "PostgreSQL hujjati (Transaction Isolation): Read Committed sukut bo'yicha izolyatsiya darajasi; FOR UPDATE/SHARE'siz SELECT so'rov boshlanishidagi snapshot'ni ko'radi; murakkab qidiruv shartlari uchun mos emasligi"
+    note: "PostgreSQL Transaction Isolation: Read Committed sukut bo'yicha; FOR UPDATE/SHARE'siz SELECT so'rov boshlanishidagi snapshot'ni ko'radi; UPDATE band qatorni kutadi va WHERE shartini yangilangan versiyada qayta tekshiradi; ON CONFLICT DO NOTHING; murakkab shartlar uchun mos emasligi; Serializable 'could not serialize access' xatosi bilan qaytaradi va qayta urinishni talab qiladi"
+  - id: pg-explicit-locking
+    note: "PostgreSQL Explicit Locking: qator darajasidagi qulflar ham deadlock keltirishi mumkin (ikki tranzaksiya qatorlarni qarama-qarshi tartibda yangilasa); asosiy himoya qulflarni izchil tartibda olish, aks holda deadlock'dan keyin qayta urinish"
+  - id: pg-serialization-failure
+    note: "PostgreSQL Serialization Failure Handling: serialization_failure SQLSTATE 40001, deadlock_detected 40P01, ba'zan unique_violation 23505 qayta urinish mumkin; butun tranzaksiya (qaror mantig'i bilan) qayta bajariladi; PostgreSQL avtomatik qayta urinishni bermaydi"
   - id: pg-rls
-    note: "PostgreSQL Row Security Policies (56-dars): policy ichidagi sub-SELECT poyga holatiga duchor bo'lishi mumkinligi haqidagi eslatma (faqat 56-darsdagi o'qishga havola; bu darsda qayta tekshirilmagan)"
+    note: "PostgreSQL Row Security Policies: policy ichidagi sub-SELECT READ COMMITTED rejimida poyga holatiga duchor bo'lib, ma'lumot sizishiga olib kelishi mumkin; yechimlar: sub-SELECT'da FOR SHARE, yangilashda ACCESS EXCLUSIVE qulf yoki yangilanishdan keyin parallel tranzaksiyalar tugashini kutish (56-dars)"
+  - id: kysely-src
+    note: "Kysely v0.29.8 manbasi: UpdateResult.numUpdatedRows va InsertResult.numInsertedOrUpdatedRows bigint, setIsolationLevel('serializable'), onConflict(...).doNothing()"
 quiz:
   - q: "Kod `if (balance >= amount) { balance -= amount; }` ketma-ket yozilgan, lekin balans bazadan o'qiladi va keyin yoziladi. Ikki parallel so'rov nima uchun ikkalasi ham o'tishi mumkin?"
     options:
@@ -116,7 +122,7 @@ task:
     })();
   solutionNotes: |
     - Bitta synchronous bo'lakda (`await`siz) `has` va `add` ketma-ket bajariladi, shuning uchun event loop ular orasida boshqa so'rovni o'tkazmaydi. Bu "atomik tekshirish va belgilash".
-    - Haqiqiy tizimda bu `INSERT ... ` ning unique constraint'i yoki `UPDATE ... WHERE` bilan bajariladi: baza o'zi atomik.
+    - Haqiqiy tizimda bu `INSERT ... ON CONFLICT DO NOTHING` bilan unique constraint orqali yoki `UPDATE ... WHERE` bilan bajariladi: baza o'zi atomik.
     - Agar yozish keyin xatolikka uchrasa, belgini qaytarish (rollback) kerak; aks holda foydalanuvchi kuponsiz qoladi. Bazada buni tranzaksiya hal qiladi (ASVS 2.3.3).
     - Xotiradagi Set faqat bitta jarayonda ishlaydi. Bir nechta instansiya bo'lsa, atomiklik baza yoki umumiy store'da (masalan unique constraint) ta'minlanadi.
   checklist:
@@ -132,7 +138,7 @@ task:
 
 Business Logic Security Cheat Sheet muammoni bir jumlada beradi: qiymatni o'qib, qaror qilib, yangi qiymat yozadigan har operatsiya poyga holatiga duchor bo'lishi mumkin. Agar ikki so'rov bir vaqtda ishlasa, ikkalasi eski qiymatni o'qiydi, bir xil qaror qiladi va ikkalasi yozadi. Natijada loyalty ballari sarflanib ketadi, balans manfiy bo'ladi, bir martalik kupon ko'p marta ishlatiladi, "har akkauntga bitta" bonus esa "har akkauntga ko'p" bo'ladi.
 
-Cheat sheet "tekshir, keyin harakat qil" shakliga ega operatsiyalarni sanaydi: balansni tekshirib, yechish; kupon ishlatilmaganini tekshirib, ishlatilganini yozish; foydalanuvchida N tadan kam element borligini tekshirib, qo'shish; slot bo'shligini tekshirib, bron qilish; referral kodining shu akkauntga qo'llanmaganini tekshirib, qo'llash; ro'yxatdan o'tish so'rovining noyobligini tekshirib, foydalanuvchini kiritish. Har biri tekshirish va harakat bitta atomik operatsiyaga birlashtirilmasa, poyga holati kutib turibdi. Dasturlash adabiyotida bu nom bilan ham yuradi: time-of-check to time-of-use, TOCTOU (bu atama cheat sheet matnida ishlatilmaydi, men uni shu naqshning umumiy nomi sifatida beraman). OWASP Top 10 A06 tegishli zaiflik turi sifatida CWE-362 ni (Concurrent Execution using Shared Resource with Improper Synchronization, "Race Condition") ro'yxatlaydi.
+Cheat sheet "tekshir, keyin harakat qil" shakliga ega operatsiyalarni sanaydi: balansni tekshirib, yechish; kupon ishlatilmaganini tekshirib, ishlatilganini yozish; foydalanuvchida N tadan kam element borligini tekshirib, qo'shish; slot bo'shligini tekshirib, bron qilish; referral kodining shu akkauntga qo'llanmaganini tekshirib, qo'llash; ro'yxatdan o'tish so'rovining noyobligini tekshirib, foydalanuvchini kiritish. Har biri tekshirish va harakat bitta atomik operatsiyaga birlashtirilmasa, poyga holati kutib turibdi. Dasturlash adabiyotida bu naqsh time-of-check to time-of-use, TOCTOU deb ham ataladi; cheat sheet o'zi atamani matnda ishlatmaydi, faqat havolalar ro'yxatida CWE-367 (Time-of-check Time-of-use Race Condition) ni keltiradi. OWASP Top 10 A06 tegishli zaiflik turi sifatida CWE-362 ni (Concurrent Execution using Shared Resource with Improper Synchronization, "Race Condition") ro'yxatlaydi.
 
 Avtopark misolida: haydovchining yoqilg'i kartasida 100 birlik limit bor. Ikkita pompa terminali bir vaqtda 80 birlik so'raydi. Agar ikkalasi ham "limit 100, 80 ruxsat" deb o'ylasa, 160 birlik beriladi.
 
@@ -153,6 +159,8 @@ Eng muhim ogohlantirish: "oraliq juda kichik" degan dalil ishlamaydi.
 ### Read Committed va ketma-ket so'rovlar
 
 PostgreSQL hujjatiga ko'ra Read Committed sukut bo'yicha izolyatsiya darajasi. Bu darajada `FOR UPDATE/SHARE`siz `SELECT` faqat so'rov boshlanishidan oldin commit qilingan ma'lumotni ko'radi (so'rov boshlangan paytdagi snapshot), ya'ni parallel tranzaksiyaning o'sha so'rov davomida commit qilgan o'zgarishlarini ko'rmaydi. Natija: ikki tranzaksiya bir vaqtda `SELECT balance` qiladi, ikkalasi 100 ni ko'radi, ikkalasi `UPDATE ... SET balance = 20` yozadi. Hujjat shuningdek, Read Committed rejimida yangilovchi buyruq parallel yangilanishlarni ayni qatorlarda ko'rishi, lekin boshqa qatorlardagi ta'sirni ko'rmasligini va shu sababli murakkab qidiruv shartli buyruqlar uchun mos emasligini yozadi. Cheat sheet ham buni ta'kidlaydi: ko'pchilik bazalarning sukut bo'yicha darajasida tekshirish va yangilash alohida ishlaydi va ular orasiga boshqa tranzaksiya kirishi mumkin.
+
+Aynan shu qoida shartli `UPDATE` ni xavfsiz qiladi. Hujjat: `UPDATE`, `DELETE` va `SELECT FOR UPDATE` qatorlarni qidirishda `SELECT` kabi ishlaydi, lekin topilgan qator boshqa tranzaksiya tomonidan allaqachon o'zgartirilayotgan bo'lsa, ular birinchi tranzaksiya tugashini kutadi. Birinchisi commit qilsa, ikkinchisi amalni qatorning yangilangan versiyasiga qo'llashga urinadi va `WHERE` shartini yangi versiyada qayta tekshiradi. Shuning uchun ikkinchi `UPDATE ... WHERE balance >= 80` yangi balans 20 ni ko'rib, nol qatorni o'zgartiradi. `INSERT ... ON CONFLICT DO NOTHING` ham shu rejimda ishlaydi: boshqa tranzaksiya natijasi hali ko'rinmasa, qator qo'shilmay qolishi mumkin. Hujjat chegarani ham aytadi: yangilovchi buyruq bir xil qatorlardagi parallel o'zgarishlarni ko'radi, lekin boshqa qatorlardagi ta'sirni ko'rmaydi, shu sababli murakkab qidiruv shartli buyruqlar uchun bu rejim mos emas. Kartaning bitta qatorini yangilash esa aynan "oddiy holat". Biz buni PostgreSQL 16.15 da ikki sessiya bilan sinadik: `SELECT` keyin `UPDATE` ikki sessiyada ham 100 ni o'qib, balansni 20 qoldirdi (160 birlik berilgan bo'lsa ham); shartli `UPDATE` da ikkinchi sessiya `UPDATE 0` oldi; `SELECT ... FOR UPDATE` da ikkinchi sessiya kutib, 20 ni o'qidi; `ON CONFLICT DO NOTHING` da ikkinchi sessiya `INSERT 0 0` oldi; `SERIALIZABLE` da ikkinchi sessiya `40001` (could not serialize access due to concurrent update) bilan to'xtadi.
 
 Muhim xulosa: "men tranzaksiya ishlatdim" o'z-o'zidan yetarli emas. Tranzaksiya ichida `SELECT` keyin ilovada hisoblash keyin `UPDATE` hamon poygaga ochiq, agar izolyatsiya darajasi va qulf mos tanlanmagan bo'lsa.
 
@@ -176,13 +184,23 @@ Cheat sheet pattern reference jadvali:
 
 Ikkita ASVS talabi shu vositalarga tayanadi. 2.3.3: tranzaksiyalar biznes mantiq darajasida ishlatilishi kerak, shunda operatsiya to'liq muvaffaq bo'ladi yoki oldingi to'g'ri holatga qaytariladi. 2.3.4: cheklangan resurslar (teatr o'rinlari, yetkazib berish slotlari) ikki marta bron qilinmasligi uchun biznes mantiq darajasida qulflash mexanizmlari ishlatilishi kerak.
 
+### Serializable, deadlock va qayta urinish
+
+Serializable darajasi PostgreSQL hujjatida eng qat'iy izolyatsiya deb ataladi: u tranzaksiyalarni go'yo ketma-ket bajarilgandek emulyatsiya qiladi, lekin konflikt topilsa tranzaksiyani `could not serialize access` xatosi bilan qaytaradi va hujjat bu darajada ilova tranzaksiyani qayta urinishga tayyor bo'lishi kerakligini aytadi. Bunday xato doim SQLSTATE `40001` (serialization_failure) bilan keladi. Hujjat deadlock (`40P01`, deadlock_detected) ni ham qayta urinish maqsadga muvofiq deydi, ba'zi holatlarda unique-key buzilishi (`23505`) uchun ham; faqat serialization_failure'ni shartsiz qayta urish tavsiya etiladi, boshqa kodlarda ehtiyot bo'lish kerak, chunki ular doimiy xatoni ham bildirishi mumkin. Qayta urinishda butun tranzaksiya, qaysi SQL va qaysi qiymat ishlatilishini hal qiluvchi mantiq bilan birga, qayta bajariladi; PostgreSQL avtomatik qayta urinish bermaydi, chunki to'g'riligini kafolatlay olmaydi. Qayta urinish tugashini ham kafolatlamaydi: yuqori raqobatda bir necha urinish kerak bo'lishi mumkin, shuning uchun urinishlar soni cheklanadi.
+
+Qulf tanlash o'zi yangi xavf keltiradi. Qator darajasidagi qulflar ham deadlock berishi mumkin: bitta tranzaksiya 1-hisobni, keyin 2-hisobni yangilasa, ikkinchisi esa 2-hisobni, keyin 1-hisobni yangilasa, ikkalasi bir-birini kutadi va PostgreSQL ulardan birini to'xtatadi. Biz buni 16.15 da ikki sessiya bilan takrorladik (`40P01`). Hujjatning asosiy maslahati: bir nechta obyekt qulflanadigan joyda qulflarni hamma ilovada izchil tartibda oling (masalan, hisob identifikatori o'sish tartibida). Bu o'tkazma funksiyasiga ham tegishli: A dan B ga va B dan A ga bir vaqtda o'tkazma qarama-qarshi tartibda qulflaydi. Agar tartibni oldindan kafolatlab bo'lmasa, deadlock'ni qayta urinish bilan ushlaysiz.
+
 ### Idempotency
 
-Tashqi amallar (kartadan yechish) uchun cheat sheet provayderning idempotency mexanizmini va bir operatsiyaning qayta urinishida bir xil kalitni ishlatishni aytadi. O'z API'ngiz uchun: saqlangan kalitlarni autentifikatsiya qilingan chaqiruvchi va operatsiya bilan chegaralang, ularni asl so'rov parametrlariga bog'lang va boshqa parametrlar bilan qayta ishlatishni rad eting; keshlangan natijani qaytarishdan oldin so'rovni avtorizatsiya qiling (kalitga egalik ruxsat emas); parallel so'rovlarni atomik muvofiqlashtiring, shunda amalni faqat bittasi boshlaydi. Lokal bazadagi tranzaksiyaning o'zi tashqi yon ta'sirni natijani saqlash bilan atomik qila olmaydi.
+Tashqi amallar (kartadan yechish) uchun cheat sheet provayderning idempotency mexanizmini va bir operatsiyaning qayta urinishida bir xil kalitni ishlatishni aytadi. O'z API'ngiz uchun: saqlangan kalitlarni autentifikatsiya qilingan chaqiruvchi va operatsiya bilan chegaralang, ularni asl so'rov parametrlariga bog'lang va boshqa parametrlar bilan qayta ishlatishni rad eting; keshlangan natijani qaytarishdan oldin so'rovni avtorizatsiya qiling (kalitga egalik ruxsat emas); parallel so'rovlarni atomik muvofiqlashtiring, shunda amalni faqat bittasi boshlaydi. Lokal bazadagi tranzaksiyaning o'zi tashqi yon ta'sirni natijani saqlash bilan atomik qila olmaydi. Cheat sheet qayta urinish va saqlash oynasini belgilashni va tashqi natija noma'lum bo'lgan holatda tiklash yo'lini oldindan o'ylashni talab qiladi; oyna tugagach, qayta yuborishdan oldin tashqi natija solishtiriladi (reconcile).
 
 ### Process timing bilan aloqasi
 
-WSTG-BUSL-04 vaqtga bog'liq jarayonlarni ko'rsatadi: slot bron qilinib, to'lovsiz ushlab turilsa, o'rinlar tugab qoladi. Remediation: tranzaksiyalar belgilangan vaqtdan keyin bekor qilinadi yoki qayta o'rnatiladi. Bu poyga emas, lekin xuddi shu oila: vaqt oralig'i tizim xatti-harakatiga ta'sir qiladi.
+WSTG-BUSL-04 vaqtga bog'liq jarayonlarni ko'rsatadi: slot bron qilinib, to'lovsiz ushlab turilsa, o'rinlar tugab qoladi. Remediation: tranzaksiyalar belgilangan vaqtdan keyin bekor qilinadi yoki qayta o'rnatiladi. Bu poyga emas, lekin xuddi shu oila: vaqt oralig'i tizim xatti-harakatiga ta'sir qiladi. WSTG-BUSL-06 ning Method 3 ro'yxatida poyga to'g'ridan-to'g'ri nomlangan: bog'liq amallarni parallel bajarib, ketma-ketlik tekshiruvini aylanib o'tish. Demak, 59-darsdagi state machine ham o'tishni shartli yangilash bilan qilishi shart (`UPDATE ... WHERE status = 'cart'`), aks holda ikki parallel `pay` ikkalasi `cart` ni ko'radi.
+
+### Testlash
+
+Cheat sheet poygani alohida testlashni talab qiladi: ikki so'rov poygalashishi mumkin bo'lsa, ularni poygalashtiradigan test yozing va oxirgi holat izchilligini tekshiring (balans hech qachon manfiy emas, kupon aynan bir marta ishlatilgan, bonus barcha g'oliblar orasida aynan bir marta berilgan). Test bir so'rovli happy path emas, parallel yuborilgan N ta so'rov bo'lishi kerak, aks holda poyga ko'rinmaydi. Yuqoridagi `ts run` modeli shu ruhda yozilgan: `Promise.all` bilan bir nechta chaqiruv va oxirgi `balans` tekshiruvi.
 
 ## Misol: yoqilg'i kartasi limiti
 
@@ -322,7 +340,7 @@ export async function grantBonus(userId: string, type: string) {
 }
 ```
 
-Kysely'ning `numUpdatedRows` va `onConflict` imzolari versiyaga bog'liq bo'lishi mumkin, o'z versiyangiz hujjatida tekshiring.
+Kysely 0.29.8 manbasiga ko'ra `numUpdatedRows` va `numInsertedOrUpdatedRows` `bigint` turida, shuning uchun kod ularni `Number(...)` bilan solishtiradi; `onConflict((oc) => oc.columns([...]).doNothing())` va `setIsolationLevel('serializable')` ham shu manbada bor. `ON CONFLICT DO NOTHING` ni PostgreSQL 16.15 da sinadik: dublikat `INSERT 0 0` beradi, ya'ni nol qator, kod `false` qaytaradi.
 
 Qatorlararo izchillik kerak bo'lsa, serializable tranzaksiya va qayta urinish:
 
@@ -349,16 +367,16 @@ export async function transfer(from: string, to: string, amount: number) {
       });
       return;
     } catch (e: any) {
-      if (e?.code !== "40001") throw e; // serialization failure: qayta urinish
+      if (e?.code !== "40001" && e?.code !== "40P01") throw e; // serialization failure yoki deadlock: butun tranzaksiyani qayta urinish
     }
   }
   throw new Error("konflikt: qayta urinishlar tugadi");
 }
 ```
 
-`40001` PostgreSQL'da serializatsiya xatosining SQLSTATE kodi; hujjat uni serialization failure sifatida keltiradi. NestJS'da bu funksiyalar servis qatlamida chaqiriladi (58-dars), controller esa faqat natijani HTTP javobiga aylantiradi.
+`40001` serialization failure, `40P01` esa deadlock_detected SQLSTATE kodi; PostgreSQL hujjati ikkalasini ham qayta urinishga loyiq deb ataydi. Kod `e.code` maydonini o'qiydi: bu `pg` drayverining SQLSTATE'ni berishiga tayanadi. NestJS'da bu funksiyalar servis qatlamida chaqiriladi (58-dars), controller esa faqat natijani HTTP javobiga aylantiradi.
 
-56-darsda aytilganidek, RLS policy ichidagi sub-SELECT ham poyga holatiga duchor bo'lishi mumkin. Bu masalani bu darsda manbadan qayta tekshirmadim; policy yozayotganda PostgreSQL hujjatidagi tegishli ogohlantirishni o'zingiz o'qing.
+56-darsda aytilganidek, RLS policy ichidagi sub-SELECT ham poyga holatiga duchor bo'lishi mumkin. PostgreSQL hujjatidagi misol: alice mallory'ning `group_id` sini kamaytirib, so'ng maxfiy qatorni yangilaydi. mallory READ COMMITTED rejimida `SELECT ... FOR UPDATE` bilan qatorga alice'dan keyin yetib kelsa, u alice commit qilishini kutadi va qatorning yangi mazmunini oladi, lekin policy ichidagi `users` sub-SELECT'i `FOR UPDATE` siz bo'lgani uchun so'rov boshlanishidagi eski snapshot'ni o'qiydi va eski huquq darajasi qatorni ko'rishga ruxsat beradi. Hujjat yechimlarni sanaydi: sub-SELECT'da `FOR SHARE` (bunda havola qilingan jadvalga UPDATE huquqi kerak, security definer funksiya yoki yana bir policy bilan cheklash mumkin), kam yangilanadigan jadvalda yangilashda `ACCESS EXCLUSIVE` qulf, yoki yangilanishdan keyin parallel tranzaksiyalar tugashini kutib, keyin xavfsizlikka bog'liq o'zgarish qilish.
 
 ## Xulosa
 

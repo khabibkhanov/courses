@@ -185,11 +185,13 @@ Kysely'da raw bo'lak `sql` tagged template bilan yoziladi. `${value}` interpolat
 
 ### 1. Dinamik identifikator
 
-Eng ko'p uchraydigan xato: ``sql`ORDER BY ${sort}` ``. Bu injection emas, chunki `sort` parametrga aylanadi (`ORDER BY $1`), lekin natija noto'g'ri: baza doimiy qiymat bo'yicha tartiblaydi yoki xato beradi. Dasturchi "ishlamayapti" deb `Unsafe` yoki `sql.raw`ga o'tadi va injection shu paytda paydo bo'ladi. To'g'ri yo'l: ruxsat etilgan ustunlar xaritasi, kalit mijozdan, qiymat koddan (22-dars).
+Eng ko'p uchraydigan xato: ``sql`ORDER BY ${sort}` ``. Bu injection emas, chunki `sort` parametrga aylanadi (`ORDER BY $1`), lekin so'rov o'ylangan ishni bajarmaydi. Prisma hujjati buni aniq yozadi: tagged template o'zgaruvchilari faqat qiymat o'rnida ishlatiladi, ustun, jadval va baza nomi yoki SQL kalit so'zi (masalan, `ORDER BY ${ordering}` dagi `desc`) o'rnida emas. Dasturchi "ishlamayapti" deb `Unsafe` yoki `sql.raw`ga o'tadi va injection shu paytda paydo bo'ladi. Hujjat dinamik jadval nomi uchun ham aynan shu yo'lni (`$queryRawUnsafe`) ko'rsatadi va uni foydalanuvchi kiritishi bilan ishlatish xavfini eslatadi; demak bu yerda allow-list majburiy. To'g'ri yo'l: ruxsat etilgan ustunlar xaritasi, kalit mijozdan, qiymat koddan (22-dars).
 
 ### 2. `undefined` va `null`
 
-Prisma filtrida `undefined` qiymat "shart qo'shma" degan ma'noni beradi, `null` esa `IS NULL`. Shu sababli `where: { email, resetToken: token }` da `token` kelmasa (`undefined`), so'rov faqat email bo'yicha ishlaydi. Tekshirilmagan HTTP kiritish `undefined` bo'lishi mumkin (parametr yo'q), shuning uchun majburiy maydonlarni oldin tekshirish kerak. Bu xatti-harakat Prisma hujjatida tasvirlangan, lekin aniq bo'lim 2026-11-11 da qayta ochib tekshirilmadi; mini-modelda uni soddalashtirib ko'rsatamiz.
+Prisma hujjatining "Null and undefined" sahifasiga ko'ra filtrda `undefined` "bu ustun uchun filtr belgilanmagan" degani: `where: { name: undefined }` butun jadvalni qaytaradi, `null` esa bo'sh (`IS NULL`) qiymatlarni qidiradi. Sahifa boshida hujjat o'zi ogohlantiradi: `undefined` so'rovga kiritilmaydi, bu kutilmagan natija va ma'lumot yo'qolishiga olib kelishi mumkin. Shu sababli `where: { email, resetToken: token }` da `token` kelmasa (`undefined`), so'rov faqat email bo'yicha ishlaydi. Tekshirilmagan HTTP kiritish `undefined` bo'lishi mumkin (parametr yo'q), shuning uchun majburiy maydonlarni oldin tekshirish kerak.
+
+Hujjat bu uchun `strictUndefinedChecks` preview imkoniyatini ham tasvirlaydi: yoqilsa, filtrda aniq `undefined` berish runtime xatosiga aylanadi, maydonni ataylab o'tkazib yuborish uchun esa `Prisma.skip` ishlatiladi. Bu foydali qo'shimcha qatlam, lekin preview ekani va u faqat `undefined` ni yopishi (operator obyektini emas) sababli sxema tekshiruvini almashtirmaydi. Mini-modelda `undefined` va `{ not: x }` xatti-harakatini soddalashtirib ko'rsatamiz. `not` operatori Prisma filtrida haqiqatan mavjud ("qiymat n ga teng emas").
 
 ### 3. Obyekt in'ektsiyasi
 
@@ -203,11 +205,23 @@ JSON body'da `token` satr o'rniga `{ "not": "" }` kelsa va kod uni `where` ga o'
 
 ORM natijasi ko'pincha to'g'ridan-to'g'ri JSON bo'lib mijozga qaytadi. `select` ni mijoz belgilasa (`?fields=id,passwordHash`), ORM parametrlangan va xavfsiz so'rov yasaydi, lekin ruxsat etilmagan maydon qaytadi. Bu yana SQL injection emas, ma'lumot sizishi (54-dars). Tuzatish: qaytariladigan maydonlar ro'yxati serverda, har tur uchun alohida DTO.
 
-### 6. Review va linter
+### 6. Prisma raw API'ning cheklovlari va ulardan kelib chiqadigan vasvasalar
+
+Hujjatda keltirilgan cheklovlar tez-tez "shu yerda Unsafe kerak" degan xulosaga olib boradi. Ularni bilish xavfsiz yechimni topishga yordam beradi:
+
+- O'zgaruvchi SQL string literali ichida ishlamaydi: ``$queryRaw`SELECT 'Ism: ${name}'` `` kutilgandek bo'lmaydi. To'g'ri shakl: butun satrni o'zgaruvchi qilish yoki `'Ism: ' || ${name}` deb ulash. Ya'ni qiymat literal ichiga matn sifatida emas, alohida parametr sifatida kiradi.
+- `LIKE`/`ILIKE` bilan `%` belgisi o'zgaruvchining ichida bo'lishi kerak (hujjat `` `%${fragment}` `` shaklini ko'rsatadi, `%$2` ishlamaydi). Bunda foydalanuvchi qiymatidagi `%` va `_` baribir wildcard bo'lib qoladi (22-dars).
+- Bir nechta shartni dinamik qo'shish kerak bo'lsa, `Prisma.sql` va `Prisma.empty` bilan bo'laklar yig'iladi: shart bor bo'lsa ``Prisma.sql`WHERE name = ${n}` ``, yo'q bo'lsa `Prisma.empty` (hujjat bu joyga `""` yoki `NULL` qo'yib bo'lmasligini ta'kidlaydi). Matn bo'laklari esa faqat kodda yozilgan bo'ladi.
+- So'rovni bir necha joyda bosqichma-bosqich yig'ish kerak bo'lsa, hujjat `Prisma.sql([bo'lak1, bo'lak2, ""], qiymat1, qiymat2)` shaklini xavfsiz deb ko'rsatadi, agar bo'laklar ishonchli bo'lsa; massivning oxirida bo'sh satr bo'lishi shart, chunki bo'laklar soni parametrlar sonidan bittaga ko'p.
+- PostgreSQL'da `ALTER USER ... PASSWORD` kabi `ALTER` buyruqlari prepared statement'da ishlamaydi; hujjat `$executeRawUnsafe` yo'lini ko'rsatadi va uni xavfsiz emas deb belgilaydi. Bunday buyruq ilova kodiga emas, migratsiya skriptiga tegishli.
+
+Bu ro'yxatning umumiy xulosasi: "parametr bilan bo'lmayapti" holati deyarli doim identifikator, kalit so'z yoki DDL bilan bog'liq; bunday qismlar kodda statik variant yoki allow-list sifatida yoziladi, qiymatlar esa parametr bo'lib qoladi.
+
+### 7. Review va linter
 
 Raw API'ning har chaqiruvi alohida review nuqtasi bo'lishi uchun loyihada ularni sanab chiqish kerak: `$queryRawUnsafe`, `$executeRawUnsafe`, `Prisma.raw`, `sql.raw`. Bu nomlar linter qoidasi yoki oddiy qidiruv bilan topiladi (83-dars) va ro'yxat har releasdan oldin ko'rib chiqiladi. Qoida: `Unsafe` yoki `raw` chaqiruvi yonida nima uchun kerakligi va qiymatlar qaerdan kelishi izohlangan bo'lishi kerak. Kysely'da `sql.raw` ga yuboriladigan har satr kodda yozilgan doimiy yoki allow-list natijasi bo'lishi shart, ya'ni uning manbasini fayl ichidan bir qarashda ko'rish mumkin bo'lishi kerak.
 
-### 7. Tenant sharti va ORM
+### 8. Tenant sharti va ORM
 
 ORM'ni to'g'ri ishlatgan kod ham tenant shartini unutishi mumkin: `findUnique({ where: { id } })` boshqa tenant satrini qaytaradi. Bu injection emas, authorization (52-dars), lekin ORM xavfsizligi haqidagi suhbatda tez-tez shu bilan aralashtiriladi. Ikki qatlam foydali: tenant shartini so'rovga qo'shuvchi yagona yordamchi funksiya (yoki Prisma extension) va ma'lumotlar bazasidagi row-level security (56-dars).
 
@@ -280,7 +294,7 @@ SELECT id FROM vehicles WHERE plate = 'x' OR '1'='1'
 SELECT id FROM vehicles ORDER BY id; DROP TABLE vehicles
 ```
 
-Birinchi so'rovda shart `'1'='1'` bilan har doim to'g'ri bo'ladi va hamma tenant'ning mashinalari qaytadi. Ikkinchisida baza ko'p buyruqli so'rovni qabul qilsa, `DROP` bajariladi (qabul qilish drayverga bog'liq; asosiy xavf shu). Tagged shaklda esa bu payload'lar parametr bo'lib qolardi, shuning uchun "ishlamaydi" degan dasturchi `Unsafe` ga o'tgan edi.
+Birinchi so'rovda shart `'1'='1'` bilan har doim to'g'ri bo'ladi va hamma tenant'ning mashinalari qaytadi. Ikkinchisida ikkinchi buyruq (`DROP`) ishlashi bazaga va drayverga bog'liq: Prisma hujjatiga ko'ra uning raw metodlari bir vaqtda faqat bitta so'rov bajaradi, shuning uchun Prisma'da ikkinchi buyruq bajarilmaydi. Bu yo'qotish emas, yengillik xolos: bitta so'rov ichida `UNION` yoki shartli ifoda qo'shish baribir mumkin, ya'ni o'qish hujumi saqlanadi. Tagged shaklda esa bu payload'lar parametr bo'lib qolardi, shuning uchun "ishlamaydi" degan dasturchi `Unsafe` ga o'tgan edi.
 
 ### 3. Tuzatilgan kod
 
@@ -385,7 +399,7 @@ export async function findByToken(email: unknown, token: unknown) {
 }
 ```
 
-`Prisma.join(ids)` bo'sh massiv bilan xato berishi mumkin, shuning uchun `ids.length === 0` holatini oldin alohida ko'ring. Kodda `Prisma.raw` ga faqat allow-list qiymati beriladi, `findByToken` esa `undefined` va obyekt tokenlarni filtr yaratilishidan oldin rad etadi.
+Bo'sh ro'yxat uchun `IN ()` to'g'ri SQL emas, shuning uchun `ids.length === 0` holatini so'rovdan oldin alohida ko'ring (bo'sh natija qaytaring). Kodda `Prisma.raw` ga faqat allow-list qiymati beriladi, `findByToken` esa `undefined` va obyekt tokenlarni filtr yaratilishidan oldin rad etadi.
 
 ## Xulosa
 

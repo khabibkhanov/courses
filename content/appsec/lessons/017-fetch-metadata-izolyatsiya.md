@@ -6,11 +6,13 @@ summary: "Sec-Fetch-* header'lari bilan resource isolation policy qurish, uning 
 duration: 40
 sources:
   - id: fetch-metadata
-    note: "Fetch Metadata Request Headers: Sec-Fetch-Site, Sec-Fetch-Mode, Sec-Fetch-Dest va Sec-Fetch-User header'lari"
-  - id: whatwg-html
-    note: "HTML Standard: browsing context group, Cross-Origin-Opener-Policy va Cross-Origin-Embedder-Policy semantikasi"
-  - id: whatwg-fetch
-    note: "Fetch Standard: request mode (cors, no-cors, navigate), destination va Cross-Origin-Resource-Policy tekshiruvi"
+    note: "Fetch Metadata Request Headers spetsifikatsiyasi: Sec-Fetch-Site, Sec-Fetch-Mode, Sec-Fetch-Dest va Sec-Fetch-User header'lari"
+  - id: mdn-fetch-metadata
+    note: "MDN Fetch metadata qo'llanmasi: header'larning taqiqlangan (forbidden) ekani, faqat potentially trustworthy URL'larga yuborilishi, resource isolation policy namunasi va Vary tavsiyasi"
+  - id: cs-csrf
+    note: "OWASP CSRF Prevention Cheat Sheet: Sec-Fetch-Site asosiy signal, Origin bo'yicha zaxira tekshiruv majburiy, header yo'q bo'lganda fail-safe yoki fail-open tanlovi, webhook va CORS API'larni istisno qilish"
+  - id: mdn-corp
+    note: "MDN CORP qo'llanmasi: Spectre kabi yon kanal hujumlari, same-origin / same-site / cross-origin qiymatlari, so'rov yuborilishi to'xtamasligi, COOP+COEP bilan cross-origin isolated"
 quiz:
   - q: "Hujumchi sahifasidagi forma sizning `POST /vehicles/v1/delete` manzilingizga yuboriladi. Brauzer qanday `Sec-Fetch-Site` qiymatini qo'yadi?"
     options:
@@ -154,7 +156,9 @@ MDN va OWASP bir xil shablonni beradi: server so'rovni quyidagicha baholaydi (MD
 3. Boshqa saytdan xavfsiz metodli yuqori darajali navigatsiya ruxsat (foydalanuvchi havolani bosib kelishi uchun).
 4. Qolgan hammasi rad etiladi.
 
-OWASP CSRF Prevention Cheat Sheet Fetch Metadata'ni CSRF'ning engil himoyasi sifatida beradi, `Sec-Fetch-Site` ni asosiy signal deb ataydi va muhim shartni qo'yadi: `Sec-Fetch-*` ni yubormaydigan eski brauzerlar uchun standart Origin tekshiruvi bilan zaxira variant majburiy. Shuningdek, cheat sheet bu header'lar barcha yirik brauzerlarda qo'llab-quvvatlanishini (2023-yil martidan beri) yozadi.
+OWASP CSRF Prevention Cheat Sheet Fetch Metadata'ni CSRF'ning engil himoyasi sifatida beradi, `Sec-Fetch-Site` ni asosiy signal deb ataydi va muhim shartni qo'yadi: `Sec-Fetch-*` ni yubormaydigan eski brauzerlar uchun standart Origin tekshiruvi bilan zaxira variant majburiy. Header umuman bo'lmaganda ikki yo'l bor: fail-safe (sezgir endpoint'lar uchun tavsiya etiladi, so'rov bloklanadi) va fail-open (moslik birinchi o'rinda: Origin tekshiruvi, CSRF token yoki qo'shimcha validatsiyaga qaytiladi). Dars modelidagi `allowed()` ikkinchi yo'lni tanlagan: `Origin` ham yo'q bo'lsa so'rov o'tadi, chunki bu brauzer bo'lmagan mijoz bo'lishi mumkin. Shuningdek, cheat sheet bu header'lar barcha yirik brauzerlarda qo'llab-quvvatlanishini (2023-yil martidan beri) yozadi.
+
+OWASP cheat sheet siyosatning standart nuqtalarini ham beradi: `Sec-Fetch-Site: cross-site` bilan xavfsiz bo'lmagan metod (`POST`, `PUT`, `PATCH`, `DELETE`) rad etiladi; `same-site` faqat tahdid modelingiz qardosh subdomenlarga ishonsa ruxsat etiladi; `none` foydalanuvchi bevosita boshlagan navigatsiya uchun. MDN esa serverga javobda `Vary: sec-fetch-site, sec-fetch-mode` (siyosat o'qiydigan header'lar) qo'shishni tavsiya qiladi, shunda keshlangan javob boshqa kontekstdagi so'rovga berilmaydi. Dars modeli MDN namunasidan qat'iyroq: cross-site navigatsiyada `Sec-Fetch-Dest: document` ni ham talab qiladi, shuning uchun cross-site `<iframe>` yoki `<embed>` navigatsiyasi ham rad etiladi (OWASP namunasi `object` va `embed` ni alohida chiqarib tashlaydi).
 
 Quyidagi `run` bloki shu siyosatni sof funksiya sifatida beradi va bir nechta so'rovni sinab ko'radi.
 
@@ -202,6 +206,10 @@ eski brauzer, begona Origin    RAD
 
 ## Chuqurroq: chegaralar va izolyatsiya
 
+### Fetch Metadata yopadigan ikkinchi sinf: cross-site leak
+
+MDN Fetch metadata qo'llanmasi CSRF bilan birga yana bir hujum sinfini nomlaydi: cross-site leak (XS-Leaks). Bunda hujumchi sahifa o'qiy olmaydigan javob haqida yon kanal orqali ma'lumot oladi: masalan, foydalanuvchining sizdagi sahifaga munosabati (kirgan yoki kirmagan) xato hodisalari orqali bilinadi, chunki boshqa saytdan `<img>` yoki `<script>` bilan yuklangan sahifa foydalanuvchi holatiga qarab yo muvaffaqiyatli, yo xato bilan tugaydi. Resource isolation policy bunday so'rovlarni (`Sec-Fetch-Site: cross-site`, `Sec-Fetch-Mode: no-cors`, `Sec-Fetch-Dest: image` yoki `script`) javob hosil qilishdan oldin rad etadi, shuning uchun hujumchi farqni kuzata olmaydi. Faqat o'qishni to'suvchi SOP bu holatni yopa olmaydi.
+
 ### Fetch Metadata nimani qilmaydi
 
 - U brauzerning kafolati, serverning emas. `curl` yoki boshqa skript header'ni istagancha yozadi. Lekin hujum modelida qurbon brauzer orqali ishlaydi: hujumchi sahifasi o'z skripti bilan `Sec-Fetch-Site` ni soxtalashtira olmaydi. Ya'ni policy "brauzerni qurolga aylantirish" hujumlariga (CSRF, cross-site leak) qarshi, boshqa mijozlarga qarshi emas.
@@ -217,9 +225,41 @@ Boshqa muammo: MDN CORP sahifasida yozilishicha, SOP skriptga cross-origin javob
 - **`Cross-Origin-Embedder-Policy` (COEP)**: hujjat qo'yadi. `require-corp` bilan hujjat faqat o'z origin'idagi yoki CORP orqali (yoki CORS bilan) ruxsat berilgan cross-origin resurslarni yuklaydi. `credentialless` esa ruxsatsiz resursni yuklashga imkon beradi, lekin cookie'siz. Standart `unsafe-none`.
 - **`Cross-Origin-Opener-Policy` (COOP)**: hujjat o'zini boshqa origin'dagi hujjatlar bilan umumiy browsing context group'dan ajratadi. `same-origin` qiymati faqat COOP qo'ygan va bir origin hujjatlar bilan guruhga ruxsat beradi; `same-origin-allow-popups`, `noopener-allow-popups` yumshoqroq variantlar; standart `unsafe-none`.
 
+MDN COEP sahifasi uni aniqlashtiradi: COEP faqat `no-cors` rejimdagi cross-origin so'rovlarga tegishli, `cors` rejimdagi yuklashni CORS o'zi boshqaradi (COEP uni bloklamaydi, lekin CORS ruxsati baribir kerak). COEP resursning o'z CORP siyosatini bekor qilmaydi: CORP `same-origin` bo'lsa, COEP qanday bo'lishidan qat'i nazar resurs cross-origin yuklanmaydi. Header takrorlansa yoki bir nechta token berilsa, `unsafe-none` deb hisoblanadi. COOP uchun MDN qoidasi: `same-origin` hujjat boshqa hujjat bilan faqat ikkalasi ham same-origin va ikkalasida `same-origin` bo'lsa umumiy browsing context group'ga tushadi; guruhdan ajratilganda oynalar o'rtasidagi `window.opener` havolasi uziladi va XS-Leaks sinfidagi hujumlar to'siladi. Shu bilan birga MDN ogohlantiradi: brauzer baribir sezgirroq va kamroq sezgir ilovani bir jarayonda joylashtirishi mumkin, ya'ni Spectre kabi hujumlarga qarshi COOP yagona kafolat emas.
+
 COOP va COEP birga (`same-origin` + `require-corp` yoki `credentialless`) hujjatni cross-origin isolated qiladi; MDN bo'yicha `SharedArrayBuffer` va yuqori aniqlikdagi `performance.now()` kabi imkoniyatlar faqat shunday hujjatlarda mavjud. Hujjat izolyatsiyalanganini `crossOriginIsolated` xossasi bilan tekshirish mumkin.
 
 Muhim kelishuv: COEP `require-corp` barcha uchinchi tomon resurslariga CORP/CORS talab qiladi, shuning uchun uchinchi tomon rasm, skript va reklama bilan to'la sayt uchun u butun ilovani sindiradi. Shu sababli bu izolyatsiya odatda faqat kerak bo'lganda (SharedArrayBuffer, aniq taymer) yoqiladi. Xavfsizlik nuqtai nazaridan esa eng arzon foyda: shaxsiy API javoblari va foydalanuvchi kontentiga `CORP: same-origin` hamda `COOP: same-origin` qo'yish (Helmet standart to'plami ham shu ikki qiymatni qo'yadi, NestJS hujjati jadvalida ko'rsatilgan).
+
+### Mashq: embed qarori
+
+Quyidagi `canLoad` COEP, CORP va so'rov rejimini birlashtirib, cross-origin resurs yuklanishini hal qiladi. Zaif versiya CORP'ni va `cors` rejimini hisobga olmaydi. Uni MDN qoidalariga ko'ra tuzating: bir origin'dagi resurs doim yuklanadi; `cors` rejimidagi yuklashni COEP bloklamaydi; `no-cors` rejimda CORP `same-origin` cross-origin so'rovni, `same-site` esa cross-site so'rovni bloklaydi; `require-corp` da CORP'siz cross-origin `no-cors` resurs bloklanadi; `credentialless` da CORP'siz resurs cookie'siz yuklanadi; `unsafe-none` da CORP'siz resurs oddiy yuklanadi.
+
+```ts run
+type Coep = "unsafe-none" | "require-corp" | "credentialless";
+type Rel = "same-origin" | "same-site" | "cross-site";
+type Corp = "same-origin" | "same-site" | "cross-origin" | undefined;
+type Res = { loaded: boolean; credentials: boolean };
+
+// ZAIF: CORP e'tiborsiz, cors rejimi va credentialless hisobga olinmagan
+function canLoad(coep: Coep, rel: Rel, mode: "cors" | "no-cors", corp: Corp): Res {
+  if (coep === "require-corp" && rel !== "same-origin") return { loaded: false, credentials: false };
+  return { loaded: true, credentials: true };
+}
+
+console.log(canLoad("unsafe-none", "cross-site", "no-cors", "same-origin"));
+```
+
+```ts test
+check("bir origin'dagi resurs har doim yuklanadi", () => canLoad("require-corp", "same-origin", "no-cors", "same-origin").loaded === true);
+check("require-corp: CORP'siz cross-site no-cors bloklanadi", () => canLoad("require-corp", "cross-site", "no-cors", undefined).loaded === false);
+check("require-corp: CORP cross-origin bo'lsa yuklanadi", () => canLoad("require-corp", "cross-site", "no-cors", "cross-origin").loaded === true);
+check("cors rejimini COEP bloklamaydi", () => canLoad("require-corp", "cross-site", "cors", undefined).loaded === true);
+check("CORP same-origin unsafe-none'da ham cross-origin no-cors'ni bloklaydi", () => canLoad("unsafe-none", "cross-site", "no-cors", "same-origin").loaded === false);
+check("CORP same-site: same-site yuklanadi, cross-site bloklanadi", () => canLoad("unsafe-none", "same-site", "no-cors", "same-site").loaded === true && canLoad("unsafe-none", "cross-site", "no-cors", "same-site").loaded === false);
+check("unsafe-none: CORP'siz resurs cookie bilan yuklanadi", () => { const r = canLoad("unsafe-none", "cross-site", "no-cors", undefined); return r.loaded && r.credentials; });
+check("credentialless: CORP'siz resurs yuklanadi, lekin cookie'siz", () => { const r = canLoad("credentialless", "cross-site", "no-cors", undefined); return r.loaded && !r.credentials; });
+```
 
 ## Misol: cross-site POST va resource isolation
 
@@ -364,6 +404,7 @@ const app = Fastify();
 const APP_ORIGIN = "https://app.fleet.example";
 
 app.addHook("onRequest", async (req, reply) => {
+  reply.header("Vary", "Sec-Fetch-Site, Sec-Fetch-Mode, Sec-Fetch-Dest");
   const site = req.headers["sec-fetch-site"];
   if (!site) {
     const origin = req.headers["origin"];
@@ -383,7 +424,7 @@ app.addHook("onSend", async (_req, reply) => {
 });
 ```
 
-Webhook yo'llarini bu hook'dan oldin alohida plagin (encapsulation) ichiga oling, ya'ni policy faqat brauzer API'lariga bog'langan bo'lsin.
+Webhook yo'llarini bu hook'dan oldin alohida plagin (encapsulation) ichiga oling, ya'ni policy faqat brauzer API'lariga bog'langan bo'lsin. OWASP cheat sheet ham shuni aytadi: cross-origin so'rov qabul qilishi ko'zda tutilgan endpoint'lar (CORS API, uchinchi tomon integratsiyasi, webhook) global rad qoidasidan alohida istisno qilinib, CORS, autentifikatsiya va log bilan himoyalanadi. NestJS'da shu mantiq global guard yoki middleware bo'lishi mumkin; Helmet ning standart to'plami (NestJS hujjatidagi jadval) `Cross-Origin-Opener-Policy` va `Cross-Origin-Resource-Policy` ni `same-origin` qilib qo'yadi, `Cross-Origin-Embedder-Policy` ni esa yubormaydi.
 
 ## Xulosa
 

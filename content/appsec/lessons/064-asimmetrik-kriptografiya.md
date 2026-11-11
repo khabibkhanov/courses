@@ -19,10 +19,10 @@ quiz:
   - q: "Yangilanish fayli va uning SHA-256 hash'i bir xil joyda (bir serverda) joylashgan. Qurilma hash'ni tekshirib faylni qabul qiladi. Serverga yozish huquqini olgan hujumchi nima qiladi?"
     options:
       - "Hech narsa: hash o'zgartirilgan faylni aniqlaydi"
-      - "Faylni o'zgartiradi va hash'ni qayta hisoblab almashtiradi, qurilma buni sezmaydi"
       - "Faqat faylni o'zgartira oladi, hash'ni emas"
+      - "Faylni o'zgartiradi va hash'ni qayta hisoblab almashtiradi, qurilma buni sezmaydi"
       - "Hash'ni tiklab asl faylni topadi"
-    answer: 1
+    answer: 2
     explain: "Hash kalitsiz hisoblanadi, shuning uchun hujumchi uni o'zi hisoblaydi. Yaxlitlik uchun imzo kerak: tekshiruvchida faqat ochiq kalit bo'ladi va hujumchi imzo yarata olmaydi."
   - q: "Ikki tomon ephemeral ECDH bilan umumiy kalit kelishdi, lekin ochiq kalitlar autentifikatsiya qilinmadi. Ularning kanalini boshqaradigan hujumchi nima qila oladi?"
     options:
@@ -35,10 +35,10 @@ quiz:
   - q: "Forward secrecy nima beradi?"
     options:
       - "Server kalitini abadiy yashiradi"
-      - "Uzoq muddatli maxfiy kalit keyinroq oshkor bo'lsa ham, o'tgan sessiyalar yozib olingan bo'lsa ham ular ochilmaydi, chunki sessiya kaliti vaqtinchalik kalitlardan kelgan"
-      - "Sessiyalar tezroq ochiladi"
       - "Hujumchi imzoni soxtalashtira olmaydi"
-    answer: 1
+      - "Sessiyalar tezroq ochiladi"
+      - "Uzoq muddatli maxfiy kalit keyinroq oshkor bo'lsa ham, o'tgan sessiyalar yozib olingan bo'lsa ham ular ochilmaydi, chunki sessiya kaliti vaqtinchalik kalitlardan kelgan"
+    answer: 3
     explain: "Ephemeral kalitlar sessiyadan keyin yo'q qilinadi. ASVS Appendix C jadvalida ECDH forward secrecy beradi, RSA PKCS#1 v1.5 kalit transporti esa yo'q (disallowed)."
   - q: "ASVS Appendix C imzo jadvaliga ko'ra qaysi to'plam to'g'ri?"
     options:
@@ -59,10 +59,10 @@ quiz:
   - q: "Yangi tizim 2026 yilda RSA-2048 kalit almashishidan ECDH P-256'ga o'tmoqda. Post-quantum nuqtai nazaridan bu o'tish nimani hal qiladi?"
     options:
       - "Kvant kompyuteriga qarshi to'liq himoya beradi"
-      - "Hech narsani: RSA ham, ECC ham kvant tahdidiga ochiq; post-quantum himoya ML-KEM kabi mexanizmlar bilan alohida o'tishni talab qiladi (70-dars)"
       - "Faqat imzoni himoya qiladi"
+      - "Hech narsani: RSA ham, ECC ham kvant tahdidiga ochiq; post-quantum himoya ML-KEM kabi mexanizmlar bilan alohida o'tishni talab qiladi (70-dars)"
       - "Faqat RSA-4096 himoya qiladi"
-    answer: 1
+    answer: 2
     explain: "Cryptographic Storage cheat sheet RSA va ECC (shu jumladan Curve25519) post-quantum xavfsiz emasligini yozadi. P-256 ga o'tish klassik samaradorlik va forward secrecy beradi, kvant tahdidini hal qilmaydi."
 task:
   title: "Imzolangan konfiguratsiya: kontekst va versiya"
@@ -179,7 +179,7 @@ ASVS Appendix C jadvallari bo'yicha:
 - Kalit kelishish: ECDH (kalit kamida 256-383 bitlik diapazonda, ya'ni P-256 va undan yuqori) va FFDH (L >= 3072, N >= 256) approved va ikkalasi ham forward secrecy beradi. RSA PKCS#1 v1.5 bilan shifrlangan kalit transporti disallowed va forward secrecy bermaydi. IKEv1 productionda ishlatilmasligi kerak.
 - Guruhlar: P-256, P-384, P-521, Curve25519, Curve448 va ffdhe guruhlari (2048 dan 8192 gacha) approved ro'yxatda.
 - Imzo: EdDSA (Ed25519, Ed448), XEdDSA, ECDSA (P-256, P-384, P-521) va RSA-PSS approved; RSA-SSA-PKCS#1 v1.5 va DSA disallowed.
-- Xavfsizlik darajasi: ASVS 11.2.3 kamida 128 bit talab qiladi va misol keltiradi: 256 bitli ECC kaliti taxminan 128 bit, RSA uchun esa 3072 bit kerak. Appendix C jadvalida RSA 2048 va ECC 224-255 bit 112 bit darajaga to'g'ri keladi.
+- Xavfsizlik darajasi: ASVS 11.2.3 kamida 128 bit talab qiladi va misol keltiradi: 256 bitli ECC kaliti qariyb 128 bit daraja beradigan joyda RSA uchun 3072 bit kerak. Appendix C jadvalida RSA 2048 va ECC 224-255 bit 112 bit darajaga to'g'ri keladi.
 
 ASVS 11.6.1 kalit generatsiyasi va imzo uchun faqat approved algoritm va rejimlar ishlatilishini, generatsiya algoritmi ma'lum hujumlarga ochiq kalit yaratmasligini (misol: Fermat faktorizatsiyasiga zaif RSA kalitlari) talab qiladi. 11.6.2 kalit almashish xavfsiz parametrlar bilan bo'lishini talab qiladi, shunda o'rtadagi hujumchi (adversary-in-the-middle) yoki kriptografik buzilish bo'lmaydi.
 

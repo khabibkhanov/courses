@@ -6,7 +6,7 @@ summary: "O'z ilovangizni sinash tartibi: WSTG toifalari bo'yicha reja, ASVS bil
 duration: 45
 sources:
   - id: wstg
-    note: "WSTG repozitoriyasi (master): 4-bo'lim toifalari 4.1 Information Gathering dan 4.13 WebAssembly Testing gacha; Testing Framework matni: build vaqtida SAST/SCA/secret scanning, staging'da DAST va IaC/image skanerlash, release oldidan blokirovka chegaralari"
+    note: "WSTG repozitoriyasi (master): 4-bo'lim toifalari 4.1 Information Gathering dan 4.13 WebAssembly Testing gacha; Testing Framework matni: oltita sinov faoliyati (talablar, dizayn va threat modeling, kod darajasi, dinamik va pentest, CI/CD, doimiy va crowd-sourced), cadence jadvali, build vaqtida SAST/SCA/secret scanning, staging'da DAST va IaC/image skanerlash, release oldidan blokirovka chegaralari; test ID'lari (WSTG-ATHZ-04, WSTG-INFO-08, WSTG-ERRH-01 va h.k.) toifa papkalaridagi fayllarda"
   - id: asvs
     note: "ASVS 5.0.0: talablar V1-V17 bo'limlarida; L1 qariyb 20%, L2 qariyb 50% talab, daraja tashkilot riskiga qarab tanlanadi"
   - id: juice-shop
@@ -15,11 +15,11 @@ quiz:
   - q: "Jamoa yiliga bir marta tashqi pentest buyurtma qiladi va qolgan vaqt hech narsa sinamaydi. Ilova har hafta o'zgaradi. Bu yondashuvning asosiy kamchiligi nima?"
     options:
       - "Pentest umuman foydasiz"
-      - "Pentest tugaganidan keyingi o'zgarishlar sinalmay qoladi; sinov yangi kod bilan birga takrorlanishi kerak"
-      - "Tashqi pentester doim ichki jamoadan yomonroq ishlaydi"
       - "Pentest faqat kod ko'rishni o'z ichiga oladi"
-    answer: 1
-    explain: "Pentest ma'lum paytdagi holatni ko'rsatadi. WSTG sinovni CI/CD'ga qo'shishni tavsiya qiladi: build'da SAST/SCA/secret scanning, staging'da DAST. Pentest foydali, lekin yagona nazorat sifatida yetarli emas."
+      - "Tashqi pentester doim ichki jamoadan yomonroq ishlaydi"
+      - "Pentest tugaganidan keyingi o'zgarishlar sinalmay qoladi; sinov yangi kod bilan birga takrorlanishi kerak"
+    answer: 3
+    explain: "Pentest ma'lum paytdagi holatni ko'rsatadi. WSTG sinovni CI/CD'ga qo'shishni tavsiya qiladi: build'da SAST/SCA/secret scanning, staging'da DAST. Pentest foydali, lekin yagona nazorat sifatida yetarli emas; WSTG uni aniq bir davriy faoliyat sifatida ham sanaydi."
   - q: "Authorization matritsa testida 'alfa' foydalanuvchisi `GET /vehicles/v2` (v2 'beta'ga tegishli) so'raydi. Qaysi natija test o'tdi degani?"
     options:
       - "200 va mashina ma'lumoti"
@@ -30,12 +30,12 @@ quiz:
     explain: "Begona obyektga kirish rad etilishi kerak va javob obyekt mavjudligini ham oshkor qilmasligi kerak. 200 (bo'sh obyekt ham) mavjudlik signali yoki sizish bo'lishi mumkin, 500 esa boshqa nuqson (xato boshqaruvi) belgisi."
   - q: "Reviewer API'da `X-Powered-By: Express 4.x` va to'liq stack trace qaytayotganini ko'rdi. Bu WSTG toifalaridan qaysilariga tegishli?"
     options:
+      - "Information Gathering (texnologiyani aniqlash) hamda Error Handling"
       - "Faqat Business Logic"
-      - "Configuration and Deployment Management hamda Error Handling"
       - "Faqat Weak Cryptography"
       - "Hech qaysisi: bu zaiflik emas"
-    answer: 1
-    explain: "Texnologiya haqidagi header sozlama (konfiguratsiya) masalasi, stack trace esa xatolarni boshqarish masalasi. Ikkalasi hujumchiga ma'lumot beradi va ayrim ilovalarda ichki yo'llar yoki so'rov matnini ham oshkor qiladi."
+    answer: 0
+    explain: "WSTG framework'ni aniqlash testida (WSTG-INFO-08) X-Powered-By ni eng oddiy aniqlash usuli sifatida ko'rsatadi; stack trace esa Improper Error Handling (WSTG-ERRH-01) toifasiga kiradi, u ichki yo'llar, xost nomlari va ulanish satrlari oshkor bo'lishini ham sanaydi. Business Logic va Weak Cryptography bu holatga tegishli emas."
   - q: "Topilma tuzatildi. Qaysi qadam eng ko'p qiymat beradi?"
     options:
       - "Topilmani 'yopildi' deb belgilab, hisobotni arxivlash"
@@ -47,10 +47,10 @@ quiz:
   - q: "Siz Juice Shop'ni lokal ishga tushirib, skaner va qo'lda sinov mashq qilmoqchisiz. Nima to'g'ri?"
     options:
       - "Juice Shop'ni internetga ochiq serverga qo'yib, hamma tekshirsin"
-      - "Faqat o'zingiz boshqaradigan izolyatsiyalangan muhitda ishga tushirish: u ataylab zaif ilova"
-      - "Real mijoz ma'lumotini Juice Shop'ga yuklab, sinash"
       - "Juice Shop'ni production'ning yoniga qo'yish"
-    answer: 1
+      - "Real mijoz ma'lumotini Juice Shop'ga yuklab, sinash"
+      - "Faqat o'zingiz boshqaradigan izolyatsiyalangan muhitda ishga tushirish: u ataylab zaif ilova"
+    answer: 3
     explain: "Juice Shop ataylab zaif, shuning uchun uni ochiq tarmoqqa yoki production yoniga qo'ymang. Real ma'lumot ham kerak emas. Mashq muhiti izolyatsiyalangan va butunlay sizniki bo'lishi shart."
   - q: "Probe kodida `expect(res.status === 404 || res.status === 403)` o'rniga `expect(res.status !== 200)` yozildi. Bu nima uchun xavfli?"
     options:
@@ -192,6 +192,18 @@ Amaliy xulosa: sinov bitta voqea emas, qatlamli jarayon. Kod ko'rish (91-dars) v
 
 WSTG "qanday sinash" ni aytadi, ASVS esa "nimani sinash kerak" (qaysi talab bajarilishi kerak) ni. ASVS 5.0.0 talablari V1 dan V17 gacha bo'limlarga bo'lingan va uch darajaga ajratilgan: L1 talablarning qariyb 20 foizi, L2 qariyb 50 foizi. Standart darajani tashkilot o'z riskidan kelib chiqib tanlashini yozadi. Shuning uchun test rejasi shunday boshlanadi: qaysi ASVS darajasiga intilamiz, shu daraja talablaridan qaysilarini WSTG toifasi sinab ko'radi, va nima qamrovdan tashqarida (masalan, "WebRTC bizda yo'q"). Qamrovdan tashqari narsani yozib qo'yish sinovning halol chegarasini beradi.
 
+### Oltita faoliyat va ularning ritmi
+
+Testing Framework sinovni oltita faoliyatga ajratadi va ularni ketma-ket bosqich emas, qayta-qayta takrorlanadigan sikl deb ta'riflaydi: talablar va siyosatni ko'rib chiqish; dizayn, arxitektura va threat modeling; kod darajasidagi ko'rib chiqish va tahlil (qo'lda review, SAST, secret scanning, SCA); dinamik sinov va penetration testing; CI/CD pipeline'dagi sinov; doimiy va crowd-sourced sinov (monitoring, davriy qayta baholash, bug bounty). Hujjat ritm jadvalini ham beradi: talablar va dizayn voqea bo'yicha (yangi funksiya, arxitektura o'zgarishi, qonun o'zgarishi), kod review va SAST har commit yoki PR'da, DAST va pentest jadval bo'yicha va voqea bo'yicha, bug bounty va monitoring doimiy. Faoliyatlar bir-biriga qaytib ta'sir qiladi: pentest biznes logikadagi nuqsonni topsa, bu threat model'da yetishmagan nazoratni ko'rsatadi va u modelga qaytariladi.
+
+Hujjatning "qayerdan boshlash" qismi ham amaliy: hamma faoliyatni birdan joriy qilish shart emas. Tezkor rivojlanayotgan jamoa kod review va SAST'ni CI'ga ulashdan boshlashi mumkin, murakkab o'zaro bog'langan tizim qurayotgan jamoa threat modeling va arxitektura review'dan, cloud'da ishlaydigan jamoa IaC skaneri va cloud konfiguratsiya review'dan, ochiq API chiqargan mahsulot jamoasi API sinovi va xavfsizlikka qaratilgan pentest'dan. Sezgir ma'lumot bilan ishlaydigan tashkilot ma'lumotni tasniflash, shifrlash standartlari va muvofiqlik talablarini ko'rib chiqishdan boshlaydi. Framework "ketma-ket bajariladigan ro'yxat" emas, balki vaqt o'tishi bilan to'liq dasturni quradigan ma'lumotnoma ekani aniq yozilgan.
+
+### Test ID'lari va aniq testlar
+
+Har WSTG testi o'z ID'siga ega: toifa qisqartmasi va tartib raqami. Bizning modelimizga tegishlilari: WSTG-ATHZ-02 (Bypassing Authorization Schema: autentifikatsiyasiz, gorizontal va vertikal kirish mumkinmi), WSTG-ATHZ-04 (Insecure Direct Object References), WSTG-APIT-02 (API Broken Object Level Authorization), WSTG-ATHN-03 (Weak Lock Out Mechanism), WSTG-SESS-02 (Cookies Attributes), WSTG-CONF-07 (HTTP Strict Transport Security), WSTG-CONF-14 (Other HTTP Security Header Misconfigurations: X-Content-Type-Options, Referrer-Policy, Permissions-Policy va boshqalar), WSTG-INFO-08 (Fingerprint Web Application Framework), WSTG-ERRH-01 (Improper Error Handling), WSTG-INJT-20 (Mass Assignment) va WSTG-BUSL-05 (funksiyani necha marta ishlatish mumkinligi chegaralari). Hisobotda topilmani shu ID bilan belgilash uni boshqa jamoa a'zosi yoki pentester topilmasi bilan solishtirish imkonini beradi. Bir eslatma: ba'zi testlar birlashtirilgan, masalan WSTG-ERRH-02 (Stack Traces) hozir WSTG-ERRH-01 ichiga qo'shilgan, shuning uchun ID'ni hujjatning joriy tarmog'idan tekshiring.
+
+IDOR testining mexanikasi oddiy va uni to'liq avtomatlashtirish mumkin. Tester avval foydalanuvchi kirishi obyektga to'g'ridan-to'g'ri ishora qiladigan barcha joylarni xaritaga tushiradi: bazadagi qator, fayl, sahifa yoki funksiya. Keyin shu parametrning qiymatini o'zgartirib, boshqa foydalanuvchiga tegishli obyektni olish yoki avtorizatsiyani chetlab o'tish mumkinligini baholaydi. API uchun BOLA testi shu g'oyani OpenAPI hujjati yoki proxy trafigidan topilgan identifikatorlarga qo'llaydi. Bizning avtorizatsiya matritsamiz aynan shu testning takrorlanadigan, kodda yozilgan shakli: har rol va tenant juftligi uchun har endpoint va har begona identifikator.
+
 ## Chuqurroq: sinovni kodga aylantirish
 
 ### Avtorizatsiya matritsasi
@@ -262,7 +274,7 @@ FAIL [4.8] xato javobida ichki matn yo'q
 FAIL [4.2] nosniff header bor
 ```
 
-Beshta probe'ning beshtasi ham yiqildi. Har qator bitta WSTG toifasiga tegishli: tokensiz kirish (Authentication), begona mashina va admin yo'li (Authorization), xato matnida parol (Error Handling) va header yo'qligi (Configuration). `/crash` javobida parol bo'lagi ko'rinishi 4.8 toifasidagi sizish: real ilovada bu ma'lumotlar bazasi manzili yoki so'rov matni bo'lishi mumkin.
+Beshta probe'ning beshtasi ham yiqildi. Probe'lardagi `[4.x]` belgilar WSTG 4-bo'limining kichik bo'limlari (4.2 Configuration, 4.4 Authentication, 4.5 Authorization, 4.8 Error Handling). Har qator bitta WSTG toifasiga tegishli: tokensiz kirish (Authentication), begona mashina va admin yo'li (Authorization), xato matnida parol (Error Handling) va header yo'qligi (Configuration). `/crash` javobida parol bo'lagi ko'rinishi 4.8 toifasidagi sizish: real ilovada bu ma'lumotlar bazasi manzili yoki so'rov matni bo'lishi mumkin.
 
 ### 3. Tuzatilgan kod
 

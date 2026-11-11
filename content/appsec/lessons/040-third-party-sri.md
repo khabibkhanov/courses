@@ -29,41 +29,41 @@ quiz:
       - "Hammasi ishlaydi"
       - "SRI ishlamaydi, lekin skript yuklanadi"
       - "Skript bloklanadi: cross-origin resurs SRI bilan CORS orqali (crossorigin va Access-Control-Allow-Origin) so'ralishi kerak"
-      - "Faqat Firefox'da bloklanadi"
+      - "Faqat bitta brauzerda bloklanadi"
     answer: 2
     explain: "MDN: SRI bilan cross-origin so'rovlar CORS protokolini ishlatishi shart, aks holda no-cors rejimida SRI'ga ruxsat berilmaydi va so'rov muvaffaqiyatsiz bo'ladi. Cheat sheet ham vendor host'da CORS yoqilgan bo'lishi kerakligini yozadi."
   - q: "`integrity=\"sha256-A sha384-B\"`. Skript mazmunining sha256 xeshi A ga teng, sha384 xeshi B ga teng emas. Brauzer qarori?"
     options:
+      - "Yuklamaydi: brauzer eng kuchli algoritm (sha384) xeshlarini tanlaydi va zaifrog'ini e'tiborsiz qoldiradi"
       - "Yuklaydi, chunki sha256 mos"
       - "Yuklaydi, chunki hech bo'lmasa bittasi mos"
-      - "Yuklamaydi: brauzer eng kuchli algoritm (sha384) xeshlarini tanlaydi va zaifrog'ini e'tiborsiz qoldiradi"
       - "Xato tashlaydi, atribut yaroqsiz"
-    answer: 2
+    answer: 0
     explain: "MDN va SRI spetsifikatsiyasi: bir nechta algoritm bo'lsa faqat eng kuchlisi ishlatiladi (sha256 < sha384 < sha512), qolganlari e'tiborsiz. Bir xil algoritmning bir nechta xeshi esa 'har qaysi biriga mos kelsa' qoidasi bilan ishlaydi (alternativ versiyalar uchun)."
   - q: "Sahifa tag manager skriptini yuklaydi; marketing jamoasi tag manager panelida tag qo'shadi va ularning kodi mijoz brauzerida ishlaydi. SRI shu yerda nima beradi?"
     options:
       - "Panelda qo'shilgan har qanday tag'ni tekshiradi"
-      - "Faqat tag manager'ning o'zi 'container' fayli uchun yordam berishi mumkin va u tez-tez o'zgaradi; panel orqali kiritilgan kod SRI doirasidan tashqari, shuning uchun publishing ruxsatlari va o'zgarishlarni kod sifatida ko'rib chiqish kerak"
       - "Hamma xavfni yo'q qiladi"
       - "Hech qanday ahamiyati yo'q, CSP kifoya"
-    answer: 1
-    explain: "Cheat sheet tag manager konteyneri tez o'zgarishini va uning ichidagi tag'lar sahifa kodi ishonch chegarasining bir qismi bo'lib qolishini yozadi (data layer sandbox emas). Tavsiya: publishing kirishini cheklash, o'zgarishlarni ilova kodi kabi ko'rib chiqish, imkon bo'lsa server tomonidagi integratsiyalarni afzal ko'rish."
+      - "Tag manager'ning container fayli tez-tez o'zgaradi, shuning uchun SRI unga amaliy emas; panel orqali kiritilgan kod ham SRI doirasidan tashqari, shu sababli publishing ruxsatlari cheklanadi va o'zgarishlar ilova kodi kabi ko'rib chiqiladi"
+    answer: 3
+    explain: "Cheat sheet tag manager orqali kelgan kod har safar sahifa yuklanganda yangilanishini, remote boshqariladigan event handler'lar sahifa kodi ishonch chegarasining bir qismi bo'lib qolishini yozadi (data layer sandbox emas), va SRI'ni buning uchun faqat boshqaruvlardan biri sifatida tilga oladi. Tavsiya: publishing kirishini cheklash, o'zgarishlarni ilova kodi kabi ko'rib chiqish, imkon bo'lsa server tomonidagi integratsiyalarni afzal ko'rish."
   - q: "Vendor o'z skriptining yangi versiyasini o'sha URL'da chiqardi. Sizning sahifada eski integrity qiymati qolgan. Nima bo'ladi va bu nimani ko'rsatadi?"
     options:
       - "Yangi versiya avtomatik ishlaydi"
-      - "SRI yangilanishlarni qo'llab-quvvatlamaydi"
       - "Skript xesh mos kelmagani uchun bloklanadi: xavfsiz, lekin ishlamaydigan sahifa; vendor skriptlarini monitoring qilish va hash yangilash jarayoni (yoki versiyalangan, o'zgarmas URL) kerak"
+      - "SRI yangilanishlarni qo'llab-quvvatlamaydi"
       - "Brauzer yangi xeshni o'zi hisoblaydi"
-    answer: 2
+    answer: 1
     explain: "Cheat sheet 'xavfsiz, lekin ishlamaydigan' uchinchi tomon kodi holatini ogohlantiradi va vendor skriptini muntazam monitoring qilishni tavsiya qiladi. Operatsion jarayon (MarSecOps) hash yangilanishini ham qamrab oladi."
   - q: "SRI qaysi xavfni YOPMAYDI?"
     options:
       - "CDN buzilishi natijasida skript mazmuni almashtirilishi"
       - "Tranzitda skriptning o'zgartirilishi"
-      - "Siz tekshirib chiqqan vendor skriptining o'zi yig'adigan va vendorga yuboradigan foydalanuvchi ma'lumotlari (referrer, cookie, DOM ma'lumoti)"
       - "Vendor domeni egalik huquqi o'tgach yangi skript yuklanishi"
-    answer: 2
-    explain: "SRI faqat yaxlitlikni (kutilgan kod bajarilishini) ta'minlaydi. Cheat sheet 3-xavf sifatida ma'lumot oqishini alohida sanaydi: tekshirilgan skript ham sahifadagi ma'lumotni vendorga yuborishi mumkin. Birinchi, ikkinchi va to'rtinchi senariylar xesh mos kelmasligi tufayli to'siladi."
+      - "Siz tekshirib chiqqan vendor skriptining o'zi yig'adigan va vendorga yuboradigan foydalanuvchi ma'lumotlari (referrer, cookie, DOM ma'lumoti)"
+    answer: 3
+    explain: "SRI faqat yaxlitlikni (kutilgan kod bajarilishini) ta'minlaydi. Cheat sheet 3-xavf sifatida ma'lumot oqishini alohida sanaydi: tekshirilgan skript ham sahifadagi ma'lumotni vendorga yuborishi mumkin. Qolgan uch senariyda mazmun o'zgaradi, xesh mos kelmaydi va resurs to'siladi."
 task:
   title: "SRI tekshiruvchisi: eng kuchli algoritm qoidasi"
   prompt: |
@@ -111,9 +111,9 @@ task:
         .filter(Boolean)
         .map((t) => {
           const i = t.indexOf("-");
-          return { alg: t.slice(0, i).toLowerCase(), hash: t.slice(i + 1) };
+          return { alg: (i < 0 ? t : t.slice(0, i)).toLowerCase(), hash: i < 0 ? "" : t.slice(i + 1) };
         })
-        .filter((t) => ALGS.includes(t.alg) && t.hash.length > 0);
+        .filter((t) => ALGS.includes(t.alg));
       if (tokens.length === 0) return true; // yaroqli metadata yo'q: SRI qo'llanmaydi
       const strongest = tokens.reduce((a, b) => (ALGS.indexOf(b.alg) > ALGS.indexOf(a.alg) ? b : a)).alg;
       const actual = await digest(strongest, content);
@@ -186,6 +186,10 @@ SRI yopadi: CDN yoki vendor serveri buzilib fayl almashtirilishi, tranzitda o'zg
 
 Cheat sheet uch xil joylashtirish arxitekturasini tasvirlaydi: vendor skripti sahifada, vendor serveridan so'rash, va tag manager orqali bilvosita so'rash. Uchinchisida marketing xodimlari panelda tag'larni o'zgartiradi va o'zgarish darhol barcha mijozlarga yetadi; kod ko'pincha obfuskatsiya qilingan. SRI bunday konteynerga mos kelmaydi, chunki mazmun atayin tez-tez o'zgaradi. Cheat sheet tavsiyalari: tag manager sayti xavfsizlik amaliyotini va panelga kirishni (masalan, ikki faktorli autentifikatsiya) tekshirish; ruxsat etilgan tag turlarini cheklash (maxsus HTML va JavaScript tag'larni o'chirish); host tomonidan yaratilgan data layer orqali uzatiladigan ma'lumotni cheklash, lekin data layer sandbox emasligini unutmaslik. Cheat sheet: remote boshqariladigan event handler'lar sahifa kodi ishonch chegarasining qismi, shuning uchun publishing ruxsatini cheklang va o'zgarishlarni ilova kodi kabi ko'rib chiqing. Brauzer ijrosini kerak qilmaydigan analitika uchun server tomonidagi kollektor va server-side vendor integratsiyalarini afzal ko'rish tavsiya qilinadi.
 
+### Integrity-Policy: integrity yo'qligini ushlash
+
+SRI'ning zaif joyi: atribut yozilmasa yoki yaroqsiz bo'lsa, hech narsa ogohlantirmaydi. MDN bunga qarshi `Integrity-Policy` va `Integrity-Policy-Report-Only` sarlavhalarini tasvirlaydi. Ular sahifadan yuklanadigan skript va stil resurslarida `integrity` atributini majburiy qilishga imkon beradi. `Integrity-Policy` bo'lsa brauzer `no-cors` rejimidagi yoki `integrity` atributisiz so'rovlarni bloklaydi va, agar reporting endpoint berilgan bo'lsa, `integrity-violation` hisobotini yuboradi. Sarlavha qiymati structured field dictionary: `blocked-destinations` (faqat `script` va `style`), ixtiyoriy `sources` va `endpoints` (endpoint nomi `Reporting-Endpoints` sarlavhasida e'lon qilinadi). MDN joriy qilish tartibini ham beradi: avval `Integrity-Policy-Report-Only` bilan hisobotlarni to'plang, buzilish kelmay qo'ygach bloklovchi sarlavhaga o'ting. Bu siyosat integrity qiymati to'g'riligini tekshirmaydi: u faqat atribut borligini talab qiladi. Qiymat to'g'riligi esa build vaqtidagi avtomatik hosil qilish va testning vazifasi.
+
 ### Boshqa qatlamlar
 
 - **Mirroring.** Skriptni o'z serveringizga (yoki o'z CDN'ingizga) ko'chirib, versiyalab joylashtirish: vendor o'zgarishi sizga o'zingiz yangilaganingizda yetadi, vendorga oqadigan so'rovlar kamayadi (cheat sheet 1 va 3-xavf uchun tilga oladi). Narxi: yangilanishlarni o'zingiz kuzatasiz (A03).
@@ -245,8 +249,8 @@ async function digest(alg: string, content: string): Promise<string> {
 async function verifyIntegrity(content: string, integrity: string): Promise<boolean> {
   const tokens = integrity.split(/\s+/).filter(Boolean).map((t) => {
     const i = t.indexOf("-");
-    return { alg: t.slice(0, i).toLowerCase(), hash: t.slice(i + 1) };
-  }).filter((t) => ALGS.includes(t.alg) && t.hash.length > 0);
+    return { alg: (i < 0 ? t : t.slice(0, i)).toLowerCase(), hash: i < 0 ? "" : t.slice(i + 1) };
+  }).filter((t) => ALGS.includes(t.alg));
   if (tokens.length === 0) return true;
   const strongest = tokens.reduce((a, b) => (ALGS.indexOf(b.alg) > ALGS.indexOf(a.alg) ? b : a)).alg;
   const actual = await digest(strongest, content);
@@ -294,7 +298,7 @@ Yopilmagan narsalar: (1) oxirgi qator muhim dars: xato yozilgan algoritm nomi (`
 
 ## Stack'da: Next.js, CI va monitoring
 
-Next.js'da o'z skriptlaringiz uchun SRI hujjatda eksperimental sifatida tavsiflanadi (hash asosidagi CSP bilan birga, statik generatsiyani saqlash uchun, 35-dars); versiyangiz hujjatini va sozlama nomini o'zingiz tekshiring. Uchinchi tomon skriptlari uchun `next/script` komponenti ishlatiladi va unga `integrity` hamda `crossorigin` atributlarini berish mumkin (komponent atributlarini hujjatda tekshiring). Xeshni qo'lda yozmang: build bosqichida vendor faylini yuklab, tekshirib, xeshini hisoblang. Quyidagi kod ishga tushirilmaydi (Node muhiti, tarmoq kerak), faqat sintaksis jihatidan tekshirilgan:
+Next.js o'z build'idagi skriptlar uchun SRI'ni eksperimental sifatida beradi: `next.config.js` ichida `experimental.sri.algorithm` (`sha256`, `sha384` yoki `sha512`), hujjat jadvaliga ko'ra v14.0.0 dan. Build vaqtida JavaScript fayllarining xeshi hisoblanib, script teglariga `integrity` sifatida yoziladi; shu tufayli nonce'siz, statik generatsiyani saqlaydigan CSP mumkin bo'ladi (35-dars). Cheklovlar hujjatda aytilgan: eksperimental (o'zgarishi yoki olib tashlanishi mumkin), faqat App Router, faqat build vaqtida (dinamik hosil qilingan skriptlarga yaramaydi). Bu mexanizm sizning o'z bundle'ingizni qamraydi, vendor skriptlarini emas. Next.js hujjatidagi `<Script>` komponenti tavsifi `integrity` haqida hech narsa aytmaydi, shuning uchun bu darsda unga tayanilmaydi: vendor skripti uchun xeshni build bosqichida o'zingiz hisoblang. Vendor faylini yuklab, tekshirib, xeshini oling va qo'lda yozmang. Quyidagi kod ishga tushirilmaydi (Node muhiti, tarmoq kerak), faqat sintaksis jihatidan tekshirilgan:
 
 ```ts
 import { createHash } from "node:crypto";

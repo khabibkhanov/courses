@@ -6,11 +6,9 @@ summary: "CVE-2021-44228 ning mexanizmi: log xabari ichidagi ma'lumot kod sifati
 duration: 40
 sources:
   - id: log4j-apache
-    note: "Apache Logging Services security sahifasi: CVE-2021-44228 (CVSS 3.1: 10.0 CRITICAL), JNDI lookup orqali LDAP serverdan yuklangan kod bajarilishi, faqat log4j-core ta'sirlangan, 2.15.0/2.12.2/2.3.1 da tuzatilgan, kashf etuvchi Chen Zhaojun (Alibaba Cloud Security Team); CVE-2021-45046 (2.16.0 da tuzatilgan, 2.15.0 dagi tuzatish to'liq emas) va CVE-2021-45105 (2.17.0 da tuzatilgan, rekursiv lookup orqali DoS)"
+    note: "Apache Logging Services security sahifasi: CVE-2021-44228 (CVSS 3.1: 10.0 CRITICAL), JNDI lookup orqali LDAP serverdan yuklangan kod bajarilishi, faqat log4j-core ta'sirlangan, 2.15.0/2.12.2/2.3.1 da tuzatilgan, kashf etuvchi Chen Zhaojun (Alibaba Cloud Security Team); CVE-2021-45046 (2.16.0 da tuzatilgan, 2.15.0 dagi tuzatish to'liq emas) va CVE-2021-45105 (2.17.0 da tuzatilgan, rekursiv lookup orqali DoS); CVE-2021-44832 (6.6 MEDIUM, JDBC Appender va JNDI data source, hujumchi logging konfiguratsiyasiga yoza olishi kerak); Log4j 1 uchun JMSAppender auditi. Sahifada sanalar ko'rsatilmagan"
   - id: cisa-log4shell
-    note: "CISA AA21-356A (2021-12-22): Log4j 2.0-beta9 dan 2.14.1 gacha ta'sirlangan; ommaviy xabarlarga ko'ra ekspluatatsiya 2021-yil 1-dekabr atrofida boshlangan; tavsiyalar: Java 8+ uchun 2.17.0 (2021-12-17), Java 7 uchun 2.12.3 (2021-12-21); inventarizatsiya; ta'sirlangan aktivlarni kompromet qilingan deb hisoblash"
-  - id: kev
-    note: "KEV katalogi: ekspluatatsiya qilinayotgan zaifliklar ro'yxati. Bu dars CVE-2021-44228 ning KEV'ga qo'shilgan sanasini tekshira olmadi, shuning uchun sana yozilmagan"
+    note: "CISA AA21-356A (2021-12-22): Log4j 2.0-beta9 dan 2.14.1 gacha ta'sirlangan; ommaviy xabarlarga ko'ra ekspluatatsiya 2021-yil 1-dekabr atrofida boshlangan; CVE-2021-44228 ochilgan sana 2021-12-10, CVE-2021-45046 2021-12-13, CVE-2021-45105 2021-12-16; Java 8+ uchun 2.17.0 (2021-12-17), Java 7 uchun 2.12.3 (2021-12-21); inventarizatsiya maydonlari; ta'sirlangan va gumon qilingan aktivlarni kompromet qilingan deb hisoblash va izolyatsiya; threat hunting; faqat Java emas, Log4j kutubxonasining o'zini yangilash; workaround'lar vaqtinchalik. Advisory 2021-12-22 da chiqqan, 2021-12-23 da havola yangilangan"
 quiz:
   - q: "Log4Shell mexanizmini umumiy model tilida qanday tasvirlash to'g'ri?"
     options:
@@ -23,42 +21,42 @@ quiz:
   - q: "Tizimingizda log4j-api bor, log4j-core yo'q. Apache yozuviga ko'ra CVE-2021-44228 ga munosabat qanday?"
     options:
       - "Ta'sirlangan: api ham zaif"
-      - "Ta'sirlanmagan: yozuvda faqat log4j-core JAR ta'sirlangani aytilgan"
-      - "Faqat Java 6 da ta'sirlangan"
       - "Aniqlab bo'lmaydi"
-    answer: 1
+      - "Faqat Java 6 da ta'sirlangan"
+      - "Ta'sirlanmagan: yozuvda faqat log4j-core JAR ta'sirlangani aytilgan"
+    answer: 3
     explain: "Apache yozuvi faqat log4j-core JAR ta'sirlangan, log4j-api'ni alohida ishlatgan ilovalar ta'sirlanmaganini aniq aytadi. Lekin buni tasdiqlash uchun transitiv bog'liqliklar ham tekshirilishi kerak (82-dars)."
   - q: "2.15.0 versiyasiga o'tgan jamoa 'tugadi' deb hisobladi. Keyin nima bo'ldi va saboq nima?"
     options:
-      - "Hech narsa: 2.15.0 yakuniy tuzatish"
       - "Apache yozuviga ko'ra 2.15.0 dagi tuzatish ayrim nodefault konfiguratsiyalarda to'liq emas edi (CVE-2021-45046, 2.16.0 da tuzatilgan), keyin yana CVE-2021-45105 (2.17.0). Birinchi tuzatishga to'xtab qolmay, advisory'ni kuzatib borish kerak"
+      - "Hech narsa: 2.15.0 yakuniy tuzatish"
       - "2.15.0 yangi zaiflik qo'shgan, shuning uchun eski versiyaga qaytish kerak"
       - "Tuzatishlar faqat Java 6 uchun"
-    answer: 1
+    answer: 0
     explain: "Birinchi tuzatish to'liq bo'lmagan; CVE-2021-45046 va CVE-2021-45105 ketma-ket paydo bo'ldi. Incident response'da 'patch qo'lladik' tugal holat emas: advisory yangilanishlari kuzatiladi."
   - q: "CISA tavsiyalariga ko'ra ta'sirlangan aktivlarga qanday munosabat qilish kerak?"
     options:
       - "Faqat patch qo'llash yetarli, boshqa narsa kerak emas"
-      - "Ma'lum va gumon qilingan zaif aktivlarni kompromet qilingan deb hisoblash, mitigation va tekshiruv tugaguncha ajratib qo'yish, threat hunting boshlash"
       - "Aktivlarni inventarizatsiya qilish shart emas"
+      - "Ma'lum va gumon qilingan zaif aktivlarni kompromet qilingan deb hisoblash, mitigation va tekshiruv tugaguncha ajratib qo'yish, threat hunting boshlash"
       - "Hamma serverlarni o'chirib, qayta o'rnatish"
-    answer: 1
+    answer: 2
     explain: "CISA advisory'si ta'sirlangan va gumon qilingan aktivlarni kompromet qilingan deb hisoblash va mitigatsiya tasdiqlangunga qadar izolyatsiya qilishni tavsiya etadi; inventarizatsiya birinchi qadam. Faqat patch ekspluatatsiya allaqachon bo'lib o'tganini aniqlamaydi."
   - q: "Versiya tekshiruvi: `\"2.9.0\" < \"2.15.0\"` JavaScript'da (satr solishtirish) nima beradi va nima uchun xavfli?"
     options:
-      - "true: to'g'ri natija"
       - "false: satrlar belgima-belgi solishtiriladi ('9' > '1'), shuning uchun 2.9.0 yangiroq deb qaraladi va zaif versiya inventarizatsiyadan tushib qolishi mumkin"
+      - "true: to'g'ri natija"
       - "Xato tashlaydi"
       - "undefined"
-    answer: 1
+    answer: 0
     explain: "Satr solishtirishda '2.9.0' va '2.15.0' birinchi farqli belgida ('9' va '1') hal bo'ladi, natija false. Versiyani raqamli qismlarga ajratib solishtirish kerak."
   - q: "Quyidagi chaqiruv orqali foydalanuvchi nomi log'ga yoziladi: `logger.info(\"failed login: \" + username)`. Log kutubxonasi xabar ichidagi `${...}` ni ifoda sifatida kengaytiradi. Eng mustahkam tuzatish qaysi?"
     options:
       - "`username` ni kichik harfga o'tkazish"
-      - "Xabar shablonini o'zgarmas qilib, ma'lumotni alohida parametr sifatida uzatish va kutubxonada lookup'larni o'chirish yoki allowlist qilish, shuningdek kutubxonani yangilash"
-      - "`${` ni qidirib, o'chirib tashlovchi regex yozish"
       - "Faqat firewall"
-    answer: 1
+      - "`${` ni qidirib, o'chirib tashlovchi regex yozish"
+      - "Xabar shablonini o'zgarmas qilib, ma'lumotni alohida parametr sifatida uzatish va kutubxonada lookup'larni o'chirish yoki allowlist qilish, shuningdek kutubxonani yangilash"
+    answer: 3
     explain: "Ma'lumotni xabar shabloniga biriktirmaslik chegarani to'g'ri tiklaydi; lookup'larni cheklash va kutubxonani yangilash ikkinchi qatlam. Regex bilan 'yomon belgi' qidirish aylanib o'tiladigan yo'l, bu qoidaga tayanmang."
 task:
   title: "Log4j inventarizatsiyasi: versiya solishtirish xatosini tuzatish"
@@ -135,7 +133,7 @@ task:
 
 ## Muammo
 
-2021-yil dekabrida Apache Log4j 2 kutubxonasidagi CVE-2021-44228 ("Log4Shell") ochildi. Apache o'z security sahifasida uni CVSS 3.1 bo'yicha 10.0 CRITICAL deb baholagan, ta'rifi esa qisqa: JNDI lookup tashqi LDAP serverdan yuklangan kodni bajarishga olib kelishi mumkin. CISA va hamkor agentliklarning AA21-356A advisory'si (2021-12-22) zaiflik Log4j 2.0-beta9 dan 2.14.1 gacha versiyalarga tegishli ekanini yozadi va ommaviy xabarlarga ko'ra ekspluatatsiya 2021-yil 1-dekabr atrofida boshlanganini aytadi.
+2021-yil dekabrida Apache Log4j 2 kutubxonasidagi CVE-2021-44228 ("Log4Shell") ochildi. Apache o'z security sahifasida uni CVSS 3.1 bo'yicha 10.0 CRITICAL deb baholagan, ta'rifi esa qisqa: JNDI lookup tashqi LDAP serverdan yuklangan kodni bajarishga olib kelishi mumkin. CISA va hamkor agentliklarning AA21-356A advisory'si (2021-12-22) CVE-2021-44228 ning 2021-12-10 da ochilganini, u Log4j 2.0-beta9 dan 2.14.1 gacha versiyalarga tegishli ekanini yozadi va ommaviy xabarlarga ko'ra ekspluatatsiya 2021-yil 1-dekabr atrofida boshlanganini aytadi.
 
 Dasturchi uchun bu hodisa to'rt savol qo'yadi. Birinchisi: oddiy log yozish qatori qanday qilib kod bajarishga aylandi? Ikkinchisi: kutubxonani yangilab chiqish nega bir marta yetmadi? Uchinchisi: qaysi servisingizda bu kutubxona borligini bilasizmi? To'rtinchisi: Node.js dasturchisi bu Java hodisasidan nimani oladi, agar o'zida Log4j bo'lmasa? Bu dars bu savollarga faqat ikkita birlamchi manbaga tayanib javob beradi: Apache security sahifasi va CISA advisory'si. Ular yozmagan narsa (masalan, kimlar hujum qilgani, qancha zarar ko'rilgani) bu yerda yo'q.
 
@@ -157,17 +155,40 @@ Saboq: patch bitta voqea emas. Birinchi tuzatish to'liq emas bo'lishi mumkin va 
 
 ## Chuqurroq: javob jarayoni nimani talab qildi
 
+### Voqealar ketma-ketligi
+
+Quyidagi jadval faqat Apache va CISA yozuvlaridagi sanalarni jamlaydi (Apache sahifasi sana ko'rsatmaydi, sanalar CISA advisory'sidan):
+
+| Sana | Voqea |
+|---|---|
+| 2021-12-01 atrofida | Ommaviy xabarlarga ko'ra CVE-2021-44228 ekspluatatsiyasi boshlangan (CISA) |
+| 2021-12-10 | CVE-2021-44228 (Log4Shell) ochilgan; tuzatish 2.15.0 (Java 8+) |
+| 2021-12-13 | CVE-2021-45046 ochilgan; tuzatish 2.16.0 (Java 8) |
+| 2021-12-16 | CVE-2021-45105 ochilgan; tuzatish 2.17.0 (Java 8) |
+| 2021-12-17 | Log4j 2.17.0 (Java 8) chiqqan |
+| 2021-12-21 | Log4j 2.12.3 (Java 7) chiqqan |
+| 2021-12-22 | CISA va hamkorlarning AA21-356A advisory'si; 2021-12-23 da bir havola yangilangan |
+
+Jadvaldan ikki xulosa. Birinchisi: ommaviy xabarlarga ko'ra ekspluatatsiya zaiflik rasman ochilishidan oldin boshlangan, ya'ni jamoalar "patch bor, qo'llaymiz" holatiga emas, "zaif, himoya yo'q" holatiga tushgan. Ikkinchisi: Java 8+ uchun uchta versiya (2.15.0, 2.16.0, 2.17.0) zaiflik ochilgandan keyingi bir hafta ichida kerak bo'lgan; "yangilab qo'ydik" degan jamoa o'sha haftalarda ikki marta yana yangilashi kerak bo'lgan. Shuning uchun yangilash jarayoni bir martalik emas, takrorlanadigan va tez bo'lishi shart.
+
+Apache sahifasida yana bir CVE bor: CVE-2021-44832 (6.6 MEDIUM). U boshqa sinf: logging konfiguratsiyasiga yoza oladigan hujumchi JDBC Appender'ning data source'ini JNDI manziliga yo'naltirib kod bajartira oladi; tuzatish JNDI data source nomlarini bitta protokol bilan cheklaydi. Bu nom kam esga olinadi, chunki bahosi past: hujumchiga konfiguratsiyaga yozish huquqi kerak. Saboq shuki, baho (CVSS) shartlarga bog'liq, ammo xuddi shu mexanizm (JNDI) turli yo'llar bilan qayta-qayta paydo bo'lgan. Log4j 1 uchun Apache boshqacha maslahat beradi: Log4j 1 da lookup'lar yo'q, u faqat konfiguratsiyadagi JNDI orqali ta'sirlanadi va `JMSAppender` sozlanmaganligini tekshirish kerak (bu alohida CVE).
+
+
 ### Inventarizatsiya birinchi qadam
 
 CISA tavsiyasidagi birinchi qadam: Log4j kutubxonasidan foydalanadigan barcha aktivlarni ro'yxatga olish. Advisory ro'yxat hamma aktivni (cloud ham) o'z ichiga olishi va har biri uchun dastur versiyalari, oxirgi yangilangan vaqt va kim yangilagani, foydalanuvchi akkauntlari va huquqlari, tarmoqdagi joyi yozilishini aytadi. Jamoalarning ko'pi uchun muammo patch emas, "bizda Log4j bormi" savoliga javob bermaslik edi. Kutubxona to'g'ridan-to'g'ri bog'liqlik bo'lmasligi, boshqa kutubxona ichida (transitiv) yoki qadoqlangan JAR ichida (shaded) yashashi mumkin. SBOM (82-dars) shu savolga javob berish uchun kerak.
 
 ### Patch bilan tugamaydi
 
-CISA advisory'si ma'lum va gumon qilingan zaif aktivlarni kompromet qilingan deb hisoblash va mitigatsiya hamda tekshiruv tugaguncha izolyatsiya qilishni tavsiya etadi, hamda threat hunting o'tkazishni (ekspluatatsiya izlarini qidirish) aytadi. Sabab: ekspluatatsiya patch'dan oldin boshlangan va tizim patch'dan keyin ham allaqachon buzilgan bo'lishi mumkin. Ya'ni patch faqat kelajakdagi ekspluatatsiyani yopadi, o'tmishdagisini emas. Loglar, tarmoq trafigi va yangi jarayonlar tahlili kerak bo'ladi (93-dars).
+CISA advisory'si ma'lum va gumon qilingan zaif aktivlarni kompromet qilingan deb hisoblash va mitigatsiya hamda tekshiruv tugaguncha izolyatsiya qilishni tavsiya etadi, hamda threat hunting o'tkazishni (ekspluatatsiya izlarini qidirish) aytadi. Sabab: ekspluatatsiya patch'dan oldin boshlangan va tizim patch'dan keyin ham allaqachon buzilgan bo'lishi mumkin. Ya'ni patch faqat kelajakdagi ekspluatatsiyani yopadi, o'tmishdagisini emas. Loglar, tarmoq trafigi va yangi jarayonlar tahlili kerak bo'ladi (93-dars). Advisory izolyatsiya variantlarini ham sanaydi: aktivni uzib qo'yish, monitoring qilinadigan alohida VLAN'ga ("jail VLAN") ko'chirish, tarmoq darajasida bloklash, qat'iy port nazoratli firewall yoki aloqani cheklash. Threat hunting uchun Log4j ishlatadigan aktivlar shubhali deb qaraladi, ularga bog'langan akkauntlar ko'riladi va 2021-yil 1-dekabrdan beri qilingan konfiguratsiya o'zgarishlari niyatli bo'lganini tekshirish tavsiya etiladi. Yana bir amaliy nuqta: yangilanishi kerak bo'lgan narsa Java emas, Log4j kutubxonasining o'zi. Vaqtincha yechimlar (workaround) faqat darhol yangilab bo'lmaganda va vaqtinchalik chora sifatida ishlatiladi.
 
 ### Node.js dasturchisi uchun saboq
 
 Sizda Log4j bo'lmasligi mumkin, lekin tuzilma bir xil: ma'lumotni kengaytiradigan har qatlam (log formatlash, template engine (28-dars), deserializatsiya (29-dars), lokalizatsiya kutubxonasi, "o'zgaruvchilarni almashtirish" xususiyati) injection sinfiga kiradi. Shuningdek siz o'zingiz yozmagan infratuzilma komponentlari (Java asosidagi xizmatlar, qidiruv va log yig'uvchi tizimlar) ham ta'sirlangan bo'lishi mumkin; qaysilari ekanini bu dars isbotlamaydi, shuning uchun o'z stack'ingizni SBOM bilan tekshiring.
+
+### Dizayn saboqlari
+
+Mexanizmdan uchta dizayn qoidasi chiqadi. Birinchisi: ma'lumot va shablon alohida kanal. Log chaqiruvida xabar matni dasturchi yozgan o'zgarmas shablon, foydalanuvchi qiymati esa alohida parametr bo'lishi kerak va kutubxona parametrni hech qachon ifoda sifatida o'qimasligi lozim. Ikkinchisi: xavfli imkoniyat default holatda yoqilmagan bo'lishi kerak. Log qatlamida tashqi manzilga murojaat qiluvchi lookup oddiy log yozuvchi dasturchi kutmagan imkoniyat edi; zaiflik shu imkoniyat hamma ma'lumotga qo'llanishida yotadi. Uchinchisi: har imkoniyat uchun allowlist (qaysi lookup turlari, qaysi protokollar), qora ro'yxat emas. CVE-2021-44832 tuzatishi aynan shunday: JNDI data source nomlari bitta protokol bilan cheklanadi. Bu qoidalar o'zingiz yozadigan har bir "qulay" kengaytirish xususiyatiga tegishli: konfiguratsiya fayllaridagi `${VAR}` almashtirishi, xabar shablonlari, email shablonlari, webhook payload'idagi o'zgaruvchilar.
 
 ## Misol: o'quv modelida lookup injection
 
@@ -306,7 +327,7 @@ Ikkinchisi: har kutubxonaga shubha bilan qarab hammasini o'zingiz yozish. Bu ko'
 
 Uchinchisi: bitta CVE uchun versiya tekshiruvi (yuqoridagi `affected44228`) butun risk baholash emas. U boshqa CVE'lar, konfiguratsiya (lookup'lar yoqilganmi) va ekspozitsiyani (zaif servis internetdan ko'rinadimi) hisobga olmaydi.
 
-To'rtinchisi: bu dars ekspluatatsiyaning real tarixi, zarar yoki hujumchilar haqida da'vo qilmaydi. Faqat Apache va CISA yozuvlaridagi mexanizm, versiyalar va tavsiyalar keltirildi. KEV katalogidagi yozuv sanasi tekshirilmagani uchun yozilmadi.
+To'rtinchisi: bu dars ekspluatatsiyaning real tarixi, zarar yoki hujumchilar haqida da'vo qilmaydi. Faqat Apache va CISA yozuvlaridagi mexanizm, versiyalar va tavsiyalar keltirildi.
 
 ## Stack'da: Node.js va umumiy amaliyot
 

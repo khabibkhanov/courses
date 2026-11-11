@@ -10,7 +10,7 @@ sources:
   - id: cs-session
     note: "Session Management cheat sheet: Session ID Entropy (kamida 64 bit, o'z identifikatoringizda kamida 128 bit CSPRNG), 64 bit uchun 585 yillik hisob, tokenni bazada hash ko'rinishida saqlash bo'limi"
   - id: node-security
-    note: "Node.js hujjatlari: crypto.randomBytes, crypto.randomInt, crypto.randomUUID (CSPRNG asosida), crypto.getRandomValues; Math.random xavfsizlik maqsadida emas (A04/Cryptographic Storage jadvali bilan mos)"
+    note: "Node.js Security Best Practices sahifasi bu darsda faqat umumiy tayanch; crypto.randomBytes, randomInt (modulo bias'siz) va randomUUID haqidagi iboralar Node.js crypto API hujjatidan (node-docs crypto.md) olingan"
   - id: asvs
     note: "ASVS 5.0.0 11.5.1 (CSPRNG va kamida 128 bit entropiya, UUID bu shartni qondirmaydi), 11.5.2, 7.2.3 (sessiya tokeni), 6.5.4 va 6.6.3 (bir martalik kodlar), Appendix C Random Values jadvali"
   - id: cs-crypto-storage
@@ -19,12 +19,12 @@ quiz:
   - q: "Parolni tiklash tokeni `Math.random().toString(36).slice(2)` bilan yaratiladi. Eng aniq muammo qaysi?"
     options:
       - "Token juda uzun"
-      - "Math.random xavfsizlik uchun mo'ljallanmagan PRNG: chiqishlar bashorat qilinishi mumkin, token CSPRNG'dan kelishi kerak"
-      - "toString(36) tokenni shifrlaydi"
       - "Token faqat brauzerda ishlaydi"
-    answer: 1
+      - "toString(36) tokenni shifrlaydi"
+      - "Math.random xavfsizlik uchun mo'ljallanmagan PRNG: chiqishlar bashorat qilinishi mumkin, token CSPRNG'dan kelishi kerak"
+    answer: 3
     explain: "OWASP Cryptographic Storage jadvali Node.js uchun Math.random'ni xavfli, crypto.randomBytes, randomInt va randomUUID'ni xavfsiz deb ko'rsatadi. A04 zaif PRNG'ni (CWE-338) asosiy sabablardan biri sifatida sanaydi."
-  - q: "Token generatori `seed = Date.now()` dan boshlanadi. Hujumchi o'z tokenini oldi va qurbonning so'rovi taxminan bir daqiqa ichida bo'lganini biladi. Nima uchun xavfli?"
+  - q: "Token generatori `seed = Date.now()` dan boshlanadi. Hujumchi o'z tokenini oldi va qurbonning so'rovi bir daqiqa atrofida vaqt ichida bo'lganini biladi. Nima uchun xavfli?"
     options:
       - "Vaqt mavhum, ahamiyatsiz"
       - "Seed makoni juda kichik (ming millisekund yoki bir necha ming qiymat): hujumchi barcha kandidat seed'lardan tokenlar hosil qilib, qurbon tokenini topadi"
@@ -43,10 +43,10 @@ quiz:
   - q: "ASVS 5.0.0 11.5.1 bo'yicha UUID haqida nima deyiladi?"
     options:
       - "Har qanday UUID kalit uchun yaroqli"
-      - "UUID kamida 128 bit entropiya talabini qondirmaydi: ularni taxmin qilib bo'lmaydigan qiymat sifatida ishlatmang"
       - "Faqat UUID v1 yaroqli"
+      - "UUID kamida 128 bit entropiya talabini qondirmaydi: ularni taxmin qilib bo'lmaydigan qiymat sifatida ishlatmang"
       - "UUID doimo CSPRNG'dan keladi, shuning uchun token sifatida yetarli"
-    answer: 1
+    answer: 2
     explain: "ASVS 11.5.1 aniq yozadi: UUID bu shartni qondirmaydi. Cryptographic Storage cheat sheet: v1 vaqt va MAC manzildan iborat, v4'ning tasodifiyligi implementatsiyaga bog'liq. Taxmin qilinmaydigan token uchun CSPRNG bayt qatoridan foydalaning."
   - q: "Reset tokeni bazada ochiq matnda saqlanadi. Nima uchun faqat yuqori entropiya yetmaydi?"
     options:
@@ -124,7 +124,7 @@ task:
     - 256 baytni 10 ga bo'lib bo'lmaydi (256 = 25*10 + 6). `% 10` birinchi 6 raqamga bir martadan ortiq vazn beradi. Rad etish chegarasi `250` = `floor(256 / 10) * 10`.
     - Sikl rad etilgan baytdan keyin yangisini oladi. Ketma-ket rad etilish ehtimoli kichik (6/256), shuning uchun kutilgan sarf bir raqamga bir baytdan bir oz ko'p.
     - Real kodda baytlar CSPRNG'dan keladi; `crypto.randomInt(0, 10)` (Node) bu ishni o'zi qiladi. Qo'lda yozish faqat mexanizmni ko'rsatish uchun.
-    - Bu faqat taqsimotni tuzatadi. 6 raqamli kod atigi taxminan 20 bit entropiya beradi (ASVS 6.5.4 buni minimal deb hisoblaydi), shuning uchun brute force'dan rate limit (73-dars) va qisqa muddat himoya qiladi (6.6.3).
+    - Bu faqat taqsimotni tuzatadi. 6 raqamli kod atigi 20 bit atrofida entropiya beradi (6 raqam 10^6 variant, ya'ni 2^20 dan sal kam) (ASVS 6.5.4 buni minimal deb hisoblaydi), shuning uchun brute force'dan rate limit (73-dars) va qisqa muddat himoya qiladi (6.6.3).
   checklist:
     - "250 va undan katta baytlar rad etiladi, yangisi olinadi"
     - "Har raqam uchun hisob teng (25 tadan)"
@@ -147,19 +147,19 @@ Avtopark platformasida tasodifiy qiymatlar ko'p: parolni tiklash tokeni, qurilma
 
 Pseudo-random number generator (PRNG) boshlang'ich holatdan (seed) deterministik ketma-ketlik yaratadi. Seed va algoritmni bilgan yoki ketma-ketlikning bir qismidan holatni tiklay olgan hujumchi qolganini hisoblaydi. Cryptographically secure PRNG (CSPRNG) esa bunga qarshi mo'ljallangan: chiqishning bir qismini ko'rish keyingi chiqishni bashorat qilishga yordam bermasligi kerak, boshlang'ich holat esa operatsion tizimning entropiya manbasidan olinadi.
 
-Cryptographic Storage cheat sheet'i buni aniq ajratadi: oddiy PRNG kam sifatli tasodifiylik beradi, tez va xavfsizlikka aloqasi yo'q maqsadlar (sahifada natijalarni aralashtirish, UI elementlari) uchun yaroqli; xavfsizlik uchun ahamiyatli joyda (kalit, IV, sessiya ID, CSRF token, parol tiklash tokeni) ishlatilmaydi. CSPRNG sekinroq va CPU'ni ko'proq ishlatadi, shuning uchun xavfsizlikka aloqasi yo'q katta hajmdagi tasodifiylik uchun mos kelmasligi mumkin. Jadvalda Node.js uchun xavfli funksiya `Math.random()`, xavfsizlari esa `crypto.randomBytes()`, `crypto.randomInt()` va `crypto.randomUUID()`. Node.js hujjatida `randomBytes` "kriptografik jihatdan kuchli pseudorandom ma'lumot" yaratishi, `randomUUID` esa RFC 4122 v4 UUID'ni kriptografik PRNG yordamida hosil qilishi yozilgan. Brauzer va edge runtime'da (shu jumladan Next.js) `crypto.getRandomValues` bor.
+Cryptographic Storage cheat sheet'i buni aniq ajratadi: oddiy PRNG kam sifatli tasodifiylik beradi, tez va xavfsizlikka aloqasi yo'q maqsadlar (sahifada natijalarni aralashtirish, UI elementlari) uchun yaroqli; xavfsizlik uchun ahamiyatli joyda (kalit, IV, sessiya ID, CSRF token, parol tiklash tokeni) ishlatilmaydi. CSPRNG sekinroq va CPU'ni ko'proq ishlatadi, shuning uchun xavfsizlikka aloqasi yo'q katta hajmdagi tasodifiylik uchun mos kelmasligi mumkin. Jadvalda Node.js uchun xavfli funksiya `Math.random()`, xavfsizlari esa `crypto.randomBytes()`, `crypto.randomInt()` va `crypto.randomUUID()`. Node.js hujjatida `randomBytes` kriptografik jihatdan kuchli pseudorandom ma'lumot yaratishi, `randomUUID` RFC 4122 v4 UUID'ni kriptografik PRNG bilan hosil qilishi, `randomInt` esa tasodifiy butun sonni modulo bias'siz qaytarishi yozilgan. Brauzer va edge runtime'da (shu jumladan Next.js) `crypto.getRandomValues` bor.
 
 ASVS Appendix C "Random Values" jadvalida approved manbalar: Linux `/dev/random` va `/dev/urandom`, `getentropy()`, hamda NIST SP 800-90A DRBG'lar (AES-CTR-DRBG, HMAC-DRBG, Hash-DRBG). Amalda siz bularni to'g'ridan-to'g'ri chaqirmaysiz: platforma API'si (`crypto.randomBytes`, `getRandomValues`) tizim manbasiga tayanadi. A04 'How to prevent' ro'yxati ham shuni yozadi: zamonaviy API'larning ko'pi CSPRNG'ni dasturchidan seed qilishni talab qilmaydi. Shuning uchun yaxshi qoida: seed bilan o'ynamang.
 
 ### Qancha entropiya kerak
 
-Entropiya - hujumchi uchun noma'lum bo'lgan variantlar sonining logarifmi (bitlarda). ASVS 5.0.0 11.5.1: taxmin qilib bo'lmasligi kerak bo'lgan barcha tasodifiy son va satrlar CSPRNG'dan kelishi va kamida 128 bit entropiyaga ega bo'lishi kerak; standart alohida eslatadi: UUID bu shartga javob bermaydi. Sessiya tokeni uchun 7.2.3 ham xuddi shuni (CSPRNG va kamida 128 bit) talab qiladi. Session Management cheat sheet kamida 64 bit minimum deydi va hisob keltiradi: 64 bitli sessiya ID'si bilan, hujumchi sekundiga 10 000 taxmin qiladi va 100 000 faol sessiya bor deb faraz qilinsa, o'rtacha taxminan 585 yil kerak. O'z identifikatoringizni yaratsangiz, cheat sheet 128 bit va CSPRNG tavsiya etadi; kod mavjud sessiya ID'sini framework'dan olish afzal.
+Entropiya - hujumchi uchun noma'lum bo'lgan variantlar sonining logarifmi (bitlarda). ASVS 5.0.0 11.5.1: taxmin qilib bo'lmasligi kerak bo'lgan barcha tasodifiy son va satrlar CSPRNG'dan kelishi va kamida 128 bit entropiyaga ega bo'lishi kerak; standart alohida eslatadi: UUID bu shartga javob bermaydi. Sessiya tokeni uchun 7.2.3 ham xuddi shuni (CSPRNG va kamida 128 bit) talab qiladi. Session Management cheat sheet kamida 64 bit minimum deydi va hisob keltiradi: 64 bitli sessiya ID'si bilan, hujumchi sekundiga 10 000 taxmin qiladi va 100 000 faol sessiya bor deb faraz qilinsa, o'rtacha 585 yil atrofida vaqt kerak. O'z identifikatoringizni yaratsangiz, cheat sheet 128 bit va CSPRNG tavsiya etadi; kod mavjud sessiya ID'sini framework'dan olish afzal.
 
 Entropiya uzunlik emas. 32 belgilik token, uning yarmi qat'iy yoki bashorat qilinadigan bo'lsa, effektiv entropiya yarmiga tushadi (cheat sheet shu misolni beradi). Bir martalik kodlarda talab pastroq, chunki ular qisqa muddatli va rate limit ostida: ASVS 6.5.4 lookup secret va out-of-band kodlar uchun kamida 20 bit (4 ta tasodifiy alfanumerik belgi yoki 6 ta raqam) deydi, 6.6.3 esa kodni brute force'dan rate limiting bilan himoyalashni va kamida 64 bit entropiyali kodni ko'rib chiqishni tavsiya qiladi.
 
 ### UUID tuzog'i
 
-Dasturchilar tez-tez UUID'ni "tasodifiy token" deb ishlatadi. Cryptographic Storage cheat sheet: UUID v1 yuqori aniqlikdagi vaqt tamg'asi va mashinaning MAC manzilidan iborat, demak tasodifiy emas; v4 tasodifiy yaratiladi, lekin CSPRNG ishlatilgani framework'ga bog'liq, shuning uchun noma'lum bo'lsa uning tasodifiyligiga tayanib bo'lmaydi. ASVS 11.5.1 esa umuman UUID 128 bit talabiga javob bermaydi, deydi. Sabab: UUID v4 formatida versiya va variant uchun bir nechta bit qat'iy (bu RFC 4122 bo'yicha umumiy bilim, bu darsda spetsifikatsiyadan tekshirilmagan), shuning uchun tasodifiy bitlar 128 tadan kam. Xulosa: ob'ekt identifikatori sifatida UUID yaxshi, lekin "bilgan odamgina kira oladi" tipidagi token sifatida emas (52-dars: IDOR'da noma'lum identifikator avtorizatsiya o'rnini bosmaydi).
+Dasturchilar tez-tez UUID'ni "tasodifiy token" deb ishlatadi. Cryptographic Storage cheat sheet: UUID v1 yuqori aniqlikdagi vaqt tamg'asi va mashinaning MAC manzilidan iborat, demak tasodifiy emas; v4 tasodifiy yaratiladi, lekin CSPRNG ishlatilgani framework'ga bog'liq, shuning uchun noma'lum bo'lsa uning tasodifiyligiga tayanib bo'lmaydi. ASVS 11.5.1 esa umuman UUID 128 bit talabiga javob bermaydi, deydi. Sabab: UUID v4 formatida versiya va variant uchun bir nechta bit qat'iy (RFC 4122 bo'yicha 6 bit, ya'ni 122 tasodifiy bit qoladi; bu umumiy bilim, kurs korpusida RFC matni yo'q), shuning uchun tasodifiy bitlar 128 tadan kam. Xulosa: ob'ekt identifikatori sifatida UUID yaxshi, lekin "bilgan odamgina kira oladi" tipidagi token sifatida emas (52-dars: IDOR'da noma'lum identifikator avtorizatsiya o'rnini bosmaydi).
 
 ```ts run
 // randomUUID: format va qat'iy belgilar (versiya "4", variant 8/9/a/b).
@@ -177,11 +177,11 @@ noyob: true
 
 ### Seed makoni
 
-PRNG'ning kuchi holatlar sonida. Agar seed `Date.now()` bo'lsa, hujumchi uchun noma'lum bo'lgan narsa faqat taxminan millisekund (yoki sekund) bo'yicha vaqt oynasi: bir necha ming yoki o'n ming variant. Bu 128 bit emas, 13-16 bitga yaqin. Hujumchi o'z tokenini oladi, vaqt oynasini taxmin qiladi va oynadagi har bir kandidat seed'dan token hosil qilib ko'radi. Xuddi shu muammo `process.pid`, hisoblagich, `userId + vaqt` kabi manbalarda ham bor. Bu A04 savollaridagi "tasodifiylik seed qilingan bo'lsa, seed yetarli entropiyaga ega emasmi" nuqtasi.
+PRNG'ning kuchi holatlar sonida. Agar seed `Date.now()` bo'lsa, hujumchi uchun noma'lum bo'lgan narsa faqat millisekund (yoki sekund) bo'yicha vaqt oynasi: bir necha ming yoki o'n ming variant. Bu 128 bit emas, 13-16 bitga yaqin. Hujumchi o'z tokenini oladi, vaqt oynasini taxmin qiladi va oynadagi har bir kandidat seed'dan token hosil qilib ko'radi. Xuddi shu muammo `process.pid`, hisoblagich, `userId + vaqt` kabi manbalarda ham bor. Bu A04 savollaridagi "tasodifiylik seed qilingan bo'lsa, seed yetarli entropiyaga ega emasmi" nuqtasi.
 
 ### Modulo bias
 
-Tasodifiy baytni raqamga aylantirish ham xato manbai. Baytda 256 qiymat bor, 10 ga bo'lganda 256 = 25*10 + 6. `byte % 10` bilan 0-5 raqamlari 26 marta, 6-9 esa 25 marta uchraydi. Farq kichik, lekin bir martalik kodlarda hujumchi taxmin qilish tartibini optimallashtirishi mumkin va xatoning o'zi to'g'ri sxema o'rniga "taxminan to'g'ri" yechim ishlatilganini ko'rsatadi. Yechim: rejection sampling (250 va undan katta baytlarni tashlab, qolganini olish) yoki tayyor `crypto.randomInt`.
+Tasodifiy baytni raqamga aylantirish ham xato manbai. Baytda 256 qiymat bor, 10 ga bo'lganda 256 = 25*10 + 6. `byte % 10` bilan 0-5 raqamlari 26 marta, 6-9 esa 25 marta uchraydi. Farq kichik, lekin bir martalik kodlarda hujumchi taxmin qilish tartibini optimallashtirishi mumkin va xatoning o'zi to'g'ri sxema o'rniga "qariyb to'g'ri" yechim ishlatilganini ko'rsatadi. Yechim: rejection sampling (250 va undan katta baytlarni tashlab, qolganini olish) yoki tayyor `crypto.randomInt`.
 
 ```ts run
 const counts = Array(10).fill(0);
@@ -235,7 +235,7 @@ qurbon tokeni uzunligi: 32
 
 ### Hujum
 
-Hujumchi o'z hisobi uchun reset so'raydi va tokenining vaqtini biladi. Qurbonning so'rovi taxminan bir daqiqa ichida yuborilganini bilib, u keyingi 60 sekund uchun tokenlarni hisoblaydi va qurbon tokenini topadi. Bu faqat shu o'quv generatoriga qarshi.
+Hujumchi o'z hisobi uchun reset so'raydi va tokenining vaqtini biladi. Qurbonning so'rovi bir daqiqa atrofida vaqt ichida yuborilganini bilib, u keyingi 60 sekund uchun tokenlarni hisoblaydi va qurbon tokenini topadi. Bu faqat shu o'quv generatoriga qarshi.
 
 ```ts run
 function weakToken(seedSeconds: number): string {
@@ -335,7 +335,7 @@ Shuningdek, tasodifiy token har doim to'g'ri tanlov emas. Bir martalik havola o'
 
 Node.js'da token: `crypto.randomBytes(32).toString("base64url")`. Sonli kod: `crypto.randomInt(0, 1_000_000)` va uni chapdan nol bilan to'ldirish. Edge/brauzer: `crypto.getRandomValues(new Uint8Array(32))`. `uuid` kutubxonasining versiyasi va uning tasodifiy manbasi (CSPRNG ekanligi) ni tekshiring, ammo sir sifatida UUID ishlatmang. NestJS'da token yaratishni bitta provayderga (`TokenService`) yig'ing va testda `RandomSource` interfeysini mock qiling.
 
-PostgreSQL'da tokenning SHA-256 hash'i uchun oddiy `bytea`/`text` ustuni va unique indeks yetadi; muddatni `expires_at` ustunida saqlang va tozalash vazifasini rejalashtiring (79-darsdagi audit logda token qiymatini emas, identifikatorini yozing). Redis'da token hash'i TTL bilan kalit bo'lishi mumkin, bu bir martalik tokenlar uchun qulay; `GETDEL` kabi atomik o'qib-o'chirish race condition'ni yopadi (60-dars), buyruq nomi va xatti-harakatini Redis hujjatidan tekshiring (bu darsda manbadan tekshirilmagan). `Math.random` ni qidiruv bilan koddan topib, xavfsizlik konteksti bor joylarni ro'yxatlang: bu SAST qoidasi sifatida oson (83-dars).
+PostgreSQL'da tokenning SHA-256 hash'i uchun oddiy `bytea`/`text` ustuni va unique indeks yetadi; muddatni `expires_at` ustunida saqlang va tozalash vazifasini rejalashtiring (79-darsdagi audit logda token qiymatini emas, identifikatorini yozing; Session Management cheat sheet ham logga sessiya ID'sining o'zini emas, tuzlangan hash'ini yozishni tavsiya qiladi). Redis'da token hash'i TTL bilan kalit bo'lishi mumkin, bu bir martalik tokenlar uchun qulay; `GETDEL` (Redis 6.2.0 dan) kalitning qiymatini qaytaradi va uni bir buyruqda o'chiradi, shuning uchun ikki parallel so'rov bir tokenni ikki marta ishlata olmaydi (60-dars); bu buyruq mexanizmi Redis buyruqlar hujjatidan olingan, kurs korpusida u yo'q. `Math.random` ni qidiruv bilan koddan topib, xavfsizlik konteksti bor joylarni ro'yxatlang: bu SAST qoidasi sifatida oson (83-dars).
 
 ## Xulosa
 

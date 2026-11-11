@@ -9,6 +9,8 @@ sources:
     note: "ASVS 5.0.0: v5.0.0 tegidagi 5.0/en papkasida V1 (Encoding and Sanitization) dan V17 (WebRTC) gacha bo'limlar; 'What is the ASVS' faylida L1 qariyb 20%, L2 qariyb 50% talab ekani yozilgan"
   - id: wstg
     note: "WSTG repozitoriyasi tarkibi: 'Testing Framework' bo'limida Code-Level Review and Analysis alohida faoliyat sifatida sanalgan; 4-bo'lim toifalari (Authentication, Authorization, Injection, Business Logic va h.k.)"
+  - id: cs-code-review
+    note: "Secure Code Review Cheat Sheet: baseline va diff-based review turlari, tayyorgarlik va jarayon bosqichlari, data flow tahlili (source, processing, sink, trust boundary), qo'lda ko'rishning afzalligi bo'lgan sohalar, topilma hisoboti shabloni"
   - id: cwe-top25
     note: "2025 CWE Top 25 jadvali: 1-o'rinda CWE-79, 2-o'rinda CWE-89, 4-o'rinda CWE-862, 24-o'rinda CWE-639; har qatorda KEV'dagi CVE soni ham berilgan"
 quiz:
@@ -32,9 +34,9 @@ quiz:
     options:
       - "Ha: xavfli sink'lar yo'q bo'lsa, zaiflik ham yo'q"
       - "Ha, agar SAST ham xatosiz o'tgan bo'lsa"
-      - "Yo'q: avtorizatsiya yetishmasligi (masalan, tenant tekshiruvi yo'qligi) hech qanday xavfli funksiya chaqirmaydi, grep uni ko'rmaydi"
       - "Yo'q: grep faqat JavaScript fayllarida ishlaydi"
-    answer: 2
+      - "Yo'q: avtorizatsiya yetishmasligi (masalan, tenant tekshiruvi yo'qligi) hech qanday xavfli funksiya chaqirmaydi, grep uni ko'rmaydi"
+    answer: 3
     explain: "Grep va ko'pchilik statik qoidalar mavjud xavfli chaqiruvni qidiradi. Yo'q bo'lgan tekshiruv (CWE-862 Missing Authorization) kodda belgi qoldirmaydi, uni reviewer 'bu endpoint'da kim, qaysi obyektga' savoli bilan topadi."
   - q: "2025 CWE Top 25 ro'yxatida CWE-862 (Missing Authorization) va CWE-639 (Authorization Bypass Through User-Controlled Key) bor. Review checklist uchun bundan qanday xulosa to'g'ri?"
     options:
@@ -169,6 +171,22 @@ ASVS darajalar haqida ham aytadi: Level 1 talablarning qariyb 20 foizi, Level 2 
 ### CWE Top 25 bilan tartiblash
 
 2025 CWE Top 25 jadvalida birinchi o'rinda CWE-79 (XSS), ikkinchisida CWE-89 (SQL injection), to'rtinchisida CWE-862 (Missing Authorization) turadi; CWE-639 (Authorization Bypass Through User-Controlled Key) 24-o'rinda, CWE-918 (SSRF) 22-o'rinda. Jadval har weakness uchun KEV ro'yxatiga kirgan CVE sonini ham beradi: masalan CWE-78 (OS Command Injection) uchun 20, CWE-79 uchun 7, CWE-862 uchun 0. Bu ro'yxat review ustuvorligini belgilashga yordam beradi, lekin ikki cheklov bor. Birinchisi, bu umumiy statistika: sizning kodingiz boshqa taqsimotga ega bo'lishi mumkin. Ikkinchisi, ro'yxat tez-tez o'zgaradi (jadvalda har qator uchun o'tgan yilga nisbatan o'zgarish ham yozilgan), shuning uchun checklist'ni yiliga bir marta yangilang.
+
+### Baseline va diff-based review
+
+Secure Code Review Cheat Sheet review'ni ikki turga ajratadi. Baseline review butun kod bazasini to'liq ko'radi: yangi ilova, katta release, eski tizimni qabul qilish, muvofiqlik talabi yoki hodisadan keyingi tahlil uchun. Diff-based review faqat o'zgarishni ko'radi: pull request, commit, tugallangan feature uchun. Kundalik ish diff-based bo'ladi, shuning uchun uning savollari boshqacha: o'zgarish mavjud xavfsizlik nazoratini buzdimi, yangi hujum yo'li ochdimi, o'zgargan trust boundary'da tekshiruv bormi, yangi integratsiya qo'shildimi, regressiya yo'qmi.
+
+Amaliy qoida: diff-based review'da faqat o'zgargan qatorlarga qarab qolmang. Qo'shilgan route'ning guard'i boshqa faylda e'lon qilingan bo'lishi mumkin, o'zgargan servis funksiyasini esa ilgari faqat tenant'ni tekshirgan controller chaqirgan bo'lishi mumkin. Shuning uchun cheat sheet tayyorgarlikda arxitektura va threat model (4-dars), oldingi topilmalar, muhim aktivlar va yuqori riskli funksiyalarni bilishni talab qiladi. Baseline review uchun qo'shimcha: ilova chegaralari va bog'liqliklari xaritasi, hodisalar tarixi va uchinchi tomon kutubxonalari auditi. Ikkala turni birlashtirish ham mumkin: yuqori riskli komponent uchun vaqti-vaqti bilan baseline, qolgan o'zgarishlar uchun diff-based; jiddiy xavotir paydo bo'lsa, diff-based review baseline'ga ko'tariladi.
+
+### Qo'lda ko'rish nima uchun kerak
+
+Cheat sheet qo'lda review'ning afzalligini aniq sanaydi: biznes logikadagi nuqsonlar, ilovaning o'z qoidalariga bog'liq zaifliklar, murakkab ruxsat modellari, race condition, kriptografiyani noto'g'ri ishlatish va arxitektura darajasidagi xatolar. Avtomatik asbob bu sohalarda faqat "ko'rib chiqing" degan ishora beradi, xulosani odam chiqaradi. Asbob va odam ishi quyidagicha bo'linadi: SAST natijasi qo'lda ko'rishning ustuvorligini belgilaydi, bog'liqlik skaneri tekshiriladigan kutubxonalarni ko'rsatadi, murakkab yoki tez-tez o'zgaradigan kod reviewer vaqtini ko'proq oladi, false positive'ni esa odam filtrlaydi. Review sifatini o'lchash uchun cheat sheet qamrovni (muhim kod yo'llarining qancha qismi odam ko'zidan o'tdi), topilma sifatini (to'g'ri topilmalarning umumiy topilmalarga nisbati) va vaqt sarfini kuzatishni tavsiya qiladi. Bu ko'rsatkichlarsiz review "qildik" degan taassurotga aylanadi.
+
+Data flow tahlili bosqichlari cheat sheet'da shunday: manbalarni aniqlash (foydalanuvchi kirishi, fayl yuklash, API chaqiruvi, bazadan o'qish, muhit o'zgaruvchilari), qayta ishlashni kuzatish (validatsiya, o'zgartirish, biznes logika, keshlash), sink'larni tekshirish (so'rov, fayl yozish, chiqish, log, tashqi API), chegaralarda validatsiya va kodlashni tekshirish, har trust zone o'tishida nazoratni tekshirish va maxfiy ma'lumot himoyasini tekshirish. E'tibor bering: bazadan o'qilgan ma'lumot ham manba hisoblanadi. Boshqa foydalanuvchi yozgan qiymat keyinroq sizning HTML'ingizga yoki shell buyrug'ingizga tushsa, bu ikkinchi tartibli (stored) hujum yo'li.
+
+### Topilmani yozish
+
+Cheat sheet topilma shablonini beradi: sarlavha (zaiflik turi va komponent), jiddiylik, CWE, joylashuv (fayl:qator), tavsif, ta'sir, qayta ishlab chiqarish qadamlari, tuzatish tavsiyasi, havolalar, holat va mas'ul. Biz unga ikki narsa qo'shamiz: source -> sink yo'li (qiymat qayerdan kelib qayerga yetadi) va tuzatishning qoldiq riski (nima hali yopilmagan). Birinchisi dasturchiga topilmani o'zi qayta ishlab chiqarishga imkon beradi, ikkinchisi keyingi reviewer'ga "bu joy tuzatildi, lekin shu narsa qoldi" degan ma'lumotni beradi. Review tugagach qisqa xulosa ham yoziladi: ilova versiyasi yoki commit, reviewer'lar, sana, qamrov (qaysi fayl va komponentlar), jiddiylik bo'yicha topilmalar soni va umumiy risk bahosi. Qamrov satri eng muhimi: "ko'rilmadi" deb yozilgan joy keyingi review uchun ro'yxat bo'ladi.
 
 ### Kod ko'rishdagi tipik tuzoqlar
 

@@ -8,7 +8,15 @@ sources:
   - id: pg-rls
     note: "PostgreSQL 5.9 Row Security Policies: default-deny, owner va BYPASSRLS, FORCE, USING/WITH CHECK, permissive OR/restrictive AND, leakproof, referential integrity bypass, row_security parametri, sub-SELECT'dagi race condition"
   - id: pg-set
-    note: "SET hujjati: SET LOCAL ta'siri joriy tranzaksiya oxirigacha, commit yoki rollback bo'lishidan qat'i nazar"
+    note: "SET hujjati: SET LOCAL ta'siri joriy tranzaksiya oxirigacha, commit yoki rollback bo'lishidan qat'i nazar; tranzaksiya blokidan tashqarida SET LOCAL ogohlantirish beradi va ta'sir qilmaydi; rollback qilingan SET yo'qoladi, commit qilingani sessiya oxirigacha qoladi; set_config() ekvivalent funksiya"
+  - id: pg-create-policy
+    note: "CREATE POLICY: AS PERMISSIVE | RESTRICTIVE sintaksisi; faqat restrictive policy'lar bo'lsa hech qaysi qator ko'rinmaydi, restrictive'lar permissive'lar ruxsatini toraytiradi"
+  - id: pg-create-view
+    note: "CREATE VIEW: asosiy jadvalda RLS yoqilgan bo'lsa sukut bo'yicha view egasining policy'lari qo'llanadi; security_invoker = true bo'lsa chaqiruvchining policy va huquqlari"
+  - id: cs-multi-tenant
+    note: "Multi-Tenant Application Security Cheat Sheet: RLS-bypass qiladigan rolni tenant-scoped so'rov yo'lida ishlatmaslik, tenant kontekstini tranzaksiya doirasida (SET LOCAL yoki set_config(..., true)) o'rnatish, current_setting'ni missing_ok'siz yozish (fail closed), izolyatsiyani tekshirish (relrowsecurity/relforcerowsecurity, pg_policies, ulanishni qayta ishlatish sinovi)"
+  - id: asvs
+    note: "ASVS 5.0.0, V8.4.1: multi-tenant ilovalarda tenant'lararo nazorat (2-daraja); RLS bu talabni ma'lumotlar bazasi qatlamida majburlaydigan mexanizmlardan biri"
   - id: pg-auth
     note: "Client Authentication bobi: rol va ulanish orqali kirish; bu darsda RLS'ni qo'llaydigan rolni ilova ulanishi uchun alohida ajratish kontekstida eslatiladi"
   - id: t10-a01
@@ -254,7 +262,11 @@ Policy boshqa jadvalga tayansa (`group_id <= (SELECT group_id FROM users ...)`),
 
 ### Tenant konteksti qanday uzatiladi
 
-Policy tenant ID'ni biror joydan oladi. Keng tarqalgan usul: maxsus sozlama, ya'ni `current_setting('app.tenant_id')`. Cheat sheet misolida policy shu sozlamani o'qiydi va `missing_ok` argumenti berilmagani uchun, sozlama mavjud bo'lmasa, PostgreSQL `NULL` qaytarmasdan xato beradi; cheat sheet buni ataylab fail-closed tanlov deb ataydi. Qiymatni o'rnatish usuli hal qiluvchi. `SET` sessiya darajasida ishlaydi: tranzaksiya commit bo'lgach ham sessiya tugagunicha saqlanadi. SET hujjatiga ko'ra `SET LOCAL` ta'siri esa faqat joriy tranzaksiya oxirigacha. Pool ulanishni qayta tiklamasdan qayta ishlatsa, sessiya darajasidagi tenant keyingi so'rovga qoladi. Cheat sheet tavsiyasi: tranzaksiya boshlang, tenant kontekstini `SET LOCAL` yoki `set_config('app.tenant_id', tenant, true)` bilan o'rnating (uchinchi argument `true` qiymatni tranzaksiyaga bog'laydi), so'rovlarni shu tranzaksiyada bajaring, har tranzaksiyada kontekstni qayta o'rnating, kontekst yo'q bo'lsa filtrsiz so'rovga o'tmang va ulanishni pool'ga qaytarishdan oldin commit yoki rollback qiling. Cheat sheet pool'dagi sessiya sozlamasiga tayanishni ishonchli qayta tiklash va ulanishni qayta ishlatish sinovlarisiz noto'g'ri amaliyotlar qatoriga qo'yadi.
+Policy tenant ID'ni biror joydan oladi. Keng tarqalgan usul: maxsus sozlama, ya'ni `current_setting('app.tenant_id')`. Cheat sheet misolida policy shu sozlamani o'qiydi va `missing_ok` argumenti berilmagani uchun, sozlama mavjud bo'lmasa, PostgreSQL `NULL` qaytarmasdan xato beradi; cheat sheet buni ataylab fail-closed tanlov deb ataydi. Qiymatni o'rnatish usuli hal qiluvchi. `SET` sessiya darajasida ishlaydi: tranzaksiya commit bo'lgach ham sessiya tugagunicha saqlanadi. SET hujjatiga ko'ra `SET LOCAL` ta'siri esa faqat joriy tranzaksiya oxirigacha. Pool ulanishni qayta tiklamasdan qayta ishlatsa, sessiya darajasidagi tenant keyingi so'rovga qoladi. Ikki nozik joy PostgreSQL hujjatida yozilgan. Birinchisi: `SET LOCAL` tranzaksiya blokidan tashqarida chaqirilsa xato bermaydi, faqat ogohlantirish chiqaradi va hech qanday ta'sir qilmaydi. Ya'ni autocommit rejimida `SET LOCAL app.tenant_id = ...` jimgina tenant'ni o'rnatmaydi (quyidagi misoldagi simulyatsiya buni qat'iyroq, xato bilan ko'rsatadi). Ikkinchisi: oddiy `SET` tranzaksiya ichida bo'lsa ham, tranzaksiya rollback bo'lsa yo'qoladi, commit bo'lsa sessiya oxirigacha qoladi. Shuning uchun `SET` ni "tranzaksiyaga bog'langan" deb o'ylash xato.
+
+`SET` utility buyruq bo'lgani uchun tayyorlangan so'rovda `$1` parametrini qabul qilmaydi (PostgreSQL 16.15 da `PREPARE p(text) AS SET LOCAL app.x = $1` sintaksis xatosi berdi), `set_config(name, value, is_local)` esa oddiy funksiya, qiymati bind parametr bo'lishi mumkin. Shu sabab ilova kodida `set_config` qulayroq va tenant ID'ni SQL matniga qo'shib qo'yish xavfidan saqlaydi (21-22-darslar). Hujjatda yana bir mayda tafsilot: `set_config` ga `NULL` berilsa, u sozlamani standart qiymatiga qaytarish so'rovi deb talqin qilinadi, ya'ni tenant'ni "o'chirish" uchun `NULL` yuborish uni sozlamasiz holatga emas, standart (bo'sh) qiymatga qaytaradi.
+
+Cheat sheet tavsiyasi: tranzaksiya boshlang, tenant kontekstini `SET LOCAL` yoki `set_config('app.tenant_id', tenant, true)` bilan o'rnating (uchinchi argument `true` qiymatni tranzaksiyaga bog'laydi), so'rovlarni shu tranzaksiyada bajaring, har tranzaksiyada kontekstni qayta o'rnating, kontekst yo'q bo'lsa filtrsiz so'rovga o'tmang va ulanishni pool'ga qaytarishdan oldin commit yoki rollback qiling. Cheat sheet pool'dagi sessiya sozlamasiga tayanishni ishonchli qayta tiklash va ulanishni qayta ishlatish sinovlarisiz noto'g'ri amaliyotlar qatoriga qo'yadi.
 
 ## Misol: pool va tenant sozlamasi
 
@@ -404,10 +416,15 @@ Kontekst tranzaksiyaga bog'langan va `finally` ichida har holda yo'qoladi, shuni
 
 ## Stack'da: PostgreSQL, Prisma va Kysely
 
-Quyidagi SQL ishga tushirilmagan (PostgreSQL serveri bu muhitda yo'q); u hujjat va cheat sheet qoidalariga asoslangan sxema. Ilova uchun alohida, huquqi cheklangan rol:
+Quyidagi SQL brauzerda ishga tushmaydi (SQLite RLS'ni bilmaydi), shuning uchun u oddiy `sql` bloki. Dars tekshiruvida u haqiqiy PostgreSQL 16.15 serverida, toza bazada, avval jadval egasi (superuser) sifatida, so'ng `SET ROLE app_user` bilan sinalgan; natija blokdan keyin. Ilova uchun alohida, huquqi cheklangan rol:
 
 ```sql
 -- migratsiya roli (jadval egasi) bilan:
+CREATE TABLE vehicles (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid NOT NULL,
+  plate text NOT NULL
+);
 CREATE ROLE app_user LOGIN NOSUPERUSER NOBYPASSRLS;
 GRANT SELECT, INSERT, UPDATE, DELETE ON vehicles TO app_user;
 
@@ -422,7 +439,39 @@ CREATE POLICY vehicles_all ON vehicles AS PERMISSIVE
   USING (true);
 ```
 
-Restrictive policy'ni permissive policy bilan birga yozish sababi hujjatda: so'rov o'tishi uchun kamida bitta permissive policy ruxsat berishi kerak, restrictive'lar esa uni toraytiradi. CREATE POLICY hujjati buni tasdiqlaydi: faqat restrictive policy'lar bo'lsa, hech qaysi qator ko'rinmaydi. Baribir kodni o'z bazangizda `\d+` va test so'rovlar bilan tekshiring.
+Restrictive policy'ni permissive policy bilan birga yozish sababi hujjatda: so'rov o'tishi uchun kamida bitta permissive policy ruxsat berishi kerak, restrictive'lar esa uni toraytiradi. CREATE POLICY hujjati buni tasdiqlaydi: faqat restrictive policy'lar bo'lsa, hech qaysi qator ko'rinmaydi (sinovda `vehicles_all` o'chirilganda `app_user` 0 qator oldi). Ikki tenant bilan sinov:
+
+```sql
+-- superuser: ikki tenant uchun bittadan qator (superuser RLS'ni chetlab o'tadi)
+INSERT INTO vehicles (tenant_id, plate) VALUES
+  ('11111111-1111-1111-1111-111111111111', '01 A 111 AA'),
+  ('22222222-2222-2222-2222-222222222222', '10 B 333 BB');
+
+SET ROLE app_user;
+SELECT plate FROM vehicles;          -- sozlama yo'q
+
+BEGIN;
+SELECT set_config('app.tenant_id', '11111111-1111-1111-1111-111111111111', true);
+SELECT plate FROM vehicles;          -- faqat o'z tenant'i
+INSERT INTO vehicles (tenant_id, plate)
+  VALUES ('22222222-2222-2222-2222-222222222222', 'X');   -- begona tenant'ga yozish
+ROLLBACK;
+
+SELECT plate FROM vehicles;          -- tranzaksiyadan keyin, o'sha sessiyada
+```
+
+```text
+ERROR:  unrecognized configuration parameter "app.tenant_id"
+    plate    
+-------------
+ 01 A 111 AA
+(1 row)
+
+ERROR:  new row violates row-level security policy "tenant_guard" for table "vehicles"
+ERROR:  invalid input syntax for type uuid: ""
+```
+
+Natijada `set_config` va psql sarlavhalari qisqartirilgan. U darsdagi qoidalarni isbotlaydi. Sozlama umuman o'rnatilmagan sessiyada so'rov "unrecognized configuration parameter" xatosi bilan to'xtaydi (fail closed). Tenant o'rnatilgach faqat o'z qatori ko'rinadi, boshqa tenant uchun `INSERT` esa `WITH CHECK` o'rnini bosuvchi implicit shart tufayli rad etiladi. Eng muhim kuzatuv oxirgi qatorda: `set_config(..., true)` ishlatilgan tranzaksiyadan keyin sozlama o'sha sessiyada "yo'q" emas, bo'sh satr (`''`) sifatida aniqlangan holda qoladi. `::uuid` cast bo'sh satrda xato beradi, shuning uchun policy shu holatda ham yopiq turadi, lekin `text` ustun bilan `tenant_id = current_setting(...)` taqqoslash xatosiz bo'sh natija beradi. Bu xatti-harakat PostgreSQL 16.15 da kuzatilgan va hujjatda alohida yozilmagan; shuning uchun o'z versiyangizda ulanishni qayta ishlatish sinovini (ikki tenant, bitta ulanish) albatta yozing.
 
 Kysely bilan har so'rovni tranzaksiyaga o'rab, sozlamani `set_config(..., true)` bilan o'rnatish (bu kod ishga tushirilmaydi, ulanish kerak):
 

@@ -13,6 +13,10 @@ sources:
     note: "Input Validation Cheat Sheet: tashqaridan kelgan har qanday ma'lumot, imzo tekshiruvidan keyin ham, tur, diapazon va tuzilma bo'yicha tekshiriladi; validatsiya avtorizatsiyani almashtirmaydi"
   - id: nestjs-webhooks
     note: "NestJS Webhooks va Raw body sahifalari: qabul tomondagi tipik xatolar (imzo qayta serializatsiya qilingan tana ustida tekshiriladi, `===` bilan taqqoslanadi, vaqt oynasi yo'q, qayta yetkazilgan event handler'ni ikki marta ishga tushiradi); imzo xom baytlar ustida, taqqoslash doimiy vaqtda, imzolangan vaqt belgisi 5 daqiqa oynasida (Standard Webhooks sxemasi: webhook-id, webhook-timestamp, webhook-signature; HMAC-SHA256 id.timestamp.body ustida); sirni rotatsiya paytida ikkitasini birga qabul qilish"
+  - id: nestjs-raw-body
+    note: "NestJS Raw body: rawBody: true bilan so'rovda xom tana (Buffer) bo'ladi; faqat ichki global body parser yoqilgan bo'lsa ishlaydi"
+  - id: node-crypto
+    note: "Node.js crypto.timingSafeEqual: bir xil uzunlikdagi buferlarni doimiy vaqtda taqqoslaydi, HMAC digest uchun mos; uzunlik farq qilsa xato; atrofdagi kodning doimiy vaqtliligini kafolatlamaydi"
 quiz:
   - q: "Webhook handler `req.body` (parse qilingan JSON) ni qayta `JSON.stringify` qilib, uning ustida HMAC hisoblaydi va header bilan solishtiradi. Qaysi muammo bor?"
     options:
@@ -34,10 +38,10 @@ quiz:
     options:
       - "Satr taqqoslash JavaScript'da ishlamaydi"
       - "Hex satr katta-kichik harfga sezgir"
-      - "Oddiy taqqoslash birinchi farqli belgida to'xtashi mumkin va javob vaqti imzo haqida ma'lumot sizdirishi (timing side channel); doimiy vaqtli taqqoslash yoki `crypto.subtle.verify` ishlatiladi"
+      - "Oddiy taqqoslash birinchi farqli belgida to'xtashi mumkin va javob vaqti imzo haqida ma'lumot sizdirishi (timing side channel); doimiy vaqtli taqqoslash (Node'da `crypto.timingSafeEqual`) ishlatiladi"
       - "Bu to'g'ri usul"
     answer: 2
-    explain: "Taqqoslash qancha belgi mos kelgani vaqtga ta'sir qilsa, hujumchi vaqtni o'lchab imzoni belgilab-belgilab topishga urinishi mumkin. Doimiy vaqtli taqqoslash buni yopadi. Ushbu darsdagi kodda `crypto.subtle.verify` ishlatilgan."
+    explain: "Taqqoslash qancha belgi mos kelgani vaqtga ta'sir qilsa, hujumchi vaqtni o'lchab imzoni belgilab-belgilab topishga urinishi mumkin. Doimiy vaqtli taqqoslash buni yopadi. Node hujjatiga ko'ra `timingSafeEqual` timing ma'lumoti sizdirmaydi, lekin ikkala bufer uzunligi teng bo'lishi shart, shuning uchun uzunlikni oldin tekshiring."
   - q: "Provayder xuddi shu event'ni ikki marta yubordi (birinchi javob timeout bo'ldi). Handler ikkala marta ham hisobga 1000 qo'shdi. To'g'ri tuzatish qaysi?"
     options:
       - "Provayderdan qayta yubormaslikni so'rash"
@@ -148,7 +152,7 @@ Bu yerda uchta alohida muammo bor va ular uchta alohida mexanizm bilan hal bo'la
 
 OWASP API Security Top 10 (2023) ning API10 kategoriyasi shu muammoning umumiy tomonini nomlaydi: dasturchilar integratsiya qilingan API'larga ishonib, ularning ma'lumotiga nisbatan transport xavfsizligi, autentifikatsiya va kirishni tekshirish kabi talablarni yumshatadi. OWASP Top 10:2025 dagi A08 esa shu ishonch chegarasini va ma'lumot artefaktlari yaxlitligini tekshirmasdan taxmin qilishni asosiy sabab sifatida ko'rsatadi. Webhook ikkalasiga ham klassik misol.
 
-Muhim ogohlantirish: har provayder o'z imzo sxemasini (header nomi, imzolanadigan matn, vaqt belgisi formati) belgilaydi. Bu darsda aniq provayder sxemasi tekshirilmagan; biz umumiy mexanizmni ko'rsatamiz. Real provayderga ulanganda uning rasmiy hujjatiga amal qiling.
+Har provayder o'z imzo sxemasini (header nomi, imzolanadigan matn, vaqt belgisi formati) belgilaydi. NestJS hujjati Standard Webhooks sxemasini (`webhook-id`, `webhook-timestamp`, `webhook-signature` header'lari) va Stripe sxemasini alohida sxemalar sifatida keltiradi. Bu dars umumiy mexanizmni ko'rsatadi, header nomlari esa o'quv nomlari; real provayderga ulanganda uning imzolanadigan matn tuzilishini hujjatdan oling.
 
 ## Asosiy g'oya
 
@@ -160,7 +164,7 @@ Eng keng tarqalgan sxema: jo'natuvchi va qabul qiluvchi umumiy sirga ega; jo'nat
 
 **Imzolanadigan matn.** Faqat tana emas, vaqt belgisini ham imzoga kiritish kerak (`${ts}.${rawBody}`). Aks holda hujumchi eski imzoni yangi vaqt belgisi bilan yuborishi mumkin.
 
-**Doimiy vaqtli taqqoslash.** `computed === received` ni ishlatsangiz, taqqoslash birinchi farqli belgida to'xtashi mumkin va javob vaqti imzo haqida ma'lumot sizdirishi (timing side channel) ehtimoli bor. Node'da `crypto.timingSafeEqual`, WebCrypto'da `subtle.verify` kabi doimiy vaqtli amallar mavjud. Taqqoslashdan oldin uzunlik va formatni tekshiring.
+**Doimiy vaqtli taqqoslash.** `computed === received` ni ishlatsangiz, taqqoslash birinchi farqli belgida to'xtashi mumkin va javob vaqti imzo haqida ma'lumot sizdirishi (timing side channel) ehtimoli bor. Node hujjati `crypto.timingSafeEqual` ni HMAC digest va shu kabi sirlarni taqqoslash uchun mos, vaqt bo'yicha ma'lumot sizdirmaydigan funksiya deb ta'riflaydi. Ikki cheklov: ikkala argument bir xil bayt uzunligida bo'lishi shart (aks holda xato tashlaydi), va u atrofdagi kodning doimiy vaqtliligini kafolatlamaydi. Shuning uchun taqqoslashdan oldin uzunlik va formatni tekshiring. Brauzer worker'ida `timingSafeEqual` yo'q, bu darsning `run` misolida `crypto.subtle.verify` ishlatiladi.
 
 **Sir.** HMAC simmetrik: sirni bilgan har kim to'g'ri imzo yasaydi. Sir repozitoriyga tushmasligi, muhit sozlamasi yoki secrets manager'da saqlanishi va vaqti-vaqti bilan aylantirilishi kerak (69-dars). Rotatsiya paytida eski va yangi kalit qisqa muddat birga qabul qilinadi.
 
@@ -324,7 +328,7 @@ Ikkinchi `INSERT` hech narsa qo'shmadi, shuning uchun `evt_100` bir qatorda qold
 
 ### Mashq
 
-Quyidagi ikki funksiyada xato bor: imzo taqqoslash doimiy vaqtli emas va vaqt oynasi kelajakdagi vaqt belgisini rad etmaydi. Testlarga qarab tuzating.
+`isFresh` kelajakdagi vaqt belgisini rad etmaydi: testlarga qarab tuzating. `safeEqual` esa natijasi bo'yicha to'g'ri, lekin `===` ishlatadi; testlar vaqtni o'lchamaydi, shuning uchun uni o'zingiz doimiy vaqtli qilib qayta yozing (uzunliklar teng bo'lmasa `false`, aks holda barcha belgilar bo'yicha farqni to'plab, oxirida bir marta qaror qiling) va testlar o'tishda davom etishini tekshiring.
 
 ```ts run
 function safeEqual(a: string, b: string): boolean {
@@ -357,7 +361,7 @@ check("kelajakdagi vaqt rad etiladi", () => isFresh(1500, 1000, 300) === false);
 
 ## Stack'da: NestJS, Fastify, PostgreSQL
 
-NestJS'da imzo tekshiruvi uchun xom tana kerak: hujjatdagi Raw body sahifasiga ko'ra `NestFactory.create(AppModule, { rawBody: true })` yoqilsa, so'rovda `rawBody` maydoni bo'ladi (global body parser o'chirilmagan bo'lishi sharti bilan). NestJS Webhooks sahifasi qabul tomondagi xatolarni aynan shu tartibda sanaydi: qayta serializatsiya qilingan tana ustida imzo, `===` taqqoslash, vaqt oynasining yo'qligi va qayta yetkazilgan event'ning ikki marta bajarilishi; o'zining tekshiruvida esa xom baytlar, doimiy vaqtli taqqoslash, imzolangan vaqt belgisi uchun 5 daqiqalik oyna va rotatsiya paytida bir nechta sirni qabul qilishni ishlatadi. Imzoni global emas, faqat webhook controller'iga guard sifatida qo'ying, tana sxemasini esa DTO bilan tekshiring (72-dars). PostgreSQL'da idempotency uchun jadval va unique constraint:
+NestJS'da imzo tekshiruvi uchun xom tana kerak: hujjatdagi Raw body sahifasiga ko'ra `NestFactory.create(AppModule, { rawBody: true })` yoqilsa, so'rovda `rawBody` maydoni bo'ladi (global body parser o'chirilmagan bo'lishi sharti bilan). NestJS Webhooks sahifasi qabul tomondagi xatolarni aynan shu tartibda sanaydi: qayta serializatsiya qilingan tana ustida imzo, `===` taqqoslash, vaqt oynasining yo'qligi va qayta yetkazilgan event'ning ikki marta bajarilishi; o'zining tekshiruvida esa xom baytlar, doimiy vaqtli taqqoslash, imzolangan vaqt belgisi uchun 5 daqiqalik oyna va rotatsiya paytida bir nechta sirni qabul qilishni ishlatadi. Imzoni global emas, faqat webhook controller'iga guard sifatida qo'ying, tana sxemasini esa DTO bilan tekshiring (72-dars). Qo'lda yozilgan guard o'rniga NestJS hujjati `@nestjs/webhooks` paketini ham tasvirlaydi: marshrutga `@VerifyWebhook('payments')` qo'yiladi va u handler'dan oldin quyidagilarni shu tartibda tekshiradi: uchta `webhook-` header mavjud va to'g'ri shaklda; `v1,` imzo `id.timestamp.body` ning HMAC'iga mos (sozlangan sirlardan biri bilan, doimiy vaqtda; rotatsiya paytida bir nechta sirni ro'yxatga olish mumkin); imzolangan vaqt belgisi hozirdan har ikki yo'nalishda 5 daqiqa ichida (`tolerance` standarti `'5m'`); tana JSON. Xato bo'lsa 401 va umumiy xabar qaytadi, sabab jo'natuvchiga berilmaydi, faqat `verification-failed` hodisasiga yoziladi. Hujjat yana ikki fakt aytadi: dekorator ishlashi uchun `NestFactory.create(AppModule, { rawBody: true })` kerak, va u faqat ichki global body parser yoqilgan bo'lsa ishlaydi (`bodyParser: false` bersangiz ishlamaydi); body parser hajm limiti (Express'da 100 kB, Fastify'da 1 MiB) oshgan tana dekoratordan oldin 413 oladi. Takror yetkazishni paket inbox bilan yopadi: ma'lum `webhook-id` handler ishlamasdan bo'sh 200 bilan javob oladi, id esa handler muvaffaqiyatli tugagandan keyin yoziladi. Pul bilan bog'liq holat uchun `processInTransaction()` id'ni buyurtma tranzaksiyasi orqali yozadi, shuning uchun yozuv va yangi holat birga commit bo'ladi. Qo'lda yozganingizda esa PostgreSQL'da idempotency uchun jadval va unique constraint kerak:
 
 ```ts
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
@@ -382,7 +386,7 @@ export class WebhookSignatureGuard implements CanActivate {
 }
 ```
 
-Header nomlari (`x-webhook-timestamp`, `x-webhook-signature`) bu yerda o'quv nomlari, real provayder boshqacha nom ishlatadi. Kod ishga tushirilmaydi: NestJS bu muhitda yo'q, faqat sintaksis tekshirilgan. Servis qatlamida effekt shunday bo'ladi: bitta tranzaksiyada `INSERT INTO processed_events(event_id) VALUES ($1) ON CONFLICT DO NOTHING`, qator qo'shilgan bo'lsa ledger yozuvi. Kysely yoki Prisma'dagi tranzaksiya sintaksisi farq qiladi, lekin mantiq bir xil. Sirni `process.env` dan o'qish minimal variant; production uchun secrets manager (69-dars).
+Header nomlari (`x-webhook-timestamp`, `x-webhook-signature`) bu yerda o'quv nomlari, real provayder boshqacha nom ishlatadi. Servis qatlamida effekt shunday bo'ladi: bitta tranzaksiyada `INSERT INTO processed_events(event_id) VALUES ($1) ON CONFLICT DO NOTHING`, qator qo'shilgan bo'lsa ledger yozuvi. Kysely yoki Prisma'dagi tranzaksiya sintaksisi farq qiladi, lekin mantiq bir xil. Sirni `process.env` dan o'qish minimal variant; production uchun secrets manager (69-dars).
 
 ## Xulosa
 

@@ -6,13 +6,19 @@ summary: "Authorization'ni freymvork qatlamlariga to'g'ri taqsimlash: NestJS gua
 duration: 50
 sources:
   - id: nestjs-guards
-    note: "NestJS Guards: guard'lar barcha middleware'dan keyin, interceptor va pipe'dan oldin ishlaydi; canActivate boolean; false bo'lsa ForbiddenException; useGlobalGuards va APP_GUARD; Reflector metadata; hujjat namunasida metadata yo'q bo'lsa true qaytariladi"
+    note: "NestJS Guards: guard'lar barcha middleware'dan keyin, interceptor va pipe'dan oldin ishlaydi; middleware kontekstga ko'r, guard ExecutionContext orqali keyingi handler'ni biladi; canActivate boolean; false bo'lsa ForbiddenException; useGlobalGuards va APP_GUARD; Reflector metadata; hujjat namunasida metadata yo'q bo'lsa true qaytariladi"
   - id: nextjs-data-security
-    note: "How to think about data security in Next.js: Data Access Layer, DTO, Server Actions to'g'ridan-to'g'ri POST bilan chaqirilishi, har action ichida authentication va authorization, taint API, server-only"
+    note: "How to think about data security in Next.js: Data Access Layer, DTO, Server Actions to'g'ridan-to'g'ri POST bilan chaqirilishi, action ID'lari va ularning cheklovi, har action ichida authentication va authorization (egalik tekshiruvi bilan), qaytarish qiymatlarini cheklash, yopilma (closure) shifrlash, Origin va Host solishtirish, taint API, server-only, audit ro'yxati"
   - id: nextjs-authentication
-    note: "Next.js Authentication guide: optimistic va secure tekshiruvlar, Proxy (middleware nomi o'zgargan) yagona himoya bo'lmasligi, layout'da tekshiruv tuzog'i, UI cheklovi yetarli emasligi"
+    note: "Next.js Authentication guide: optimistic va secure tekshiruvlar, Proxy (middleware nomi o'zgargan) yagona himoya bo'lmasligi, layout'da tekshiruv tuzog'i, UI cheklovi yetarli emasligi, statik route'larni DAL emas Proxy himoya qilishi, cache() Server Action va Route Handler'larda takroriy chaqiruvlarni qisqartirmasligi"
   - id: cs-authz
     note: "Authorization Cheat Sheet: har so'rovda tekshirish, global konfiguratsiya, mijoz tomoni tekshiruviga tayanmaslik, xavfsiz chiqish"
+  - id: nestjs-authorization
+    note: "NestJS Authorization (@nestjs/authorization): siyosat sinflari, global AuthorizationGuard standart rad qiladi (faqat literal true ruxsat), @Can va @Public deklaratsiyasi, global guard'lar tartibi, 401 va 403 farqi"
+  - id: nestjs-exception-filters
+    note: "NestJS Exception filters: HttpException bo'lmagan (tanilmagan) istisno standart filtrda 500 Internal server error javobini beradi"
+  - id: asvs
+    note: "ASVS 5.0.0 V8 Authorization: 8.2.1 (funksiya darajasi), 8.2.2 (ma'lumot darajasi, IDOR va BOLA), 8.3.1 (ishonchli servis qatlamida majburlash, mijoz JavaScript'iga tayanmaslik), 8.3.3 (obyektga kirish dastlabki subyekt huquqiga asoslanadi)"
 quiz:
   - q: "NestJS hujjatidagi `RolesGuard` namunasida `const roles = ...; if (!roles) return true;` yozilgan. Bu qator xavfsizlik nuqtai nazaridan nimani anglatadi va nimani o'zgartirasiz?"
     options:
@@ -116,7 +122,7 @@ task:
   solutionNotes: |
     - Ochiqlik `public === true` bilan aniq belgilanadi; metadata'ning yo'qligi ochiqlik emas, rad.
     - `!meta.roles || meta.roles.length === 0` sharti bo'sh ro'yxatni ham rad qiladi: `@Roles()` argumentsiz yozilsa, tasodifan hamma o'tmaydi.
-    - `!!user &&` sharti `null` foydalanuvchi uchun xato tashlamaydi va rad qaytaradi. Xato tashlash NestJS'da ham 500 yoki boshqa javobga olib kelishi mumkin; rad etish aniq.
+    - `!!user &&` sharti `null` foydalanuvchi uchun xato tashlamaydi va rad qaytaradi. Guard ichida oddiy `Error` tashlash NestJS'da tanilmagan istisno sifatida 500 beradi; rad etish esa aniq 403 yoki 401 bo'ladi.
     - Bu guard faqat funksiya darajasini (53-dars) hal qiladi. Obyekt egaligi (52-dars) va maydonlar (54-dars) servis qatlamida alohida tekshiriladi.
     - Real NestJS'da `meta` ni `Reflector.getAllAndOverride` bilan handler va class darajasidan o'qiysiz; shuning uchun handler metadata'si class metadata'sini ustun qiladi, va ular qanday birlashishini sinab ko'ring.
   checklist:
@@ -146,7 +152,9 @@ Authorization Cheat Sheet'ning to'rt talabi ikkala freymvorkka tegadi: ruxsat ha
 
 ### Guard hayot tsiklidagi o'rni
 
-NestJS hujjatiga ko'ra guard'lar barcha middleware'dan keyin, lekin har qanday interceptor yoki pipe'dan oldin bajariladi. Guard `CanActivate` interfeysini amalga oshiradi, `canActivate()` metodi joriy so'rov ruxsat etilganligini bildiruvchi boolean qaytaradi (sinxron yoki Promise/Observable orqali). `true` bo'lsa so'rov qayta ishlanadi, `false` bo'lsa Nest uni rad etadi. Hujjat: guard `false` qaytarganda framework `ForbiddenException` tashlaydi va standart javob 403 `Forbidden resource` bo'ladi; boshqa javob kerak bo'lsa o'z istisnongizni tashlaysiz (masalan `UnauthorizedException`). Guard'da tashlangan istisno exceptions layer'da qayta ishlanadi.
+Hujjat guard'ni middleware'dan farqlaydi. Guard'ning yagona vazifasi: runtime'dagi shartlar (ruxsatlar, rollar, ACL) asosida so'rovni route handler qayta ishlashi yoki ishlamasligini hal qilish. Middleware autentifikatsiya uchun yaxshi (token tekshirish va `request` ga xususiyat biriktirish route kontekstiga bog'liq emas), lekin kontekstga ko'r: `next()` dan keyin qaysi handler bajarilishini bilmaydi. Guard esa `ExecutionContext` orqali aynan nima bajarilishini biladi, shuning uchun authorization uchun mos. ASVS 5.0.0 8.3.1 (1-daraja) ham shuni talab qiladi: authorization qoidalari ishonchli servis qatlamida majburlanadi va ishonchsiz iste'molchi o'zgartira oladigan nazoratlarga, masalan mijoz JavaScript'iga, tayanmaydi.
+
+NestJS hujjatiga ko'ra guard'lar barcha middleware'dan keyin, lekin har qanday interceptor yoki pipe'dan oldin bajariladi. Guard `CanActivate` interfeysini amalga oshiradi, `canActivate()` metodi joriy so'rov ruxsat etilganligini bildiruvchi boolean qaytaradi (sinxron yoki Promise/Observable orqali). `true` bo'lsa so'rov qayta ishlanadi, `false` bo'lsa Nest uni rad etadi. Hujjat: guard `false` qaytarganda framework `ForbiddenException` tashlaydi va standart javob 403 `Forbidden resource` bo'ladi; boshqa javob kerak bo'lsa o'z istisnongizni tashlaysiz (masalan `UnauthorizedException`). Guard'da tashlangan istisno exceptions layer'da qayta ishlanadi. Exception filters hujjati yana bir nozik joyni ko'rsatadi: `HttpException` yoki uning avlodi bo'lmagan (tanilmagan) istisno standart filtrda `Internal server error` javobini beradi. Shuning uchun guard ichida oddiy `Error` tashlash rad etishni 500 ga aylantiradi, 403 yoki 401 ga emas; rad etish uchun `false` qaytaring yoki `ForbiddenException`/`UnauthorizedException` tashlang.
 
 Pipe guard'dan keyin ishlagani uchun, guard so'rov tanasi validatsiya va transformatsiyadan o'tmagan holatda ishlaydi. Natija: guard foydalanuvchi, rol va route metadata'siga qarab funksiya darajasida qaror qiladi; so'rov tanasidagi obyekt ID yoki maydonlarga bog'liq qarorlar (52, 54-darslar) odatda servis qatlamida qabul qilinadi.
 
@@ -163,6 +171,12 @@ Deny-by-default uchun global guard kerak: har controller'ga `@UseGuards` yozishd
 
 Rol ro'yxatini handler'ga biriktirish uchun hujjat custom metadata'ni (`Reflector.createDecorator()` yoki `@SetMetadata()`) ko'rsatadi. Hujjatdagi `RolesGuard` namunasi esa metadata yo'q bo'lsa quyidagicha harakat qiladi: `if (!roles) { return true; }`. Namuna ta'limiy (hujjat `matchRoles()` ni ham o'zi taqdim etmasligini ogohlantiradi), lekin uni production'ga ko'chirish metadata unutilgan route'ni ochiq qoldiradi. 53-darsdagi guard va pastdagi Stack bo'limidagi PolicyGuard buni teskari qiladi: metadata yo'q bo'lsa rad, ochiq route esa aniq `@Public()` bilan.
 
+### Tayyor deny-by-default: @nestjs/authorization
+
+NestJS hujjatidagi alohida Authorization bobi (`@nestjs/authorization`) aynan shu darsning tamoyilini paketga aylantirgan. Modul global `AuthorizationGuard` ni ro'yxatdan o'tkazadi va u standart bo'yicha rad etadi: handler faqat tekshiruv e'lon qilgandagina ishlaydi, ya'ni `@Can()`, `@Can.Anyone()` yoki `@nestjs/authentication`dagi `@Public()` (u `@Can.Anyone()` ga teng) bilan. Hech narsa e'lon qilinmagan handler uchun javob: foydalanuvchiga 403, mehmonga 401, va startup logida shu handler nomi chiqadi. Siyosat sinfidagi qobiliyat (ability) faqat literal `true` qaytarsa ruxsat beradi, boshqa har qanday qiymat, hatto truthy bo'lsa ham, rad. Yozuv kerak bo'lgan tekshiruv route'da emas, servisda `authorize()` bilan bajariladi, chunki guard'da yozuv yo'q (52-dars); faqat URL parametriga bog'liq tekshiruv route'da qolishi mumkin.
+
+Ikki ehtiyotkorlik. Birinchisi: global guard'lar Nest modullarni skanerlagan tartibda ishlaydi, shuning uchun `AuthenticationModule` birinchi turishi kerak; teskari tartibda authorization guard `request.user` o'rnatilishidan oldin ishlaydi va har tekshiruv foydalanuvchini mehmon deb ko'radi. `AuthorizationModule` startup'da buni tekshiradi va noto'g'ri tartibda ilova ishga tushmaydi; lekin Passport `AuthGuard()` avlodi kabi belgisiz guard'larda tekshiruv faqat sinf nomiga qaraydi, shuning uchun bunday guard'ni `app.useGlobalGuards()` emas, `APP_GUARD` bilan ro'yxatdan o'tkazing (hujjat: `useGlobalGuards()` bilan qo'shilganlar barcha `APP_GUARD`dan keyin ishlaydi). Ikkinchisi: Nest global guard ishlatmaydigan joyda (masalan, `fieldResolverEnhancers` ichida `'guards'` bo'lmagan GraphQL field resolver'lar) hech narsa rad etilmaydi.
+
 ### Authentication guard va authorization guard
 
 Hujjat shuni eslatadi: Node.js ilovalarda autentifikatsiya qilingan foydalanuvchini `request` obyektiga biriktirish odatiy, va bu odatda alohida authentication guard'da amalga oshadi. Authorization guard o'sha `request.user` ga tayanadi. Tartib muhim: authorization guard authentication guard'dan keyin ishlashi kerak, aks holda `request.user` yo'q bo'ladi (pastdagi kod buni `!!user &&` bilan rad qiladi).
@@ -177,6 +191,8 @@ Next.js ilovasida ma'lumotga bir nechta yo'l bilan kelinadi: page va layout rend
 
 Data security hujjati aniq yozadi: eksport qilingan Server Action sukut bo'yicha to'g'ridan-to'g'ri POST so'rovi bilan chaqirilishi mumkin, faqat ilova UI orqali emas. Action'ga ichki shifrlangan, deterministik bo'lmagan ID beriladi va ishlatilmaydigan action'lar klient bundle'idan olib tashlanadi, lekin hujjat shu yerning o'zida tushuntiradi: bu xavfni kamaytiradi, ammo Server Action'larga baribir to'g'ridan-to'g'ri POST bilan murojaat mumkin deb qarab, har birining ichida authentication va authorization tekshirish kerak. Hujjat misoli: sahifadagi `redirect` qaysi UI ko'rinishini boshqaradi, lekin action alohida kirish nuqtasi va chaqiruvchini o'zi tekshirishi kerak. Authentication emas, authorization ham: hujjat `deletePost(postId)` misolida postning muallifi sessiyadagi foydalanuvchi ekanini tekshirishni ko'rsatadi va bu IDOR'ning oldini oladi (52-dars).
 
+Hujjat action ID'lari haqida sanab o'tadi: ular kompilyatsiya paytida yaratiladi va ko'pi bilan 14 kun keshlanadi, yangi build yoki yaroqsiz kesh bilan qayta yaratiladi. Action return qiymati serializatsiya qilinib mijozga yuboriladi, shuning uchun to'liq DB yozuvini qaytarmang, faqat UI kerak bo'lganini (`{ success: true }`). Hujjatning audit ro'yxati action uchun beshta savol beradi: argumentlar tekshirilganmi, foydalanuvchi action ichida qayta authorize qilinadimi, resurs egaligi tekshirilganmi (authentication emas, authorization), return qiymatlari filtrlanganmi, DB kirishi `server-only` DAL'ga topshirilganmi. Action komponent ichida yopilma (closure) bilan e'lon qilinsa, yopilgan o'zgaruvchilar mijozga yuborilib qaytadi; Next.js ularni shifrlaydi va har build uchun yangi kalit yaratadi, lekin hujjat sezgir qiymatlarni faqat shifrlashga tayanib oshkor qilishni tavsiya etmaydi. Origin sarlavhasi Host (yoki `X-Forwarded-Host`) bilan solishtiriladi va mos kelmasa so'rov to'xtatiladi; reverse proxy ortidagi ilovalar uchun `serverActions.allowedOrigins` ishlatiladi (CSRF haqida 36-dars).
+
 Mijoz kiritishi ham ishonchsiz: hujjat `searchParams.isAdmin === 'true'` kabi qiymatlarga tayanishni zaif namuna sifatida ko'rsatadi va har safar sessiyani qayta tekshirishni tavsiya qiladi.
 
 ### Proxy (avvalgi middleware)
@@ -186,6 +202,10 @@ Joriy hujjatda `middleware` fayl konvensiyasi eskirgan va `proxy` deb qayta noml
 ### Layout tuzog'i
 
 Hujjat: partial rendering tufayli layout navigatsiyada qayta render bo'lmaydi, shuning uchun foydalanuvchi sessiyasi har route o'zgarishida tekshirilmaydi. Layout qolgan route segmentlari va parallel slot'larning renderlanishini boshqarmaydi, ular layout ularni yashirganda ham ishlashi va RSC payload'ida bo'lishi mumkin. Tavsiya: tekshiruvni ma'lumot manbaida (DAL) yoki shartli renderlanadigan komponentda qiling.
+
+### Statik route'lar va cache() chegaralari
+
+Authentication guide ikkita chegarani alohida qayd etadi. Birinchisi: DAL so'rov vaqtida olinadigan ma'lumotni himoya qiladi, lekin foydalanuvchilar o'rtasida umumiy ma'lumotli statik route'larda ma'lumot so'rov vaqtida emas, build vaqtida olinadi; bunday statik route'larni himoyalash uchun Proxy ishlatiladi. Demak, statik sahifada DAL tekshiruvi har so'rovda ishlamaydi. Ikkinchisi: React `cache()` bitta render o'tishi ichida takroriy chaqiruvlarni qisqartiradi, lekin Server Action va Route Handler render o'tishining qismi emas, shuning uchun u yerda `cache()` o'ram hech narsa qilmaydi va funksiya har safar ishlaydi. Natija: `requireAdmin` kabi DAL funksiyasi action ichida har chaqiruvda sessiyani qayta tekshiradi va bu to'g'ri, ortiqcha emas. Data security hujjati audit ro'yxatida `proxy.ts` va `route.ts` fayllarini "katta kuchga ega" deb ataydi va ularni an'anaviy usullar bilan, jumladan penetratsion test va zaiflik skanerlari bilan alohida diqqat bilan tekshirishni tavsiya qiladi.
 
 ### Data Access Layer va DTO
 
@@ -309,11 +329,11 @@ Endi action kimdan kelishidan qat'i nazar o'zini tekshiradi: mehmon, admin bo'lm
 
 ## Qachon qo'llamaslik kerak
 
-- Har bir qatlamda to'liq tekshiruv takrorlash ortiqcha. Proxy yoki guard'da qimmat DB tekshiruvlarini qilish (Next.js hujjati Proxy uchun buni aniq tavsiya qilmaydi) kechikish qo'shadi. Tez rad etish uchun yengil tekshiruv, qaror uchun esa ma'lumot yaqinidagi tekshiruv.
+- Har bir qatlamda to'liq tekshiruv takrorlash ortiqcha. Proxy yoki guard'da qimmat DB tekshiruvlarini qilish kechikish qo'shadi; Next.js hujjati Proxy uchun buni aniq tavsiya etmaydi: u prefetch qilingan route'larda ham ishlagani uchun faqat cookie'dan sessiyani o'qish tavsiya qilinadi. Tez rad etish uchun yengil tekshiruv, qaror uchun esa ma'lumot yaqinidagi tekshiruv.
 - Global guard + `@Public()` modeli kichik ilovada ortiqcha ko'rinishi mumkin, lekin u bitta unutishni jiddiy ochiq endpoint qilmasligini ta'minlaydi. Ochiq route'lar sezilarli ko'p bo'lgan ilovada (ommaviy API) teskari modelni (har controller o'z guard'i) tanlash mumkin; shunda sinov va lint qoidasi unutishni ushlashi shart.
 - DAL bilan DTO katta qatlam qo'shadi. Prototip uchun hujjat o'zi component-level data access'ni tavsiya qiladi, lekin uni tasodifan ma'lumot oshkor qilish xavfi bilan bog'laydi. Production uchun DAL tavsiya etiladi, va bir yondashuvni tanlash (aralashtirmaslik) hujjatda alohida maslahat qilingan.
 - Client-side tekshiruvlar (tugmani yashirish) foydali UX, lekin xavfsizlik nazorati emas. Ularni olib tashlash shart emas, faqat ularga tayanmang.
-- Freymvork xususiyatlari versiyaga bog'liq: Next.js `middleware` nomi `proxy` ga o'zgargan, taint API esa eksperimental. O'z versiyangiz hujjatini tekshiring, bu darsdagi kodni ko'chirish o'rniga mexanizmni qo'llang.
+- Eksperimental xususiyatlarga tayanib himoya qurmang: korpusdagi hujjatda `forbidden.js` va `unauthorized.js` fayl konvensiyalari `version: experimental` deb belgilangan, taint API esa `experimental.taint` opsiyasini yoqishni talab qiladi va hujjat uni DAL filtrlash o'rnini bosmaydigan qo'shimcha qatlam deydi. Authentication guide'da Proxy nomi `middleware` o'rniga ishlatiladi; ularning kodini nusxalamay, mexanizmni (tekshiruv ma'lumotga yaqin, standart rad) qo'llang.
 
 ## Stack'da: NestJS va Next.js kodi
 
@@ -348,7 +368,7 @@ export class AuthzGuard implements CanActivate {
 export class AuthzModule {}
 ```
 
-`Reflector.createDecorator` va `getAllAndOverride` NestJS hujjatida bor; ularning aniq imzosini o'z versiyangizda tekshiring. Obyekt egaligi (52-dars) guard'da emas, servis qatlamida: guard tanasi hali pipe'dan o'tmagan.
+`Reflector.createDecorator<string[]>()` va `getAllAndOverride(Roles, [handler, class])` shakllari NestJS hujjatida shu ko'rinishda keltirilgan; `getAllAndOverride` birinchi aniqlangan qiymatni qaytaradi, `getAllAndMerge` esa ikkala daraja massivlarini birlashtiradi. Obyekt egaligi (52-dars) guard'da emas, servis qatlamida: guard tanasi hali pipe'dan o'tmagan.
 
 Next.js'da DAL va server action:
 

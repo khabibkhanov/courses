@@ -8,11 +8,11 @@ sources:
   - id: cs-redirect
     note: "OWASP Unvalidated Redirects and Forwards Cheat Sheet: xavfli kod namunalari, oldini olish yo'llari va URL'ni parser bilan tekshirish tavsiyasi"
   - id: cs-input
-    note: "Input Validation Cheat Sheet: allowlist yondashuvi va kirishni kontekstga mos tekshirish haqida umumiy mazmun; bo'lim nomlari keltirilmaydi"
+    note: "Input Validation Cheat Sheet: kirishni allowlist bilan tekshirish va sintaktik hamda semantik validatsiyani ajratish bo'yicha umumiy yo'riqnoma (yo'naltirish manzili uchun aniq qoidalar cs-redirect'da)"
   - id: t10-a01
     note: "OWASP Top 10:2025 A01 ro'yxatida CWE-601 (Open Redirect) bog'liq weakness sifatida sanalgan"
   - id: whatwg-html
-    note: "HTML Standard navigatsiya va URL'lar bilan ishlash kontekstini beradi; bu dars URL tahlili xatti-harakatini Node.js URL parserida lokal sinab ko'rishga tayanadi"
+    note: "HTML Standard: brauzer havola va navigatsiya manzillarini URL tahlili orqali oladi. Dars `//host`, `/\\host` va tab kabi holatlarni WHATWG URL standartini amalga oshiruvchi `new URL` bilan ko'rsatadi"
 quiz:
   - q: "Login'dan keyin `next` parametriga yo'naltirish bor. Tekshiruv: `next.startsWith('/')`. Hujumchi qaysi qiymatni yuboradi?"
     options:
@@ -143,7 +143,7 @@ task:
 
 Login sahifasida `https://app.example/login?next=/hisobot/7` ko'rinishidagi havola odatiy: foydalanuvchi himoyalangan sahifaga kirmoqchi bo'ldi, tizim uni loginga yubordi va kirgandan keyin qaytaradi. Server `next` qiymatini o'qib `302 Location: <next>` qaytaradi. Agar `next` tekshirilmasa, hujumchi `https://app.example/login?next=https://evil.example/kirish` havolasini tarqatadi. Havola domeni haqiqiy `app.example`, shuning uchun foydalanuvchi va hatto pochta filtri ham unga ishonadi. U parol kiritadi, tizim uni `evil.example` ga yo'naltiradi, u yerda "sessiya tugadi, qayta kiring" sahifasi parolni yig'adi.
 
-Bu open redirect (unvalidated redirect): ilova ishonchsiz kirishdagi URL'ga yo'naltiradi. OWASP Unvalidated Redirects and Forwards Cheat Sheet xavfni shunday tasvirlaydi: havolada server nomi asl sayt bilan bir xil, shuning uchun phishing ishonchliroq ko'rinadi. OWASP Top 10:2025 da A01 Broken Access Control kategoriyasiga bog'langan weakness'lar orasida CWE-601 (URL Redirection to Untrusted Site) ham sanalgan.
+Bu open redirect (unvalidated redirect): ilova ishonchsiz kirishdagi URL'ga yo'naltiradi. OWASP Unvalidated Redirects and Forwards Cheat Sheet xavfni shunday tasvirlaydi: havolada server nomi asl sayt bilan bir xil, shuning uchun phishing ishonchliroq ko'rinadi. OWASP Top 10:2025 ning A01 Broken Access Control toifasiga bog'langan CWE'lar orasida CWE-601 (URL Redirection to Untrusted Site, ya'ni Open Redirect) ham sanalgan.
 
 Bitta open redirect "faqat phishing" bo'lib ko'rinadi, lekin u zanjir halqasi bo'lishi mumkin: OAuth oqimida `redirect_uri` tekshiruvini aylanib o'tish (48-dars), ruxsat ro'yxatidagi domen orqali ichki filtrlarni yengish (SSRF, 27-dars). Cheat sheet forward'lar haqida ham ogohlantiradi: server ichida foydalanuvchi kiritgan manzilga forward qilish kirish nazorati tekshiruvini aylanib o'tib, administrator funksiyasiga olib borishi mumkin. Shu sababli bu mavzu faqat havola tozaligi emas, ishonch chegarasi masalasi.
 
@@ -163,7 +163,7 @@ Tekshirish tafsiloti uchun cheat sheet: URL'ni yo'naltirish API bilan va brauzer
 
 ## Chuqurroq: nega qo'lda tekshiruvlar buziladi
 
-Quyidagi natijalar Node.js URL parserida lokal sinab ko'rilgan (ushbu dars yozilganda). Brauzerlar ham WHATWG URL algoritmiga tayanadi, lekin aniq xatti-harakatni o'z maqsadli brauzeringizda tekshiring; bu dars bunga kafolat bermaydi.
+Quyidagi natijalar `new URL(x, "https://app.example")` chaqiruvidan olingan: Node.js `URL` sinfi WHATWG URL standartini amalga oshiradi va brauzerlar ham shu standartga tayanadi, shuning uchun parser natijasi brauzer qarori bilan mos keladi.
 
 ### Nisbiy ko'rinishdagi tashqi manzillar
 
@@ -180,6 +180,45 @@ Quyidagi natijalar Node.js URL parserida lokal sinab ko'rilgan (ushbu dars yozil
 ### Tekshirilgan va yuborilgan qiymat bir xil bo'lsin
 
 Eng ko'p uchraydigan ikkinchi xato: `isSafe(next)` true qaytardi, keyin kod `next.trim()`, `decodeURIComponent(next)` yoki boshqa o'zgartirish qiladi. Natijada tekshirilgan satr bilan yuborilgan satr farq qiladi. Kod qiymatni bir marta tahlil qilib, parsed qismlardan yangi nisbiy yo'l yig'sin va faqat shuni ishlatsin. Bu "validate, so'ng transform" naqshining TOCTOU shakli (60-dars).
+
+### Yo'naltirishdan keyin kod davom etadi
+
+Cheat Sheet PHP misolida muhim nozik joyni qayd etadi: `header("Location: ...")` dan keyingi kod ishlashda davom etadi, shuning uchun foydalanuvchi brauzerini yo'naltirishni e'tiborsiz qoldirsa (masalan `curl`), sahifaning qolgan qismiga yetib borishi mumkin. Node.js'da ham xuddi shunday: `res.redirect(...)` dan keyin funksiya tugamaydi. Himoyalangan sahifada "tekshir va yo'naltir" naqshida har doim `return res.redirect(...)` yozing, aks holda yo'naltirishdan keyingi kod (ma'lumot yuklash, yozish) baribir bajariladi. Bu open redirect emas, lekin yo'naltirish orqali "kirish nazorati" qilinadigan hamma joyga tegishli. Yo'naltirish brauzerga tavsiya, server tomonidagi to'siq emas.
+
+### Manzil qiymati va ruxsat
+
+Cheat Sheet foydalanuvchi kiritishini qabul qilishda uch shartni sanaydi: qiymat yaroqli, ilova uchun mos va foydalanuvchi uchun ruxsat etilgan bo'lishi kerak. `safeRedirect` birinchi ikki shartning bir qismini (tashqi domenni) yopadi, lekin uchinchisi ilova mantig'iga tegishli: login'dan keyin `next=/admin/foydalanuvchilar` bo'lsa, oddiy dispetcher shu sahifaga yo'naltirilishi mumkin va sahifaning o'zi avtorizatsiyani tekshirishi kerak (51-dars). Yo'naltirish orqali "forward" qilinadigan ichki marshrutlarda esa bu tekshiruv yo'naltiruvchi kodning o'zida bo'lmasa, hujumchi kirish nazorati filtridan o'tgan URL orqali administrator funksiyasiga yetadi.
+
+### OAuth: aniq tenglik
+
+OAuth oqimida `redirect_uri` ni tekshirish open redirect bilan bir oilada, lekin qoida qattiqroq. ASVS 5.0.0 ning 10.4.1 talabi (1-daraja) authorization server redirect URI'larni mijozga xos, oldindan ro'yxatdan o'tkazilgan allowlist bilan aniq satr solishtirish (exact string comparison) orqali tekshirishini talab qiladi. OWASP OAuth2 Cheat Sheet esa mijoz va authorization server tasodifiy URI'ga yo'naltiradigan "open redirector" endpoint'larni ochmasligi kerakligini yozadi, chunki ular authorization code va access token'ni chiqarib ketishga imkon beradi. Demak `safeRedirect` dagi kabi "origin teng bo'lsa yo'l ixtiyoriy" mantiq OAuth uchun yetarli emas: u yerda butun URI oldindan ro'yxatda turishi kerak (48 va 49-darslar).
+
+### Mashq: redirect_uri uchun aniq tenglik
+
+Quyidagi funksiya hozir prefiks bo'yicha solishtiradi. Uni ro'yxatdan o'tgan URI'larga aniq tenglik bilan almashtiring: kiritish parser orqali o'tsin, parser hosil qilgan `href` ro'yxatdagi yozuv bilan teng bo'lsin, so'rov satri, prefiks, userinfo va boshqa yo'l qabul qilinmasin.
+
+```ts run
+const REGISTERED = ["https://app.example/oauth/callback", "https://portal.alfa.example/cb"];
+
+function isRegisteredRedirect(uri: string): boolean {
+  return REGISTERED.some((r) => uri.startsWith(r)); // TUZATING: aniq tenglik
+}
+
+console.log(isRegisteredRedirect("https://app.example/oauth/callback"));
+console.log(isRegisteredRedirect("https://app.example/oauth/callback/../../x"));
+console.log(isRegisteredRedirect("https://app.example/oauth/callback.evil.example/x"));
+```
+
+```ts test
+check("ro'yxatdagi aniq URI qabul qilinadi", () => isRegisteredRedirect("https://app.example/oauth/callback") === true);
+check("prefiksli yo'l rad etiladi", () => isRegisteredRedirect("https://app.example/oauth/callback/x") === false);
+check("so'rov satri qo'shilgani rad etiladi", () => isRegisteredRedirect("https://app.example/oauth/callback?next=//evil.example") === false);
+check("userinfo bilan yashirilgan host rad etiladi", () => isRegisteredRedirect("https://app.example@evil.example/oauth/callback") === false);
+check("../ bilan chiqib ketish rad etiladi", () => isRegisteredRedirect("https://app.example/oauth/callback/../../x") === false);
+check("bo'sh va yaroqsiz kirish rad etiladi", () => isRegisteredRedirect("") === false && isRegisteredRedirect("not a url") === false);
+```
+
+Yechim g'oyasi: `new URL(uri)` xato bersa `false`; aks holda `REGISTERED.includes(u.href)` va bundan tashqari `u.href === uri` (kiritish parser tomonidan o'zgartirilmagan, ya'ni normalizatsiyasiz aniq tenglik). Ikkinchi shart muhim: `https://app.example/oauth/callback` va `https://APP.example/oauth/callback` parser ostida bir xil `href` beradi, lekin ASVS satrni aynan solishtirishni talab qiladi.
 
 ### Server tomonidagi forward
 

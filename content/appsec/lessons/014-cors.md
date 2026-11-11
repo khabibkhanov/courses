@@ -6,11 +6,13 @@ summary: "CORS same-origin policy'ni qanday yumshatishi, simple va preflight so'
 duration: 45
 sources:
   - id: mdn-cors
-    note: "MDN CORS qo'llanmasi: simple so'rov, preflight, credentials va header'lar ro'yxati"
+    note: "MDN CORS qo'llanmasi: simple so'rov shartlari va ularning forma bilan bog'liqligi, preflight, credentials bilan wildcard taqiqi, Vary: Origin, Access-Control-Max-Age (standart 5 sekund)"
+  - id: nestjs-cors
+    note: "NestJS CORS sahifasi: enableCors() va Express hamda Fastify standart metodlari farqi (Fastify'da PUT, PATCH, DELETE preflight'da rad etiladi)"
   - id: whatwg-fetch
     note: "Fetch Standard: CORS protokoli, CORS-safelisted metod va header'lar, credentials bilan wildcard taqiqi"
   - id: t10-a02
-    note: "A02:2025 Security Misconfiguration: noto'g'ri sozlangan CORS siyosati misollar qatorida"
+    note: "A02:2025 Security Misconfiguration kategoriyasi: tizim yoki ilova xavfsizlik nuqtai nazaridan noto'g'ri sozlanishi (CORS sozlamasi shunday xatolarning keng tarqalgan misoli, bu muallifning tasnifi)"
 quiz:
   - q: "API `Access-Control-Allow-Origin: *` qaytaradi va ma'lumot cookie bilan himoyalangan. Tashqi sahifadan `fetch(url, {credentials: 'include'})` chaqirildi. Natija?"
     options:
@@ -118,7 +120,7 @@ task:
 
 Frontend `app.fleet.example` da, API `api.fleet.example` da. Brauzer same-origin policy tufayli sahifa skriptiga API javobini bermaydi (12-dars). Dasturchi birinchi marta konsolda "blocked by CORS policy" xatosini ko'radi va internetdan topgan "tuzatish"ni qo'yadi: `Access-Control-Allow-Origin: *` yoki eng yomoni, kelgan `Origin`ni aks ettiruvchi middleware. Xato yo'qoladi, ilova ishlaydi, lekin xavfsizlik chegarasi ham yo'qoladi.
 
-CORS (Cross-Origin Resource Sharing) SOP'ni o'chirmaydi. U serverga brauzerga "bu origin mening javobimni o'qishi mumkin" deb aytish imkonini beradi. Qaror serverda, ijrochi brauzerda. Shuning uchun noto'g'ri sozlangan CORS, ayniqsa credentials (cookie) bilan, tashqi saytga foydalanuvchi nomidan autentifikatsiyalangan javobni o'qish imkonini beradi. OWASP Top 10:2025 da bu A02 Security Misconfiguration ostida keladigan tipik xato.
+CORS (Cross-Origin Resource Sharing) SOP'ni o'chirmaydi. U serverga brauzerga "bu origin mening javobimni o'qishi mumkin" deb aytish imkonini beradi. Qaror serverda, ijrochi brauzerda. Shuning uchun noto'g'ri sozlangan CORS, ayniqsa credentials (cookie) bilan, tashqi saytga foydalanuvchi nomidan autentifikatsiyalangan javobni o'qish imkonini beradi. CORS'ning noto'g'ri sozlanishi OWASP Top 10:2025 dagi A02 Security Misconfiguration kategoriyasiga (tizimning xavfsizlik nuqtai nazaridan noto'g'ri sozlanishi) tushadi; bu tasnif muallifniki, kategoriya matni CORS'ni alohida tilga olmaydi.
 
 Ikkinchi nomuvofiqlik: dasturchilar CORS'ni "tashqi saytdan so'rov yuborishni taqiqlash" deb tushunadi. Aslida CORS so'rov yuborishni emas, javobni o'qishni boshqaradi, va ko'p so'rovlar serverga baribir yetib boradi. Bu darsda biz mexanizmni aniq ko'ramiz: simple va preflight so'rovlar, header'lar, credentials qoidalari va xato sozlamaning aniq hujumi.
 
@@ -142,11 +144,11 @@ Brauzer cross-origin so'rov yuborganda `Origin` header'ini qo'shadi. Server javo
 
 Fetch Standard "CORS-safelisted" metodlar (`GET`, `HEAD`, `POST`), ba'zi header'lar va `Content-Type` qiymatlari (`application/x-www-form-urlencoded`, `multipart/form-data`, `text/plain`) ro'yxatini belgilaydi. Shu ro'yxatdan chiqmaydigan so'rov "simple" bo'ladi: u to'g'ridan-to'g'ri yuboriladi. Ro'yxatdan chiqsa (masalan, `PUT`, `DELETE`, `Authorization` header'i yoki `Content-Type: application/json`) brauzer avval `OPTIONS` preflight yuboradi va serverdan ruxsat so'raydi. Ruxsat bo'lmasa, haqiqiy so'rov yuborilmaydi.
 
-Bu qoida tarixiy: HTML formalar CORS'dan oldin ham cross-origin `POST` yubora olgan, shuning uchun formaga o'xshash so'rovlar preflight talab qilmaydi. Natija muhim: **JSON API'ning preflight talab qilishi tasodifan ba'zi CSRF hujumlarini to'sadi, lekin bunga tayanmang.** Server `Content-Type` ni tekshirmasdan `text/plain` bilan kelgan JSON body'ni qabul qilsa, "JSON uchun preflight bor" himoyasi yo'qoladi.
+Bu qoida tarixiy. MDN uni shunday izohlaydi: HTML 4.0 formasi CORS'dan oldin ham istalgan origin'ga so'rov yubora olgan, shuning uchun server yozuvchisi CSRF'dan allaqachon himoyalanishi kerak va forma ko'rinishidagi so'rovga alohida ruxsat (preflight) talab qilinmaydi. Server esa javobni skriptga ulashish uchun baribir `Access-Control-Allow-Origin` bilan rozilik berishi shart. MDN simple so'rov shartlarini sanaydi: metod `GET`, `HEAD` yoki `POST`; qo'lda qo'yiladigan header faqat CORS-safelisted (`Accept`, `Accept-Language`, `Content-Language`, `Content-Type`, bir qiymatli `Range`); `Content-Type` faqat uch qiymatdan biri; `ReadableStream` ishlatilmagan. Natija muhim: **JSON API'ning preflight talab qilishi tasodifan ba'zi CSRF hujumlarini to'sadi, lekin bunga tayanmang.** Server `Content-Type` ni tekshirmasdan `text/plain` bilan kelgan JSON body'ni qabul qilsa, "JSON uchun preflight bor" himoyasi yo'qoladi.
 
 ### Credentials
 
-Standart holatda cross-origin `fetch` cookie yubormaydi. `credentials: "include"` bilan yuborilsa, brauzer cookie qo'shadi, lekin javobni berish uchun server `Access-Control-Allow-Credentials: true` qaytarishi va ACAO aniq origin bo'lishi kerak. `*` credentials bilan yaroqsiz: Fetch Standard buni rad etadi. Shu cheklov sababli dasturchilar "wildcard ishlamayapti" deb Origin'ni aks ettiradigan kod yozadi, va xavfsizlik chegarasi shu yerda yo'qoladi.
+Standart holatda cross-origin `fetch` cookie yubormaydi. `credentials: "include"` bilan yuborilsa, brauzer cookie qo'shadi, lekin javobni berish uchun server `Access-Control-Allow-Credentials: true` qaytarishi va ACAO aniq origin bo'lishi kerak. `*` credentials bilan yaroqsiz: Fetch Standard buni rad etadi. MDN bu qoidani kengaytiradi: credentials'li so'rovda `Access-Control-Allow-Headers`, `Access-Control-Allow-Methods` va `Access-Control-Expose-Headers` da ham `*` ishlatilmaydi, aniq ro'yxat berilishi kerak. Yana bir nozik joy: javobdagi `Access-Control-Allow-Origin` `*` bo'lsa, javobdagi `Set-Cookie` cookie o'rnatmaydi. Shu cheklov sababli dasturchilar "wildcard ishlamayapti" deb Origin'ni aks ettiradigan kod yozadi, va xavfsizlik chegarasi shu yerda yo'qoladi.
 
 ## Chuqurroq: aks ettirish, null va cache
 
@@ -168,6 +170,14 @@ Bu "ro'yxat: hamma" degani. Har qanday hujumchi sahifasi `fetch(api, {credential
 ### Vary: Origin va cache
 
 Agar javobdagi ACAO so'rovdagi Origin'ga bog'liq bo'lsa, oraliq cache bir origin uchun saqlangan javobni boshqasiga berishi mumkin. Natija ikki xil: ruxsat etilgan origin noto'g'ri javob oladi (xizmat buziladi) yoki ruxsatsiz origin ruxsatli javobni oladi. Yechim: javobga `Vary: Origin` qo'shish. Cache zaharlanishining umumiy mexanizmi 20-darsda.
+
+### Preflight keshi
+
+`Access-Control-Max-Age` preflight natijasi necha sekund saqlanishini bildiradi; MDN bo'yicha standart qiymat 5 sekund, brauzerlar esa o'z yuqori chegarasini qo'llaydi: Firefox 24 soat (86400 sekund), Chromium 76 versiyadan boshlab 2 soat (7200 sekund). Qiymat qanchalik katta bo'lsa, ortiqcha `OPTIONS` shunchalik kam, lekin siyosatni o'zgartirganingizda eski ruxsat shunchalik uzoq amal qiladi. Preflight javobi ham `Vary: Origin` ga muhtoj: aks holda CDN bir origin uchun berilgan ruxsatni boshqasiga qaytarishi mumkin.
+
+### Credentials'siz so'rovlar va private ma'lumot
+
+`*` faqat credentials'siz so'rov uchun mumkin. "Faqat cookie yo'q, shuning uchun xavfsiz" xulosasi esa to'liq to'g'ri emas: ma'lumot tarmoq joylashuvi bilan himoyalangan bo'lishi mumkin (masalan, faqat ichki tarmoqdan ochiladigan servis). Foydalanuvchi brauzeri ichki tarmoqda bo'lsa, tashqi sahifaning skripti u servisga cookie'siz so'rov yuboradi va `*` bo'lsa javobni o'qiydi. MDN SOP sahifasi aynan shu holatni (ichki tarmoq va webmail) SOP himoya qiladigan misol sifatida keltiradi. Shuning uchun ichki servislarda ham `*` ni qo'ymang.
 
 ### Preflight va autentifikatsiya
 
@@ -321,12 +331,55 @@ Tuzatish nima uchun yetarli. Invariant: javobni o'qish ruxsati faqat aniq ro'yxa
 
 Yopilmagani. Birinchidan, serverga hujum so'rovi baribir yetib boradi: bu misolda `server()` chaqirildi va, agar u yon ta'sirli bo'lsa, bajariladi. CORS CSRF'ni to'xtatmaydi (36-dars). Ikkinchidan, ro'yxatdagi origin'ning o'zida XSS bo'lsa, hujumchi o'sha origin'dan o'qiydi: ro'yxatni qisqa tuting. Uchinchidan, CORS faqat brauzerni cheklaydi; `curl` bilan cookie yoki token ega bo'lgan har kim API'ga murojaat qila oladi, ya'ni avtorizatsiya server tomonda alohida tekshiriladi.
 
+### 4. Mashq: preflight javobini yig'ish
+
+Zaif `preflight` funksiyasi Origin'ni aks ettiradi, credentials bilan `*` qaytaradi va so'ralgan hamma metod va header'ga ruxsat beradi. Uni tuzating: ruxsat etilgan origin, metod va header'lar uchungina `204` va CORS header'lari qaytsin, qolgan holda `403` va faqat `Vary`. Yashirin testlar begona va `null` origin'ni, ro'yxatdan tashqari metod va header'ni hamda wildcard'ni tekshiradi.
+
+```ts run
+const ALLOWED = new Set(["https://app.fleet.example", "https://admin.fleet.example"]);
+const METHODS = ["GET", "POST", "PUT", "DELETE"];
+const HEADERS = ["content-type", "authorization"];
+
+type Pre = { status: number; headers: Record<string, string> };
+
+// ZAIF: Origin aks ettiriladi, wildcard credentials bilan, hamma narsa ruxsat
+function preflight(origin: string | undefined, method: string, reqHeaders: string): Pre {
+  return {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": origin ?? "*",
+      "Access-Control-Allow-Credentials": "true",
+      "Access-Control-Allow-Methods": "*",
+      "Access-Control-Allow-Headers": "*",
+    },
+  };
+}
+
+console.log(preflight("https://evil.example", "PUT", "authorization"));
+```
+
+```ts test
+const ok = preflight("https://app.fleet.example", "PUT", "Content-Type, Authorization");
+check("ruxsat etilgan origin, metod va header: 204", () => ok.status === 204);
+check("ACAO aynan o'sha origin", () => ok.headers["Access-Control-Allow-Origin"] === "https://app.fleet.example");
+check("Allow-Credentials true", () => ok.headers["Access-Control-Allow-Credentials"] === "true");
+check("Allow-Methods va Allow-Headers wildcard emas", () => ok.headers["Access-Control-Allow-Methods"] !== "*" && ok.headers["Access-Control-Allow-Headers"] !== "*");
+check("Max-Age 600 dan oshmaydi", () => Number(ok.headers["Access-Control-Max-Age"]) > 0 && Number(ok.headers["Access-Control-Max-Age"]) <= 600);
+const evil = preflight("https://evil.example", "PUT", "authorization");
+check("begona origin: 403 va ACAO yo'q", () => evil.status === 403 && !("Access-Control-Allow-Origin" in evil.headers));
+check("null origin ruxsat olmaydi", () => !("Access-Control-Allow-Origin" in preflight("null", "GET", "").headers));
+check("Origin yo'q: ACAO yo'q", () => !("Access-Control-Allow-Origin" in preflight(undefined, "GET", "").headers));
+check("ro'yxatdan tashqari metod (PATCH) rad etiladi", () => preflight("https://app.fleet.example", "PATCH", "").status === 403);
+check("ro'yxatdan tashqari header (x-debug) rad etiladi", () => preflight("https://app.fleet.example", "GET", "x-debug").status === 403);
+check("Vary: Origin har holda bor", () => [ok, evil, preflight(undefined, "GET", "")].every((r) => /Origin/.test(r.headers["Vary"] ?? "")));
+```
+
 ## Qachon qo'llamaslik kerak
 
 - CORS umuman kerak bo'lmasligi mumkin. Frontend va API bir origin'da (reverse proxy orqali `/api` yo'li) bo'lsa, cross-origin so'rov yo'q va CORS o'chirib qo'yiladi. Bu eng xavfsiz sozlama: konfiguratsiya yo'q, xato yo'q. Next.js'da API yo'llari yoki rewrite shu uchun mos.
 - Haqiqatan ommaviy, autentifikatsiyasiz API (ochiq ma'lumot) uchun `Access-Control-Allow-Origin: *` to'g'ri tanlov. Faqat cookie, token yoki foydalanuvchiga xos ma'lumot yo'qligiga ishonch hosil qiling va hech qachon `*` ni credentials bilan aralashtirmang.
 - Dinamik ruxsat ro'yxati (har mijoz o'z domenini qo'shadi) murakkab: ro'yxatni bazadan olish, domenga egalikni tasdiqlash va kesh siyosatini hisobga olish kerak. Bu holda har domen uchun tekshirilgan yozuv yetarli; keng `endsWith` qoidasi yo'q.
-- Preflight natijasini uzoq keshlash (`Access-Control-Max-Age`) siyosat o'zgarishini kechiktiradi. MDN: standart qiymat 5 sekund, brauzerlar esa o'zlarining ichki yuqori chegarasini qo'llaydi (u `Access-Control-Max-Age` qiymatidan ustun). Qisqa qiymat qo'ying.
+- Preflight natijasini uzoq keshlash (`Access-Control-Max-Age`) siyosat o'zgarishini kechiktiradi. Yuqorida ko'rilganidek, standart 5 sekund, Firefox 24 soat, Chromium 2 soatda to'xtatadi. Siyosat tez o'zgarishi mumkin bo'lsa, qiymatni qisqa tuting.
 - CORS xatosini "tuzatish" uchun brauzer kengaytmasi yoki `--disable-web-security` ishlatish faqat lokal sinov uchun; production xatolari bunday yo'qolmaydi.
 
 ## Stack'da: NestJS va Fastify
@@ -353,7 +406,7 @@ app.get("/vehicles", async (req) => {
 });
 ```
 
-NestJS hujjati ogohlantiradi: Fastify'da cross-origin `PUT`, `PATCH` yoki `DELETE` preflight bosqichida rad etiladi, agar `methods` ni o'zingiz ko'rsatmasangiz (Express'da shu kod ishlaydi). Kutubxona standart qiymatlari versiyaga qarab o'zgaradi, shuning uchun `origin`, `credentials` va `Vary` xatti-harakatini integratsiya testi bilan tekshiring: begona `Origin` bilan so'rov yuborib, ACAO header'i yo'qligini tasdiqlang. Nest'da `app.enableCors({ origin: [...], credentials: true })` ham shu ma'noda ishlaydi.
+NestJS hujjati ogohlantiradi: `enableCors()` standart `Access-Control-Allow-Methods` qiymati platformaga qarab farq qiladi. Express'ning `cors` paketi `GET,HEAD,PUT,PATCH,POST,DELETE` qaytaradi, `@fastify/cors` esa faqat CORS-safelisted `GET,HEAD,POST` ni; shuning uchun Fastify'da cross-origin `PUT`, `PATCH` yoki `DELETE` preflight bosqichida rad etiladi, agar `methods` ni o'zingiz ko'rsatmasangiz (xuddi shu kod Express'da ishlaydi). `enableCors()` ham, `NestFactory.create()` ning `cors` opsiyasi ham funksiya qabul qiladi, shunda ruxsat ro'yxatini har so'rovda hisoblash mumkin. Kutubxona standart qiymatlari versiyaga qarab o'zgaradi, shuning uchun `origin`, `credentials` va `Vary` xatti-harakatini integratsiya testi bilan tekshiring: begona `Origin` bilan so'rov yuborib, ACAO header'i yo'qligini tasdiqlang. Nest'da `app.enableCors({ origin: [...], credentials: true })` ham shu ma'noda ishlaydi.
 
 ## Xulosa
 

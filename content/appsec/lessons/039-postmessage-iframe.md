@@ -6,7 +6,13 @@ summary: "Cross-origin hujjatlar orasidagi yagona rasmiy aloqa kanali postMessag
 duration: 40
 sources:
   - id: whatwg-html
-    note: "HTML Standard: cross-origin obyektlar va window.postMessage; bu dars aniq bo'lim raqamlarini keltirmaydi va xatti-harakatni lokal Chromium'da sinab ko'rishga tayanadi"
+    note: "HTML Standard: origin tushunchasi va cross-origin aloqa; bu dars standartdan bo'lim raqami keltirmaydi, postMessage qoidalari MDN va OWASP sahifalaridan olingan"
+  - id: mdn-window-postmessage
+    note: "MDN Window.postMessage(): targetOrigin aniq moslashishi (scheme, host, port), '*' xavfi, event.origin va event.source, data: URL uchun '*' talabi, xabar mazmunini tekshirish"
+  - id: mdn-csp-sandbox
+    note: "MDN CSP sandbox direktivasi: allow-same-origin bo'lmasa sandbox'li resurs opaque origin'ga ega va uning Origin qiymati null"
+  - id: cs-micro-frontend
+    note: "OWASP Micro-Frontend Security Cheat Sheet: allow-scripts bilan allow-same-origin'ni birga bermaslik; sandbox'li hujjat xabarda \"null\" bo'lib ko'rinadi va bu qiymatga ishonib bo'lmaydi"
   - id: mdn-sop
     note: "MDN Same-origin policy: ikki origin hujjatlari orasida aloqa uchun window.postMessage ishlatilishi va cross-origin Window obyektiga cheklangan kirish"
   - id: cs-xss
@@ -45,7 +51,7 @@ quiz:
       - "Sandbox'li iframe xabar yubora olmaydi"
       - "`\"null\"` (noyob/opaque origin); `e.source === frame.contentWindow` bilan manbani tekshirish kerak, 'null' ni allowlist'ga qo'shish esa har qanday sandbox'li hujjatni qabul qiladi"
     answer: 3
-    explain: "Sandbox atributi hujjatni noyob origin'ga o'tkazadi (cheat sheet: markup unique origin sifatida qaraladi); bu origin xabarda 'null' deb ko'rinadi, va barcha sandbox'li hujjatlar uchun bir xil. Shu sababli 'null' ga ishonib bo'lmaydi; e.source ni o'zingiz yaratgan iframe'ning contentWindow'iga solishtiring (mazkur xatti-harakat lokal Chromium'da sinab ko'rilgan)."
+    explain: "allow-same-origin bo'lmasa sandbox'li hujjat opaque origin'ga ega va uning origin'i \"null\" deb ko'rinadi (MDN CSP sandbox sahifasi, Micro-Frontend cheat sheet). Bu qiymat barcha sandbox'li hujjatlar uchun bir xil, shu sababli unga ishonib bo'lmaydi; e.source ni o'zingiz yaratgan iframe'ning contentWindow'iga solishtiring."
   - q: "Ishonchsiz kontent uchun iframe'ga `sandbox=\"allow-scripts allow-same-origin\"` berildi va iframe sizning origin'ingizdan yuklanadi. Nima uchun bu sandbox deyarli ma'nosiz?"
     options:
       - "Ikkala flag birga ishlamaydi"
@@ -53,12 +59,12 @@ quiz:
       - "allow-scripts faqat HTML uchun"
       - "Brauzer bunday atributni e'tiborsiz qoldiradi"
     answer: 1
-    explain: "Same-origin hujjat skripti ota sahifaga to'liq kira oladi, shu jumladan iframe elementining sandbox atributini o'zgartira oladi. Bu yaxshi ma'lum ogohlantirish (ushbu dars uni lokal korpusdagi manbalar bilan tasdiqlamagan, shuning uchun hujjatni o'zingiz o'qib chiqing). Ishonchsiz kontent alohida origin'da ham bo'lishi kerak."
+    explain: "Same-origin hujjat skripti ota sahifaga to'liq kira oladi, shu jumladan iframe elementining sandbox atributini o'zgartira oladi. OWASP Micro-Frontend cheat sheet shu kombinatsiyani sizning origin'ingizdagi kontent uchun bermaslikni yozadi. Ishonchsiz kontent alohida origin'da ham bo'lishi kerak."
   - q: "Qabul qiluvchi `e.data` ni `eval(e.data.code)` qiladi, lekin origin allowlist'ga tekshiradi. Bu nima?"
     options:
       - "Origin'ga ishonish zaiflikni yo'q qilmaydi: bu eval sink, jo'natuvchi buzilsa yoki tekshiruv xato bo'lsa to'g'ridan-to'g'ri kod bajariladi; xabar faqat ma'lumot (buyruq nomi allowlist'dan) bo'lishi kerak"
       - "Xavfsiz dizayn"
-      - "Faqat Firefox'da ishlaydi"
+      - "Faqat bitta brauzerda ishlaydi"
       - "Faqat sandbox bo'lsa xavfli"
     answer: 0
     explain: "Cheat sheet: xabarni hech qachon kod sifatida baholamang (eval) yoki DOM'ga (innerHTML) qo'ymang. Protokol tuzilmasi aniq bo'lsin: ruxsat etilgan `type` qiymatlari va har biri uchun tekshiriladigan maydonlar."
@@ -147,13 +153,13 @@ OWASP HTML5 Security Cheat Sheet postMessage bo'yicha aniq qoidalarni beradi. Yu
 
 Cheat sheet ikkita muhim eslatma qo'shadi. Birinchisi, `data` ustidan nazoratingiz bor deb o'ylamang: jo'natuvchi sahifadagi bitta XSS hujumchiga istalgan formatdagi xabarni yuborish imkonini beradi. Ikkinchisi, ikkala sahifa ham xabarlarni faqat ma'lumot sifatida qayta ishlashi kerak: ularni `eval()` bilan kod sifatida baholamang va `innerHTML` bilan DOM'ga qo'ymang, chunki bu DOM-based XSS yaratadi; `element.textContent = data` xavfsizroq variant. Origin tekshirishda FQDN'ni aniq moslashtirish kerak. Cheat sheet `message.origin.indexOf(".owasp.org") != -1` kodini juda xavfsiz emas deb ataydi, chunki `owasp.org.attacker.com` ham mos keladi.
 
-Eslatma: bu dars cheat sheet va MDN SOP sahifasining lokal nusxalariga solishtirilgan. HTML Standard (postMessage algoritmi) lokal korpusda yo'q va undan to'g'ridan-to'g'ri da'vo olinmagan; `event.origin` va sandbox bilan bog'liq xatti-harakatlar esa lokal Chromium'da sinab ko'rildi.
+MDN `Window.postMessage()` sahifasi shu qoidalarni to'ldiradi. `targetOrigin` aniq mos kelishi kerak, scheme, hostname va port bilan birga; parol kabi qiymat yuboriladigan joyda bu argument aynan qabul qiluvchining origin'i bo'lishi shart. Sabab shuki, zararli sayt oynaning manzilini sizning bilmasangiz ham almashtirishi mumkin va `'*'` bilan yuborilgan ma'lumotni ushlab oladi. Qabul qiluvchi tomonda MDN yanada qat'iy: `origin` va kerak bo'lsa `source` tekshirilmasa, XSS ochiladi. Tekshiruvdan o'tgandan keyin ham xabarning sintaksisini tekshirish kerak, aks holda ishongan saytingizdagi zaiflik sizning saytingizda XSS'ga aylanadi.
 
 ## Chuqurroq: nozik holatlar
 
 ### event.origin, event.source va event.data
 
-`event.origin` brauzer tomonidan qo'yiladi, jo'natuvchi sahifa uni soxtalashtira olmaydi: u xabar yuborgan hujjatning origin'ini aytadi. Lekin bu shu origin'ga ishonish mumkin degani emas. `event.source` xabar kelgan oynaning o'zi (WindowProxy): u origin tekshiruvini to'ldiradi, chunki bir origin'dan bir nechta oyna va iframe bo'lishi mumkin. `event.data` esa jo'natuvchi nazoratidagi qiymat, doim ishonchsiz. Shuning uchun uchta tekshiruv: origin allowlist, source kutilgan oyna, data tuzilma allowlist.
+`event.origin` brauzer tomonidan qo'yiladi, jo'natuvchi sahifa uni soxtalashtira olmaydi: u xabar yuborgan hujjatning origin'ini aytadi. MDN yana bir nozik joyni ta'kidlaydi: bu qiymat `postMessage` chaqirilgan paytdagi origin, oyna keyin boshqa manzilga o'tgan bo'lishi mumkin. Shuning uchun u oynaning hozirgi yoki kelajakdagi origin'i kafolati emas. Lekin bu shu origin'ga ishonish mumkin degani emas. `event.source` xabar kelgan oynaning o'zi (WindowProxy): u origin tekshiruvini to'ldiradi, chunki bir origin'dan bir nechta oyna va iframe bo'lishi mumkin. `event.data` esa jo'natuvchi nazoratidagi qiymat, doim ishonchsiz. Shuning uchun uchta tekshiruv: origin allowlist, source kutilgan oyna, data tuzilma allowlist.
 
 ### Origin allowlist va xom solishtirish
 
@@ -161,9 +167,9 @@ Origin'ni to'plam bilan aniq tenglik orqali solishtiring: `ALLOWED.has(e.origin)
 
 ### Sandbox iframe va origin "null"
 
-Cheat sheet `sandbox` atributi yoqilganda hujjat noyob (unique) origin'dan deb hisoblanishini, formalar va skriptlar o'chirilishini, havolalar boshqa browsing context'larni nishonga ololmasligini, avtomatik ishga tushadigan xususiyatlar va plaginlar bloklanishini yozadi. `allow-scripts` kabi qiymatlar bilan alohida imkoniyatlarni qaytarish mumkin. Bu darsni yozishda Chromium'da sinab ko'rilgan: `sandbox="allow-scripts"` iframe'dan yuborilgan xabarda `event.origin` qiymati `"null"` satri bo'ladi, `event.source` esa iframe'ning `contentWindow` obyektiga teng. Natija ikki muhim qoidani beradi. Birinchi, sandbox'li hujjatni origin bo'yicha ajratib bo'lmaydi: `"null"` ni allowlist'ga qo'shsangiz, har qanday sandbox'li hujjat (hujumchining ham) qabul qilinadi. Ikkinchi, bunday iframe'dan xabarni `event.source === frame.contentWindow` bilan tekshirish kerak, chunki aynan siz yaratgan iframe ekanini manba tasdiqlaydi.
+Cheat sheet `sandbox` atributi yoqilganda hujjat noyob (unique) origin'dan deb hisoblanishini, formalar va skriptlar o'chirilishini, havolalar boshqa browsing context'larni nishonga ololmasligini, avtomatik ishga tushadigan xususiyatlar va plaginlar bloklanishini yozadi. `allow-scripts` kabi qiymatlar bilan alohida imkoniyatlarni qaytarish mumkin. MDN CSP `sandbox` sahifasi aniqroq: `allow-same-origin` bo'lmasa sandbox'li resurs opaque origin'dan hisoblanadi, uning `Origin` qiymati `null`, va u same-origin policy tekshiruvlaridan doim o'ta olmaydi, ya'ni `localStorage` va `document.cookie`ga ham kira olmaydi. Micro-Frontend cheat sheet buni xabarlarga ko'chiradi: bunday hujjat xabarda `"null"` bo'lib ko'rinadi va bu qiymatni jo'natuvchi kimligi sifatida ishonchli deb bo'lmaydi. Bu darsdagi birinchi misol aynan shuni ko'rsatadi (`origin: "null"`). Natija ikki muhim qoidani beradi. Birinchi, sandbox'li hujjatni origin bo'yicha ajratib bo'lmaydi: `"null"` ni allowlist'ga qo'shsangiz, har qanday sandbox'li hujjat (hujumchining ham) qabul qilinadi. Ikkinchi, bunday iframe'dan xabarni `event.source === frame.contentWindow` bilan tekshirish kerak, chunki aynan siz yaratgan iframe ekanini manba tasdiqlaydi. Agar xabar yuborish uchun aniq origin kerak bo'lsa (masalan, maxfiy ma'lumot), Micro-Frontend cheat sheet boshqa yo'lni tavsiya qiladi: alohida cross-origin iframe va origin'ni saqlaydigan sandbox siyosati. MDN yana bir istisnoni yozadi: `data:` URL'lar opaque origin'ga ega, shuning uchun ularga xabar yuborish uchun `"*"` ishlatishga to'g'ri keladi; bu ham ularga maxfiy ma'lumot yubormaslik uchun sabab.
 
-`allow-same-origin` ni `allow-scripts` bilan birga ishonchsiz kontent uchun bermang: iframe sizning origin'ingizdan yuklansa, uning skripti ota sahifaga kirib, o'z sandbox cheklovlarini olib tashlay oladi. Bu yaxshi ma'lum xavf, lekin lokal korpusdagi manbalarda aniq matn sifatida tasdiqlanmagan, shu sababli HTML Standard hujjatidagi `sandbox` atributi bo'limini o'zingiz o'qib chiqing. Cheat sheet qo'shimcha ogohlantirish beradi: `sandbox` eski brauzerlarda e'tiborsiz qoldiriladi, shuning uchun uni qo'shimcha himoya qatlami sifatida ishlating yoki brauzer qo'llab-quvvatlashini tekshirib, shundan keyingina ishonchsiz kontentni ko'rsating.
+`allow-same-origin` ni `allow-scripts` bilan birga ishonchsiz kontent uchun bermang: iframe sizning origin'ingizdan yuklansa, uning skripti ota sahifaga kirib, o'z sandbox cheklovlarini olib tashlay oladi. Micro-Frontend cheat sheet aynan shuni yozadi: bu ikki ruxsatni o'z origin'ingizdagi kontent uchun birga bermang, chunki ichki ilova sandbox'ini olib tashlay oladi. `allow-same-origin` ramkaning asl origin'ini saqlaydi, lekin cross-origin ramkani host bilan same-origin qilib qo'ymaydi. Cheat sheet qo'shimcha ogohlantirish beradi: `sandbox` eski brauzerlarda e'tiborsiz qoldiriladi, shuning uchun uni qo'shimcha himoya qatlami sifatida ishlating yoki brauzer qo'llab-quvvatlashini tekshirib, shundan keyingina ishonchsiz kontentni ko'rsating.
 
 ### Protokol dizayni
 
@@ -244,9 +250,9 @@ rad etildi
 
 ### Tuzatish nima uchun yetarli
 
-Invariant: panelga faqat o'zimiz yaratgan iframe'dan kelgan, tuzilmasi allowlist'ga mos xabar tushadi va u matn sifatida ko'rsatiladi. Ko'rsatilgan hujum ikki qatlam bilan yopildi: begona oynadan kelgan payload `source` tekshiruvidan o'tmadi ("rad etildi"), va hatto tekshiruvdan o'tgan holatda ham `textContent` HTML'ni tahlil qilmaydi (`<7>` matn bo'lib ko'rindi). Yuboruvchi tomonda `'*'` ishlatildi, chunki bu misolda xabarda maxfiy ma'lumot yo'q va sandbox'li qabul qiluvchi origin'i `"null"`; maxfiy ma'lumot yuboriladigan joyda aniq origin ko'rsatiladi.
+Invariant: panelga faqat o'zimiz yaratgan iframe'dan kelgan, tuzilmasi allowlist'ga mos xabar tushadi va u matn sifatida ko'rsatiladi. Ko'rsatilgan hujum ikki qatlam bilan yopildi: begona oynadan kelgan payload `source` tekshiruvidan o'tmadi ("rad etildi"), va hatto tekshiruvdan o'tgan holatda ham `textContent` HTML'ni tahlil qilmaydi (`<7>` matn bo'lib ko'rindi). Yuboruvchi tomonda `'*'` ishlatildi, chunki bu o'quv sahifasining ota oynasi qaysi origin'dan ochilishi oldindan ma'lum emas va xabarda maxfiy ma'lumot yo'q; real tizimda ota sahifaning aniq origin'i yoziladi, maxfiy ma'lumot yuboriladigan joyda esa `'*'` mutlaqo ishlatilmaydi.
 
-Yopilmagan narsalar: (1) vidjetning o'zi buzilsa, `source` tekshiruvi o'tadi, shuning uchun mazmun validatsiyasi (uzunlik, tur) va textContent kerak edi; (2) mazmun xavfsiz bo'lsa ham mantiqiy ishonch masalasi qoladi: vidjet yolg'on mashina nomi yuborishi mumkin; (3) xabar orqali kelgan amal buyrug'ini serverda avtorizatsiya qilish kerak; (4) real sahifada origin allowlist (agar iframe sandbox'siz bo'lsa) ham qo'shiladi; (5) misol yagona brauzerda (Chromium) lokal sinab ko'rilgan.
+Yopilmagan narsalar: (1) vidjetning o'zi buzilsa, `source` tekshiruvi o'tadi, shuning uchun mazmun validatsiyasi (uzunlik, tur) va textContent kerak edi; (2) mazmun xavfsiz bo'lsa ham mantiqiy ishonch masalasi qoladi: vidjet yolg'on mashina nomi yuborishi mumkin; (3) xabar orqali kelgan amal buyrug'ini serverda avtorizatsiya qilish kerak; (4) real sahifada, iframe sandbox'siz va alohida origin'dan yuklansa, `source` tekshiruviga origin allowlist ham qo'shiladi.
 
 ## Qachon qo'llamaslik kerak
 

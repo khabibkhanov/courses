@@ -6,11 +6,15 @@ summary: "TLS 1.3 handshake bosqichlari (key exchange, server parameters, authen
 duration: 50
 sources:
   - id: rfc8446
-    note: "RFC 8446: 1.2 (TLS 1.2 dan asosiy farqlar), 2 (protokol umumiy ko'rinishi va 1-rasm), 2.3 va 8 (0-RTT va replay), 4.4.3 (CertificateVerify), 5.3 (yozuv nonce'si), 7.1 (HKDF-Expand-Label), 9.1 (majburiy suite'lar)"
+    note: "RFC 8446: 1.2 (TLS 1.2 dan asosiy farqlar), 2 (protokol umumiy ko'rinishi va 1-rasm), 2.3 va Appendix E.5 (0-RTT va replay), 4.1.3 (downgrade himoyasi), 4.4.3 (CertificateVerify), 7.1 (HKDF-Expand-Label), 9.1 (majburiy suite'lar). Kalit jadvali va Finished tafsilotlari darslik darajasida yozilgan"
   - id: t10-a04
     note: "A04:2025 'How to prevent': TLS 1.2 va undan yuqori faqat forward secrecy cipher'lar bilan, CBC'dan voz kechish, HSTS, kvant bardosh kalit almashish algoritmlari; tekshiriladigan savollar: sertifikat va ishonch zanjiri tekshiruvi, algoritm downgrade"
   - id: rfc5280
     note: "RFC 5280 6.1.3 va 4.1.2.5: sertifikat yo'li tekshiruvi (imzo, muddat, bekor qilinmaganlik) va validity davri; bu darsda sertifikat tekshiruvi qisqa eslatiladi, to'liq 66-darsda"
+  - id: pg-libpq-ssl
+    note: "PostgreSQL libpq 32.19 SSL Support: sslmode qiymatlari (disable, allow, prefer, require, verify-ca, verify-full), standart prefer qiymati xavfsiz muhit uchun tavsiya etilmaydi, verify-full server nomini ham tekshiradi"
+  - id: redis-tls
+    note: "Redis TLS sahifasi: tls-port va port 0, tls-cert-file, tls-key-file, tls-ca-cert-file, standart holatda mutual TLS (tls-auth-clients), tls-replication va tls-cluster"
   - id: cs-pqc
     note: "Post-Quantum Cryptography cheat sheet: X25519MLKEM768 kabi hybrid exchange'ni pilot qilish, hybrid kalit almashish sertifikat imzosini kvantga bardosh qilmasligi"
 quiz:
@@ -24,11 +28,11 @@ quiz:
     explain: "RFC 8446 1.2: ServerHello'dan keyingi barcha handshake xabarlari shifrlangan; shuning uchun sertifikat ham passiv kuzatuvchiga ko'rinmaydi (2-rasmda {} belgisi)."
   - q: "Kimdir ClientHello'dagi cipher suite ro'yxatini yo'lda o'zgartirib, zaifroq variantni majbur qilmoqchi (downgrade). TLS 1.3 buni qanday aniqlaydi?"
     options:
-      - "Server ClientHello'ni imzolaydi"
       - "Finished xabari handshake transkriptining MAC'i; ikki tomon ko'rgan transkript farq qilsa Finished mos kelmaydi va handshake to'xtaydi"
+      - "Server ClientHello'ni imzolaydi"
       - "Brauzer har doim eng zaif variantni rad etadi"
       - "Hech narsa; downgrade TLS 1.3 da mumkin"
-    answer: 1
+    answer: 0
     explain: "Kalitlar va Finished transkript hash'iga bog'liq. O'zgargan ClientHello ikki tomonda turli transkript beradi; autentifikatsiya qilingan Finished/CertificateVerify buni ushlaydi."
   - q: "0-RTT (early data) haqida RFC 8446 nimani aytadi?"
     options:
@@ -42,9 +46,9 @@ quiz:
     options:
       - "Har qanday TLS versiyasi, agar sertifikat bor bo'lsa"
       - "TLS 1.0 va forward secrecy ixtiyoriy"
-      - "TLS 1.2 va undan yuqori, forward secrecy cipher'lar bilan, CBC'dan voz kechish, HTTPS uchun HSTS"
       - "Faqat HSTS yetarli, versiya ahamiyatsiz"
-    answer: 2
+      - "TLS 1.2 va undan yuqori, forward secrecy cipher'lar bilan, CBC'dan voz kechish, HTTPS uchun HSTS"
+    answer: 3
     explain: "A04: >= TLS 1.2 faqat forward secrecy cipher'lar bilan, CBC cipher'larni olib tashlash, kvant bardosh kalit almashish algoritmlarini qo'llash va HTTPS uchun HSTS."
   - q: "Servis `TLS_RSA_WITH_AES_128_CBC_SHA` suite'ini qo'llab-quvvatlaydi. Nima uchun bu muammo?"
     options:
@@ -56,11 +60,11 @@ quiz:
     explain: "RFC 8446 1.2: statik RSA va DH suite'lari olib tashlangan, simmetrik algoritmlar faqat AEAD. ASVS Appendix C ham RSA PKCS#1 v1.5 kalit transportini disallowed, CBC'ni legacy deb belgilaydi."
   - q: "Zamonaviy hybrid TLS kalit almashish (X25519MLKEM768) yoqildi. Bu qanday ta'sir qiladi?"
     options:
-      - "Server sertifikati ham avtomatik kvantga bardosh bo'ladi"
       - "Kalit almashish (maxfiylik) kvant tahdidiga qarshi kuchayadi, lekin sertifikat imzolari klassik bo'lib qoladi va ular uchun alohida migratsiya kerak"
+      - "Server sertifikati ham avtomatik kvantga bardosh bo'ladi"
       - "TLS 1.3 kerak bo'lmay qoladi"
       - "Forward secrecy yo'qoladi"
-    answer: 1
+    answer: 0
     explain: "OWASP PQC cheat sheet: hybrid TLS kalit almashish sertifikat imzolarini kvantga bardosh qilmaydi; autentifikatsiya algoritmlari alohida tekshiriladi (70-dars)."
 task:
   title: "TLS konfiguratsiya linteri"
@@ -216,13 +220,13 @@ Bundan muhim xususiyat kelib chiqadi: traffic kalitlari handshake'ning shu paytg
 
 ### Downgrade va sertifikat tekshiruvi
 
-Downgrade hujumida hujumchi ClientHello'dagi algoritm ro'yxatini yo'lda o'zgartirib, ikki tomonni zaifroq variantga majbur qiladi. Himoya shunga asoslanadi: o'zgargan ro'yxat transkriptni o'zgartiradi va Finished/CertificateVerify mos kelmaydi. TLS 1.3 qo'shimcha ravishda ServerHello.random maydonining oxirgi 8 baytini TLS 1.2 yoki 1.1 muzokara qilinsa, maxsus qiymat bilan to'ldiradi (4.1.3 bo'limi, downgrade himoya mexanizmi); tafsilot spetsifikatsiyada.
+Downgrade hujumida hujumchi ClientHello'dagi algoritm ro'yxatini yo'lda o'zgartirib, ikki tomonni zaifroq variantga majbur qiladi. Himoya shunga asoslanadi: o'zgargan ro'yxat transkriptni o'zgartiradi va Finished/CertificateVerify mos kelmaydi. Qo'shimcha mexanizm: RFC 8446 4.1.3 bo'yicha TLS 1.3 server TLS 1.2 yoki undan past versiyani muzokara qilsa, ServerHello.Random maydonining oxirgi 8 baytini maxsus qiymat bilan to'ldirishi shart (TLS 1.2 uchun `DOWNGRD` ASCII matni va 0x01 bayti, TLS 1.1 yoki past uchun oxirgi bayt 0x00). TLS 1.3 qo'llaydigan mijoz bunday qiymatni ko'rsa, handshake'ni to'xtatadi, shuning uchun hujumchi serverni kuch bilan eski versiyaga tushira olmaydi.
 
 Sertifikatni tekshirish mijoz tomonidagi mas'uliyat: RFC 5280 6.1.3 bo'limi yo'ldagi har bir sertifikat uchun imzo tekshirilishi, validity davri joriy vaqtni qamrashi, sertifikat bekor qilinmaganligi va issuer nomi mos kelishi kerakligini yozadi. Kutubxonada sertifikat tekshiruvini o'chirib qo'yish (`rejectUnauthorized: false` kabi bayroq) butun handshake'ni autentifikatsiyasiz qoldiradi: ikkala tomon shifrlangan kanal o'rnatadi, lekin kim bilan ekani noma'lum (64-darsdagi MITM). Bu A04 tekshirish ro'yxatidagi "server sertifikati va ishonch zanjiri to'g'ri tekshirilyaptimi" savoliga to'g'ri keladi. PKI tafsiloti 66-darsda.
 
 ### 0-RTT: tezlik va replay
 
-Ilgari ulangan tomonlar PSK ulashsa, TLS 1.3 mijozga birinchi parvozda ma'lumot yuborishga ruxsat beradi (early data, 2.3-bo'lim). RFC 8446 aniq aytadi: 0-RTT ma'lumot xavfsizligi boshqa TLS ma'lumotlaridan zaifroq. U forward secret emas, chunki faqat taklif qilingan PSK'dan hosil kalit bilan shifrlanadi. Va ulanishlar orasida replay'ga qarshi kafolat yo'q: oddiy 1-RTT ma'lumotini replay'dan serverning Random qiymati himoya qiladi, 0-RTT esa ServerHello'ga bog'liq emas. Spetsifikatsiya ilova protokollari 0-RTT'ni uni aniqlovchi profilsiz ishlatmasligi kerakligini yozadi. 8-bo'lim esa tarmoq hujumchisi 0-RTT parvozini nusxalashi yoki mijozning qayta urinish xulq-atvoridan foydalanib serverni bir xil xabarni bir necha marta olishga majbur qilishi mumkinligini tushuntiradi; birinchi turdagi hujumni 0-RTT ma'lumotni ko'pi bilan bir marta qabul qiladigan umumiy holat bilan oldini olish mumkin, serverlar buni amalga oshirishi SHOULD.
+Ilgari ulangan tomonlar PSK ulashsa, TLS 1.3 mijozga birinchi parvozda ma'lumot yuborishga ruxsat beradi (early data, 2.3-bo'lim). RFC 8446 aniq aytadi: 0-RTT ma'lumot xavfsizligi boshqa TLS ma'lumotlaridan zaifroq. U forward secret emas, chunki faqat taklif qilingan PSK'dan hosil kalit bilan shifrlanadi. Va ulanishlar orasida replay'ga qarshi kafolat yo'q: oddiy 1-RTT ma'lumotini replay'dan serverning Random qiymati himoya qiladi, 0-RTT esa ServerHello'ga bog'liq emas. RFC 8446 Appendix E.5 aniq yozadi: ilova protokollari 0-RTT ma'lumotdan uni aniqlovchi profilsiz foydalanmasligi kerak (MUST NOT), mijozlar replay qilinsa xavfli xabarlarni early data'da yubormasligi kerak va TLS implementatsiyalari ilova so'ramaguncha 0-RTT'ni yoqmasligi kerak. Oxir-oqibat serverlar o'zlarini replay'dan o'zlari himoya qilishi kerak; 8-bo'limda bunday mexanizmlar (bir martalik ticket'lar, ClientHello yozuvi va yangilik tekshiruvi) tasvirlangan. Ularning tafsilotini bu dars chuqur ochmaydi: asosiy xulosa shuki, replay himoyasi TLS kutubxonasining standart xususiyati emas, uni siz yoqasiz va ilova qatlamida ham ta'minlaysiz.
 
 Amaliy qoida: holatni o'zgartiradigan so'rovlar (POST, to'lov, buyruq yuborish) uchun 0-RTT yoqmang yoki ularni idempotent qiling. Idempotency kalitlari 75-darsda.
 
@@ -344,7 +348,7 @@ Nimani yopmaydi. Birinchidan, bu model o'quv versiyasi: real TLS'da bu mexanizm 
 
 ## Qachon qo'llamaslik kerak
 
-TLS 1.3 hamma muhitga bir tekis mos kelmaydi. Eski mijozlar (embedded qurilmalar, eski Android versiyalari, ayrim korporativ proksilar) faqat TLS 1.2 ni bilishi mumkin. Telematika qurilmalari ko'pincha shunday bo'ladi (bu muallifning amaliy kuzatuvi, manbada tekshirilmagan): ularni bir kunda yangilab bo'lmaydi. Bunday holda TLS 1.2 ni forward secrecy cipher'lar (ECDHE + AEAD) bilan qoldirish va eskirgan suite'larni o'chirish A04 talabiga mos, lekin buni inventarda yozib qo'ying va yangilash muddatini belgilang. TLS 1.3 majburiy deb butun parkni uzib qo'yish ham xavfsizlik emas, mavjudlik buzilishi (1-dars).
+TLS 1.3 hamma muhitga bir tekis mos kelmaydi. Eski mijozlar (embedded qurilmalar, eski Android versiyalari, ayrim korporativ proksilar) faqat TLS 1.2 ni bilishi mumkin. Telematika qurilmalari ko'pincha shunday bo'ladi (bu muallifning amaliy kuzatuvi, manbada tekshirilmagan; ro'yxatni o'z inventaringizdan oling): ularni bir kunda yangilab bo'lmaydi. Bunday holda TLS 1.2 ni forward secrecy cipher'lar (ECDHE + AEAD) bilan qoldirish va eskirgan suite'larni o'chirish A04 talabiga mos, lekin buni inventarda yozib qo'ying va yangilash muddatini belgilang. TLS 1.3 majburiy deb butun parkni uzib qo'yish ham xavfsizlik emas, mavjudlik buzilishi (1-dars).
 
 0-RTT ni asosan statik, takrorlanishi zararsiz GET so'rovlari uchun yoqing yoki umuman yoqmang. Ichki tarmoqda "TLS shart emas" deb hisoblash ham xato: A04 tranzitda hamma ma'lumot shifrlanishi kerakligini yozadi, hujumchi ichki tarmoqqa tushsa, ochiq HTTP uni ochib beradi. Kompensatsiya qilishning o'rniga mTLS (66-dars) ichki servislarda keng qo'llaniladi.
 
@@ -352,7 +356,11 @@ TLS 1.3 hamma muhitga bir tekis mos kelmaydi. Eski mijozlar (embedded qurilmalar
 
 Ko'p production tizimda TLS ilovada emas, reverse proxy, load balancer yoki ingress'da tugaydi. Node.js jarayoni oddiy HTTP eshitsa, proxy bilan servis orasidagi bo'lak ham himoyalanishi kerak (cluster ichida mTLS yoki service mesh). Minimal versiya, suite ro'yxati va HSTS sozlamalarini bitta joyda (proxy konfiguratsiyasida) yuriting va yuqoridagi linter kabi inventar skripti bilan tekshiring.
 
-Ilova Node.js'da TLS ustida ishlasa, klient sifatida sertifikat tekshiruvini hech qachon o'chirmang (`rejectUnauthorized: false` kod ichida paydo bo'lsa, review'da to'xtating). PostgreSQL va Redis ulanishlarida ham shifrlash va server kimligini tekshirish alohida sozlamalar: faqat shifrlaydigan rejim sertifikatni tekshirmasligi mumkin, shuning uchun ulanish rejimini hujjatdan tekshiring (bu qism bu darsda manba bilan tekshirilmagan, 22 va 24-darslarda pg-auth va redis-security manbalari bilan qaytamiz). Next.js uchun Vercel kabi platformalar TLS'ni o'zi boshqaradi; sizning mas'uliyatingiz HSTS va xavfsiz cookie sozlamalari (13 va 16-darslar).
+Ilova Node.js'da TLS ustida ishlasa, klient sifatida sertifikat tekshiruvini hech qachon o'chirmang (`rejectUnauthorized: false` kod ichida paydo bo'lsa, review'da to'xtating). PostgreSQL va Redis ulanishlarida ham shifrlash va server kimligini tekshirish alohida sozlamalar.
+
+PostgreSQL klienti (libpq) uchun `sslmode` oltita qiymat oladi: `disable`, `allow`, `prefer`, `require`, `verify-ca`, `verify-full`. Standart qiymat `prefer`: avval SSL, bo'lmasa shifrsiz ulanish; hujjatning o'zi uni xavfsizlik nuqtai nazaridan mantiqsiz va faqat orqaga moslik uchun qoldirilgan, xavfsiz muhitda tavsiya etilmaydi deb yozadi. `require` ulanishni shifrlaydi, lekin hujjat jadvali bo'yicha o'rtadagi hujumchidan (MITM) himoya bermaydi: u tarmoq sizni to'g'ri serverga ulaydi deb ishonadi (ildiz CA fayli mavjud bo'lsa, sertifikat `verify-ca` kabi tekshiriladi). `verify-ca` server sertifikati ishonchli CA tomonidan berilganini tekshiradi, `verify-full` esa bundan tashqari so'ralgan server nomi sertifikatdagi nomga mos kelishini ham tekshiradi va hujjat uni xavfsizlikka sezgir muhitlarning ko'pida tavsiya qiladi. Ommaviy CA ishlatilsa, `verify-ca` boshqa kimdir shu CA'da ro'yxatdan o'tkazgan serverga ulanishga yo'l beradi, shuning uchun u holatda doim `verify-full` kerak. `sslmode` Unix domain socket ulanishida e'tiborga olinmaydi. Yo'riqnoma: productionda `sslmode=verify-full` va ildiz sertifikat fayli (`sslrootcert`) berilsin.
+
+Redis TLS ni 6-versiyadan boshlab qo'llaydi va u kompilyatsiya paytida yoqilgan bo'lishi kerak (`BUILD_TLS=yes`). `tls-port` shifrlangan portni ochadi va bu oddiy `port` ga qo'shimcha: shifrsiz portni butunlay o'chirish uchun `port 0` yoziladi. Server sertifikati, kalit va ishonchli CA uchun `tls-cert-file`, `tls-key-file`, `tls-ca-cert-file` ishlatiladi. Standart holatda Redis mutual TLS qo'llaydi va mijozdan ishonchli sertifikat talab qiladi (`tls-auth-clients no` buni o'chiradi). Replika ulanishi uchun `tls-replication yes`, klaster shinasi uchun `tls-cluster yes` kerak, aks holda ichki linklar shifrsiz qoladi. Redis va PostgreSQL hardening 89-darsda. Next.js uchun Vercel kabi platformalar TLS'ni o'zi boshqaradi; sizning mas'uliyatingiz HSTS va xavfsiz cookie sozlamalari (13 va 16-darslar).
 
 ## Xulosa
 

@@ -6,11 +6,11 @@ summary: "Clickjacking (UI redress) mexanizmi: sahifa begona saytning shaffof if
 duration: 40
 sources:
   - id: csp3
-    note: "frame-ancestors direktivasi: ajdodlar ro'yxatini cheklaydi, default-src'ga o'tmaydi, meta orqali berilgan siyosatda e'tiborsiz qoladi, X-Frame-Options'dan ustun"
+    note: "frame-ancestors direktivasi: ajdodlar URL'larini cheklaydi, default-src'ga qaytmaydi, policy meta elementda bo'lsa e'tiborsiz qoldirilishi shart (MUST), enforce rejimidagi frame-ancestors bor javobda X-Frame-Options e'tiborsiz qoldiriladi"
   - id: mdn-csp
-    note: "CSP bo'yicha umumiy ma'lumot; frame-ancestors va frame-src farqi MDN direktiva sahifasida"
+    note: "MDN frame-ancestors sahifasi: direktiva frame, iframe, object, embed ota-onalarini belgilaydi, frame-src'dan farqi, default-src fallback yo'q, meta'da qo'llab-quvvatlanmaydi, har bir ajdod tekshiriladi va bittasi mos kelmasa yuklash bekor qilinadi"
   - id: t10-a06
-    note: "Insecure Design: framing siyosatini boshidan loyihalash zarurati haqida umumiy dizayn tamoyili"
+    note: "A06 Insecure Design dizayn va arxitektura kamchiliklari toifasi (threat modeling va secure design'ga urg'u); clickjacking u yerda nomi bilan tilga olinmaydi, dars uni framing siyosati dizayn qarori sifatida bog'laydi"
   - id: cs-clickjacking
     note: "OWASP Clickjacking Defense Cheat Sheet: frame-ancestors, X-Frame-Options, SameSite, DoubleClickjacking va meta teg ishlamasligi"
 quiz:
@@ -33,7 +33,7 @@ quiz:
   - q: "Dasturchi `<meta http-equiv=\"Content-Security-Policy\" content=\"frame-ancestors 'none'\">` ni HTML'ga qo'shdi. Natija?"
     options:
       - "Sahifani frame qilish taqiqlanadi"
-      - "Faqat Firefox'da ishlaydi"
+      - "Faqat bitta brauzerda ishlaydi"
       - "frame-ancestors meta orqali berilganda e'tiborsiz qoladi: u HTTP javob sarlavhasida bo'lishi kerak"
       - "Faqat X-Frame-Options bilan birga ishlaydi"
     answer: 2
@@ -141,7 +141,7 @@ Mijoz kabinetidagi "Mashinani masofadan bloklash" sahifasida katta qizil tugma b
 
 Bu clickjacking (UI redress attack): hujumchi foydalanuvchi ko'rayotgan narsa bilan bosayotgan narsani ajratadi. CSRF (36-dars) bilan farqi: CSRF so'rovni foydalanuvchisiz yuboradi, shuning uchun token uni to'sadi. Clickjacking'da so'rovni haqiqatan foydalanuvchining o'zi, sizning sahifangizning o'zida, to'g'ri CSRF tokeni bilan yuboradi. Token, Origin tekshiruvi, same-origin bo'lgani uchun, bu hujumga ta'sir qilmaydi. Ayni shu sabab alohida himoya kerak: sahifani boshqa sayt frame ichiga olishini brauzer darajasida taqiqlash.
 
-Bu mavzu OWASP Top 10:2025 da A06 Insecure Design kategoriyasiga yaqin. Himoya bitta sarlavha bo'lsa ham, uni qo'yish dizayn qarori: qaysi sahifa kim tomonidan frame qilinishi mumkin, qaysi biri hech kim tomonidan. Qaror qabul qilinmasa, brauzer standarti "hamma frame qila oladi".
+OWASP Top 10:2025 ning A06 Insecure Design toifasi dizayn va arxitektura kamchiliklariga qaratilgan; u clickjacking'ni nomi bilan tilga olmaydi, lekin sabab shu turdagi: himoya bitta sarlavha bo'lsa ham, uni qo'yish dizayn qarori. Qaysi sahifani kim frame qilishi mumkin, qaysini hech kim. Qaror qabul qilinmasa, brauzer standarti "hamma frame qila oladi".
 
 ## Asosiy g'oya
 
@@ -155,11 +155,11 @@ Cheat sheet mexanizmlar bir-biriga bog'liq emasligini va imkon qadar bir nechtas
 
 ### frame-ancestors
 
-`Content-Security-Policy: frame-ancestors 'none'` sahifani hech kim frame qila olmasligini aytadi. `'self'` faqat o'z origin'ingiz, aniq origin ro'yxati esa ruxsat etilgan hamkorlar uchun. Muhim tafsilotlar (CSP3 spetsifikatsiyasi va MDN direktiva sahifasi lokal nusxasida tekshirilgan):
+`Content-Security-Policy: frame-ancestors 'none'` sahifani hech kim frame qila olmasligini aytadi. `'self'` faqat o'z origin'ingiz, aniq origin ro'yxati esa ruxsat etilgan hamkorlar uchun. Muhim tafsilotlar:
 
 - Direktiva `<frame>`, `<iframe>`, `<object>`, `<embed>` ichiga joylashtirishni boshqaradi. U `frame-src` dan farq qiladi: `frame-src` sizning sahifangiz qaysi iframe'larni yuklashini, `frame-ancestors` sizning sahifangizni kim yuklashini boshqaradi.
 - `frame-ancestors` `default-src` ga qaytmaydi. `default-src 'none'` yozilgan policy'ning o'zi sahifani har kim frame qilishidan to'smaydi.
-- Meta element orqali berilgan policy'da `frame-ancestors` e'tiborsiz qoldiriladi (spetsifikatsiyada shunday yozilgan). OWASP cheat sheet ham `X-Frame-Options` va `frame-ancestors` meta tegda ishlamasligini, ular HTTP javob sarlavhasida bo'lishi kerakligini ta'kidlaydi.
+- Meta element orqali berilgan policy'da `frame-ancestors` e'tiborsiz qoldirilishi shart (CSP3: MUST; MDN ham direktiva `<meta>` da qo'llab-quvvatlanmasligini yozadi). OWASP cheat sheet ham `X-Frame-Options` va `frame-ancestors` meta tegda ishlamasligini, ular HTTP javob sarlavhasida bo'lishi kerakligini ta'kidlaydi.
 - Ichma-ich frame'larda brauzer hamma ajdodni tekshiradi: bittasi mos kelmasa yuklash bekor qilinadi (MDN).
 
 ### X-Frame-Options
@@ -183,6 +183,14 @@ Cheat sheet SameSite=Strict yoki Lax cookie'lar cross-site iframe so'rovlaridan 
 ### DoubleClickjacking
 
 Cheat sheet alohida bo'lim sifatida DoubleClickjacking'ni tasvirlaydi: hujumchi foydalanuvchini ikki marta bosishga undab, ikki bosish orasida yangi oynani almashtiradi, ikkinchi bosish esa top-level oynadagi sezgir tugmaga tushadi. Nishon frame ichida emas, shuning uchun `X-Frame-Options` va `frame-ancestors` yordam bermaydi. Cheat sheet tavsiyasi: yuqori xavfli amallar (rozilik ekrani, to'lov tasdig'i, xavfsizlik sozlamalari) uchun foydalanuvchi amal tafsilotini ko'rib, serverda majburlanadigan tasdiqdan (transaction authorization) o'tsin; qo'shimcha tugma bosish o'zi yetarli emas. Tugmalarni oldindan o'chirib, avval o'zaro ta'sir bo'lgandan keyin yoqish faqat qo'shimcha chora sifatida taklif qilinadi va yordamchi texnologiyalar bilan sinab ko'rilishi kerak. Bu mavzuning chuqur tafsilotlari cheat sheet bo'limida.
+
+### X-Frame-Options cheklovlari
+
+Cheat Sheet `X-Frame-Options` ning nega eskirgan hisoblanishini aniq sanaydi. Sarlavha har sahifa uchun alohida belgilanishi kerak, shuning uchun joriy qilish murakkab. U ko'p domenli sayt uchun yaroqsiz: ruxsat etilgan domenlar ro'yxatini bermaydi, shu sababli bir vaqtda o'zingiz va bitta hamkor frame qilishi kerak bo'lsa, yo'li yo'q (brauzerlar faqat bitta sarlavha va bitta qiymatni hisobga oladi). Ichma-ich frame'larda `SAMEORIGIN` va `ALLOW-FROM` kutilgandek ishlamaydi, chunki `ALLOW-FROM` ota-oynani emas, eng yuqori kontekstni tekshiradi. Va proksilar sarlavhalarni qo'shadi yoki o'chiradi, o'chirilsa himoya yo'qoladi. `frame-ancestors` bularning hammasini hal qiladi: bir nechta origin yozish mumkin, ichma-ich zanjirda har bir ajdod tekshiriladi. Sintaksis nozikligi: `'self'` va `'none'` bir tirnoq ichida yoziladi, origin'lar esa tirnoqsiz; wildcard `https://*.somesite.com` subdomenlarga mos keladi, lekin bare `somesite.com` ga emas, uni alohida yozish kerak.
+
+### Nega frame-buster ishonchsiz
+
+Cheat Sheet oddiy `if (top != self) top.location.href = self.location.href` skriptini ishlatmaslikni aytadi va uni yengish usullarini sanaydi. Ikki marta frame'lash (double framing): hujumchi sahifasi qurbonni frame ichidagi frame'ga qo'yadi, `parent.location` ga yozish brauzerning descendant frame navigation siyosati tufayli xavfsizlik xatosiga aylanadi va skript ishlamay qoladi. `onbeforeunload` bilan foydalanuvchiga "chiqmoqchimisiz?" so'rovi ko'rsatib navigatsiyani bekor qildirish yoki 204 javobli sahifaga takroran navigatsiya qilib asl so'rovni bekor qilish ham mumkin. Va cheklangan zonalar: `sandbox` atributi (Chrome) iframe ichida JavaScript'ni o'chiradi, shunda skript umuman ishga tushmaydi. Natija: skript sarlavhaning o'rnini bosmaydi; nomi "best-for-now" skript esa faqat sarlavhani bilmaydigan eski brauzerlar uchun zaxira. Frame qilinishi kerak bo'lgan sahifalarda esa `window.confirm()` foydalanuvchiga amalni bildirib, qisman yordam beradi, lekin Cheat Sheet uni kafolat emas, qo'shimcha tasdiq deb belgilaydi: sandbox'li frame'da brauzer oddiy dialoglarni bostirishi mumkin, shuning uchun amal faqat `true` natijadan keyin bajariladi.
 
 ### Frame-buster
 
@@ -328,7 +336,7 @@ const config: NextConfig = {
 export default config;
 ```
 
-Bu yerda ikkita `source` bir yo'lga mos kelishi mumkin (`/vidjet/...` ikkalasiga ham tushadi) va bir xil nomli sarlavhalar qanday birlashtirilishi Next.js hujjatidagi qoidaga bog'liq; natijani haqiqiy javobda `curl -I` bilan tekshiring, "ishlaydi" deb faraz qilmang. Ishonchli yo'l: umumiy qoidani vidjet yo'lini istisno qiladigan `source` bilan yozish yoki sarlavhani bitta middleware'da hisoblash. Nginx/CDN darajasida qo'yish ham mumkin, lekin ilova sarlavhasi bilan ziddiyat bo'lmasligi kerak. Tenant ro'yxati bazadan kelsa, 37-darsdagi vazifadagi kabi allowlist funksiyasidan o'tkazing.
+Bu yerda `/vidjet/...` yo'li ikkala `source` ga ham mos keladi. Next.js hujjatiga ko'ra bir xil kalitli sarlavhada oxirgi qoida oldingisini bosib ketadi, shuning uchun vidjet sahifasida `Content-Security-Policy` ikkinchi qoidadagisi bo'ladi. Lekin `X-Frame-Options: DENY` birinchi qoidadan qoladi: zamonaviy brauzer enforce rejimidagi `frame-ancestors` bor javobda uni e'tiborsiz qoldiradi, `frame-ancestors`ni bilmaydigan eski brauzer esa `DENY` bilan vidjetni ham bloklaydi. Toza yo'l: vidjet yo'lini birinchi qoidadan istisno qiladigan `source` yozish (masalan negative lookahead bilan) yoki sarlavhani bitta Proxy yoki middleware'da yo'l bo'yicha hisoblash. Natijani haqiqiy javobda `curl -I` bilan tekshiring. Nginx/CDN darajasida qo'yish ham mumkin, lekin ilova sarlavhasi bilan ziddiyat bo'lmasligi kerak. Tenant ro'yxati bazadan kelsa, 37-darsdagi vazifadagi kabi allowlist funksiyasidan o'tkazing.
 
 ## Xulosa
 
