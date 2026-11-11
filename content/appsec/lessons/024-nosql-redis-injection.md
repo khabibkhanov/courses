@@ -364,7 +364,7 @@ export async function remember(tenantId: string, name: string, value: string) {
 }
 ```
 
-Mongoose'da `sanitizeFilter` sozlamasi bor: u filtr ichida `$` bilan boshlanadigan kalitli ichki obyektlarni `$eq` ichiga o'raydi, shunda `{ "$ne": null }` operator emas, oddiy qiymat sifatida solishtiriladi. Bu qo'shimcha qatlam; asosiy chora `zod` kabi sxema bilan tur va shakl tekshiruvi. Redis uchun `username/password` ACL foydalanuvchisi, ilova roli esa faqat kerakli buyruqlar va kalit naqshlariga cheklanadi.
+Mongoose'da `sanitizeFilter` sozlamasi bor: u filtr ichida `$` bilan boshlanadigan kalitli ichki obyektlarni `$eq` ichiga o'raydi, shunda `{ "$ne": null }` operator emas, oddiy qiymat sifatida solishtiriladi. Bu qo'shimcha qatlam; asosiy chora `zod` kabi sxema bilan tur va shakl tekshiruvi. Redis uchun `username/password` ACL foydalanuvchisi, ilova roli esa faqat kerakli buyruqlar va kalit naqshlariga cheklanadi. Redis 7.0 da sinaganimizda `+get +set +del` bilan cheklangan rolda `ioredis` ulanadi, lekin ulanishdagi `INFO` tekshiruvi `NOPERM` bilan rad etilgani uchun ogohlantirish chiqaradi: `enableReadyCheck: false` bering yoki `+info` qo'shing. Shuningdek `+@all -@dangerous` roli `FLUSHALL`, `KEYS` va `CONFIG` ni to'sadi, lekin `EVAL` ga ruxsat qoladi (skript ichida ham kalit naqshi va buyruq cheklovi amal qiladi); `EVAL` kerak bo'lmasa uni alohida yoping.
 
 ## Xulosa
 

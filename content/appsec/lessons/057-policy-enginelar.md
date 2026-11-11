@@ -165,13 +165,14 @@ Cheat sheet ikki variantni ajratadi:
 
 ### OPA
 
-Open Policy Agent (OPA) hujjatiga ko'ra ochiq kodli, umumiy maqsadli policy engine: siyosat kod sifatida yuqori darajali deklarativ tilda (Rego) yoziladi, dasturlar qaror qabul qilishni OPA'ga topshirish uchun oddiy API'dan foydalanadi. OPA qaror qabul qilishni majburlashdan ajratadi: dastur OPA'ga so'rov yuboradi va tuzilgan ma'lumot (masalan JSON) bilan kirish beradi, OPA kirishni siyosat va ma'lumotga qarshi baholab qaror chiqaradi. Hujjat OPA CNCF graduated loyiha ekanini va uni mikroservislar, Kubernetes, CI/CD va API gateway'larda ishlatish mumkinligini aytadi. Cheat sheet qo'shimcha eslatadi: OPA HTTP, kutubxona va WebAssembly integratsiyasini qo'llaydi, mahsulot nomi bitta deployment rejimini bildirmaydi. Authorization Patterns Cheat Sheet uchta deployment variantini ajratadi: embedded kutubxona (masofaviy PDP ulanishisiz baholash davom etadi, lekin siyosat va ma'lumot yangi bo'lishi va har kirish nuqtasida majburlash tekshirilishi kerak), lokal sidecar yoki daemon (umumiy qaror amalga oshirilishi servis yaqinida, lekin API'si cheklanadi va jarayon xatosi boshqariladi; lokal joylashuv o'zi ishonch yaratmaydi) va masofaviy servis (umumiy baholash va markazlashgan boshqaruv, lekin PEP'lar autentifikatsiya va authorize qilinadi, javoblar himoyalanadi, yaroqli qaror bo'lmasa rad etiladi). Qaror va uning majburlanishi qaysi siyosat versiyasi bilan chiqqanini tekshirish uchun yetarli kontekst bilan log qilinadi, sezgir atributlarni oshkor qilmasdan. Tanlov access control modelidan (RBAC, ABAC, ReBAC) mustaqil: OPA ham, boshqa PDP ham model emas, uni ifodalash vositasi.
+Open Policy Agent (OPA) hujjatiga ko'ra ochiq kodli, umumiy maqsadli policy engine: siyosat kod sifatida yuqori darajali deklarativ tilda (Rego) yoziladi, dasturlar qaror qabul qilishni OPA'ga topshirish uchun oddiy API'dan foydalanadi. OPA qaror qabul qilishni majburlashdan ajratadi: dastur OPA'ga so'rov yuboradi va tuzilgan ma'lumot (masalan JSON) bilan kirish beradi, OPA kirishni siyosat va ma'lumotga qarshi baholab qaror chiqaradi. Hujjatga ko'ra OPA CNCF graduated loyiha, mikroservislar, Kubernetes, CI/CD va API gateway'larda ishlatiladi. Cheat sheet: OPA HTTP, kutubxona va WebAssembly integratsiyasini qo'llaydi, nomi bitta deployment rejimini bildirmaydi. Authorization Patterns Cheat Sheet uchta deployment variantini ajratadi: embedded kutubxona (masofaviy PDP ulanishisiz baholash davom etadi, lekin siyosat va ma'lumot yangi bo'lishi va har kirish nuqtasida majburlash tekshirilishi kerak), lokal sidecar yoki daemon (umumiy qaror amalga oshirilishi servis yaqinida, lekin API'si cheklanadi va jarayon xatosi boshqariladi; lokal joylashuv o'zi ishonch yaratmaydi) va masofaviy servis (umumiy baholash va markazlashgan boshqaruv, lekin PEP'lar autentifikatsiya va authorize qilinadi, javoblar himoyalanadi, yaroqli qaror bo'lmasa rad etiladi). Qaror va majburlanishi qaysi siyosat versiyasi bilan chiqqanini tekshirish uchun yetarli kontekst bilan log qilinadi, sezgir atributlarsiz. Tanlov access control modelidan (RBAC, ABAC, ReBAC) mustaqil: PDP model emas, uni ifodalash vositasi.
 
-Quyida bizning avtopark qoidasi Rego'da qanday ko'rinishi mumkin. Bu kod bu darsda ishga tushirilmagan (OPA bu muhitda yo'q), faqat shaklni ko'rsatadi:
+Avtopark qoidasi Rego'da shunday ko'rinishi mumkin (OPA hujjatidagi sintaksis bo'yicha):
 
 ```rego
 package fleet.authz
 
+# OPA 1.x da bu import shart emas (if, in, contains standart); pre-1.0 versiyalarda kerak
 import rego.v1
 
 default allow := false
@@ -183,7 +184,7 @@ allow if {
 }
 ```
 
-`default allow := false` qatori deny by default'ning o'zi: boshqa qoida mos kelmasa, javob rad. Lekin qoida to'g'ri yozilgani siyosat to'g'riligini kafolatlamaydi, uni test qilish kerak (pastda).
+`default allow := false` qatori deny by default'ning o'zi: boshqa qoida mos kelmasa, javob rad. Lekin to'g'ri yozilgan qoida siyosat to'g'riligini kafolatlamaydi: uni test qiling (pastda).
 
 ASVS 5.0.0 V8.3 bo'limidagi ikki talab policy engine dizayniga bevosita tegadi. 8.3.2 (3-daraja): authorization qarori tayanadigan qiymatlar o'zgarsa, o'zgarish darhol qo'llanishi kerak; darhol qo'llab bo'lmaydigan joyda (masalan, o'zi-o'zini tasdiqlovchi tokenlardagi ma'lumot) iste'molchi endi huquqsiz bo'lib qolgan amalni bajarganda ogohlantiradigan va o'zgarishni qaytaradigan kompensatsion nazorat bo'lishi kerak; ASVS bu muqobil ma'lumot sizishini yopmasligini ham eslatadi. 8.3.3 (3-daraja): obyektga kirish dastlabki subyektning huquqlariga asoslanadi, oraliq servis huquqlariga emas. Misol: iste'molchi token bilan bir servisni chaqirsa va u ikkinchi servisdan ma'lumot so'rasa, ikkinchi servis birinchisining mashina-mashina tokenini emas, iste'molchining tokenini qaror uchun ishlatadi. Bu PDP'ga beriladigan `user` atributlari qayerdan kelishi masalasining ASVS shakli: servislar zanjirida PEP har bo'g'inda dastlabki subyektni uzatishi kerak.
 
@@ -191,7 +192,7 @@ ASVS 5.0.0 V8.3 bo'limidagi ikki talab policy engine dizayniga bevosita tegadi. 
 
 ### Qarorni qaysi ma'lumotga bog'lash
 
-Cheat sheet har qarorni autentifikatsiyalangan subyektga, amalga, resursga, tenant'ga va tegishli kontekstga bog'lashni aytadi. Muhim ogohlantirish: PEP PDP'ga rol, tenant a'zoligi yoki egalik kabi qiymatlarni yuborsa, ularni ishonchli manbadan olishi kerak; mijoz so'rovidan ko'chirilgan qiymat ishonchli bo'lib qolmaydi. Boshqacha aytganda, PDP'ni autentifikatsiyalash yetarli emas, unga beriladigan atributlar manbasi ham tekshiriladi. Resurs identifikatorlari ham haqiqiy maqsad obyektga qarshi tekshirilishi kerak (52-dars).
+Cheat sheet har qarorni autentifikatsiyalangan subyektga, amalga, resursga, tenant'ga va tegishli kontekstga bog'lashni aytadi. Muhim ogohlantirish: PEP PDP'ga rol, tenant a'zoligi yoki egalik kabi qiymatlarni yuborsa, ularni ishonchli manbadan olishi kerak; mijoz so'rovidan ko'chirilgan qiymat ishonchli bo'lib qolmaydi. Ya'ni PDP'ni autentifikatsiyalash yetarli emas, atributlar manbasi ham tekshiriladi. Resurs identifikatorlari ham haqiqiy maqsad obyektga qarshi tekshirilishi kerak (52-dars).
 
 ### Siyosat va ma'lumot yangiligi
 

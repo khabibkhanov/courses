@@ -401,7 +401,7 @@ export async function verifyAndUpgrade(
 }
 ```
 
-`memoryCost` KiB'da berilgani uchun 19456 = 19 MiB (OWASP minimumi). Natija qatori parametrlar va tuzni o'zida saqlaydi, shu sababli sozlamani oshirganda eski yozuvlar kirishda yangilanadi.
+`memoryCost` KiB'da berilgani uchun 19456 = 19 MiB (OWASP minimumi). Natija qatori parametrlar va tuzni o'zida saqlaydi, shu sababli sozlamani oshirganda eski yozuvlar kirishda yangilanadi. `argon2` 0.45 bilan sinaganimizda: noto'g'ri parol uchun `verify` `false` qaytaradi, lekin saqlangan qator buzilgan yoki bo'sh bo'lsa `TypeError` tashlaydi (`needsRehash` ham), shuning uchun login oqimida bu holatni ushlab, "parol noto'g'ri" bilan bir xil javob bering va logga yozing; `memoryCost` yoki `timeCost` oshirilsa `needsRehash` `true` qaytaradi, `argon2i` yozuvi `argon2id` sozlamasiga nisbatan ham `true` beradi. Kutubxona standarti (`m=65536,t=3,p=4`) yuqoridagi OWASP minimumidan boshqa, shuning uchun parametrlarni har doim aniq bering.
 
 ## Qachon qo'llamaslik kerak
 

@@ -86,8 +86,13 @@ self.onmessage = async (e) => {
     const require = (m) => { throw new Error("import/require bu yerda ishlamaydi: " + m); };
     await new Function("console", "exports", "require", "check", '"use strict"; return (async () => {\\n' + e.data.code + '\\n})()')(console, exports, require, check);
     await Promise.all(pending);
-    if (live.size) await new Promise((resolve) => (idle = resolve));
-    await Promise.all(pending);
+    // Oxirgi taymer callback'idan keyin promise davomlari (va ular qo'yadigan yangi taymerlar) hali bajarilmagan bo'lishi mumkin:
+    // native makrotask bilan event loop'ga chiqamiz va taymer qolmaguncha takrorlaymiz.
+    do {
+      if (live.size) await new Promise((resolve) => (idle = resolve));
+      await new Promise((resolve) => nativeSet(resolve, 0));
+      await Promise.all(pending);
+    } while (live.size);
   } catch (err) {
     postMessage({ type: "out", out: { kind: "err", text: err && err.stack ? String(err.stack).split("\\n    at new Function")[0] : String(err) } });
   }

@@ -1516,3 +1516,93 @@ kubelet-security-context:
   year: 2026
   kind: web
   url: https://raw.githubusercontent.com/kubernetes/kubernetes/master/pkg/kubelet/kuberuntime/security_context_others.go
+rfc7919:
+  title: "RFC 7919: Negotiated Finite Field Diffie-Hellman Ephemeral Parameters for Transport Layer Security (TLS)"
+  author: "D. Gillmor (IETF)"
+  year: 2016
+  kind: spec
+  url: https://www.rfc-editor.org/rfc/rfc7919
+ecma262:
+  title: "ECMA-262 (ECMAScript Language Specification), spec.html source, RegExp sections"
+  author: "Ecma TC39"
+  year: 2026
+  kind: spec
+  url: https://github.com/tc39/ecma262
+docker-dockerfile-ref:
+  title: "Dockerfile reference | Docker Docs"
+  author: "Docker Inc."
+  year: 2026
+  kind: docs
+  url: https://docs.docker.com/reference/dockerfile/
+docker-run-ref:
+  title: "docker container run | Docker Docs"
+  author: "Docker Inc."
+  year: 2026
+  kind: docs
+  url: https://docs.docker.com/reference/cli/docker/container/run/
+docker-run-guide:
+  title: "Running containers (Runtime privilege and Linux capabilities) | Docker Docs"
+  author: "Docker Inc."
+  year: 2026
+  kind: docs
+  url: https://docs.docker.com/engine/containers/run/
+lex-dxx-113:
+  title: "113-son 15.10.2024 (ro'yxat raqami 3573). Kiberxavfsizlik talablariga muvofiqlik yuzasidan ekspertizadan o'tkazish tartibi to'g'risidagi nizomni tasdiqlash haqida (Davlat xavfsizlik xizmati raisining buyrug'i)"
+  author: "O'zbekiston Respublikasi Davlat xavfsizlik xizmati"
+  year: 2024
+  kind: docs
+  url: https://lex.uz/uz/docs/-7222910
+lex-dxx-118:
+  title: "118-son 24.10.2024 (ro'yxat raqami 3570). O'zbekiston Respublikasi muhim axborot infratuzilmasi obyektlarini toifalash va ularning yagona reyestrini shakllantirish tartibi to'g'risidagi vaqtinchalik nizomni tasdiqlash haqida (Davlat xavfsizlik xizmati raisining buyrug'i)"
+  author: "O'zbekiston Respublikasi Davlat xavfsizlik xizmati"
+  year: 2024
+  kind: docs
+  url: https://lex.uz/uz/docs/-7217270
+lex-dxx-91:
+  title: "91-son 04.09.2023 (ro'yxat raqami 3458). O'zbekiston Respublikasi kiberxavfsizlik va muhim axborot infratuzilmasi obyektlarining kiberxavfsizligini ta'minlash darajasini baholash tartibi to'g'risidagi nizomni tasdiqlash haqida (Davlat xavfsizlik xizmati raisining buyrug'i)"
+  author: "O'zbekiston Respublikasi Davlat xavfsizlik xizmati"
+  year: 2023
+  kind: docs
+  url: https://lex.uz/uz/docs/-6615573
+lex-mh-19:
+  title: "19-mh-son 14.11.2023 (ro'yxat raqami 3477). Shaxsga doir ma'lumotlar bazasining mulkdori va (yoki) operatorining shaxsga doir ma'lumotlarga ishlov berilishini hamda ularning himoya qilinishini ta'minlovchi tuzilmaviy bo'linmasi yoki vakolatli shaxsi faoliyatini tashkil etishning namunaviy tartibini tasdiqlash haqida (Adliya vazirining buyrug'i)"
+  author: "O'zbekiston Respublikasi Adliya vazirligi"
+  year: 2023
+  kind: docs
+  url: https://lex.uz/uz/docs/-6663969
+lex-mh-20:
+  title: "20-mh-son 15.11.2023 (ro'yxat raqami 3478). Shaxsga doir ma'lumotlarga ishlov berishning namunaviy tartibini tasdiqlash haqida (Adliya vazirining buyrug'i)"
+  author: "O'zbekiston Respublikasi Adliya vazirligi"
+  year: 2023
+  kind: docs
+  url: https://lex.uz/uz/docs/-6663967
+lex-pf-38:
+  title: "PF-38-son 10.03.2026. O'zbekiston Respublikasining Kiberxavfsizlik strategiyasini belgilash va kiberjinoyatchilikning oldini olish tizimini takomillashtirish to'g'risida (Prezidentning farmoni)"
+  author: "O'zbekiston Respublikasi Prezidenti"
+  year: 2026
+  kind: docs
+  url: https://lex.uz/uz/docs/-8079286
+lex-pq-167:
+  title: "PQ-167-son 31.05.2023. O'zbekiston Respublikasining muhim axborot infratuzilmasi obyektlari kiberxavfsizligini ta'minlash tizimini takomillashtirish bo'yicha qo'shimcha chora-tadbirlar to'g'risida (Prezidentning qarori)"
+  author: "O'zbekiston Respublikasi Prezidenti"
+  year: 2023
+  kind: docs
+  url: https://lex.uz/uz/docs/-6479190
+lex-vm-415:
+  title: "415-son 29.07.2026. Shaxsga doir ma'lumotlar bir xil himoya qilinishini ta'minlovchi chet davlatlar ro'yxatini tasdiqlash to'g'risida (Vazirlar Mahkamasining qarori)"
+  author: "O'zbekiston Respublikasi Vazirlar Mahkamasi"
+  year: 2026
+  kind: docs
+  url: https://lex.uz/uz/docs/-8369688
+lex-vm-570:
+  title: "570-son 05.10.2022. Shaxsga doir ma'lumotlarga ishlov berish sohasidagi ayrim normativ-huquqiy hujjatlarni tasdiqlash to'g'risida (Vazirlar Mahkamasining qarori)"
+  author: "O'zbekiston Respublikasi Vazirlar Mahkamasi"
+  year: 2022
+  kind: docs
+  url: https://lex.uz/uz/docs/-6225462
+lex-vm-71:
+  title: "71-son 08.02.2020. Shaxsga doir ma'lumotlar bazalarining davlat reyestrini yuritish bo'yicha davlat xizmatini ko'rsatishning ma'muriy reglamentini tasdiqlash to'g'risida (Vazirlar Mahkamasining qarori)"
+  author: "O'zbekiston Respublikasi Vazirlar Mahkamasi"
+  year: 2020
+  kind: docs
+  url: https://lex.uz/uz/docs/-4729730

@@ -9,6 +9,8 @@ O'zbek tilidagi chuqur dasturlash kurslari - bitta Next.js ilova, bitta Vercel l
 | `/cs50` | CS50 asosida computer science, 60 dars | `lessons-md` | `docs/cs50/lesson-spec.md` |
 | `/clean-code` | Clean Code, 100 dars | `clean-code` | `content/clean-code/AUTHORING.md` |
 | `/system-design` | System Design, 100 dars | `lessons-md` | `docs/system-design/lesson-spec.md`, `case-study.md`, `verification-pass.md` |
+| `/go` | Go (advanced), 100 dars | `clean-code` | `content/go/AUTHORING.md` |
+| `/appsec` | Application Security, 100 dars | `clean-code` | `content/appsec/AUTHORING.md` |
 
 ## Tuzilma
 

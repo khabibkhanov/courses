@@ -301,7 +301,7 @@ SELECT id FROM vehicles WHERE plate = 'x' OR '1'='1'
 SELECT id FROM vehicles ORDER BY id; DROP TABLE vehicles
 ```
 
-Birinchi so'rovda shart `'1'='1'` bilan har doim to'g'ri bo'ladi va hamma tenant'ning mashinalari qaytadi. Ikkinchisida ikkinchi buyruq (`DROP`) ishlashi bazaga va drayverga bog'liq: Prisma hujjatiga ko'ra uning raw metodlari bir vaqtda faqat bitta so'rov bajaradi, shuning uchun Prisma'da ikkinchi buyruq bajarilmaydi. Bu yo'qotish emas, yengillik xolos: bitta so'rov ichida `UNION` yoki shartli ifoda qo'shish baribir mumkin, ya'ni o'qish hujumi saqlanadi. Tagged shaklda esa bu payload'lar parametr bo'lib qolardi, shuning uchun "ishlamaydi" degan dasturchi `Unsafe` ga o'tgan edi.
+Birinchi so'rovda shart `'1'='1'` bilan har doim to'g'ri bo'ladi va hamma tenant'ning mashinalari qaytadi. Ikkinchisida ikkinchi buyruq (`DROP`) ishlashi bazaga va drayverga bog'liq. Prisma hujjati raw metodlar bir vaqtda bitta so'rov bajaradi deydi, lekin real PostgreSQL 16 bilan Prisma 7 va `@prisma/adapter-pg` da sinaganimizda parametrsiz `$queryRawUnsafe` va `$executeRawUnsafe` ichidagi `; DROP TABLE ...` haqiqatan bajarildi (pg parametrsiz so'rovni oddiy protokol bilan yuboradi); so'rovda `$1` kabi parametr bo'lsa baza `cannot insert multiple commands into a prepared statement` xatosi bilan rad etdi. Kysely'ning `sql.raw` i ham parametrsiz so'rovda ikkinchi buyruqni o'tkazdi. Demak ikkinchi buyruq bajarilmaydi deb hisoblash noto'g'ri; bunda ham `UNION` va shartli ifoda bilan o'qish hujumi saqlanadi. Tagged shaklda esa bu payload'lar parametr bo'lib qolardi, shuning uchun "ishlamaydi" degan dasturchi `Unsafe` ga o'tgan edi.
 
 ### 3. Tuzatilgan kod
 

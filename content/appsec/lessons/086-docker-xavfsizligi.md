@@ -11,6 +11,12 @@ sources:
     note: "Docker build best practices: tag'lar o'zgaruvchan, digest bilan qotirish takrorlanuvchi build beradi; USER bilan non-root; multi-stage build"
   - id: docker-build-secrets
     note: "Docker build secrets: build argument va environment variable final image'da saqlanib qolgani uchun sir uchun yaramaydi; secret mount va SSH mount ishlatiladi"
+  - id: docker-dockerfile-ref
+    note: "Dockerfile reference: FROM <image>[:<tag>][@<digest>] [AS <name>]; RUN --mount=type=secret opsiyalari id, target (dst, destination); COPY [--chown=<user>:<group>]; USER <user>[:<group>]; parser directive # syntax=docker/dockerfile:1"
+  - id: docker-run-ref
+    note: "docker container run reference: --read-only, --tmpfs, --security-opt (misol: --security-opt no-new-privileges), --cap-add va --cap-drop"
+  - id: docker-run-guide
+    note: "Docker run guide (Runtime privilege and Linux capabilities): --cap-add va --cap-drop ikkalasi ham ALL qiymatini qo'llab-quvvatlaydi (hujjat misolida katta harf)"
   - id: cs-docker
     note: "OWASP Docker Security Cheat Sheet: docker.sock'ni ochmaslik, USER, --cap-drop all, no-new-privileges, --read-only, resurs cheklovlari, image skanerlash, supply chain (provenance, SBOM, imzo)"
   - id: cs-nodedocker
@@ -191,7 +197,7 @@ OWASP Docker cheat sheet 13-qoidada image'ning butun hayot siklini qamraydi: kel
 
 Mavjudlik (availability) ham konteyner sozlamasi. OWASP cheat sheet 7-qoidada xotira, CPU, fayl deskriptorlari, jarayonlar soni va qayta ishga tushirishlarni cheklashni DoS'dan himoyaning eng yaxshi usuli deb ataydi; Kubernetes'da buning o'xshashi resource request va limit'lar. 5-qoida konteynerlar orasidagi aloqaga ehtiyot bo'lishni, 5a esa port'larni host'ga ulashda UFW kabi firewall'lar bilan o'zaro ta'sirga e'tibor berishni aytadi. Bu 1-darsdagi CIA triadasining konteynerdagi aksi: root va socket maxfiylik va yaxlitlikka, resurs limiti mavjudlikka ta'sir qiladi.
 
-Yana bir real masala: faqat "root emas" yetarli emas. Jarayon root bo'lmasa ham, agar fayl tizimi yoziladigan va capability'lar tashlanmagan bo'lsa, hujumchi huquqini oshirishga urinish uchun vositalar topadi. Shu sababli cheat sheet qatlamlarni birga tavsiya qiladi: USER, `--cap-drop all`, `no-new-privileges` (setuid va setgid binary'lar orqali yangi huquq olishni to'sadi), `--read-only`. Har qatlam alohida kuchsiz, birga esa hujumchining keyingi qadamini qimmatlashtiradi (defense in depth, 3-dars).
+Yana bir real masala: faqat "root emas" yetarli emas. Jarayon root bo'lmasa ham, agar fayl tizimi yoziladigan va capability'lar tashlanmagan bo'lsa, hujumchi huquqini oshirishga urinish uchun vositalar topadi. Shu sababli cheat sheet qatlamlarni birga tavsiya qiladi: USER, `--cap-drop ALL`, `no-new-privileges` (setuid va setgid binary'lar orqali yangi huquq olishni to'sadi), `--read-only`. Har qatlam alohida kuchsiz, birga esa hujumchining keyingi qadamini qimmatlashtiradi (defense in depth, 3-dars).
 
 ## Misol: RCE dan keyin konteyner nimani beradi
 
@@ -310,13 +316,13 @@ Ishga tushirishda qolgan nazoratlar beriladi:
 
 ```bash
 docker run --read-only --tmpfs /tmp \
-  --cap-drop all \
+  --cap-drop ALL \
   --security-opt=no-new-privileges \
   --memory 512m --cpus 1 \
   fleet-api:1.0.0
 ```
 
-Nima uchun shunday: base image digest bilan qotirilgan (best practices hujjati); token faqat `RUN` davomida fayl sifatida mount qilinadi va qatlamga yozilmaydi, `ARG`/`ENV` esa final image'da qolardi; ikkinchi bosqich faqat build natijasi va production bog'liqliklarini oladi; fayllar `--chown=node:node` bilan, jarayon `USER node` bilan ishlaydi; `--read-only` yozishni `--tmpfs /tmp` bilan cheklaydi (cheat sheet misoli), `--cap-drop all` va `no-new-privileges` yuqorida ko'rilgan. Qoldiq risk: `npm ci` bu yerda install skriptlarini ishga tushiradi (81-darsdagi trade-off), digest yangilanmasa base image eskiradi, va image ichidagi paketlar skanerlanishi kerak.
+Nima uchun shunday: base image digest bilan qotirilgan (best practices hujjati); token faqat `RUN` davomida fayl sifatida mount qilinadi va qatlamga yozilmaydi, `ARG`/`ENV` esa final image'da qolardi; ikkinchi bosqich faqat build natijasi va production bog'liqliklarini oladi; fayllar `--chown=node:node` bilan, jarayon `USER node` bilan ishlaydi; `--read-only` yozishni `--tmpfs /tmp` bilan cheklaydi (cheat sheet misoli), `--cap-drop ALL` va `no-new-privileges` yuqorida ko'rilgan. Qoldiq risk: `npm ci` bu yerda install skriptlarini ishga tushiradi (81-darsdagi trade-off), digest yangilanmasa base image eskiradi, va image ichidagi paketlar skanerlanishi kerak.
 
 ### Dockerfile linter
 
@@ -357,7 +363,7 @@ Yakuniy eslatma: bu nazoratlar bir-birini to'ldiradi va hech biri yagona himoya 
 ## Qachon qo'llamaslik kerak
 
 - `--read-only` ni sinovsiz hamma servisga yoqish. Ko'p ilova vaqtinchalik fayl yozadi (kesh, upload buferi); tmpfs bilan cheklangan yozish joyi bermasangiz, ilova ishlamaydi. Cheat sheet shu holat uchun `--tmpfs` ni ko'rsatadi.
-- `--cap-drop all` ni kerakli capability'ni bilmasdan qo'yish. Ilova ishga tushmasa, jamoa `--privileged` ga qaytadi, bu eng yomon natija. To'g'ri yo'l: tashlab, xato ko'rinsa, aniq bitta capability qo'shish.
+- `--cap-drop ALL` ni kerakli capability'ni bilmasdan qo'yish. Ilova ishga tushmasa, jamoa `--privileged` ga qaytadi, bu eng yomon natija. To'g'ri yo'l: tashlab, xato ko'rinsa, aniq bitta capability qo'shish.
 - Digest pin'ni yangilash jarayonisiz joriy qilish. Pin'langan eski base image tuzatilgan zaifliklarni olmaydi: A03 risk asosida o'z vaqtida yangilashni talab qiladi.
 - Image skanerini yagona nazorat qilish. U ma'lum zaifliklarni topadi (NodeJS cheat sheet to'liq `node` image'da yuzlab zaiflik bo'lishi mumkinligini yozadi, shuning uchun kichikroq base image tanlash ham chora), lekin sozlama xatolarini (socket, privileged) ko'rmaydi.
 - Rootless rejimni hamma joyda majburlash. U daemon xavfini kamaytiradi, lekin hujjat troubleshooting sahifasidagi "Known limitations" bo'limida qo'llab-quvvatlanmaydigan imkoniyatlarni sanaydi; avval o'z muhitingizda sinab ko'rib qaror qiling.
@@ -375,7 +381,7 @@ Yakuniy eslatma: bu nazoratlar bir-birini to'ldiradi va hech biri yagona himoya 
 
 - Konteyner chegarasi sozlamalarga bog'liq: root, capability'lar, mount'lar va privileged rejim uni yo'qqa chiqaradi.
 - `docker.sock`'ni konteynerga ulash host'ga cheklanmagan root kirishiga teng; read-only mount buni o'zgartirmaydi.
-- `USER` + `COPY --chown`, `--cap-drop all`, `no-new-privileges`, `--read-only`: har biri RCE dan keyingi zararni kamaytiradi, RCE'ning o'zini tuzatmaydi.
+- `USER` + `COPY --chown`, `--cap-drop ALL`, `no-new-privileges`, `--read-only`: har biri RCE dan keyingi zararni kamaytiradi, RCE'ning o'zini tuzatmaydi.
 - Build argument va environment variable'lar final image'da qoladi: sirlar uchun secret mount.
 - Tag o'zgaruvchan, digest o'zgarmas; qotirish yangilash jarayoni bilan birga bo'ladi.
 - Image tarkibi supply chain masalasi: skanerlash, SBOM, provenance va imzo.
