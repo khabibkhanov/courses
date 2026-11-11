@@ -1,0 +1,70 @@
+- term: least privilege
+  aliases: []
+  uz: "Har foydalanuvchi va komponentga vazifasi uchun zarur eng kam huquq beriladi; ortiqcha huquq buzilganda zararni kattalashtiradi."
+  course: appsec
+  lesson: 51
+- term: role explosion
+  aliases: []
+  uz: "RBAC'da istisnolar va kontekstlar uchun rollar tez ko'payib, boshqarib bo'lmaydigan holga kelishi."
+  course: appsec
+  lesson: 51
+- term: IDOR
+  aliases: ["BOLA"]
+  uz: "Obyekt identifikatori so'rovda keladi, server esa chaqiruvchi shu obyektga egaligini tekshirmaydi; begona yozuvlarga kirish mumkin bo'ladi."
+  course: appsec
+  lesson: 52
+- term: deny by default
+  aliases: []
+  uz: "Aniq ruxsat berilmagan hamma narsa rad etiladi; siyosati belgilanmagan yo'l yopiq turadi."
+  course: appsec
+  lesson: 53
+- term: mass assignment
+  aliases: []
+  uz: "So'rov tanasidagi maydonlar to'g'ridan-to'g'ri modelga yozilishi; hujumchi rol, tenant yoki narx kabi himoyalangan maydonlarni o'zgartiradi."
+  course: appsec
+  lesson: 54
+- term: tenant
+  aliases: []
+  uz: "Bitta tizimdan foydalanadigan alohida mijoz tashkiloti; uning ma'lumotlari boshqa tenant'lardan ajratilishi kerak."
+  course: appsec
+  lesson: 55
+- term: BYPASSRLS
+  aliases: []
+  uz: "PostgreSQL rol atributi: bunday rol row-level security siyosatlarini chetlab o'tadi. Ilova roli unga ega bo'lmasligi kerak."
+  course: appsec
+  lesson: 56
+- term: SET LOCAL
+  aliases: ["set_config"]
+  uz: "Sessiya sozlamasini faqat joriy tranzaksiya uchun o'rnatadi; connection pool'da tenant kontekstining boshqa so'rovga sizib o'tishini oldini oladi."
+  course: appsec
+  lesson: 56
+- term: PDP
+  aliases: ["policy decision point"]
+  uz: "Policy Decision Point: kirish so'roviga ruxsat yoki rad qarorini chiqaradigan komponent."
+  course: appsec
+  lesson: 57
+- term: PEP
+  aliases: ["policy enforcement point"]
+  uz: "Policy Enforcement Point: PDP qarorini amalda majburlaydigan nuqta (guard, gateway, servis kodi)."
+  course: appsec
+  lesson: 57
+- term: fail closed
+  aliases: []
+  uz: "Qaror chiqarib bo'lmasa (xato, timeout) so'rov rad etiladi, ruxsat berilmaydi."
+  course: appsec
+  lesson: 57
+- term: Data Access Layer
+  aliases: ["DAL"]
+  uz: "Faqat serverda ishlaydigan qatlam: authorization tekshiruvlarini bajaradi va xavfsiz, minimal DTO qaytaradi."
+  course: appsec
+  lesson: 58
+- term: state machine
+  aliases: []
+  uz: "Workflow'ning ruxsat etilgan holatlari va o'tishlari aniq yozilgan modeli; boshqa har qanday o'tish rad etiladi."
+  course: appsec
+  lesson: 59
+- term: unique constraint
+  aliases: []
+  uz: "Ma'lumotlar bazasidagi cheklov: ustunlar kombinatsiyasi takrorlanmaydi; bir martalik amallarni poygaga qarshi majburlaydi."
+  course: appsec
+  lesson: 60

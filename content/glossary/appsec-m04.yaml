@@ -1,0 +1,110 @@
+- term: XSS
+  aliases: ["cross-site scripting"]
+  uz: "Hujumchi kodi zaif sahifada qurbonning brauzerida sahifa origin'i huquqi bilan bajariladigan zaiflik; reflected, stored va DOM-based turlari bor."
+  course: appsec
+  lesson: 31
+- term: source va sink
+  aliases: ["source", "sink"]
+  uz: "DOM XSS'da source hujumchi boshqaradigan ma'lumot manbai (masalan URL), sink esa uni kodga aylantira oladigan xavfli joy (masalan innerHTML)."
+  course: appsec
+  lesson: 31
+- term: output encoding
+  aliases: ["kontekstga mos kodlash"]
+  uz: "Ma'lumotni chiqarilayotgan kontekstga (HTML, atribut, JavaScript, URL) mos usulda kodlash, shunda u kod sifatida talqin qilinmaydi."
+  course: appsec
+  lesson: 32
+- term: dangerouslySetInnerHTML
+  aliases: []
+  uz: "React'da qiymatni escape qilmasdan HTML sifatida o'rnatadigan xavfli yo'l; unga ishonchsiz ma'lumot berilsa XSS paydo bo'ladi."
+  course: appsec
+  lesson: 33
+- term: sanitization
+  aliases: ["sanitizatsiya"]
+  uz: "Ruxsat etilgan HTML'ni saqlab, xavfli teg va atributlarni olib tashlash (allowlist asosida); kodlash mumkin bo'lmagan holatlar uchun."
+  course: appsec
+  lesson: 34
+- term: mXSS
+  aliases: ["mutation XSS"]
+  uz: "Sanitizer tekshirgan HTML brauzer tomonidan qayta tahlil qilinganda o'zgarib (mutatsiya), xavfli shaklga aylanishidan kelib chiqadigan XSS."
+  course: appsec
+  lesson: 34
+- term: Trusted Types
+  aliases: []
+  uz: "Brauzer imkoniyati: xavfli DOM sink'lariga oddiy string o'rniga faqat policy yaratgan maxsus turdagi qiymat berilishini majburlaydi."
+  course: appsec
+  lesson: 34
+- term: CSP
+  aliases: ["Content Security Policy"]
+  uz: "Brauzerga qaysi manbalardan skript, stil va boshqa resurslar yuklash mumkinligini aytadigan sarlavha; XSS ta'sirini kamaytiruvchi qo'shimcha qatlam."
+  course: appsec
+  lesson: 35
+- term: nonce
+  aliases: ["CSP nonce"]
+  uz: "Har so'rovda yangidan yaratiladigan tasodifiy qiymat; faqat shu qiymatli skriptlarga CSP bajarishga ruxsat beradi."
+  course: appsec
+  lesson: 35
+- term: strict-dynamic
+  aliases: ["'strict-dynamic'"]
+  uz: "CSP kalit so'zi: nonce yoki xesh bilan ishonch berilgan skript yuklagan boshqa skriptlarga ham avtomatik ishonch beriladi."
+  course: appsec
+  lesson: 35
+- term: CSRF
+  aliases: ["cross-site request forgery"]
+  uz: "Foydalanuvchi brauzeri avtomatik yuboradigan cookie'dan foydalanib, uning nomidan kutilmagan so'rov yuborishga majburlash hujumi."
+  course: appsec
+  lesson: 36
+- term: SameSite
+  aliases: ["SameSite cookie"]
+  uz: "Cookie atributi: cookie cross-site so'rovlarga qo'shilish-qo'shilmasligini boshqaradi (Strict, Lax, None); CSRF'ga qarshi birinchi qatlam."
+  course: appsec
+  lesson: 36
+- term: double-submit cookie
+  aliases: ["signed double-submit"]
+  uz: "CSRF tokenini cookie va so'rovda ikki marta yuborib solishtirish usuli; imzolangan variantida token sessiyaga bog'lanadi."
+  course: appsec
+  lesson: 36
+- term: Fetch Metadata
+  aliases: ["Sec-Fetch-Site"]
+  uz: "Brauzer yuboradigan Sec-Fetch-* sarlavhalari: so'rov qaerdan va qanday kelganini ko'rsatadi, server cross-site so'rovlarni rad etishi mumkin."
+  course: appsec
+  lesson: 36
+- term: clickjacking
+  aliases: ["UI redress"]
+  uz: "Hujumchi sahifa ustiga ko'rinmas iframe qo'yib, foydalanuvchini bilmagan holda bosishga majburlaydigan hujum."
+  course: appsec
+  lesson: 37
+- term: frame-ancestors
+  aliases: []
+  uz: "CSP direktivasi: sahifani qaysi origin'lar iframe ichiga joylashi mumkinligini belgilaydi; X-Frame-Options o'rnini bosadi."
+  course: appsec
+  lesson: 37
+- term: open redirect
+  aliases: ["ochiq redirekt"]
+  uz: "Server foydalanuvchi bergan manzilga tekshiruvsiz yo'naltirganda hosil bo'ladigan zaiflik; fishing va OAuth oqimlarini buzishda ishlatiladi."
+  course: appsec
+  lesson: 38
+- term: postMessage
+  aliases: []
+  uz: "Turli origin'dagi oynalar va iframe'lar orasida xabar almashish API; qabul qiluvchi origin va source'ni tekshirishi shart."
+  course: appsec
+  lesson: 39
+- term: targetOrigin
+  aliases: []
+  uz: "postMessage yuborishda xabar faqat shu origin'ga yetkazilishini belgilaydigan parametr; '*' ishlatmaslik kerak."
+  course: appsec
+  lesson: 39
+- term: iframe sandbox
+  aliases: ["sandbox"]
+  uz: "iframe atributi: ichidagi mazmunga skript, forma, origin va boshqa imkoniyatlarni cheklaydi; allow-* bayroqlari bilan ochiladi."
+  course: appsec
+  lesson: 39
+- term: SRI
+  aliases: ["Subresource Integrity", "integrity atributi"]
+  uz: "Skript yoki stil yuklashda kutilgan kriptografik xeshni e'lon qilish; brauzer xesh mos kelmasa resursni bajarmaydi."
+  course: appsec
+  lesson: 40
+- term: tag manager
+  aliases: []
+  uz: "Marketing tag'larini sahifadan tashqari panel orqali boshqarish xizmati; kod tez o'zgargani uchun SRI bilan himoyalab bo'lmaydigan ishonch bo'g'ini."
+  course: appsec
+  lesson: 40

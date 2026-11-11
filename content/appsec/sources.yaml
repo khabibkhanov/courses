@@ -623,3 +623,287 @@ cisa-npm-2025:
   year: 2025
   kind: web
   url: https://www.cisa.gov/news-events/alerts/2025/09/23/widespread-supply-chain-compromise-impacting-npm-ecosystem
+cs-crypto-storage:
+  title: "Cryptographic Storage Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html
+cs-key-mgmt:
+  title: "Key Management Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Key_Management_Cheat_Sheet.html
+cs-pqc:
+  title: "Post-Quantum Cryptography Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Post_Quantum_Cryptography_Cheat_Sheet.html
+opa-docs:
+  title: "Open Policy Agent (OPA) documentation: Introduction"
+  author: "Open Policy Agent project (CNCF)"
+  year: 2026
+  kind: docs
+  url: https://www.openpolicyagent.org/docs
+pg-set:
+  title: "PostgreSQL Documentation: SET"
+  author: "PostgreSQL Global Development Group"
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/sql-set.html
+cs-graphql:
+  title: "GraphQL Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/GraphQL_Cheat_Sheet.html
+cs-websocket:
+  title: "WebSocket Security Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html
+cs-error-handling:
+  title: "Error Handling Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html
+cs-llm-injection:
+  title: "LLM Prompt Injection Prevention Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html
+llm-top10:
+  title: "OWASP Top 10 for LLM Applications 2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://genai.owasp.org/llm-top-10/
+cs-multi-tenant:
+  title: "Multi-Tenant Application Security Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Multi_Tenant_Security_Cheat_Sheet.html
+nestjs-webhooks:
+  title: "Webhooks | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: web
+  url: https://docs.nestjs.com/http/webhooks
+cs-forgot-password:
+  title: "Forgot Password Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html
+cs-attack-surface:
+  title: "Attack Surface Analysis Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Attack_Surface_Analysis_Cheat_Sheet.html
+cs-secure-design:
+  title: "Secure Product Design Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Secure_Product_Design_Cheat_Sheet.html
+
+# --- Modul 9 (supply chain va DevSecOps) uchun qo'shimcha manbalar; URL'lar lokal korpusdagi fayl yo'llariga mos (2026-11-11) ---
+cs-npm:
+  title: "NPM Security Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/NPM_Security_Cheat_Sheet.html
+cs-cicd:
+  title: "CI/CD Security Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/CI_CD_Security_Cheat_Sheet.html
+cs-docker:
+  title: "Docker Security Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html
+cs-k8s:
+  title: "Kubernetes Security Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Kubernetes_Security_Cheat_Sheet.html
+cs-sbom:
+  title: "Dependency Graph SBOM Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Dependency_Graph_SBOM_Cheat_Sheet.html
+cs-vulndeps:
+  title: "Vulnerable Dependency Management Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Vulnerable_Dependency_Management_Cheat_Sheet.html
+cs-cloudarch:
+  title: "Secure Cloud Architecture Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Secure_Cloud_Architecture_Cheat_Sheet.html
+cs-db:
+  title: "Database Security Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html
+npm-ci:
+  title: "npm-ci | npm Docs"
+  author: "npm"
+  year: 2026
+  kind: docs
+  url: https://docs.npmjs.com/cli/v11/commands/npm-ci
+npm-scripts:
+  title: "scripts | npm Docs"
+  author: "npm"
+  year: 2026
+  kind: docs
+  url: https://docs.npmjs.com/cli/v11/using-npm/scripts
+k8s-psa:
+  title: "Pod Security Admission"
+  author: "Kubernetes"
+  year: 2026
+  kind: docs
+  url: https://kubernetes.io/docs/concepts/security/pod-security-admission/
+k8s-secrets-practices:
+  title: "Good practices for Kubernetes Secrets"
+  author: "Kubernetes"
+  year: 2026
+  kind: docs
+  url: https://kubernetes.io/docs/concepts/security/secrets-good-practices/
+docker-build-practices:
+  title: "Building best practices | Docker Docs"
+  author: "Docker"
+  year: 2026
+  kind: docs
+  url: https://docs.docker.com/build/building/best-practices/
+docker-build-secrets:
+  title: "Build secrets | Docker Docs"
+  author: "Docker"
+  year: 2026
+  kind: docs
+  url: https://docs.docker.com/build/building/secrets/
+cs-clickjacking:
+  title: "Clickjacking Defense Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Clickjacking_Defense_Cheat_Sheet.html
+cs-redirect:
+  title: "Unvalidated Redirects and Forwards Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html
+cs-html5:
+  title: "HTML5 Security Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html
+cs-thirdparty-js:
+  title: "Third Party JavaScript Management Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Third_Party_Javascript_Management_Cheat_Sheet.html
+mdn-sri:
+  title: "Subresource Integrity - Security | MDN"
+  author: "Mozilla"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Subresource_Integrity
+cs-authz-patterns:
+  title: "Authorization Patterns Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Patterns_Cheat_Sheet.html
+cs-authz-data:
+  title: "Authorization Policy and Data Distribution Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Policy_And_Data_Distribution_Cheat_Sheet.html
+cs-authz-decisions:
+  title: "Authorization Decisions and Output Handling Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Decisions_And_Output_Handling_Cheat_Sheet.html
+cs-business-logic:
+  title: "Business Logic Security Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Business_Logic_Security_Cheat_Sheet.html
+nextjs-authentication:
+  title: "Guides: Authentication | Next.js"
+  author: "Vercel"
+  year: 2026
+  kind: docs
+  url: https://nextjs.org/docs/app/guides/authentication
+cs-nodedocker:
+  title: "NodeJS Docker Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/NodeJS_Docker_Cheat_Sheet.html
+cs-vuln-disclosure:
+  title: "Vulnerability Disclosure Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Vulnerability_Disclosure_Cheat_Sheet.html
+pg-mvcc:
+  title: "PostgreSQL Documentation: Transaction Isolation"
+  author: "PostgreSQL Global Development Group"
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/transaction-iso.html
+nestjs-logger:
+  title: "Logger | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: web
+  url: https://docs.nestjs.com/application/logger
+k8s-rbac-practices:
+  title: "Role Based Access Control Good Practices"
+  author: "Kubernetes"
+  year: 2026
+  kind: docs
+  url: https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+t10-program:
+  title: "Establishing a Modern Application Security Program - OWASP Top 10:2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://top10.owasp.org/2025/0x03_2025-Establishing_a_Modern_Application_Security_Program/
+cs-idor:
+  title: "Insecure Direct Object Reference Prevention Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html
+cs-mass-assignment:
+  title: "Mass Assignment Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Mass_Assignment_Cheat_Sheet.html

@@ -1,0 +1,130 @@
+- term: parser differential
+  aliases: []
+  uz: "Ikki komponent (masalan, proxy va backend) bir xil HTTP xabarini turlicha talqin qilishi; birinchisi tekshirgan narsa ikkinchisi bajargan narsadan farq qiladi."
+  course: appsec
+  lesson: 11
+- term: X-Forwarded-For
+  aliases: []
+  uz: "Proxy mijoz IP manzilini uzatadigan umumiy header. Mijoz uni o'zi ham yubora oladi, shuning uchun faqat ishonchli proxy qo'shgan qismiga ishoniladi."
+  course: appsec
+  lesson: 11
+- term: header injection
+  aliases: []
+  uz: "Header qiymatiga CR va LF belgilari kiritib, javobga qo'shimcha header yoki xabar qo'shish hujumi."
+  course: appsec
+  lesson: 11
+- term: same-origin policy
+  aliases: ["SOP"]
+  uz: "Brauzer qoidasi: boshqa origin'dagi sahifa skripti javobni o'qiy olmaydi. So'rov yuborish va resurs joylash odatda cheklanmaydi."
+  course: appsec
+  lesson: 12
+- term: origin
+  aliases: []
+  uz: "Sxema, host va port uchligi. Uchalasi mos kelsa ikki URL same-origin hisoblanadi."
+  course: appsec
+  lesson: 12
+- term: registrable domain
+  aliases: []
+  uz: "Ro'yxatdan o'tkaziladigan domen (masalan, fleet.example). Site tushunchasi sxema va shu domen bilan aniqlanadi."
+  course: appsec
+  lesson: 12
+- term: cookie tossing
+  aliases: []
+  uz: "Subdomen ota-domen uchun cookie yozib, asosiy ilova cookie'sini soxta qiymat bilan almashtirishi yoki ikkilantirishi. __Host- prefiksi buni to'sadi."
+  course: appsec
+  lesson: 13
+- term: HttpOnly
+  aliases: []
+  uz: "Cookie atributi: sahifa skripti document.cookie orqali qiymatni o'qiy olmaydi. XSS'da tokenni o'g'irlashni qiyinlashtiradi."
+  course: appsec
+  lesson: 13
+- term: SameSite
+  aliases: []
+  uz: "Cookie atributi (Strict, Lax, None): cross-site so'rovlarda cookie yuborilishini cheklaydi va CSRF'ning bir qismini yopadi."
+  course: appsec
+  lesson: 13
+- term: __Host-
+  aliases: []
+  uz: "Cookie nomi prefiksi: cookie Secure bo'lishi, HTTPS'dan o'rnatilishi, Domain'siz va Path=/ bo'lishi shart, ya'ni qat'iy host-only."
+  course: appsec
+  lesson: 13
+- term: CORS
+  aliases: []
+  uz: "Cross-Origin Resource Sharing: server header'lar orqali qaysi origin'dagi skript javobini o'qishi mumkinligini brauzerga bildiradi."
+  course: appsec
+  lesson: 14
+- term: preflight
+  aliases: []
+  uz: "Brauzer murakkab cross-origin so'rovdan oldin yuboradigan OPTIONS so'rovi; server ruxsat bermasa, haqiqiy so'rov yuborilmaydi."
+  course: appsec
+  lesson: 14
+- term: Content Security Policy
+  aliases: ["CSP"]
+  uz: "Brauzerga qaysi manbalardan skript, rasm va boshqa resurs yuklash mumkinligini aytuvchi siyosat; XSS uchun chuqur himoya qatlami."
+  course: appsec
+  lesson: 15
+- term: strict-dynamic
+  aliases: []
+  uz: "CSP kalit so'zi: nonce yoki hash bilan ishonchli skript yaratgan skriptlar ham ishonchli; host ro'yxati va 'self' e'tiborsiz qoldiriladi."
+  course: appsec
+  lesson: 15
+- term: HSTS
+  aliases: []
+  uz: "HTTP Strict Transport Security: brauzer max-age davomida host bilan faqat HTTPS orqali bog'lanadi va http:// ni o'zi yangilaydi."
+  course: appsec
+  lesson: 16
+- term: nosniff
+  aliases: []
+  uz: "X-Content-Type-Options qiymati: brauzer e'lon qilingan Content-Type'ga amal qiladi va tarkibdan boshqa tur taxmin qilmaydi."
+  course: appsec
+  lesson: 16
+- term: Fetch Metadata
+  aliases: []
+  uz: "Brauzer qo'shadigan Sec-Fetch-* header'lari: so'rov qaysi saytdan, qanday rejimda va qaysi maqsadda kelganini serverga bildiradi."
+  course: appsec
+  lesson: 17
+- term: resource isolation policy
+  aliases: []
+  uz: "Fetch Metadata asosidagi server siyosati: same-origin va foydalanuvchi boshlagan so'rovlar ruxsat, boshqa saytdan faqat xavfsiz navigatsiya, qolgani rad."
+  course: appsec
+  lesson: 17
+- term: cross-origin isolated
+  aliases: []
+  uz: "COOP va COEP birga qo'yilgan hujjat holati; SharedArrayBuffer kabi imkoniyatlar faqat shunday hujjatlarda ochiladi."
+  course: appsec
+  lesson: 17
+- term: mixed content
+  aliases: []
+  uz: "HTTPS sahifaning http:// orqali resurs yuklashi. Brauzer rasm, video va audioni https'ga yangilaydi, qolganini bloklaydi."
+  course: appsec
+  lesson: 18
+- term: forward secrecy
+  aliases: []
+  uz: "Uzoq muddatli kalit keyinroq oshkor bo'lsa ham o'tmishdagi sessiyalar shifrini ochib bo'lmasligi. TLS 1.3 da (EC)DHE majburiy."
+  course: appsec
+  lesson: 18
+- term: subjectAltName
+  aliases: ["SAN"]
+  uz: "Sertifikat maydoni: sertifikat amal qiladigan host nomlari ro'yxati. Mijoz so'ralgan host shu nomlardan biriga mos kelishini tekshiradi."
+  course: appsec
+  lesson: 18
+- term: BFF
+  aliases: ["Backend-for-Frontend"]
+  uz: "Brauzer faqat shu server bilan HttpOnly cookie sessiyasida ishlaydi, OAuth token'larni esa server ushlaydi; brauzer kodi token'ni ko'rmaydi."
+  course: appsec
+  lesson: 19
+- term: request smuggling
+  aliases: []
+  uz: "Proxy va backend so'rov chegarasini turlicha topishidan foydalanib, bitta so'rov ichiga ikkinchisini yashirib yuborish; proxy nazoratlari aylanib o'tiladi."
+  course: appsec
+  lesson: 20
+- term: cache poisoning
+  aliases: []
+  uz: "Hujumchi zararli javobni umumiy cache'ga joylab, boshqa foydalanuvchilarga yetkazishi, odatda cache kalitiga kirmaydigan kiritma orqali."
+  course: appsec
+  lesson: 20
+- term: unkeyed
+  aliases: []
+  uz: "Javobga ta'sir qiladi, lekin cache kalitiga kirmaydigan kiritma (masalan, X-Forwarded-Host)."
+  course: appsec
+  lesson: 20

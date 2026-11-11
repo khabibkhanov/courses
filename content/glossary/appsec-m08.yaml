@@ -1,0 +1,86 @@
+- term: type coercion
+  aliases:
+  - coercion
+  uz: Qiymat turini avtomatik o'zgartirish (masalan, "55" satrini 55 songa). Qabul qilinadigan kirishlar to'plamini kengaytirgani uchun xavfsizlik nuqtai nazaridan ochiq e'lon qilinishi kerak.
+  course: appsec
+  lesson: 72
+- term: token bucket
+  aliases: []
+  uz: 'Rate limiting algoritmi: chelakda cheklangan miqdor token bor, u doimiy tezlikda to''ladi va har so''rov token sarflaydi. Qisqa burst''ga ruxsat beradi, o''rtacha tezlikni cheklaydi.'
+  course: appsec
+  lesson: 73
+- term: fixed window
+  aliases: []
+  uz: 'Rate limiting usuli: vaqt qat''iy oynalarga bo''linadi va har oynada alohida hisoblagich yuritiladi. Oyna chegarasida limitning ikki barobarigacha so''rov o''tishi mumkin.'
+  course: appsec
+  lesson: 73
+- term: magic bytes
+  aliases:
+  - file signature
+  uz: Fayl boshidagi turini belgilovchi baytlar ketma-ketligi (masalan, PNG uchun 89 50 4E 47). Kengaytma va Content-Type'dan ishonchliroq, lekin faqat fayl boshini tekshiradi.
+  course: appsec
+  lesson: 74
+- term: polyglot
+  aliases: []
+  uz: Bir vaqtda ikki formatda to'g'ri hisoblanadigan fayl (masalan, PNG signature'li va ichida brauzer HTML sifatida o'qiy oladigan matn). Signature tekshiruvidan o'tib ketadi.
+  course: appsec
+  lesson: 74
+- term: CDR
+  aliases:
+  - Content Disarm and Reconstruct
+  uz: 'Content Disarm & Reconstruct: faylni tahlil qilib, faqat xavfsiz elementlardan uni qayta qurish (PDF, DOCX kabi formatlarda faol kontentni olib tashlash).'
+  course: appsec
+  lesson: 74
+- term: HMAC
+  aliases:
+  - Hash-based Message Authentication Code
+  uz: Maxfiy kalit va xabardan hisoblanadigan imzo (kod). Webhook'da yuboruvchi va qabul qiluvchi kalitni biladi; imzo xabar o'zgarmaganini va yuboruvchi kalit egasi ekanini tasdiqlaydi.
+  course: appsec
+  lesson: 75
+- term: idempotency
+  aliases:
+  - idempotent
+  uz: Bir xil so'rov yoki hodisani bir necha marta qayta ishlash natijani faqat bir marta o'zgartirishi xossasi. Webhook'da hodisa identifikatori va unique constraint bilan ta'minlanadi.
+  course: appsec
+  lesson: 75
+- term: introspection
+  aliases:
+  - introspection so'rovi
+  uz: GraphQL'da server sxemasini (tur va maydonlar) so'rov orqali ochib beradigan imkoniyat. Production'da hujum yuzasini ko'rsatmaslik uchun cheklanadi.
+  course: appsec
+  lesson: 76
+- term: batching
+  aliases:
+  - alias attack
+  uz: GraphQL'da bitta HTTP so'rov ichida ko'p amalni (alias yoki massiv orqali) yuborib, so'rov-bo'yicha rate limit'ni chetlab o'tish.
+  course: appsec
+  lesson: 76
+- term: CSWSH
+  aliases:
+  - Cross-Site WebSocket Hijacking
+  uz: Foydalanuvchi brauzeri begona sayt orqali ilovaga WebSocket ochganda cookie avtomatik yuboriladi va hujumchi autentifikatsiyalangan ulanishga ega bo'ladi. Origin allowlist bilan yopiladi.
+  course: appsec
+  lesson: 77
+- term: log injection
+  aliases: []
+  uz: Ishonchsiz ma'lumot (masalan, yangi qator belgisi) orqali log faylida soxta yozuv yaratish. Structured (JSON) format va qiymat hajmini cheklash bilan oldi olinadi.
+  course: appsec
+  lesson: 79
+- term: honeytoken
+  aliases: []
+  uz: 'Oddiy faoliyatda ishlatilmaydigan tuzoq yozuv yoki hisob: unga har qanday murojaat shubhali va deyarli noto''g''ri signalsiz alert beradi.'
+  course: appsec
+  lesson: 79
+- term: prompt injection
+  aliases:
+  - indirect prompt injection
+  - direct prompt injection
+  uz: 'Kirish orqali LLM xatti-harakatini kutilmagan tarzda o''zgartirish. Direct: foydalanuvchi so''rovida; indirect: model o''qigan tashqi mazmunda (sahifa, fayl, yozuv).'
+  course: appsec
+  lesson: 80
+- term: Excessive Agency
+  aliases:
+  - ortiqcha agency
+  uz: LLM'ga ortiqcha funksionallik, ruxsat yoki avtonomiya berilishi; manipulyatsiya qilingan chiqish zarar keltiruvchi harakatga aylanadi (OWASP LLM06).
+  course: appsec
+  lesson: 80

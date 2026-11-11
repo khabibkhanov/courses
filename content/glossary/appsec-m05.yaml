@@ -1,0 +1,155 @@
+- term: step-up
+  aliases: ["step-up authentication"]
+  uz: "Sezgir amal oldidan foydalanuvchidan qo'shimcha yoki kuchliroq autentifikatsiya talab qilish: sessiya ochiq bo'lsa ham, xavfli harakat uchun faktor qayta so'raladi."
+  course: appsec
+  lesson: 41
+- term: AAL
+  aliases: ["Authentication Assurance Level"]
+  uz: "NIST SP 800-63 da autentifikatsiya ishonchlilik darajasi (AAL1, AAL2, AAL3): daraja oshgani sayin talab qilinadigan faktorlar va authenticator'lar kuchliroq bo'ladi."
+  course: appsec
+  lesson: 41
+- term: phishing-resistant
+  aliases: ["phishing resistance"]
+  uz: "Hujumchi soxta sahifa orqali foydalanuvchidan olib, keyin qayta ishlata olmaydigan authenticator turi. Passkey va WebAuthn authenticator'lari origin'ga bog'langani uchun shunday."
+  course: appsec
+  lesson: 41
+- term: salt
+  aliases: []
+  uz: "Parol hash'iga qo'shiladigan, har foydalanuvchi uchun tasodifiy qiymat: bir xil parollar turli hash beradi va oldindan hisoblangan jadvallar (rainbow table) ishlamaydi."
+  course: appsec
+  lesson: 42
+- term: work factor
+  aliases: ["cost parameter"]
+  uz: "Parol hash funksiyasining ishlash narxini belgilovchi parametr (iteratsiya, xotira, parallelizm). Uni oshirish har bir taxminni hujumchi uchun qimmatlashtiradi."
+  course: appsec
+  lesson: 42
+- term: memory-hard
+  aliases: ["memory-hard function"]
+  uz: "Ko'p xotira talab qiladigan hash funksiyasi (masalan Argon2id, scrypt): GPU va maxsus uskunada parallel taxmin qilish arzonlashmaydi."
+  course: appsec
+  lesson: 42
+- term: pepper
+  aliases: []
+  uz: "Parol hash'iga qo'shiladigan, bazadan alohida saqlanadigan umumiy sir. Baza sizsa ham hujumchida pepper bo'lmasa, hash'ni sinash qiyinlashadi."
+  course: appsec
+  lesson: 42
+- term: needsRehash
+  aliases: []
+  uz: "Saqlangan hash eski algoritm yoki past parametr bilan yaratilganini aniqlaydigan tekshiruv. Muvaffaqiyatli kirishda parol yangi parametrlar bilan qayta hash qilinadi."
+  course: appsec
+  lesson: 42
+- term: credential stuffing
+  aliases: []
+  uz: "Boshqa sayt sizilishidan olingan email-parol juftliklarini ommaviy sinash hujumi. Odamlar parolni qayta ishlatgani uchun ba'zi juftliklar mos keladi."
+  course: appsec
+  lesson: 43
+- term: password spraying
+  aliases: []
+  uz: "Bitta keng tarqalgan parolni ko'p akkauntda sinash hujumi: har akkauntga urinish soni kam, shuning uchun akkaunt bo'yicha qulflash ishlamaydi."
+  course: appsec
+  lesson: 43
+- term: throttling
+  aliases: []
+  uz: "Muvaffaqiyatsiz urinishlar ortgani sayin keyingi urinishni kechiktirish yoki cheklash. Akkauntni butunlay qulflashdan farqli o'laroq, egasini DoS qilish xavfi kam."
+  course: appsec
+  lesson: 43
+- term: HOTP
+  aliases: []
+  uz: "HMAC asosidagi bir martalik kod (RFC 4226): kod hisoblagich qiymatidan olinadi. TOTP shu sxemaning vaqtga bog'langan variantidir."
+  course: appsec
+  lesson: 44
+- term: TOTP
+  aliases: ["time-based one-time password"]
+  uz: "Umumiy sir va joriy vaqt oynasidan HMAC bilan hisoblanadigan qisqa muddatli kod (RFC 6238). Server va authenticator ilovasi kodni mustaqil hisoblaydi."
+  course: appsec
+  lesson: 44
+- term: replay
+  aliases: ["replay hujumi"]
+  uz: "Ilgari ushlangan yaroqli ma'lumotni (kod, token, imzo) qayta yuborib ruxsat olish. Bir martalik foydalanish yoki hisoblagich tekshiruvi bundan himoya qiladi."
+  course: appsec
+  lesson: 44
+- term: passkey
+  aliases: []
+  uz: "WebAuthn asosidagi parolsiz kirish usuli: qurilmada private key saqlanadi, serverda faqat public key turadi va imzo faqat to'g'ri origin uchun beriladi."
+  course: appsec
+  lesson: 45
+- term: relying party
+  aliases: ["RP"]
+  uz: "WebAuthn va OpenID Connect da foydalanuvchini autentifikatsiya qilishni talab qiluvchi ilova yoki servis, ya'ni tekshiruvni amalga oshiruvchi tomon."
+  course: appsec
+  lesson: 45
+- term: rpId
+  aliases: ["RP ID"]
+  uz: "WebAuthn da credential bog'lanadigan domen identifikatori. Brauzer faqat sahifa origin'i rpId bilan mos kelsa imzo yaratadi."
+  course: appsec
+  lesson: 45
+- term: signature counter
+  aliases: ["sign count"]
+  uz: "Authenticator har imzoda oshiradigan hisoblagich. Server kutilganidan kichik qiymatni ko'rsa, credential nusxalangan bo'lishi mumkin deb gumon qiladi."
+  course: appsec
+  lesson: 45
+- term: session fixation
+  aliases: []
+  uz: "Hujumchi oldindan bilgan session ID'ni qurbonga o'rnatib, qurbon kirgach shu ID bilan sessiyaga ega bo'lish hujumi. Kirishda ID'ni almashtirish uni yopadi."
+  course: appsec
+  lesson: 46
+- term: idle timeout
+  aliases: ["inactivity timeout"]
+  uz: "Foydalanuvchi faol bo'lmaganda sessiyani tugatuvchi muddat. Har so'rovda yangilanadi, shuning uchun uzoq muddatli egallashni o'zi to'xtata olmaydi."
+  course: appsec
+  lesson: 46
+- term: absolute timeout
+  aliases: []
+  uz: "Sessiya faol bo'lishidan qat'i nazar, yaratilganidan boshlab maksimal yashash muddati. Shundan keyin qayta autentifikatsiya talab qilinadi."
+  course: appsec
+  lesson: 46
+- term: JWT
+  aliases: ["JSON Web Token"]
+  uz: "Header, payload va imzodan iborat o'z-o'zini tavsiflovchi token (RFC 7519). Server imzo va claim'larni (iss, aud, exp) tekshirishi shart."
+  course: appsec
+  lesson: 47
+- term: PKCE
+  aliases: ["Proof Key for Code Exchange"]
+  uz: "Authorization code'ni ushlab olgan hujumchi uni almashtira olmasligi uchun code_verifier va code_challenge juftligidan foydalanadigan OAuth kengaytmasi (RFC 7636)."
+  course: appsec
+  lesson: 48
+- term: code_verifier
+  aliases: []
+  uz: "PKCE da klient yaratadigan tasodifiy sir. Token so'rovida yuboriladi; server uning hash'i avval kelgan code_challenge ga mosligini tekshiradi."
+  course: appsec
+  lesson: 48
+- term: redirect URI
+  aliases: ["redirect_uri"]
+  uz: "Authorization server code yoki token qaytaradigan manzil. U oldindan ro'yxatdan o'tgan qiymatga aniq (exact) mos kelishi kerak, aks holda code hujumchiga ketadi."
+  course: appsec
+  lesson: 48
+- term: ID token
+  aliases: []
+  uz: "OpenID Connect da foydalanuvchi autentifikatsiyasi haqidagi imzolangan JWT. Ilova uni iss, aud, exp va nonce bo'yicha tekshirgandan keyingina ishonadi."
+  course: appsec
+  lesson: 49
+- term: nonce
+  aliases: []
+  uz: "Autentifikatsiya so'rovida yuboriladigan va ID token ichida qaytishi kerak bo'lgan bir martalik qiymat. Token boshqa sessiyadan qayta ishlatilishini bloklaydi."
+  course: appsec
+  lesson: 49
+- term: email_verified
+  aliases: []
+  uz: "ID token'dagi claim: provayder email manzilini tasdiqlagan yoki yo'qligini bildiradi. Akkauntlarni email bo'yicha bog'lashdan oldin tekshirilishi kerak."
+  course: appsec
+  lesson: 49
+- term: reset token
+  aliases: ["parolni tiklash token'i"]
+  uz: "Parolni tiklash havolasidagi bir martalik, qisqa muddatli, tasodifiy sir. Bazada faqat hash'i saqlanadi, chunki token egasi akkauntni egallay oladi."
+  course: appsec
+  lesson: 50
+- term: recovery code
+  aliases: []
+  uz: "Asosiy faktor yo'qolganda ishlatiladigan, ro'yxatdan o'tishda beriladigan bir martalik zaxira kodlar. Hash qilib saqlanadi va ishlatilgach bekor qilinadi."
+  course: appsec
+  lesson: 50
+- term: Host header
+  aliases: ["Host header injection"]
+  uz: "So'rovdagi Host sarlavhasi mijoz nazoratida. Undan reset havolasini qurish hujumchiga token'ni o'z domeniga yo'naltirish imkonini beradi."
+  course: appsec
+  lesson: 50

@@ -1,0 +1,70 @@
+- term: security code review
+  aliases: ["code review"]
+  uz: "Kodni xavfsizlik nuqtai nazaridan o'qish: foydalanuvchi kirishidan (source) xavfli joyga (sink) boradigan yo'lni kuzatish va har endpoint uchun kim, qaysi obyekt, qanday kirish, qayerga va nima chiqishini tekshirish."
+  course: appsec
+  lesson: 91
+- term: allowlist
+  aliases: ["ruxsat etilganlar ro'yxati"]
+  uz: "Faqat oldindan ruxsat etilgan qiymatlarni qabul qilib, qolganini rad etadigan nazorat. Identifikatorlar (ustun nomi, tartib yo'nalishi) uchun placeholder o'rniga ishlatiladi."
+  course: appsec
+  lesson: 91
+- term: WSTG
+  aliases: ["Web Security Testing Guide"]
+  uz: "OWASP veb-ilovalarni xavfsizlik bo'yicha sinash qo'llanmasi: sinov toifalari va usullari to'plami (autentifikatsiya, avtorizatsiya, sessiya, xatolar va boshqalar)."
+  course: appsec
+  lesson: 92
+- term: probe
+  aliases: ["probe majmuasi"]
+  uz: "Aniq bir xatti-harakatni (masalan, begona tenant obyekti 404 qaytarishini) tekshiradigan kichik avtomat so'rovlar ketma-ketligi. O'tish faqat shu xatti-harakat haqida gapiradi."
+  course: appsec
+  lesson: 92
+- term: incident response
+  aliases: ["hodisaga javob"]
+  uz: "Xavfsizlik hodisasini aniqlash, cheklash, tiklash va undan o'rganish jarayoni; dalillarni saqlagan holda sessiyalarni bekor qilish va aybsiz (blameless) tahlilni o'z ichiga oladi."
+  course: appsec
+  lesson: 93
+- term: privacy by design
+  aliases: []
+  uz: "Shaxsiy ma'lumotlar himoyasini keyin qo'shimcha qilmay, loyihalash bosqichidayoq kiritish: maqsadga mos proyeksiya, saqlash muddati va haqiqiy anonimlashtirish."
+  course: appsec
+  lesson: 94
+- term: compliance
+  aliases: ["muvofiqlik"]
+  uz: "Tashkilot nazoratlarining tashqi talab yoki ramkaga (PCI DSS, ISO/IEC 27001, SOC 2) mosligi, dalil bilan tasdiqlanadigan holat. Xavfsizlikning kafolati emas."
+  course: appsec
+  lesson: 95
+- term: drift
+  aliases: ["konfiguratsiya drift'i"]
+  uz: "Nazoratning e'lon qilingan holati bilan haqiqiy holati orasidagi vaqt o'tishi bilan paydo bo'ladigan farq; predikatlar bilan muntazam tekshirib topiladi."
+  course: appsec
+  lesson: 95
+- term: Log4Shell
+  aliases: []
+  uz: "Log4j kutubxonasidagi lookup mexanizmi orqali kod bajarilishiga olib kelgan zaiflik; ketma-ket patch'lar va dependency inventory ahamiyatini ko'rsatgan case study."
+  course: appsec
+  lesson: 96
+- term: tarball
+  aliases: []
+  uz: "Release artefakti sifatida tarqatiladigan arxiv. xz holatida u manba repozitoriyidan farq qilgan, shuning uchun artefaktni manba bilan solishtirish kerak."
+  course: appsec
+  lesson: 98
+- term: accepted risk
+  aliases: ["qabul qilingan risk"]
+  uz: "Tuzatilmay qoldirilgan riskni egasi, muddati va vaqtinchalik nazorati bilan rasman qayd etish."
+  course: appsec
+  lesson: 99
+- term: retest
+  aliases: ["qayta tekshiruv"]
+  uz: "Tuzatishdan keyin asl hujum kirishini, regressiyani va yondosh holatlarni takroran tekshirish; topilmani yopish mezoni."
+  course: appsec
+  lesson: 99
+- term: SSDF
+  aliases: ["NIST SP 800-218"]
+  uz: "NIST'ning xavfsiz dasturiy ta'minot ishlab chiqish amaliyotlari to'plami; jarayonni baholash xaritasi sifatida ishlatiladi, kafolat emas."
+  course: appsec
+  lesson: 100
+- term: SAMM
+  aliases: ["OWASP SAMM"]
+  uz: "OWASP Software Assurance Maturity Model: xavfsizlik amaliyotlari yetukligini biznes funksiyalar bo'yicha baholash va keyingi qadamni tanlash modeli."
+  course: appsec
+  lesson: 100

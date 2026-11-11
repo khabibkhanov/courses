@@ -18,3 +18,93 @@
   uz: "Riskni kamaytiradigan chora: zaiflikni yopish, ta'sirni yoki ehtimolni kamaytiradigan nazorat."
   course: appsec
   lesson: 1
+- term: hujumchi modeli
+  aliases: ["threat actor"]
+  uz: "Hujumchi haqidagi aniq farazlar: kim, qanday kirish darajasi bilan, nimaga qodir va nimani xohlaydi; model nimani qamramasligini ham yozadi."
+  course: appsec
+  lesson: 2
+- term: attack surface
+  aliases: ["attack surface'ni", "attack surface'"]
+  uz: "Hujumchi tizimga ma'lumot kirita oladigan yoki undan ma'lumot ola oladigan barcha nuqtalar, ularni himoya qiluvchi kod va qimmatli ma'lumot yig'indisi."
+  course: appsec
+  lesson: 2
+- term: fail-safe defaults
+  aliases: ["fail-safe default"]
+  uz: "Saltzer va Schroeder tamoyili: default holat ruxsat bermaslik; xato, noma'lum kirish yoki nosozlikda tizim rad etadi, ruxsat esa aniq beriladi."
+  course: appsec
+  lesson: 3
+- term: defense in depth
+  aliases: ["defense-in-depth"]
+  uz: "Bir nechta mustaqil nazorat qatlami: bittasi buzilsa ham boshqasi ushlab qoladi. Qatlamlar bir xil nuqtaga tayansa, ular birga yiqiladi."
+  course: appsec
+  lesson: 3
+- term: complete mediation
+  aliases: []
+  uz: "Saltzer va Schroeder tamoyili: ob'ektga har bir murojaat huquq tekshiruvidan o'tishi kerak; amalda tekshiruv markaziy joyga (guard, middleware) qo'yiladi."
+  course: appsec
+  lesson: 3
+- term: trust boundary
+  aliases: ["trust boundary'dan", "trust boundary'lar"]
+  uz: "Ma'lumot bir ishonch darajasidan boshqasiga o'tadigan chiziq (masalan brauzer va server); chegaradan o'tgan ma'lumot ishonchsiz deb qaraladi va tekshiriladi."
+  course: appsec
+  lesson: 4
+- term: STRIDE
+  aliases: []
+  uz: "Tahdidlarni oltita turga ajratadigan tasnif: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege."
+  course: appsec
+  lesson: 4
+- term: data flow diagram
+  aliases: ["DFD"]
+  uz: "Tizimni tashqi ob'ekt, jarayon, ma'lumotlar ombori, ma'lumot oqimi va trust boundary elementlari bilan tasvirlaydigan diagramma; threat modeling'ning asosiy modeli."
+  course: appsec
+  lesson: 4
+- term: CWE
+  aliases: []
+  uz: "Common Weakness Enumeration: zaifliklarga olib kelishi mumkin bo'lgan weakness turlarining hamjamiyat tomonidan yuritiladigan ro'yxati."
+  course: appsec
+  lesson: 7
+- term: CVE
+  aliases: []
+  uz: "Konkret mahsulotdagi konkret zaiflik nusxasi uchun identifikator (CVE-YYYY-NNNN); zaiflik turini emas, aniq nusxani nomlaydi."
+  course: appsec
+  lesson: 7
+- term: CVSS
+  aliases: []
+  uz: "Zaiflik og'irligini 0 dan 10 gacha ball bilan ifodalaydigan standart; texnik og'irlikni o'lchaydi, sizning muhitingizdagi to'liq riskni emas."
+  course: appsec
+  lesson: 7
+- term: EPSS
+  aliases: []
+  uz: "Exploit Prediction Scoring System: e'lon qilingan CVE keyingi 30 kun ichida real sharoitda ekspluatatsiya qilinishi ehtimolini 0 dan 1 gacha baholaydigan model."
+  course: appsec
+  lesson: 7
+- term: KEV
+  aliases: []
+  uz: "CISA yuritadigan Known Exploited Vulnerabilities katalogi: ekspluatatsiyasi amalda qayd etilgan zaifliklar ro'yxati; kuchli ustuvorlik signali, lekin to'liq emas."
+  course: appsec
+  lesson: 7
+- term: ASVS
+  aliases: []
+  uz: "OWASP Application Security Verification Standard: tekshirish mumkin bo'lgan xavfsizlik talablari to'plami, uch darajali (L1, L2, L3)."
+  course: appsec
+  lesson: 8
+- term: responsible disclosure
+  aliases: ["coordinated disclosure"]
+  uz: "Zaiflik tashkilotga maxfiy xabar qilinadi, to'liq tafsilotlar esa tuzatish tayyor bo'lgach yoki kelishilgan muddatdan keyin e'lon qilinadi."
+  course: appsec
+  lesson: 9
+- term: safe harbor
+  aliases: []
+  uz: "Dastur shartlarida yozilgan va'da: doira va qoidalar ichida, yaxshi niyatda ishlagan tadqiqotchiga nisbatan huquqiy choralar ko'rilmaydi."
+  course: appsec
+  lesson: 9
+- term: security.txt
+  aliases: []
+  uz: "Saytning /.well-known/security.txt fayli: zaiflik haqida xabar berish uchun aloqa (Contact) va amal qilish muddati (Expires) kabi maydonlarni beradi."
+  course: appsec
+  lesson: 9
+- term: loopback
+  aliases: ["127.0.0.1"]
+  uz: "Faqat shu mashinaning o'zidan kirish mumkin bo'lgan tarmoq manzili; zaif laboratoriya ilovasini shunga bog'lash uni tarmoqdagi boshqa qurilmalardan yashiradi."
+  course: appsec
+  lesson: 10

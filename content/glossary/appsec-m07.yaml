@@ -1,0 +1,95 @@
+- term: constant-time
+  aliases: [constant-time taqqoslash]
+  uz: "Ish vaqti kiritilgan qiymatlarga bog'liq bo'lmaydigan amal. MAC yoki tokenni taqqoslashda vaqt farqidan qiymatni bilib olishning oldini oladi."
+  course: appsec
+  lesson: 62
+- term: ECB
+  aliases: []
+  uz: "Block cipher rejimi, unda bir xil ochiq matn bloklari bir xil shifrmatn blokini beradi va tuzilma sezilib qoladi. Xavfsiz rejim hisoblanmaydi."
+  course: appsec
+  lesson: 63
+- term: ECDH
+  aliases: []
+  uz: "Elliptik egri chiziqdagi Diffie-Hellman: ikki tomon ochiq kalitlarni almashib, umumiy maxfiy qiymatni hosil qiladi. Efemer kalitlar bilan forward secrecy beradi, lekin o'zi tomonlarni autentifikatsiya qilmaydi."
+  course: appsec
+  lesson: 64
+- term: ECDSA
+  aliases: []
+  uz: "Elliptik egri chiziqqa asoslangan raqamli imzo algoritmi. Maxfiy kalit bilan imzolanadi, ochiq kalit bilan tekshiriladi."
+  course: appsec
+  lesson: 64
+- term: HKDF
+  aliases: []
+  uz: "HMAC asosidagi kalit chiqarish funksiyasi: umumiy maxfiy qiymatdan bir nechta mustaqil kalit hosil qiladi. TLS 1.3 kalit jadvalida ishlatiladi."
+  course: appsec
+  lesson: 65
+- term: downgrade
+  aliases: []
+  uz: "Hujumchi tomonlarni zaifroq protokol versiyasi yoki algoritmga o'tishga majburlaydigan hujum. Handshake transkriptini autentifikatsiya qilish bundan himoya qiladi."
+  course: appsec
+  lesson: 65
+- term: trust anchor
+  aliases: []
+  uz: "Ishonch zanjirining boshlanishi: tekshiruvchi oldindan ishonadigan ildiz sertifikat yoki ochiq kalit. Sertifikat zanjiri shu nuqtagacha tekshiriladi."
+  course: appsec
+  lesson: 66
+- term: CSPRNG
+  aliases: []
+  uz: "Kriptografik jihatdan xavfsiz pseudo-tasodifiy son generatori. Token, kalit va nonce yaratishda ishlatiladi; Math.random va vaqtga bog'liq generatorlar bunga yaramaydi."
+  course: appsec
+  lesson: 67
+- term: modulo bias
+  aliases: []
+  uz: "Tasodifiy baytni qoldiq (%) bilan kichik oraliqqa keltirganda ba'zi qiymatlar ko'proq chiqishi. Rejection sampling bilan bartaraf etiladi."
+  course: appsec
+  lesson: 67
+- term: DEK
+  aliases: [Data Encryption Key]
+  uz: "Ma'lumotni bevosita shifrlaydigan kalit. Odatda KEK bilan o'ralgan holda ma'lumot yonida saqlanadi."
+  course: appsec
+  lesson: 68
+- term: KEK
+  aliases: [Key Encryption Key]
+  uz: "DEK'larni o'raydigan (shifrlaydigan) kalit. KMS yoki HSM kabi ma'lumotdan alohida joyda saqlanadi."
+  course: appsec
+  lesson: 68
+- term: cryptoperiod
+  aliases: []
+  uz: "Kalit yangi ma'lumotni himoyalash uchun ishlatilishi mumkin bo'lgan belgilangan muddat. Muddat tugaganda yoki foydalanish limitiga yetganda kalit almashtiriladi."
+  course: appsec
+  lesson: 68
+- term: re-wrap
+  aliases: []
+  uz: "DEK'ni eski KEK bilan ochib, yangi KEK bilan qayta o'rash. DEK o'zgarmaydi, shuning uchun uning cryptoperiod va foydalanish limiti tiklanmaydi."
+  course: appsec
+  lesson: 68
+- term: dynamic secrets
+  aliases: []
+  uz: "Ilova so'raganda yangi yaratiladigan qisqa muddatli credential. Lease tugagach yoki revoke qilinganda ishlamaydi, shuning uchun o'g'irlangan qiymat qisqa vaqt yaroqli."
+  course: appsec
+  lesson: 69
+- term: crypto agility
+  aliases: []
+  uz: "Algoritm, kalit uzunligi va rejimlarni butun tizimni qayta yozmasdan almashtira olish xususiyati. Saqlanadigan yozuvlarda versiya va algoritm identifikatori bilan ta'minlanadi."
+  course: appsec
+  lesson: 70
+- term: ML-KEM
+  aliases: [FIPS 203]
+  uz: "Post-quantum kalit o'rnatish mexanizmi (NIST FIPS 203). Simmetrik shifrlash uchun umumiy maxfiy qiymat hosil qiladi; ma'lumotni o'zi shifrlamaydi va autentifikatsiya qilmaydi."
+  course: appsec
+  lesson: 70
+- term: ML-DSA
+  aliases: [FIPS 204]
+  uz: "Post-quantum raqamli imzo standarti (NIST FIPS 204). ECDSA va RSA imzolarining quantum-chidamli o'rnini bosish uchun mo'ljallangan."
+  course: appsec
+  lesson: 70
+- term: harvest now, decrypt later
+  aliases: []
+  uz: "Hujumchi shifrlangan trafik yoki ma'lumotni hozir to'plab, kelajakda quantum kompyuter yordamida ochishi. Uzoq muddat maxfiy ma'lumot uchun migratsiyani ustuvor qiladi."
+  course: appsec
+  lesson: 70
+- term: lazy migration
+  aliases: []
+  uz: "Eski formatdagi yozuvni o'qilgan vaqtda yangi formatga ko'chirish. Fon job qolganlarini tugatadi."
+  course: appsec
+  lesson: 70

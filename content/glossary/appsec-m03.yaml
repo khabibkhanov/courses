@@ -1,0 +1,85 @@
+- term: injection
+  aliases: ["in'ektsiya"]
+  uz: "Ishonchsiz ma'lumot interpreterga buyruq sifatida o'tib ketishi: ma'lumot va boshqaruv kanali aralashib qolganda yuzaga keladi."
+  course: appsec
+  lesson: 21
+- term: parametrlangan so'rov
+  aliases: ["parameterized query", "prepared statement"]
+  uz: "So'rov matni va qiymatlar alohida uzatiladigan SQL usuli: qiymat hech qachon SQL sintaksisi sifatida talqin qilinmaydi."
+  course: appsec
+  lesson: 22
+- term: blind SQL injection
+  aliases: ["blind injection"]
+  uz: "Natija to'g'ridan-to'g'ri ko'rinmaydigan SQL injection: hujumchi javob farqidan (mantiqiy shart yoki vaqt) ma'lumotni bit-bit chiqaradi."
+  course: appsec
+  lesson: 22
+- term: raw so'rov
+  aliases: ["raw query", "queryRawUnsafe"]
+  uz: "ORM himoyasini chetlab, SQL matnini qo'lda beradigan API; matnga qiymat qo'shilsa, SQL injection qaytadi."
+  course: appsec
+  lesson: 23
+- term: operator in'ektsiyasi
+  aliases: ["operator injection", "NoSQL injection"]
+  uz: "Satr kutilgan joyga obyekt (masalan, {\"$ne\": \"\"}) yuborib, so'rov shartini o'zgartirish."
+  course: appsec
+  lesson: 24
+- term: RESP
+  aliases: ["Redis serialization protocol"]
+  uz: "Redis protokoli: har argument uzunlik bilan beriladi, shuning uchun qiymat ichidagi CRLF buyruq chegarasi bo'lmaydi."
+  course: appsec
+  lesson: 24
+- term: command injection
+  aliases: ["buyruq in'ektsiyasi", "OS command injection"]
+  uz: "Foydalanuvchi ma'lumoti operatsion tizim buyrug'iga aralashib, qo'shimcha buyruq bajarilishi."
+  course: appsec
+  lesson: 25
+- term: argument injection
+  aliases: ["argument in'ektsiyasi"]
+  uz: "Shell ishlatilmasa ham, qiymat opsiya (masalan, -e) sifatida talqin qilinib dastur xatti-harakatini o'zgartirishi; -- belgisi va allow-list bilan oldi olinadi."
+  course: appsec
+  lesson: 25
+- term: path traversal
+  aliases: ["yo'l o'tishi", "directory traversal"]
+  uz: "../ kabi ketma-ketliklar bilan ruxsat etilgan papkadan tashqaridagi fayllarga yetish."
+  course: appsec
+  lesson: 26
+- term: kanonik yo'l
+  aliases: ["canonical path", "realpath"]
+  uz: "Nuqtalar, ortiqcha slesh va symlink'lar yechilgandan keyingi yagona yo'l; tekshiruv aynan shu shaklda o'tkaziladi."
+  course: appsec
+  lesson: 26
+- term: SSRF
+  aliases: ["server-side request forgery"]
+  uz: "Serverni hujumchi tanlagan manzilga so'rov yuborishga majburlash; ko'pincha ichki xizmatlar va metadata servisiga yetish uchun ishlatiladi."
+  course: appsec
+  lesson: 27
+- term: DNS rebinding
+  aliases: ["DNS qayta bog'lash"]
+  uz: "Domen tekshiruvda ommaviy IP'ga, ulanishda ichki IP'ga ko'rsatadigan hujum; IP'ni tekshiruvdan keyin qotirish (pinning) bilan yopiladi."
+  course: appsec
+  lesson: 27
+- term: SSTI
+  aliases: ["server-side template injection", "template injection"]
+  uz: "Foydalanuvchi ma'lumoti template'ning o'zi (kod) sifatida render qilinishi; render o'zgaruvchisiga tushishidan farq qiladi."
+  course: appsec
+  lesson: 28
+- term: deserialization
+  aliases: ["deserializatsiya", "insecure deserialization"]
+  uz: "Baytlar yoki matndan obyekt tiklash; ishonchsiz kirishdan tur tanlanishi xavfli."
+  course: appsec
+  lesson: 29
+- term: prototype pollution
+  aliases: ["prototip ifloslanishi"]
+  uz: "__proto__ yoki constructor.prototype orqali Object.prototype'ga xususiyat qo'shish; barcha obyektlar uni meros qilib oladi."
+  course: appsec
+  lesson: 29
+- term: ReDoS
+  aliases: ["regex denial of service"]
+  uz: "Regex'dagi ichma-ich takrorlanishlar tufayli backtracking portlashi va event loop'ning bloklanishi."
+  course: appsec
+  lesson: 30
+- term: allow-list validatsiya
+  aliases: ["allow-list", "oq ro'yxat"]
+  uz: "Faqat oldindan ma'lum to'g'ri shakllarni qabul qilish; boshqa hamma narsa rad etiladi."
+  course: appsec
+  lesson: 30

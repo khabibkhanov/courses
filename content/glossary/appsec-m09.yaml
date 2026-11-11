@@ -1,0 +1,90 @@
+- term: typosquatting
+  aliases: []
+  uz: "Mashhur paket nomiga o'xshash nom bilan zararli paket e'lon qilish; dasturchi nomni xato yozib o'rnatib yuboradi."
+  course: appsec
+  lesson: 81
+- term: tranzitiv bog'liqlik
+  aliases: ["tranzitiv bog'liqliklar"]
+  uz: "Siz ro'yxatda yozmagan, lekin yozgan paketlaringiz o'z navbatida talab qiladigan paket. Hujum sirtining ko'rinmas qismi."
+  course: appsec
+  lesson: 81
+- term: lockfile
+  aliases: []
+  uz: "Har bog'liqlikning aniq versiyasi, manzili va integrity hash'ini saqlaydigan fayl; o'rnatishni takrorlanadigan qiladi."
+  course: appsec
+  lesson: 81
+- term: provenance
+  aliases: []
+  uz: "Artefakt qayerdan va qanday yig'ilganini (digest, builder, repozitoriy, commit) bildiruvchi imzolangan tasdiq."
+  course: appsec
+  lesson: 82
+- term: SBOM
+  aliases: ["Software Bill of Materials"]
+  uz: "Artefakt tarkibidagi komponentlar ro'yxati (nomi, versiyasi): zaiflik e'lon qilinganda qaysi servis ta'sirlanganini topish uchun."
+  course: appsec
+  lesson: 82
+- term: SLSA
+  aliases: []
+  uz: "Supply-chain Levels for Software Artifacts: build jarayoni ishonchliligini darajalar bilan tasvirlovchi framework (OpenSSF)."
+  course: appsec
+  lesson: 82
+- term: SAST
+  aliases: ["Static Application Security Testing"]
+  uz: "Kodni ishga tushirmay o'qib, xavfli naqshlarni qidiruvchi statik tahlil."
+  course: appsec
+  lesson: 83
+- term: secret scanning
+  aliases: []
+  uz: "Kod va git tarixida kalit, token va parol qidirish; prefiks va entropiya qoidalari bilan ishlaydi."
+  course: appsec
+  lesson: 83
+- term: DAST
+  aliases: ["Dynamic Application Security Testing"]
+  uz: "Ishlayotgan ilovaga tashqaridan so'rov yuborib, javoblar bo'yicha zaiflik qidiruvchi dinamik sinov."
+  course: appsec
+  lesson: 84
+- term: fuzzing
+  aliases: ["fuzz"]
+  uz: "Funksiya yoki servisga ko'p avtomatik yaratilgan kirish berib, crash va invariant buzilishini qidirish usuli."
+  course: appsec
+  lesson: 84
+- term: script injection
+  aliases: []
+  uz: "CI workflow'da ishonchsiz kiritma (masalan, PR sarlavhasi) shell buyrug'i matniga to'g'ridan-to'g'ri qo'yilib, buyruq sifatida bajarilishi."
+  course: appsec
+  lesson: 85
+- term: capability
+  aliases: ["Linux capability", "capabilities"]
+  uz: "Root huquqini mayda bo'laklarga ajratuvchi Linux imkoniyatlari; konteynerda keraksizlarini tashlash (drop ALL) hujum sirtini kamaytiradi."
+  course: appsec
+  lesson: 86
+- term: docker.sock
+  aliases: []
+  uz: "Docker daemon'ning Unix socket'i; konteynerga ulansa, u daemon orqali host ustidan root darajasidagi nazoratga ega bo'ladi."
+  course: appsec
+  lesson: 86
+- term: Pod Security Admission
+  aliases: ["PSA"]
+  uz: "Kubernetes admission controller'i: namespace label'lari (enforce, audit, warn) bilan Pod Security Standards profilini majburlaydi."
+  course: appsec
+  lesson: 87
+- term: NetworkPolicy
+  aliases: []
+  uz: "Kubernetes'da pod'lar orasidagi ingress va egress trafikni cheklovchi resurs; ta'sir qilishi uchun klaster uni qo'llaydigan network plugin ishlatishi kerak."
+  course: appsec
+  lesson: 87
+- term: workload identity
+  aliases: []
+  uz: "Servis doimiy kalitsiz, platforma bergan identitet orqali qisqa muddatli credential olishi; o'g'irlangan credential tez yaroqsiz bo'ladi."
+  course: appsec
+  lesson: 88
+- term: pg_hba.conf
+  aliases: []
+  uz: "PostgreSQL klient autentifikatsiyasi fayli: birinchi mos yozuv hal qiladi, zaxira yo'q, mos yozuv bo'lmasa kirish rad etiladi."
+  course: appsec
+  lesson: 89
+- term: protected mode
+  aliases: []
+  uz: "Redis 3.2.0 dan: default konfiguratsiya va parolsiz ishga tushganda faqat loopback'dan kelgan so'rovlarga javob beradigan rejim."
+  course: appsec
+  lesson: 89
