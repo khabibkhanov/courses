@@ -5,10 +5,12 @@ title: "HTTP xavfsizlik nuqtai nazaridan: request, header va parser farqlari"
 summary: "HTTP so'rovining qaysi qismlari hujumchi nazoratida ekani, takrorlangan va noodatiy header'larni turli komponentlar turlicha o'qishi, Host va X-Forwarded-For'ga ishonish xatosi, header injection va ularning tuzatilgan varianti."
 duration: 40
 sources:
+  - id: fastify-server
+    note: "Fastify Server: trustProxy standart false; true hamma proxy'ga ishonadi; satr/massiv IP-CIDR; son (hop soni) o'chirilgan, chunki bevosita mijoz X-Forwarded-* ni soxtalashtira oladi; request.ip untrusted input sifatida ogohlantirilgan"
   - id: rfc9110
-    note: "HTTP Semantics: header maydonlari nomining katta-kichik harfga bog'liq emasligi, bir nomli maydonlarni vergul bilan birlashtirish qoidasi va Host maydoni"
+    note: "HTTP Semantics: header maydonlari nomining katta-kichik harfga bog'liq emasligi, 5.3-bo'lim: qabul qiluvchi bir nomli maydon qatorlarini (ro'yxat sintaksisli maydonlarda) tartibni saqlab vergul bilan birlashtirishi mumkin (MAY), proxy tartibni o'zgartirmaydi; Set-Cookie ro'yxat sintaksisidan foydalanmagani uchun alohida holat; Host maydoni"
   - id: rfc9112
-    note: "HTTP/1.1 xabar sintaksisi: maydon nomi va ikki nuqta orasidagi bo'shliqni rad etish talabi hamda xabar chegarasini aniqlash qoidalari"
+    note: "HTTP/1.1 xabar sintaksisi: maydon nomi va ikki nuqta orasidagi bo'shliq: server 400 bilan rad etishi shart (MUST), proxy javobdan olib tashlaydi; 6.1 va 6.3: Transfer-Encoding Content-Length'dan ustun, ikkalasi birga bo'lsa server rad etishi yoki faqat Transfer-Encoding bo'yicha qayta ishlashi mumkin (MAY), har holda ulanishni yopishi shart (MUST); 11.2: request smuggling ta'rifi"
   - id: t10-a02
     note: "A02:2025 Security Misconfiguration kategoriyasi: tizim, ilova yoki cloud xizmati xavfsizlik nuqtai nazaridan noto'g'ri sozlanganda zaiflik paydo bo'lishi"
   - id: nestjs-rate-limit
@@ -30,14 +32,14 @@ quiz:
       - "Aniqlab bo'lmaydi, shuning uchun har doim ulanish manzilini oling"
     answer: 2
     explain: "Mijoz o'zi X-Forwarded-For yuborishi mumkin, shuning uchun chapdagi qiymatlar hujumchi nazoratida. Ishonchli proxy qo'shgan yozuv o'ngdan sanaladi. To'g'ri javobdagi mantiq: ishonchli hop sonini bilish. Oxirgi variant faqat proxy bo'lmagan holatda to'g'ri."
-  - q: "Ikki header: `Cookie: a=1` va `Cookie: b=2` bir so'rovda keldi. RFC 9110 bo'yicha umumiy qoida nima va u qaysi header'ga tatbiq etilmaydi?"
+  - q: "Ikki header: `Accept-Language: uz` va `Accept-Language: ru` bir so'rovda keldi. RFC 9110 bo'yicha umumiy qoida nima va u qaysi javob header'iga tatbiq etilmaydi?"
     options:
       - "Oxirgisi ustun, qolganlari tashlanadi; istisno yo'q"
       - "Birinchisi ustun, qolganlari tashlanadi; istisno Host"
       - "So'rov noto'g'ri, har doim 400"
-      - "Bir nomli maydonlar vergul bilan birlashtirilib bitta ro'yxat sifatida o'qilishi mumkin; istisno Set-Cookie"
+      - "Ro'yxat sintaksisli maydonda qabul qiluvchi ularni tartibni saqlab vergul bilan bitta qatorga birlashtirishi mumkin; istisno Set-Cookie"
     answer: 3
-    explain: "Umumiy qoida: bir nomli maydonlar tartib saqlangan holda vergul bilan birlashtiriladi, Set-Cookie istisno. Komponentlar bu qoidani turlicha qo'llasa (kimdir birinchisini, kimdir oxirgisini oladi), parser farqi hosil bo'ladi."
+    explain: "RFC 9110 5.3: qabul qiluvchi bir nomli maydon qatorlarini tartibni saqlab vergul bilan birlashtirishi mumkin (MAY), lekin bu ro'yxat sintaksisli maydonlar uchun; Set-Cookie ro'yxat sintaksisidan foydalanmaydi, shuning uchun uni birlashtirib bo'lmaydi va alohida qaraladi. Komponentlar bu qoidani turlicha qo'llasa (kimdir birinchisini, kimdir oxirgisini oladi), parser farqi hosil bo'ladi."
   - q: "Quyidagi kodda hujumchi `name` orqali javobga qo'shimcha header kiritishga urinadi. Qaysi gap to'g'ri?\n\n```ts\nres.setHeader(\"X-Vehicle\", req.query.name as string);\n```\nHujumchi `name=a%0d%0aSet-Cookie:%20x=1` yuboradi."
     options:
       - "Zamonaviy Node.js `setHeader` qiymatdagi CR va LF'ni rad etadi, lekin xom socket yoki qo'lda yig'ilgan javobda bu himoya yo'q"
@@ -155,7 +157,7 @@ Oxirgi qator muhim: faqat TCP ulanishining manzili tarmoq darajasida bilinadi va
 
 RFC 9110 bo'yicha header maydon nomlari katta-kichik harfga bog'liq emas: `Host`, `host` va `HOST` bir xil. Node.js `req.headers` hamma nomni kichik harfga o'tkazadi, lekin boshqa til yoki proxy shunday qilmasa, matn bo'yicha solishtirish xatosi paydo bo'ladi.
 
-Ikkinchi qoida: bir nomli bir necha maydon, tartib saqlangan holda, vergul bilan birlashtirilgan bitta ro'yxatga teng deb qaralishi mumkin; istisno `Set-Cookie`. Node.js buni qisman bajaradi: ko'p header'larni vergul bilan birlashtiradi, ba'zilarida (masalan `Host`, `Content-Type`) birinchisini oladi va qolganini tashlaydi. Bu xatti-harakat Node hujjatida bayon etilgan, lekin boshqa komponent (proxy, WAF) boshqacha tanlasa, farq paydo bo'ladi. Ya'ni "ikkita `Host` yuborilsa nima bo'ladi" savoliga javob komponentga bog'liq, va bu aniq hujum maydoni.
+Ikkinchi qoida: RFC 9110 (5.3-bo'lim) bo'yicha jo'natuvchi, ro'yxat sintaksisli maydonlardan tashqari, bir nomli bir necha maydon qatori yaratmasligi kerak, qabul qiluvchi esa shunday qatorlarni tartibni saqlab vergul bilan bitta qatorga birlashtirishi mumkin. Tartib ahamiyatli: proxy qiymatlar tartibini o'zgartirishi mumkin emas. Yagona ma'lum istisno `Set-Cookie`: u ro'yxat sintaksisidan foydalanmaydi va ko'pincha bir nechta qatorda keladi, shuning uchun qabul qiluvchi uni birlashtirmay, alohida holat sifatida qayta ishlashi kerak. Node.js buni qisman bajaradi: ko'p header'larni vergul bilan birlashtiradi, ba'zilarida (masalan `Host`, `Content-Type`) birinchisini oladi va qolganini tashlaydi. Bu xatti-harakat Node hujjatida bayon etilgan, lekin boshqa komponent (proxy, WAF) boshqacha tanlasa, farq paydo bo'ladi. Ya'ni "ikkita `Host` yuborilsa nima bo'ladi" savoliga javob komponentga bog'liq, va bu aniq hujum maydoni.
 
 Uchinchi qoida: RFC 9112 server maydon nomi va ikki nuqta orasida bo'shliq bo'lgan xabarni 400 bilan rad etishi shartligini belgilaydi. Sababi shu: ba'zi parser `Transfer-Encoding : chunked` ni tan oladi, boshqasi tanimaydi, natijada xabar chegarasi haqida kelishmovchilik chiqadi. Qat'iy parser noaniq xabarni rad etadi, yumshoq parser "tuzatib" yuboradi, va "tuzatish" ning o'zi hujum vektoriga aylanadi.
 
@@ -193,7 +195,7 @@ Birinchi natijada ikki `Host` bitta ro'yxatga aylandi: shu qiymatni `ALLOWED.has
 
 ### Xabar chegarasi
 
-HTTP/1.1 da bir TCP ulanishida ketma-ket ko'p so'rov o'tishi mumkin, shuning uchun har so'rov qayerda tugashini parser aniq bilishi shart. Buning uchun `Content-Length` yoki `Transfer-Encoding: chunked` ishlatiladi. Ikkalasi bir xabarda bo'lsa yoki qiymatlar noaniq bo'lsa, RFC 9112 xavfsizlik bo'limida buni request smuggling manbai deb belgilaydi va xabarni rad etish yoki ulanishni yopishni tavsiya qiladi. Ikki komponent chegarani turlicha topsa, bir komponent "bitta so'rov" deb ko'rgan baytlarni ikkinchisi "ikkita so'rov" deb o'qiydi. Bu mexanizmni 20-darsda to'liq ko'ramiz; hozir faqat shuni yodda tuting: chegara qoidasi xavfsizlik qoidasi.
+HTTP/1.1 da bir TCP ulanishida ketma-ket ko'p so'rov o'tishi mumkin, shuning uchun har so'rov qayerda tugashini parser aniq bilishi shart. Buning uchun `Content-Length` yoki `Transfer-Encoding: chunked` ishlatiladi. RFC 9112 11.2-bo'limi request smuggling'ni qabul qiluvchilar parsing'idagi farqdan foydalanish deb ta'riflaydi va xabar chegarasi qoidalarini (6.3) shu sababli qat'iylashtirganini yozadi. Ikkalasi bir xabarda kelsa, Transfer-Encoding Content-Length'dan ustun; RFC bunday xabarni smuggling urinishi bo'lishi mumkin va xato sifatida qayta ishlanishi kerak deydi (6.3). Server uni rad etishi (MAY) yoki faqat Transfer-Encoding bo'yicha qayta ishlashi mumkin, lekin har holda javobdan keyin ulanishni yopishi shart (6.1). Ikki komponent chegarani turlicha topsa, bir komponent "bitta so'rov" deb ko'rgan baytlarni ikkinchisi "ikkita so'rov" deb o'qiydi. Bu mexanizmni 20-darsda to'liq ko'ramiz; hozir faqat shuni yodda tuting: chegara qoidasi xavfsizlik qoidasi.
 
 ### Normalizatsiya tartibi
 
@@ -239,6 +241,8 @@ https://fleet.example/reset?token=T123
 Oddiy foydalanuvchi uchun hamma narsa to'g'ri ishlaydi. Kod zaifligi uni oddiy sinovda ko'rinmaydi.
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu Host header'ini soxtalashtirish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi o'z mijoz dasturidan (brauzer emas) qurbonning emailiga tiklash so'rovini boshlaydi, lekin `Host: evil.example` yuboradi. U ikkinchi hujumni ham sinaydi: yuklama balanseri ortidagi ilovaga `X-Forwarded-For: 1.2.3.4` yuboradi, balanser esa haqiqiy manzilni oxiriga qo'shadi.
 

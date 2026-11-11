@@ -29,6 +29,32 @@ Bu fayl AppSec kursidagi har bir darsni yozish uchun yagona standart. Format Cle
 - Muhim: hujum ko'rsatilsa, shu darsda uni to'sadigan tuzatish ham ko'rsatiladi.
 - Real zaiflik (CVE) haqida yozilganda faqat ommaviy advisory va tuzatilgan versiyalar haqida gap boradi.
 
+### "Ta'lim maqsadida" ogohlantirishi (majburiy)
+
+Hujum texnikasini ko'rsatadigan har darsda (`### 2. Hujum` yoki `### Hujum` bo'limi bor, yoki boshqa joyda biror narsani qanday ekspluatatsiya qilishni ko'rsatadi: injection, XSS, CSRF, SSRF, path traversal, auth bypass, IDOR, race condition, kripto hujumlari, ReDoS, supply chain, prompt injection va h.k.) hujum qismining boshida **bitta** blockquote bo'ladi. Joyi: "Hujum" sarlavhasidan keyingi birinchi paragraf (sarlavha bo'lmasa, birinchi hujum namoyishidan oldin). Sof tushuncha, standart, jarayon va compliance darslari (hujum namoyishi yo'q) hamda 9 va 94-darslarning o'zi ogohlantirishsiz. Hujum o'rniga jarayon xatosi ko'rsatilsa (6, 7, 8, 90, 95-darslar) va hujum emas, sozlama xatosi ko'rsatilsa (10-dars) ham kerak emas.
+
+Format (2-3 gap, o'zbek lotin, 60 so'zdan kam):
+
+```text
+> **Ta'lim maqsadida.** <Bu texnika nomi> faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-X-moddasi (<9-darsdagi sarlavha>) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+```
+
+- Birinchi gap shu darsdagi texnikani nomlasin va darsdan darsga biroz o'zgarsin (bir xil matnni ko'chirmang).
+- Moddani texnikaning tabiatiga qarab tanlang (ko'pi bilan ikkita modda), 9-darsdagi tavsifga ko'ra:
+
+| Texnika | Modda (sarlavha 9-darsdagidek) |
+|---|---|
+| Kompyuter axborotiga ruxsatsiz kirish yoki undan nusxa olish | 278-2 (Kompyuter axborotidan ruxsatsiz foydalanish) |
+| Axborotni ruxsatsiz o'zgartirish, shikastlash, o'chirish | 278-4 (Kompyuter axborotini modifikatsiyalashtirish) |
+| Tizimni ishdan chiqarish yoki ishini buzish (DoS, ReDoS, resurs tugatish) | 278-5 (Kompyuter sabotaji) |
+| Zararli dastur yaratish, ishlatish, tarqatish | 278-6 (Zarar keltiruvchi dasturlar) |
+| Ruxsatsiz kirish uchun maxsus vosita tayyorlash yoki tarqatish | 278-3 (Maxsus vositalarni tayyorlash va tarqatish) |
+| Shaxsga doir ma'lumotdan noto'g'ri foydalanish | 94-darsga havola va shu darsda nomlangan moddalar (Jinoyat kodeksi 141-2, Ma'muriy kodeks 46-2, O'RQ-547) |
+
+- "(kurs talqini)" har doim yoziladi: texnikani moddaga moslash kursning o'qishi, qonun matnining o'zi emas.
+- Huquqiy faktlar faqat 9 va 94-darslardan olinadi (modda raqami va sarlavhasi aynan o'sha yerdagidek). Yangi huquqiy da'vo, jazo yoki sanksiya yozilmaydi; ularni ogohlantirishga qo'shmang.
+- Havola "9-dars" ko'rinishida yoziladi (yuqoridagi "(23-dars)" qoidasidagi kabi).
+
 ## Aniqlik va manbalar
 
 - Birlamchi manbalar ustun: spetsifikatsiya (RFC, W3C, WHATWG), standartlar (NIST, OWASP ASVS), rasmiy hujjatlar. Dars faqat `sources.yaml`dagi id'larga tayanadi.

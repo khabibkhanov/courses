@@ -271,6 +271,8 @@ SELECT id FROM vehicles ORDER BY plate
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu raw so'rovdagi injection usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) va 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi "alfa" foydalanuvchisi, o'quv funksiyalariga qarshi. Davlat raqami maydoniga `x' OR '1'='1` yuboriladi. Saralash maydoniga `id; DROP TABLE vehicles` (o'quv modelda faqat matn chiqadi).
 
 ```ts run

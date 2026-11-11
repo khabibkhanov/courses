@@ -17,6 +17,8 @@ sources:
     note: "AICPA SOC sahifasi (2026-11-11): SOC - CPA'lar ko'rsatadigan xizmatlar to'plami (xizmat ko'rsatuvchi tashkilotdagi tizim darajasidagi yoki boshqa tashkilotlardagi entity darajasidagi nazoratlar); SOC 2 nashrining sarlavhasi 'Reporting on an Examination of Controls at a Service Organization Relevant to Security, Availability, Processing Integrity, Confidentiality, or Privacy'; 2027 uchun SOC 2 Trust Services Criteria va Description Criteria exposure draft'lari e'lon qilingani ko'rsatilgan"
   - id: aicpa-soc2-ed
     note: "AICPA yangiligi (2026-10-28): 2027 SOC 2 Trust Services Criteria yangilash taklifi: mezonlarni birlashtirish, ba'zilarini olib tashlash, aniqlik kerak joyda qo'shish, qayta yozish; sun'iy intellekt uchun points of focus (AI governance, model monitoring, prompt manipulation, data poisoning va h.k.); izoh muddati 2027-yil 15-yanvar; tasdiqlansa, 2027-yil 31-dekabrda yoki undan keyin boshlangan engagement'larga qo'llanadi, erta qo'llash mumkin"
+  - id: pci-scoping-guidance
+    note: "PCI SSC Scoping and Network Segmentation Guidance v1.1: qamrov CHD/SAD saqlanadigan, qayta ishlanadigan yoki uzatiladigan joyga bog'liq; tokenizatsiya kabi vositalar xavfni kamaytirishi mumkin, barcha talablarni yo'qotadigan yechim yo'q; uchinchi tomonga topshirishda tomonlar talablarni kelishadi; hosted/redirect/iframe to'lov sahifalari qo'llanmada yo'q"
   - id: asvs
     note: "ASVS 5.0.0 'Assessment and Certification' bo'limi: OWASP hech kimni sertifikatlamaydi; verifikatsiya hisoboti qamrov, tekshirilgan talablar, istisnolar va hal qilish yo'riqnomasini o'z ichiga olishi kerak; avtomatik asbobni ishga tushirish talabni tekshirish degani emas ('testable using automation != running an off-the-shelf tool')"
 quiz:
@@ -175,7 +177,7 @@ PCI Security Standards Council sahifasiga ko'ra PCI DSS to'lov kartasi hisobi ma
 
 PCI SSC blogidagi ma'lumotlarga ko'ra v3.2.1 2024-yil 31-martda nafaqaga chiqqan; v4.0.1 2024-yil 11-iyunda e'lon qilingan "limited revision" bo'lib, yangi yoki o'chirilgan talab qo'shmagan, faqat tuzatish va aniqlashtirishlar kiritgan; v4.0 2024-yil 31-dekabrda nafaqaga chiqqan. v4.0 64 ta yangi talab qo'shgan, ularning 51 tasi future-dated bo'lib, 2025-yil 31-martdan majburiy bo'lgan. Blogdagi misollar bu talablarning ko'pi jarayonga tegishli ekanini ko'rsatadi: rollar va mas'uliyatlarni hujjatlashtirish va yangilab turish, yillik qamrovni tasdiqlash, SAQ A toifasidagi e-commerce savdogarlari uchun ASV orqali choraklik skanerlash. Xulosa: ramka versiyasi muddati bor hujjat; reja "qaysi versiya va qaysi sanadagi talablar" deb yozilishi kerak.
 
-Dasturchi uchun asosiy amaliy xulosa qamrov (scope): karta ma'lumoti qayerdan o'tsa, o'sha tizim talabga tushadi. Karta ma'lumotini umuman saqlamaslik va o'zingizga olib kelmaslik (to'lov provayderi hosting qilgan to'lov formasi) qamrovni keskin kamaytiradi. Buning usullari va qaysi hollarda qamrov qanday o'zgarishi aniq PCI SSC hujjatlarida ko'rsatiladi (bu darsda o'qilmagan).
+Dasturchi uchun asosiy amaliy xulosa qamrov (scope): karta ma'lumoti qayerdan o'tsa, o'sha tizim talabga tushadi. PCI SSC qamrov va segmentatsiya qo'llanmasi qamrovni tizim CHD/SAD ni saqlaydimi, qayta ishlaydimi yoki uzatadimi, shunga bog'laydi, shuning uchun faqat saqlamaslik tizimni qamrovdan chiqarmaydi. Qo'llanma tokenizatsiya kabi vositalar xavfni kamaytirishi mumkinligini, lekin barcha talablarni olib tashlaydigan yechim yo'qligini aytadi; funksiya uchinchi tomonga topshirilsa, tomonlar qaysi talabni kim bajarishini kelishishi kerak. To'lov formasini hosted, redirect yoki iframe qilishning qamrovga ta'siri bu qo'llanmada yo'q, uni ekvayer yoki to'lov brendi bilan aniqlang.
 
 ### ISO/IEC 27001
 
@@ -387,7 +389,7 @@ describe("compliance controls", () => {
 
 - PCI DSS to'lov kartasi ma'lumoti bilan ishlaydigan yoki uning muhitiga ta'sir qila oladigan tashkilotlar uchun bazaviy talablar (hozirgi nashr v4.0.1); majburiyat to'lov brendlari va acquirer'lar orqali keladi; asosiy dasturchi qarori qamrovni kamaytirish.
 - SOC 2 mustaqil auditorning Security, Availability, Processing Integrity, Confidentiality va Privacy bo'yicha nazoratlar hisoboti; 2027 mezonlari loyiha bosqichida (izoh muddati 2027-yil 15-yanvar).
-- ISO/IEC 27001 ISMS standarti, sertifikatlash ixtiyoriy; standart matni pullik va bu darsda o'qilmagan, talablar ISO matnidan olinadi.
+- ISO/IEC 27001 ISMS standarti, sertifikatlash ixtiyoriy; standart matni pullik, shuning uchun bu dars uning talablarini sanamaydi; talablar ISO matnidan olinadi.
 - Nazoratni bir marta joriy qilib, dalilini avtomatik yig'ing va ramka talablariga aniq matn bilan bog'lang ("bir nazorat, ko'p ramka").
 - Declared holat bilan haqiqiy holat orasidagi og'ishni predikat va snapshot bilan toping; istisnolarga egasi, kompensatsiya va muddat bering.
 - Compliance xavfsizlikning o'zi emas: o'z riskingiz uchun threat model va kod review bilan to'ldiring.

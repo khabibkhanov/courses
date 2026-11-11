@@ -8,7 +8,7 @@ sources:
   - id: cs-csrf
     note: "OWASP CSRF Prevention Cheat Sheet: synchronizer token va imzolangan double-submit cookie (oddiy variant tavsiya etilmaydi), Fetch Metadata siyosati va fallback, Origin tekshiruvi, SameSite cheklovlari, custom header, client-side CSRF, XSS hamma CSRF himoyasini yengishi"
   - id: rfc6265bis
-    note: "Cookie qoralamasi: SameSite atributi (Strict, Lax, None) shu hujjatda ta'riflangan. Matn lokal korpusda yo'q, shuning uchun Lax xatti-harakati va cross-site POST'da Lax-allowing-unsafe oynasi haqidagi da'volar OWASP cheat sheet'ning shu qoralamaga havolalariga tayanadi"
+    note: "Cookie qoralamasi (hali draft, RFC 6265 ni almashtirishga mo'ljallangan): SameSite Strict, Lax, None; atribut yo'q yoki noma'lum bo'lsa \"Default\" belgisi Lax kabi qo'llanadi; \"Lax-allowing-unsafe\" yumshatishi (faqat SameSite yozilmagan cookie'lar, cross-site top-level so'rovga metodidan qat'i nazar, tavsiya etilgan cookie yoshi chegarasi 2 daqiqa yoki kam)"
   - id: fetch-metadata
     note: "W3C Fetch Metadata: Sec-Fetch-Site, Sec-Fetch-Mode, Sec-Fetch-Dest sarlavhalari va ularning qiymatlari"
 quiz:
@@ -150,7 +150,7 @@ Hammasi uchun ikki qoida: holatni o'zgartiruvchi amal GET bo'lmaydi (HTTP'da GET
 
 ### SameSite va "site" tushunchasi
 
-SameSite cookie'ning cross-site so'rovlarga qo'shilishini boshqaradi, lekin "site" origin'dan kengroq (12-dars): `app.example` va `eski.app.example` bitta site. Sibling subdomen yoki sizning domeningizdagi boshqa ilovada XSS bo'lsa, undan yuborilgan so'rov same-site hisoblanadi va cookie qo'shiladi. Shuning uchun SameSite kuchli, lekin yagona himoya emas. Ikkinchi nozik joy: `Lax` top-level GET navigatsiyada cookie'ni qo'shadi, shu sababli GET orqali holat o'zgartiradigan endpoint hujumga ochiq. Uchinchisi: cheat sheet'ga ko'ra Chromium asosidagi brauzerlar `SameSite` ko'rsatilmagan cookie'ni `Lax` deb oladi, Firefox va Safari esa yo'q, eski va o'rnatilgan klientlar atributni umuman e'tiborsiz qoldirishi mumkin; `Lax` default bo'lgan brauzerlar cookie o'rnatilgandan keyin qariyb ikki daqiqa cross-site top-level POST'da ham yuborishi mumkin (cheat sheet shunday yozadi). Atributni har doim aniq yozing (13-dars).
+SameSite cookie'ning cross-site so'rovlarga qo'shilishini boshqaradi, lekin "site" origin'dan kengroq (12-dars): `app.example` va `eski.app.example` bitta site. Sibling subdomen yoki sizning domeningizdagi boshqa ilovada XSS bo'lsa, undan yuborilgan so'rov same-site hisoblanadi va cookie qo'shiladi. Shuning uchun SameSite kuchli, lekin yagona himoya emas. Ikkinchi nozik joy: `Lax` top-level GET navigatsiyada cookie'ni qo'shadi, shu sababli GET orqali holat o'zgartiradigan endpoint hujumga ochiq. Uchinchisi: cheat sheet'ga ko'ra Chromium asosidagi brauzerlar `SameSite` ko'rsatilmagan cookie'ni `Lax` deb oladi, Firefox va Safari esa yo'q, eski va o'rnatilgan klientlar atributni umuman e'tiborsiz qoldirishi mumkin; `Lax` default bo'lgan brauzerlar cookie o'rnatilgandan keyin qariyb ikki daqiqa cross-site top-level POST'da ham yuborishi mumkin (cheat sheet shunday yozadi; rfc6265bis qoralamasi buni "Lax-allowing-unsafe" rejimi deb ataydi: brauzerlarga ruxsat (MAY), faqat `SameSite` yozilmagan cookie'larga, yoshi 2 daqiqa yoki undan kam bo'lganlarga cheklash tavsiya qilinadi, SHOULD; qoralama hali standart emas). Atributni har doim aniq yozing (13-dars).
 
 ### CSRF token
 
@@ -227,6 +227,8 @@ console.log("v7 limiti:", limits.get("v7"));
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu CSRF usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi sahifasi (`evil.example`) foydalanuvchi brauzeridan `app.example` ga forma yuboradi. Modelda cookie `SameSite=None`, shuning uchun cross-site POST'da ham qo'shiladi:
 

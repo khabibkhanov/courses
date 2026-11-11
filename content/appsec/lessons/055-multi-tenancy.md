@@ -247,6 +247,8 @@ alfa: 120
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu tenant izolyatsiyasining buzilishi namunasi faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi hech narsa qilmaydi: u shunchaki o'z hisobotini so'raydi. Kod o'zi chegarani buzadi, ikkinchi tenant keyingi navbatda keladi:
 
 ```ts run

@@ -5,8 +5,8 @@ title: "TLS 1.3 handshake"
 summary: "TLS 1.3 handshake bosqichlari (key exchange, server parameters, authentication), HKDF asosidagi kalit jadvali, Finished xabari bilan handshake yaxlitligi va downgrade himoyasi, 0-RTT replay xavfi, TLS 1.2 dan farqlar va konfiguratsiya xatolari."
 duration: 50
 sources:
-  - id: rfc8446
-    note: "RFC 8446: 1.2 (TLS 1.2 dan asosiy farqlar), 2 (protokol umumiy ko'rinishi va 1-rasm), 2.3 va Appendix E.5 (0-RTT va replay), 4.1.3 (downgrade himoyasi), 4.4.3 (CertificateVerify), 7.1 (HKDF-Expand-Label), 9.1 (majburiy suite'lar). Kalit jadvali va Finished tafsilotlari darslik darajasida yozilgan"
+  - id: rfc9846
+    note: "RFC 9846 (2026-yil iyul, Standards Track): TLS 1.3 ning joriy spetsifikatsiyasi, RFC 8446 va RFC 5246 ni bekor qiladi (obsoletes), 1.2 (RFC 8446 bilan munosabat); 1.3 (TLS 1.2 dan asosiy farqlar), 2 (protokol umumiy ko'rinishi), 2.3 va 8 (0-RTT va anti-replay), F.5 (0-RTT replay xavfi va profil talabi), 4.2.3 (downgrade himoyasi), 4.5.2 (CertificateVerify), 5.3 (yozuv nonce'si), 7.1 (HKDF-Expand-Label), 9.1 (majburiy suite'lar). Raqamlash RFC 8446 dan farq qiladi: masalan CertificateVerify 8446 da 4.4.3 edi. Finished tafsilotlari darslik darajasida yozilgan"
   - id: t10-a04
     note: "A04:2025 'How to prevent': TLS 1.2 va undan yuqori faqat forward secrecy cipher'lar bilan, CBC'dan voz kechish, HSTS, kvant bardosh kalit almashish algoritmlari; tekshiriladigan savollar: sertifikat va ishonch zanjiri tekshiruvi, algoritm downgrade"
   - id: rfc5280
@@ -25,7 +25,7 @@ quiz:
       - "Ular handshake traffic kalitlari bilan shifrlanadi"
       - "Ular faqat TLS 1.2 da shifrlanadi"
     answer: 2
-    explain: "RFC 8446 1.2: ServerHello'dan keyingi barcha handshake xabarlari shifrlangan; shuning uchun sertifikat ham passiv kuzatuvchiga ko'rinmaydi (2-rasmda {} belgisi)."
+    explain: "RFC 9846 1.3: ServerHello'dan keyingi barcha handshake xabarlari shifrlangan; shuning uchun sertifikat ham passiv kuzatuvchiga ko'rinmaydi (2-rasmda {} belgisi)."
   - q: "Kimdir ClientHello'dagi cipher suite ro'yxatini yo'lda o'zgartirib, zaifroq variantni majbur qilmoqchi (downgrade). TLS 1.3 buni qanday aniqlaydi?"
     options:
       - "Finished xabari handshake transkriptining MAC'i; ikki tomon ko'rgan transkript farq qilsa Finished mos kelmaydi va handshake to'xtaydi"
@@ -34,14 +34,14 @@ quiz:
       - "Hech narsa; downgrade TLS 1.3 da mumkin"
     answer: 0
     explain: "Kalitlar va Finished transkript hash'iga bog'liq. O'zgargan ClientHello ikki tomonda turli transkript beradi; autentifikatsiya qilingan Finished/CertificateVerify buni ushlaydi."
-  - q: "0-RTT (early data) haqida RFC 8446 nimani aytadi?"
+  - q: "0-RTT (early data) haqida RFC 9846 nimani aytadi?"
     options:
       - "U 1-RTT bilan bir xil xavfsizlik beradi va replay'dan himoyalangan"
       - "U forward secret emas va ulanishlar orasida replay'dan kafolat yo'q; shuning uchun profilsiz ishlatilmaydi"
       - "U faqat parol almashish uchun"
       - "U sertifikatni almashtiradi"
     answer: 1
-    explain: "0-RTT ma'lumot oldingi PSK'dan hosil kalit bilan shifrlanadi (forward secrecy yo'q) va replay himoyasi yo'q. Server yoki ilova darajasida bir martalik qabul qilish kerak; to'lov yoki holat o'zgartiruvchi so'rovlarga mos emas."
+    explain: "RFC 9846 2.3: protokol 0-RTT ma'lumot uchun forward secrecy kafolatini bermaydi (kafolat server xatti-harakatiga bog'liq va mijozga bildirilmaydi) va ulanishlar orasida non-replay kafolati yo'q. Server yoki ilova darajasida bir martalik qabul qilish kerak; to'lov yoki holat o'zgartiruvchi so'rovlarga mos emas."
   - q: "A04:2025 'How to prevent' bo'yicha tranzitdagi ma'lumot uchun minimal talab qaysi?"
     options:
       - "Har qanday TLS versiyasi, agar sertifikat bor bo'lsa"
@@ -57,7 +57,7 @@ quiz:
       - "AES TLS'da ishlatilmaydi"
       - "SHA TLS'da taqiqlangan"
     answer: 1
-    explain: "RFC 8446 1.2: statik RSA va DH suite'lari olib tashlangan, simmetrik algoritmlar faqat AEAD. ASVS Appendix C ham RSA PKCS#1 v1.5 kalit transportini disallowed, CBC'ni legacy deb belgilaydi."
+    explain: "RFC 9846 1.3: statik RSA va DH suite'lari olib tashlangan, simmetrik algoritmlar faqat AEAD. ASVS Appendix C ham RSA PKCS#1 v1.5 kalit transportini disallowed, CBC'ni legacy deb belgilaydi."
   - q: "Zamonaviy hybrid TLS kalit almashish (X25519MLKEM768) yoqildi. Bu qanday ta'sir qiladi?"
     options:
       - "Kalit almashish (maxfiylik) kvant tahdidiga qarshi kuchayadi, lekin sertifikat imzolari klassik bo'lib qoladi va ular uchun alohida migratsiya kerak"
@@ -173,13 +173,13 @@ HTTPS yoqilgan bo'lsa, ko'pchilik jamoa "transport xavfsiz" deb hisoblaydi. Asli
 
 OWASP Top 10:2025 A04 tranzitdagi ma'lumot haqida aniq: barcha ma'lumot transport qatlamida shifrlanishi kerak, sertifikat va kalit boshqaruvi kamchiliklari CPU tezlatgichlari va LetsEncrypt kabi xizmatlar tufayli endi to'siq emas. Tekshiriladigan savollarda ham shu bor: sertifikat va ishonch zanjiri to'g'ri tekshirilyaptimi, shifrlash majburiymi (HTTP sarlavhalari yetishmayaptimi), algoritmni pasaytirish yoki aylanib o'tish mumkinmi. Handshake'ning ichki tuzilishini bilmasdan bu savollarga javob berish qiyin.
 
-Bu dars TLS 1.3 (RFC 8446) handshake'ini kriptografiya nuqtai nazaridan ochadi: nima almashiladi, kalitlar qanday chiqariladi, nima uchun downgrade qiyin, 0-RTT nega xavfli. Oldingi uch dars (hash, AEAD, imzo va kalit kelishish) bu yerda bitta protokolga birlashadi. Sertifikat va PKI 66-darsda, HSTS va HTTPS sozlamalari 16 va 18-darslarda.
+Bu dars TLS 1.3 handshake'ini kriptografiya nuqtai nazaridan ochadi: nima almashiladi, kalitlar qanday chiqariladi, nima uchun downgrade qiyin, 0-RTT nega xavfli. Oldingi uch dars (hash, AEAD, imzo va kalit kelishish) bu yerda bitta protokolga birlashadi. Sertifikat va PKI 66-darsda, HSTS va HTTPS sozlamalari 16 va 18-darslarda.
 
 ## Asosiy g'oya
 
 ### Uch bosqich
 
-RFC 8446 2-bo'limi handshake'ni uch bosqichli deb ta'riflaydi: Key Exchange (umumiy kalit material kelishiladi va kriptografik parametrlar tanlanadi; shundan keyingi hamma narsa shifrlangan), Server Parameters (mijoz autentifikatsiya qilinadimi, ilova qatlami protokoli va hokazo) va Authentication (server va ixtiyoriy ravishda mijoz autentifikatsiya qilinadi, kalitlar tasdiqlanadi va handshake yaxlitligi ta'minlanadi). Xabarlar oqimi:
+TLS 1.3 dastlab RFC 8446 (2018) da yozilgan. Joriy spetsifikatsiya RFC 9846 (2026-yil iyul, Standards Track): u RFC 8446 va RFC 5246 (TLS 1.2) ni bekor qiladi. RFC 9846 1.2 bo'limiga ko'ra bu TLS 1.3 ning kichik yangilanishi: versiya raqami o'zgarmagan, protokol orqaga mos, ba'zi talablar qattiqlashtirilgan. Bu darsga tegishlilari: KeyShare qiymatlarini ulanishlar orasida qayta ishlatish taqiqlangan, TLS 1.0 va 1.1 ni muzokara qilish taqiqlangan (RFC 8996), kalit ishlatish chegarasiga yetishdan oldin KeyUpdate qilish MUST bo'lgan, "master" atamasi "main" bilan almashtirilgan, asimmetrik kalit almashish tavsifi KEM asosidagisini ham qamrab oladi. Bo'limlar raqamlanishi o'zgargan, shuning uchun quyida RFC 9846 raqamlari beriladi. RFC 9846 2-bo'limi handshake'ni uch bosqichli deb ta'riflaydi: Key Exchange (umumiy kalit material kelishiladi va kriptografik parametrlar tanlanadi; shundan keyingi hamma narsa shifrlangan), Server Parameters (mijoz autentifikatsiya qilinadimi, ilova qatlami protokoli va hokazo) va Authentication (server va ixtiyoriy ravishda mijoz autentifikatsiya qilinadi, kalitlar tasdiqlanadi va handshake yaxlitligi ta'minlanadi). Xabarlar oqimi:
 
 ```text
 Client                                           Server
@@ -195,11 +195,11 @@ ClientHello  (+ key_share, supported_versions,
 [Application Data]            <------->  [Application Data]
 ```
 
-Figuradagi `{}` handshake traffic kalitlari bilan shifrlangan xabarlarni, `[]` application traffic kalitlari bilan himoyalanganlarini bildiradi (RFC 8446 1-rasmi bilan mos). Asosiy g'oya: mijoz ClientHello'da o'zi tomonidan taklif qilingan algoritmlar bilan birga darhol (EC)DHE kalit ulushini (`key_share`) yuboradi. Server bittasini tanlab, o'z ulushini ServerHello'da qaytaradi. Shu nuqtada ikki tomon umumiy sirga ega va qolgan hamma narsa shifrlanadi. Shuning uchun TLS 1.3 to'liq handshake'i bir aylanish (1-RTT) bilan tugaydi va passiv kuzatuvchi serverning sertifikatini ham ko'rmaydi: RFC 1.2 bo'limi ServerHello'dan keyingi barcha handshake xabarlari shifrlangan deb yozadi.
+Figuradagi `{}` handshake traffic kalitlari bilan shifrlangan xabarlarni, `[]` application traffic kalitlari bilan himoyalanganlarini bildiradi (RFC 9846 2-bo'limdagi rasm bilan mos). Asosiy g'oya: mijoz ClientHello'da o'zi tomonidan taklif qilingan algoritmlar bilan birga darhol (EC)DHE kalit ulushini (`key_share`) yuboradi. Server bittasini tanlab, o'z ulushini ServerHello'da qaytaradi. Shu nuqtada ikki tomon umumiy sirga ega va qolgan hamma narsa shifrlanadi. Shuning uchun TLS 1.3 to'liq handshake'i bir aylanish (1-RTT) bilan tugaydi va passiv kuzatuvchi serverning sertifikatini ham ko'rmaydi: RFC 9846 1.3 bo'limi ServerHello'dan keyingi barcha handshake xabarlari shifrlangan deb yozadi.
 
 ### TLS 1.2 dan farqlar
 
-RFC 8446 1.2 bo'limi asosiy farqlarni sanaydi (bu ro'yxat to'liq emas):
+RFC 9846 1.3 bo'limi asosiy farqlarni sanaydi (bu ro'yxat to'liq emas):
 
 - Simmetrik algoritmlar ro'yxatidan eskirganlari chiqarilgan, qolganlarining hammasi AEAD. Cipher suite tushunchasi o'zgargan: autentifikatsiya va kalit almashish mexanizmlari yozuvni himoyalash algoritmi (kalit uzunligi bilan) va hash'dan ajratilgan.
 - Statik RSA va Diffie-Hellman suite'lari olib tashlangan: ochiq kalit asosidagi har qanday kalit almashish forward secrecy beradi.
@@ -208,25 +208,25 @@ RFC 8446 1.2 bo'limi asosiy farqlarni sanaydi (bu ro'yxat to'liq emas):
 - Siqish, DSA va moslashtirilgan DHE guruhlari olib tashlangan; RSA imzolari uchun RSASSA-PSS ishlatiladi; ChangeCipherSpec faqat middlebox moslashuvi uchun qolgan.
 - 0-RTT rejimi qo'shilgan: ba'zi ma'lumotlar uchun bir aylanish tejaladi, lekin ayrim xavfsizlik xususiyatlari hisobiga.
 
-Majburiy implementatsiya (9.1-bo'lim, boshqa ilova profili ko'rsatilmagan bo'lsa): `TLS_AES_128_GCM_SHA256` MUST, `TLS_AES_256_GCM_SHA384` va `TLS_CHACHA20_POLY1305_SHA256` SHOULD; kalit almashish uchun secp256r1 (P-256) MUST, X25519 SHOULD. Ko'rinib turibdiki, suite nomi endi faqat AEAD va hash'ni bildiradi (`TLS_AES_128_GCM_SHA256`), kalit almashish va imzo algoritmi alohida kelishiladi. A04 oldini olish ro'yxati ham mos: TLS 1.2 va undan yuqori, forward secrecy cipher'lar bilan, CBC cipher'larni olib tashlash, kvantga bardosh kalit almashish algoritmlarini qo'llab-quvvatlash va HTTPS uchun HSTS (16-dars).
+Majburiy implementatsiya (RFC 9846 9.1-bo'lim, boshqa ilova profili ko'rsatilmagan bo'lsa): `TLS_AES_128_GCM_SHA256` MUST, `TLS_AES_256_GCM_SHA384` va `TLS_CHACHA20_POLY1305_SHA256` SHOULD; kalit almashish uchun secp256r1 (P-256) MUST, X25519 SHOULD. Ko'rinib turibdiki, suite nomi endi faqat AEAD va hash'ni bildiradi (`TLS_AES_128_GCM_SHA256`), kalit almashish va imzo algoritmi alohida kelishiladi. A04 oldini olish ro'yxati ham mos: TLS 1.2 va undan yuqori, forward secrecy cipher'lar bilan, CBC cipher'larni olib tashlash, kvantga bardosh kalit almashish algoritmlarini qo'llab-quvvatlash va HTTPS uchun HSTS (16-dars).
 
 ## Chuqurroq: kalit jadvali va yaxlitlik
 
 ### HKDF va transkript
 
-Kalitlar bitta umumiy sirdan emas, zanjir bilan chiqariladi. RFC 8446 7.1: kalit chiqarish HKDF-Extract va HKDF-Expand funksiyalaridan foydalanadi; ikkita kirish siri bor: PSK (oldin kelishilgan yoki oldingi ulanishdan olingan) va (EC)DHE umumiy siri. Yangi sir qo'shish usuli: joriy holat tuz (salt) sifatida, yangi sir esa kirish kalit material (IKM) sifatida HKDF-Extract'ga beriladi. Konkret kalit `HKDF-Expand-Label(Secret, Label, Context, Length)` bilan chiqariladi, bunda `HkdfLabel` tuzilmasi 16 bitli uzunlik, `"tls13 " + Label` va kontekstdan iborat. `Derive-Secret` esa kontekst sifatida shu paytgacha yuborilgan handshake xabarlarining transkript hash'ini oladi.
+Kalitlar bitta umumiy sirdan emas, zanjir bilan chiqariladi. RFC 9846 7.1: kalit chiqarish HKDF-Extract va HKDF-Expand funksiyalaridan foydalanadi; ikkita kirish siri bor: PSK (oldin kelishilgan yoki oldingi ulanishdan olingan) va (EC)DHE umumiy siri. Yangi sir qo'shish usuli: joriy holat tuz (salt) sifatida, yangi sir esa kirish kalit material (IKM) sifatida HKDF-Extract'ga beriladi. Konkret kalit `HKDF-Expand-Label(Secret, Label, Context, Length)` bilan chiqariladi, bunda `HkdfLabel` tuzilmasi 16 bitli uzunlik, `"tls13 " + Label` va kontekstdan iborat. `Derive-Secret` esa kontekst sifatida shu paytgacha yuborilgan handshake xabarlarining transkript hash'ini oladi.
 
-Bundan muhim xususiyat kelib chiqadi: traffic kalitlari handshake'ning shu paytgacha ko'rilgan hamma xabariga bog'liq. Mijoz va server har xil ClientHello ko'rgan bo'lsa, ular har xil kalit chiqaradi. Yaxlitlikni esa Finished xabari ta'minlaydi: u transkript hash'ining MAC'i, ya'ni handshake'ning "tasdiqlovchi imzosi", uni to'g'ri hisoblash uchun handshake kalitini bilish kerak. Server ham CertificateVerify yuboradi: RFC 4.4.3 uni sertifikatga mos maxfiy kalitga egalikning aniq isboti va handshake'ning shu paytgacha yaxlitligini ta'minlovchi xabar deb ta'riflaydi. Imzo 64 ta bo'sh joy bayti, kontekst satri va transkript hash'i ustidan hisoblanadi; shu tuzilma oldingi TLS versiyalaridagi tanlangan prefiks hujumini oldini olish uchun mo'ljallangan.
+Bundan muhim xususiyat kelib chiqadi: traffic kalitlari handshake'ning shu paytgacha ko'rilgan hamma xabariga bog'liq. Mijoz va server har xil ClientHello ko'rgan bo'lsa, ular har xil kalit chiqaradi. Yaxlitlikni esa Finished xabari ta'minlaydi: u transkript hash'ining MAC'i, ya'ni handshake'ning "tasdiqlovchi imzosi", uni to'g'ri hisoblash uchun handshake kalitini bilish kerak. Server ham CertificateVerify yuboradi: RFC 9846 4.5.2 uni sertifikatga mos maxfiy kalitga egalikning aniq isboti va handshake'ning shu paytgacha yaxlitligini ta'minlovchi xabar deb ta'riflaydi. Imzo 64 ta bo'sh joy bayti, kontekst satri va transkript hash'i ustidan hisoblanadi; shu tuzilma oldingi TLS versiyalaridagi tanlangan prefiks hujumini oldini olish uchun mo'ljallangan.
 
 ### Downgrade va sertifikat tekshiruvi
 
-Downgrade hujumida hujumchi ClientHello'dagi algoritm ro'yxatini yo'lda o'zgartirib, ikki tomonni zaifroq variantga majbur qiladi. Himoya shunga asoslanadi: o'zgargan ro'yxat transkriptni o'zgartiradi va Finished/CertificateVerify mos kelmaydi. Qo'shimcha mexanizm: RFC 8446 4.1.3 bo'yicha TLS 1.3 server TLS 1.2 yoki undan past versiyani muzokara qilsa, ServerHello.Random maydonining oxirgi 8 baytini maxsus qiymat bilan to'ldirishi shart (TLS 1.2 uchun `DOWNGRD` ASCII matni va 0x01 bayti, TLS 1.1 yoki past uchun oxirgi bayt 0x00). TLS 1.3 qo'llaydigan mijoz bunday qiymatni ko'rsa, handshake'ni to'xtatadi, shuning uchun hujumchi serverni kuch bilan eski versiyaga tushira olmaydi.
+Downgrade hujumida hujumchi ClientHello'dagi algoritm ro'yxatini yo'lda o'zgartirib, ikki tomonni zaifroq variantga majbur qiladi. Himoya shunga asoslanadi: o'zgargan ro'yxat transkriptni o'zgartiradi va Finished/CertificateVerify mos kelmaydi. Qo'shimcha mexanizm: RFC 9846 4.2.3 bo'yicha TLS 1.3 server TLS 1.2 yoki undan past versiyani muzokara qilsa, ServerHello.Random maydonining oxirgi 8 baytini maxsus qiymat bilan to'ldirishi shart: TLS 1.2 uchun `DOWNGRD` ASCII matni va 0x01 bayti. TLS 1.1 va undan pastni muzokara qilish RFC 8996 va RFC 9846 bilan taqiqlangan, lekin shunga qaramay qiladigan server oxirgi baytni 0x00 qiladi. TLS 1.2 yoki undan past versiyani ko'rsatgan ServerHello'da bu qiymatni topgan TLS 1.3 mijozi handshake'ni `illegal_parameter` alert bilan to'xtatishi shart. RFC bu mexanizmni Finished almashinuvi beradigan himoyaga qo'shimcha cheklangan himoya deb ataydi: ephemeral shifrlar ishlatilganda faol hujumchi random qiymatlarni aniqlanmay o'zgartira olmaydi (TLS 1.2 ServerKeyExchange ikkala random ustidan imzo qo'yadi), static RSA ishlatilganda esa downgrade himoyasi yo'q. Shu sababli hujumchi serverni kuch bilan eski versiyaga tushira olmaydi, static RSA suite'lari o'chirilgan bo'lsa.
 
 Sertifikatni tekshirish mijoz tomonidagi mas'uliyat: RFC 5280 6.1.3 bo'limi yo'ldagi har bir sertifikat uchun imzo tekshirilishi, validity davri joriy vaqtni qamrashi, sertifikat bekor qilinmaganligi va issuer nomi mos kelishi kerakligini yozadi. Kutubxonada sertifikat tekshiruvini o'chirib qo'yish (`rejectUnauthorized: false` kabi bayroq) butun handshake'ni autentifikatsiyasiz qoldiradi: ikkala tomon shifrlangan kanal o'rnatadi, lekin kim bilan ekani noma'lum (64-darsdagi MITM). Bu A04 tekshirish ro'yxatidagi "server sertifikati va ishonch zanjiri to'g'ri tekshirilyaptimi" savoliga to'g'ri keladi. PKI tafsiloti 66-darsda.
 
 ### 0-RTT: tezlik va replay
 
-Ilgari ulangan tomonlar PSK ulashsa, TLS 1.3 mijozga birinchi parvozda ma'lumot yuborishga ruxsat beradi (early data, 2.3-bo'lim). RFC 8446 aniq aytadi: 0-RTT ma'lumot xavfsizligi boshqa TLS ma'lumotlaridan zaifroq. U forward secret emas, chunki faqat taklif qilingan PSK'dan hosil kalit bilan shifrlanadi. Va ulanishlar orasida replay'ga qarshi kafolat yo'q: oddiy 1-RTT ma'lumotini replay'dan serverning Random qiymati himoya qiladi, 0-RTT esa ServerHello'ga bog'liq emas. RFC 8446 Appendix E.5 aniq yozadi: ilova protokollari 0-RTT ma'lumotdan uni aniqlovchi profilsiz foydalanmasligi kerak (MUST NOT), mijozlar replay qilinsa xavfli xabarlarni early data'da yubormasligi kerak va TLS implementatsiyalari ilova so'ramaguncha 0-RTT'ni yoqmasligi kerak. Oxir-oqibat serverlar o'zlarini replay'dan o'zlari himoya qilishi kerak; 8-bo'limda bunday mexanizmlar (bir martalik ticket'lar, ClientHello yozuvi va yangilik tekshiruvi) tasvirlangan. Ularning tafsilotini bu dars chuqur ochmaydi: asosiy xulosa shuki, replay himoyasi TLS kutubxonasining standart xususiyati emas, uni siz yoqasiz va ilova qatlamida ham ta'minlaysiz.
+Ilgari ulangan tomonlar PSK ulashsa, TLS 1.3 mijozga birinchi parvozda ma'lumot yuborishga ruxsat beradi (early data, 2.3-bo'lim). RFC 9846 2.3 aniq aytadi: 0-RTT ma'lumot xavfsizligi boshqa TLS ma'lumotlaridan zaifroq. Protokol bu ma'lumot uchun forward secrecy kafolatini bermaydi: kafolat server xatti-harakatiga bog'liq (8.1-bo'lim), bu xatti-harakat mijozga protokol orqali bildirilmaydi, shuning uchun mijoz uni forward secret emas deb hisoblashi kerak. Va ulanishlar orasida replay'ga qarshi kafolat yo'q: oddiy 1-RTT ma'lumotini replay'dan serverning Random qiymati himoya qiladi, 0-RTT esa ServerHello'ga bog'liq emas. RFC 9846 Appendix F.5 (RFC 8446 da bu E.5 edi) aniq yozadi: ilova protokollari 0-RTT ma'lumotdan uni aniqlovchi profilsiz foydalanmasligi kerak (MUST NOT), mijozlar replay qilinsa xavfli yoki qayta urinishga tayyor bo'lmagan xabarlarni early data'da yubormasligi kerak va TLS implementatsiyalari ilova aniq so'ramaguncha 0-RTT'ni yoqmasligi kerak. Oxir-oqibat serverlar o'zlarini replay'dan o'zlari himoya qilishi kerak. 8-bo'lim bunday mexanizmlarni beradi (bir martalik ticket'lar, ClientHello yozuvi, yangilik tekshiruvi) va serverlar bir xil 0-RTT handshake'ni har instansiyada ko'pi bilan bir marta qabul qilishini talab qiladi (MUST); ya'ni replay soni instansiyalar soniga cheklanadi. Bu mexanizmlar TLS qatlamidagi replay'ni to'xtatadi, lekin mijozning qayta urinishidan kelib chiqadigan takrorni emas: ikkinchi turdagi hujum TLS qatlamida oldini olib bo'lmaydi va ilova hal qiladi (8-bo'lim). Ularning tafsilotini bu dars chuqur ochmaydi: asosiy xulosa shuki, replay himoyasi TLS kutubxonasining standart xususiyati emas, uni siz yoqasiz va ilova qatlamida ham ta'minlaysiz.
 
 Amaliy qoida: holatni o'zgartiradigan so'rovlar (POST, to'lov, buyruq yuborish) uchun 0-RTT yoqmang yoki ularni idempotent qiling. Idempotency kalitlari 75-darsda.
 
@@ -259,6 +259,8 @@ tanlangan: AEAD-GCM | mijoz qabul qiladi: true
 
 ### Hujum
 
+> **Ta'lim maqsadida.** Bu TLS downgrade usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Yo'ldagi hujumchi ClientHello'dan `AEAD-GCM` ni olib tashlaydi. Server ko'rgan ro'yxatda faqat `XOR-LEGACY` qoladi.
 
 ```ts run
@@ -284,7 +286,7 @@ Ikkala tomon ham o'zini muvaffaqiyatli deb hisobladi, lekin kanal zaif variantda
 
 ### Tuzatilgan kod
 
-Tuzatish: ikki tomon haqiqiy (EC)DHE bilan umumiy sir hosil qiladi, kalitlar HKDF-Expand-Label orqali transkript hash'idan chiqariladi va server `Finished` (transkript MAC'i) yuboradi. Mijoz uni o'zi ko'rgan ClientHello bilan hisoblanganiga solishtiradi. Modelda HKDF-Extract `HMAC(salt, IKM)` va bir blokli HKDF-Expand `HMAC(PRK, info || 0x01)` sifatida yozilgan; `HkdfLabel` tuzilishi RFC 8446 7.1 dagi kabi (`"tls13 "` prefiksi).
+Tuzatish: ikki tomon haqiqiy (EC)DHE bilan umumiy sir hosil qiladi, kalitlar HKDF-Expand-Label orqali transkript hash'idan chiqariladi va server `Finished` (transkript MAC'i) yuboradi. Mijoz uni o'zi ko'rgan ClientHello bilan hisoblanganiga solishtiradi. Modelda HKDF-Extract `HMAC(salt, IKM)` va bir blokli HKDF-Expand `HMAC(PRK, info || 0x01)` sifatida yozilgan; `HkdfLabel` tuzilishi RFC 9846 7.1 dagi kabi (`"tls13 "` prefiksi).
 
 ```ts run
 const enc = new TextEncoder();
@@ -348,7 +350,7 @@ Nimani yopmaydi. Birinchidan, bu model o'quv versiyasi: real TLS'da bu mexanizm 
 
 ## Qachon qo'llamaslik kerak
 
-TLS 1.3 hamma muhitga bir tekis mos kelmaydi. Eski mijozlar (embedded qurilmalar, eski Android versiyalari, ayrim korporativ proksilar) faqat TLS 1.2 ni bilishi mumkin. Telematika qurilmalari ko'pincha shunday bo'ladi (bu muallifning amaliy kuzatuvi, manbada tekshirilmagan; ro'yxatni o'z inventaringizdan oling): ularni bir kunda yangilab bo'lmaydi. Bunday holda TLS 1.2 ni forward secrecy cipher'lar (ECDHE + AEAD) bilan qoldirish va eskirgan suite'larni o'chirish A04 talabiga mos, lekin buni inventarda yozib qo'ying va yangilash muddatini belgilang. TLS 1.3 majburiy deb butun parkni uzib qo'yish ham xavfsizlik emas, mavjudlik buzilishi (1-dars).
+TLS 1.3 hamma muhitga bir tekis mos kelmaydi. Faqat TLS 1.2 ni biladigan mijozlar bo'lishi mumkin: ularning ro'yxatini o'ylab topmang, serverlar logidagi muzokara qilingan versiya va qurilma inventaridan oling. Parkdagi qurilmani bir kunda yangilab bo'lmasa, TLS 1.3 ni majburiy qilib bo'lmaydi. Bunday holda TLS 1.2 ni forward secrecy cipher'lar (ECDHE + AEAD) bilan qoldirish va eskirgan suite'larni o'chirish A04 talabiga mos, lekin buni inventarda yozib qo'ying va yangilash muddatini belgilang. TLS 1.3 majburiy deb butun parkni uzib qo'yish ham xavfsizlik emas, mavjudlik buzilishi (1-dars).
 
 0-RTT ni asosan statik, takrorlanishi zararsiz GET so'rovlari uchun yoqing yoki umuman yoqmang. Ichki tarmoqda "TLS shart emas" deb hisoblash ham xato: A04 tranzitda hamma ma'lumot shifrlanishi kerakligini yozadi, hujumchi ichki tarmoqqa tushsa, ochiq HTTP uni ochib beradi. Kompensatsiya qilishning o'rniga mTLS (66-dars) ichki servislarda keng qo'llaniladi.
 

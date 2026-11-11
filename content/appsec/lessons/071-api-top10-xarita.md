@@ -241,6 +241,8 @@ console.log("v1:", JSON.stringify(dispatchWeak("GET /api/v1/vehicles", { tenant:
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu eski API versiyasiga murojaat usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 "alfa" foydalanuvchisi hujjatda yo'q, lekin hali ishlayotgan `v1` manziliga murojaat qiladi. Faqat o'z o'quv modelimizga qarshi so'rov:
 
 ```text

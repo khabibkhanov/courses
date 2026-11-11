@@ -257,6 +257,8 @@ console.log("begona mashina:", readVehicleWeak(alfaDispatcher, "v3")?.plate);
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu identifikatorni almashtirish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi alfa kompaniyasining oddiy dispetcheri. U brauzerda yoki `curl` bilan mashina identifikatorini `v1` dan `v3` ga almashtiradi. Hech qanday maxsus asbob kerak emas:
 
 ```text

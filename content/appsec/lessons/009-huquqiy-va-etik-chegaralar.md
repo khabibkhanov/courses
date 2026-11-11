@@ -2,66 +2,70 @@
 n: 9
 slug: huquqiy-va-etik-chegaralar
 title: "Huquqiy va etik chegaralar: O'zbekiston qonunchiligi va responsible disclosure"
-summary: "Xavfsizlikni sinashda ruxsat va doira (scope) chegarasi, O'zbekistonning Kiberxavfsizlik va Shaxsga doir ma'lumotlar to'g'risidagi qonunlarining dasturchi uchun muhim qoidalari, responsible disclosure jarayoni; sinash vositasining doirasini to'g'ri tekshirish misoli."
+summary: "Xavfsizlikni sinashda ruxsat va doira (scope) chegarasi; Kiberxavfsizlik to'g'risidagi qonun (O'RQ-764) va Jinoyat kodeksining XX1 bobi (278-1 - 278-7-moddalar) matni bo'yicha tadqiqotchi va tashkilot majburiyatlari; pentest shartnomasi, bug bounty va responsible disclosure; sinash vositasining doirasini to'g'ri tekshirish misoli."
 duration: 40
 sources:
   - id: lex-cyber
-    note: "lex.uz O'RQ-764 (15.04.2022, kuchga kirishi 17.07.2022): 3-modda ta'riflar (zaiflik ta'rifi yo'q), 16-modda kiberxavfsizlik subyektlarining huquq va majburiyatlari, 22-24-moddalar kiberxavfsizlik hodisalari, 37-modda javobgarlik (kodekslarga havola qiladi)"
+    note: "lex.uz O'RQ-764 (15.04.2022, kuchga kirishi 17.07.2022), 40 modda, hammasi o'qilgan; sahifada o'zgartirish kiritgan qonunlar ko'rsatilmagan. 3-modda ta'riflar (zaiflik ta'rifi yo'q), 11-12 vakolatli organ (Davlat xavfsizlik xizmati), 15 zaxira nusxalar, 16 kiberxavfsizlik subyektlarining majburiyatlari, 18-21 ekspertiza, sertifikatlash, attestatsiya, baholash, 22-24 hodisalar va ma'lumotni oshkor qilish, 26-31 muhim axborot infratuzilmasi, 37 javobgarlik (bir jumla)"
+  - id: lex-criminal-code
+    note: "lex.uz Jinoyat kodeksi, joriy tahrir (sahifadagi oxirgi o'zgartirish 04.11.2026, 03/26/1186/1095-son): XX1 bob 'Axborot texnologiyalari sohasidagi jinoyatlar', 278-1 (axborotlashtirish qoidalarini buzish), 278-2 (kompyuter axborotidan ruxsatsiz foydalanish), 278-3 (maxsus vositalarni tayyorlash va tarqatish), 278-4 (modifikatsiyalashtirish), 278-5 (kompyuter sabotaji), 278-6 (zarar keltiruvchi dasturlar), 278-7 (telekommunikatsiya tarmog'idan ruxsatsiz foydalanish) to'liq o'qilgan; 141-2 (shaxsga doir ma'lumotlar to'g'risidagi qonunchilikni buzish) 94-darsda"
+  - id: lex-admin-code
+    note: "lex.uz Ma'muriy javobgarlik to'g'risidagi kodeks, joriy tahrir (oxirgi o'zgartirish 04.11.2026): 155-1 (kompyuter tizimidan foydalanish qoidalarini buzish), 155-2 (telekommunikatsiya tarmog'idan ruxsatsiz foydalanish) o'qilgan; 46-2 94-darsda"
   - id: lex-pdp
-    note: "lex.uz O'RQ-547 (02.07.2019) amaldagi tahriri (tahrirlar ro'yxatida oxirgisi 12.09.2026): 4-modda ta'riflar, 5-modda tamoyillar, 15-modda chegaradan tashqariga uzatish, 18-19 va 21-moddalar asos, maqsad va rozilik, 25-modda maxsus ma'lumotlar, 27-modda himoya kafolatlari, 27-1-modda saqlash shartlari (2026 yil 26 martdagi O'RQ-1125 tahririda)"
+    note: "lex.uz O'RQ-547 (02.07.2019) joriy tahrir, to'liq o'qilgan: tahrirlar 15.01.2021, 21.04.2021 (O'RQ-683), 29.11.2023 (O'RQ-880), 27.03.2026 (O'RQ-1125), 14.07.2026 (O'RQ-1158), 12.09.2026 (O'RQ-1174). Bu darsda faqat 4-modda (shaxsga doir ma'lumot ta'rifi) va 94-darsga havola"
   - id: wstg
     note: "WSTG Bug Bounty Programs bo'limi: bug bounty va pentest farqi; dastur doirasi, rules of engagement, safe harbor (dastur shartlarida aniq berilishi) va oshkor qilish muddati"
   - id: cs-vuln-disclosure
     note: "Vulnerability Disclosure Cheat Sheet: tadqiqotchi va tashkilot uchun majburiyatlar, oshkor qilish modellari, security.txt, hisobot mazmuni"
 quiz:
-  - q: "Siz o'zingiz ishlaydigan kompaniya platformasining test muhitida zaiflik topdingiz va ishlab chiqarish (production) muhitida ham borligini tekshirmoqchisiz. Ruxsatingiz faqat test muhitiga berilgan. Nima to'g'ri?"
-    options:
-      - "Production'da faqat o'qish so'rovlari bilan tekshirish zararsiz"
-      - "Tekshirish mumkin, chunki kompaniya sizniki"
-      - "Production'ga tegmasdan, topilmani xavfsizlik jamoasiga yozma xabar qilish va production tekshiruviga ruxsat so'rash"
-      - "Do'stingiz bilan birga tekshirish"
-    answer: 2
-    explain: "Ruxsat doirasi chegara: test muhitiga berilgan ruxsat production'ga tarqalmaydi. To'g'ri yo'l topilmani xabar qilish va keyingi qadam uchun ruxsat so'rash."
-  - q: "OWASP Vulnerability Disclosure Cheat Sheet'ga ko'ra, bug bounty dasturi bo'lmagan tashkilotga zaiflik haqida xabar berishda nima qilmaslik kerak?"
-    options:
-      - "Tafsilotlarni to'lov talab qilib, shart sifatida qo'yish"
-      - "Aloqa ma'lumotini topishga urinish"
-      - "Hisobotga shaxsiy ma'lumotni olib tashlash"
-      - "Reproduksiya uchun yetarli tafsilot berish"
-    answer: 0
-    explain: "Cheat sheet to'lovni tafsilot oshkor qilishdan oldin talab qilishni tavsiya etmaydi: bu firibgarlik ko'rinishida bo'lib, yomon holda tovlamachilik (extortion) bo'lishi mumkin. Qolgan uch xatti-harakat tavsiya etilgan."
-  - q: "Quyidagilardan qaysi biri responsible (coordinated) disclosure'ni to'g'ri tavsiflaydi?"
-    options:
-      - "Tafsilotlar darhol hammaga e'lon qilinadi"
-      - "Zaiflik hech qachon e'lon qilinmaydi"
-      - "Faqat bug bounty platformasida e'lon qilinadi"
-      - "Dastlabki hisobot maxfiy beriladi, to'liq tafsilotlar esa tuzatish tayyor bo'lgach (ko'pincha kelishilgan muddatdan keyin) e'lon qilinadi"
-    answer: 3
-    explain: "Responsible disclosure private disclosure va full disclosure o'rtasidagi o'rta yo'l: avval maxfiy xabar, tuzatishdan keyin yoki muddat o'tgach e'lon."
-  - q: "Telemetriya eksporti haydovchi ismi bilan GPS izini o'z ichiga oladi. Shaxsga doir ma'lumotlar to'g'risidagi qonun nuqtai nazaridan eng to'g'ri yondashuv?"
-    options:
-      - "Telemetriya texnik ma'lumot, qonun tegishli emas"
-      - "Bu shaxsni aniqlashga imkon beruvchi ma'lumot bo'lishi mumkin: qonunning ta'rifi, rozilik, maqsad va xavfsizlik talablarini yuristlar bilan tekshirish kerak"
-      - "Faqat parollar shaxsga doir ma'lumot"
-      - "Mijoz kompaniya javobgar, platforma emas"
-    answer: 1
-    explain: "Qonun shaxsga doir ma'lumotni muayyan jismoniy shaxs haqidagi yoki uni aniqlashga imkon beradigan ma'lumot sifatida ta'riflaydi. Haydovchi ismi bilan bog'langan GPS izi shunga tushishi mumkin; aniq huquqiy baho yuristning ishi."
-  - q: "Sinash vositasi doirani `target.includes(\"lab.fleet.test\")` bilan tekshiradi. Qaysi manzil noto'g'ri ravishda doira ichida deb hisoblanadi?"
-    options:
-      - "https://lab.fleet.test/api"
-      - "https://api.fleet.test/"
-      - "https://example.org/"
-      - "https://lab.fleet.test.evil.example/api"
-    answer: 3
-    explain: "`includes` matn ichidan qidiradi, shuning uchun `lab.fleet.test.evil.example` kabi boshqa domen ham mos keladi. To'g'ri tekshiruv URL'ni tahlil qilib, hostname'ni aniq solishtiradi."
-  - q: "Kiberxavfsizlik to'g'risidagi qonunning 24-moddasiga ko'ra, zaifliklar haqidagi ma'lumotdan qanday foydalanish kerak?"
-    options:
-      - "Istalgan maqsadda, faqat uni sotmaslik sharti bilan"
-      - "Maqola yozish uchun erkin"
-      - "Faqat ularni bartaraf etish va noqonuniy harakatlarning oldini olish uchun; oshkor qilish esa subyekt ruxsati va himoya choralari ko'rilgandan keyin"
-      - "Qonun bu haqda hech narsa demaydi"
-    answer: 2
-    explain: "lex.uz'dagi matnga ko'ra 24-modda tahdid va zaifliklar haqidagi ma'lumotni faqat ularni bartaraf etish va noqonuniy harakatlarning oldini olish uchun ishlatishni belgilaydi, oshkor qilish esa subyekt ruxsati bilan va himoya choralari ko'rilgandan keyin mumkin."
+- q: Siz o'zingiz ishlaydigan kompaniya platformasining test muhitida zaiflik topdingiz va ishlab chiqarish (production) muhitida ham borligini tekshirmoqchisiz. Ruxsatingiz faqat test muhitiga berilgan. Nima to'g'ri?
+  options:
+  - Production'da faqat o'qish so'rovlari bilan tekshirish zararsiz
+  - Tekshirish mumkin, chunki kompaniya sizniki
+  - Production'ga tegmasdan, topilmani xavfsizlik jamoasiga yozma xabar qilish va production tekshiruviga ruxsat so'rash
+  - Do'stingiz bilan birga tekshirish
+  answer: 2
+  explain: 'Ruxsat doirasi chegara: test muhitiga berilgan ruxsat production''ga tarqalmaydi. To''g''ri yo''l topilmani xabar qilish va keyingi qadam uchun ruxsat so''rash.'
+- q: Siz bug bounty dasturi bo'lmagan kompaniyaning ilovasida zaiflik topdingiz va unga xat yozmoqchisiz. Xat qanday bo'lsa to'g'ri?
+  options:
+  - Qayta ishlab chiqish uchun yetarli tafsilot va ta'sir bor, shaxsga doir ma'lumot olib tashlangan, to'lov talab qilinmaydi
+  - Tafsilotlar faqat to'lov kelishilgandan keyin ochiladi
+  - Avval ijtimoiy tarmoqda e'lon qilinadi, keyin kompaniyaga yoziladi
+  - Dalil sifatida haqiqiy mijoz yozuvlari ilova qilinadi
+  answer: 0
+  explain: 'Cheat sheet to''lovni tafsilot oshkor qilishdan oldin talab qilishni tavsiya etmaydi: bu tovlamachilik (extortion) ko''rinishida bo''lishi mumkin. Hisobotda shaxsga doir ma''lumot bo''lmasin, real yozuvni ilova qilish esa 278-2 dagi nusxa ko''chirish oqibatiga olib kelishi mumkin. Avval e''lon qilish 24-moddaga zid.'
+- q: Siz topgan zaiflikni kompaniya tuzatdi. Siz texnik tafsilot bilan maqola yozmoqchisiz, lekin kompaniya e'longa ruxsat bermagan. O'RQ-764 24-moddasi nuqtai nazaridan nima to'g'ri?
+  options:
+  - Tuzatish tugagani uchun ruxsat shart emas
+  - Kelishilgan muddat tugasa, ruxsatsiz ham e'lon qilish mumkin
+  - Faqat ijtimoiy tarmoqda qisqa e'lon qilish mumkin
+  - Axborot himoya choralari ko'rilgandan keyin va kiberxavfsizlik subyektining ruxsati bilan oshkor qilinishi mumkin; ruxsat bo'lmasa, avval ruxsat so'rash kerak
+  answer: 3
+  explain: '24-modda ikki shartni qo''yadi: himoya choralari ko''rilgan bo''lsin va subyektning ruxsati bo''lsin. Faqat tuzatish yetarli emas. ''Muddat tugadi - e''lon qilaman'' yondashuvi ruxsat bo''lmasa matnga zid kelishi mumkin (muallifning o''qishi). Kanal (ijtimoiy tarmoq yoki maqola) ruxsat o''rnini bosmaydi.'
+- q: Shartnoma bo'yicha sizga faqat staging muhitini sinash ruxsat etilgan. SQL injection topdingiz va 'ta'sirni isbotlash uchun' production bazasidan 500 qator mijoz yozuvini ko'chirib oldingiz. Jinoyat kodeksining 278-2-moddasi nuqtai nazaridan nima to'g'ri?
+  options:
+  - Ruxsat bor, chunki shartnoma imzolangan
+  - Production ruxsat doirasida emas va nusxa ko'chirish 278-2 matnidagi oqibatlardan biri; to'g'ri yo'l - ko'chirmasdan to'xtash va topilmani xabar qilish
+  - Faqat o'chirish yoki o'zgartirish jinoyat, o'qish va nusxalash emas
+  - Zaiflik topilgani uchun javobgarlik bo'lmaydi
+  answer: 1
+  explain: '278-2: ruxsatsiz foydalanish, agar u axborotdan nusxa ko''chirilishi yoki uning qo''lga kiritilishiga (yo''q qilish, to''sish, modifikatsiyalash bilan bir qatorda) sabab bo''lsa. Production doiradan tashqarida, ya''ni ruxsatsiz, nusxalash esa o''zi oqibat. Ta''sirni isbotlash uchun real yozuvni ko''chirish shart emas: so''rov natijasining shakli yoki sanog''i yetadi.'
+- q: Siz o'quv skaneriga doira tekshiruvini `target.includes("lab.fleet.test")` bilan yozdingiz. Qaysi manzil noto'g'ri ravishda doira ichida deb hisoblanadi?
+  options:
+  - https://lab.fleet.test/api
+  - https://api.fleet.test/
+  - https://example.org/
+  - https://lab.fleet.test.evil.example/api
+  answer: 3
+  explain: '`includes` matn ichidan qidiradi, shuning uchun `lab.fleet.test.evil.example` kabi boshqa domen ham mos keladi. To''g''ri tekshiruv URL''ni tahlil qilib, hostname''ni aniq solishtiradi.'
+- q: Sizning kompaniyangiz muhim axborot infratuzilmasi (MAI) obyekti bo'lgan bank. Rahbariyat tashqi firmaga tizim xavfsizligini baholatmoqchi va shartnomani tezda imzolamoqchi. 31-modda bo'yicha nima qilish kerak?
+  options:
+  - Shartnoma yetarli, boshqa ruxsat kerak emas
+  - Faqat hosting provayderdan ruxsat olish yetadi
+  - 'Baholash vakolatli organ ruxsati bilan, ixtisoslashtirilgan tashkilotlar jalb etilgan holda o''tadi: shartnomadan oldin shu yo''lni aniqlash kerak'
+  - Baholashni yashirincha o'tkazib, natijani keyin xabar qilish
+  answer: 2
+  explain: 31-modda MAI obyektlarining kiberxavfsizligini baholashni vakolatli organning ruxsati bilan, ixtisoslashtirilgan tashkilotlar jalb etilgan holda o'tkazishni belgilaydi. Shartnomaning o'zi bu ruxsat o'rnini bosmaydi; hosting egasining ruxsati alohida masala, yashirincha baholash esa ruxsatsiz harakat.
 task:
   title: "Sinash doirasini (scope) aniq tekshirish"
   prompt: |
@@ -126,61 +130,101 @@ task:
 
 ## Muammo
 
-Xavfsizlik bilimi ikki tomonlama: himoyalanishni o'rgatadigan bilim hujum qilishni ham o'rgatadi. Bu kursda SQL injection, XSS va boshqa hujumlar ko'rsatiladi. Ularni faqat o'z tizimingizda, o'z laboratoriyangizda sinash mumkin. Boshqa birovning tizimida, ruxsatsiz sinash, hatto "yaxshi niyat bilan" bo'lsa ham, jinoiy javobgarlikka olib kelishi mumkin.
+Xavfsizlik bilimi ikki tomonlama: himoyalanishni o'rgatadigan bilim hujum qilishni ham o'rgatadi. Bu kursdagi hujumlarni faqat o'z laboratoriyangizda sinang. Dasturchi amalda uchta vaziyatga duch keladi.
 
-Muammo ikki yo'nalishda chiqadi. Birinchisi, dasturchi yoki talaba qiziqish bilan biror sayt yoki kompaniyaning tizimini "faqat tekshirib ko'rish" uchun sinaydi, topilmasini xabar qilmoqchi bo'ladi, lekin ruxsatsiz kirish allaqachon sodir bo'lgan. Ikkinchisi, kompaniya tashqaridan kelgan xabarga dushmanlik bilan javob beradi: tadqiqotchini yuristlar bilan qo'rqitadi, zaiflik esa yopilmay qoladi.
+Birinchisi: staging'da zaiflik topdingiz va production'da ham borligini bilmoqchisiz. Skaner tayyor, lekin ruxsat faqat staging uchun berilgan, yozma hujjat esa yo'q. Production'ga ketgan har so'rov "ruxsatsiz" bo'lib qoladi, Jinoyat kodeksining 278-2-moddasida esa shu so'z markaziy belgi.
 
-Bu darsning vazifasi huquqshunoslik kursi bo'lish emas. Dasturchi sifatida ikki narsani bilishingiz kerak: ruxsat va doira chegarasi qayerda, va zaiflik topilsa yoki sizga xabar kelsa, jarayon qanday bo'lishi kerak. Qonunlarni lex.uz saytidagi amaldagi matn bo'yicha ko'rib chiqamiz, lekin bu dars huquqiy maslahat emas: qaror qabul qilishdan oldin yurist bilan maslahatlashing.
+Ikkinchisi: SQL injection topdingiz va "ta'sirni isbotlash uchun" production bazasidan mijoz yozuvlarini nusxalab oldingiz. Hisobot uchun bu yaxshi dalil, qonun uchun esa nusxa ko'chirishning o'zi oqibat.
+
+Uchinchisi: boshqa kompaniyaning ilovasida bug ko'rdingiz va u haqda maqola yozmoqchisiz. Kompaniya hali bilmaydi. Nima qilish mumkinligini O'RQ-764 ning 24-moddasi belgilaydi.
+
+Teskari holat ham bor: kompaniya tashqaridan kelgan xabarga dushmanlik bilan javob beradi, zaiflik esa yopilmay qoladi. O'z platformangiz ham qonun obyekti: 278-1-modda himoya choralarini ko'rmasdan axborot tizimlarini yaratish va ishlatishni ham jinoyat deb belgilaydi. Matnlar lex.uz'dagi joriy tahrirdan o'qilgan.
 
 ## Asosiy g'oya
 
-### Ruxsat va doira
+Hammasi oltita qoidaga tushadi. Har birida: qoida, nega (qonun yoki manba), amalda nima qilasiz.
 
-Xavfsizlik sinovining asosiy chegarasi bitta: aniq, oldindan berilgan ruxsat va aniq belgilangan doira (scope). WSTG bug bounty dasturlari bo'limida shunday ta'riflanadi: tashkilot doirani (qaysi domen, ilova va API'lar sinashga ruxsat etilgan), rules of engagement'ni (qanday usullar mumkin) va oshkor qilish muddatini e'lon qiladi; tadqiqotchi faqat e'lon qilingan doira ichida ishlashi kerak. Shu sahifa yaxshi niyatdagi tadqiqotchiga qonuniy himoya (safe harbor) dastur shartlarida aniq berilishi kerakligini ham aytadi. Bu xulosa muhim: safe harbor avtomatik emas, u shartnoma yoki dastur shartlarida yozilgan bo'ladi.
+**1. Sinashdan oldin yozma ruxsat va aniq doira (scope) bo'lsin.** Nega: 278-2, 278-3 va 278-7-moddalarida "ruxsatsiz" markaziy belgi, ruxsatni esa tizim egasi beradi; 278-1 - 278-7 matnida yaxshi niyatli tadqiqotchi uchun istisno yoki himoya yo'q. WSTG bug bounty bo'limiga ko'ra tashkilot doirani (qaysi domen, ilova va API), rules of engagement'ni (qanday usullar) va oshkor qilish muddatini e'lon qiladi, tadqiqotchi faqat shu doirada ishlaydi. Safe harbor avtomatik emas: u dastur shartlarida yozilgan bo'lishi kerak. OWASP Vulnerability Disclosure Cheat Sheet qo'shadi: doiradan chiqish jinoyat bo'lishi mumkin. Amalda: ish beruvchidan muhit, vaqt va usullarni yozma oling, production uchun alohida ruxsat so'rang, vositaga doira tekshiruvini kiriting (Misol bo'limi). "Men bu tizimni yozganman" ruxsat degani emas.
 
-OWASP Vulnerability Disclosure Cheat Sheet ham shu fikrni takrorlaydi: sinashdan oldin o'z yurisdiksiyangizdagi qonunlarni bilishingiz va tushunishingiz kerak; doira va dastur qoidalaridan chiqish jinoyat bo'lishi mumkin. Sahifa o'zi huquqiy maslahat emasligini ham ochiq yozadi. Tadqiqotchi uchun asosiy qoidalar: sinash qonuniy va ruxsat etilgan bo'lsin, boshqalarning maxfiyligini hurmat qiling, tashkilot xavfsizlik jamoasiga murojaat qilishga harakat qiling, tekshirish uchun yetarli tafsilot bering.
+**2. Ta'sirni real ma'lumotni ko'chirmasdan isbotlang.** Nega: 278-2 bo'yicha ruxsatsiz foydalanish axborotning yo'q qilinishi, to'sib qo'yilishi, modifikatsiyalanishi, undan nusxa ko'chirilishi yoki qo'lga kiritilishiga sabab bo'lsa jinoyat; demak "isbot uchun" nusxalash o'zi oqibat bo'lishi mumkin. Amalda: so'rov natijasining shakli yoki sanog'ini ko'rsating, hisobotdagi shaxsga doir ma'lumotni yashiring (Chuqurroq bo'limidagi kod), imkon bo'lsa sintetik ma'lumotli laboratoriyada sinang (10-dars).
 
-Dasturchi sifatida o'z kompaniyangiz tizimini sinashda ham ruxsat kerak. "Men bu tizimni yozganman" ruxsat degani emas: ish beruvchi ruxsat doirasini (qaysi muhit, qaysi vaqt, qanday usullar) yozma belgilab berishi kerak. Ayniqsa production'da: u yerda real mijoz ma'lumoti va real foydalanuvchilar bor.
+**3. Vositani yozishdan oldin uning maqsadini va tarqatish kanalini o'ylang.** Nega: 278-3 va 278-6 harakat uchun ham, vosita uchun ham javobgarlik belgilaydi. Muallifning talqini: boshqalarning tizimiga mo'ljallangan, ruxsatsiz foydalanishga xizmat qiladigan vositani o'tkazish maqsadida tayyorlash yoki tarqatish va zararli dastur yaratish jinoyat bo'lishi mumkin. Amalda: tayyor exploit'ni ochiq joyga qo'ymasdan oldin kimga va nima uchun ekanini aniqlang.
 
-### O'zbekiston qonunchiligi: Kiberxavfsizlik to'g'risida
+**4. Topilmani avval egasiga xabar qiling, e'lonni esa uning ruxsati bilan qiling.** Nega: 24-modda zaiflik haqidagi axborotni himoya choralari ko'rilgandan keyin va kiberxavfsizlik subyektining ruxsati bilan oshkor qilishga ruxsat beradi; shu axborotdan faqat zaiflikni bartaraf etish va qonunga xilof harakatlarning oldini olish uchun foydalanish kerak. Muallifning o'qishi: tashkilot ruxsat bermasa, "muddat tugadi - e'lon qilaman" yondashuvi matnga zid kelishi mumkin. Amalda: oshkor qilish tartibi va muddatini oldindan yozma kelishing, e'longa yozma ruxsat oling.
 
-"Kiberxavfsizlik to'g'risida"gi qonun (O'RQ-764, 15.04.2022) lex.uz saytida joylashgan. Qonun 40 ta moddadan iborat va 17.07.2022 da kuchga kirgan (40-modda: rasmiy e'lon qilingandan uch oy o'tgach). Quyida dasturchi uchun muhim qoidalar lex.uz'dagi matn bo'yicha qisqacha berilgan; bu bayon, to'liq matnni o'zingiz o'qing.
+**5. O'z tizimingizda himoya choralarini ko'ring.** Nega: 278-1 tizim egasi va dasturchiga qaratilgan: belgilangan himoya choralarisiz tizim yaratish va ishlatish, ko'p miqdorda zarar bo'lsa, jinoyat. Amalda: himoya choralari talabi loyiha talablariga kirsin, hujjatlashtirilsin.
 
-- 3-modda 13 ta tushunchani ta'riflaydi. Kiberxavfsizlik - shaxs, jamiyat va davlat manfaatlarining kibermakondagi tashqi va ichki tahdidlardan himoyalanganlik holati. Kiberxavfsizlik hodisasi - kibermakonda axborot tizimlari ishlashida uzilishlarga va (yoki) axborotning ochiqligi, yaxlitligi yoki undan erkin foydalanilishining buzilishiga olib kelgan hodisa. Kiberhujum - kibermakonda apparat, apparat-dasturiy va dasturiy vositalardan foydalangan holda qasddan amalga oshiriladigan, kiberxavfsizlikka tahdid soladigan harakat. Kibertahdid - kibermakonda shaxs, jamiyat va davlat manfaatlariga tahdid soluvchi shart-sharoitlar va omillar majmui. Ta'rifdagi yaxlitlik va foydalanish imkoniyati 1-darsdagi CIA xususiyatlariga mos keladi. Zaiflik (vulnerability) 3-moddada ta'riflanmagan; 23 va 24-moddalar bu so'zni ta'rifsiz ishlatadi, shuning uchun "zaiflik" nimaligini qonun emas, texnik standartlar (7-dars) belgilaydi.
-- 16-modda kiberxavfsizlik subyektlarining huquq va majburiyatlarini beradi. Majburiyatlar: ma'lumotni noqonuniy tarqatish, o'g'irlash, o'zgartirish, bloklash, soxtalashtirish va ruxsatsiz kirishning oldini olish va bunday holat yuz berganda tezkor choralar ko'rish; ruxsatsiz kirish yoki o'zgartirishdan keyin tizimni tez tiklash; kiberxavfsizlik hodisalari va kiberjinoyatlar haqida vakolatli davlat organini xabardor qilish; tahlil uchun zarur raqamli izlar va ma'lumotni saqlash.
-- 22-24-moddalar kiberxavfsizlik hodisalariga bag'ishlangan. 22-modda hodisalarni vakolatli organ mansabdor shaxslari tekshirishini, resurs egasida yetarli resurs va texnik imkoniyat bo'lsa u ham tekshira olishini, lekin natijani vakolatli organga bildirishini belgilaydi. 23-modda subyektlar choralari qatorida dastur va qurilmalardagi zaiflik va xatolarni bartaraf etishni, zararli dasturni cheklashni va kiberhujum manbalarini texnik jihatdan cheklashni nomlaydi. 24-modda axborot tizimlari va resurslarida aniqlangan zaifliklar, kibertahdidlar va kiberhujumlar haqidagi axborot kiberxavfsizlik subyektining ruxsati bilan va ularni himoya qilish choralari ko'rilgandan keyin oshkor qilinishi mumkinligini belgilaydi; aniqlangan kibertahdidlar va zaifliklar haqidagi axborotdan esa faqat ularni bartaraf etish hamda qonunga xilof harakatlarning oldini olish uchun foydalanish kerak.
-- 37-modda javobgarlik haqida va bitta jumladan iborat: kiberxavfsizlik qonunchiligini buzganlikda aybdor shaxslar belgilangan tartibda javobgarlikka tortiladi. Jazo turlari qonunning o'zida yo'q; lex.uz izohi ma'muriy javobgarlik va jinoyat kodekslariga havola qiladi. Aniq moddalar va jazolarni o'sha kodekslarning amaldagi matnidan o'qing: bu dars ularni qamramaydi.
+**6. Tashkilot sifatida xabar yo'lini bering va hodisani qonundagi jarayonga ulang.** Nega: 16-modda subyektlarni hodisa haqida vakolatli organni xabardor qilishga va raqamli izlarni saqlashga majbur qiladi. Amalda: `security.txt`, mas'ul odam, tashqi hisobotni hodisa jarayoniga ulash (93-dars).
 
-Amaliy xulosa. Qonun subyektlarga hodisa haqida xabar berish va tizimni tiklash majburiyatini yuklaydi, zaifliklar haqidagi axborotni esa tuzatish maqsadidan tashqarida ishlatishni cheklaydi. Moddalar ro'yxatida (1-40) mustaqil xavfsizlik tadqiqotchisiga ruxsatsiz sinash huquqini beradigan yoki uni alohida himoya qiladigan modda yo'q. Shuning uchun tadqiqotchi uchun himoya qonundan emas, tizim egasining yozma ruxsati va dastur shartlaridagi safe harbor'dan keladi.
+### Vaziyatlar jadvali
 
-### Shaxsga doir ma'lumotlar to'g'risida
+| Vaziyat | Mumkinmi | Asos (modda) | Nima qilish kerak |
+|---|---|---|---|
+| Ruxsat faqat staging'ga berilgan, production'da ham tekshirmoqchisiz | Yo'q | 278-2 ("ruxsatsiz") | Production'ga tegmang, topilmani yozma xabar qiling va production uchun ruxsat so'rang |
+| SQL injection topdingiz, isbot uchun production'dan 500 qator mijoz yozuvini ko'chirdingiz | Yo'q | 278-2 (nusxa ko'chirish oqibat) | To'xtang, ko'chirmang; so'rov shakli yoki sanog'ini ko'rsating |
+| Bug bounty dasturining e'lon qilingan doirasi ichidagi domenni sinaysiz | Ha, doira va qoidalar ichida | WSTG; dastur shartlari ruxsat (muallifning o'qishi) | Doirani muntazam qayta o'qing, safe harbor shartlarda yozilganini tekshiring |
+| Bounty dasturida ko'rsatilmagan domenga ham so'rov yubormoqchisiz | Yo'q | 278-2; doiradan tashqarida shartlar himoya bermaydi (muallifning o'qishi) | Egasiga xabar yozing va ruxsat so'rang |
+| Zaiflik tuzatilgan, siz blogda tafsilot e'lon qilmoqchisiz, kompaniya ruxsat bermagan | Yo'q | 24 | Oldindan kelishilgan tartibga qayting, yozma ruxsat oling |
+| Tayyor exploit'ni ochiq repozitoriyga qo'ymoqchisiz | Maqsad va kanalga bog'liq | 278-3, 278-6 (muallifning talqini) | Kimga mo'ljallangani va kanalni baholang, ruxsatsiz foydalanishga xizmat qiladigan vositani tarqatmang |
+| Bank (MAI) tizimini baholatmoqchisiz | Faqat vakolatli organ ruxsati bilan, ixtisoslashtirilgan tashkilot orqali | 31 | Shartnomadan oldin shu yo'lni aniqlang |
+| Himoya choralarisiz axborot tizimini ishga tushirdingiz | Yo'q, agar ko'p miqdorda zarar yoki jiddiy ziyon yetsa | 278-1 | Himoya choralarini loyiha talabiga kiriting |
+| Kompaniyangizda hodisa aniqlandi (siz kiberxavfsizlik subyektisiz) | Xabar qilish kerak | 16 | Vakolatli organni xabardor qiling, raqamli izlarni saqlang; muddat matnda ko'rsatilmagan |
 
-"Shaxsga doir ma'lumotlar to'g'risida"gi qonun (O'RQ-547, 02.07.2019) 01.10.2019 da kuchga kirgan va keyin bir necha marta o'zgartirilgan: lex.uz tahrirlar ro'yxatida 2021 (15.01 va 21.04), 2023 (29.11) va 2026 yil tahrirlari bor, oxirgisi 12.09.2026. Quyidagi bayon amaldagi tahrirga tayanadi; dastlabki 2019 matnida, masalan, 27-1-modda yo'q edi. Vakolatli organ - Vazirlar Mahkamasi huzuridagi Davlat personalizatsiya markazi (8-modda). Asosiy qoidalar:
+### Moddalar jadvali
 
-- 4-modda ta'riflar beradi: shaxsga doir ma'lumot - muayyan jismoniy shaxsga tegishli yoki uni identifikatsiya qilish imkonini beradigan, elektron, qog'oz yoki boshqa moddiy tashuvchidagi axborot. Subyekt - ma'lumot tegishli shaxs; operator ishlov berishni amalga oshiradi, mulkdor ma'lumotlar bazasiga egalik qiladi.
-- 5-modda tamoyillarni sanaydi: konstitutsiyaviy huquqlarga rioya, ishlov berish maqsadi va usullarining qonuniyligi, ma'lumotning aniqligi va ishonchliligi, maxfiylik va himoya va boshqalar. 19-modda talablariga ko'ra ishlov berish maqsadi to'planish paytida e'lon qilingan maqsadga mos bo'lishi kerak, maqsad o'zgarsa subyektning yangi roziligi olinadi, ma'lumot aniq va kerak bo'lsa yangilangan bo'lishi, ishlov berish esa rozilik muddatidan oshmasligi kerak.
-- 21-modda rozilik shakli haqida: rozilik uning olinganini tasdiqlash imkonini beradigan har qanday shaklda berilishi mumkin; shaxsga doir maxsus ma'lumotlar uchun yozma (elektron hujjat shaklida ham) rozilik kerak; rozilik qaytarib olinishi mumkin. 25-modda maxsus ma'lumotlar toifalarini sanaydi (jumladan sog'liq, shaxsiy hayot, jinoiy sudlanganlik, siyosiy va diniy qarashlar) va ularga ishlov berishni istisnolar bo'lmasa taqiqlaydi.
-- 27-modda himoya kafolatlari: mulkdor, operator va uchinchi shaxs ma'lumotning yaxlitligi va to'liqligi, maxfiyligini ta'minlash va noqonuniy ishlov berishning oldini olish uchun huquqiy, tashkiliy va texnik choralar ko'rishi kerak.
-- 15-modda ma'lumotni O'zbekiston hududidan tashqariga uzatishni tartibga soladi: umumiy qoida bo'yicha subyektlar huquqlari teng himoyalanishini ta'minlaydigan davlatlarga uzatish mumkin, boshqa hollarda faqat qonunda sanalgan sharoitlarda (masalan, subyekt roziligi bilan); xavfsizlik va mudofaa manfaatlari uchun uzatish taqiqlanishi yoki cheklanishi mumkin.
-- 27-1-modda (2026 yil 26 martdagi O'RQ-1125 tahririda) saqlash joyiga oid maxsus shartlarni beradi. Ikkinchi qismiga ko'ra jismoniy shaxslarning biometrik va genetik ma'lumotlari hamda O'zbekistonda faoliyat yurituvchi telekommunikatsiya operatorlaridagi ma'lumotlar O'zbekiston hududida saqlanishi shart. Qolgan shaxsga doir ma'lumotlar chet elda saqlanishi va ishlov berilishi mumkin, agar uch shartdan biri bajarilsa: chet davlat ma'lumotlar teng himoyalanishini ta'minlovchi davlat deb tan olingan bo'lsa; operator vakolatli organ tasdiqlagan talablarga javob beradigan standart shartnoma shartlari yoki majburiy korporativ qoidalarni qabul qilib, ularga rioya qilsa; yoki operator vakolatli organ tasdiqlagan ro'yxatdagi xalqaro standartlarga amal qilsa. Teng himoya beruvchi davlatlar ro'yxatini Vazirlar Mahkamasi belgilaydi. 20-modda O'zbekistonda saqlanishi shart bo'lgan ma'lumotlar bazalarini davlat reyestrida ro'yxatdan o'tkazishni talab qiladi.
+O'RQ-764 15.04.2022 da imzolangan, 8 bob va 40 moddadan iborat, 17.07.2022 da kuchga kirgan (40-modda: e'londan uch oy o'tgach). Qonunning o'zida jazo turlari yo'q, 37-modda bitta jumlada aybdorlar belgilangan tartibda javobgarlikka tortilishini aytadi; jazolar Jinoyat va Ma'muriy kodekslarda. Jarimalar "bazaviy hisoblash miqdori" (BHM) bilan o'lchanadi; BHM qiymati kodeksda emas. Jinoyat kodeksining XX1 bobi 278-1 dan 278-9 gacha; 278-8 va 278-9 kripto-aktivlarga oid, ular bu yerda yo'q.
 
-Avtopark platformasi uchun oqibat: haydovchining ismi, telefon raqami yoki davlat raqami bilan bog'langan GPS izi muayyan shaxsni aniqlashga imkon bersa, ehtimol bu qonun ta'rifiga tushadi (bu kursning talqini, yuridik xulosa emas). Agar platforma bunday ma'lumotni chet eldagi bulutda saqlasa, 15 va 27-1-moddalarni yurist bilan ko'rib chiqish kerak: telefon raqami va biometrik ma'lumot qaysi toifaga tushishi, qaysi shartlardan biri bajarilishi aniq baholanadi. Shuning uchun o'quv laboratoriyasida real haydovchi ma'lumotidan foydalanmang, hisobot va log ichiga real telefon raqamini yozmang va tadqiqot natijalarida shaxsga doir ma'lumotni yashiring. Platforma qatlamidagi talablar (maqsad, rozilik, saqlash muddati, xavfsizlik) 94-darsda ko'riladi.
+| Modda | Nima haqida | Kimga tegishli | Sanksiya |
+|---|---|---|---|
+| Jinoyat kodeksi 278-1 | Axborotlashtirish qoidalarini buzish: belgilangan himoya choralarini ko'rmasdan axborot tizimlari, ma'lumotlar bazalari va banklarini yaratish, joriy etish va ulardan foydalanish, shuningdek tizimdan ruxsat bilan foydalanishda qoidani buzish, agar fuqarolar, davlat yoki jamoat manfaatlariga ko'p miqdorda zarar yoki jiddiy ziyon yetkazilsa | Tizim egasi va dasturchi | 1-qism: 50 BHM gacha jarima yoki 1 yilgacha axloq tuzatish ishlari; 2-qism (juda ko'p miqdorda zarar): 50-100 BHM jarima yoki 1-2 yil axloq tuzatish ishlari |
+| Jinoyat kodeksi 278-2 | Kompyuter axborotidan qonunga xilof (ruxsatsiz) foydalanish, agar u axborotning yo'q qilinishi, to'sib qo'yilishi, modifikatsiyalanishi, undan nusxa ko'chirilishi yoki uning qo'lga kiritilishiga, yoki EHM, ularning tizimi yoki tarmog'i ishining buzilishiga sabab bo'lsa | Har kim, shu jumladan tadqiqotchi | 1-qism: 100 BHM gacha jarima yoki 3 yilgacha muayyan huquqdan mahrum qilish yoxud 1 yilgacha axloq tuzatish ishlari; 2-qism (guruh, takroran, xizmat mavqeyidan foydalanib, uyushgan guruh): 100-300 BHM jarima yoki 1-2 yil axloq tuzatish ishlari yoki 1-3 yil ozodlikni cheklash yoxud 3 yilgacha ozodlikdan mahrum qilish |
+| Jinoyat kodeksi 278-3 | Maxsus vositalarni tayyorlash va tarqatish: himoyalangan kompyuter tizimi yoki telekommunikatsiya tarmog'idan ruxsatsiz foydalanish uchun maxsus dasturiy yoki apparat vositalarini o'tkazish maqsadini ko'zlab tayyorlash yoxud o'tkazish va tarqatish | Vosita yaratuvchi va tarqatuvchi | 1-qism: 200 BHM gacha jarima yoki 1 yilgacha axloq tuzatish ishlari; 2-qism: 200-300 BHM jarima yoki 1-3 yil axloq tuzatish ishlari |
+| Jinoyat kodeksi 278-4 | Kompyuter axborotini modifikatsiyalashtirish: kompyuter tizimidagi axborotni qonunga xilof o'zgartirish, unga shikast yetkazish, o'chirish, bila turib yolg'on axborot kiritish, agar ko'p miqdorda zarar yoki jiddiy ziyon yetkazilsa | Har kim | 1-qism: 100 BHM gacha jarima yoki 2 yilgacha axloq tuzatish, ozodlikni cheklash yoki ozodlikdan mahrum qilish; 2-qism: 1-3 yil shu jazolardan biri |
+| Jinoyat kodeksi 278-5 | Kompyuter sabotaji: o'zganing yoki xizmatda foydalaniladigan kompyuter uskunasini qasddan ishdan chiqarish, kompyuter tizimini buzish | Har kim | 1-qism: 3 yilgacha huquqdan mahrum qilib 300-400 BHM jarima yoki 2 yilgacha ozodlikni cheklash yoxud ozodlikdan mahrum qilish; 2-qism (guruh, takroran): 2-3 yil axloq tuzatish, ozodlikni cheklash yoki ozodlikdan mahrum qilish |
+| Jinoyat kodeksi 278-6 | Zarar keltiruvchi dasturlar: kompyuter tizimidagi axborotni ruxsatsiz yo'q qilish, to'sish, modifikatsiyalash, nusxalash yoki qo'lga kiritish maqsadida dastur yaratish yoki mavjud dasturga o'zgartirish kiritish, maxsus virus dasturlarini ishlab chiqish, ulardan qasddan foydalanish yoki tarqatish | Dastur yaratuvchi va tarqatuvchi | 1-qism: 100-300 BHM jarima yoki 2 yilgacha ozodlikni cheklash yoxud 2 yilgacha ozodlikdan mahrum qilish; 2-qism: 2-3 yil ozodlikni cheklash yoki ozodlikdan mahrum qilish |
+| Jinoyat kodeksi 278-7 | Telekommunikatsiya tarmog'idan ruxsatsiz foydalanish: himoya tizimlarini chetlab o'tib, xalqaro trafik o'tkazish maqsadida tarmoqdan foydalanish va shu maqsadli vositalarni ruxsatsiz saqlash | Har kim | 1-qism: 100-300 BHM jarima yoki 1-3 yil ozodlikni cheklash yoxud 3 yilgacha ozodlikdan mahrum qilish; 2-qism: 300-600 BHM jarima yoki 3-5 yil ozodlikni cheklash yoki ozodlikdan mahrum qilish |
+| Ma'muriy kodeks 155-1 | Kompyuter tizimiga ruxsati bor shaxsning foydalanish qoidalarini buzishi, agar bu axborotning yo'q qilinishi, to'sib qo'yilishi, modifikatsiyalanishi yoki uskuna ishining buzilishiga sabab bo'lsa | Tizimga ruxsati bor shaxs | Fuqarolarga 5-7 BHM, mansabdor shaxslarga 7-10 BHM jarima; konfidensial axborotli tizimda (2-qism) 7-10 va 10-15 BHM |
+| Ma'muriy kodeks 155-2 | Jinoyat belgilarisiz telekommunikatsiya tarmog'idan ruxsatsiz foydalanish | Har kim | Vosita musodarasi bilan fuqarolarga 10-20, mansabdorlarga 20-50 BHM jarima |
+| O'RQ-764, 1-3 | Maqsad (1), qonunchilik tarkibi (2), 13 ta tushuncha (3): kiberxavfsizlik hodisasi - axborot tizimlari ishlashida uzilishlarga va (yoki) axborotning ochiqligi, yaxlitligi yoki undan erkin foydalanilishining buzilishiga olib kelgan hodisa (CIA, 1-dars); kiberxavfsizlik subyekti - milliy axborot resurslariga ega bo'lgan, ulardan foydalanadigan va tasarruf etadigan yoki ulardan foydalanish bo'yicha elektron axborot xizmatlari ko'rsatadigan yuridik shaxs yoki yakka tartibdagi tadbirkor, shu jumladan MAI subyektlari. Zaiflik 3-moddada ta'riflanmagan, lekin 11, 14, 16, 23 va 24-moddalar bu so'zni ishlatadi; mazmunini texnik standartlar beradi (7-dars) | Hamma | Jazo yo'q |
+| O'RQ-764, 11 | Vakolatli organ - Davlat xavfsizlik xizmati. Vakolatlari: qonun ijrosi ustidan nazorat; kiberxavfsizlik hodisalari bo'yicha tezkor-qidiruv tadbirlari va tergov harakatlari; MAI obyektlarining yagona reyestrini yuritish va talablarini belgilash; axborot tizimlari vositalarini sertifikatlashtirish va obyektlarni attestatsiyadan o'tkazish tartibini belgilash; kriptografik himoya vositalari faoliyatini litsenziyalash; "kiberxavfsizlik bo'linmalarining, mustaqil ekspertlar xizmatlari va guruhlarining faoliyatini tartibga solish" (oxirgi band mustaqil tadqiqotchilar uchun muhim, lekin tartibi qonunda yo'q). Qonuniy ko'rsatmalarni bajarish majburiy | Subyektlar | Jazo yo'q |
+| O'RQ-764, 15 | Ma'lumot zaxira nusxalarining saqlanish muddati kamida oxirgi uch oy | Davlat organlari va MAI obyektlari | Jazo yo'q |
+| O'RQ-764, 16 | Subyektlar: ma'lumotning qonunga xilof tarqalishi, o'g'irlanishi, yo'qolishi, yaxlitligining buzilishi, bloklanishi, soxtalashtirilishi va ruxsatsiz kirishning oldini oladi va aniqlanganda o'z vaqtida choralar ko'radi; ruxsatsiz kirish yoki o'zgartirishdan keyin tizimni tezkor tiklaydi; hodisalar va kiberjinoyatlar haqida vakolatli organni xabardor qiladi, raqamli izlar yo'qolishiga yo'l qo'ymaydi va tahlil uchun ma'lumotlarni doimiy saqlaydi; vakolatli organ talablariga rioya etadi; hodisalarga javob mexanizmlari va kiberxavfsizlik bo'linmalari ishlashini ta'minlaydi, ular bo'lmasa vakolatli organ ruxsati bilan autsorsing xizmatlaridan foydalanadi; monitoring tizimlariga kirish huquqini vakolatli organga beradi. Hodisa haqida xabar berish muddati matnda ko'rsatilmagan | Kiberxavfsizlik subyektlari | Jazo yo'q |
+| O'RQ-764, 18, 19 | 18: MAI toifasidagi va davlat organlarining tizimlari muvofiqlik ekspertizasidan majburiy o'tadi. 19: himoya vositalari majburiy sertifikatlanadi | MAI va davlat organlari | Jazo yo'q |
+| O'RQ-764, 22, 23 | 22: hodisalarni vakolatli organ yoki ishchi organ mansabdorlari tekshiradi; resurs egasi imkoniyati bo'lsa o'zi ham tekshiradi va natijani vakolatli organga bildiradi. 23: choralar shakllari - zaifliklarni bartaraf etish, zararli dasturlarni yo'q qilish, obyektlarni ajratish, huquqni muhofaza organlariga ma'lumot berish | Resurs egalari | Jazo yo'q |
+| O'RQ-764, 24 | Aniqlangan zaifliklar, kibertahdidlar va kiberhujumlar haqidagi axborot himoya choralari ko'rilgandan keyin subyektning ruxsati bilan oshkor qilinishi mumkin; bu axborotdan faqat ularni bartaraf etish va qonunga xilof harakatlarning oldini olish uchun foydalanish kerak | Tadqiqotchi va tashkilot | Jazo yo'q |
+| O'RQ-764, 26-28, 30, 31 | MAI: 3-moddaga ko'ra davlat boshqaruvi, mudofaa, yoqilg'i-energetika, bank-moliya tizimi, transport, sog'liqni saqlash, axborot-kommunikatsiya texnologiyalari va boshqa sohalardagi axborotlashtirish tizimlari. 26: yuqori, o'rta va past toifalar; 27: yagona reyestr; 28: uzluksiz ishlash, hodisalar haqidagi axborotni vakolatli organga yetkazish, sabablarni aniqlashda ko'maklashish, monitoring tizimlarini o'rnatish va unga kirish huquqini berish, ko'rsatmalarini bajarish, reyestrdagi ma'lumot o'zgarganda xabar berish; 30: MAI hodisalari haqidagi axborot cheklangan; 31: MAI obyektlarining kiberxavfsizligini baholash vakolatli organ ruxsati bilan, ixtisoslashtirilgan tashkilotlar jalb etilgan holda | MAI subyektlari | Jazo yo'q |
+| O'RQ-764, 37 | Qonunchilikni buzganlikda aybdor shaxslar belgilangan tartibda javobgarlikka tortiladi | Hamma | Turlari qonunda yo'q; yuqoridagi kodekslarda |
 
-## Chuqurroq: responsible disclosure
+Shaxsga doir ma'lumotlar bo'yicha javobgarlik 94-darsda (Jinoyat kodeksi 141-2, Ma'muriy kodeks 46-2).
 
-### Uch model
+## Chuqurroq: pentest shartnomasi, bug bounty va responsible disclosure
 
-Vulnerability Disclosure Cheat Sheet oshkor qilishning uch modelini ajratadi. Private disclosure: zaiflik tashkilotga maxfiy xabar qilinadi, e'lon qilish tashkilot ixtiyorida; ko'pchilik bug bounty dasturlari shuni talab qiladi, kamchiligi tashkilot javob bermasa tafsilotlar hech qachon e'lon qilinmasligi mumkin. Full disclosure: tafsilotlar topilishi bilan hammaga e'lon qilinadi, ba'zan exploit kodi bilan; sahifa uni munozarali deb ataydi va faqat boshqa yo'llar ish bermaganda yoki exploit allaqachon ommaviy bo'lganda ko'rib chiqishni tavsiya qiladi. Responsible (coordinated) disclosure: dastlabki hisobot maxfiy, to'liq tafsilotlar esa tuzatish tayyor bo'lgach e'lon qilinadi; ko'pincha tadqiqotchi javob yoki tuzatish uchun muddat qo'yadi. Cheat sheet misol sifatida Google Project Zero siyosatini keltiradi: odatda tuzatish uchun 90 kun, tuzatishdan keyin 30 kun o'tgach texnik tafsilotlar e'lon qilinadi, ekspluatatsiya qilinayotgan zaifliklar uchun istisnolar bor.
+### Qonun shartnomaga qanday ta'sir qiladi
 
-### Bug bounty va pentest farqi
+Quyidagi ro'yxat qonun matnidan va bu darsdagi talqindan kelib chiqadi (talqin muallifniki, yuridik xulosa emas). Pentest shartnomasi yoki dastur shartlari kamida shularni yozsin:
 
-WSTG bug bounty dasturini an'anaviy penetration testdan farqlaydi. Pentest vaqt bilan cheklangan, bitta jamoa o'tkazadi, odatda white-box yoki gray-box (kod va arxitektura beriladi), doirasi shartnomada kelishiladi va rasmiy hisobot bilan tugaydi. Bug bounty uzluksiz, ko'p tadqiqotchi ishtirok etadi, black-box ishlaydi, doirani dastur egasi bir tomonlama belgilaydi va to'lov har topilma uchun. Bundan xulosa: bounty tadqiqotchisi faqat e'lon qilingan doira ichida ishlaydi, doira o'rtada o'zgarishi mumkin (uni muntazam qayta o'qing), doiradan tashqari topilma haqiqiy bo'lsa ham rad etiladi. WSTG oshkor qilish muddati uchun odatiy oraliq sifatida 30-90 kunni keltiradi.
+- ruxsat beruvchi tizim egasi ekani (hosting va bulut egalarining ruxsati alohida bo'lishi mumkin);
+- doira (domen, IP, muhit), vaqt oynasi va usullar;
+- ma'lumot qoidasi: 278-2 bo'yicha nusxalash oqibat, shuning uchun real yozuvni ko'chirmaslik, minimal dalil;
+- zararli kod va maxsus vositalarni (278-3, 278-6) tashqariga chiqarmaslik;
+- hodisa aniqlansa kim kimni xabardor qilishi (16-modda);
+- oshkor qilish tartibi (24-modda).
+
+MAI obyektlarini baholash 31-moddaga ko'ra vakolatli organ ruxsati bilan ixtisoslashtirilgan tashkilot orqali o'tadi, shuning uchun shartnomadan oldin bu yo'lni aniqlang. 16-modda tashkilotda kiberxavfsizlik bo'linmasi bo'lmasa, vakolatli organ ruxsati bilan autsorsingdan foydalanishni nazarda tutadi; tashqi pentest firmasi shu bandga tushishi mumkin.
+
+### Bug bounty va pentest
+
+WSTG bug bounty'ni pentestdan farqlaydi. Pentest vaqt bilan cheklangan, bitta jamoa o'tkazadi, odatda white-box yoki gray-box, doirasi shartnomada kelishiladi, rasmiy hisobot bilan tugaydi. Bug bounty uzluksiz, ko'p tadqiqotchili, black-box, doirani dastur egasi bir tomonlama belgilaydi, to'lov har topilma uchun. Xulosa: bounty tadqiqotchisi faqat e'lon qilingan doirada ishlaydi va doirani muntazam qayta o'qiydi. Dastur shartlari tizim egasining ruxsati; ruxsat doirasida harakat "ruxsatsiz" bo'lmaydi, doiradan tashqarida esa shartlar himoya bermaydi (bu muallifning o'qishi). Dastur shartlarining sud amaliyotidagi kuchi bu darsda tekshirilmagan.
+
+### Uch oshkor qilish modeli va 24-modda
+
+Cheat sheet uch modelni ajratadi. Private disclosure: maxfiy xabar, e'lon qilish tashkilot ixtiyorida. Full disclosure: tafsilotlar topilishi bilan hammaga e'lon qilinadi (sahifa uni munozarali deydi). Responsible (coordinated) disclosure: hisobot maxfiy, tafsilotlar tuzatish tayyor bo'lgach e'lon qilinadi; misol - Google Project Zero siyosati (tuzatishga odatda 90 kun, undan keyin 30 kun). WSTG 30-90 kunni misol qiladi.
+
+O'RQ-764 24-moddasi bu modellarga cheklov qo'yadi: e'lon himoya choralari ko'rilgandan keyin va subyekt ruxsati bilan. Shuning uchun responsible disclosure'ni qo'llasangiz, muddatni ham, e'lon ruxsatini ham xabar bilan birga yozma kelishing.
 
 ### Tadqiqotchi sifatida
 
-Zaiflik topganingizda (ruxsat doirasida yoki tasodifan), cheat sheet tavsiyalarining qisqa ro'yxati: aloqa uchun avval tashkilotning e'lon qilingan siyosati va `/.well-known/security.txt` faylini qidiring (RFC 9116 bo'yicha, kamida Contact va Expires maydonlari bor); topilmasa `security@` kabi manzil yoki kontakt sahifasi, kerak bo'lsa milliy CERT. Hisobotda nuqsonni tushunish va qayta ishlab chiqish uchun yetarli tafsilot, HTTP so'rov va javoblar, ta'siri bo'lishi kerak, lekin shaxsga doir ma'lumot olib tashlanadi. To'lov yoki mukofotni tafsilotlarni ochishdan oldin talab qilmang: bu tovlamachilik bo'lishi mumkin.
-
-Quyidagi kod hisobotga tushadigan dalildan telefon raqami va davlat raqamini yashiradi. Naqsh o'quv uchun: real tizimda yashiriladigan maydonlar ro'yxati ma'lumot modelingizdan kelib chiqadi.
+Avval tashkilotning e'lon qilingan siyosati va `/.well-known/security.txt` faylini qidiring (RFC 9116, kamida Contact va Expires); topilmasa `security@` manzili. Hisobotda qayta ishlab chiqish uchun yetarli tafsilot, so'rov-javoblar va ta'sir bo'lsin, shaxsga doir ma'lumot olib tashlansin. To'lovni tafsilotlardan oldin talab qilmang: bu tovlamachilik bo'lishi mumkin. Quyidagi kod dalildan telefon va davlat raqamini yashiradi (o'quv naqshi).
 
 ```ts run
 // O'zbekiston telefon formati va davlat raqami formati bu yerda o'quv soddalashtirishi
@@ -199,15 +243,15 @@ console.log(redact(response));
 {"driver":"Test Haydovchi","phone":"[telefon]","plate":"[davlat raqami]","fuel":62}
 ```
 
-Ro'yxat yetarli emas: ism ("Test Haydovchi") yashirilmadi, va regex'lar faqat ma'lum formatlarni topadi. Eng ishonchli yo'l real ma'lumotni dalilga umuman kiritmaslik, ya'ni sinovni sintetik ma'lumotli laboratoriyada o'tkazish (10-dars).
+Ro'yxat yetarli emas: ism ("Test Haydovchi") yashirilmadi, regex'lar faqat ma'lum formatlarni topadi. Eng ishonchli yo'l real ma'lumotni dalilga umuman kiritmaslik, ya'ni sintetik ma'lumotli laboratoriyada sinash (10-dars).
 
 ### Tashkilot sifatida
 
-Tashqaridan hisobot keladigan tomon uchun cheat sheet ro'yxati: xabar yuborish uchun aniq yo'l bering, javob muddatini oqilona belgilang, tadqiqotchi bilan ochiq muloqot qiling, yuridik tahdid qilmang, kerak bo'lsa CVE so'rang, aniq advisory va changelog chiqaring, mukofot va e'tirof bering. Bug bounty dasturi bo'lsa, WSTG ko'rsatganidek, doira, safe harbor, ruxsat etilgan usullar va oshkor qilish muddati dastur shartlarida yozilgan bo'lishi kerak. Qonunning 16-moddasi esa hodisa haqida vakolatli organni xabardor qilish majburiyatini qo'yadi: hisobot tashqi tadqiqotchidan kelsa ham, uni hodisa jarayoniga ulash kerak (93-dars).
+Cheat sheet: xabar yo'lini bering, javob muddatini oqilona belgilang, tadqiqotchi bilan ochiq muloqot qiling, yuridik tahdid qilmang, advisory chiqaring, e'tirof bering. Kiberxavfsizlik subyekti sifatida 16-modda bo'yicha hodisani xabar qilishingiz kerak bo'lgani uchun tashqi hisobotni hodisa jarayoniga ulang (93-dars).
 
 ## Misol: sinash vositasining doirasi
 
-Kod o'quv maqsadida: u faqat bizning `inScope` funksiyamizga qarshi, haqiqiy tizim yo'q. `.test` va `.example` domenlari faqat hujjat va sinov uchun ajratilgan, real tizimlarga tegishli emas. Misol sinash vositasi (masalan, o'zingiz yozgan skaner) ruxsatsiz hostga tegib ketishining oldini olish mexanizmini ko'rsatadi.
+Kod faqat bizning `inScope` funksiyamizga qarshi; `.test` va `.example` domenlari hujjat va sinov uchun ajratilgan. Misol skaner ruxsatsiz hostga tegib ketishining oldini oladi: xato bilan doiradan chiqish 278-2 dagi "ruxsatsiz" belgisini keltirib chiqarishi mumkin.
 
 ### 1. Zaif kod
 
@@ -239,7 +283,7 @@ doira ichida  https://notlab.fleet.test/
 doira ichida  http://lab.fleet.test@evil.example/
 ```
 
-Birinchisidan boshqa uchalasi ham doiradan tashqarida. Oxirgisida haqiqiy host `evil.example`: `lab.fleet.test@` qismi login sifatida talqin qilinadi. Real sinovda bu ruxsatsiz hostga so'rov yuborish, ya'ni 1-qismdagi ruxsat chegarasini buzish bo'lardi.
+Birinchisidan boshqa uchalasi ham doiradan tashqarida. Oxirgisida haqiqiy host `evil.example`: `lab.fleet.test@` qismi login sifatida talqin qilinadi. Real sinovda bu ruxsatsiz hostga so'rov yuborish, ya'ni ruxsat chegarasini buzish bo'lardi.
 
 ### 3. Tuzatilgan kod
 
@@ -278,18 +322,18 @@ doiradan tashqari http://lab.fleet.test@evil.example/
 doiradan tashqari ftp://lab.fleet.test/
 ```
 
-Endi tekshiruv URL'ni tahlil qiladi va hostname'ni aniq solishtiradi, shuning uchun ko'rsatilgan to'rt hiyla yopiladi. Qoldiq risk: tekshiruv faqat manzil matnini ko'radi. DNS ko'rsatmasi (doira ichidagi nom tashqi IP ga yo'naltirilgan bo'lishi) va redirect (javob boshqa hostga yo'naltirishi) bu tekshiruvdan o'tib ketadi; ularni har so'rovdan oldin ham, redirect'dan keyin ham qayta tekshirish kerak. Eng muhimi, kod yozma ruxsat o'rnini bosmaydi: u faqat xato bilan chegaradan chiqib ketishning oldini oladi.
+Endi tekshiruv URL'ni tahlil qiladi va hostname'ni aniq solishtiradi, shuning uchun ko'rsatilgan to'rt hiyla yopiladi. Qoldiq risk: tekshiruv faqat manzil matnini ko'radi; DNS va redirect orqali tashqi hostga o'tish bundan o'tib ketadi, shuning uchun ularni har so'rovdan oldin va redirect'dan keyin qayta tekshiring. Kod yozma ruxsat o'rnini bosmaydi.
 
 ## Qachon qo'llamaslik kerak
 
-- Bu dars huquqiy maslahat emas. Qonun matni o'zgaradi (ayniqsa shaxsga doir ma'lumotlar to'g'risidagi qonun keyingi tahrirlarga ega), va jinoiy javobgarlik boshqa qonunlarda. Muhim qarorlarda (zaiflik haqida xabar berish, ma'lumot yig'ish, mijoz bilan shartnoma) yurist bilan ishlang.
 - Doira tekshiruvi avtomatlashtirilgan vosita uchun himoya qatlami, ruxsat emas. Ruxsat yozma, aniq doira, muddat va kontakt bilan bo'lishi kerak.
-- Responsible disclosure har vaziyatda ham ishlamaydi: tashkilot javob bermasa, cheat sheet muqobillarni (anonim e'lon qilish, regulyator yoki ma'lumotlarni himoya qilish organiga xabar berish, voz kechish) ro'yxatlaydi va ularning har birining xavfini ochiq yozadi. Eng yaxshi tanlov holatga bog'liq va ko'pincha yurist bilan maslahatlashishni talab qiladi.
-- Kichik jamoaga to'liq bug bounty dasturi ortiqcha. Ko'pincha yetarli minimum: `security.txt`, xavfsizlik uchun alohida email va xabarlarni kuzatadigan mas'ul odam.
+- Responsible disclosure har vaziyatda ishlamaydi: tashkilot javob bermasa, cheat sheet muqobillarni (anonim e'lon qilish, regulyatorga xabar berish, voz kechish) va ularning xavfini ro'yxatlaydi; 24-modda bilan birga tanlov tor.
+- Kichik jamoaga to'liq bug bounty ortiqcha: `security.txt`, alohida email va mas'ul odam ko'pincha yetadi.
+- Vazirlar Mahkamasi qarorlari, vakolatli organning quyi hujjatlari va sud amaliyoti o'qilmagan.
 
 ## Stack'da: security.txt va hisobot jarayoni
 
-Zaiflik haqida xabar berishni osonlashtirish uchun veb-saytingizda `/.well-known/security.txt` faylini joylashtiring. Next.js loyihada u `public/.well-known/security.txt` yo'lida statik fayl bo'lishi mumkin. Cheat sheet kamida `Contact` va `Expires` maydonlarini talab qiladi; ixtiyoriy maydonlar (`Preferred-Languages`, `Canonical`, `Policy`, `Hiring`) yo'naltirishni yaxshilaydi. Misol (manzillar `.test` va `.example` hujjat domenlari):
+Next.js loyihada `public/.well-known/security.txt` statik fayl bo'lishi mumkin; kamida `Contact` va `Expires` kerak. Misol (hujjat domenlari):
 
 ```text
 Contact: mailto:security@fleet.example
@@ -299,7 +343,7 @@ Canonical: https://fleet.example/.well-known/security.txt
 Policy: https://fleet.example/security-policy
 ```
 
-`Expires` sanasi o'tib ketmasligini nazorat qiling: eskirgan fayl yomonroq ishlaydi, shuning uchun uni CI'da tekshiruvchi test qo'shish foydali:
+`Expires` sanasi o'tib ketmasligini CI'da tekshiring: eskirgan fayl yomonroq ishlaydi.
 
 ```ts
 import { readFileSync } from "node:fs";
@@ -315,13 +359,12 @@ export function securityTxtIsFresh(path: string, now: Date): boolean {
 }
 ```
 
-Bu kod ishga tushirilmaydi (Node `fs` brauzer worker'ida yo'q). Ichki jarayon uchun: hisobot qabul qiladigan navbat, mas'ul odam, javob muddati, tuzatilgandan keyin tadqiqotchiga xabar berish va, kerak bo'lsa, advisory chiqarish.
+Bu kod ishga tushirilmaydi (Node `fs` brauzer worker'ida yo'q).
 
 ## Xulosa
 
-- Xavfsizlik sinovining chegarasi: aniq, oldindan berilgan yozma ruxsat va aniq doira. "Men yozganman" yoki "yaxshi niyat" ruxsat emas.
-- Kiberxavfsizlik to'g'risidagi qonun (O'RQ-764, 15.04.2022) hodisa haqida xabar berish va zaifliklar haqidagi ma'lumotdan faqat tuzatish maqsadida foydalanishni belgilaydi; to'liq matn va jazolarni lex.uz'da va tegishli qonunlarda o'qing.
-- Shaxsga doir ma'lumotlar to'g'risidagi qonun (O'RQ-547, 02.07.2019) ma'lumotni muayyan shaxsni aniqlash imkoniyati bilan ta'riflaydi; GPS izi haydovchi bilan bog'langanda shu toifaga tushishi mumkin. Laboratoriyada real ma'lumot ishlatmang.
-- Responsible disclosure: maxfiy hisobot, tafsilotlarni tuzatishdan keyin e'lon qilish; to'lovni tafsilotdan oldin talab qilmang, dalildan shaxsga doir ma'lumotni olib tashlang.
-- Tashkilot sifatida xabar yuborish yo'lini (security.txt, siyosat) bering, tadqiqotchini yuridik bosim bilan qo'rqitmang va hisobotni hodisa jarayoniga ulang.
-- Bu dars huquqiy maslahat emas: muhim qarorlarda yurist bilan ishlang.
+- Qaror qoidasi: yozma ruxsat va aniq doira bo'lmasa, tegmang. Jinoyat kodeksining 278-2, 278-3 va 278-7-moddalarida "ruxsatsiz" markaziy belgi; XX1 bobda yaxshi niyatli tadqiqotchi uchun istisno yo'q.
+- Isbotni real ma'lumotni ko'chirmasdan bering: 278-2 oqibat talab qiladi, nusxalash ham oqibat; 278-3 va 278-6 vosita yaratish va tarqatishni ham jazolaydi.
+- 24-modda: zaifliklar haqidagi axborot himoya choralari ko'rilgach va subyekt ruxsati bilan oshkor qilinadi; oshkor qilish muddatini oldindan yozma kelishing.
+- Shartnoma va bug bounty shartlari ruxsat egasi, doira, usullar, ma'lumot qoidasi va oshkor qilish tartibini yozsin; MAI baholashi vakolatli organ ruxsati bilan (31-modda).
+- Tashkilot sifatida xabar yo'lini (security.txt) bering; vakolatli organ - Davlat xavfsizlik xizmati (11-modda), subyektlar hodisa haqida uni xabardor qiladi va raqamli izlarni saqlaydi (16), MAI subyektlari qo'shimcha majburiyatlarga ega (26-31).

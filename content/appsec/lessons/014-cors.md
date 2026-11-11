@@ -5,6 +5,8 @@ title: "CORS: preflight, credentials va xato sozlamalar"
 summary: "CORS same-origin policy'ni qanday yumshatishi, simple va preflight so'rovlar, Access-Control-Allow-Origin va Allow-Credentials qoidalari, Origin'ni aks ettirish xatosi, Vary: Origin va to'g'ri ruxsat ro'yxati."
 duration: 45
 sources:
+  - id: fastify-cors
+    note: "@fastify/cors README: origin (standart *; Boolean, String, RegExp, Array, Function), methods standarti GET,HEAD,POST, credentials, allowedHeaders, maxAge soniyada; RegExp/funksiya origin DoS ogohlantirishi"
   - id: mdn-cors
     note: "MDN CORS qo'llanmasi: simple so'rov shartlari va ularning forma bilan bog'liqligi, preflight, credentials bilan wildcard taqiqi, Vary: Origin, Access-Control-Max-Age (standart 5 sekund)"
   - id: nestjs-cors
@@ -259,6 +261,8 @@ Ilovaning o'z frontendi uchun hamma narsa ishlaydi.
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu CORS xatosidan foydalanish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Foydalanuvchi tizimga kirgan va hujumchi sahifasini ochadi. Hujumchi skripti `fetch(api, {credentials: "include"})` chaqiradi; brauzer foydalanuvchi cookie'sini qo'shadi, server esa `Origin: https://evil.example` ni aks ettiradi.
 
 ```ts run
@@ -384,7 +388,7 @@ check("Vary: Origin har holda bor", () => [ok, evil, preflight(undefined, "GET",
 
 ## Stack'da: NestJS va Fastify
 
-NestJS'da `app.enableCors({...})`, Fastify'da `@fastify/cors` (`origin`, `credentials`, `methods`, `allowedHeaders`, `maxAge` opsiyalari). Ikkalasida ham `origin` uchun massiv yoki funksiya berasiz; massiv aniq tenglik beradi. Kod ishga tushirilmaydi (framework kerak), sintaksis tekshirilgan.
+NestJS'da `app.enableCors({...})`, Fastify'da `@fastify/cors` (`origin`, `credentials`, `methods`, `allowedHeaders`, `maxAge` opsiyalari). Ikkalasida ham `origin` uchun massiv yoki funksiya berasiz. `@fastify/cors` README'siga ko'ra `origin` standart qiymati `*` (hamma origin), massiv elementlari esa satr yoki `RegExp` bo'lishi mumkin: satr aniq tenglik beradi, `RegExp` esa `RegExp.prototype.test` bilan, o'zi bog'lanmagan holda qo'llanadi, shuning uchun uni `^` va `$` bilan hamda sxema bilan yozing; README `RegExp` yoki funksiya `origin` DoS xavfini keltirishi mumkinligini ham ogohlantiradi. Kod ishga tushirilmaydi (framework kerak), sintaksis tekshirilgan.
 
 ```ts
 import Fastify from "fastify";

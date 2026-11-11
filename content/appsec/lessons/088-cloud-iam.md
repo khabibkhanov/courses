@@ -11,6 +11,8 @@ sources:
     note: "A01:2025: least privilege, ya'ni deny by default (ommaviy resurslardan tashqari); nazorat ishonchli server tomonida; CORS noto'g'ri sozlanishi"
   - id: cs-cloudarch
     note: "OWASP Secure Cloud Architecture Cheat Sheet: IAM access (workload identity yoki federated role orqali qisqa muddatli credential, doimiy kalit emas), signed URL va public storage kamchiliklari, shared responsibility (IaaS/PaaS/SaaS), logging"
+  - id: aws-imdsv2
+    note: "AWS EC2 User Guide: IMDSv2 sessiya tokeni PUT bilan olinadi, TTL 1 soniyadan 6 soatgacha (X-aws-ec2-metadata-token-ttl-seconds), GET'da X-aws-ec2-metadata-token; PUT javobining standart hop limit'i 1; token talab qilinganda tokensiz so'rov 401"
   - id: occ-capital-one
     note: "OCC press-relizi (2020-08-06): $80 million civil money penalty; sabab sifatida public cloud'ga o'tishdan oldin samarali risk assessment jarayonlari yaratilmagani va kamchiliklar o'z vaqtida tuzatilmagani ko'rsatiladi. Texnik zanjir bu relizda emas, uni 97-dars birlamchi manbalar bilan ko'radi"
 quiz:
@@ -184,6 +186,8 @@ Model provayderdan mustaqil: policy `actions` va `resources` ro'yxatidan iborat,
 
 ### 1. Zaif kod va 2. Hujum
 
+> **Ta'lim maqsadida.** Bu o'g'irlangan credential'dan foydalanish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Ilova roli "ish bersin" deb `storage:*` va `*` resurs bilan yozilgan, credential esa static. Hujumchi ilovadagi zaiflik (masalan SSRF) orqali shu credential'ni o'g'irladi va 30 kundan keyin ham ishlatadi. Bu faqat o'quv modeli; haqiqiy tizimga qarshi hech narsa qilinmaydi.
 
 ```ts run
@@ -333,7 +337,7 @@ KUTILGAN 6
 - Terraform yoki boshqa infratuzilma kodidagi policy'larni CI'da linter (yuqoridagi kabi, yoki tayyor vosita) bilan tekshiring va o'zgarishlarni pull request orqali kiriting (85-dars).
 - Bulut sozlamalari uchun muntazam tekshiruv: A02:2025 storage ruxsatlarini ko'rib chiqishni patch management jarayonining bir qismi qilishni tavsiya qiladi.
 - Log: rol qabul qilish va storage murojaatlarini ruxsat berilgan sxema bilan yozing, credential va token'larni log'ga kiritmang.
-- SSRF'ni (27-dars) bulut metama'lumot xizmatiga chiqish yo'lini yopish bilan birga o'ylang: egress siyosati va tor rol bir-birini to'ldiradi. Metadata xizmatining sozlamalari provayderga bog'liq.
+- SSRF'ni (27-dars) bulut metama'lumot xizmatiga chiqish yo'lini yopish bilan birga o'ylang: egress siyosati va tor rol bir-birini to'ldiradi. AWS EC2 da bu IMDSv2: metadata'ni olish uchun avval `PUT` so'rovi bilan sessiya tokeni olinadi (`X-aws-ec2-metadata-token-ttl-seconds` sarlavhasi, muddat 1 soniyadan 6 soatgacha), keyingi `GET` so'rovlari tokenni `X-aws-ec2-metadata-token` sarlavhasida yuboradi. `PUT` javobining standart hop limit'i 1, konteynerlar uchun uni oshirish kerak bo'lishi mumkin. Token talab qilinganda tokensiz so'rov `401` oladi. Boshqa provayderlarning metadata sozlamalari alohida hujjatlashtirilgan va bu darsda ko'rib chiqilmagan.
 
 ## Xulosa
 

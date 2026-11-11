@@ -231,6 +231,8 @@ out.forEach((l) => console.log(l));
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu Log4Shell turidagi lookup usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) va 278-6-moddasi (Zarar keltiruvchi dasturlar) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi faqat foydalanuvchi nomi maydonini to'ldiradi. Ikkinchi chaqiruvda ifoda "tashqi katalogdan" kodni oladi va bajaradi, uchinchisida esa muhit o'zgaruvchisi qiymati log'ga sizadi (Apache yozuvidagi CVE-2021-45046 tavsifida ham boshqa lookup'larning maxfiy ma'lumotni log orqali oshkor qilishi mumkinligi aytilgan). Natija:
 
 ```text

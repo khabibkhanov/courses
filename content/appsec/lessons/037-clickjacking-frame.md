@@ -232,6 +232,8 @@ console.log("hujumchi sahifasi frame qila oladi:", canFrame(weakHeaders, page, [
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu clickjacking usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi sahifasi (`evil.example`) sizning sahifangizni iframe ichiga oladi. Modelga ko'ra brauzer buni to'smaydi:
 
 ```text

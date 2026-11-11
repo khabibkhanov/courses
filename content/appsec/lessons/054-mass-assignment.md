@@ -17,6 +17,10 @@ sources:
     note: "Next.js data security: Data Access Layer xavfsiz minimal DTO qaytaradi (telefon raqami misoli), Server Action to'g'ridan-to'g'ri POST bilan chaqirilishi mumkin, Server Action qaytarish qiymati faqat UI'ga kerakli narsa bo'lishi"
   - id: nestjs-validation
     note: "NestJS Validation: ValidationPipe whitelist (noma'lum xossalarni olib tashlaydi) va forbidNonWhitelisted (xato bilan rad etadi)"
+  - id: fastify-validation
+    note: "Fastify Validation and Serialization: chiqish sxemasi berilsa javob fast-json-stringify bilan yuboriladi va sezgir ma'lumotning tasodifan oshkor bo'lishining oldini olishga yordam beradi (sahifa sxemada yo'q xossalar taqdirini alohida aytmaydi)"
+  - id: class-transformer
+    note: "class-transformer README: strategy 'excludeAll' (instanceToPlain) @Expose bilan belgilanmagan xossalarni chiqarmaydi; plainToInstance sukut bo'yicha hamma xossani o'rnatadi, excludeExtraneousValues esa e'lon qilinmagan kalitlarni tashlaydi"
   - id: cs-input
     note: "Input Validation Cheat Sheet: objects uchun ruxsat etilgan va majburiy maydonlar qoidasi, JSON schema'da additional properties'ni aniq sozlash, 'bind only intended input', authorization alohida tekshirilishi"
 quiz:
@@ -248,6 +252,8 @@ javob maydonlari: id, tenant, name, alertThreshold, plan, deviceKey
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu mass assignment usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Dispetcher tahrirlash so'rovi tanasiga forma yubormaydigan maydonlarni qo'shadi:
 
 ```ts run
@@ -353,13 +359,15 @@ check("JSON'dagi __proto__ kaliti o'tmaydi", () => {
 
 - Ichki, ishonchli import va migratsiya skriptlari uchun qattiq allowlist ortiqcha bo'lishi mumkin, lekin ular ham servis qatlamidan o'tsin: bir kuni skript endpoint bo'lib qoladi.
 - Hammasiga bir xil allowlist (rolga qaramay) qulay, lekin rolga bog'liq maydonlar bo'lganda qo'pol: shunda admin funksiyasi uchun alohida endpoint yoki alohida allowlist kerak. Ikkalasi o'rtasida tanlovni maydonlar soni va o'zgarish tezligi belgilaydi.
-- Javobni har endpoint uchun qo'lda yig'ish ko'p kod bo'ladi. Kod generatsiyasi yoki sxema asosidagi serializatsiya (masalan, har endpoint uchun javob sxemasi va Fastify'ning sxema serializatori, `class-transformer`ning `@Expose`/`excludeExtraneousValues` sozlamalari) bu yukni kamaytiradi. Muhimi: sukut bo'yicha maydon chiqmaydi, ruxsat berilgani chiqadi. Bu muallif tavsiyasi; sozlamalarning aniq xatti-harakatini o'z versiyangiz hujjatida tekshiring.
+- Javobni har endpoint uchun qo'lda yig'ish ko'p kod bo'ladi. Sxema asosidagi serializatsiya bu yukni kamaytiradi: Fastify hujjatiga ko'ra route'da chiqish sxemasi berilsa, javob `fast-json-stringify` bilan yuboriladi va bu "sezgir ma'lumotning tasodifan oshkor bo'lishining oldini olishga yordam beradi". `class-transformer` da `instanceToPlain` ga `strategy: 'excludeAll'` berilsa, `@Expose()` bilan belgilanmagan hamma xossa chiqarib tashlanadi; `plainToInstance` ning `excludeExtraneousValues` opsiyasi esa kirish tomonida klassda e'lon qilinmagan kalitlarni tashlaydi. Muhimi: sukut bo'yicha maydon chiqmaydi, ruxsat berilgani chiqadi. Bu muallif tavsiyasi; yuqoridagi hujjatlar faqat mexanizmni tasdiqlaydi, o'z javoblaringiz uchun test yozing.
 - Silent drop (noma'lum maydonni jimgina o'chirish) kerak bo'lishi mumkin: eski mijoz ilovalari qo'shimcha maydon yuborsa, qat'iy rad etish ularni sindiradi. Bunda o'chirish bilan birga urinishni log'ga yozing (79-dars), aks holda hujum izsiz o'tadi.
 - Allowlist authorization emas, faqat bir qatlam. Rol yoki tenant tekshiruvi bo'lmasa, allowlist ichidagi maydon ham begona obyektga yozilishi mumkin.
 
 ## Stack'da: NestJS, Prisma va Next.js
 
 NestJS'da ikki qatlam: global `ValidationPipe` va servisdagi allowlist. Prisma'da `data: body` ni hech qachon to'g'ridan-to'g'ri bermang; `select` bilan javobni toraytiring. Bu kod ishga tushirilmaydi (tashqi modullar), faqat sintaksis tekshirilgan.
+
+Eslatma: Prisma ORM 7 hujjatiga ko'ra `PrismaClient` driver adapter talab qiladi va adapter'siz `new PrismaClient()` xato beradi; quyidagi namunada qisqalik uchun adapter ko'rsatilmagan, haqiqiy loyihada `new PrismaClient({ adapter })` yozing (masalan, PostgreSQL uchun `@prisma/adapter-pg`).
 
 ```ts
 import { Body, Controller, Param, Patch, Req } from "@nestjs/common";

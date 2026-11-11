@@ -19,6 +19,9 @@ sources:
     note: "NestJS WebSockets Exception filters: global filter'lar (useGlobalFilters, APP_FILTER) gateway'larga qo'llanmaydi, @UseFilters() gateway yoki metod darajasida"
   - id: whatwg-html
     note: "Brauzerdagi WebSocket API shu spetsifikatsiyaning bir qismi; dars xavfsizlik qoidalarini spetsifikatsiyadan emas, WebSocket Security Cheat Sheet va NestJS hujjatiga tayanib beradi"
+  - id: rfc6455
+    note: "RFC 6455 4.1 (brauzer mijoz Origin yuborishi shart; versiya 13; mijoz 101 va to'g'ri Sec-WebSocket-Accept bo'lmasa ulanishni rad etadi), 4.2.1-4.2.2 (Origin'siz urinish brauzer deb hisoblanmaydi; server Origin bilan qaror qabul qilishi mumkin, rad etsa 403 kabi HTTP xato qaytaradi; muvaffaqiyatda 101 Switching Protocols), 10.1 (brauzer bo'lmagan mijoz Origin'ni soxtalashtirishi mumkin), 10.2 (server kutilgan Origin'ni tekshirishi kerak va 403 bilan rad etishi kerak), 10.5 (handshake'da autentifikatsiya usulini protokol belgilamaydi: cookie, HTTP auth, TLS auth)"
+
 quiz:
   - q: "Foydalanuvchi ilovaga kirgan (session cookie bor). U boshqa saytni ochdi va u sayt `new WebSocket('wss://app.fleet.example/live')` ni ishga tushirdi. Server faqat cookie'ni tekshiradi. Nima bo'ladi?"
     options:
@@ -176,7 +179,7 @@ Brauzerlar WebSocket handshake'iga cookie'larni avtomatik qo'shadi. Cheat sheet 
 
 Asosiy himoya: har handshake'da `Origin` sarlavhasini tekshirish. Cheat sheet bu sarlavhani brauzer qo'yishini va zararli JavaScript uni bekor qila olmasligini aytadi, hamda aniq ishonchli origin'lar allowlist'ini ishlatishni, wildcard va substring bo'yicha taqqoslashdan (xatoga moyil) qochishni talab qiladi. Node.js'dagi `ws` kutubxonasi uchun cheat sheet Origin'ni HTTP serverning `upgrade` hodisasida, `handleUpgrade` chaqirilishidan oldin tekshirishni va `verifyClient` dan qochishni (kutubxona uni tavsiya etmaydi) aytadi. Yana bir qatlam: CSRF himoyasi bor ilovalarda CSRF token'ni handshake'ga qo'shish, shuningdek `SameSite=Lax` yoki `Strict` cookie'lar.
 
-Origin tekshiruvi brauzer mijozlari uchun ishlaydi. Brauzer bo'lmagan mijoz (skript, mobil ilova) `Origin` ni o'zi yozishi mumkin; shuning uchun Origin tekshiruvi autentifikatsiyani almashtirmaydi, faqat brauzer orqali amalga oshadigan cross-site hujumni yopadi (bu muallifning izohi).
+Origin tekshiruvi brauzer mijozlari uchun ishlaydi. RFC 6455 buni shunday belgilaydi: 4.1-bo'limga ko'ra so'rov brauzerdan kelsa, mijoz `Origin` yuborishi shart; 4.2.1 `Origin` sarlavhasi yo'q urinishni brauzerdan kelgan deb talqin qilmaslikni aytadi; 4.2.2 serverga Origin'dan qabul qarorida foydalanishga ruxsat beradi va rad etilganda 403 Forbidden kabi HTTP xato qaytarilishi shartligini yozadi; 10.2 esa faqat ma'lum saytlar uchun mo'ljallangan server kutilgan Origin'ni tekshirishi va yaroqsiz bo'lsa 403 bilan rad etishi kerakligini aytadi. 10.2 maqsadni ham cheklaydi: niyat brauzer bo'lmagan mijozlarning ulanishini to'sish emas, balki ishonchsiz brauzer skripti handshake'ni soxtalashtirishining oldini olish. 10.1-bo'lim sababni beradi: brauzer bo'lmagan host o'z nomidan ishlaydi va soxta `Origin` yuborib serverni aldashi mumkin, shuning uchun server kirishga ishonmasligi kerak. Xulosa: Origin tekshiruvi autentifikatsiyani almashtirmaydi, faqat brauzer orqali amalga oshadigan cross-site hujumni yopadi. Handshake'da autentifikatsiya usulini RFC belgilamaydi (10.5): har qanday HTTP autentifikatsiya mexanizmi, jumladan cookie, ishlatilishi mumkin, CSWSH aynan shu cookie uchun xavf.
 
 ### Autentifikatsiya: token birinchi xabarda
 
@@ -240,6 +243,8 @@ console.log("2)", c ? onMessageWeak(c, JSON.stringify({ type: "subscribe", chann
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu cross-site WebSocket usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Foydalanuvchi `u1` ("alfa") ilovada kirgan. U `evil.example` sahifasini ochadi; sahifaning skripti ilova manziliga WebSocket ochadi va brauzer sessiya cookie'sini yuboradi. Keyin ulanish orqali "beta" tenant'ining kanaliga obuna so'raydi. Natija:
 

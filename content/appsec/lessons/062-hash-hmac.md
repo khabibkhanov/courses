@@ -11,6 +11,10 @@ sources:
     note: "ASVS 5.0.0 V11.4 (11.4.1, 11.4.3), V11.2.4 va Appendix C: hash, MAC va parol hash jadvallaridagi approved, legacy, disallowed holatlari"
   - id: cs-password
     note: "Password Storage Cheat Sheet: SHA-256 kabi tez hash'lar parol saqlash uchun yaramaydi, parol uchun sekin va memory-hard funksiyalar; pepper (parol hash'idan keyin HMAC kaliti sifatida ishlatiladigan umumiy sir) va uni bazadan alohida saqlash"
+  - id: rfc2104
+    note: "RFC 2104 bo'lim 2: HMAC = H(K XOR opad, H(K XOR ipad, text)), H har qanday iteratsiyali kriptografik hash bo'lishi mumkin; length extension RFC matnida nomlanmagan, uning manbasi keyingi yozuv (bck-1996)"
+  - id: bck-1996
+    note: "Bellare, Canetti, Krawczyk, 'Keying Hash Functions for Message Authentication' (1996), 6-bo'lim: kalit oldindan qo'shiladigan konstruksiyada MAC_k(x) ni bilgan hujumchi kalitni bilmasdan x ning istalgan davomi uchun MAC hisoblay oladi; NMAC'da buni tashqi qatlam to'sadi"
   - id: node-security
     note: "Node.js Security Best Practices: timing attack bo'limi, crypto.timingSafeEqual tavsiyasi"
 quiz:
@@ -209,7 +213,7 @@ Jadvaldagi eslatma: 254 bitdan qisqa dayjest berayotgan funksiyalar collision re
 
 Message Authentication Code (MAC) - umumiy sir kalit va xabardan hisoblanadigan teg. Kalitni bilgan tomon tegni tekshira oladi va uni yasay oladi; kalitni bilmagan tomon yarata olmaydi. RFC 2104 HMAC'ni ta'riflaydi: u har qanday iterativ kriptografik hash funksiyasi va umumiy sir kalit bilan xabarni autentifikatsiya qilish mexanizmi, HMAC mustahkamligi ostidagi hash funksiyasining xossalariga bog'liq. ASVS Appendix C HMAC-SHA-256, HMAC-SHA-384 va HMAC-SHA-512 ni approved deb belgilaydi; HMAC-SHA-1 legacy, HMAC-MD5 disallowed. Jadvalda boshqa approved MAC'lar ham bor (KMAC, AES-CMAC, BLAKE3 keyed mode va boshqalar), lekin web backend uchun HMAC-SHA-256 odatiy tanlov.
 
-Nima uchun `sha256(secret + body)` emas? Bu qo'lda yig'ilgan konstruksiya va HMAC kabi tahlil qilinmagan. SHA-256 kabi Merkle-Damgard tuzilishidagi hash'larda "sir + xabar" sxemasi length extension hujumiga ochiq: tegni va xabar uzunligini bilgan hujumchi sirni bilmay turib, xabarga qo'shimcha baytlar qo'shib, yangi yaroqli teg hisoblay oladi. Bu darslik darajasidagi fakt; kurs korpusidagi manbalarda yozilmagan, shuning uchun uni umumiy bilim sifatida qabul qiling. SHA3-256 kabi funksiyalarda bu hujum yo'q, lekin HMAC hash oilasidan qat'i nazar xavfsizligi tahlil qilingan standart tanlov, shuning uchun amaliy xulosa bitta: tayyor HMAC implementatsiyasini ishlating (61-dars qoidasi).
+Nima uchun `sha256(secret + body)` emas? Bu qo'lda yig'ilgan konstruksiya va HMAC kabi tahlil qilinmagan. SHA-256 kabi Merkle-Damgard tuzilishidagi hash'larda "sir + xabar" sxemasi length extension hujumiga ochiq: tegni va xabar uzunligini bilgan hujumchi sirni bilmay turib, xabarga qo'shimcha baytlar qo'shib, yangi yaroqli teg hisoblay oladi. Bellare, Canetti va Krawczyk (1996) kalitni oldindan qo'shadigan konstruksiya uchun aynan shuni ko'rsatgan: MAC qiymatini bilgan hujumchi kalitni bilmasdan uni istalgan davomga hisoblay oladi. RFC 2104 HMAC'ni `H(K XOR opad, H(K XOR ipad, text))` deb ta'riflaydi: ichki hash natijasi yana kalitli tashqi hash'dan o'tadi, shuning uchun teg "sir + xabar" ning oddiy davomi emas. SHA3-256 kabi funksiyalarda bu hujum yo'q, lekin HMAC hash oilasidan qat'i nazar xavfsizligi tahlil qilingan standart tanlov, shuning uchun amaliy xulosa bitta: tayyor HMAC implementatsiyasini ishlating (61-dars qoidasi).
 
 HMAC kalitining uzunligi ham ahamiyatli. RFC 2104 bo'yicha kalit istalgan uzunlikda bo'lishi mumkin (blokdan uzun kalit avval hash qilinadi), lekin hash chiqishi uzunligidan qisqa kalit tavsiya etilmaydi, chunki u funksiyaning mustahkamligini pasaytiradi. Amalda kalit CSPRNG'dan olingan kamida 32 bayt bo'ladi (67-dars). HMAC tegini qisqartirish mumkin, lekin tekshiruv uchun ishlatiladigan tegni qisqartirmang; quyidagi misolda pseudonim 16 hex belgiga (64 bit) qisqartirilgan, chunki u faqat log yorlig'i, imzo emas.
 
@@ -253,6 +257,8 @@ a99983ec0e8c52e9 yoqilg'i tushishi
 ```
 
 ### Hujum
+
+> **Ta'lim maqsadida.** Bu hash qiymatlaridan ma'lumotni tiklash usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Log tizimiga kirgan ichki xodim hash'lardan tabel raqamlarini tiklamoqchi. U barcha `D0000`-`D9999` qiymatlarini hash qiladi va loglardagi bilan solishtiradi. Bu faqat shu o'quv kodining formatiga qarshi.
 

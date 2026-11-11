@@ -232,6 +232,8 @@ bitta so'rov: ok balans: 20
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu race condition usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Ikki terminal bir vaqtda 80 birlik so'raydi (modelda `Promise.all`):
 
 ```ts run

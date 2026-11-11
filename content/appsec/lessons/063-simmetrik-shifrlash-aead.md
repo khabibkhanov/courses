@@ -13,8 +13,10 @@ sources:
     note: "Cryptographic Storage cheat sheet: algoritmlar va cipher modes bo'limlari (AES, GCM/CCM birinchi tanlov, ECB ishlatilmaydi), defense in depth"
   - id: cs-key-mgmt
     note: "Key Management cheat sheet: Cryptoperiods and Rotation bo'limida 96 bitli tasodifiy IV bilan AES-GCM'da bir kalit ostida (shu kalitni ishlatadigan hamma qurilmalar bo'yicha) 2^32 shifrlash operatsiyasidan oshmaslik; NIST tavsiyasiga tayanib bitta kalit bitta maqsad uchun ishlatilishi"
-  - id: rfc8446
-    note: "RFC 8446 1.2 va 5.3: TLS 1.3 faqat AEAD algoritmlarini qoldirgan; yozuv nonce'si ketma-ketlik raqamidan hosil qilinadi"
+  - id: rfc9846
+    note: "RFC 9846 (RFC 8446 ni bekor qilgan joriy TLS 1.3) 1.3 va 5.3: TLS 1.3 faqat AEAD algoritmlarini qoldirgan; yozuv nonce'si 64 bitli ketma-ketlik raqamining statik IV bilan XOR'idan hosil qilinadi"
+  - id: nist-800-38d
+    note: "NIST SP 800-38D: 5.2.1.1 (IV uchun 96 bit tavsiya), 5.2.1.2 (standart teg uzunliklari 128, 120, 112, 104, 96; 64 va 32 faqat ayrim ilovalar uchun), 8.2 (deterministik va RBG asosidagi IV konstruksiyalari; RBG asosida tasodifiy maydon kamida 96 bit), 8.3 (bir kalit ostidagi autentifikatsiyalangan shifrlash chaqiruvlari soni 2^32 dan oshmasligi)"
 quiz:
   - q: "Telemetriya maydoni AES-256-CBC bilan shifrlanadi, kalit to'g'ri saqlanadi, IV tasodifiy. Yaxlitlik tekshiruvi yo'q. Bazaga yozish huquqiga ega hujumchi nima qila oladi?"
     options:
@@ -172,7 +174,7 @@ AEAD shu qoidani bitta primitive'ga jamlaydi: kalit, nonce, ochiq matn va ixtiyo
 
 ASVS Appendix C AEAD jadvalida AES-GCM, AES-CCM, ChaCha20-Poly1305 va AEGIS oilasi approved. Shifr jadvalida AES-256 va ChaCha20 approved, AES-128 legacy. AES rejimlari jadvali: GCM va CCM approved, CBC legacy, CCM-8, ECB, CFB, OFB va CTR disallowed. Jadval eslatmalari muhim: autentifikatsiyasiz har qanday shifrlangan xabar MAC bilan tekshirilishi kerak; CBC faqat MAC bilan (encrypt-then-MAC tartibida) va padding tekshiruvi constant-time bo'lsagina ishlatiladi. ASVS 11.3.5 ham shifr va MAC birikmasi encrypt-then-MAC tartibida bo'lishini talab qiladi. Cryptographic Storage cheat sheet'i ham GCM va CCM'ni birinchi tanlov deydi; ular bo'lmasa CTR yoki CBC'ni alohida autentifikatsiya (Encrypt-then-MAC) bilan ishlatish mumkin.
 
-TLS 1.3 ham shu yo'ldan borgan: RFC 8446 1.2 bo'limi qo'llab-quvvatlanadigan simmetrik algoritmlar ro'yxati legacy algoritmlardan tozalanganini, qolganlarining hammasi AEAD ekanini yozadi (65-dars). Demak "AEAD o'rniga shifrlash + MAC'ni qo'lda yig'ish" davri protokol darajasida ham tugagan.
+TLS 1.3 ham shu yo'ldan borgan: RFC 9846 (u RFC 8446 ni bekor qilgan) 1.3 bo'limi qo'llab-quvvatlanadigan simmetrik algoritmlar ro'yxati legacy algoritmlardan tozalanganini, qolganlarining hammasi AEAD ekanini yozadi (65-dars). Demak "AEAD o'rniga shifrlash + MAC'ni qo'lda yig'ish" davri protokol darajasida ham tugagan.
 
 ## Chuqurroq: ichki mexanika
 
@@ -214,7 +216,7 @@ ECB'da bir xil ochiq matn bloklari bir xil shifrmatn beradi: hujumchi qaysi yozu
 
 GCM hisoblagich rejimi (CTR) va autentifikatsiya mexanizmidan iborat. Hisoblagich rejimi kalit oqimini kalit va nonce'dan hosil qiladi va xabarni shu oqim bilan XOR qiladi. Nonce takrorlansa, kalit oqimi ham takrorlanadi, ya'ni 61-darsdagi XOR sxemasining xatosi qaytadi, faqat endi kalit oqimi ancha uzun. ASVS 11.3.4 shuning uchun nonce, IV va boshqa bir martalik sonlar bir kalit va ma'lumot elementi juftligi uchun bir martadan ko'p ishlatilmasligini talab qiladi, hosil qilish usuli algoritmga mos bo'lishi shart. A04 ham IV bir kalit bilan hech qachon ikki marta ishlatilmasligini yozadi; nonce talab qiladigan rejimlarda IV CSPRNG bo'lishi shart emas, lekin takrorlanmasligi shart.
 
-Nonce'ni hosil qilishning ikki odatiy yo'li bor. Tasodifiy nonce (CSPRNG'dan 12 bayt) oddiy va saqlash uchun qulay, lekin to'qnashuv ehtimoli bir kalit ostidagi shifrlashlar soni bilan o'sadi: Key Management cheat sheet AES-GCM'da tasodifiy 96 bitli IV ishlatilganda bitta kalit uchun jami shifrlash soni 2^32 dan oshmasligini tavsiya qiladi. Hisoblagich asosidagi nonce to'qnashmaydi, lekin davlat (counter) saqlanishi va bir nechta jarayon orasida sinxronlanishi kerak; TLS 1.3 shu yo'lni tanlagan: yozuv nonce'si 64 bitli ketma-ketlik raqamining statik IV bilan XOR'idan hosil bo'ladi (RFC 8446 5.3). Ko'p instansli web servisda odatda tasodifiy nonce va kalit rotatsiyasi soddaroq.
+Nonce'ni hosil qilishning ikki odatiy yo'li bor. Tasodifiy nonce (CSPRNG'dan 12 bayt) oddiy va saqlash uchun qulay, lekin to'qnashuv ehtimoli bir kalit ostidagi shifrlashlar soni bilan o'sadi. NIST SP 800-38D 8.2.2 RBG asosidagi IV'ni tasodifiy maydon (kamida 96 bit) va ixtiyoriy erkin maydondan quradi, 8.3 esa bir kalit ostidagi autentifikatsiyalangan shifrlash chaqiruvlarining umumiy soni 2^32 dan oshmasligini talab qiladi (bu RBG asosidagi IV'larga va 96 bit bo'lmagan deterministik IV'larga tegishli; faqat 96 bitli deterministik IV ishlatadigan implementatsiyalar bu chegaradan ozod). Key Management cheat sheet ham tasodifiy 96 bitli IV bilan AES-GCM uchun shu 2^32 chegarasini keltiradi. Hisoblagich asosidagi nonce to'qnashmaydi, lekin davlat (counter) saqlanishi va bir nechta jarayon orasida sinxronlanishi kerak; TLS 1.3 shu yo'lni tanlagan: yozuv nonce'si 64 bitli ketma-ketlik raqamining statik IV bilan XOR'idan hosil bo'ladi (RFC 9846 5.3). Ko'p instansli web servisda odatda tasodifiy nonce va kalit rotatsiyasi soddaroq.
 
 ### Associated data va kontekst
 
@@ -222,7 +224,7 @@ AAD shifrlanmaydi, lekin teg hisobiga kiradi. Shifrlangan maydonni qaysi tenant,
 
 ### WebCrypto'da AES-GCM parametrlari
 
-Darsdagi kod `crypto.subtle` bilan yozilgan, shuning uchun uning parametrlarini bilish kerak (MDN, `AesGcmParams`). `iv` - majburiy; AES-GCM spetsifikatsiyasi 96 bit (12 bayt) tavsiya qiladi. MDN IV'ning bir kalit bilan har shifrlashda noyob bo'lishi shartini, ya'ni uni qayta ishlatmaslikni aniq yozadi; IV sir emas va shifrmatn bilan ochiq yuborilishi mumkin. `additionalData` ixtiyoriy: u autentifikatsiya qilinadi, lekin shifrlanmaydi va `decrypt` ga aynan o'sha qiymat berilmasa, ochish xato tashlaydi. `tagLength` ixtiyoriy, bitlarda; ruxsat etilgan qiymatlar 32, 64, 96, 104, 112, 120 va 128, standart 128. NIST faqat 96 va undan yuqorisini tavsiya qiladi, shuning uchun uni o'zgartirmang: qisqa teg soxta shifrmatnni topish ehtimolini oshiradi (ASVS Appendix C ham 64 bitli teg beradigan CCM-8'ni shu sababli disallowed deb belgilaydi). `encrypt` natijasida teg shifrmatn oxiriga qo'shilgan bo'ladi, bu yuqoridagi mashqda `13 + 16 + 12` uzunlikda ko'rinadi (ochiq matn, teg, nonce). Kalit `generateKey({ name: "AES-GCM", length: 256 }, false, [...])` bilan yaratilsa va `extractable` `false` bo'lsa, JavaScript kodi uning baytlarini o'qiy olmaydi.
+Darsdagi kod `crypto.subtle` bilan yozilgan, shuning uchun uning parametrlarini bilish kerak (MDN, `AesGcmParams`). `iv` - majburiy; SP 800-38D 5.2.1.1 IV'ni 96 bit (12 bayt) bilan cheklashni tavsiya qiladi. MDN IV'ning bir kalit bilan har shifrlashda noyob bo'lishi shartini, ya'ni uni qayta ishlatmaslikni aniq yozadi; IV sir emas va shifrmatn bilan ochiq yuborilishi mumkin. `additionalData` ixtiyoriy: u autentifikatsiya qilinadi, lekin shifrlanmaydi va `decrypt` ga aynan o'sha qiymat berilmasa, ochish xato tashlaydi. `tagLength` ixtiyoriy, bitlarda; Web Crypto spetsifikatsiyasi 32, 64, 96, 104, 112, 120 va 128 ni ruxsat etadi, standart 128. SP 800-38D 5.2.1.2 standart uzunliklar sifatida 128, 120, 112, 104 va 96 ni beradi, 64 va 32 faqat ayrim ilovalar uchun (Appendix C), shuning uchun uni o'zgartirmang: qisqa teg soxta shifrmatnni topish ehtimolini oshiradi (ASVS Appendix C ham 64 bitli teg beradigan CCM-8'ni shu sababli disallowed deb belgilaydi). `encrypt` natijasida teg shifrmatn oxiriga qo'shilgan bo'ladi, bu yuqoridagi mashqda `13 + 16 + 12` uzunlikda ko'rinadi (ochiq matn, teg, nonce). Kalit `generateKey({ name: "AES-GCM", length: 256 }, false, [...])` bilan yaratilsa va `extractable` `false` bo'lsa, JavaScript kodi uning baytlarini o'qiy olmaydi.
 
 Node.js'da ChaCha20-Poly1305 ham `node:crypto` orqali bor; WebCrypto'ning standart ro'yxatida u yo'q, shuning uchun brauzer va Edge runtime uchun AES-GCM odatiy tanlov.
 
@@ -260,6 +262,8 @@ beta v2 ed40e221846620d02a1ad53c46bf79d27175c6c8bf698282b7921598ed
 ```
 
 ### Hujum
+
+> **Ta'lim maqsadida.** Bu nonce'ni qayta ishlatish orqali ochish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 "alfa" tenant'i o'z haydovchisining telefon raqamini biladi, chunki uni o'zi kiritgan. Bazaga yozish huquqi bilan emas, faqat shifrmatnlarni o'qish orqali (masalan, zaif eksport endpoint'idan yoki zaxira nusxadan) u "beta" qatorini ham ko'radi. Ikkala shifrmatn bir kalit va bir nonce bilan shifrlanganligi uchun, ularning XOR'i ochiq matnlar XOR'iga teng, bu yerda tegdan oldingi qismi uchun. Bu faqat shu o'quv kodiga qarshi.
 

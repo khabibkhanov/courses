@@ -259,6 +259,8 @@ console.log("v2 yoqilg'i:", fuel.get("v2"));
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu boshqa qurilma nomidan xabar yuborish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi qurilma kanaliga xabar yubora oladigan tomon, masalan egallangan yoki soxta qurilma, yoki identifikatorni bilgan oddiy tashqi foydalanuvchi. U boshqa qurilma `deviceId`'sini yozadi. Server hech narsani tekshirmagani uchun yoqilg'i qiymatini qabul qiladi:
 
 ```text

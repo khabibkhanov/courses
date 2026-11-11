@@ -359,6 +359,8 @@ to'g'ridan-to'g'ri /admin: false
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu request smuggling usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 To'g'ridan-to'g'ri `/admin` so'rovi frontend ACL'idan o'tmaydi. Hujumchi esa uni ruxsat etilgan `POST /api/note` so'rovining body'siga o'rab yuboradi va ikkala header'ni qo'yadi:
 
 ```ts run

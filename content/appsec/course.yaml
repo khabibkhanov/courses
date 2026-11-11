@@ -7,7 +7,7 @@ description: >-
   supply chain va DevSecOps, shuningdek case study'lar va capstone. Har mavzu mexanizm darajasida beriladi: zaif kod,
   hujum va tuzatilgan kod. Asosiy manbalar: OWASP Top 10 2025, ASVS 5.0.0, OWASP API Security Top 10 (2023), WSTG,
   Cheat Sheet Series, CWE Top 25 (2025), NIST va IETF/W3C spetsifikatsiyalari.
-audience: "Backend yoki fullstack tajribasi bor dasturchilar uchun (Node.js/TypeScript, PostgreSQL, Redis). Dasturlash asoslari tushuntirilmaydi. Misollar Node.js, NestJS, Fastify, Next.js, Prisma va Kysely stack'ida, neytral avtopark monitoring platformasi atrofida; hujum namunalari faqat darsning o'z o'quv kodiga qarshi."
+audience: "Backend yoki fullstack tajribasi bor dasturchilar uchun (Node.js/TypeScript, PostgreSQL, Redis). Dasturlash asoslari tushuntirilmaydi. Misollar Node.js, NestJS, Fastify, Next.js, Prisma va Kysely stack'ida, neytral avtopark monitoring platformasi atrofida; hujum namunalari faqat darsning o'z o'quv kodiga qarshi. Hujumlar ta'lim uchun o'quv kodida ko'rsatiladi; ularni boshqalarning tizimlarida yozma ruxsatsiz qo'llash O'zbekiston qonunchiligiga ko'ra huquqbuzarlik (batafsil 9-darsda)."
 order: 5
 color: "#7c3aed"
 format: clean-code

@@ -11,8 +11,8 @@ sources:
     note: "Input Validation Cheat Sheet: kirishni allowlist bilan tekshirish va sintaktik hamda semantik validatsiyani ajratish bo'yicha umumiy yo'riqnoma (yo'naltirish manzili uchun aniq qoidalar cs-redirect'da)"
   - id: t10-a01
     note: "OWASP Top 10:2025 A01 ro'yxatida CWE-601 (Open Redirect) bog'liq weakness sifatida sanalgan"
-  - id: whatwg-html
-    note: "HTML Standard: brauzer havola va navigatsiya manzillarini URL tahlili orqali oladi. Dars `//host`, `/\\host` va tab kabi holatlarni WHATWG URL standartini amalga oshiruvchi `new URL` bilan ko'rsatadi"
+  - id: whatwg-url
+    note: "URL Standard, basic URL parser: kirishdan boshidagi va oxiridagi C0 control/bo'shliq hamda barcha ASCII tab va yangi qator olib tashlanadi; maxsus sxemada teskari slash (U+005C) validation error beradi, lekin slash sifatida tahlil qilinadi; shuning uchun `//host`, `/\\host` va tab bilan yashirilgan yozuvlar `new URL` da ochiladi"
 quiz:
   - q: "Login'dan keyin `next` parametriga yo'naltirish bor. Tekshiruv: `next.startsWith('/')`. Hujumchi qaysi qiymatni yuboradi?"
     options:
@@ -261,6 +261,8 @@ for (const n of inputs) {
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu open redirect usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi `next` qiymatini tanlaydi. Jadvalda har bir qiymat uchun brauzer olib boradigan haqiqiy origin va qaysi zaif tekshiruv uni o'tkazgani ko'rinadi (origin parser hisoblagan, shuning uchun brauzerning haqiqiy qarori bilan mos):
 

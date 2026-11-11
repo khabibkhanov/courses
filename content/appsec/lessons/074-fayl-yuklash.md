@@ -13,6 +13,8 @@ sources:
     note: "ASVS 5.0.0 da alohida V5 File Handling bo'limi bor; dars aniq talab raqamlarini keltirmaydi"
   - id: nestjs-file-upload
     note: "NestJS File upload: multer asosidagi interceptor'lar, standart xotira storage'i va limits.fileSize, ParseFilePipe bilan MaxFileSizeValidator va FileTypeValidator (magic number), diskStorage, @fastify/multipart standartlari"
+  - id: multer-readme
+    note: "Multer README, limits opsiyasi: fieldNameSize (standart cheksiz), fieldSize (1 MB), fields (cheksiz), fileSize (cheksiz), files (cheksiz), parts (cheksiz), headerPairs (2000), fieldNestingDepth va fieldArrayIndexLimit (cheksiz); opsiya berilmasa fayllar xotirada qoladi; Multer multipart/form-data bo'lmagan formani qayta ishlamaydi"
 quiz:
   - q: "Mijoz `report.png` nomi va `Content-Type: image/png` bilan fayl yukladi. Server faqat shu ikkitasini tekshirib, faylni qabul qildi. Nega bu yetarli emas?"
     options:
@@ -240,6 +242,8 @@ console.log("2)", JSON.stringify(r2));
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu fayl yuklash orqali yozish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi ikkita fayl yuboradi: birinchisi `photo.png.html` nomi, `image/png` header va ichida HTML skript. Ikkinchisi nomida `../` bor. Natija o'quv modelimizda:
 
 ```text
@@ -307,7 +311,7 @@ Yopilmagan narsalar: PNG signature bilan boshlanuvchi polyglot o'tib ketadi. Ung
 
 ## Stack'da: NestJS, Fastify va Prisma
 
-NestJS fayl yuklashni multer ustida quradi (Express adapteri); Fastify adapterida xuddi shu interceptor'lar `@fastify/multipart` ustida ishlaydi. Xavfsizlik uchun hujjatdan muhim faktlar: multer standart holda xotira storage'idan foydalanadi, ya'ni har yuklangan fayl to'liq `Buffer` sifatida xotiraga o'qiladi, va hujjat ogohlantiradi: Multer standart holda fayl hajmini cheklamaydi, shuning uchun xotirada saqlanganda `limits.fileSize` ni doim qo'ying. Limit oshsa Nest 413 qaytaradi (boshqa limitlar uchun 400) va handler chaqirilmaydi. Hujjat farqni ham aytadi: `MaxFileSizeValidator` butun fayl qabul qilingandan keyin ishlaydi, `limits.fileSize` esa Multer fayl saqlashni limitga yetgan zahoti to'xtatadi. Xotira sarfi fayl hajmiga bog'liq bo'lmasligi uchun `diskStorage()` ishlating; `dest` opsiyasi fayllarni tasodifiy nom bilan yozadi. Diskdagi fayllar handler tugagandan keyin avtomatik o'chirilmaydi, ularni `unlink()` bilan o'zingiz o'chirasiz (hujjatga ko'ra NestJS v12.2 dan boshlab pipe so'rovni rad etsa, saqlangan fayllar xato javobi yuborilgandan keyin o'chiriladi).
+NestJS fayl yuklashni multer ustida quradi (Express adapteri); Fastify adapterida xuddi shu interceptor'lar `@fastify/multipart` ustida ishlaydi. Xavfsizlik uchun hujjatdan muhim faktlar: multer standart holda xotira storage'idan foydalanadi, ya'ni har yuklangan fayl to'liq `Buffer` sifatida xotiraga o'qiladi, va hujjat ogohlantiradi: Multer standart holda fayl hajmini cheklamaydi, shuning uchun xotirada saqlanganda `limits.fileSize` ni doim qo'ying. Multer README'dagi `limits` kalitlari: `fieldNameSize` (maydon nomi uzunligi), `fieldSize` (maydon qiymati hajmi, standart 1 MB), `fields` (fayl bo'lmagan maydonlar soni), `fileSize` (fayl hajmi, bayt), `files` (fayl maydonlari soni), `parts` (maydonlar va fayllar jami), `headerPairs` (standart 2000), shuningdek `fieldNestingDepth` va `fieldArrayIndexLimit`. `fileSize`, `files`, `fields`, `parts` va `fieldNameSize` standart holda cheksiz (Infinity); limitlar butun so'rovga qo'llanadi, har faylga alohida emas. Multer faqat `multipart/form-data` ni qayta ishlaydi. Limit oshsa Nest 413 qaytaradi (boshqa limitlar uchun 400) va handler chaqirilmaydi. Hujjat farqni ham aytadi: `MaxFileSizeValidator` butun fayl qabul qilingandan keyin ishlaydi, `limits.fileSize` esa Multer fayl saqlashni limitga yetgan zahoti to'xtatadi. Xotira sarfi fayl hajmiga bog'liq bo'lmasligi uchun `diskStorage()` ishlating; `dest` opsiyasi fayllarni tasodifiy nom bilan yozadi. Diskdagi fayllar handler tugagandan keyin avtomatik o'chirilmaydi, ularni `unlink()` bilan o'zingiz o'chirasiz (hujjatga ko'ra NestJS v12.2 dan boshlab pipe so'rovni rad etsa, saqlangan fayllar xato javobi yuborilgandan keyin o'chiriladi).
 
 Tur uchun `ParseFilePipe` ichida `FileTypeValidator` bor va u standart holda MIME turini fayl tarkibining magic number'idan aniqlaydi (client yuborgan turdan emas), `MaxFileSizeValidator` esa bayt hisobida hajmni tekshiradi. Bu cheat sheet'dagi signature tekshiruviga to'g'ri keladi, shuning uchun u polyglot'ni to'xtatmaydi. `@fastify/multipart` Multer'dan qattiqroq standartga ega: `fileSize` Fastify `bodyLimit` ga (standart 1 MiB) teng, qismlar soni 1000, Multer esa ikkalasini ham cheklamaydi. Fastify'da faqat stream bilan ishlaydigan `FileStreamInterceptor` bor; fayl buferlanmagani uchun `MaxFileSizeValidator` va `FileTypeValidator` magic number tekshiruvi unga qo'llanmaydi, lekin `fileSize` limiti saqlanadi.
 

@@ -248,6 +248,8 @@ haydovchi sahifani ochadi: redirect /login
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu server action'ni to'g'ridan-to'g'ri chaqirish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Haydovchi sahifani ochmaydi. U action'ga to'g'ridan-to'g'ri POST yuboradi (modelda: funksiyani chaqiradi), va u hatto boshqa tenant'ning yozuvini ham o'chiradi:
 
 ```ts run

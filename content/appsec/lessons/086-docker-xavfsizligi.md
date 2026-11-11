@@ -199,6 +199,8 @@ Quyidagi model "konteyner sozlamasi → RCE dan keyin hujumchi imkoniyatlari" bo
 
 ### 1. Zaif kod va 2. Hujum
 
+> **Ta'lim maqsadida.** Bu konteynerdan chiqish imkoniyatlari namunasi faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Sozlama: root, `docker.sock` ulangan, capability'lar tashlanmagan, yoziladigan fayl tizimi, parol muhit o'zgaruvchisida. "Hujum" bu RCE dan keyingi imkoniyatlar ro'yxati:
 
 ```ts run

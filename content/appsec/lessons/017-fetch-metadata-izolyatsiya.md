@@ -304,6 +304,8 @@ o'chirildi: v1 | qoldi: v2
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu cross-site so'rov yuborish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Foydalanuvchi tizimga kirgan va hujumchi sahifasini ochadi. Sahifada yashirin forma `POST /vehicles/v2/delete` manziliga yuboriladi. Brauzer cookie'ni qo'shadi va `Sec-Fetch-Site: cross-site` qo'yadi:
 
 ```ts run

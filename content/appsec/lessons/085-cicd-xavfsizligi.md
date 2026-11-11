@@ -235,6 +235,8 @@ for (const line of runScript(script, {})) console.log(line);
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu CI skriptiga buyruq kiritish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi PR sarlavhasiga qo'shtirnoq va nuqta-vergul qo'yadi. Skript matni almashtirilgach, shell uchun uchta buyruq paydo bo'ladi:
 
 ```text

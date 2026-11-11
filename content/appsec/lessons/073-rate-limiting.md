@@ -7,6 +7,10 @@ duration: 40
 sources:
   - id: api-top10
     note: "API4:2023 Unrestricted Resource Consumption: resurslar (tarmoq, CPU, xotira, saqlash) va per-request to'lanadigan xizmatlar (email, SMS, qo'ng'iroq, biometrik tekshiruv); 'How To Prevent': resurs chegaralari, payload o'lchami, chastota limiti, bir operatsiyani takrorlash limiti (OTP, parol tiklash), spending limit yoki billing alert; API6:2023 biznes oqimlarni avtomatlashtirish"
+  - id: rfc6585
+    note: "RFC 6585 4 (429 Too Many Requests): foydalanuvchi berilgan vaqtda juda ko'p so'rov yuborgan; javob tanasi holatni tushuntirishi kerak (SHOULD), Retry-After ixtiyoriy (MAY); server foydalanuvchini va so'rovlarni qanday sanashini RFC belgilamaydi; 429 javobni cache saqlamasligi shart; 7.2: server 429 ishlatishga majbur emas, hujum paytida ulanishni uzish ma'qulroq bo'lishi mumkin"
+  - id: rfc9110
+    note: "RFC 9110 10.2.3 (Retry-After): qiymat HTTP-date yoki soniyalar soni (delay-seconds); 503 bilan xizmat qancha vaqt mavjud bo'lmasligini, 3xx bilan minimal kutish vaqtini bildiradi"
   - id: nestjs-rate-limit
     note: "NestJS Rate Limiting: @nestjs/throttler, ThrottlerModule.forRoot ichida ttl (millisekund) va limit, bir nechta nomli throttler (short, medium, long), blockDuration, @Throttle va @SkipThrottle, ThrottlerGuard'ni global bog'lash, proxy ortida trust proxy / trustProxy sozlash (Fastify'da son qiymati haqida ogohlantirish), standart xotira storage'i va custom storage, WebSocket uchun ThrottlerGuard'ni kengaytirish"
   - id: redis-security
@@ -195,7 +199,7 @@ Limiter storage'i (Redis) uzilsa ikkita yo'l bor: hamma so'rovni o'tkazish (fail
 
 ### Javob va mijoz bilan muloqot
 
-Limit oshganda odatda 429 Too Many Requests status (RFC 6585) qaytariladi va qayta urinish vaqtini bildiruvchi `Retry-After` header'i beriladi. Javob matnida qaysi limit oshgani haqida ortiqcha ichki tafsilot (kalit tuzilishi, boshqa tenant limitlari) chiqarmang. Mijoz SDK'lari eksponensial kechikish bilan qayta urinishi kerak, aks holda ular o'zlarining limit buzishlari bilan to'lqinni kuchaytiradi.
+Limit oshganda odatda 429 Too Many Requests status qaytariladi. RFC 6585 4-bo'limi uni foydalanuvchi berilgan vaqt ichida juda ko'p so'rov yuborganini bildiradi deb ta'riflaydi; javob tanasi holatni tushuntirishi kerak (SHOULD), `Retry-After` esa ixtiyoriy (MAY). `Retry-After` qiymati RFC 9110 10.2.3 bo'yicha yoki HTTP-date, yoki soniyalar soni (`Retry-After: 120`). RFC 6585 foydalanuvchini qanday aniqlash va so'rovni nimaga nisbatan sanash (resurs, butun server, serverlar guruhi) masalasini belgilamaydi va 429 javobni cache saqlamasligi shartligini yozadi. 7.2-bo'limga ko'ra server 429 ishlatishga majbur emas: hujum paytida har so'rovga 429 qaytarish ham resurs sarflaydi, shuning uchun ulanishni uzish kabi chora ma'qulroq bo'lishi mumkin. Javob matnida qaysi limit oshgani haqida ortiqcha ichki tafsilot (kalit tuzilishi, boshqa tenant limitlari) chiqarmang. Mijoz SDK'lari eksponensial kechikish bilan qayta urinishi kerak, aks holda ular o'zlarining limit buzishlari bilan to'lqinni kuchaytiradi.
 
 ### Narx asosidagi limit va parallellik
 
@@ -242,6 +246,8 @@ console.log("2) oyna chegarasida ~1 soniya ichida o'tgan: " + burst + " (limit m
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu rate limit'ni aylanib o'tish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-5-moddasi (Kompyuter sabotaji) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Birinchi hujumda hujumchi bitta haqiqiy IP'dan, lekin har so'rovda boshqa `X-Forwarded-For` qiymati bilan keladi. Ikkinchisida oyna chegarasiga to'g'ri vaqtlab so'rov yuboradi (o'quv modelimizda `t` millisekundda):
 

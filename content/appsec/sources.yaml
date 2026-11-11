@@ -1264,3 +1264,255 @@ kysely-src:
   year: 2026
   kind: docs
   url: https://github.com/kysely-org/kysely/blob/master/src/query-builder/insert-result.ts
+class-validator:
+  title: "class-validator (typestack): README and decorator sources"
+  author: "typestack"
+  year: 2026
+  kind: web
+  url: https://github.com/typestack/class-validator
+rfc10017:
+  title: "OAuth 2.0 for Browser-Based Applications (RFC 10017, BCP 212)"
+  author: "A. Parecki, P. De Ryck, D. Waite"
+  year: 2026
+  kind: spec
+  url: https://www.rfc-editor.org/rfc/rfc10017.html
+rfc9846:
+  title: "RFC 9846: The Transport Layer Security (TLS) Protocol Version 1.3"
+  author: "E. Rescorla (IETF)"
+  year: 2026
+  kind: spec
+  url: https://www.rfc-editor.org/info/rfc9846
+lex-criminal-code:
+  title: "O'zbekiston Respublikasining Jinoyat kodeksi"
+  author: "O'zbekiston Respublikasi"
+  year: 1994
+  kind: spec
+  url: https://lex.uz/docs/-111453
+lex-admin-code:
+  title: "O'zbekiston Respublikasining Ma'muriy javobgarlik to'g'risidagi kodeksi"
+  author: "O'zbekiston Respublikasi"
+  year: 1994
+  kind: spec
+  url: https://lex.uz/docs/-97664
+nist-800-38d:
+  title: "NIST SP 800-38D, Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC"
+  author: "Morris Dworkin (NIST)"
+  year: 2007
+  kind: spec
+  url: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
+v8-regexp:
+  title: "An additional non-backtracking RegExp engine - V8 blog"
+  author: "V8 team"
+  year: 2021
+  kind: web
+  url: https://v8.dev/blog/non-backtracking-regexp
+re2:
+  title: "RE2: a regular expression library"
+  author: "Google"
+  year: 2026
+  kind: web
+  url: https://github.com/google/re2
+python-re:
+  title: "re - Regular expression operations - Python documentation"
+  author: "Python Software Foundation"
+  year: 2026
+  kind: web
+  url: https://docs.python.org/3/library/re.html
+rfc9525:
+  title: "RFC 9525: Service Identity in TLS"
+  author: "P. Saint-Andre, R. Salz (IETF)"
+  year: 2023
+  kind: spec
+  url: https://www.rfc-editor.org/rfc/rfc9525.txt
+rfc9562:
+  title: "RFC 9562: Universally Unique IDentifiers (UUIDs)"
+  author: "K. Davis, B. Peabody, P. Leach (IETF)"
+  year: 2024
+  kind: spec
+  url: https://www.rfc-editor.org/rfc/rfc9562.txt
+redis-getdel:
+  title: "GETDEL | Redis Docs"
+  author: "Redis"
+  year: 2026
+  kind: docs
+  url: https://redis.io/docs/latest/commands/getdel/
+whatwg-url:
+  title: "URL Standard"
+  author: "WHATWG"
+  year: 2026
+  kind: spec
+  url: https://url.spec.whatwg.org/
+rfc9794:
+  title: "RFC 9794: Terminology for Post-Quantum Traditional Hybrid Schemes"
+  author: "F. Driscoll, M. Parsons, B. Hale (IETF)"
+  year: 2025
+  kind: spec
+  url: https://www.rfc-editor.org/rfc/rfc9794.txt
+rfc6585:
+  title: "RFC 6585: Additional HTTP Status Codes"
+  author: "M. Nottingham, R. Fielding (IETF)"
+  year: 2012
+  kind: spec
+  url: https://www.rfc-editor.org/rfc/rfc6585.txt
+multer-readme:
+  title: "Multer: README (expressjs/multer)"
+  author: "Express.js project"
+  year: 2026
+  kind: docs
+  url: https://github.com/expressjs/multer
+mdn-iframe:
+  title: "<iframe>: The Inline Frame element - MDN"
+  author: "Mozilla"
+  year: 2026
+  kind: web
+  url: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe
+rfc6455:
+  title: "RFC 6455: The WebSocket Protocol"
+  author: "I. Fette, A. Melnikov (IETF)"
+  year: 2011
+  kind: spec
+  url: https://www.rfc-editor.org/rfc/rfc6455.txt
+rfc9457:
+  title: "RFC 9457: Problem Details for HTTP APIs"
+  author: "M. Nottingham, E. Wilde, S. Dalal (IETF)"
+  year: 2023
+  kind: spec
+  url: https://www.rfc-editor.org/info/rfc9457
+pnpm-install:
+  title: "pnpm install | pnpm docs"
+  author: "pnpm"
+  year: 2026
+  kind: docs
+  url: https://pnpm.io/cli/install
+yarn-install:
+  title: "yarn install | Yarn documentation"
+  author: "Yarn"
+  year: 2026
+  kind: docs
+  url: https://yarnpkg.com/cli/install
+npm-trusted-publishers:
+  title: "Trusted publishing for npm packages | npm Docs"
+  author: "npm (GitHub)"
+  year: 2026
+  kind: docs
+  url: https://docs.npmjs.com/trusted-publishers
+fastify-server:
+  title: "Fastify Reference: Server (factory options: bodyLimit, trustProxy)"
+  author: "Fastify"
+  year: 2026
+  kind: web
+  url: https://fastify.dev/docs/latest/Reference/Server/
+fastify-helmet:
+  title: "@fastify/helmet README (enableCSPNonces, reply.cspNonce)"
+  author: "Fastify"
+  year: 2026
+  kind: web
+  url: https://github.com/fastify/fastify-helmet
+fastify-cookie:
+  title: "@fastify/cookie README (maxAge in seconds)"
+  author: "Fastify"
+  year: 2026
+  kind: web
+  url: https://github.com/fastify/fastify-cookie
+fastify-cors:
+  title: "@fastify/cors README (origin, methods, maxAge options)"
+  author: "Fastify"
+  year: 2026
+  kind: web
+  url: https://github.com/fastify/fastify-cors
+zod-api:
+  title: "Zod: Defining schemas (z.strictObject, string validators)"
+  author: "Colin McDonnell"
+  year: 2026
+  kind: web
+  url: https://zod.dev/api
+express-res:
+  title: "Express 5.x API: res.cookie (maxAge in milliseconds)"
+  author: "Express"
+  year: 2026
+  kind: web
+  url: https://expressjs.com/en/5x/api/response
+rfc8996:
+  title: "RFC 8996: Deprecating TLS 1.0 and TLS 1.1"
+  author: "IETF"
+  year: 2021
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc8996
+slsa-v1-2:
+  title: "SLSA specification v1.2"
+  author: "OpenSSF (SLSA community)"
+  year: 2025
+  kind: spec
+  url: https://slsa.dev/spec/v1.2/
+mozilla-tls:
+  title: "Server Side TLS (Mozilla guidelines, configuration JSON v5.0; moved to TLSRef)"
+  author: "Mozilla"
+  year: 2026
+  kind: web
+  url: https://github.com/mozilla/server-side-tls
+rfc4226:
+  title: "RFC 4226: HOTP: An HMAC-Based One-Time Password Algorithm"
+  author: "IETF"
+  year: 2005
+  kind: spec
+  url: https://www.rfc-editor.org/rfc/rfc4226
+k8s-pod-api:
+  title: "Pod v1 API reference (PodSecurityContext, SecurityContext) | Kubernetes"
+  author: "Kubernetes"
+  year: 2026
+  kind: docs
+  url: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/
+kubelet-kuberuntime-container:
+  title: "kubernetes/kubernetes: pkg/kubelet/kuberuntime/kuberuntime_container.go"
+  author: "Kubernetes project"
+  year: 2026
+  kind: web
+  url: https://raw.githubusercontent.com/kubernetes/kubernetes/master/pkg/kubelet/kuberuntime/kuberuntime_container.go
+aws-imdsv2:
+  title: "Use IMDSv2 | Amazon EC2 User Guide"
+  author: "Amazon Web Services"
+  year: 2026
+  kind: docs
+  url: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html
+express-app:
+  title: "Express 4.x va 5.x API: app.set 'query parser' (extended default 4.x, simple default 5.x)"
+  author: "Express"
+  year: 2026
+  kind: web
+  url: https://expressjs.com/en/5x/api/application
+fastify-validation:
+  title: "Validation and Serialization | Fastify"
+  author: "Fastify"
+  year: 2026
+  kind: docs
+  url: https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/
+rfc2104:
+  title: "RFC 2104: HMAC: Keyed-Hashing for Message Authentication"
+  author: "H. Krawczyk, M. Bellare, R. Canetti"
+  year: 1997
+  kind: spec
+  url: https://www.rfc-editor.org/rfc/rfc2104
+bck-1996:
+  title: "Keying Hash Functions for Message Authentication"
+  author: "M. Bellare, R. Canetti, H. Krawczyk"
+  year: 1996
+  kind: paper
+  url: https://cseweb.ucsd.edu/~mihir/papers/kmd5.pdf
+pci-scoping-guidance:
+  title: "Information Supplement: Guidance for PCI DSS Scoping and Network Segmentation v1.1"
+  author: "PCI Security Standards Council"
+  year: 2017
+  kind: spec
+  url: https://listings.pcisecuritystandards.org/documents/Guidance-PCI-DSS-Scoping-and-Segmentation_v1_1.pdf
+class-transformer:
+  title: "typestack/class-transformer README (@Expose, @Exclude, strategy, excludeExtraneousValues)"
+  author: "TypeStack"
+  year: 2026
+  kind: docs
+  url: https://github.com/typestack/class-transformer
+kubelet-security-context:
+  title: "kubernetes/kubernetes: pkg/kubelet/kuberuntime/security_context_others.go (verifyRunAsNonRoot)"
+  author: "Kubernetes project"
+  year: 2026
+  kind: web
+  url: https://raw.githubusercontent.com/kubernetes/kubernetes/master/pkg/kubelet/kuberuntime/security_context_others.go

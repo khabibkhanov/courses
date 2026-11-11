@@ -7,6 +7,12 @@ duration: 50
 sources:
   - id: k8s-pss
     note: "Pod Security Standards: uch profil (Privileged, Baseline, Restricted); Baseline privileged konteyner, host namespace va hostPath'ni taqiqlaydi; Restricted allowPrivilegeEscalation=false, runAsNonRoot, seccomp, capability drop ALL va cheklangan hajm turlarini talab qiladi"
+  - id: k8s-pod-api
+    note: "Pod v1 API reference, runAsNonRoot: true bo'lsa kubelet image'ni ishga tushirish paytida UID 0 emasligini tekshiradi va 0 bo'lsa konteynerni ishga tushirmaydi; qiymat berilmagan yoki false bo'lsa tekshiruv yo'q; SecurityContext va PodSecurityContext ikkalasida berilsa SecurityContext (konteyner) ustun; runAsUser berilmasa image metadata'dagi foydalanuvchi ishlatiladi"
+  - id: kubelet-kuberuntime-container
+    note: "kubelet manba kodi (kuberuntime_container.go, generateContainerConfig): runAsNonRoot tekshiruvi oldidagi izoh 'Non-root verification only supports numeric user'"
+  - id: kubelet-security-context
+    note: "kubelet manba kodi (security_context_others.go, verifyRunAsNonRoot): runAsNonRoot yoqilgan bo'lsa runAsUser 0 rad etiladi; runAsUser berilmasa image foydalanuvchisi tekshiriladi: nom bo'lib UID yo'q bo'lsa 'container has runAsNonRoot and image has non-numeric user (%s), cannot verify user is non-root', UID 0 bo'lsa 'image will run as root'"
   - id: k8s-psa
     note: "Pod Security Admission: namespace label'lari pod-security.kubernetes.io/<MODE>: <LEVEL>, rejimlar enforce, audit, warn; enforce workload resource'larga emas, hosil bo'lgan pod'larga qo'llanadi; istisnolar"
   - id: k8s-secrets-practices
@@ -214,6 +220,8 @@ Takrorlanuvchanlik masalasi ham muhim: A02:2025 tavsifi hardening jarayoni takro
 Model hujjatdagi Baseline qoidalarini va admission rejimlarini ifodalaydi. Haqiqiy tekshiruvni Pod Security Admission bajaradi; bu model uning mantiqini ko'rsatadi, qamrovi toraytirilgan (faqat privileged, hostNetwork, hostPath).
 
 ### 1. Zaif kod va 2. Hujum
+
+> **Ta'lim maqsadida.** Bu xavfli pod'ni joylashtirish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Pod'da privileged konteyner va host tarmog'i bor. Savol: namespace label'iga qarab nima bo'ladi? "Hujum" bu holda sozlanmagan admission: yomon pod jim o'tib ketadi.
 
@@ -432,7 +440,7 @@ rootUser       restricted: OK
 
 ## Stack'da: NestJS/Next.js deployment
 
-- Deployment spetsifikatsiyasida `securityContext`: `runAsNonRoot: true`, `allowPrivilegeEscalation: false`, `seccompProfile: { type: RuntimeDefault }`, `capabilities: { drop: ["ALL"] }`. 86-darsdagi image `USER node` bilan mos bo'lishi kerak. Image'da nomli `USER` bo'lsa, kubelet uning root emasligini tekshira olmaydi, shuning uchun `runAsUser` bilan raqamli UID bering.
+- Deployment spetsifikatsiyasida `securityContext`: `runAsNonRoot: true`, `allowPrivilegeEscalation: false`, `seccompProfile: { type: RuntimeDefault }`, `capabilities: { drop: ["ALL"] }`. 86-darsdagi image `USER node` bilan mos bo'lishi kerak. `runAsNonRoot: true` bo'lsa kubelet image'ni ishga tushirish paytida tekshiradi va UID 0 bo'lsa konteynerni ishga tushirmaydi (Pod API ma'lumotnomasi). Kubelet manba kodidagi izohga ko'ra bu tekshiruv faqat raqamli foydalanuvchini qo'llab-quvvatlaydi ("Non-root verification only supports numeric user"): `runAsUser` berilmagan va image'dagi foydalanuvchi nom bo'lsa (`USER node`), kubelet `container has runAsNonRoot and image has non-numeric user (node), cannot verify user is non-root` xatosi bilan konteynerni ishga tushirmaydi; `runAsUser: 0` yoki image UID 0 ham rad etiladi. Shuning uchun nomga tayanmang: `runAsUser` bilan raqamli UID bering (u image metadata'dagi qiymatdan ustun). Konteyner va pod darajasida ikkalasi berilsa, konteyner qiymati ustun.
 - Namespace'lar: har tenant yoki muhit uchun alohida namespace, label'lar `enforce: baseline` (yoki restricted), `warn` va `audit` uchun `restricted`.
 - Servis hisoblari: har servis uchun alohida ServiceAccount, API ishlatilmasa `automountServiceAccountToken: false`.
 - Secret'lar: tashqi secrets manager va ilova runtime'da oladi (69-dars); etcd'da encryption at rest klaster administratori bilan kelishilgan.

@@ -250,6 +250,8 @@ Joriy kod toza, lekin parol o'zgarmagan. Bu holatda "tuzatish" faqat ko'rinishni
 
 ### Hujum
 
+> **Ta'lim maqsadida.** Bu sirlarni git tarixidan yig'ish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi repozitoriyning o'qish nusxasini oldi (xodimning noutbuki, eski CI keshi, ochiq fork). U har bir commit'dan ulanish satrlaridagi `user:parol@` qismini yig'adi va o'quv bazasi servisiga sinab ko'radi.
 
 ```ts run

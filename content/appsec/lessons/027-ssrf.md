@@ -264,6 +264,8 @@ oddiy: logo.png (200 OK)
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu SSRF usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 "alfa" foydalanuvchisi logotip URL maydoniga CDN o'rniga to'rt xil manzil yuboradi. Faqat shu o'quv modeliga qarshi.
 
 ```ts run
@@ -414,14 +416,14 @@ function isPublic(ip: string): boolean {
   return isIP(ip) === 4 && !/^(0|10|127)\.|^169\.254\.|^192\.168\.|^172\.(1[6-9]|2\d|3[01])\.|^2(2[4-9]|[3-5]\d)\./.test(ip);
 }
 
-type Cb = (err: Error | null, address?: string | { address: string; family: number }[], family?: number) => void;
+type Cb = (err: Error | null, address: string | { address: string; family: number }[], family?: number) => void;
 
 // Ulanish aynan shu tekshirilgan manzilga qilinadi: tekshiruv va ulanish orasida ikkinchi resolve yo'q
 function pinnedLookup(hostname: string, options: { all?: boolean }, cb: Cb): void {
   lookup(hostname, { ...options, all: true }, (err, addrs) => {
-    if (err) return cb(err);
+    if (err) return cb(err, []);
     if (addrs.length === 0 || !addrs.every((a) => isPublic(a.address))) {
-      return cb(new Error("ichki manzilga ruxsat yo'q"));
+      return cb(new Error("ichki manzilga ruxsat yo'q"), []);
     }
     if (options.all) return cb(null, addrs);
     cb(null, addrs[0].address, addrs[0].family);

@@ -19,6 +19,10 @@ sources:
     note: "OWASP NPM Security Cheat Sheet: lockfile'ni majburlash (npm ci), --ignore-scripts va allowlist, typosquatting, slopsquatting, dependency confusion (scoped nomlar)"
   - id: asvs
     note: "ASVS 5.0.0 V15.1.1, V15.1.2 (SBOM, ishonchli repozitoriylar) va V15.2.4 (tranzitiv bog'liqliklar kutilgan repozitoriydan, dependency confusion xavfi yo'q)"
+  - id: pnpm-install
+    note: "pnpm install --frozen-lockfile: lockfile manifest bilan mos kelmasa, lockfile kerak bo'lsa yoki yo'q bo'lsa o'rnatish xato bilan tugaydi; lockfile mavjud bo'lsa CI muhitida standart true, CI'dan tashqarida false"
+  - id: yarn-install
+    note: "yarn install --immutable: lockfile o'zgaradigan bo'lsa xato kodi bilan to'xtaydi; CI'da standart true; --frozen-lockfile zamonaviy Yarn'da --immutable ning orqaga moslik alias'i va keyingi relizda olib tashlanishi aytilgan"
 quiz:
   - q: "package.json'da \"geo-utils\": \"^1.2.0\" yozilgan, lockfile esa yo'q. CI'da yangi `npm install` qaysi versiyani oladi?"
     options:
@@ -205,7 +209,7 @@ Shuning uchun amaliy xulosa: oraliq o'zi xavfsizlik chegarasi emas. Xavfsizlik c
 
 `package-lock.json` har paket uchun aniq versiya, yuklab olinadigan manzil (`resolved`) va `integrity` maydonini saqlaydi. Integrity tarball tarkibining hash'i (SRI formatida, hash algoritmi nomi va base64 qiymat). O'rnatish vaqtida tarball yuklangach, hash qayta hisoblanadi va mos kelmasa o'rnatish to'xtaydi. Bu ikkita narsani beradi: versiyani qotirish (bugungi `npm ci` kechagi bilan bir xil daraxt oladi) va tarkibni qotirish (mirror, korporativ kesh yoki tarmoq orasida tarball almashtirilsa, ushlanadi).
 
-`npm ci` buyrug'i shu uchun mo'ljallangan. npm hujjatiga ko'ra u `npm install` ga o'xshaydi, lekin avtomatlashtirilgan muhit (test platformasi, CI, deploy) uchun: loyihada `package-lock.json` bo'lishi shart; lockfile bilan `package.json` mos kelmasa, `npm ci` lockfile'ni yangilamasdan xato bilan chiqadi; u `package.json` va `package-lock.json` ga hech qachon yozmaydi; mavjud `node_modules` oldin o'chiriladi. OWASP NPM Security Cheat Sheet ham aynan shu xavfni ko'rsatadi: lockfile'siz yoki mos kelmasa, `npm install` `package.json` ga qarab boshqa versiyalarni o'rnatishi mumkin, bu esa lockfile foydasini yo'qqa chiqaradi; yechim sifatida npm uchun `npm ci`, Yarn uchun `yarn install --frozen-lockfile` ko'rsatiladi.
+`npm ci` buyrug'i shu uchun mo'ljallangan. npm hujjatiga ko'ra u `npm install` ga o'xshaydi, lekin avtomatlashtirilgan muhit (test platformasi, CI, deploy) uchun: loyihada `package-lock.json` bo'lishi shart; lockfile bilan `package.json` mos kelmasa, `npm ci` lockfile'ni yangilamasdan xato bilan chiqadi; u `package.json` va `package-lock.json` ga hech qachon yozmaydi; mavjud `node_modules` oldin o'chiriladi. OWASP NPM Security Cheat Sheet ham aynan shu xavfni ko'rsatadi: lockfile'siz yoki mos kelmasa, `npm install` `package.json` ga qarab boshqa versiyalarni o'rnatishi mumkin, bu esa lockfile foydasini yo'qqa chiqaradi; yechim sifatida npm uchun `npm ci`, Yarn uchun `yarn install --frozen-lockfile` ko'rsatiladi. Zamonaviy Yarn hujjati `--frozen-lockfile` ni `--immutable` ning orqaga moslik uchun saqlangan alias'i deb ataydi va keyingi relizda olib tashlanishini yozadi, shuning uchun yangi loyihada `yarn install --immutable` yozing. pnpm'da mos bayroq `pnpm install --frozen-lockfile`: lockfile manifest bilan mos kelmasa o'rnatish xato bilan tugaydi; pnpm hujjatiga ko'ra CI muhiti aniqlansa va lockfile mavjud bo'lsa u standart holda yoqiq, CI'dan tashqarida o'chiq (`CI=false` aniqlashni o'chiradi). Yarn'da `--immutable` ham CI'da standart yoqiq.
 
 Lockfile'dagi `integrity` maydoni npm hujjatida Standard Subresource Integrity satri (`sha512` yoki `sha1`) sifatida ta'riflanadi: ochilgan artefakt uchun hash.
 
@@ -302,6 +306,8 @@ console.log("ishga tushadigan kod:", picked.code);
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu zararli paket versiyasi usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-6-moddasi (Zarar keltiruvchi dasturlar) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi paketning buzilgan hisobi orqali `1.3.0` ni e'lon qiladi. Siz hech narsa o'zgartirmadingiz: `package.json` oldingidek `^1.2.0`. Keyingi o'rnatishda:
 
 ```text
@@ -372,7 +378,7 @@ Nima yopildi: kecha tekshirilgan versiya o'rniga yangisi jimgina tanlanmaydi; bi
 
 ## Stack'da: Node.js, NestJS, Next.js
 
-- CI'da `npm ci` (yoki `pnpm install --frozen-lockfile`, `yarn install --immutable`): lockfile'ga mos kelmasa, xato. Bu o'zgarish hech narsa yangilamaydi, faqat jimgina farqni to'xtatadi.
+- CI'da `npm ci` (yoki `pnpm install --frozen-lockfile`, `yarn install --immutable`; ikkalasi ham CI aniqlanganda standart yoqiq, shunga qaramay ochiq yozing): lockfile'ga mos kelmasa, xato. Bu o'zgarish hech narsa yangilamaydi, faqat jimgina farqni to'xtatadi.
 - Lockfile'ni PR'da review qiling: yangi tranzitiv paketlar, `resolved` manzili npm registry'dan boshqa joyga o'zgargan qatorlar, install skripti qo'shilgan paketlar.
 - A03 "how to prevent" ro'yxati ham shu yo'nalishda: butun dasturiy ta'minot SBOM'ini markaziy yaratish, faqat to'g'ridan-to'g'ri emas, tranzitiv bog'liqliklarni ham kuzatish, ishlatilmaydigan bog'liqliklarni olib tashlash, rasmiy (ishonchli) manbalardan xavfsiz kanal orqali olish, versiyani ongli tanlash va faqat kerak bo'lganda yangilash, hamda yangilanishni hamma tizimga bir vaqtda emas, bosqichma-bosqich (staged yoki canary) yoyish. ASVS V15.1.1 xavfli versiyalar uchun xavfga asoslangan tuzatish muddatlarini hujjatlashtirishni, V15.1.2 esa SBOM kabi inventar yuritishni talab qiladi.
 - `npm audit` ma'lum zaifliklarni ko'rsatadi (A03 ning "komponentlarni yangilab turish" qismi). U yomon niyatli, hali e'lon qilinmagan paketni topmaydi: shuning uchun u lockfile intizomini almashtirmaydi.

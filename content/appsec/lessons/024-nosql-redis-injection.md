@@ -5,6 +5,10 @@ title: "NoSQL va Redis injection"
 summary: "NoSQL'da injection operator obyektlari orqali (`$ne`, `$gt`), Redis'da esa protokol, kalit nomlari va skriptlar orqali yuz beradi. Dars ikkala mexanizmni mini-modellarda ishga tushiradi va tuzatishni (tur tekshiruvi, RESP kodlash, kalit kodlash, tarmoq va ACL) ko'rsatadi."
 duration: 45
 sources:
+  - id: zod-api
+    note: "Zod: z.strictObject noma'lum kalit topilsa xato tashlaydi, oddiy z.object esa ularni jimgina olib tashlaydi"
+  - id: express-app
+    note: "Express app.set 'query parser': 4.x default 'extended' (qs asosida), 5.x default 'simple' (Node querystring asosida)"
   - id: t10-a05
     note: "A05 Injection: SQL, NoSQL, OS command, ORM, LDAP va EL/OGNL injection 'ning umumiy ro'yxati; tushuncha barcha interpreter'larda bir xil"
   - id: redis-security
@@ -137,7 +141,7 @@ Redis'ning xavfsizlik modeli ishonchli muhitdagi ishonchli klientlarga tayanadi.
 ### Qaysi kirish obyekt bo'lib kelishi mumkin
 
 - JSON body: `{"token": {"$ne": null}}`.
-- Query string. Express'ning `qs` parser'i (extended rejim) `?token[$ne]=x` ni obyektga aylantiradi. Qaysi rejim default ekani Express versiyasiga bog'liq; versiyangizni tekshiring va tur tekshiruvini rejimga tayanmay yozing.
+- Query string. Express'ning `qs` parser'i (extended rejim) `?token[$ne]=x` ni obyektga aylantiradi. Express 4.x'da `query parser` default qiymati `"extended"` (`qs`), Express 5'da esa `"simple"` (Node'ning `querystring` moduli) bo'lib, `simple` rejim ichma-ich obyekt yasamaydi. Baribir `extended` yoqilgan bo'lishi mumkin, shuning uchun tur tekshiruvini rejimga tayanmay yozing.
 - Header va cookie'lar odatda satr, lekin ba'zi framework'lar ularni ham massivga yoki obyektga aylantiradi.
 
 ### Qora ro'yxat va `$` ni olib tashlash
@@ -218,6 +222,8 @@ inline: [["SET","name","ali"]]
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu NoSQL operator va Redis buyruq injection usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi "alfa" foydalanuvchisi o'z tokenini bilmaydi. U JSON body'da satr o'rniga operator yuboradi. Redis tomonda esa qiymatga yangi buyruq qo'shishga harakat qiladi. Ikkalasi ham faqat shu o'quv modellariga qarshi.
 
@@ -335,7 +341,8 @@ import { Model } from "mongoose";
 
 const redis = new Redis(process.env.REDIS_URL!, { username: "app", password: process.env.REDIS_PASSWORD });
 
-const RefreshBody = z.object({ refreshToken: z.string().min(8).max(200) }).strict();
+// z.strictObject: noma'lum kalit xato beradi (oddiy z.object noma'lum kalitlarni jimgina tashlab yuboradi)
+const RefreshBody = z.strictObject({ refreshToken: z.string().min(8).max(200) });
 
 export async function refresh(
   Session: Model<{ refreshToken: string; userId: string }>,

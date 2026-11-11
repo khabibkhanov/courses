@@ -6,7 +6,7 @@ summary: "OAuth 2.0 rollari va authorization code grant, redirect URI'ni aniq so
 duration: 50
 sources:
   - id: rfc6749
-    note: "OAuth 2.0 rollari (resource owner, client, authorization server, resource server) va authorization code grant oqimi; redirect URI va state parametrlari"
+    note: "OAuth 2.0 rollari (resource owner, client, authorization server, resource server) va authorization code grant oqimi; redirect URI va state parametrlari; 4.1.2: code muddati eng ko'pi 10 daqiqa (RECOMMENDED), code ikki marta ishlatilmaydi (MUST NOT), qayta ishlatilsa rad etiladi (MUST)"
   - id: rfc7636
     note: "PKCE: code_verifier, code_challenge, S256 = BASE64URL(SHA256(ASCII(code_verifier))); klient S256 ni qo'llay olsa, S256 ishlatishi shart; plain faqat S256 ni qo'llay olmaydigan klient uchun"
   - id: rfc9700
@@ -235,7 +235,7 @@ Access token'ning huquqlari minimal bo'lishi (scope), faqat bitta resource serve
 
 ### Code'ning umri va qayta ishlatilishi
 
-Authorization code token bo'lmagan oraliq qiymat, lekin u token'ga almashadi, shuning uchun uni bir martalik qilish kerak. RFC 9700 (4.2.4): authorization server code'ni token endpoint'da birinchi ishlatilgandan keyin bekor qilishi shart (MUST); code qayta ishlatilsa, server shu code asosida oldin berilgan hamma token'larni bekor qilishi kerak (SHOULD). Tuzatilgan misoldagi `codes.delete(code)` aynan shuni ko'rsatadi. RFC matnining ko'rilgan qismida code'ning eng katta muddati raqam bilan berilmagan; muddatni qisqa (daqiqalar) qilish amaliy tavsiya, aniq qiymat server siyosatiga bog'liq.
+Authorization code token bo'lmagan oraliq qiymat, lekin u token'ga almashadi, shuning uchun uni bir martalik qilish kerak. RFC 9700 (4.2.4): authorization server code'ni token endpoint'da birinchi ishlatilgandan keyin bekor qilishi shart (MUST); code qayta ishlatilsa, server shu code asosida oldin berilgan hamma token'larni bekor qilishi kerak (SHOULD). Tuzatilgan misoldagi `codes.delete(code)` aynan shuni ko'rsatadi. Muddat haqida RFC 6749 (4.1.2) aniq: code'ning eng katta muddati 10 daqiqa bo'lishi tavsiya etiladi (RECOMMENDED); bundan tashqari klient code'ni ikki marta ishlatmasligi shart (MUST NOT), server esa qayta ishlatilgan code'ni rad etishi shart (MUST) va u asosida berilgan token'larni imkon qadar bekor qilishi kerak (SHOULD).
 
 ## Misol: authorization server
 
@@ -275,6 +275,8 @@ token: access-token-u1
 ```
 
 ### Hujum
+
+> **Ta'lim maqsadida.** Bu OAuth redirect_uri orqali code o'g'irlash usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi foydalanuvchiga tayyorlangan authorization havolasini yuboradi, unda `redirect_uri` hujumchi domenida (prefiks qo'shimchasi bilan). Foydalanuvchi ruxsat beradi, code hujumchining serveriga keladi, hujumchi uni almashtiradi. Bu faqat shu o'quv serveriga qarshi.
 

@@ -212,6 +212,8 @@ payload bajarildi
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu sanitization'ni aylanib o'tish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Izoh maydoniga ruxsat etilgan `<b>` bilan birga ikkita yashirin element kiritildi: `<img onerror>` (rasm yuklanmaganda kod ishlaydi) va `javascript:` havolasi `onclick` bilan. Natijada konsolda "payload bajarildi" chiqdi: izoh muallifi kodi dispetcher brauzerida ishladi. Hujumchi `<script>` ishlatmadi, shuning uchun `<script>` ni o'chiradigan har qanday filtr ham o'tkazib yuborar edi.
 
 ### 3. Tuzatilgan kod
@@ -285,10 +287,14 @@ React/Next.js'da HTML kiritish `dangerouslySetInnerHTML` orqali bo'ladi (33-dars
 ```tsx
 import DOMPurify from "dompurify";
 
-// Minimal allowlist: kerakli teglar va atributlar
+// Minimal allowlist: kerakli teglar va atributlar.
+// data-* va aria-* atributlari ALLOWED_ATTR dan mustaqil ravishda standart bo'yicha ruxsat etiladi (ikkalasi true),
+// shuning uchun "faqat href" bo'lishi uchun ularni aniq o'chiramiz.
 const CONFIG = {
   ALLOWED_TAGS: ["b", "i", "em", "strong", "p", "br", "ul", "ol", "li", "a"],
   ALLOWED_ATTR: ["href"],
+  ALLOW_DATA_ATTR: false,
+  ALLOW_ARIA_ATTR: false,
 };
 
 export function sanitizeComment(dirty: string): string {
@@ -300,7 +306,7 @@ export function Comment({ html }: { html: string }) {
 }
 ```
 
-DOMPurify brauzer DOM'iga tayanadi, shuning uchun server-renderda (Node) unga jsdom kabi DOM muhiti kerak bo'ladi; ko'p loyihalar sanitizatsiyani klient tomonida bajaradi. Trusted Types bilan bog'lash MDN namunasidagi kabi: `createPolicy("nom", { createHTML: (input) => DOMPurify.sanitize(input) })`. Next.js'da `require-trusted-types-for 'script'` CSP sarlavhasi orqali beriladi (35-dars), policy nomlari esa klient kodida bir joyda ro'yxatga olinadi va `trusted-types` ro'yxati bilan mos bo'lishi kerak.
+DOMPurify brauzer DOM'iga tayanadi, shuning uchun server-renderda (Node) unga jsdom kabi DOM muhiti kerak bo'ladi; ko'p loyihalar sanitizatsiyani klient tomonida bajaradi. Trusted Types bilan bog'lash: DOMPurify README'siga ko'ra `createHTML` oddiy satr kutadi, shuning uchun policy ichida `RETURN_TRUSTED_TYPE` true bo'lmasligi kerak (u `true` bo'lsa `sanitize` `TrustedHTML` qaytarishga urinadi). `TRUSTED_TYPES_POLICY` berilmasa DOMPurify o'zining `dompurify` nomli ichki policy'sini yaratishga urinadi; sizning CSP `trusted-types` ro'yxatida bu nom bo'lmasa brauzer uni bloklaydi va CSP buzilishi hisobot qilinadi. Shuning uchun o'z policy'ngiz ichida `TRUSTED_TYPES_POLICY: null` bering: `createPolicy("nom", { createHTML: (input) => DOMPurify.sanitize(input, { TRUSTED_TYPES_POLICY: null }) })`. O'z policy'ngizni DOMPurify'ga `TRUSTED_TYPES_POLICY` sifatida qaytarib bermang: policy ichida `sanitize` chaqirilgani uchun aylana hosil bo'ladi va DOMPurify `TypeError` tashlaydi. Next.js'da `require-trusted-types-for 'script'` CSP sarlavhasi orqali beriladi (35-dars), policy nomlari esa klient kodida bir joyda ro'yxatga olinadi va `trusted-types` ro'yxati bilan mos bo'lishi kerak.
 
 Amaliy tavsiyalar: sanitizerni ko'rsatish joyida chaqiring; sozlamani bitta fayldagi bitta funksiyada saqlang (DRY); lint qoidasi bilan `dangerouslySetInnerHTML` faqat shu funksiyadan keladigan qiymatlar bilan ishlatilishini tekshiring; kutubxona yangilanishini `npm audit` va dependabot (81-dars) bilan kuzating.
 

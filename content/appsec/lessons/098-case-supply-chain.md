@@ -11,8 +11,8 @@ sources:
     note: "Andres Freund, oss-security (2024-03-29): upstream xz repozitoriysi va tarball'lar backdoor qilingani; build-to-host.m4 dagi qator faqat tarball'larda (5.6.0 va 5.6.1) bor, git manbada yo'q; configure oxirida obfuscated skript ishlashi; repozitoriyda tests/files ostidagi 'test' fayllari; shartlar (x86-64 Linux, gcc va GNU ld, Debian yoki RPM paket build); sshd libsystemd orqali liblzma'ga bog'lanishi; muallifning o'z o'lchovlari"
   - id: cisa-npm-2025
     note: "CISA alert (2025-09-23): 'Shai-Hulud' nomi bilan ommaga ma'lum o'z-o'zidan ko'payuvchi hujum 500 dan ortiq paketni kompromet qilgan; o'g'irlangan ma'lumotlar 'Shai-Hulud' nomli ommaviy GitHub repozitoriysiga yuklangan; GitHub PAT va AWS/GCP/Azure API kalitlarini qidirgan; kompromet qilingan dasturchi sifatida npm'ga autentifikatsiya qilib boshqa paketlarga kod kiritgan; tavsiyalar: dependency review, lockfile tekshiruvi, 2025-09-16 dan oldingi xavfsiz versiyalarga pin, kredensiallarni almashtirish, phishing-resistant MFA"
-  - id: slsa
-    note: "SLSA v1.1 (hozir 'Retired', joriy tasdiqlangan versiya v1.2, unda Source Track qo'shilgan): Build track L0-L3; L1 provenance mavjud (xato va hujjatlashtirishga qarshi, uni aylanib o'tish yoki soxtalashtirish oson), L2 imzolangan provenance hosting build platformadan (build'dan keyingi tampering), L3 hardened build platform (build paytidagi tampering); provenance kim, qaysi jarayon va qaysi kirishlardan build qilganini aytadi"
+  - id: slsa-v1-2
+    note: "SLSA v1.2 (holati Approved, joriy versiya, 2025-yil 24-noyabr; v1.1 hozir Retired; v1.2 Source Track qo'shgan): Build track L0-L3, tavsifi v1.1 dagi bilan bir xil; L1 provenance mavjud (xato va hujjatlashtirishga qarshi, uni aylanib o'tish yoki soxtalashtirish oson), L2 imzolangan provenance hosting build platformadan (build'dan keyingi tampering), L3 hardened build platform (build paytidagi tampering); provenance kim, qaysi jarayon va qaysi kirishlardan build qilganini aytadi"
 quiz:
   - q: "Freund xabariga ko'ra xz backdoor'ining bir qismi 'faqat tarball'larda' bo'lgan. Bu dasturchi uchun qanday amaliy xulosa beradi?"
     options:
@@ -29,7 +29,7 @@ quiz:
       - "Dependency'lardagi zaifliklarni avtomatik tuzatadi"
       - "Hosting build platformasi tomonidan imzolangan provenance: build'dan keyin artefakt yoki provenance'ni o'zgartirishga qarshi"
     answer: 3
-    explain: "SLSA v1.1 L2 ni imzolangan provenance, hosting platformadan, 'tampering after the build' ga qarshi deb ta'riflaydi. U manbaning o'zi zararli ekanini aniqlamaydi: provenance 'qanday build qilingan' ni aytadi, 'manba yaxshimi' ni emas."
+    explain: "SLSA v1.2 Build track L2 ni imzolangan provenance, hosting platformadan, 'tampering after the build' ga qarshi deb ta'riflaydi. U manbaning o'zi zararli ekanini aniqlamaydi: provenance 'qanday build qilingan' ni aytadi, 'manba yaxshimi' ni emas."
   - q: "xz holatida manbaning o'zida (repozitoriyda) zararli fayllar bor edi. SLSA provenance bunday hodisani avtomatik to'xtata oladimi?"
     options:
       - "Ha, L3 hamma hujumni to'xtatadi"
@@ -151,7 +151,7 @@ Bu dars ikki hodisani faqat birlamchi yozuvlar bo'yicha ko'radi: 2024-yilda xz/l
 
 ### Hodisa 1: xz/liblzma (2024)
 
-Andres Freund 2024-yil 29-martda oss-security ro'yxatiga yozdi. U Debian sid o'rnatmalarida liblzma (xz paketining qismi) atrofida bir necha haftadan beri g'alati belgilarni kuzatgan: ssh orqali kirish CPU'ni ko'p olgan, valgrind xatolari chiqqan. Tekshiruv natijasi: "upstream xz repozitoriysi va xz tarball'lari backdoor qilingan". Avvaliga u buni Debian paketining komprometi deb o'ylagan, lekin muammo upstream'da ekan.
+Andres Freund 2024-yil 29-martda oss-security ro'yxatiga yozdi. U Debian sid o'rnatmalarida liblzma (xz paketining qismi) atrofida bir necha haftadan beri g'alati belgilarni kuzatgan: ssh orqali kirish CPU'ni ko'p olgan, valgrind xatolari chiqqan. Tekshiruv natijasi: "upstream xz repozitoriysi va xz tarball'lari backdoor qilingan". Avvaliga u buni Debian paketining komprometi deb o'ylagan, lekin muammo upstream'da ekan. Xabar zaiflikka CVE-2024-3094 raqami Red Hat tomonidan berilganini ham qayd etadi; zararli kod xz 5.6.0 va 5.6.1 release tarball'larida bo'lgan.
 
 Xabarning mexanikasi bo'yicha asosiy nuqtalar (hammasi muallifning o'z tavsifi):
 
@@ -172,7 +172,7 @@ CISA tavsiyalari: barcha npm ishlatadigan dasturiy ta'minotda dependency review;
 
 ## Chuqurroq: SLSA nimani qamraydi
 
-SLSA v1.1 spetsifikatsiyasi (sahifada hozir "Retired" deb belgilangan, joriy versiya v1.2) supply chain xavfsizligini ketma-ket oshib boruvchi darajalar bilan tasvirlaydi. Build track bo'yicha L0 hech qanday kafolat bermaydi; L1 da provenance (artefakt kim, qaysi jarayon va qaysi kirishlar bilan build qilingani) mavjud bo'lishi kerak, bu xato va hujjatlashtirishga qarshi; L2 da provenance imzolangan va hosting build platformasi tomonidan yaratiladi, bu build'dan keyingi tampering'ga qarshi; L3 da build platformasi mustahkamlangan, bu build paytidagi tampering'ga qarshi. Build track maqsadi artefakt kutilganidek build qilinganini tekshirish imkonini berish: iste'molchi paket uchun kutilgan provenance qanday ko'rinishini biladi va haqiqiysi bilan solishtiradi.
+SLSA v1.2 spetsifikatsiyasi (sahifada holati Approved; v1.1 hozir Retired deb belgilangan, v1.2 unga orqaga mos) supply chain xavfsizligini ketma-ket oshib boruvchi darajalar bilan tasvirlaydi. Build track bo'yicha L0 hech qanday kafolat bermaydi; L1 da provenance (artefakt kim, qaysi jarayon va qaysi kirishlar bilan build qilingani) mavjud bo'lishi kerak, bu xato va hujjatlashtirishga qarshi; L2 da provenance imzolangan va hosting build platformasi tomonidan yaratiladi, bu build'dan keyingi tampering'ga qarshi; L3 da build platformasi mustahkamlangan, bu build paytidagi tampering'ga qarshi. Build track maqsadi artefakt kutilganidek build qilinganini tekshirish imkonini berish: iste'molchi paket uchun kutilgan provenance qanday ko'rinishini biladi va haqiqiysi bilan solishtiradi.
 
 Bu ikki hodisaga qanday tegishli? Quyidagi xulosalar bu darsning tahlili, SLSA matnidagi gaplar emas:
 
@@ -226,6 +226,8 @@ buildFrom(gitTree).forEach((l) => console.log(" ", l));
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu release tarball'ni o'zgartirish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-6-moddasi (Zarar keltiruvchi dasturlar) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Modelda "hujumchi" release tarball tayyorlovchisi: u manbada yo'q qatorni faqat tarball'dagi `m4/helper.m4` ga qo'shadi. Iste'molchi tarball'dan build qilganda yashirin qadam ishlaydi, git daraxtidan build qilganda ishlamaydi:
 

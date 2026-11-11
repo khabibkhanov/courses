@@ -5,6 +5,8 @@ title: "Content Security Policy: direktivalar, nonce va strict-dynamic"
 summary: "CSP qanday ishlaydi, asosiy direktivalar (script-src, object-src, base-uri, frame-ancestors, form-action), host ro'yxatining zaifligi, nonce va strict-dynamic bilan qat'iy siyosat, Report-Only rejimi va CSP ning chegaralari."
 duration: 45
 sources:
+  - id: fastify-helmet
+    note: "@fastify/helmet README va manba kodi: enableCSPNonces, reply.cspNonce.script/style; nonce script-src va style-src massiviga qo'shiladi, 'strict-dynamic' qo'shilmaydi"
   - id: csp3
     note: "Content Security Policy Level 3: source expression'lar, nonce va hash, 'strict-dynamic' semantikasi (host va 'unsafe-inline' e'tiborsiz, parser-inserted skriptlar ishonchli emas), Strict CSP ta'rifi va orqaga moslik namunasi"
   - id: mdn-csp
@@ -304,6 +306,8 @@ o'z fayl: true
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu inline skript kiritish namunasi faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi XSS orqali sahifaga `<script>alert(1)</script>` kiritdi. Bu nonce'siz inline skript:
 
 ```ts run
@@ -443,7 +447,7 @@ app.get("/", async (req, reply) => {
 ```
 
 
-`enableCSPNonces` va `reply.cspNonce` @fastify/helmet README'sida bayon qilingan. Hujjatda yaratilgan nonce'ning o'zingiz bergan `directives` ga avtomatik qo'shilishi aniq yozilmagan, shuning uchun o'z `scriptSrc` qatoringizni yozganda javob header'ini integratsiya testi bilan tekshiring: `script-src` da `'nonce-...'` va `'strict-dynamic'` bo'lishi kerak. Yuqoridagi parcha foydalanuvchi ma'lumotini HTML'ga qo'shmaydi; real shablon mexanizmi esa chiqishni escape qilishi shart (32-dars).
+`enableCSPNonces` va `reply.cspNonce` @fastify/helmet README'sida bayon qilingan; plugin manba kodi va testlari esa nonce'ning policy'ga qanday qo'shilishini ko'rsatadi: plugin `script-src` (yoki `scriptSrc`) va `style-src` (yoki `styleSrc`) massivining oxiriga `'nonce-<qiymat>'` qo'shadi, massivni nusxalaydi (siz bergan obyekt o'zgarmaydi) va `directives` bermasangiz Helmet'ning standart direktivalaridan foydalanadi. U `'strict-dynamic'` qo'shmaydi: kerak bo'lsa uni o'zingiz `scriptSrc` ga yozasiz va javob header'ini integratsiya testi bilan tekshirasiz. Yuqoridagi parcha foydalanuvchi ma'lumotini HTML'ga qo'shmaydi; real shablon mexanizmi esa chiqishni escape qilishi shart (32-dars).
 
 ## Xulosa
 

@@ -6,15 +6,17 @@ summary: "Saqlanayotgan ma'lumotni qaysi qatlamda shifrlash, versiyalangan shifr
 duration: 55
 sources:
   - id: fips203
-    note: "FIPS 203: ML-KEM (Module-Lattice-Based Key-Encapsulation Mechanism). Kalit kelishuvi uchun post-quantum standart; maxfiy umumiy qiymat hosil qiladi (Cryptographic Storage cheat sheet'dagi havola orqali)"
+    note: "FIPS 203: ML-KEM (Module-Lattice-Based Key-Encapsulation Mechanism), 2024-yil 13-avgust, Final; parametr to'plamlari ML-KEM-512, ML-KEM-768, ML-KEM-1024; kalit kelishuvi uchun post-quantum standart (csrc.nist.gov sahifasi o'qilgan)"
   - id: fips204
-    note: "FIPS 204: ML-DSA (Module-Lattice-Based Digital Signature Algorithm). Post-quantum imzo standarti (Post-Quantum Cryptography cheat sheet'dagi havola orqali)"
+    note: "FIPS 204: ML-DSA (Module-Lattice-Based Digital Signature Algorithm), 2024-yil 13-avgust, Final; post-quantum imzo standarti (csrc.nist.gov sahifasi o'qilgan; parametr to'plami nomlari bu sahifada yo'q, ml-dsa-44/65/87 nomlari Node.js hujjatidan)"
+  - id: rfc9794
+    note: "RFC 9794 (2025-yil iyun, Informational): 2 (PQ/T hybrid KEM va PQ/T hybrid digital signature ta'riflari), 5 (hybrid maxfiylik hybrid autentifikatsiyani hal qilmaydi)"
   - id: t10-a04
     note: "A04:2025: transportda forward secrecy va quantum-safe kalit almashinuvini qo'llab-quvvatlash, PQC'ga hozirdan tayyorlanish (yuqori xavfli tizimlar 2030 oxiridan kech bo'lmay xavfsiz), A04 tekshiriladigan savollar"
   - id: node-crypto
     note: "Node.js crypto: ML-KEM va ML-DSA kalitlari qo'llab-quvvatlanadi (ml-kem-768, ml-dsa-65 va boshqalar), lekin bu algoritmlar OpenSSL 3.5 yoki undan yangisini talab qiladi va Node versiyasiga bog'liq"
   - id: node-tls
-    note: "Node.js tls: ecdhCurves sozlamasida X25519MLKEM768 kabi nomni ko'rsatish mumkin"
+    note: "Node.js tls.createSecureContext: ecdhCurve opsiyasi nomlangan egri chiziq yoki TLS guruhlari ro'yxatini oladi (masalan P-521:P-384:P-256, X25519 yoki X25519MLKEM768); TLS 1.3 da bu supported groups va key share guruhlarini sozlaydi"
   - id: asvs
     note: "ASVS 5.0.0 11.1.2-11.1.4 (inventar, discovery, PQC migratsiya rejasi), 11.2.2 (crypto agility), 11.3.x (AEAD va nonce), Appendix C (Post-Quantum Encryption Standards)"
   - id: cs-crypto-storage
@@ -202,9 +204,9 @@ PQC cheat sheet xavfni aniq chegaralaydi. Yetarlicha kuchli quantum kompyuter RS
 
 ### Standartlar va hybrid
 
-Kalit o'rnatish uchun cheat sheet ML-KEM (NIST FIPS 203) ni ko'rsatadi: u simmetrik shifrlash uchun umumiy maxfiy qiymat o'rnatadi; ma'lumotni bevosita shifrlamaydi va peer'ni autentifikatsiya qilmaydi. Shu sababli saqlanayotgan ma'lumot uchun AES o'z o'rnida qoladi. Imzolar uchun ML-DSA (FIPS 204) ko'rsatiladi, lekin imzolar migratsiyasi alohida: imzo formati va tekshiruvchisini qo'llab-quvvatlash va imzolovchi bilan tekshiruvchilarni muvofiqlashtirib yangilash kerak. ASVS Appendix C ham PQC implementatsiyalari FIPS 203, 204 va 205 ga mos bo'lishi kerakligini aytadi va hozircha mustahkamlangan kod va referens implementatsiyalar kam ekanini qayd etadi.
+FIPS 203 (ML-KEM) va FIPS 204 (ML-DSA) NIST tomonidan 2024-yil 13-avgustda yakuniy (Final) standart sifatida e'lon qilingan. FIPS 203 uch parametr to'plamini beradi: ML-KEM-512, ML-KEM-768 va ML-KEM-1024 (xavfsizlik darajasi o'sgani sari tezlik pasayadi); Node.js hujjati ML-DSA uchun `ml-dsa-44`, `ml-dsa-65` va `ml-dsa-87` nomlarini keltiradi. NIST sahifalari ikkala standart uchun ham kelajakdagi yangilanishda tuzatiladigan errata borligini qayd etadi, shuning uchun amalga oshirishda NIST'ning joriy errata ro'yxatiga qarab turing. Kalit o'rnatish uchun cheat sheet ML-KEM (NIST FIPS 203) ni ko'rsatadi: u simmetrik shifrlash uchun umumiy maxfiy qiymat o'rnatadi; ma'lumotni bevosita shifrlamaydi va peer'ni autentifikatsiya qilmaydi. Shu sababli saqlanayotgan ma'lumot uchun AES o'z o'rnida qoladi. Imzolar uchun ML-DSA (FIPS 204) ko'rsatiladi, lekin imzolar migratsiyasi alohida: imzo formati va tekshiruvchisini qo'llab-quvvatlash va imzolovchi bilan tekshiruvchilarni muvofiqlashtirib yangilash kerak. ASVS Appendix C ham PQC implementatsiyalari FIPS 203, 204 va 205 ga mos bo'lishi kerakligini aytadi va hozircha mustahkamlangan kod va referens implementatsiyalar kam ekanini qayd etadi.
 
-Transport uchun cheat sheet klassik va PQC birga ishlaydigan hybrid almashinuvni (masalan X25519MLKEM768) sinab ko'rishni tavsiya etadi, sertifikat va hostname tekshiruvini yoqilgan holda saqlab. Hybrid konstruksiyani o'zingiz yig'masligingiz kerak: protokol implementatsiyasidan foydalaning. Muhim farq: hybrid TLS key exchange maxfiylikni beradi, lekin klassik sertifikat imzolarini quantum-chidamli qilmaydi (cheat sheet RFC 9794'ga tayanadi). Sertifikat asosidagi autentifikatsiya uchun leaf va intermediate sertifikatlardagi algoritmlar, sozlangan trust anchor'ning public-key algoritmi va runtime'ning sertifikat tekshiruvi qo'llab-quvvatlashi tekshiriladi (65 va 66-darslar). Dual-signature sxemasida ikkala imzo ham tekshirilishi shart; birini qabul qilish klassik-only qabulga yo'l ochadi, va mavjud token yoki sertifikat formatiga o'zingizcha imzo maydoni qo'shmang.
+Transport uchun cheat sheet klassik va PQC birga ishlaydigan hybrid almashinuvni (masalan X25519MLKEM768) sinab ko'rishni tavsiya etadi, sertifikat va hostname tekshiruvini yoqilgan holda saqlab. Hybrid konstruksiyani o'zingiz yig'masligingiz kerak: protokol implementatsiyasidan foydalaning. Muhim farq: hybrid TLS key exchange maxfiylikni beradi, lekin klassik sertifikat imzolarini quantum-chidamli qilmaydi (cheat sheet RFC 9794'ga tayanadi). RFC 9794 (2025-yil iyun, Informational) terminologiya hujjati: 2-bo'limda PQ/T hybrid KEM va PQ/T hybrid digital signature ni kamida bitta post-quantum va kamida bitta traditional komponentdan iborat sxema deb ta'riflaydi, 5-bo'limda esa [HYBRID-TLS] hybrid maxfiylikni beradi, lekin hybrid autentifikatsiyani hal qilmaydi, deb yozadi. Sertifikat asosidagi autentifikatsiya uchun leaf va intermediate sertifikatlardagi algoritmlar, sozlangan trust anchor'ning public-key algoritmi va runtime'ning sertifikat tekshiruvi qo'llab-quvvatlashi tekshiriladi (65 va 66-darslar). Dual-signature sxemasida ikkala imzo ham tekshirilishi shart; birini qabul qilish klassik-only qabulga yo'l ochadi, va mavjud token yoki sertifikat formatiga o'zingizcha imzo maydoni qo'shmang.
 
 ### Test, fallback va rollout
 
@@ -246,6 +248,8 @@ ochildi: rol=guest;t=alfa
 Nima noto'g'ri: shifrlash maxfiylik beradi, lekin yaxlitlik yo'q (63-dars). Formatda versiya ham yo'q, shuning uchun algoritmni almashtirish yozuvlarni ajratib bo'lmaydigan migratsiyaga aylanadi.
 
 ### Hujum
+
+> **Ta'lim maqsadida.** Bu CBC'da IV orqali bitlarni o'zgartirish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi bazaga yozish huquqiga ega (masalan SQL orqali) va kalitni bilmaydi. CBC'da birinchi blok oldingi blok o'rnida IV bilan XOR qilinadi, shuning uchun IV'ni o'zgartirish birinchi blok ochiq matnining mos bitlarini o'zgartiradi. Bu o'quv xizmati uchun namuna.
 
@@ -362,7 +366,7 @@ PQC migratsiyasi ham har joyda bir xil shoshilinch emas. Bir necha daqiqa yoki k
 
 ## Stack'da: Node.js, PostgreSQL, TLS va KMS
 
-Node.js'da shifrlash uchun `crypto` va WebCrypto bor; ML-KEM va ML-DSA kalitlari `crypto`da va WebCrypto'da bor, lekin hujjatga ko'ra ular OpenSSL 3.5 yoki undan yangisini talab qiladi, shuning uchun qo'llab-quvvatlash Node versiyasiga bog'liq. `tls` sozlamalarida esa `ecdhCurves` qiymatida `X25519MLKEM768` nomini ko'rsatish mumkin. Ishlatadigan versiya hujjatini tekshiring. Kodni `seal`/`open` interfeysi orqasida yozing va formatni bitta joyda saqlang: algoritm almashganda faqat shu modul o'zgaradi (ASVS 11.2.2). Prisma yoki Kysely'da yozuv jadvaliga `enc_version`, `kek_id` va `ciphertext` ustunlarini qo'shing yoki bitta `bytea` ustunda header bo'lsin; fon job kichik paketlarda eski yozuvlarni ko'chirib, qancha qolganini o'lchaydi.
+Node.js'da shifrlash uchun `crypto` va WebCrypto bor; ML-KEM va ML-DSA kalitlari `crypto`da va WebCrypto'da bor, lekin hujjatga ko'ra ular OpenSSL 3.5 yoki undan yangisini talab qiladi, shuning uchun qo'llab-quvvatlash Node versiyasiga bog'liq. `tls` sozlamalarida esa `ecdhCurve` opsiyasiga `X25519MLKEM768` nomini ko'rsatish mumkin (Node.js hujjatidagi misol; TLS 1.3 da bu opsiya supported groups va key share guruhlarini belgilaydi). Node.js hujjatiga ko'ra `crypto.generateKeyPair` ML-DSA ni v24.6.0 dan, ML-KEM ni v24.7.0 dan, WebCrypto'da ML-KEM va ML-DSA v24.7.0 dan qo'llaydi; ular OpenSSL 3.5 yoki undan yangisini talab qiladi (hujjatdagi izoh), shuning uchun ishlatadigan Node.js ning `process.versions.openssl` qiymati kamida 3.5 bo'lishi shart. Kodni `seal`/`open` interfeysi orqasida yozing va formatni bitta joyda saqlang: algoritm almashganda faqat shu modul o'zgaradi (ASVS 11.2.2). Prisma yoki Kysely'da yozuv jadvaliga `enc_version`, `kek_id` va `ciphertext` ustunlarini qo'shing yoki bitta `bytea` ustunda header bo'lsin; fon job kichik paketlarda eski yozuvlarni ko'chirib, qancha qolganini o'lchaydi.
 
 Transportda eng amaliy qadam: TLS terminatsiya qiladigan qatlam (reverse proxy, load balancer, CDN yoki bulut provayder) hybrid kalit almashinuvini qo'llab-quvvatlaydimi, shuni tekshirish va faqat ularning qo'llab-quvvatlanadigan sozlamasidan foydalanish. TLS cheat sheet'da X25519MLKEM768 post-quantum uchun "hozirgi vaqtda ishlatiladi" deb qayd etilgan, lekin u formal ma'noda group emas. Sertifikat va hostname tekshiruvi yoqilgan qolishi kerak. Bulut KMS va HSM uchun provayderning PQC yo'l xaritasini so'rang va DEK'ni o'rash algoritmini inventarga yozing (68-dars).
 

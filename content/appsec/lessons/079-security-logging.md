@@ -244,6 +244,8 @@ file.forEach((l, i) => console.log(`${i + 1}: ${l}`));
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu log injection usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi login oynasiga foydalanuvchi nomi sifatida yangi qator belgisi va soxta log qatorini kiritadi. Fayl uni alohida yozuv deb saqlaydi. Parollar esa ochiq turibdi.
 
 ```text

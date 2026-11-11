@@ -247,6 +247,8 @@ o'z safari: Toshkent - Samarqand
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu IDOR usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Alfa foydalanuvchisi o'z safarining `1001` ID'sini ko'radi va qo'shni sonlarni sinab ko'radi. ID ketma-ket bo'lgani uchun sanash oson:
 
 ```ts run
@@ -350,6 +352,8 @@ Egalik tekshiruvi har joyda kerak emas.
 IDOR Prevention Cheat Sheet'dagi asosiy naqsh "foydalanuvchiga tegishli to'plamdan qidirish": `Project.find(id)` o'rniga `current_user.projects.find(id)`. Bu Spring misolida `findByIdAndOwnerId(id, currentUser().getId())` ko'rinishida, Prisma'da `where: { id, tenantId }` ko'rinishida. Qidiruv va egalik bitta so'rov, shuning uchun "ol, keyin tekshir" oralig'ida unutish imkoni yo'q.
 
 Prisma'da egalikni so'rovga kiritishning ishonchli usuli: faqat `id` bilan qidirish o'rniga `findFirst({ where: { id, tenantId } })` yozish. Yozish uchun `updateMany`/`deleteMany` ni tenant sharti bilan ishlatib, `count` ni tekshirish mumkin: nol bo'lsa, obyekt yo'q yoki sizniki emas. Bu kod ishga tushirilmaydi (tashqi modul tiplari yo'q, server/DB kerak).
+
+Eslatma: Prisma ORM 7 hujjatiga ko'ra `PrismaClient` driver adapter talab qiladi va adapter'siz `new PrismaClient()` xato beradi; quyidagi namunada qisqalik uchun adapter ko'rsatilmagan, haqiqiy loyihada `new PrismaClient({ adapter })` yozing (masalan, PostgreSQL uchun `@prisma/adapter-pg`).
 
 ```ts
 import { Controller, Delete, Get, NotFoundException, Param, Req } from "@nestjs/common";

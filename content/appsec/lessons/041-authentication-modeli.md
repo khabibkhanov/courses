@@ -274,6 +274,8 @@ console.log(whoAmI({ headers: { "x-user-id": "u1" } }));
 
 ### Hujum
 
+> **Ta'lim maqsadida.** Bu autentifikatsiyani aylanib o'tish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi "alfa" kompaniyasining oddiy dispetcheri. Ilovaga gateway'ni aylanib o'tib yoki gateway sarlavhani o'chirmasa, shunchaki sarlavhani o'zi qo'yadi. Bu faqat shu o'quv kodiga qarshi:
 
 ```ts run

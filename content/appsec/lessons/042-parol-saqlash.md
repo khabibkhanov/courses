@@ -8,7 +8,7 @@ sources:
   - id: cs-password
     note: "Password Storage Cheat Sheet: eng kam parametrlar (Argon2id 19 MiB / t=2 / p=1 va unga teng boshqa kombinatsiyalar; scrypt N=2^17, r=8, p=1; bcrypt work factor 10 va 72 bayt chegarasi; PBKDF2 uchun HMAC-SHA-256 600 000, SHA-512 220 000 iteratsiya), pepper talablari, work factor'ni kirishda yangilash va eski hash'larni yangilash usullari"
   - id: rfc9106
-    note: "Argon2 parametrlarini tanlash tartibi: birinchi tavsiya (Argon2id, t=1, p=4, m=2^21 ya'ni 2 GiB) va xotira kam bo'lganda ikkinchi tavsiya (t=3, p=4, m=2^16 ya'ni 64 MiB); salt 128 bit, tag 256 bit"
+    note: "4-bo'lim (Parameter Choice): Argon2 parametrlarini tanlash tartibi; birinchi tavsiya (Argon2id, t=1, p=4, m=2^21 ya'ni 2 GiB) va xotira kam bo'lganda ikkinchi tavsiya (t=3, p=4, m=2^16 ya'ni 64 MiB); salt 128 bit, tag 256 bit"
   - id: nist-63-4
     note: "Parol tekshiruvchisi parollarni oflayn hujumga chidamli shaklda saqlashi, ya'ni tuzlangan va hash qilingan holda; parolning minimal uzunligi 15 (yagona faktor) va maksimal uzunlikka kamida 64 belgi ruxsat berilishi"
 quiz:
@@ -302,6 +302,8 @@ hash uzunligi: 64
 ```
 
 ### Hujum
+
+> **Ta'lim maqsadida.** Bu hash'larni tanlab ochish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Faraz qilaylik, shu `rows` jadvali sizdi. Hujumchi eng ko'p uchraydigan parollar ro'yxatini (bu yerda o'quv uchun to'rttasi) hash qilib, sizgan qiymatlar bilan solishtiradi. Bu hujum faqat shu darsning o'quv ma'lumotiga qarshi:
 

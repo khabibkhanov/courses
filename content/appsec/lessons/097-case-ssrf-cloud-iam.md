@@ -174,7 +174,7 @@ Cheat sheet qabul qiluvchi tomondan ham himoya g'oyasini beradi: so'rovni qabul 
 
 ### Metadata xizmati
 
-Cheat sheet AWS uchun IMDSv2 ni qo'shimcha defense-in-depth sifatida tavsiya qiladi: u SSRF ning ayrim holatlarini yumshatadi, IMDSv2 ga o'tib eski IMDSv1 ni o'chirish kerak. Muhim: bu yengillashtirish, kafolat emas, cheat sheet "mitigates some of the instances" deydi. Tafsilotlar uchun provayder hujjatiga qarang (88-dars).
+Cheat sheet AWS uchun IMDSv2 ni qo'shimcha defense-in-depth sifatida tavsiya qiladi: u SSRF ning ayrim holatlarini yumshatadi, IMDSv2 ga o'tib eski IMDSv1 ni o'chirish kerak. Muhim: bu yengillashtirish, kafolat emas, cheat sheet "mitigates some of the instances" deydi. AWS hujjatiga ko'ra IMDSv2 da token `PUT` so'rovi bilan olinadi va keyingi `GET` so'rovlarida sarlavhada yuboriladi, `PUT` javobining standart hop limit'i 1 (88-dars). Shu sababli faqat `GET` yubora oladigan oddiy SSRF tokenni ololmaydi, lekin `PUT` va sarlavha yubora oladigan SSRF uchun bu to'siq emas.
 
 ### Rol huquqi
 
@@ -226,6 +226,8 @@ console.log("3) sirlar:", read(key, "secrets/db.txt"));
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu SSRF orqali metadata'dan credential olish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi tizimga kirgan oddiy foydalanuvchi: u faqat "URL bo'yicha import" maydoniga qiymat kiritadi. Birinchi URL o'nlik IP shaklida (parse qilingandan keyin metadata manzili), natijada import javobi sifatida credential qaytadi, keyin shu credential bilan boshqa obyektlar o'qiladi:
 

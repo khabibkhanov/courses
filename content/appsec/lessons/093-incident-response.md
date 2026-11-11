@@ -6,7 +6,7 @@ summary: "Incident response'ning ilova jamoasi uchun amaliy modeli: tayyorgarlik
 duration: 45
 sources:
   - id: nist-61r3
-    note: "NIST SP 800-61 Rev. 3 sahifasi: 2025-yil aprelda e'lon qilingan, SP 800-61 Rev. 2 (08/06/2012) o'rnini bosadi; abstract: incident response tavsiyalarini NIST CSF 2.0 bo'yicha risk boshqaruviga kiritishga yordam beradi"
+    note: "NIST SP 800-61 Rev. 3 sahifasi va PDF: 2025-yil aprel (04/03/25), SP 800-61 Rev. 2 (08/06/2012) o'rnini bosadi, 'A CSF 2.0 Community Profile'; abstract: incident response tavsiyalarini CSF 2.0 bo'yicha risk boshqaruviga kiritishga yordam beradi. PDF mundarijasi: 2.1 Incident Response Life Cycle Model (oltita CSF funksiyasi), 3.1 Preparation and Lessons Learned (Govern, Identify, Protect), 3.2 Incident Response (Detect, Respond, Recover); 1-jadval eski to'rt bosqichni CSF funksiyalariga moslaydi"
   - id: cs-logging
     note: "Logging Cheat Sheet: 'Which events to log' (autentifikatsiya muvaffaqiyat va xatolari, avtorizatsiya xatolari va h.k.; 'alarm fog' haqida ogohlantirish) va 'Data to exclude' (parol, token, session identifikator, connection string va boshqalar log'ga to'g'ridan-to'g'ri yozilmaydi)"
   - id: asvs
@@ -159,7 +159,7 @@ Bu dars ilova jamoasi uchun minimal, ammo amaliy incident response modelini bera
 
 ### Rasmiy yo'riqnoma nima deydi
 
-NIST SP 800-61 Rev. 3 2025-yil aprelda e'lon qilingan va 2012-yilgi Rev. 2 ni almashtiradi. Abstract'ga ko'ra hujjat incident response tavsiyalarini NIST Cybersecurity Framework (CSF) 2.0 doirasidagi kiberxavfsizlik risk boshqaruvi faoliyatlariga kiritishga yordam beradi. Maqsadlar: incident'larga tayyorlanish, ularning soni va ta'sirini kamaytirish, aniqlash, javob berish va tiklash samaradorligini oshirish. NIST CSF 2.0 o'zi oltita funksiyadan iborat (Govern, Identify, Protect, Detect, Respond, Recover): incident response ularning Detect, Respond va Recover qismlariga tegadi, lekin Govern (rollar, siyosat) va Protect (oldindan qilingan himoya) ham hodisa oqibatini belgilaydi. Bu yerda muhim fikr: incident response alohida "yong'in o'chirish" funksiyasi emas, risk boshqaruvining davomiy qismi. Hujjatning to'liq tuzilmasini (bo'limlar va faoliyatlar tafsilotini) bu dars o'qib chiqmagan; quyida bayon qilingan bosqichlar kursning ishchi modeli, standart bo'limlarining nusxasi emas.
+NIST SP 800-61 Rev. 3 2025-yil aprelda e'lon qilingan va 2012-yilgi Rev. 2 ni almashtiradi. Abstract'ga ko'ra hujjat incident response tavsiyalarini NIST Cybersecurity Framework (CSF) 2.0 doirasidagi kiberxavfsizlik risk boshqaruvi faoliyatlariga kiritishga yordam beradi. Maqsadlar: incident'larga tayyorlanish, ularning soni va ta'sirini kamaytirish, aniqlash, javob berish va tiklash samaradorligini oshirish. NIST CSF 2.0 oltita funksiyadan iborat (Govern, Identify, Protect, Detect, Respond, Recover). Rev. 3 eski to'rt bosqichli sikl (tayyorgarlik; aniqlash va tahlil; cheklash, yo'q qilish va tiklash; hodisadan keyingi faoliyat) o'rniga shu oltita funksiyani asos qiladi va 1-jadvalda eski bosqichlarni ularga moslaydi: tayyorgarlik Govern, Identify va Protect ga, aniqlash va tahlil Detect ga, cheklash va tiklash Respond va Recover ga, hodisadan keyingi faoliyat Identify dagi Improvement kategoriyasiga (ID.IM) tushadi. Hujjat 2.1 bo'limida Govern, Identify va Protect ni incident response'ning o'zi emas, balki unga yordam beruvchi tayyorgarlik deb ataydi; Detect, Respond va Recover esa incident response'ning o'zi. Hujjat tuzilishi: 2-bo'lim (risk boshqaruvi, hayot sikli modeli, rollar, siyosatlar), 3-bo'lim (CSF 2.0 Community Profile: 2-jadval tayyorgarlik va saboqlar, 3-jadval incident response). Bu yerda muhim fikr: incident response alohida "yong'in o'chirish" funksiyasi emas, risk boshqaruvining davomiy qismi. Quyida bayon qilingan besh bosqich esa kursning ishchi modeli: u Rev. 3 ning bo'limlari nusxasi emas, uning g'oyalarini (tayyorgarlik, aniqlash, cheklash, tiklash, saboq) ilova jamoasi uchun tartibga soladi.
 
 ### Ilova jamoasi uchun besh bosqich
 
@@ -223,6 +223,8 @@ console.log("log'da sirlar bormi?", lines.some((l) => l.includes("password=")) ?
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu credential stuffing usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi umumiy parol ro'yxati bilan bir necha akkauntni sinaydi (credential stuffing, 43-dars). Hujumning o'zi oddiy, muammo log'ning holatida. Natija:
 

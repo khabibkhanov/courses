@@ -249,6 +249,8 @@ Fuzz harness'ning o'zi "hujum": u kutilmagan kirishlarni yuboradi. Model server 
 
 ### 1. Zaif kod va 2. Hujum
 
+> **Ta'lim maqsadida.** Bu fuzzing usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-5-moddasi (Kompyuter sabotaji) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Parser filtr satrini regex bilan ajratadi va natijani tekshirmay qaytaradi. Harness 2000 kirishni yuboradi va ikkita narsani sanaydi: exception va qabul qilingan natijaning buzilgan invarianti (ruxsat etilmagan maydon yoki 0..1000 butun bo'lmagan qiymat).
 
 ```ts run

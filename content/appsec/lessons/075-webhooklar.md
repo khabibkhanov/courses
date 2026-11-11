@@ -229,6 +229,8 @@ console.log("2) bir xil voqea ikki marta:", invoices.get("inv_1")!.creditedCents
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu soxta webhook yuborish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Birinchi hujumchi hech qanday sir bilmaydi: endpoint manzilini bilib, soxta "to'lov o'tdi" tanasini yuboradi. Ikkinchi holat hujum emas: provayder xabarni ikki marta yuboradi (masalan, birinchi javob timeout bo'ldi). Natija:
 
 ```text

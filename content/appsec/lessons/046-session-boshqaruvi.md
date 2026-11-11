@@ -283,6 +283,8 @@ oddiy oqim: dispatcher-alfa
 
 ### Hujum
 
+> **Ta'lim maqsadida.** Bu session fixation usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi identifikatorni o'zi tanlaydi (`attacker-chosen`) va qurbon brauzeriga joylaydi (masalan, boshqa subdomen orqali; cookie scoping haqida 13-dars). Qurbon kirgach, hujumchi o'sha identifikator bilan so'rov yuboradi. Bu faqat shu o'quv kodiga qarshi.
 
 ```ts run

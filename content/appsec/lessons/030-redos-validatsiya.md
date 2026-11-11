@@ -5,12 +5,22 @@ title: "ReDoS va kirish validatsiyasi strategiyasi"
 summary: "ReDoS: backtracking regex dvigateli maxsus kiritishda eksponensial ishlaydi va Node.js event loop'ni band qiladi. Dars regex xavfini va kirish validatsiyasining umumiy strategiyasini (sintaksis va semantika, allow-list, server tomonda, rad etish, sxema, o'lcham cheklovlari) mini-modelda ko'rsatadi va modul xulosasini beradi."
 duration: 50
 sources:
+  - id: zod-api
+    note: "Zod: z.strictObject noma'lum kalit topilsa xato tashlaydi (oddiy z.object ularni olib tashlaydi); .strict() Zod 4 da eski (legacy) usul; z.string().max() va .regex()"
+  - id: fastify-server
+    note: "Fastify Server: bodyLimit baytlarda, standart 1048576 (1 MiB); standart body reader chegaradan oshganda FST_ERR_CTP_BODY_TOO_LARGE bilan javob beradi"
   - id: cs-input
     note: "Input Validation Cheat Sheet: sintaksis va semantika, allow-list va denylist, xavfsiz parse qilish (o'lcham va chuqurlik cheklovlari), JSON sxema (required va additional properties), regex bo'limi (to'liq moslik, uzunlikni oldindan cheklash, ortiqcha backtracking'dan qochish, timeout), keng tarqalgan xatolar"
   - id: mdn-input-validation
     note: "MDN Input validation: allow-list denylist'dan ishonchliroq (default holatda rad etadi), sintaktik va semantik validatsiya, murakkab regex'lar DoS xavfini tug'dirishi mumkin va yaxshi tanilgan validatsiya kutubxonasi (validator.js) afzalroq"
   - id: nestjs-validation
     note: "NestJS Validation: ValidationPipe'ning whitelist (ruxsat etilmagan xususiyatlarni olib tashlash) va forbidNonWhitelisted (istisno tashlash) sozlamalari"
+  - id: v8-regexp
+    note: "V8 blogi: Irregexp backtracking dvigatel, eksponensial vaqt xavfi; tajribaviy non-backtracking dvigatel (--enable-experimental-regexp-engine, l flagi) va uning cheklovlari (backreference, lookaround)"
+  - id: re2
+    note: "RE2 README: moslash vaqti kiritish uzunligiga chiziqli, ishonchsiz regex'lar uchun xavfsiz, backreference va look-around yo'q"
+  - id: python-re
+    note: "Python re hujjati: $ satr oxirida yoki oxirgi yangi qatordan oldin mos keladi; fullmatch butun satrni tekshiradi"
   - id: asvs
     note: "ASVS 5.0.0: 1.3.12 (regex'lar eksponensial backtracking'siz bo'lishi, Level 3), 2.2.1 (allow-list/struktura bilan validatsiya), 2.2.2 (validatsiya ishonchli servis qatlamida; klient tekshiruvi xavfsizlik nazorati emas, Level 1), 2.1.1 (validatsiya qoidalari hujjatlashtirilishi)"
   - id: cs-nodejs
@@ -210,14 +220,14 @@ ASVS 5.0.0 bu g'oyalarni talablarga aylantiradi: 2.1.1 validatsiya qoidalari huj
 
 Input Validation Cheat Sheet quyidagilarni tavsiya qiladi: regex'ni sodda, tuzilmali maydonlar uchun ishlating; butun qiymat moslashini talab qiling (`fullmatch` kabi API yoki `^...$`); dvigatelning belgi sinflari va yangi qator xatti-harakatini tekshiring, hamma tilda bir xil deb o'ylamang; moslashdan oldin kiritish uzunligini cheklang; ortiqcha backtracking'dan qoching va imkon bo'lsa non-backtracking dvigatel yoki moslash timeout'ini ishlating; to'g'ri, noto'g'ri va "deyarli mos" qiymatlar bilan sinab ko'ring; timeout'ni validatsiya muvaffaqiyatsizligi deb hisoblang.
 
-JavaScript'da `$` `m` flagisiz faqat satr oxirida mos keladi, `m` flagi bilan esa qator oxirida (shu bilan Python'dan farq qiladi). Misol: `/^[A-Z]+$/.test("AB\n")` `false`, `m` flagi bilan `true`. Shuning uchun yangi qator bilan kelgan qiymat dvigatelga qarab turlicha o'tadi. Bu farqlar dvigatel hujjatida tekshiriladi.
+JavaScript'da `$` `m` flagisiz faqat satr oxirida mos keladi, `m` flagi bilan esa qator oxirida (shu bilan Python'dan farq qiladi). Misol: `/^[A-Z]+$/.test("AB\n")` `false`, `m` flagi bilan `true`. Shuning uchun yangi qator bilan kelgan qiymat dvigatelga qarab turlicha o'tadi. Python hujjatiga ko'ra `re` da `$` satr oxirida yoki oxirgi yangi qatordan oldin mos keladi (`fullmatch` butun satr mosligini talab qiladi); shuning uchun "AB\n" Python'da `$` bilan mos keladi, JavaScript'da esa yo'q.
 
 ### Node.js'da amaliy chora
 
 - Uzunlikni oldindan cheklash (eng arzon).
 - Bir ma'noli pattern yozish: ichma-ich takrorlanish yo'q, qo'shni qismlar bir xil belgilarni qamramaydi.
 - Mavjud kutubxona validatorlaridan foydalanish: MDN murakkab regex'larni to'g'ri yozish qiyin ekanini, ba'zilari denial of service hujumiga yo'l ochishini va shuning uchun odatda yaxshi tanilgan validatsiya kutubxonasini ishlatish ma'qul ekanini yozadi (misol: validator.js). Kutubxona versiyasini yangilab turing.
-- Non-backtracking dvigatel (masalan, RE2 asosidagi kutubxona) yoki regex'ni alohida worker thread'da ishga tushirib, vaqt chegarasidan oshsa to'xtatish. Cheat sheet ikkalasini ham "qo'llab-quvvatlansa" shartida tavsiya qiladi: JavaScript'ning o'rnatilgan `RegExp` obyektida match timeout yo'q, shuning uchun timeout kerak bo'lsa worker thread yoki tashqi dvigatel ishlatiladi.
+- Non-backtracking dvigatel (masalan, RE2 asosidagi kutubxona) yoki regex'ni alohida worker thread'da ishga tushirib, vaqt chegarasidan oshsa to'xtatish. Cheat sheet ikkalasini ham "qo'llab-quvvatlansa" shartida tavsiya qiladi. JavaScript tomonida: MDN `RegExp` sahifasi konstruktorga faqat pattern va flags beriladi deb yozadi va match vaqt chegarasini tilga olmaydi, V8 blogi esa standart dvigatel Irregexp'ni backtracking dvigatel deb ataydi, uning vaqti kiritish hajmiga eksponensial o'sishi mumkinligini yozadi. Shuning uchun timeout kerak bo'lsa, regex'ni worker thread'da ishga tushirib to'xtatish yoki tashqi dvigatel kerak. RE2 README'siga ko'ra RE2 moslik vaqti kiritish uzunligiga chiziqli ekanini kafolatlaydi, ishonchsiz foydalanuvchi regex'lari bilan xavfsiz ishlash uchun yozilgan, lekin backreference va look-around qo'llamaydi. V8 ning tajribaviy `--enable-experimental-regexp-engine` bayrog'i chiziqli vaqtli `l` flagini yoqadi; u standart emas va hammasini qo'llamaydi.
 - Foydalanuvchi regex'ni o'zi kiritadigan funksiyalar (qidiruv "regex rejimi") alohida xavf: bunday imkoniyatni bermang yoki non-backtracking dvigatelda bajaring.
 - Event loop monitoringi. Cheat sheet event loop kechikishini kuzatuvchi `toobusy-js` modulini tilga oladi: kechikish chegaradan oshganda `503` qaytarish. U himoyaning o'rnini bosmaydi, lekin ta'sirni cheklaydi.
 
@@ -264,6 +274,8 @@ A12: {"ok":true,"steps":2}
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu ReDoS usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-5-moddasi (Kompyuter sabotaji) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi kodni "to'g'ri ko'rinadigan, lekin oxirida mos kelmaydigan belgi bor" satr bilan yuboradi. Eng yomon holat uchun belgilar sonini oshiramiz va qadamlarni kuzatamiz. Faqat shu model.
 
@@ -384,12 +396,11 @@ const app = Fastify({
   bodyLimit: 100 * 1024, // parse'dan oldin hajm cheklovi
 });
 
-const VehicleUpdate = z
-  .object({
-    code: z.string().max(24).regex(/^[A-Z0-9]+(-[A-Z0-9]+)*$/),
-    fuel: z.number().min(0).max(100),
-  })
-  .strict(); // noma'lum maydonlar rad etiladi
+// z.strictObject: noma'lum kalit topilsa xato (oddiy z.object ularni jimgina tashlab yuboradi)
+const VehicleUpdate = z.strictObject({
+  code: z.string().max(24).regex(/^[A-Z0-9]+(-[A-Z0-9]+)*$/),
+  fuel: z.number().min(0).max(100),
+});
 
 app.put("/vehicles/:id", async (req, reply) => {
   const parsed = VehicleUpdate.safeParse(req.body);
@@ -399,7 +410,7 @@ app.put("/vehicles/:id", async (req, reply) => {
 });
 ```
 
-`bodyLimit` Fastify'ning so'rov tanasi hajmini baytlarda cheklaydigan server sozlamasi: chegaradan oshgan tana parse qilinmasdan rad etiladi. Zod'da `max(24)` regex'dan oldin tekshiriladi, shuning uchun uzun satr regex'ga yetmaydi. NestJS'da bir xil g'oya `ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })` bilan: `whitelist` ruxsat etilmagan xususiyatlarni DTO'dan olib tashlaydi, `forbidNonWhitelisted` esa ularni olib tashlash o'rniga istisno tashlaydi. Rad etish tozalashdan afzal bo'lgani uchun ikkinchisini yoqing. Hamma xatolarni umumiy `400` bilan qaytaring va tafsilotni logga yozing (78-79-darslar).
+`bodyLimit` Fastify'ning qabul qilinadigan eng katta tana hajmini baytlarda cheklaydigan server sozlamasi (standart 1048576, ya'ni 1 MiB); Fastify hujjatiga ko'ra standart body reader hajm chegaradan oshsa `FST_ERR_CTP_BODY_TOO_LARGE` xatosi bilan javob beradi (`preParsing` hook bo'lsa, chegara hook qaytargan oqim hajmiga qo'llanadi). Zod'da `max(24)` regex'dan oldin tekshiriladi, shuning uchun uzun satr regex'ga yetmaydi. NestJS'da bir xil g'oya `ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })` bilan: `whitelist` ruxsat etilmagan xususiyatlarni DTO'dan olib tashlaydi, `forbidNonWhitelisted` esa ularni olib tashlash o'rniga istisno tashlaydi. Rad etish tozalashdan afzal bo'lgani uchun ikkinchisini yoqing. Hamma xatolarni umumiy `400` bilan qaytaring va tafsilotni logga yozing (78-79-darslar).
 
 ## Xulosa
 

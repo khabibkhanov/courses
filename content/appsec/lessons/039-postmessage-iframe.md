@@ -6,9 +6,11 @@ summary: "Cross-origin hujjatlar orasidagi yagona rasmiy aloqa kanali postMessag
 duration: 40
 sources:
   - id: whatwg-html
-    note: "HTML Standard: origin tushunchasi va cross-origin aloqa; bu dars standartdan bo'lim raqami keltirmaydi, postMessage qoidalari MDN va OWASP sahifalaridan olingan"
+    note: "HTML Standard, web messaging: kanalning ikkita port'i bor va bir port'ga yuborilgan ma'lumotni ikkinchisi qabul qiladi; port Window.postMessage transfer ro'yxati orqali uzatiladi va qabul tomonda event.ports da keladi; targetOrigin mos kelmasa xabar tashlab yuboriladi. postMessage qoidalari MDN va OWASP sahifalaridan"
   - id: mdn-window-postmessage
     note: "MDN Window.postMessage(): targetOrigin aniq moslashishi (scheme, host, port), '*' xavfi, event.origin va event.source, data: URL uchun '*' talabi, xabar mazmunini tekshirish"
+  - id: mdn-iframe
+    note: "MDN iframe: allow-same-origin bo'lmasa resurs same-origin policy'dan o'ta olmaydigan maxsus origin'dan hisoblanadi; same-origin hujjatda allow-scripts va allow-same-origin birga sandbox atributini olib tashlashga imkon beradi"
   - id: mdn-csp-sandbox
     note: "MDN CSP sandbox direktivasi: allow-same-origin bo'lmasa sandbox'li resurs opaque origin'ga ega va uning Origin qiymati null"
   - id: cs-micro-frontend
@@ -169,7 +171,7 @@ Origin'ni to'plam bilan aniq tenglik orqali solishtiring: `ALLOWED.has(e.origin)
 
 Cheat sheet `sandbox` atributi yoqilganda hujjat noyob (unique) origin'dan deb hisoblanishini, formalar va skriptlar o'chirilishini, havolalar boshqa browsing context'larni nishonga ololmasligini, avtomatik ishga tushadigan xususiyatlar va plaginlar bloklanishini yozadi. `allow-scripts` kabi qiymatlar bilan alohida imkoniyatlarni qaytarish mumkin. MDN CSP `sandbox` sahifasi aniqroq: `allow-same-origin` bo'lmasa sandbox'li resurs opaque origin'dan hisoblanadi, uning `Origin` qiymati `null`, va u same-origin policy tekshiruvlaridan doim o'ta olmaydi, ya'ni `localStorage` va `document.cookie`ga ham kira olmaydi. Micro-Frontend cheat sheet buni xabarlarga ko'chiradi: bunday hujjat xabarda `"null"` bo'lib ko'rinadi va bu qiymatni jo'natuvchi kimligi sifatida ishonchli deb bo'lmaydi. Bu darsdagi birinchi misol aynan shuni ko'rsatadi (`origin: "null"`). Natija ikki muhim qoidani beradi. Birinchi, sandbox'li hujjatni origin bo'yicha ajratib bo'lmaydi: `"null"` ni allowlist'ga qo'shsangiz, har qanday sandbox'li hujjat (hujumchining ham) qabul qilinadi. Ikkinchi, bunday iframe'dan xabarni `event.source === frame.contentWindow` bilan tekshirish kerak, chunki aynan siz yaratgan iframe ekanini manba tasdiqlaydi. Agar xabar yuborish uchun aniq origin kerak bo'lsa (masalan, maxfiy ma'lumot), Micro-Frontend cheat sheet boshqa yo'lni tavsiya qiladi: alohida cross-origin iframe va origin'ni saqlaydigan sandbox siyosati. MDN yana bir istisnoni yozadi: `data:` URL'lar opaque origin'ga ega, shuning uchun ularga xabar yuborish uchun `"*"` ishlatishga to'g'ri keladi; bu ham ularga maxfiy ma'lumot yubormaslik uchun sabab.
 
-`allow-same-origin` ni `allow-scripts` bilan birga ishonchsiz kontent uchun bermang: iframe sizning origin'ingizdan yuklansa, uning skripti ota sahifaga kirib, o'z sandbox cheklovlarini olib tashlay oladi. Micro-Frontend cheat sheet aynan shuni yozadi: bu ikki ruxsatni o'z origin'ingizdagi kontent uchun birga bermang, chunki ichki ilova sandbox'ini olib tashlay oladi. `allow-same-origin` ramkaning asl origin'ini saqlaydi, lekin cross-origin ramkani host bilan same-origin qilib qo'ymaydi. Cheat sheet qo'shimcha ogohlantirish beradi: `sandbox` eski brauzerlarda e'tiborsiz qoldiriladi, shuning uchun uni qo'shimcha himoya qatlami sifatida ishlating yoki brauzer qo'llab-quvvatlashini tekshirib, shundan keyingina ishonchsiz kontentni ko'rsating.
+`allow-same-origin` ni `allow-scripts` bilan birga ishonchsiz kontent uchun bermang: iframe sizning origin'ingizdan yuklansa, uning skripti ota sahifaga kirib, o'z sandbox cheklovlarini olib tashlay oladi. Micro-Frontend cheat sheet aynan shuni yozadi: bu ikki ruxsatni o'z origin'ingizdagi kontent uchun birga bermang, chunki ichki ilova sandbox'ini olib tashlay oladi. MDN `iframe` sahifasi ham xuddi shuni aytadi: hujjat ota sahifa bilan same-origin bo'lsa `allow-scripts` va `allow-same-origin` ni birga ishlatish qat'iy tavsiya etilmaydi, chunki hujjat `sandbox` atributini olib tashlay oladi va sandbox'siz holatdan xavfsizroq bo'lmay qoladi. `allow-same-origin` ramkaning asl origin'ini saqlaydi, lekin cross-origin ramkani host bilan same-origin qilib qo'ymaydi. Cheat sheet qo'shimcha ogohlantirish beradi: `sandbox` eski brauzerlarda e'tiborsiz qoldiriladi, shuning uchun uni qo'shimcha himoya qatlami sifatida ishlating yoki brauzer qo'llab-quvvatlashini tekshirib, shundan keyingina ishonchsiz kontentni ko'rsating.
 
 ### Protokol dizayni
 
@@ -177,7 +179,7 @@ Xabarlar tuzilmasini oldindan belgilang: `type` maydoni ruxsat etilgan qiymatlar
 
 ### MessageChannel va uzun suhbat
 
-Ikki taraf ko'p xabar almashsa, handshake bosqichida `MessageChannel` yaratib, bitta port'ni yuborish mumkin: keyingi xabarlar faqat shu port orqali ketadi va umumiy `window.onmessage` kanali ochiq qolmaydi. Handshake xabarini baribir origin va source bilan tekshirish kerak. Bu texnika ixtiyoriy; oddiy holatda to'g'ri tekshirilgan `message` handler yetarli.
+Ikki taraf ko'p xabar almashsa, handshake bosqichida `MessageChannel` yaratib, bitta port'ni yuborish mumkin. HTML Standard'ga ko'ra kanalning ikkita port'i bor va bir port orqali yuborilgan ma'lumotni faqat ikkinchi port qabul qiladi. Port `postMessage(xabar, targetOrigin, [port2])` ning transfer ro'yxati orqali uzatiladi (uzatilgandan keyin yuboruvchi uni ishlata olmaydi), qabul tomonda u `event.ports` da keladi. Keyingi suhbat shu juft port orqali ketadi; `window` ning umumiy `message` kanali bundan yopilib qolmaydi, u boshqa jo'natuvchilardan xabar olishda davom etadi, shuning uchun uni baribir tekshirasiz. Handshake xabarini baribir origin va source bilan tekshirish kerak. Bu texnika ixtiyoriy; oddiy holatda to'g'ri tekshirilgan `message` handler yetarli.
 
 ## Misol: vidjet va panel
 
@@ -207,6 +209,8 @@ P1
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu postMessage orqali XSS usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Vidjet yuborgan "mashina nomi" aslida `<img onerror=...>`. Handler uni `innerHTML` ga yozdi va `onerror` kodi (`P1` ni konsolga yozuvchi zararsiz o'quv kodi) ota sahifa origin'ida ishladi. Haqiqiy hujumda bu joyda dispetcher sessiyasi nomidan so'rovlar bo'lardi. Handler origin'ni umuman tekshirmagani uchun xabarni istalgan oyna yuborishi mumkin edi: sahifani `window.open` bilan ochgan boshqa sayt ham, sahifaga joylashtirilgan boshqa iframe ham.
 

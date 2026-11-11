@@ -258,6 +258,8 @@ console.log("header bilan:", listVehiclesWeak({ headers: { "x-tenant-id": "beta"
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu tenant header'ini soxtalashtirish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi "alfa" ning qonuniy foydalanuvchisi. U brauzer yoki `curl` orqali so'rovga `x-tenant-id: beta` header'ini qo'shadi. Server header'ni session'dan ustun qo'yadi:
 
 ```text

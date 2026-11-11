@@ -5,8 +5,14 @@ title: "Brauzer storage: token qayerda saqlanadi"
 summary: "localStorage, sessionStorage, cookie va xotiradagi (in-memory) saqlash xavflari, nima uchun XSS bo'lganda localStorage'dagi token o'g'irlanishi, HttpOnly cookie va BFF yondashuvi, hamda bu yechimlarning qoldiq riskleri."
 duration: 40
 sources:
+  - id: fastify-cookie
+    note: "@fastify/cookie README: maxAge soniyada"
+  - id: express-res
+    note: "Express 5.x res.cookie: maxAge millisekundda; @fastify/cookie da esa soniyada"
   - id: cs-session
     note: "Session Management Cheat Sheet: localStorage va sessionStorage'da autentifikatsiya token'larini saqlamaslik, HttpOnly cookie yoki BFF tavsiyasi, Web Workers bo'limi"
+  - id: rfc10017
+    note: "RFC 10017 (BCP 212) 8.3-bo'lim: refresh token'ni Web Worker'da ajratish mumkin, lekin hujumchi yangi Authorization Code oqimi bilan o'z token'ini olishiga bu to'sqinlik qilmaydi"
   - id: mdn-cookies
     note: "MDN Cookies: HttpOnly va Secure atributlari, cookie'ning brauzer tomonidan avtomatik yuborilishi"
   - id: mdn-sop
@@ -213,7 +219,7 @@ Birinchi rejimda skript tokenni o'qib oldi (`exfiltrated`) va hujumchi uni istal
 
 Tokenni faqat JS o'zgaruvchisida tutish va sahifa yangilanganda qayta olish (masalan, cookie bilan refresh) yondashuvi bor. Cheat sheet Web Worker haqida alohida bo'lim beradi: worker sirni xotirada ushlab, asosiy oynaga qaytarmasa, mavjud sirga to'g'ridan-to'g'ri kirish kamayadi, lekin bu XSS'dan himoya qilmaydi, chunki zararli kod worker orqali sirga bog'liq amallarni so'rab, natijani o'qiy oladi. Brauzer kodiga sir kerak bo'lmasa, HttpOnly cookie yoki sirni backend ushlashi afzal.
 
-Cheat sheet worker haqida yana bir cheklovni qayd etadi: refresh token'ni alohida ajratib qo'yish zararli kodning boshqa authorization oqimi orqali yangi token olishiga to'sqinlik qilmaydi (OAuth brauzer ilovalari ko'rsatmasi, 8.3-bo'lim). Worker faqat brauzer kodiga sirga bog'liq amallar haqiqatan kerak bo'lganda mantiqli; bunda xabar interfeysini tor qiling va ruxsatni serverda tekshiring. Worker sirni sahifa yangilanganda saqlamaydi, shuning uchun uni faqat qayta tiklanishi shart bo'lmagan sirlar uchun ishlating.
+Cheat sheet worker haqida yana bir cheklovni qayd etadi: refresh token'ni alohida ajratib qo'yish zararli kodning boshqa authorization oqimi orqali yangi token olishiga to'sqinlik qilmaydi (RFC 10017, "OAuth 2.0 for Browser-Based Applications", BCP 212, 8.3-bo'lim: refresh token'ni worker'da saqlash hujumchining yangi Authorization Code oqimini ishga tushirib o'z token'ini olishiga to'sqinlik qilmaydi). Worker faqat brauzer kodiga sirga bog'liq amallar haqiqatan kerak bo'lganda mantiqli; bunda xabar interfeysini tor qiling va ruxsatni serverda tekshiring. Worker sirni sahifa yangilanganda saqlamaydi, shuning uchun uni faqat qayta tiklanishi shart bo'lmagan sirlar uchun ishlating.
 
 ### Boshqa storage turlari
 
@@ -276,6 +282,8 @@ localStorage'da token bor: true
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu XSS orqali tokenni o'g'irlash usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Saytda stored XSS bor. Kiritilgan skript localStorage'ni o'qiydi, tokenni hujumchi serveriga yuboradi (bu yerda faqat o'qilgan qiymatni ko'rsatamiz):
 

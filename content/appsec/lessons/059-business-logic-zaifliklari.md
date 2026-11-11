@@ -15,6 +15,10 @@ sources:
     note: "ASVS 5.0 V2: 2.1.3 (biznes limitlar hujjatlashtirilishi), 2.2.1-2.2.3 (kiritishni biznes kutilmasi bo'yicha va ishonchli qatlamda tekshirish, bog'liq maydonlar), 2.3.1 (qadamlar ketma-ketligi), 2.3.2 (limitlar), 2.3.3-2.3.4 (biznes darajasidagi tranzaksiya va qulf), 2.3.5 (yuqori qiymatli oqimlar uchun ko'p foydalanuvchi tasdig'i), 2.4.1-2.4.2 (anti-automation, inson tezligi). V8: 8.1.1-8.1.2 (qoidalar holat va atributga bog'liq bo'lishi mumkin), 8.2.1-8.2.2 (funksiya va ma'lumot darajasi)"
   - id: api-top10
     note: "API6:2023 Unrestricted Access to Sensitive Business Flows: xavfli oqim misollari (sotib olish, izoh/post, rezervatsiya), ikki qatlamli rejalash (biznes va muhandislik), qurilma barmoq izi, inson aniqlash, g'ayriinsoniy andozalar, B2B API'lar"
+  - id: nestjs-validation
+    note: "NestJS Validation: ValidationPipe class-validator dekoratorlari bilan e'lon qilingan DTO'larni tekshiradi va app.useGlobalPipes(new ValidationPipe()) bilan ulanadi; pipe ulanmasa dekoratorlar tekshiruv bajarmaydi"
+  - id: class-validator
+    note: "class-validator manbasi (v0.15.1): IsString, IsInt, Min, Max, IsOptional dekoratorlari mavjud; dekoratorlar metadata qo'shadi, tekshiruvni validator (NestJS'da ValidationPipe) bajaradi"
   - id: prisma-error-reference
     note: "Prisma ORM 7 xato ma'lumotnomasi: P2002 kodi (Unique constraint failed). Prisma ORM 8 release candidate'da P2002 uslubidagi kodlar yo'q, unique buzilishi error.sqlState 23505 bilan keladi"
 quiz:
@@ -225,6 +229,8 @@ oddiy xarid: 200
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu business logic suiiste'moli usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi servis kodini o'zgartirmaydi, faqat so'rovni qo'lda tuzadi:
 
 ```ts run
@@ -382,6 +388,8 @@ export class OrdersService {
   }
 }
 ```
+
+`@IsInt() @Min(1) @Max(10)` kabi dekoratorlar o'zi hech narsani rad etmaydi: ular metadata qo'shadi, tekshiruvni `ValidationPipe` bajaradi. NestJS hujjatiga ko'ra pipe ilova darajasida ulanadi (`app.useGlobalPipes(new ValidationPipe())`), shunda har endpoint himoyalanadi. Pipe ulanmagan bo'lsa, `qty` uchun `1000` yoki `-5` ham servisga yetib keladi. Qo'shimcha maydon (masalan `price`) `whitelist` bo'lmasa DTO'da qoladi, shuning uchun sozlamalar 72-darsda keltirilgan: `whitelist: true`, `forbidNonWhitelisted: true`, `transform: true`.
 
 Kod Prisma ORM 7 API'siga mos: uning hujjatida `Prisma.PrismaClientKnownRequestError` va `e.code === "P2002"` unique constraint buzilishini tutish uchun ko'rsatilgan, `updateMany` esa `{ count }` qaytaradi. Prisma ORM 8 release candidate'da P2002 uslubidagi kodlar hali yo'q, u yerda unique buzilishi `error.sqlState === "23505"` bilan keladi. `updateMany` ichidagi `status: "paid"` sharti tekshiruv va yangilashni bitta operatsiyaga birlashtiradi, bu keyingi darsning asosiy g'oyasi.
 

@@ -11,6 +11,8 @@ sources:
     note: "API4:2023 'How To Prevent': kiruvchi parametr va payload'lar uchun maksimal o'lcham (satr uzunligi, massiv elementlari soni, fayl hajmi) va qaytariladigan yozuvlar sonini boshqaruvchi parametrni server tomonda tekshirish; API3:2023 xossa darajasidagi avtorizatsiya"
   - id: asvs
     note: "ASVS 5.0.0 V2 Validation and Business Logic va V4 API and Web Service bo'limlari mavzuga yaqin; dars aniq talab raqamlarini keltirmaydi"
+  - id: fastify-validation
+    note: "Fastify Validation and Serialization: baseline Ajv sozlamalari coerceTypes: 'array', useDefaults: true, removeAdditional: true, allErrors: false (true bo'lsa DoS mumkin)"
   - id: nestjs-validation
     note: "NestJS Validation: ValidationPipe opsiyalari (whitelist, forbidNonWhitelisted, forbidUnknownValues, transform, disableErrorMessages); auto-transformation primitiv turlarni o'giradi; Zod sxemalari uchun z.object strip, z.strictObject rad etish, z.looseObject saqlash"
 quiz:
@@ -211,6 +213,8 @@ console.log("nuqtalar soni:", g.points.length);
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu validatsiyasiz maydonlar orqali yuborish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) va 278-5-moddasi (Kompyuter sabotaji) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 "alfa" tenant foydalanuvchisi o'z so'rovida uchta narsani qo'shdi: `tenant: "beta"` (yozuvni boshqa tenant'ga yozish), `radiusM: "1e9"` (mantiqsiz radius) va 20 000 nuqta. Natija:
 
 ```text
@@ -337,7 +341,7 @@ check("limit='10' (satr) rad etiladi", () => parsePage({ limit: "10" }).ok === f
 
 ## Stack'da: NestJS, Fastify va Prisma
 
-NestJS'da kirish DTO va `app.useGlobalPipes(new ValidationPipe(...))` orqali tekshiriladi; pipe `class-validator` va `class-transformer` ustida ishlaydi, dekoratorlar esa sxema vazifasini bajaradi. Xavfsizlik uchun muhim sozlamalar: `whitelist: true` (dekoratorsiz xossalar olib tashlanadi), `forbidNonWhitelisted: true` (olib tashlash o'rniga xato), `transform: true` (payload DTO sinfiga aylanadi va primitiv turlar o'giriladi; bu coercion, ya'ni uni bilib yoqing). `disableErrorMessages: true` validatsiya xabarlarini mijozga qaytarmaydi (78-dars). `forbidUnknownValues` esa noma'lum obyektni tekshirishga urinish darhol muvaffaqiyatsiz bo'lishini belgilaydi. NestJS hujjati Zod kabi Standard Schema sxemalari uchun alohida pipe ham beradi. Fastify JSON Schema bilan ishlaydi: sxema route'ga beriladi, tekshiruvdan o'tmagan so'rov handler'ga yetmaydi; uning Ajv standart sozlamalari tur o'girish va qo'shimcha xossalarni olib tashlashni yoqadi, shuning uchun o'z shartnomangizga mos holda test yozing: noma'lum maydon, satr o'rniga son va juda uzun massiv yuboring.
+NestJS'da kirish DTO va `app.useGlobalPipes(new ValidationPipe(...))` orqali tekshiriladi; pipe `class-validator` va `class-transformer` ustida ishlaydi, dekoratorlar esa sxema vazifasini bajaradi. Dekoratorlar o'zi tekshirmaydi: `ValidationPipe` ulanishi shart, NestJS hujjati uni ilova darajasida (`app.useGlobalPipes(new ValidationPipe())`) bog'lashni tavsiya qiladi, shunda har endpoint himoyalanadi; pipe ulanmagan route'da DTO faqat tur annotatsiyasi bo'lib qoladi. Xavfsizlik uchun muhim sozlamalar: `whitelist: true` (validatsiya dekoratori yo'q xossalar olib tashlanadi), `forbidNonWhitelisted: true` (olib tashlash o'rniga xato; `whitelist` bilan birga beriladi), `transform: true` (payload DTO sinfiga aylanadi va primitiv turlar o'giriladi, masalan `@Param('id') id: number` uchun satr songa o'giriladi; bu coercion, ya'ni uni bilib yoqing). `disableErrorMessages: true` validatsiya xabarlarini mijozga qaytarmaydi (78-dars). `forbidUnknownValues` noma'lum obyektni tekshirishga urinish darhol muvaffaqiyatsiz bo'lishini belgilaydi; class-validator hujjati uning sukut bo'yicha `true` ekanini aytadi va `false` qilsa noma'lum obyektlar tekshiruvdan o'tib ketishi haqida ogohlantiradi. Zod kabi sxema kutubxonalari uchun NestJS `StandardSchemaValidationPipe` beradi: unda `z.object()` noma'lum xossalarni olib tashlaydi (`whitelist` kabi), `z.strictObject()` rad etadi (`forbidNonWhitelisted` kabi). Fastify JSON Schema bilan ishlaydi: sxema route'ga beriladi, tekshiruvdan o'tmagan so'rov handler'ga yetmaydi; Fastify hujjatiga ko'ra uning baseline Ajv sozlamasi `coerceTypes: 'array'` (qiymat sxemadagi `type` ga o'giriladi), `useDefaults: true` (yo'q xossa `default` bilan to'ldiriladi) va `removeAdditional: true` (sxemada `additionalProperties: false` bo'lsa, qo'shimcha xossalar rad etilmay, jimgina olib tashlanadi) qiymatlarini beradi; hujjat o'zi bu xatti-harakatni loyiha talabiga mosligini tekshirishni tavsiya qiladi. Shuning uchun o'z shartnomangizga mos holda test yozing: noma'lum maydon, satr o'rniga son va juda uzun massiv yuboring.
 
 ```ts
 import { IsInt, IsNumber, IsString, Max, MaxLength, Min, ValidateNested, ArrayMaxSize, ArrayNotEmpty } from "class-validator";

@@ -371,6 +371,8 @@ yuklangan fayl turi: text/html
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu SSL stripping va MIME sniffing namunasi faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Ochiq Wi-Fi'da tinglovchi `http://` so'rovni ko'radi va redirectni o'zgartirib, foydalanuvchini soxta sahifaga olib borishi mumkin (SSL stripping). Ikkinchi qatorda foydalanuvchi yuklagan "matn fayli" brauzerda HTML sifatida talqin qilinadi: ichidagi skript sahifa kontekstida ishlaydi. Natija (1-qismdagi kodning chiqishi):
 
 ```text

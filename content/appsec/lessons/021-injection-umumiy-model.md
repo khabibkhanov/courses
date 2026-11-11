@@ -277,6 +277,8 @@ natija:   [ '01 A 111 AA (alfa)' ]
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu injection namunasi faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi "alfa" foydalanuvchisi. U davlat raqami maydoniga o'z mashinasi raqamini emas, quyidagini yuboradi: `x' OR tenant = 'beta' --`. Yig'ilgan matn `... WHERE plate = 'x' OR tenant = 'beta' --' AND tenant = 'alfa'` bo'ladi. Lekser birinchi `'` dan keyin `x` ni satr deb o'qiydi, `'` satrni yopadi, `OR` va `tenant = 'beta'` esa endi ma'lumot emas, kod, `--` esa tenant shartini izohga aylantiradi.
 
 ```ts run

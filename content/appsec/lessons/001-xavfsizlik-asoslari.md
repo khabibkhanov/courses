@@ -249,6 +249,8 @@ console.log("3) Mavjudlik, qaytgan qatorlar:", listReadingsWeak("Infinity").leng
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu maxfiylik, yaxlitlik va mavjudlikni buzish namunalari faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) va 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi "alfa" kompaniyasining oddiy foydalanuvchisi, ya'ni tizimga kirgan va o'z mashinalarini ko'rishga haqli. Uning uchta harakati kodning o'zida: mashina identifikatorini `v2` ga almashtirish, yoqilg'i qiymati sifatida `-500` yuborish va `limit` ga `Infinity` yozish. Natija:
 
 ```text

@@ -230,6 +230,8 @@ Klient tomonida DOM-based variant ham shunday. Pastdagi sahifa URL fragmentini (
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu XSS namunasi faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Birinchi blokda hujumchi `q` ga `<img src=x onerror=alert(1)>` yuboradi, ikkinchisida izoh matniga `<svg onload=alert(1)>`. Render funksiyasi bularni tag sifatida qaytaradi:
 
 ```text

@@ -234,6 +234,8 @@ Salom, Ali! Hisobingiz tayyor.
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu template injection usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi "alfa" foydalanuvchisi, profil ismiga oddiy ism emas, template ifodasi yozadi. Xat yuborilganda server uni ifoda sifatida baholaydi. Faqat shu o'quv engine'iga qarshi.
 
 ```ts run

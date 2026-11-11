@@ -226,6 +226,8 @@ Algoritm to'g'ri (AES-GCM, tasodifiy nonce), lekin kalit boshqaruvi yo'q: kalit 
 
 ### Hujum
 
+> **Ta'lim maqsadida.** Bu kalitni kod va zaxira nusxadan olish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi bazaning zaxira nusxasini oldi (bu faqat shifrmatnlar) va repozitoriyga o'qish huquqini oldi (u yerda `KEY_TEXT`). Quyidagi blok shu o'quv kodining o'zi bilan hujumni ko'rsatadi: kalit kod ichidan olinadi.
 
 ```ts run

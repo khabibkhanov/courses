@@ -5,16 +5,18 @@ title: "Lockfile, provenance, SBOM va SLSA"
 summary: "Artefakt qayerdan va qanday yig'ilgani isbotlanadigan bo'lishi: provenance attestation, SBOM bilan 'qaysi servisda bu komponent bor' savoliga javob, SLSA tilidagi build kafolatlari va ularning chegaralari."
 duration: 45
 sources:
-  - id: slsa
-    note: "SLSA v1.1 (slsa.dev/spec/v1.1/levels): Build track L0-L3 (L1 provenance mavjud, L2 hosted platforma va imzolangan provenance, L3 mustahkamlangan build) va har darajaning himoya doirasi; v1.1 da L4 yo'q. Provenance terminologiyasi korpusdagi SLSA matniga mos"
+  - id: slsa-v1-2
+    note: "SLSA v1.2 (slsa.dev/spec/v1.2, holati Approved, 2025-yil 24-noyabrda e'lon qilingan, v1.1 bilan orqaga mos): Build track L0-L3 (L1 provenance mavjud, L2 hosted platforma va imzolangan provenance, L3 mustahkamlangan build) va har darajaning himoya doirasi; v1.2 da Build L4 yo'q; v1.2 Source Track qo'shgan; v1.1 hozir Retired deb belgilangan. Provenance terminologiyasi korpusdagi SLSA matniga mos"
   - id: npm-provenance
-    note: "npm provenance mavzusi; aniq buyruq matni korpusda yo'q. Verified: npm audit signatures provenance attestation'larni ham tekshiradi (npm-audit hujjati) va trusted publishing provenance'ni avtomatik yaratadi (OWASP NPM cheat sheet)"
+    note: "npm 'Generating provenance statements' sahifasi (o'qilgan): provenance faqat GitHub Actions yoki GitLab CI/CD ning bulutdagi runner'idan yig'ilganda hosil bo'ladi; GitHub'da id-token: write ruxsati va `npm publish --provenance` (yoki publishConfig/.npmrc/NPM_CONFIG_PROVENANCE) kerak; npm CLI 9.5.0 yoki yangiroq; package.json'dagi public repository maydoni publish qilinayotgan repozitoriyga mos bo'lishi shart; trusted publishing ishlatilsa provenance avtomatik; `npm audit signatures` registry imzolari va attestation'larni tekshiradi"
   - id: t10-a03
     note: "A03:2025: SBOM'ni markaziy yaratish, artefakt yaxlitligi provenance, imzo va timestamp orqali, artefaktni har muhit uchun qayta yig'masdan promote qilish"
   - id: cs-sbom
     note: "OWASP Dependency Graph SBOM Cheat Sheet: SBOM tarkibi, har release uchun yaratish, SBOM va artefakt digest'ini imzolangan attestation bilan bog'lash, inventardan zaiflikka javobda foydalanish"
   - id: asvs
     note: "ASVS 5.0.0 V15.1.2: uchinchi tomon kutubxonalari inventari (masalan SBOM) yuritiladi va komponentlar oldindan belgilangan ishonchli repozitoriylardan keladi"
+  - id: npm-trusted-publishers
+    note: "npm trusted publishing hujjati: qo'llab-quvvatlanadigan provayderlar GitHub Actions (GitHub-hosted runner), GitLab CI/CD (GitLab.com shared runner) va CircleCI (cloud); GitHub'da id-token: write shart; npm CLI 11.5.1+ va Node 22.14.0+; provenance GitHub Actions va GitLab uchun avtomatik, public repozitoriy va public paket talab qilinadi, CircleCI uchun provenance yo'q; self-hosted runner'lar hozircha qo'llab-quvvatlanmaydi"
 quiz:
   - q: "Artefakt uchun provenance attestation: digest, builder, repo va commit imzolangan. Deploy faqat imzoni tekshiradi, boshqa siyosat yo'q. Hujumchi o'z fork'ida CI orqali artefakt yig'ib, shu CI'ning haqiqiy imzosini oldi. Deploy nima qiladi?"
     options:
@@ -152,7 +154,7 @@ Ko'p jamoada bu savollarga javob "bilmaymiz, ammo ehtimol shundaydir" bo'ladi. A
 
 OWASP Top 10:2025 ning A03 Software Supply Chain Failures kategoriyasi aynan shu yaxlit tasvirni talab qiladi: gap faqat bog'liqlik ro'yxatida emas, zanjirning har bir bo'g'inini tekshirishda. Bu darsda uch vositani ko'ramiz: provenance (artefaktning kelib chiqishi), SBOM (tarkib inventari) va SLSA (shu kafolatlarni darajalarga ajratuvchi framework).
 
-Bu darsda SLSA v1.1 ga tayanamiz: unda faqat Build track bor, darajalari L0 dan L3 gacha. Keyingi versiya (v1.2) Source track qo'shgan; ushbu dars uni qamramaydi.
+Bu darsda SLSA v1.2 ga tayanamiz: u hozirgi tasdiqlangan (Approved) versiya, 2025-yil noyabrda e'lon qilingan va v1.1 bilan orqaga mos; v1.1 SLSA sahifasida hozir Retired deb belgilangan. v1.2 ikkita track beradi: Build (darajalari L0 dan L3 gacha, Build L4 yo'q) va v1.1 da bo'lmagan Source track. Build track tavsifi v1.1 dagi bilan bir xil. Ushbu dars faqat Build trackni qamraydi; Source track 98-darsda xz holati bilan bog'lanadi.
 
 ## Asosiy g'oya
 
@@ -177,7 +179,7 @@ SBOM ikkita narsani bermaydi. Birinchi, u komponent xavfsiz ekanini aytmaydi: fa
 
 SLSA (Supply-chain Levels for Software Artifacts) o'zini supply chain xavfsizligini bosqichma-bosqich yaxshilash uchun spetsifikatsiya deb ta'riflaydi; u o'sib boruvchi kafolatlarni darajalar bilan tasvirlaydi. SLSA'da provenance deganda artefaktni murakkab zanjir orqali manbagacha kuzatish mumkin bo'lgan tekshiriladigan ma'lumot tushuniladi: u qayerda, qachon va qanday ishlab chiqarilganini tasvirlaydi. Build provenance build natijasini uni hosil qilgan manba kodga bog'laydi.
 
-SLSA v1.1 Build track jadvali:
+SLSA v1.2 Build track jadvali:
 
 | Daraja | Talab | Nimaga qarshi |
 |---|---|---|
@@ -235,7 +237,7 @@ Ikkinchi chegara: siyosat kim tomonidan yozilgani. Agar deploy "har qanday haqiq
 
 ### npm tizimida provenance
 
-npm CLI hujjati `npm audit signatures` buyrug'i registry imzolarini tekshirishini va yuklab olingan paketlarning provenance attestation'larini ham tekshirishini aytadi; shuningdek attestation formati vaqt o'tishi bilan o'zgarishi mumkinligi uchun eng yangi npm CLI ishlatish kerakligini eslatadi (bu ko'pincha Node.js bilan birga kelgan npm'dan yangiroq versiyani anglatadi). OWASP NPM Cheat Sheet paketni e'lon qilish uchun uzoq muddatli token o'rniga OIDC asosidagi trusted publishing'ni tavsiya qiladi: har e'lon qisqa muddatli, workflow'ga xos credential bilan bo'ladi, va trusted publishing orqali e'lon qilinganda npm provenance attestation'ni avtomatik hosil qiladi. Bu 81-darsdagi Shai-Hulud tavsifiga to'g'ridan-to'g'ri javob: u token'larni topib, ular orqali yangi versiyalar yuborgan.
+npm CLI hujjati `npm audit signatures` buyrug'i registry imzolarini tekshirishini va yuklab olingan paketlarning provenance attestation'larini ham tekshirishini aytadi; shuningdek attestation formati vaqt o'tishi bilan o'zgarishi mumkinligi uchun eng yangi npm CLI ishlatish kerakligini eslatadi (bu ko'pincha Node.js bilan birga kelgan npm'dan yangiroq versiyani anglatadi). OWASP NPM Cheat Sheet paketni e'lon qilish uchun uzoq muddatli token o'rniga OIDC asosidagi trusted publishing'ni tavsiya qiladi: har e'lon qisqa muddatli, workflow'ga xos credential bilan bo'ladi, va trusted publishing orqali e'lon qilinganda npm provenance attestation'ni avtomatik hosil qiladi. npm trusted publishing hujjati shartlarni aniqlashtiradi: qo'llab-quvvatlanadigan provayderlar GitHub Actions (GitHub-hosted runner), GitLab CI/CD (GitLab.com shared runner) va CircleCI (cloud); self-hosted runner'lar hozircha yo'q. GitHub Actions'da workflow'da `id-token: write` ruxsati shart, kerakli minimal versiyalar npm CLI 11.5.1 va Node 22.14.0. Provenance GitHub Actions va GitLab uchun `--provenance` bayrog'isiz avtomatik hosil bo'ladi, lekin public repozitoriy va public paket talab qilinadi; CircleCI orqali e'lon qilingan paketda provenance attestation bo'lmaydi, private repozitoriydan ham provenance berilmaydi. `--provenance` bayrog'i bilan oddiy (tokenli) e'lon qilinsa ham provenance olish mumkin, ammo bunda ham bulutdagi qo'llab-quvvatlanadigan CI kerak (npm provenance hujjati). Bu 81-darsdagi Shai-Hulud tavsifiga to'g'ridan-to'g'ri javob: u token'larni topib, ular orqali yangi versiyalar yuborgan.
 
 ### SBOM: nima yozilishi kerak va nimani aytmaydi
 
@@ -273,6 +275,8 @@ console.log(deployWeak(fromLaptop));
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu artefaktni almashtirish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-6-moddasi (Zarar keltiruvchi dasturlar) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi (yoki shoshilgan dasturchi) artefaktni o'z noutbugida yig'adi va registry'ga yuklaydi. Deploy farqni ko'rmaydi:
 
@@ -340,7 +344,7 @@ Nima yopildi: attestation'siz artefakt, boshqa baytlarga ko'chirilgan attestatio
 
 ## Stack'da: GitHub Actions, npm, Docker
 
-- Paketni e'lon qilsangiz: OIDC asosidagi trusted publishing va u hosil qiladigan provenance (yuqorida). Iste'molchi tomonida `npm audit signatures` CI qadami sifatida. OWASP cheat sheet qaysi CI provayderlar qo'llab-quvvatlanishini npm trusted publishing hujjatidan tekshirishni aytadi.
+- Paketni e'lon qilsangiz: OIDC asosidagi trusted publishing va u hosil qiladigan provenance (yuqorida). Iste'molchi tomonida `npm audit signatures` CI qadami sifatida. Qo'llab-quvvatlanadigan CI provayderlar ro'yxati yuqorida keltirilgan (npm trusted publishing hujjati).
 - CI tomonida artefaktni yig'ish va imzolash bitta, ruxsati cheklangan pipeline'da bo'lishi kerak (85-dars); deploy esa shu pipeline'dan kelmagan artefaktni qabul qilmasligi kerak.
 - Docker image'lar uchun SBOM image darajasida olinadi (86-dars), chunki OS paketlari lockfile'da ko'rinmaydi.
 - Zaiflik oqimi (90-dars): SBOM → "qaysi servis" → KEV/EPSS bilan ustuvorlik → tuzatish.
@@ -352,4 +356,4 @@ Nima yopildi: attestation'siz artefakt, boshqa baytlarga ko'chirilgan attestatio
 - Provenance'ni deploy tekshirmasa, u hech narsani himoya qilmaydi. To'rt qadam: mavjudlik, imzo, digest, siyosat (builder va repo).
 - Haqiqiy imzo "to'g'ri manba" degani emas: siyosat alohida tekshiriladi.
 - SBOM zaiflik kunida tezlik beradi, lekin to'liqligi qaerdan olinganiga bog'liq va zararsizlikni kafolatlamaydi.
-- SLSA darajalari yo'l xaritasi: L1 xatolar uchun, L2 build'dan keyingi o'zgartirish uchun (imzolangan provenance, hosted platforma), L3 build davomidagi o'zgartirish uchun (SLSA v1.1 Build track).
+- SLSA darajalari yo'l xaritasi: L1 xatolar uchun, L2 build'dan keyingi o'zgartirish uchun (imzolangan provenance, hosted platforma), L3 build davomidagi o'zgartirish uchun (SLSA v1.2 Build track).

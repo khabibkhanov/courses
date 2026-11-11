@@ -268,6 +268,8 @@ console.log(render(BadgeWeak({ dangerouslySetInnerHTML: { __html: "<img src=x on
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu React'dagi XSS tuzoqlaridan foydalanish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Birinchi qatorda React'ning asosiy himoyasi ishlayapti: izoh matni kodlandi. Qolgan ikki holatda hujumchi komponentning o'ziga emas, unga beriladigan ma'lumotga ta'sir qiladi. Uchinchi qatordagi `javascript:` havolasi foydalanuvchi bosganda bajariladi. To'rtinchi qatorda hujumchi prop nomini ham tanladi: `dangerouslySetInnerHTML` kaliti "belgi" ma'lumotiga qo'shildi va komponent ichiga xom `<img onerror=...>` tushdi. Bunday zaiflik haqiqiy React loyihalarida API'dan kelgan sozlama obyektini `{...config}` qilib yoyishda uchraydi.
 
 ### 3. Tuzatilgan kod

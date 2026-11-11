@@ -312,6 +312,8 @@ console.log("1-so'rov (alfa):", handleWeak("alfa"));
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu RLS kontekstining qolib ketishidan foydalanish namunasi faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi hech narsa yubormaydi: u kirmagan (yoki autentifikatsiya xato bergan) so'rovni yuboradi, kod esa tenant'ni o'rnatmasdan so'rovni davom ettiradi. Oldingi so'rovdan qolgan qiymat pool'dagi ulanishda turibdi:
 
 ```ts run

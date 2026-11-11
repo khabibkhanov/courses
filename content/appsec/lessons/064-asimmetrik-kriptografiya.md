@@ -7,8 +7,8 @@ duration: 50
 sources:
   - id: t10-a04
     note: "A04:2025: 'How to prevent' ro'yxati (forward secrecy ciphers, PKCS#1 v1.5 kabi eskirgan sxemalardan qochish, post-quantum tayyorgarlik) va tekshiriladigan savollar (algoritm downgrade yoki aylanib o'tilishi)"
-  - id: rfc8446
-    note: "RFC 8446 1.2: statik RSA va Diffie-Hellman suitelari olib tashlangan, barcha ochiq kalit asosidagi kalit almashish forward secrecy beradi; 4.4.3 CertificateVerify: maxfiy kalitga egalikning aniq isboti va handshake yaxlitligi"
+  - id: rfc9846
+    note: "RFC 9846 (RFC 8446 ni bekor qilgan joriy TLS 1.3) 1.3: statik RSA va Diffie-Hellman suitelari olib tashlangan, barcha ochiq kalit asosidagi kalit almashish forward secrecy beradi; 4.5.2 CertificateVerify (RFC 8446 da 4.4.3): maxfiy kalitga egalikning aniq isboti va handshake yaxlitligi"
   - id: fips204
     note: "FIPS 204 abstract: raqamli imzo o'zgartirishni aniqlash va imzolovchini autentifikatsiya qilish uchun, ML-DSA kvant kompyuteriga qarshi ham xavfsiz deb hisoblanadi, non-repudiation"
   - id: asvs
@@ -185,7 +185,7 @@ ASVS 11.6.1 kalit generatsiyasi va imzo uchun faqat approved algoritm va rejimla
 
 ### Forward secrecy
 
-Kalit kelishishda ikki xil yondashuv bor. Statik: server doimiy kalit juftligi bilan umumiy sirni hisoblaydi; maxfiy kalit keyinroq oshkor bo'lsa, o'tmishda yozib olingan butun trafik ochiladi. Ephemeral: har sessiyada yangi kalit juftligi yaratilib, sessiya tugagach yo'q qilinadi; uzoq muddatli kalit keyin oshkor bo'lsa ham o'tgan sessiyalar ochilmaydi. Bu xususiyat forward secrecy deyiladi. TLS 1.3 shuni majburiy qilgan: RFC 8446 1.2 statik RSA va Diffie-Hellman suitelari olib tashlanganini va endi barcha ochiq kalit asosidagi kalit almashish mexanizmlari forward secrecy berishini yozadi (65-dars). OWASP A04 oldini olish ro'yxati ham forward secrecy (FS) shifrlarini talab qiladi.
+Kalit kelishishda ikki xil yondashuv bor. Statik: server doimiy kalit juftligi bilan umumiy sirni hisoblaydi; maxfiy kalit keyinroq oshkor bo'lsa, o'tmishda yozib olingan butun trafik ochiladi. Ephemeral: har sessiyada yangi kalit juftligi yaratilib, sessiya tugagach yo'q qilinadi; uzoq muddatli kalit keyin oshkor bo'lsa ham o'tgan sessiyalar ochilmaydi. Bu xususiyat forward secrecy deyiladi. TLS 1.3 shuni majburiy qilgan: RFC 9846 1.3 statik RSA va Diffie-Hellman suitelari olib tashlanganini va endi barcha ochiq kalit asosidagi kalit almashish mexanizmlari forward secrecy berishini yozadi (65-dars). OWASP A04 oldini olish ro'yxati ham forward secrecy (FS) shifrlarini talab qiladi.
 
 ## Chuqurroq: autentifikatsiyasiz almashish va imzoning chegarasi
 
@@ -221,7 +221,7 @@ Mallory Bob bilan umumiy sirga ega: true
 Alice va Bob sirlari bir xil: false
 ```
 
-Alice va Bob umumiy sirlari endi har xil, lekin ikkalasi ham o'zini xavfsiz deb hisoblaydi, Mallory esa har ikkisini ochib, trafikni uzatib turadi. Yechim: ochiq kalit haqiqatan kimniki ekanini tasdiqlash. TLS'da server o'z handshake'ini sertifikat bilan bog'langan kalit bilan imzolaydi; RFC 8446 4.4.3 CertificateVerify xabarini shunday ta'riflaydi: endpoint sertifikatga mos maxfiy kalitga egaligining aniq isboti, shuningdek handshake'ning shu paytgacha yaxlitligini ta'minlaydi. Sertifikat va ishonch zanjiri 66-darsda.
+Alice va Bob umumiy sirlari endi har xil, lekin ikkalasi ham o'zini xavfsiz deb hisoblaydi, Mallory esa har ikkisini ochib, trafikni uzatib turadi. Yechim: ochiq kalit haqiqatan kimniki ekanini tasdiqlash. TLS'da server o'z handshake'ini sertifikat bilan bog'langan kalit bilan imzolaydi; RFC 9846 4.5.2 CertificateVerify xabarini shunday ta'riflaydi: endpoint sertifikatga mos maxfiy kalitga egaligining aniq isboti, shuningdek handshake'ning shu paytgacha yaxlitligini ta'minlaydi. Sertifikat va ishonch zanjiri 66-darsda.
 
 ### Imzo nimani kafolatlaydi
 
@@ -261,6 +261,8 @@ qonuniy yangilanish qabul qilindi: true
 ```
 
 ### Hujum
+
+> **Ta'lim maqsadida.** Bu yangilanish faylini almashtirish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-4-moddasi (Kompyuter axborotini modifikatsiyalashtirish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi yangilanish serveriga yozish huquqini oldi (yoki qurilma va server orasidagi kanalni boshqaradi). U faylni o'zgartiradi va hash'ni qayta hisoblaydi. Bu faqat shu o'quv qurilmasi kodiga qarshi, maqsadli URL esa `example.test` zahiralangan domen.
 

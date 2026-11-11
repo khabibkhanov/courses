@@ -227,6 +227,8 @@ console.log("/admin/users:", handleWeak(driver, "GET", "/admin/users"));
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu admin yo'lini aylanib o'tish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Haydovchi `/admin/users` da 403 oladi. U yo'lning harf registrini o'zgartiradi yoki slash qo'shadi:
 
 ```ts run

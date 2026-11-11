@@ -6,7 +6,7 @@ summary: "Saltzer va Schroeder tamoyillari (fail-safe defaults, least privilege,
 duration: 40
 sources:
   - id: saltzer
-    note: "Saltzer va Schroeder maqolasi: axborotni himoya qiluvchi tizimlar dizayni uchun sakkiz tamoyil (economy of mechanism, fail-safe defaults, complete mediation, open design, separation of privilege, least privilege, least common mechanism, psychological acceptability)"
+    note: "Saltzer va Schroeder maqolasi: axborotni himoya qiluvchi tizimlar dizayni uchun sakkiz dizayn tamoyili misoli (economy of mechanism, fail-safe defaults, complete mediation, open design, separation of privilege, least privilege, least common mechanism, psychological acceptability) va fizik xavfsizlikdan olingan, kompyuter tizimlariga nomukammal mos keladigan work factor hamda compromise recording"
   - id: t10-a06
     note: "A06:2025 Insecure Design: dizayn nuqsonlari va implementatsiya nuqsonlari turli narsalar; secure design naqshlari va threat modeling kerakligi"
   - id: cs-secure-design
@@ -133,7 +133,7 @@ OWASP Secure Product Design Cheat Sheet ham shu yo'nalishda boshlanadi: xavfsiz 
 
 ### Saltzer va Schroeder tamoyillari
 
-"The Protection of Information in Computer Systems" maqolasi axborotni himoya qiladigan tizimlar dizayni uchun sakkiz tamoyil beradi. Ularni qisqa va amaliy ko'rinishda keltiramiz:
+"The Protection of Information in Computer Systems" maqolasi himoya mexanizmlariga xos sakkiz dizayn tamoyili misolini beradi; mualliflar ularni mutlaq qoida emas, ogohlantirish sifatida ishlatishni aytadi. Ularni qisqa va amaliy ko'rinishda keltiramiz:
 
 | Tamoyil | Ma'nosi | Avtopark platformasidagi misol |
 |---|---|---|
@@ -146,7 +146,7 @@ OWASP Secure Product Design Cheat Sheet ham shu yo'nalishda boshlanadi: xavfsiz 
 | Least common mechanism | Foydalanuvchilar o'rtasida umumiy mexanizm kam bo'lsin | Tenant'lar uchun umumiy kesh kaliti emas, tenant bo'yicha ajratilgan kalit |
 | Psychological acceptability | Xavfsizlik mexanizmi qulay bo'lsin, aks holda uni aylanib o'tadilar | Qiyin tiklash oqimi support'da "yo'l" paydo qiladi |
 
-Maqolada yana ikki fikr bor: work factor (hujumchining sarfi himoya xarajatiga nisbatan) va compromise recording (buzilishni yashirib bo'lmasligi). Ikkinchisi bugungi audit logning (79-dars) ildizi.
+Maqola sakkiz tamoyildan keyin fizik xavfsizlik tajribasidan olingan yana ikki tamoyilni nomlaydi: work factor (aylanib o'tish xarajatini potensial hujumchi resurslari bilan solishtirish) va compromise recording (buzilish bo'lganini ishonchli qayd etadigan mexanizm). Mualliflar ularni kompyuter tizimlariga "faqat nomukammal" qo'llanadi deydi: ko'p himoyani tizimli hujum sarfi bilan o'lchab bo'lmaydi, chunki hujumchi apparat nosozligini kutishi yoki implementatsiya xatosini topishi mumkin. Compromise recording haqida maqola "ba'zan taklif qilinadi" deydi: qayd to'liq oldini oluvchi mexanizmni almashtira oladi. Lekin kompyuter tizimlarida bu kam qo'llanishini yozadi, chunki aniqlanishni kafolatlash qiyin va aqlli hujumchi izlarni yo'q qila oladi. Bu g'oya bugungi audit logning (79-dars) ildizi, lekin maqola log'ni oldini olishning o'rnini bosadi demaydi.
 
 Defense in depth bu ro'yxatda yo'q. Bu umumiy muhandislik tamoyili: bir nechta mustaqil nazorat qatlami, bittasi buzilsa boshqasi ushlab qoladi. Mustaqillik muhim: ikki qatlam bir xil kalitga, bir xil kod yo'liga yoki bir xil xato bilan buzilsa, ular bitta qatlamdan farq qilmaydi.
 
@@ -237,6 +237,8 @@ console.log("__proto__ toString:", authorizeWeak("__proto__", "toString"));
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu rol jadvalidagi bo'shliqdan foydalanish namunasi faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi tizimga kirgan foydalanuvchi bo'lib, o'z rolini bilmagan yoki sozlamadagi xato tufayli noma'lum rol bilan kirgan (masalan, yangi rol qo'shilgan, lekin jadvalga kiritilmagan). Rol jadvalida yo'q bo'lgani uchun `permissions[role]` `undefined` qaytaradi, `.includes` xato tashlaydi, `catch` esa `true` qaytaradi:
 

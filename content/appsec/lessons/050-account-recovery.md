@@ -285,6 +285,8 @@ egasi tiklaydi: true
 
 ### Hujum
 
+> **Ta'lim maqsadida.** Bu tiklash tokenini taxmin qilish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi o'z email'iga tiklash so'rovini yuboradi, o'z tokenini ko'radi (`r-1002`). Qurbon so'rovi undan oldin yuborilgan edi; hujumchi tokenlar ketma-ket ekanini payqab, bittasi pastroqni sinaydi. Bu faqat shu o'quv kodiga qarshi.
 
 ```ts run

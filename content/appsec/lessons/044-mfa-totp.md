@@ -5,8 +5,10 @@ title: "Multi-factor authentication: TOTP, push va SMS xavflari"
 summary: "Ikkinchi faktor turlari va ularning hujumga chidamliligi: TOTP algoritmi (RFC 6238), qabul oynasi va replay'ni to'sish, secret saqlash, recovery kodlar, push charchatish hujumi va SMS'ning NIST'dagi cheklangan maqomi."
 duration: 45
 sources:
+  - id: rfc4226
+    note: "HOTP = Truncate(HMAC-SHA-1(K, C)) (5.2-bo'lim); kamida 6 raqamli kod (5.3); umumiy sir kamida 128 bit, 160 bit tavsiya etiladi (4-bo'lim, R6)"
   - id: rfc6238
-    note: "TOTP = HOTP(K, T), vaqt qadami standarti 30 soniya, HMAC-SHA-1 asosli HOTP; kalitlar tasodifiy va HMAC chiqishi uzunligida bo'lishi (SHOULD); tekshiruvchi muvaffaqiyatli tekshirilgan OTP'ning ikkinchi urinishini qabul qilmasligi (MUST NOT); tarmoq kechikishi uchun ko'pi bilan bir qadam oyna tavsiyasi; Appendix B test vektorlari"
+    note: "TOTP = HOTP(K, T), vaqt qadami standarti 30 soniya (4.1-bo'lim), HMAC-SHA-1 asosli HOTP; kalitlar tasodifiy va HMAC chiqishi uzunligida bo'lishi (SHOULD); tekshiruvchi muvaffaqiyatli tekshirilgan OTP'ning ikkinchi urinishini qabul qilmasligi (MUST NOT); tarmoq kechikishi uchun ko'pi bilan bir qadam oyna tavsiyasi (5.2-bo'lim, ikkalasi ham shu bo'limda); kalit HMAC chiqishi uzunligida bo'lishi tavsiya etiladi (5.1); Appendix B test vektorlari"
   - id: nist-63-4
     note: "SP 800-63B-4: out-of-band autentifikatsiyada email ishlatilmasligi; PSTN cheklangan (restricted) authenticator ekani, qabul qilish shartlari (alternativ, ogohlantirish, migratsiya rejasi) va SIM almashtirish kabi risk belgilari; out-of-band sir kamida olti o'nlik raqam, 10 daqiqa, bir martalik, yangi sir urinishlar hisobini nolga tushirmasligi; OTP verifier replay va rate limiting talablari; push yuborish tezligi/sonini cheklash (SHOULD); look-up secret kamida olti o'nlik raqam"
   - id: cs-authn
@@ -160,11 +162,11 @@ Bu darsda eng ko'p qo'llaniladigan ikkinchi faktor turi TOTP'ni mexanizm darajas
 
 ### TOTP qanday ishlaydi
 
-TOTP (Time-Based One-Time Password) RFC 6238 da tavsiflangan. U HOTP (RFC 4226) algoritmining variantidir: HOTP HMAC-SHA-1 ga asoslangan va hisoblagich qiymatini kalit bilan HMAC qilib, natijani foydalanuvchiga qulay qisqa raqamga kesadi. TOTP'da hisoblagich o'rniga vaqt qadami olinadi:
+TOTP (Time-Based One-Time Password) RFC 6238 da tavsiflangan. U HOTP (RFC 4226) algoritmining variantidir: HOTP (RFC 4226, 5.2-bo'lim) `Truncate(HMAC-SHA-1(K, C))` ko'rinishida: hisoblagich qiymatini kalit bilan HMAC qilib, natijani foydalanuvchiga qulay qisqa raqamga kesadi. TOTP'da hisoblagich o'rniga vaqt qadami olinadi:
 
 `TOTP = HOTP(K, T)`, bunda `T` boshlang'ich vaqtdan (odatda Unix epoch) beri o'tgan vaqt qadamlari soni. Standartdagi qadam uzunligi X = 30 soniya (sozlanuvchi parametr). Ya'ni 30 soniya davomida kod o'zgarmaydi, keyin yangisi chiqadi. Server va foydalanuvchi ilovasi ulashgan sirni (K) biladi, ikkalasi ham soatni ko'radi va bir xil kodni mustaqil hisoblaydi: tarmoq orqali hech narsa almashilmaydi.
 
-Standart yana ikkita muhim talabni belgilaydi. Birinchisi: kalitlar tasodifiy yoki kriptografik jihatdan kuchli tasodifiy generator bilan yaratilishi va HMAC chiqishi uzunligida bo'lishi tavsiya etiladi (SHOULD). SHA-1 uchun bu 20 bayt. Ikkinchisi: tekshiruvchi muvaffaqiyatli tekshirilgan OTP'ning ikkinchi urinishini qabul qilmasligi shart (MUST NOT). Chunki foydalanuvchi bir kodni qadam oynasi ichida bir necha marta yuborishi mumkin va aynan shu qadam bir martalikni ta'minlaydi.
+Standart yana ikkita muhim talabni belgilaydi. Birinchisi: kalitlar tasodifiy yoki kriptografik jihatdan kuchli tasodifiy generator bilan yaratilishi va HMAC chiqishi uzunligida bo'lishi tavsiya etiladi (SHOULD). SHA-1 uchun bu 20 bayt (160 bit); RFC 4226 umumiy sir uchun kamida 128 bitni talab qiladi (MUST) va 160 bitni tavsiya etadi. Ikkinchisi: tekshiruvchi muvaffaqiyatli tekshirilgan OTP'ning ikkinchi urinishini qabul qilmasligi shart (MUST NOT). Chunki foydalanuvchi bir kodni qadam oynasi ichida bir necha marta yuborishi mumkin va aynan shu qadam bir martalikni ta'minlaydi.
 
 ### Test vektori bilan tekshirish
 
@@ -339,6 +341,8 @@ birinchi kirish: true
 ```
 
 ### Hujum
+
+> **Ta'lim maqsadida.** Bu bir martalik kodni qayta yuborish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi foydalanuvchi kodni kiritayotganda uni ko'rib qoldi (yoki soxta sahifadan oldi) va o'quv serveriga qayta yuboradi.
 

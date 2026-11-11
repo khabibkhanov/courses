@@ -12,7 +12,7 @@ sources:
   - id: t10-a06
     note: "A06:2025 Insecure Design: yo'qolgan yoki samarasiz nazorat dizayni, dizayn va amalga oshirish nuqsonlarining farqi"
   - id: opa-docs
-    note: "OPA Introduction: OPA umumiy maqsadli policy engine, siyosat kod sifatida deklarativ tilda yoziladi, qaror qabul qilish majburlashdan ajratiladi, CNCF graduated loyiha"
+    note: "OPA Introduction: OPA umumiy maqsadli policy engine, siyosat kod sifatida deklarativ tilda yoziladi, qaror qabul qilish majburlashdan ajratiladi, CNCF graduated loyiha. REST API (Data API): undefined yo'l uchun 200 va `result` kaliti yo'q; style guide: `import rego.v1` OPA v0.59.0 dan"
   - id: cs-authz-patterns
     note: "Authorization Patterns Cheat Sheet: PEP/PDP/PAP/PIP, service-level va gateway enforcement, PDP deployment variantlari, PDP xato va timeout'larida rad etish"
   - id: cs-authz-data
@@ -266,6 +266,8 @@ PDP ishlayapti, begona: false
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu policy xizmatining ishdan chiqishidan foydalanish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) va 278-5-moddasi (Kompyuter sabotaji) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi PDP'ni ishdan chiqara olsa (masalan, uni ko'p so'rov bilan band qilib, yoki PDP'ning tarmoq yo'liga ta'sir qilib) yoki shunchaki PDP muammosi paytini kutsa, PEP hamma narsaga ruxsat beradi:
 
 ```ts run
@@ -378,6 +380,8 @@ export class PdpGuard implements CanActivate {
   }
 }
 ```
+
+OPA REST API hujjati (Data API, "Get a Document (with Input)"): so'rovdagi yo'l undefined hujjatga ishora qilsa, server 200 qaytaradi, lekin javobda `result` kaliti bo'lmaydi. Guard shuning uchun `result` yo'qligini ham rad deb hisoblaydi (`body.result === true` yoki `result.allow === true` bo'lmasa `false`). Yuqoridagi Rego'da `default allow := false` bo'lgani uchun `allow` har doim aniqlangan; default'siz qoida mos kelmasa `result` kaliti tushib qolardi. Rego sintaksisi: `import rego.v1` OPA 0.59.0 da kiritilgan va `if`, `in`, `every`, `contains` kalit so'zlarini yoqadi; OPA v1.x da bu sintaksis standart.
 
 Bu yerda `resource.tenant` PDP o'zi ishonchli ma'lumot manbasidan oladigan yoki PEP resurs yozuvidan o'qib beradigan qiymat bo'lishi kerak, mijozdan emas (cheat sheet talabi). Next.js'da server action va route handler'larda ham xuddi shu: har biri PEP bo'lib, natijani qo'llashdan oldin resursni ochmaydi (58-dars).
 

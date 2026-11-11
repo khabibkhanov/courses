@@ -226,6 +226,8 @@ sent.forEach((s, i) => console.log(`${i + 1}. ${s}`));
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu so'rov parametrlari orqali injection usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi "alfa" foydalanuvchisi, u faqat so'rov parametrlarini o'zgartiradi: `vehicleId` ga `x' OR '1'='1` va `sort` ga ikkinchi buyruqni yozadi. Birinchi qator oddiy so'rov, ikkinchisida filtr shartsiz bo'lib qolgan va qo'shimcha buyruq paydo bo'lgan:
 
 ```text

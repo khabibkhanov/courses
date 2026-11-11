@@ -5,6 +5,10 @@ title: "Cookie: Secure, HttpOnly, SameSite va prefikslar"
 summary: "Cookie qanday saqlanadi va yuboriladi, Secure, HttpOnly, SameSite, Domain va Path atributlari nimani himoya qiladi va nimani qilmaydi, __Host- va __Secure- prefikslari, subdomen orqali cookie tossing hujumi va uning tuzatilishi."
 duration: 45
 sources:
+  - id: express-res
+    note: "Express 5.x res.cookie: maxAge millisekundda (expires ga aylantiriladi), bu @fastify/cookie va NestJS setCookie bilan farq qiladi"
+  - id: fastify-cookie
+    note: "@fastify/cookie README: maxAge soniyada (Max-Age atributi), expires va maxAge ikkalasi berilsa maxAge ustun"
   - id: rfc6265
     note: "HTTP State Management Mechanism: Set-Cookie va Cookie header'lari, Domain, Path, Secure, HttpOnly atributlari va xavfsizlik mulohazalari"
   - id: rfc6265bis
@@ -130,10 +134,10 @@ Bu dars cookie atributlarini mexanizm darajasida ko'radi: har atribut aynan qays
 
 ### Cookie qanday ishlaydi
 
-Server `Set-Cookie: nom=qiymat; atribut; atribut` yuboradi. Brauzer uni saqlab, shartlarga mos har so'rovda `Cookie: nom=qiymat` qaytaradi. Asosiy hujjat RFC 6265; uning yangilanayotgan qoralamasi (rfc6265bis, `SameSite` va prefikslar shunda bayon qilingan) hozirgi brauzer xatti-harakatini aks ettiradi. Muhim xossalar:
+Server `Set-Cookie: nom=qiymat; atribut; atribut` yuboradi. Brauzer uni saqlab, shartlarga mos har so'rovda `Cookie: nom=qiymat` qaytaradi. Asosiy hujjat RFC 6265; uning yangilanayotgan qoralamasi (rfc6265bis, hali draft; `SameSite` va prefikslar shunda bayon qilingan) hozirgi brauzer xatti-harakatini aks ettirishga qaratilgan. Muhim xossalar:
 
 - Server brauzerning faqat `nom=qiymat` juftini ko'radi, atributlarni (Secure, Path, Domain) emas. Shu sababli server cookie qayerdan o'rnatilganini bila olmaydi.
-- Cookie origin emas, host (va Domain bo'lsa, uning subdomenlari) bilan bog'lanadi. RFC 6265 cookie'lar port va sxema bo'yicha izolyatsiya qilinmasligini o'zining xavfsizlik mulohazalarida yozadi: `http://app.fleet.example` va `https://app.fleet.example` bir cookie'ni ulashishi mumkin (Secure bo'lmasa).
+- Cookie origin emas, host (va Domain bo'lsa, uning subdomenlari) bilan bog'lanadi. RFC 6265 cookie'lar port va sxema bo'yicha izolyatsiya qilinmasligini o'zining xavfsizlik mulohazalarida yozadi (qoralamaning "Weak Confidentiality" bo'limi buni takrorlaydi va bir host'dagi o'zaro ishonmaydigan xizmatlarni turli portlarda cookie bilan ishlatmaslikni tavsiya qiladi): `http://app.fleet.example` va `https://app.fleet.example` bir cookie'ni ulashishi mumkin (Secure bo'lmasa).
 - Bir nomdagi cookie turli Domain/Path bilan bir vaqtda bir nechta bo'lishi mumkin; brauzer hammasini yuboradi. RFC 6265 uzunroq `Path` li cookie'ni oldinroq qo'yishni belgilaydi, lekin server bu tartibga tayanmasligi kerak: qaysi biri o'qilishi framework'ga bog'liq.
 
 Bu cookie'larni origin chegarasiga tayanadigan SOP (12-dars) dan farqli qiladi. Cookie modeli tarixan oldin paydo bo'lgan va shuning uchun sxema, port va subdomen bo'yicha "yumshoq". Hozirgi atributlar shu bo'shliqlarni to'ldirishga urinadi.
@@ -159,14 +163,14 @@ Bu cookie'larni origin chegarasiga tayanadigan SOP (12-dars) dan farqli qiladi. 
 - `Lax`: cross-site so'rovlarda yuborilmaydi, lekin yuqori darajali navigatsiyada va xavfsiz metodlarda (masalan, havola bosilganda GET) yuboriladi.
 - `None`: cross-site so'rovlarda ham yuboriladi; brauzerlar buni `Secure` bilan talab qiladi.
 
-MDN bo'yicha ba'zi brauzerlar atribut yozilmaganda `Lax` ni standart qiladi, lekin bu yumshoqroq variant: cookie o'rnatilganiga ikki daqiqadan oshmagan bo'lsa, cross-site `POST` so'rovlarga ham qo'shiladi. Bu brauzerga bog'liq xatti-harakat, unga tayanmang: `SameSite` ni har doim aniq yozing. Yana bir muhim narsa: "site" tushunchasi (12-dars) subdomenlarni ichiga oladi. `SameSite=Strict` cookie `blog.fleet.example` dan boshlangan so'rovda ham yuboriladi, chunki ular same-site. SameSite faqat boshqa saytlardan himoya qiladi, kompaniya ichidagi bo'lgan subdomenlardan emas.
+rfc6265bis qoralamasi (u hali RFC emas, draft) `SameSite` yozilmagan yoki noma'lum qiymatli cookie'ga "Default" belgisini beradi va uni `Lax` kabi qo'llashni talab qiladi; MDN ham atribut yo'q bo'lsa cookie `Lax` deb qaraladi, deydi. Lekin qoralama brauzerlarga "Lax-allowing-unsafe" yumshatishni ham ruxsat etadi (MAY): faqat `SameSite` yozilmagan cookie'larga qo'llanadi va cross-site top-level so'rovga metodidan qat'i nazar (masalan `POST`) cookie qo'shiladi. Qoralama bunday cookie yoshini chegaralashni tavsiya qiladi (SHOULD) va tajribaga ko'ra 2 daqiqa yoki undan kam yetarli deydi. Ya'ni bu "Default" haqidagi qoida qat'iy emas, brauzerga bog'liq: unga tayanmang, `SameSite` ni har doim aniq yozing. Yana bir muhim narsa: "site" tushunchasi (12-dars) subdomenlarni ichiga oladi. `SameSite=Strict` cookie `blog.fleet.example` dan boshlangan so'rovda ham yuboriladi, chunki ular same-site. SameSite faqat boshqa saytlardan himoya qiladi, kompaniya ichidagi bo'lgan subdomenlardan emas.
 
 ### Prefikslar
 
 Cookie nomining boshiga `__Secure-` yoki `__Host-` qo'yilsa, brauzer nom bo'yicha qo'shimcha talab qo'yadi:
 
-- `__Secure-`: cookie `Secure` atributi bilan va xavfsiz (HTTPS) sahifadan o'rnatilgan bo'lishi shart.
-- `__Host-`: yuqoridagi shartlarga qo'shimcha, `Domain` atributi bo'lmasligi va `Path=/` bo'lishi shart. Natijada cookie qat'iy host-only bo'ladi.
+- `__Secure-`: cookie `Secure` atributi bilan va xavfsiz (HTTPS) sahifadan o'rnatilgan bo'lishi shart. Qoralamaning saqlash algoritmi prefiksni katta-kichik harfga bog'liq bo'lmagan holda solishtiradi (`__SECURE-` ham `__Secure-` kabi tekshiriladi).
+- `__Host-`: yuqoridagi shartlarga qo'shimcha, `Domain` atributi bo'lmasligi va `Path=/` bo'lishi shart. Natijada cookie qat'iy host-only bo'ladi. Qoralama aytadi: origin modelidan faqat port `__Host-` cookie uchun hamon e'tiborga olinmaydi.
 
 MDN yana ikki prefiksni sanaydi: `__Http-` (cookie `Secure` va `HttpOnly` bo'lishi shart, ya'ni JavaScript uni o'rnata olmaydi) va `__Host-Http-` (ikkalasining birikmasi). Ular yangiroq va brauzer qo'llab-quvvatlashi har xil, shuning uchun bu darsda `__Host-` ga tayanamiz. Server cookie nomini prefiks bilan to'liq tekshirishi shart: brauzer prefiksni qirqib yubormaydi, `Cookie` header'ida `__Host-sid` bo'lib keladi. Ilova `sid` nomini o'qisa, prefiksli himoya umuman ishlamaydi.
 
@@ -256,6 +260,8 @@ server ko'radi: sid=real-session-1
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu cookie o'qish va yozish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi ikki narsani sinaydi: XSS orqali `document.cookie` ni o'qish va ishdan chiqqan `blog.fleet.example` subdomenidan ota-domen uchun cookie yozish.
 

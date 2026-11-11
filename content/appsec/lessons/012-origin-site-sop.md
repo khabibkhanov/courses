@@ -8,7 +8,9 @@ sources:
   - id: mdn-sop
     note: "Same-origin policy sahifasi: origin ta'rifi (sxema, port, host), cross-origin yozish, joylash va o'qish o'rtasidagi farq, document.domain'ning eskirgani, storage origin bo'yicha ajratilishi, cookie esa boshqacha ta'rifdan foydalanishi"
   - id: whatwg-html
-    note: "HTML Standard: origin, site va same site tushunchalari, opaque origin"
+    note: "HTML Standard (browsers bo'limi): opaque origin (ichki qiymat, faqat o'ziga teng, serializatsiyasi null), site = opaque origin yoki scheme-and-host, same site (port va domain e'tiborga olinmaydi), same site tekshiruvidan qochish tavsiyasi"
+  - id: whatwg-url
+    note: "URL Standard: registrable domain = host'ning public suffix'i va undan oldingi domen yorlig'i (Public Suffix List bo'yicha), bo'lmasa null"
   - id: whatwg-fetch
     note: "Fetch Standard: Origin header'i va cross-origin so'rovlar qanday ishlashi"
   - id: nextjs-data-security
@@ -142,11 +144,11 @@ MDN va HTML Standard origin'ni uchta bo'lakdan iborat deb ta'riflaydi: sxema (`h
 
 Standart port (https uchun 443, http uchun 80) odatda yozilmaydi va origin'ni solishtirishda hisobga olinmaydi: `https://fleet.example:443` va `https://fleet.example` bir origin.
 
-Ba'zi kontekstlarda origin "opaque" bo'ladi, ya'ni hech bir origin bilan teng emas. MDN'ning `Origin` header sahifasi `null` qiymat beradigan holatlarni sanaydi (to'liq ro'yxat emas): `sandbox` iframe (`allow-same-origin`siz), `data:` URL'dan yaratilgan hujjat, `sandbox` direktivali CSP bilan berilgan hujjat. Shu kontekstlardan yuborilgan so'rovda `Origin: null` bo'lishi mumkin. Shuning uchun `null` ni ishonchli origin ro'yxatiga qo'shmang: ko'p begona kontekst shu qiymatni beradi.
+Ba'zi kontekstlarda origin "opaque" bo'ladi. HTML Standard uni ichki qiymat deb ta'riflaydi: tuzilishi yo'q, uni qayta tiklab bo'ladigan serializatsiyasi yo'q, yagona ma'noli amal tenglik tekshiruvi, va u faqat o'ziga teng; boshqa har qanday origin bilan same-origin emas. Serializatsiyada u `null` bo'ladi. MDN'ning `Origin` header sahifasi `null` qiymat beradigan holatlarni sanaydi (to'liq ro'yxat emas): `sandbox` iframe (`allow-same-origin`siz), `data:` URL'dan yaratilgan hujjat, `sandbox` direktivali CSP bilan berilgan hujjat. Shu kontekstlardan yuborilgan so'rovda `Origin: null` bo'lishi mumkin. Shuning uchun `null` ni ishonchli origin ro'yxatiga qo'shmang: ko'p begona kontekst shu qiymatni beradi.
 
 ### Site: ro'yxatdan o'tgan domen
 
-Site tushunchasi kengroq: HTML Standard unda sxema va "registrable domain" (ro'yxatdan o'tkaziladigan domen) bo'lishini belgilaydi. `fleet.example` ro'yxatga olingan domen bo'lsa, `app.fleet.example` va `api.fleet.example` bir site ichida, lekin turli origin. Registrable domen Public Suffix List kabi ro'yxatlar yordamida aniqlanadi: `co.uk` kabi qo'shma suffikslarda `a.co.uk` va `b.co.uk` turli site hisoblanadi. Shu sababli site'ni oddiy "oxirgi ikki bo'lak" deb hisoblash noto'g'ri.
+Site tushunchasi kengroq: HTML Standard site'ni opaque origin yoki "scheme-and-host" juftligi deb ta'riflaydi, same site tekshiruvi esa avval ikkala origin'ni site'ga aylantirib, so'ng sxema va host'ni solishtiradi; port va domain komponentlari e'tiborga olinmaydi. Host'ning registrable domain'i bo'lsa u ishlatiladi, bo'lmasa (masalan IP manzil yoki public suffix'ning o'zi) host'ning o'zi. URL Standard registrable domain'ni Public Suffix List bo'yicha aniqlangan public suffix va undan oldingi bitta domen yorlig'i deb ta'riflaydi. Standart shuni ham qayd etadi: same site tekshiruvlaridan imkon qadar qochib, same origin tekshiruvini afzal ko'rish kerak. `fleet.example` ro'yxatga olingan domen bo'lsa, `app.fleet.example` va `api.fleet.example` bir site ichida, lekin turli origin. Public suffix'ni ro'yxat belgilaydi: `co.uk` kabi qo'shma suffikslarda `a.co.uk` va `b.co.uk` turli site hisoblanadi. Shu sababli site'ni oddiy "oxirgi ikki bo'lak" deb hisoblash noto'g'ri.
 
 Qisqacha: same-origin ⊂ same-site. Origin xavfsizlik chegarasi sifatida (SOP, CORS, postMessage) ishlatiladi, site esa cookie va CSRF bilan bog'liq masalalarda (SameSite, Fetch Metadata). Ularni almashtirish tipik xato.
 
@@ -255,6 +257,8 @@ Oddiy sinovda ikkala funksiya ham to'g'ri ishlaydi.
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu origin tekshiruvini aldash usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi `evil-fleet.example` domenini o'zi ro'yxatdan o'tkazadi (arzon va oddiy amal) va `fleet.example.evil.test` kabi uzun nom yaratadi. Brauzer bu sahifalardan so'rov yuborganda `Origin` header'ini haqiqiy origin bilan qo'yadi, ilova esa uni noto'g'ri solishtiradi:
 
 ```ts run
@@ -345,7 +349,7 @@ const ALLOWED = new Set(["https://app.fleet.example", "https://admin.fleet.examp
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: (origin, cb) => {
+    origin: (origin: string | undefined, cb: (err: Error | null, allow?: boolean) => void) => {
       // Origin yo'q bo'lsa (server-server, same-origin) CORS kerak emas
       if (!origin) return cb(null, false);
       cb(null, ALLOWED.has(origin));

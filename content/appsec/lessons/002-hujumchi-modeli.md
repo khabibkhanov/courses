@@ -251,6 +251,8 @@ for (const p of ["/internal/metrics", "/api/../internal/metrics", "/api/%2e%2e/i
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu yo'l normallashtirishni aylanib o'tish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi oddiy tashqi foydalanuvchi: faqat so'rov yo'lini o'zgartiradi. To'g'ridan-to'g'ri `/internal/metrics` rad etiladi, lekin `..` yoki `%2e%2e` bilan yozilgan yo'l gateway tekshiruvidan o'tadi, ilova esa uni `/internal/metrics` ga aylantiradi:
 
 ```text

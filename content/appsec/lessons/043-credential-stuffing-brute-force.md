@@ -255,6 +255,8 @@ Parol xato
 
 ### Hujum
 
+> **Ta'lim maqsadida.** Bu credential stuffing va brute force usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi boshqa servisdan sizgan juftliklar ro'yxatiga ega (faqat shu o'quv kodining foydalanuvchilari uchun) va har juftlikni boshqa IP'dan yuboradi. Ikkinchi senariy: bitta akkauntga o'nta taxmin, har biri yangi IP'dan.
 
 ```ts run

@@ -232,6 +232,8 @@ console.log("script'dan keyin HTML qoldi:", html.slice(end).startsWith("</script
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu kontekstga mos kodlash xatosidan foydalanish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi profilni tahrirlashi mumkin bo'lgan foydalanuvchi (masalan, haydovchi). U ikki maydonni to'ldirdi: veb-sayt sifatida `javascript:alert(1)`, izoh sifatida `</script><img src=x onerror=alert(1)>`. Natija:
 
 ```text

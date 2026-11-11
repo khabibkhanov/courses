@@ -6,9 +6,11 @@ summary: "Sertifikat nima bog'laydi (ochiq kalit va nom), ishonch zanjiri va yo'
 duration: 50
 sources:
   - id: rfc5280
-    note: "RFC 5280: 4.1.2.5 Validity, 4.2.1.6 Subject Alternative Name (identifikatorlarni sub'ektga bog'lash), 4.2.1.9 Basic Constraints (cA va pathLenConstraint), 4.2.1.12 Extended Key Usage, 6.1 va 6.1.3 yo'lni tekshirish. Bo'lim raqamlari va qoidalar darslik darajasida keltirilgan"
-  - id: rfc8446
-    note: "RFC 8446 4.4.2 va 4.4.3: Certificate va CertificateVerify xabarlari; mijoz sertifikat bilan autentifikatsiya qilsa CertificateVerify yuborishi shart"
+    note: "RFC 5280: 4.1.2.5 Validity, 4.2.1.6 Subject Alternative Name (identifikatorlarni sub'ektga bog'lash), 4.2.1.9 Basic Constraints (cA va pathLenConstraint), 4.2.1.12 Extended Key Usage, 6.1 va 6.1.3 yo'lni tekshirish. RFC matni bilan solishtirilgan: 4.2 (taniy olmagan critical kengaytmali sertifikat rad etiladi), 4.2.1.9 (cA tasdiqlanmasa kalit sertifikat imzosini tekshirishda ishlatilmaydi; pathLenConstraint 0 - undan keyin non-self-issued oraliq CA yo'q), 6.1.3 (a)(1)-(a)(4): imzo, validity, bekor qilinmaganlik, issuer nomi"
+  - id: rfc9846
+    note: "RFC 9846 (RFC 8446 ni bekor qilgan joriy TLS 1.3) 4.5.1 va 4.5.2: Certificate va CertificateVerify xabarlari (RFC 8446 da 4.4.2 va 4.4.3); mijoz sertifikat bilan autentifikatsiya qilsa CertificateVerify yuborishi shart"
+  - id: rfc9525
+    note: "RFC 9525 (2023-yil noyabr, RFC 6125 ni bekor qiladi): 2 (Common Name xizmat identifikatsiyasi uchun ishlatilmasligi shart), 6.3 (DNS nomlarni label bo'yicha katta-kichik harfga bog'liq bo'lmagan solishtirish; wildcard faqat eng chap label'ning to'liq mazmuni bo'lgan bitta '*' va aynan bitta label'ga mos keladi), 6.4 (IP manzil baytma-bayt)"
   - id: t10-a04
     note: "A04:2025 tekshiriladigan savollar: server sertifikati va ishonch zanjiri to'g'ri tekshirilyaptimi; eng sezgir kalitlarni HSM'da saqlash; LetsEncrypt kabi xizmatlar sertifikat boshqaruvini soddalashtirgani"
   - id: cs-key-mgmt
@@ -74,7 +76,7 @@ task:
     `checkLeaf(cert, host, now, revoked)` funksiyasi server sertifikatini tekshiradi, lekin hozir faqat imzo bayrog'iga qaraydi. Quyidagi qoidalarni qo'shing, har qoida uchun bitta qator, aynan shu matn va tartib bilan:
     1. `sigOk` false: `"imzo yaroqsiz"`.
     2. `now` > `notAfter`: `"muddati tugagan"`.
-    3. `host` hech bir SAN yozuviga mos kelmaydi: `"hostname mos emas"`. Moslik: katta-kichik harfga bog'liq emas; `*.fleet.test` shaklidagi wildcard aynan bitta label'ni almashtiradi (`gps.fleet.test` mos, `a.b.fleet.test` va `fleet.test` mos emas). Bu darsning o'quv qoidasi.
+    3. `host` hech bir SAN yozuviga mos kelmaydi: `"hostname mos emas"`. Moslik: katta-kichik harfga bog'liq emas; `*.fleet.test` shaklidagi wildcard aynan bitta label'ni almashtiradi (`gps.fleet.test` mos, `a.b.fleet.test` va `fleet.test` mos emas). RFC 9525 6.3 bilan mos.
     4. `eku` ichida `"serverAuth"` yo'q: `"serverAuth emas"`.
     5. `serial` `revoked` to'plamida: `"bekor qilingan"`.
 
@@ -142,7 +144,7 @@ task:
     - Katta-kichik harf farqi `toLowerCase` bilan olib tashlanadi: DNS nomlari harfga sezgir emas.
     - Qoidalar mustaqil tekshiriladi va hammasi qaytariladi: bitta muammo topilganda to'xtab qolmaslik uchun (uchinchi holatda `muddati tugagan` va `bekor qilingan` birga chiqadi). Real kutubxona birinchi xatodan to'xtashi mumkin, lekin audit uchun to'liq ro'yxat foydali.
     - Bu faqat leaf sertifikat siyosati. Zanjir tekshiruvi (imzo zanjiri, CA belgisi, pathLen) alohida; `sigOk` bu yerda tayyor bayroq. Real tizimda tekshirishni TLS kutubxonasi qiladi, siz uni o'chirmaysiz, nom va maqsad siyosatini esa sozlaysiz.
-    - Wildcard qoidasi bu yerda o'quv qoidasi: chap label o'rniga bitta label. PostgreSQL libpq hujjati ham wildcard faqat nuqtadan boshqa belgilarga mos kelishini va subdomenlarga mos kelmasligini yozadi; boshqa kutubxonalarning aniq xatti-harakati bu darsda manba bilan tekshirilmagan.
+    - Wildcard qoidasi RFC 9525 6.3 dan: `*` faqat eng chap label'ning to'liq mazmuni bo'lishi mumkin va aynan bitta label'ga mos keladi (qisman wildcard va ko'p darajali moslik yo'q); qoida buzilgan identifikator yaroqsiz va e'tiborga olinmaydi. DNS nomlar label bo'yicha, katta-kichik harfga bog'liq bo'lmagan holda solishtiriladi. PostgreSQL libpq hujjati ham wildcard faqat nuqtadan boshqa belgilarga mos kelishini va subdomenlarga mos kelmasligini yozadi.
   checklist:
     - "Har bir qoida o'z matni va tartibi bilan chiqadi"
     - "Wildcard aynan bitta label'ni almashtiradi, katta-kichik harf farq qilmaydi"
@@ -165,7 +167,7 @@ Uchinchi masala servislar orasidagi aloqa. Mikroservis arxitekturasida avtopark 
 
 X.509 sertifikati ochiq kalitni bir yoki bir nechta identifikatorga bog'laydigan va CA (Certification Authority) tomonidan imzolangan ma'lumot. RFC 5280 profilidagi muhim maydonlar:
 
-- Subject va Subject Alternative Name (SAN): sertifikat kimni (qaysi DNS nomi, IP, email yoki URI'ni) bildiradi. RFC 5280 4.2.1.6: SAN kengaytmasi identifikatorlarni sertifikat sub'ektiga bog'laydi va ular subject maydonidagi nomga qo'shimcha yoki uning o'rniga kelishi mumkin; aniqlangan turlar: email, DNS nomi, IP manzil va URI. Mijoz ulanayotgan nomni SAN bilan solishtiradi.
+- Subject va Subject Alternative Name (SAN): sertifikat kimni (qaysi DNS nomi, IP, email yoki URI'ni) bildiradi. RFC 5280 4.2.1.6: SAN kengaytmasi identifikatorlarni sertifikat sub'ektiga bog'laydi va ular subject maydonidagi nomga qo'shimcha yoki uning o'rniga kelishi mumkin; aniqlangan turlar: email, DNS nomi, IP manzil va URI. Mijoz ulanayotgan nomni SAN bilan solishtiradi. Nom moslashtirish qoidalari RFC 9525 da: 2-bo'limga ko'ra Common Name (CN) xizmat identifikatsiyasi uchun ishlatilmaydi (MUST NOT), shuning uchun host nomi faqat SAN dagi DNS-ID yoki IP-ID bilan solishtiriladi; mijoz taqdim etilgan identifikatorlardan birortasi o'zi qurgan mos yozuvga to'g'ri kelsa, qidiruvni to'xtatadi (6.2).
 - Validity (notBefore va notAfter): CA shu davr ichida sertifikat holati haqida ma'lumot yuritishga kafolat beradi (4.1.2.5).
 - Basic Constraints: sertifikat sub'ekti CA ekanligini (`cA` belgisi) va undan keyingi zanjir chuqurligi chegarasini (`pathLenConstraint`) bildiradi. Agar bu kengaytma yo'q yoki `cA` tasdiqlanmagan bo'lsa, sertifikatdagi ochiq kalit sertifikat imzolarini tekshirish uchun ishlatilmasligi shart (4.2.1.9).
 - Extended Key Usage (EKU): sertifikat qaysi maqsadlarda ishlatilishi mumkin (masalan server autentifikatsiyasi yoki mijoz autentifikatsiyasi). Kengaytma bor bo'lsa, sertifikat faqat sanalgan maqsadlardan biri uchun ishlatiladi (4.2.1.12).
@@ -174,7 +176,7 @@ X.509 sertifikati ochiq kalitni bir yoki bir nechta identifikatorga bog'laydigan
 
 Mijoz ishonadigan CA sertifikatlari (trust anchor, root) uning ishonch ro'yxatida turadi. Server leaf sertifikatini va kerak bo'lsa oraliq (intermediate) CA sertifikatlarini yuboradi; mijoz zanjir root'ga yetguncha har sertifikat imzosini keyingisi bilan tekshiradi. RFC 5280 6.1.3 (basic certificate processing) yo'ldagi har bir sertifikat uchun shartlarni sanaydi: imzo working public key bilan tekshiriladi, sertifikat validity davri joriy vaqtni qamraydi, sertifikat bekor qilinmagan (CRL, status ma'lumoti yoki out-of-band mexanizm bilan aniqlanadi) va issuer nomi kutilgan nomga teng. Shuningdek, nom cheklovlari va sertifikat siyosati tekshiruvlari bor. Spetsifikatsiya yana bir muhim qoida beradi: mijoz qo'llab-quvvatlamaydigan critical kengaytmali sertifikatni rad etishi kerak.
 
-TLS handshake'da server sertifikat zanjirini Certificate xabarida yuboradi va CertificateVerify bilan uning maxfiy kalitiga egaligini isbotlaydi (RFC 8446 4.4.2 va 4.4.3). Shunday qilib, sertifikat "bu ochiq kalit shu nomniki" deydi, CertificateVerify esa "men shu kalitning egasiman" deydi. Ikkalasi birga 64-darsdagi MITM'ni yopadi.
+TLS handshake'da server sertifikat zanjirini Certificate xabarida yuboradi va CertificateVerify bilan uning maxfiy kalitiga egaligini isbotlaydi (RFC 9846 4.5.1 va 4.5.2). Shunday qilib, sertifikat "bu ochiq kalit shu nomniki" deydi, CertificateVerify esa "men shu kalitning egasiman" deydi. Ikkalasi birga 64-darsdagi MITM'ni yopadi.
 
 ### CA kaliti va kalit boshqaruvi
 
@@ -201,7 +203,7 @@ Eng ko'p uchraydigan xato birinchi ikki qatorni tekshirib, uchinchisini unutish.
 
 ### mTLS: ikki tomonlama autentifikatsiya
 
-Oddiy TLS'da faqat server sertifikat ko'rsatadi. mTLS'da (mutual TLS) server mijozdan ham sertifikat so'raydi (CertificateRequest). Mijoz Certificate yuboradi va u sertifikat bilan autentifikatsiya qilsa, CertificateVerify yuborishi shart (RFC 8446 4.4.3). Natijada server so'rov kelgan servisning kimligini kriptografik asosda biladi, parol yoki API kalitisiz. Bu servislar orasidagi umumiy sirni (har bir servisning kaliti ro'yxati) olib tashlaydi va kalit muddati sertifikat bilan birga yuradi.
+Oddiy TLS'da faqat server sertifikat ko'rsatadi. mTLS'da (mutual TLS) server mijozdan ham sertifikat so'raydi (CertificateRequest). Mijoz Certificate yuboradi va u sertifikat bilan autentifikatsiya qilsa, CertificateVerify yuborishi shart (RFC 9846 4.5.2). Natijada server so'rov kelgan servisning kimligini kriptografik asosda biladi, parol yoki API kalitisiz. Bu servislar orasidagi umumiy sirni (har bir servisning kaliti ro'yxati) olib tashlaydi va kalit muddati sertifikat bilan birga yuradi.
 
 Lekin mTLS faqat autentifikatsiya beradi. Ishonchli ichki CA bergan har qanday servis sertifikati zanjirni o'tadi, bu "so'rovchi nomi `billing.fleet.internal`" degan ma'noni beradi, "u telemetriyani o'qiy oladi" degani emas. Shuning uchun server sertifikat identifikatorini (SAN dagi URI yoki DNS) servislar ro'yxati va ruxsatlar bilan solishtiradi: bu avtorizatsiya (51-53 va 57-darslar). Aks holda bitta buzilgan servis hamma servislarga kira oladigan bo'ladi, mTLS esa hujum sirini kamaytirmaydi, faqat tashqi tomonni to'xtatadi.
 
@@ -263,6 +265,8 @@ qonuniy zanjir qabul qilindi: true
 ```
 
 ### Hujum
+
+> **Ta'lim maqsadida.** Bu soxta sertifikat zanjiri usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi o'z domeni `evil.example.test` uchun CA'dan oddiy (leaf) sertifikat oldi. Bu sertifikat `isCA: false`. U o'sha sertifikat kaliti bilan `gps.fleet.test` uchun sertifikat imzolaydi va zanjirni `[soxta, evil-leaf]` qilib yuboradi.
 

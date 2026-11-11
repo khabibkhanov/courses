@@ -236,6 +236,8 @@ oddiy: tar -czf out.tgz clips/a.mp4
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu command injection usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Hujumchi "alfa" foydalanuvchisi, `name` maydoniga klip nomi o'rniga shell belgisi bilan qo'shimcha buyruq yuboradi. Bu yerda faqat model: u bajarilishi mumkin bo'lgan buyruqlarni chop etadi, hech narsa ishga tushmaydi.
 
 ```ts run

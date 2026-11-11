@@ -249,6 +249,8 @@ oddiy: alfa klip metama'lumoti
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu path traversal usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 "alfa" foydalanuvchisi `name` parametrini o'zgartiradi. Uchta holat uchta zaif funksiyaga qarshi, faqat shu o'quv fayl tizimida.
 
 ```ts run

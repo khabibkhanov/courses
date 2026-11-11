@@ -272,6 +272,8 @@ console.log("2) resolver chaqiruvlari:", resolverCalls);
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu GraphQL enumeration va chuqur so'rov usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) va 278-5-moddasi (Kompyuter sabotaji) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 "alfa" tenant foydalanuvchisi bitta so'rovda to'rtta alias bilan `v1..v4` ID'larini sinaydi (enumeration), keyin aylanma bog'lanishli chuqur so'rov yuboradi. Natija:
 
 ```text
@@ -387,6 +389,8 @@ Qoldiq risk: aliaslar sonini 3 ga cheklash bitta so'rovda enumeration'ni sekinla
 ## Stack'da: NestJS, Apollo va Prisma
 
 NestJS'da GraphQL uchun `@nestjs/graphql` paketi (Apollo yoki Mercurius drayveri bilan) ishlatiladi. Chuqurlik va narx tekshiruvi odatda validation rule yoki plugin sifatida qo'shiladi; cheat sheet JavaScript uchun chuqurlik uchun `graphql-depth-limit`, miqdor uchun `graphql-input-number`, narx uchun `graphql-cost-analysis` va `graphql-validation-complexity` paketlarini nomlaydi. NestJS hujjati narx tahlili uchun `graphql-query-complexity` bilan integratsiyani tasvirlaydi: `ApolloServerPlugin` sifatida `ComplexityPlugin` yoziladi, `fieldExtensionsEstimator` va `simpleEstimator` bilan hisoblangan narx `maxComplexity` dan oshsa so'rov rad etiladi, maydon narxi esa `@Field({ complexity: 3 })` bilan beriladi (hujjat bu bobni faqat code first yondashuvga tegishli deydi). Avtorizatsiya uchun muhim nozik joy: NestJS hujjatiga ko'ra GraphQL kontekstida guard, interceptor va filter'lar standart holda maydon darajasida ishlamaydi, faqat yuqori darajadagi `@Query()` va `@Mutation()` metodida. `@ResolveField()` metodlarida ishlashi uchun `GraphQLModule.forRoot({ fieldResolverEnhancers: ['guards'] })` kerak, hujjat esa ko'p yozuv qaytganda bu unumdorlikni pasaytirishi mumkinligini ogohlantiradi. Shu sababli quyidagi misolda tenant filtri guard'ga emas, resolver ichidagi `where` shartiga qo'yilgan. Kontekstdan so'rovni olish uchun guard ichida `GqlExecutionContext.create(context)` ishlatiladi. Apollo drayverida GraphiQL `NODE_ENV` production bo'lmaganda avtomatik yoqiladi va production'da standart bo'yicha o'chiq; uni `graphiql: true` bilan majburan yoqish mumkin, shuning uchun bu sozlamani konfiguratsiyada tekshiring. Stack trace uchun cheat sheet Apollo Server'da `includeStacktraceInErrorResponses: false` ni aytadi; u berilmasa `NODE_ENV=production` yoki `test` stack trace'ni standart bo'yicha yashiradi, lekin xato xabarlarini alohida maskalash kerak.
+
+Eslatma: Prisma ORM 7 hujjatiga ko'ra `PrismaClient` driver adapter talab qiladi va adapter'siz `new PrismaClient()` xato beradi; quyidagi namunada qisqalik uchun adapter ko'rsatilmagan, haqiqiy loyihada `new PrismaClient({ adapter })` yozing (masalan, PostgreSQL uchun `@prisma/adapter-pg`).
 
 ```ts
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";

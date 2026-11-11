@@ -247,6 +247,8 @@ for (const p of probes) console.log(`${p.run(makeWeak()) ? "PASS" : "FAIL"} ${p.
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu probe majmuasi faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Probe majmuasi hujumchi ko'zi bilan ettita oddiy so'rov ketma-ketligini bajaradi (login urinishlari, taxmin qilingan token, begona identifikator, admin yo'li, `role` maydoni, xatoni chaqirish, logoutdan keyin qayta foydalanish). Zaif platformada natija:
 
 ```text

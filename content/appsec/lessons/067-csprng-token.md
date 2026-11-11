@@ -13,6 +13,10 @@ sources:
     note: "Node.js Security Best Practices sahifasi bu darsda faqat umumiy tayanch; crypto.randomBytes, randomInt (modulo bias'siz) va randomUUID haqidagi iboralar Node.js crypto API hujjatidan (node-docs crypto.md) olingan"
   - id: asvs
     note: "ASVS 5.0.0 11.5.1 (CSPRNG va kamida 128 bit entropiya, UUID bu shartni qondirmaydi), 11.5.2, 7.2.3 (sessiya tokeni), 6.5.4 va 6.6.3 (bir martalik kodlar), Appendix C Random Values jadvali"
+  - id: rfc9562
+    note: "RFC 9562 (2024-yil may, Standards Track, RFC 4122 ni bekor qiladi): 5.4 UUIDv4 tuzilishi (random_a 48 bit, ver 4 bit, random_b 12 bit, var 2 bit, random_c 62 bit; jami 122 tasodifiy bit), 4.1 variant bitlari 10, 8 Security Considerations (UUID security capability sifatida ishlatilmasligi shart)"
+  - id: redis-getdel
+    note: "Redis GETDEL: kalit qiymatini qaytaradi va kalitni o'chiradi (faqat qiymat turi string bo'lsa); Redis Open Source 6.2.0 dan; murakkabligi O(1); kalit yo'q yoki turi string emas bo'lsa nil"
   - id: cs-crypto-storage
     note: "Cryptographic Storage cheat sheet: Secure Random Number Generation bo'limi (tillar bo'yicha xavfsiz va xavfli funksiyalar jadvali, Node.js uchun Math.random xavfli) va UUIDs and GUIDs bo'limi"
 quiz:
@@ -159,7 +163,7 @@ Entropiya uzunlik emas. 32 belgilik token, uning yarmi qat'iy yoki bashorat qili
 
 ### UUID tuzog'i
 
-Dasturchilar tez-tez UUID'ni "tasodifiy token" deb ishlatadi. Cryptographic Storage cheat sheet: UUID v1 yuqori aniqlikdagi vaqt tamg'asi va mashinaning MAC manzilidan iborat, demak tasodifiy emas; v4 tasodifiy yaratiladi, lekin CSPRNG ishlatilgani framework'ga bog'liq, shuning uchun noma'lum bo'lsa uning tasodifiyligiga tayanib bo'lmaydi. ASVS 11.5.1 esa umuman UUID 128 bit talabiga javob bermaydi, deydi. Sabab: UUID v4 formatida versiya va variant uchun bir nechta bit qat'iy (RFC 4122 bo'yicha 6 bit, ya'ni 122 tasodifiy bit qoladi; bu umumiy bilim, kurs korpusida RFC matni yo'q), shuning uchun tasodifiy bitlar 128 tadan kam. Xulosa: ob'ekt identifikatori sifatida UUID yaxshi, lekin "bilgan odamgina kira oladi" tipidagi token sifatida emas (52-dars: IDOR'da noma'lum identifikator avtorizatsiya o'rnini bosmaydi).
+Dasturchilar tez-tez UUID'ni "tasodifiy token" deb ishlatadi. Cryptographic Storage cheat sheet: UUID v1 yuqori aniqlikdagi vaqt tamg'asi va mashinaning MAC manzilidan iborat, demak tasodifiy emas; v4 tasodifiy yaratiladi, lekin CSPRNG ishlatilgani framework'ga bog'liq, shuning uchun noma'lum bo'lsa uning tasodifiyligiga tayanib bo'lmaydi. ASVS 11.5.1 esa umuman UUID 128 bit talabiga javob bermaydi, deydi. Sabab: UUID v4 formatida versiya va variant uchun bir nechta bit qat'iy. UUID'ning joriy spetsifikatsiyasi RFC 9562 (2024-yil may), u RFC 4122 ni bekor qilgan; 5.4-bo'limga ko'ra UUIDv4 128 bitdan iborat: 48 bitli random_a, 4 bitli ver (0b0100), 12 bitli random_b, 2 bitli var (0b10) va 62 bitli random_c. Qat'iy 6 bit (4 + 2) chiqarilgach 122 tasodifiy bit qoladi, shuning uchun tasodifiy bitlar 128 tadan kam. RFC 9562 8-bo'limi UUID'ni security capability, ya'ni faqat egalik qilish kirish beradigan identifikator sifatida ishlatishni taqiqlaydi (MUST NOT) va UUID'ni taxmin qilish qiyin deb hisoblamaslikni tavsiya qiladi. Node.js hujjati `randomUUID` ni RFC 4122 versiya 4 UUID deb ataydi; bu RFC 9562 da ham UUIDv4 bo'lib qolgan. Xulosa: ob'ekt identifikatori sifatida UUID yaxshi, lekin "bilgan odamgina kira oladi" tipidagi token sifatida emas (52-dars: IDOR'da noma'lum identifikator avtorizatsiya o'rnini bosmaydi).
 
 ```ts run
 // randomUUID: format va qat'iy belgilar (versiya "4", variant 8/9/a/b).
@@ -234,6 +238,8 @@ qurbon tokeni uzunligi: 32
 32 hex belgi 128 bit ko'rinishini beradi, lekin generator holati bitta 32 bitli seed bilan belgilanadi, seed esa sekund bo'yicha vaqt.
 
 ### Hujum
+
+> **Ta'lim maqsadida.** Bu bashorat qilinadigan tokenni hisoblash usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi o'z hisobi uchun reset so'raydi va tokenining vaqtini biladi. Qurbonning so'rovi bir daqiqa atrofida vaqt ichida yuborilganini bilib, u keyingi 60 sekund uchun tokenlarni hisoblaydi va qurbon tokenini topadi. Bu faqat shu o'quv generatoriga qarshi.
 
@@ -335,7 +341,7 @@ Shuningdek, tasodifiy token har doim to'g'ri tanlov emas. Bir martalik havola o'
 
 Node.js'da token: `crypto.randomBytes(32).toString("base64url")`. Sonli kod: `crypto.randomInt(0, 1_000_000)` va uni chapdan nol bilan to'ldirish. Edge/brauzer: `crypto.getRandomValues(new Uint8Array(32))`. `uuid` kutubxonasining versiyasi va uning tasodifiy manbasi (CSPRNG ekanligi) ni tekshiring, ammo sir sifatida UUID ishlatmang. NestJS'da token yaratishni bitta provayderga (`TokenService`) yig'ing va testda `RandomSource` interfeysini mock qiling.
 
-PostgreSQL'da tokenning SHA-256 hash'i uchun oddiy `bytea`/`text` ustuni va unique indeks yetadi; muddatni `expires_at` ustunida saqlang va tozalash vazifasini rejalashtiring (79-darsdagi audit logda token qiymatini emas, identifikatorini yozing; Session Management cheat sheet ham logga sessiya ID'sining o'zini emas, tuzlangan hash'ini yozishni tavsiya qiladi). Redis'da token hash'i TTL bilan kalit bo'lishi mumkin, bu bir martalik tokenlar uchun qulay; `GETDEL` (Redis 6.2.0 dan) kalitning qiymatini qaytaradi va uni bir buyruqda o'chiradi, shuning uchun ikki parallel so'rov bir tokenni ikki marta ishlata olmaydi (60-dars); bu buyruq mexanizmi Redis buyruqlar hujjatidan olingan, kurs korpusida u yo'q. `Math.random` ni qidiruv bilan koddan topib, xavfsizlik konteksti bor joylarni ro'yxatlang: bu SAST qoidasi sifatida oson (83-dars).
+PostgreSQL'da tokenning SHA-256 hash'i uchun oddiy `bytea`/`text` ustuni va unique indeks yetadi; muddatni `expires_at` ustunida saqlang va tozalash vazifasini rejalashtiring (79-darsdagi audit logda token qiymatini emas, identifikatorini yozing; Session Management cheat sheet ham logga sessiya ID'sining o'zini emas, tuzlangan hash'ini yozishni tavsiya qiladi). Redis'da token hash'i TTL bilan kalit bo'lishi mumkin, bu bir martalik tokenlar uchun qulay; `GETDEL` (Redis Open Source 6.2.0 dan, murakkabligi O(1)) kalitning qiymatini qaytaradi va uni bir buyruqda o'chiradi, shuning uchun ikki parallel so'rov bir tokenni ikki marta ishlata olmaydi (60-dars). Kalit yo'q bo'lsa yoki qiymati string bo'lmasa, buyruq nil qaytaradi va hech narsani o'chirmaydi. `Math.random` ni qidiruv bilan koddan topib, xavfsizlik konteksti bor joylarni ro'yxatlang: bu SAST qoidasi sifatida oson (83-dars).
 
 ## Xulosa
 

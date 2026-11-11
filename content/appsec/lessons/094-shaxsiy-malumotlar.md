@@ -2,66 +2,70 @@
 n: 94
 slug: shaxsiy-malumotlar
 title: "Shaxsiy ma'lumotlar: O'zbekiston qonunchiligi va privacy by design"
-summary: "O'RQ-547 (Shaxsga doir ma'lumotlar to'g'risida) va O'RQ-764 (Kiberxavfsizlik to'g'risida) qonunlarining dasturchi uchun ahamiyatli moddalari lex.uz matni bo'yicha: ma'lumot turlari, maqsad va rozilik, saqlash joyi, operator majburiyatlari, hodisa haqida xabar berish; privacy by design kodda: maydonlarni tasniflash, maqsad bo'yicha proyeksiya, anonimlashtirish."
+summary: "O'RQ-547 (Shaxsga doir ma'lumotlar to'g'risida) lex.uz joriy tahriri bo'yicha: ta'riflar, huquqiy asoslar va rozilik, maqsad va saqlash muddati, subyekt huquqlari, operator majburiyatlari va reyestr, transchegaraviy uzatish va 27-1 (saqlash joyi), javobgarlik moddalari (Ma'muriy kodeks 46-2, Jinoyat kodeksi 141-2); privacy by design kodda: maydon tasnifi, maqsad bo'yicha proyeksiya, anonimlashtirish."
 duration: 50
 sources:
   - id: lex-pdp
-    note: "O'RQ-547 (02.07.2019) lex.uz'dagi hujjat, 2026-11-11 da o'qilgan: 4-modda (asosiy tushunchalar), 5 (prinsiplar), 15 (transchegaraviy uzatish), 16 (egasizlantirish), 17 (yo'q qilish), 19 (ishlov berish talablari), 21 (rozilik), 25-26 (maxsus, biometrik va genetik ma'lumotlar), 27 (himoya kafolatlari), 30 (subyekt huquqlari), 31 (mulkdor va operator majburiyatlari), 33 (javobgarlik: faqat 'belgilangan tartibda javobgar' degan umumiy norma). Sahifaning asosiy matni 01.10.2019 holatida ko'rsatiladi; joriy tahrir ro'yxatida 12.09.2026 gacha tahrirlar bor, ularning faqat O'RQ-1125 bilan kiritilgani (27-1 va 20-modda) quyidagi manbadan tekshirilgan"
+    note: "lex.uz O'RQ-547 (02.07.2019), 36 modda, joriy tahrir to'liq o'qilgan. Tahrirlar (sahifa oxiridagi ro'yxat): 15.01.2021, 21.04.2021 (O'RQ-683), 29.11.2023 (O'RQ-880), 27.03.2026 (O'RQ-1125), 14.07.2026 (O'RQ-1158, Konstitutsiyaviy qonun, 3-moddaga uchinchi qism), 12.09.2026 (O'RQ-1174, 25-modda uchinchi qismining bir bandi). Ishlatilgan moddalar: 3, 4, 7, 8, 10, 11, 15-26, 27, 27-1, 28, 30, 31, 33"
   - id: lex-pdp-1125
-    note: "O'RQ-1125 (26.03.2026, 27.03.2026 da e'lon qilingan, e'lon kunidan kuchga kirgan): O'RQ-547 ga o'zgartirishlar. Yangi 27-1 modda: fuqarolarning ma'lumotlari qonun prinsiplariga rioya qilingan holda saqlanadi; biometrik va genetik ma'lumotlar hamda O'zbekistonda faoliyat yurituvchi telekommunikatsiya operatorlari xizmatidan foydalanuvchilar ma'lumotlari O'zbekiston hududida saqlanishi shart; boshqa ma'lumotlar chet elda saqlanishi mumkin, agar uchta shartdan biri bajarilsa (bir xil himoya qiluvchi davlat, tasdiqlangan standart shartnomaviy shartlar yoki majburiy korporativ qoidalar, tasdiqlangan xalqaro standartlar); 20-modda shu bazalar ro'yxatdan o'tkazilishini aytadi"
+    note: "O'RQ-1125 (26.03.2026, kuchga kirishi 27.03.2026): 3-modda ikkinchi qismining ikkinchi va to'rtinchi bandi, 20-moddaning birinchi qismi va 27-1 modda 'quyidagi tahrirda bayon etilsin' deb qayta yozilgan (27-1 bu qonun bilan birinchi marta kiritilmagan; oldingi tahrir o'qilmagan). Yangi 27-1: biometrik va genetik ma'lumotlar hamda O'zbekistonda faoliyat yurituvchi telekommunikatsiya operatorlaridagi ularning xizmatlaridan foydalanuvchi jismoniy shaxslar ma'lumotlari O'zbekiston hududida saqlanishi shart; boshqa ma'lumotlar chet elda uchta shartdan biri bajarilganda saqlanishi mumkin"
+  - id: lex-criminal-code
+    note: "lex.uz Jinoyat kodeksi, joriy tahrir (oxirgi o'zgartirish 04.11.2026): 141-1 (shaxsiy hayot daxlsizligini buzish) va 141-2 (shaxsga doir ma'lumotlar to'g'risidagi qonunchilikni buzish; matni O'RQ-726, 29.10.2021, 31.01.2022 dan kuchda) to'liq o'qilgan"
+  - id: lex-admin-code
+    note: "lex.uz Ma'muriy javobgarlik to'g'risidagi kodeks, joriy tahrir (oxirgi o'zgartirish 04.11.2026): 46 (sir va zarar yetkazishi mumkin ma'lumotni oshkor etish), 46-1 (shaxsiy hayot daxlsizligini buzish), 46-2 (shaxsga doir ma'lumotlar to'g'risidagi qonunchilikni buzish; ikkinchi qism O'RQ-1115, 21.01.2026) to'liq o'qilgan"
   - id: lex-cyber
-    note: "O'RQ-764 (15.04.2022) lex.uz'dagi matn, 2026-11-11 da o'qilgan: 3-modda (kiberxavfsizlik hodisasi ta'rifi), 16 (kiberxavfsizlik subyektlarining huquq va majburiyatlari: hodisa va kiberjinoyatlar haqida vakolatli organni xabardor qilish, raqamli izlar yo'qolishiga yo'l qo'ymaslik, tahlil uchun ma'lumotni saqlash), 23 (hodisalar bo'yicha choralar), 24 (hodisa haqidagi axborotni oshkor qilish), 37 (javobgarlik: 'belgilangan tartibda'); sahifa 2022-yil 15-aprel sanasini ko'rsatadi, keyingi tahrir sanasi ko'rsatilmagan"
+    note: "lex.uz O'RQ-764 (15.04.2022) to'liq o'qilgan: 3-modda (kiberxavfsizlik hodisasi, kiberxavfsizlik subyekti ta'riflari), 16 (subyektlarning majburiyatlari: vakolatli organni xabardor qilish, raqamli izlar), 28 (MAI subyektlari). Hodisa haqida xabar berish muddati qonun matnida yo'q"
   - id: cs-privacy
     note: "User Privacy Protection Cheat Sheet: foydalanuvchi maxfiyligi uchun texnik choralar: kuchli kriptografiya (uzatishda va saqlashda, parollar hash), HSTS, remote session invalidation (yo'qolgan yoki musodara qilingan qurilma sessiyalarini ko'rish va uzish), uchinchi tomon kontentidan IP manzil sizishining oldini olish, halollik va shaffoflik (huquqiy yoki texnik himoya yetarli bo'lmasa, foydalanuvchiga ochiq aytish)"
 quiz:
-  - q: "Platformada haydovchining ismi, telefon raqami va uning boshqargan mashinasining GPS izi saqlanadi. O'RQ-547 4-moddasidagi ta'rifga ko'ra bu 'shaxsga doir ma'lumotlar'mi?"
-    options:
-      - "Ha, agar ma'lumot muayyan jismoniy shaxsga taalluqli bo'lsa yoki uni identifikatsiya qilish imkonini bersa; haydovchiga bog'langan iz shunday bo'lishi mumkin (yuridik baho uchun yurist kerak)"
-      - "Yo'q: GPS izi mashinaga tegishli, odamga emas"
-      - "Faqat pasport raqami shaxsga doir ma'lumot"
-      - "Faqat qog'ozdagi ma'lumot"
-    answer: 0
-    explain: "Ta'rif keng: muayyan jismoniy shaxsga taalluqli yoki uni identifikatsiya qilish imkonini beradigan axborot, elektron, qog'oz yoki boshqa moddiy jismda qayd etilgan. Haydovchiga bog'langan GPS izi shu ta'rifga tushishi mumkin. Aniq yuridik xulosa yurist ishi."
-  - q: "Foydalanuvchi ma'lumotlarini 'xizmatni ko'rsatish' maqsadida yig'ib, keyin marketing uchun ishlatishga qaror qildingiz. O'RQ-547 19-moddasiga ko'ra nima kerak?"
-    options:
-      - "Hech narsa, ma'lumot allaqachon sizda"
-      - "Faqat saytga e'lon qo'yish"
-      - "Ishlov berish maqsadi o'zgargan taqdirda subyektning o'zgargan maqsadga muvofiq roziligini olish kerak"
-      - "Faqat ma'lumotni shifrlash"
-    answer: 2
-    explain: "19-modda: maqsad yig'ish chog'ida bildirilgan maqsadlarga mos bo'lishi kerak va maqsad o'zgarsa, o'zgargan maqsad uchun rozilik olinadi. Shifrlash maqsad cheklovini almashtirmaydi."
-  - q: "Dasturchi sifatida 'maqsadga muvofiq proyeksiya' (purpose-based projection) qanday ishlaydi?"
-    options:
-      - "Hamma maydonni qaytarib, frontend ko'rsatmaydigan qilish"
-      - "Har maqsad (hisobot, support, billing) uchun ruxsat etilgan maydonlar ro'yxati oldindan belgilanadi va faqat shular qaytariladi; ro'yxatda yo'q maydon default holatda qaytmaydi"
-      - "Maydonlarni base64 bilan yozish"
-      - "Faqat adminlarga hamma narsani ko'rsatish"
-    answer: 1
-    explain: "Allowlist yondashuv default-deny: yangi maydon qo'shilganda u avtomatik hech qaysi maqsadga kirmaydi. Frontend'da yashirish ma'lumotni API javobidan olib tashlamaydi, base64 esa shifrlash emas."
-  - q: "O'RQ-547 27-1-moddasi (joriy matn) biometrik ma'lumotlar haqida nimani belgilaydi?"
-    options:
-      - "Ular istalgan mamlakatda saqlanishi mumkin"
-      - "Faqat davlat organlari saqlay oladi"
-      - "Biometrik ma'lumot yig'ish butunlay taqiqlangan"
-      - "Jismoniy shaxslarning biometrik va genetik ma'lumotlari O'zbekiston hududida saqlanishi shart (shuningdek telekommunikatsiya operatorlaridagi foydalanuvchi ma'lumotlari)"
-    answer: 3
-    explain: "Moddaning ikkinchi qismi shu uch toifani O'zbekiston hududida saqlanishi shartligini aytadi. Qolgan ma'lumotlar uchun chet elda saqlash alohida shartlardan biri bajarilganda mumkin. Bu dars yuridik maslahat emas: loyihangizga tatbiq etish uchun yurist kerak."
-  - q: "Saqlash muddati tugagan GPS yozuvlarini 'anonimlashtirish' deganda nimani tushunamiz, O'RQ-547 16-moddasi ruhida?"
-    options:
-      - "Haydovchi ismini 'X' ga o'zgartirish, lekin ID qoldirish"
-      - "Ma'lumotning muayyan subyektga tegishliligini aniqlash imkoni qolmaydigan harakatlar; ID yoki boshqa bog'lovchi maydonlar ham olib tashlanishi yoki qaytarilmas qilib o'zgartirilishi kerak"
-      - "Yozuvni arxivga ko'chirish"
-      - "Faqat jadval nomini o'zgartirish"
-    answer: 1
-    explain: "16-moddaga ko'ra egasizlantirish harakatlari natijasida ma'lumotning muayyan subyektga tegishliligini aniqlash imkoni qolmaydi. Ism almashtirilib ID qolsa, ID orqali shaxs tiklanadi (re-identification)."
-  - q: "O'RQ-764 16-moddasiga ko'ra kiberxavfsizlik subyektlari hodisa sodir bo'lganda, boshqa narsalar qatori, nima qilishlari kerak?"
-    options:
-      - "Hodisa haqida hech kimga bildirmaslik"
-      - "Faqat mijozlarga xat yuborish"
-      - "Hodisa va kiberjinoyatlar haqida vakolatli davlat organini xabardor qilish, tegishli raqamli izlar yo'qolishiga yo'l qo'ymaslik va tahlil uchun zarur ma'lumotlar saqlanishini ta'minlash"
-      - "Barcha loglarni o'chirish"
-    answer: 2
-    explain: "16-modda aynan shuni sanaydi: vakolatli organni xabardor qilish, raqamli izlarni saqlash va ma'lumotlarning doimiy saqlanishini ta'minlash. Kompaniyangiz 'kiberxavfsizlik subyekti' ta'rifiga kirishini aniqlash yurist ishi; 93-darsdagi dalilni saqlash tamoyili shu bilan mos."
+- q: Platformada haydovchining ismi, telefon raqami va uning boshqargan mashinasining GPS izi saqlanadi. O'RQ-547 4-moddasidagi ta'rifga ko'ra bu 'shaxsga doir ma'lumotlar'mi?
+  options:
+  - Ha, agar ma'lumot muayyan jismoniy shaxsga taalluqli bo'lsa yoki uni identifikatsiya qilish imkonini bersa; haydovchiga bog'langan iz shunday bo'lishi mumkin
+  - 'Yo''q: GPS izi mashinaga tegishli, odamga emas'
+  - Faqat pasport raqami shaxsga doir ma'lumot
+  - Faqat qog'ozdagi ma'lumot
+  answer: 0
+  explain: 'Ta''rif keng: muayyan jismoniy shaxsga taalluqli yoki uni identifikatsiya qilish imkonini beradigan axborot, elektron, qog''oz yoki boshqa moddiy jismda qayd etilgan. Haydovchiga bog''langan GPS izi shu ta''rifga tushishi mumkin.'
+- q: Foydalanuvchi ma'lumotlarini 'xizmatni ko'rsatish' maqsadida yig'ib, keyin marketing uchun ishlatishga qaror qildingiz. O'RQ-547 19-moddasiga ko'ra nima kerak?
+  options:
+  - Hech narsa, ma'lumot allaqachon sizda
+  - Faqat saytga e'lon qo'yish
+  - Ishlov berish maqsadi o'zgargan taqdirda subyektning o'zgargan maqsadga muvofiq roziligini olish kerak
+  - Faqat ma'lumotni shifrlash
+  answer: 2
+  explain: '19-modda: maqsad yig''ish chog''ida bildirilgan maqsadlarga mos bo''lishi kerak va maqsad o''zgarsa, o''zgargan maqsad uchun rozilik olinadi. Shifrlash maqsad cheklovini almashtirmaydi.'
+- q: Dispetcher hisoboti API javobida har haydovchi uchun pasport raqami va manzil ham qaytadi, frontend esa ularni ko'rsatmaydi. Jamoa 'muammo yo'q, ekranda ko'rinmaydi' demoqda. Nima to'g'ri?
+  options:
+  - 'Muammo yo''q: ma''lumot foydalanuvchiga ko''rinmaydi'
+  - 'Muammo bor: javobdagi ortiqcha maydon 10 va 19-moddalardagi zarur va yetarli hajm talabiga zid; har maqsad uchun ruxsat etilgan maydonlar ro''yxati (default-deny) bilan faqat shular qaytariladi'
+  - Pasportni base64 bilan yozish yetarli
+  - Hisobotni faqat adminlarga ochish yetarli
+  answer: 1
+  explain: Frontend'da yashirish ma'lumotni API javobidan olib tashlamaydi (brauzer tarmoq oynasida ko'rinadi). Allowlist yondashuvda yangi maydon avtomatik hech qaysi maqsadga kirmaydi. Base64 shifrlash emas, rolni cheklash esa hajm talabini almashtirmaydi.
+- q: Avtopark platformasi DMS kamera orqali haydovchi yuzini tanib oladi va yozuvlarni arzon chet el bulutida saqlamoqchi. 27-1-modda bo'yicha nima to'g'ri?
+  options:
+  - Chet elda saqlash mumkin, chunki platforma telekommunikatsiya operatori emas
+  - Faqat davlat organlari biometrik ma'lumotni saqlay oladi
+  - Chet el bulutiga o'tish uchun uch shartdan biri bajarilishi yetarli
+  - Biometrik ma'lumot O'zbekiston hududida saqlanishi shart (yuz identifikatsiyasi shu toifaga tushishi mumkin - kursning talqini), shuning uchun bu yozuvlarni chet el bulutiga qo'ymaslik kerak
+  answer: 3
+  explain: '27-1: jismoniy shaxslarning biometrik va genetik ma''lumotlari O''zbekiston hududida saqlanishi SHART. Uch shartdan biri faqat qolgan ma''lumotlar uchun chet elda saqlashga yo''l ochadi. Telekommunikatsiya bandi alohida toifa, biometrik band unga bog''liq emas.'
+- q: 'Retention job''ni yozdingiz: muddati o''tgan yozuvlarda haydovchi ismi ''X'' ga almashtiriladi, ID va telefon qoladi. Job''ni egasizlantirish deb hisoblash mumkinmi (16-modda)?'
+  options:
+  - 'Yo''q: egasizlantirishdan keyin ma''lumotning muayyan subyektga tegishliligini aniqlash imkoni qolmasligi kerak, ID va telefon orqali shaxs tiklanadi'
+  - Ha, ism ko'rinmasa yetarli
+  - Ha, agar jadval nomi o'zgartirilsa
+  - Ha, agar yozuv arxivga ko'chirilsa
+  answer: 0
+  explain: 16-moddaga ko'ra egasizlantirish harakatlari natijasida ma'lumotning muayyan subyektga tegishliligini aniqlash imkoni qolmaydi. ID yoki telefon qolsa, shaxs qayta tiklanadi (re-identification). Arxivga ko'chirish yoki jadval nomini o'zgartirish ma'lumotni o'zgartirmaydi.
+- q: Kompaniyangiz kiberxavfsizlik subyekti ta'rifiga kiradi va ma'lumot sizib chiqishi hodisasi aniqlandi. Jamoadan biri 'loglarni tozalab tashlaymiz, hech kim bilmaydi' deydi. O'RQ-764 16-moddasi nima talab qiladi?
+  options:
+  - Barcha loglarni o'chirish
+  - Hodisa va kiberjinoyatlar haqida vakolatli organni xabardor qilish, raqamli izlar yo'qolishiga yo'l qo'ymaslik va tahlil uchun ma'lumotni saqlash
+  - Faqat mijozlarga xat yuborish
+  - Hodisa haqida hech kimga bildirmaslik
+  answer: 1
+  explain: '16-modda aynan shuni sanaydi: vakolatli organni xabardor qilish, raqamli izlarni saqlash va tahlil uchun ma''lumotlarni doimiy saqlash. Loglarni o''chirish raqamli izlarni yo''qotadi. Xabar berish muddati matnda ko''rsatilmagan; kompaniyangiz subyekt ta''rifiga kirishi alohida aniqlanadi (93-darsdagi dalil saqlash tamoyili shu bilan mos).'
 task:
   title: "Maqsad bo'yicha proyeksiya: ortiqcha shaxsiy ma'lumotni qaytarmaslik"
   prompt: |
@@ -151,62 +155,86 @@ task:
 
 ## Muammo
 
-Platformada haydovchining ismi, telefon raqami, guvohnomasi, mashina GPS izi, video yozuv va yoqilg'i hisoboti saqlanadi. Dasturchi uchun bular "ustunlar", qonun uchun esa shaxsga doir ma'lumotlar bo'lishi mumkin. Odatiy xatolar: hamma maydonni har hisobotga qo'shish ("kerak bo'lib qolar"), logga telefon raqamini yozish, saqlash muddatini belgilamaslik, foydalanuvchi so'rasa ma'lumotini topib chiqarib berish yoki o'chirish imkoniyatini oldindan qurmaslik. Bularning har biri texnik nuqson sifatida ham (maxfiylik buzilishi, 1-dars), huquqiy nuqson sifatida ham (talablarga mos kelmaslik) oqibat beradi.
+Platformada haydovchining ismi, telefon raqami, guvohnomasi, GPS izi, video yozuv va yoqilg'i hisoboti saqlanadi. Bular ustunlar, qonun uchun esa shaxsga doir ma'lumotlar bo'lishi mumkin. Dasturchi amalda shu vaziyatlarga tushadi.
 
-Ikkinchi muammo: dasturchilar qonun matnini o'qimaydi, yuristlar esa kod qanday ishlashini bilmaydi. Natijada "qonun talab qiladi" degan gap texnik talabga aylanmaydi. Bu dars qonunning dasturchi uchun muhim joylarini lex.uz'dagi joriy matn bo'yicha qisqa keltiradi va ularni kod darajasidagi amaliyotga (privacy by design) bog'laydi.
+Birinchisi: arzon bulut kerak va u chet elda. Haydovchilar yuzi DMS kamerada tanilsa va bu yozuvlar o'sha bulutga ketsa, 27-1-modda bo'yicha muammo bo'lishi mumkin: ba'zi toifalar O'zbekistonda saqlanishi shart.
 
-Bu dars yuridik maslahat emas. Qonunlar o'zgaradi (quyida ko'rasiz, 2026-yil tahrirlari mavjud), ularning kompaniyangizga tatbiqi (siz mulkdormi yoki operatormi, qaysi toifadagi ma'lumot, qaysi hudud) yurist ishi.
+Ikkinchisi: debug uchun logga butun so'rov tanasi yoziladi, unda telefon raqami va pasport bor. Log hamma dasturchiga ochiq, hech qachon o'chirilmaydi.
+
+Uchinchisi: "keyin kerak bo'lar" deb hamma yozuv abadiy saqlanadi, baza esa reyestrda yo'q, subyekt so'rov yuborsa ma'lumotni topadigan va o'chiradigan funksiya ham yo'q.
+
+Har biri texnik nuqson (1-dars) va huquqiy nuqson: Ma'muriy va Jinoyat kodekslari bo'yicha javobgarlikka olib kelishi mumkin. Matnlar 2026-11-11 da lex.uz'dan o'qilgan; qonun 2026-yilda uch marta o'zgargan, shuning uchun loyihada matnni nusxalamang, havola va o'qilgan sana bilan yozing.
 
 ## Asosiy g'oya
 
-### O'RQ-547: asosiy tushunchalar
+O'RQ-547 (02.07.2019) 36 moddadan iborat, 01.10.2019 da kuchga kirgan. Dasturchi uchun u sakkiz qoidaga tushadi: qoida, nega (modda), amalda nima qilasiz.
 
-"Shaxsga doir ma'lumotlar to'g'risida" O'zbekiston Respublikasining Qonuni (02.07.2019, O'RQ-547) lex.uz'da bir necha marta o'zgartirilgan tahrirda turibdi. 4-moddaga ko'ra shaxsga doir ma'lumotlar muayyan jismoniy shaxsga taalluqli bo'lgan yoki uni identifikatsiya qilish imkonini beradigan, elektron tarzda, qog'ozda yoki boshqa moddiy jismda qayd etilgan axborot. Subyekt shu ma'lumot taalluqli bo'lgan jismoniy shaxs. Ishlov berish ma'lumotni yig'ish, tizimlashtirish, saqlash, o'zgartirish, to'ldirish, ulardan foydalanish, berish, tarqatish, uzatish, egasizlantirish va yo'q qilish bo'yicha bir harakat yoki harakatlar majmuasi. Mulkdor ma'lumotlar bazasiga egalik qilish, foydalanish va tasarruf etish huquqiga ega, operator esa ishlov berishni amalga oshiruvchi tomon.
+**1. Haydovchiga bog'langan har yozuvni shaxsga doir ma'lumot deb hisoblang.** Nega: 4-moddaga ko'ra shaxsga doir ma'lumot - muayyan jismoniy shaxsga taalluqli yoki uni identifikatsiya qilish imkonini beradigan axborot; "ishlov berish" ta'rifi log yozish, hisobotga qo'shish, boshqa servisga yuborish va o'chirishni ham qamraydi. GPS izi identifikatsiya imkonini bersa, ta'rifga tushadi (kursning talqini). Amalda: har maydon uchun toifa belgilang (data inventory).
 
-Dasturchi uchun xulosa: "ishlov berish" so'zi juda keng. Faqat bazaga yozish emas, log'ga yozish, hisobotga qo'shish, boshqa servisga yuborish va o'chirish ham ishlov berish. Haydovchiga bog'langan GPS izi muayyan odamni identifikatsiya qilishga imkon bersa, ta'rifga tushishi mumkin (bu bizning talqinimiz).
+**2. Ishlovdan oldin asos va maqsadni yozing; maqsad o'zgarsa yangi rozilik oling.** Nega: 18-modda asoslarni sanaydi, rozilik yagona asos emas; 19-modda maqsad o'zgarsa yangi rozilikni talab qiladi; 21 va 31-moddalar rozilik olinganligi faktini isbotlashni talab qiladi. Amalda: kim, qachon, matnning qaysi versiyasi va qaysi maqsad uchun rozilik bergani va qachon qaytarib olgani saqlanadi.
 
-### Prinsiplar, maqsad va rozilik
+**3. Har so'rovda faqat zarur maydonni qaytaring.** Nega: 10 va 19-moddalar "zarur va yetarli" hajmni, 12-modda faqat bildirilgan maqsad uchun foydalanishni talab qiladi. Amalda: maqsad bo'yicha default-deny proyeksiya (Misol bo'limi).
 
-5-modda prinsiplar qatoriga ishlov berish maqsadlari va usullarining qonuniyligi, ma'lumotlarning aniqligi va ishonchliligi, maxfiyligi va himoya qilinganligini kiritadi. 19-modda talablarini texnik tilga o'girsak: maqsad hujjatlarda belgilanadi va qonunga mos bo'ladi; maqsad yig'ish chog'ida bildirilgan maqsadga mos bo'lishi kerak, maqsad o'zgarsa o'zgargan maqsad uchun subyektdan rozilik olinadi; ma'lumotlar aniq va ishonchli bo'lishi, zarur bo'lsa o'zgartirilishi va to'ldirilishi kerak; ishlov beriladigan ma'lumotlarning hajmi va xususiyati maqsad va usullarga mos bo'lishi kerak.
+**4. Muddat tugagach yo'q qiling yoki egasizlantiring.** Nega: 10-modda saqlash muddatini maqsadga erishilgan sana bilan belgilaydi; 16 va 17-moddalar egasizlantirish va yo'q qilishni ta'riflaydi. Amalda: retention job, zaxira nusxa, kesh va logdagi nusxalar bilan birga. Ismni almashtirib ID qoldirish egasizlantirish emas.
 
-21-modda bo'yicha subyekt rozilikni uning olinganligi faktini tasdiqlash imkonini beradigan har qanday shaklda beradi; maxsus shaxsga doir ma'lumotlar uchun yozma shakldagi (elektron hujjat tarzida ham) rozilik talab etiladi; muomalaga layoqatsiz yoki cheklangan, shuningdek voyaga yetmagan subyektlar uchun qonuniy vakillar (ota-ona, vasiy, homiy) yozma rozilik beradi. Texnik oqibat: rozilik faktini isbotlash mumkin bo'lishi kerak, ya'ni kim, qachon, qaysi matn versiyasi va qaysi maqsad uchun rozilik bergani saqlanadi (31-modda ham mulkdor va operator rozilik olinganligi dalilini taqdim etishi kerak bo'lgan hollarni nazarda tutadi).
+**5. Subyekt so'rovlarini oldindan quring.** Nega: 11, 22, 23, 24 va 30-moddalar subyektga o'zgartirish, axborot olish, xabardor qilinish, avtomatlashtirilgan qarorga e'tiroz va ishlovni to'xtatishni talab qilish huquqini beradi, muddatlari 3 va 10 kun. Amalda: topish, eksport, tuzatish, to'xtatish bayrog'i, o'chirish va rozilikni qaytarib olish funksiyalari; driver scoring uchun e'tiroz va qo'lda ko'rib chiqish yo'li.
 
-### Saqlash joyi va transchegaraviy uzatish
+**6. Saqlash joyini ma'lumot toifasi bo'yicha tanlang.** Nega: 27-1-modda biometrik va genetik ma'lumotni hamda telekommunikatsiya operatorlaridagi foydalanuvchi ma'lumotini O'zbekistonda saqlashni shart qiladi; qolganlari uchun uch shartdan biri kerak; 15-modda transchegaraviy uzatishni tartibga soladi. Amalda: toifa bo'yicha ruxsat etilgan joylar konfiguratsiyada va deploy vaqtida tekshiriladi.
 
-27-1-moddaning joriy matniga ko'ra O'zbekiston fuqarolarining shaxsga doir ma'lumotlari qonunning asosiy prinsiplari ta'minlangan holda saqlanishi lozim. Jismoniy shaxslarning biometrik ma'lumotlari, genetik ma'lumotlari va O'zbekistonda faoliyat yurituvchi telekommunikatsiya operatorlaridagi ularning xizmatlaridan foydalanuvchi jismoniy shaxslar ma'lumotlari O'zbekiston hududida saqlanishi shart. Boshqa shaxsga doir ma'lumotlar chet elda saqlanishi va ishlov berilishi mumkin, agar quyidagilardan biri bajarilsa: chet davlat ma'lumotlarni bir xil himoya qiluvchi davlat sifatida tan olingan bo'lsa; operator vakolatli organ tasdiqlagan talablarga javob beruvchi standart shartnomaviy shartlar yoki majburiy korporativ qoidalarni qabul qilib, ularga rioya etsa; yoki operator vakolatli organ tasdiqlagan ro'yxatdagi xalqaro standartlarga rioya etsa. Bir xil himoya qiluvchi davlatlar ro'yxatini Vazirlar Mahkamasi belgilaydi. 15-modda esa transchegaraviy uzatishni umumiy tartibga soladi. 20-moddaning birinchi qismi esa (O'RQ-1125 (26.03.2026) tahririda) 27-1-moddaning ikkinchi qismi bo'yicha O'zbekistonda saqlanishi shart bo'lgan ma'lumotlar bazalari shaxsga doir ma'lumotlar bazalari davlat reyestrida ro'yxatdan o'tkazilishi lozimligini aytadi.
+**7. Biometrik va maxsus ma'lumotni alohida rejimda yuriting.** Nega: 25-modda maxsus ma'lumotga ishlov berishni, istisnolardan tashqari, taqiqlaydi; 26-modda biometrik va genetik ma'lumotga faqat roziligi bilan (istisnolardan tashqari) ruxsat beradi. Yuz bilan identifikatsiya shu toifaga tushishi mumkin (kursning talqini). Amalda: DMS kamera ma'lumotini alohida toifa va alohida saqlash joyi bilan yuriting.
 
-Misol: avtopark platformasi haydovchi yuzini tanish (biometrik ma'lumot bo'lishi mumkin) yoki video ma'lumotlarni chet eldagi cloud'da saqlasa, bu 27-1 bo'yicha alohida huquqiy savol. Qaror qabul qilishdan oldin yurist bilan aniqlang. Dasturchi vazifasi: ma'lumot turi bo'yicha saqlash joyini konfiguratsiyada ifodalash va kodda tekshirish.
+**8. Himoya, maxfiylik va hodisa jarayonini quring.** Nega: 27 va 28-moddalar himoya choralari va maxfiylikni, 31-modda huquqiy, tashkiliy va texnik himoyani talab qiladi; hodisada O'RQ-764 16-moddasi ishlaydi. Amalda: access logging, hodisa jarayoni (93-dars), reyestr arizasi (20-modda).
 
-### Operator majburiyatlari
+### Vaziyatlar jadvali
 
-31-moddaga ko'ra mulkdor va operator, boshqa narsalar qatori: qonunchilikka rioya etadi; subyekt murojaati bo'yicha uning ma'lumotlariga ishlov berish haqida axborot beradi; o'z vazifalarini bajarish uchun zarur va yetarli ma'lumotlar tarkibini tasdiqlaydi; ishlov berish maqsadiga erishilganda yoki qonunda belgilangan boshqa hollarda ma'lumotlarni yo'q qilish choralarini ko'radi; zarur hollarda rozilik olinganligi dalilini taqdim etadi; ishonchli hujjatlar bilan tasdiqlansa, ma'lumotlarni o'zgartiradi yoki to'ldiradi, imkoni bo'lmasa yo'q qiladi; ishlov berish shartlari buzilganligi haqida axborot bo'lsa, ishlov berishni vaqtincha to'xtatadi yoki ma'lumotlarni yo'q qiladi. 27-modda mulkdor, operator va uchinchi shaxs ma'lumotlarni himoya qilish bo'yicha huquqiy, tashkiliy va texnik choralar ko'rishini, shu jumladan ma'lumotlarning yaxlitligi, maxfiyligi va qonunga xilof ishlov berilishining oldini olish kafolatlanishini yozadi. Bu aynan CIA triadasi (1-dars) tili.
+| Vaziyat | Mumkinmi | Asos (modda) | Nima qilish kerak |
+|---|---|---|---|
+| Servis "xizmat ko'rsatish" uchun yig'ilgan ma'lumotni marketing uchun ishlatmoqchi | Faqat yangi rozilik bilan | 19 | Maqsad o'zgargani uchun o'zgargan maqsadga rozilik oling va hujjatlang |
+| Dispetcher hisoboti API javobida pasport va manzil ham bor | Yo'q | 10, 19 (zarur va yetarli hajm) | Maqsad bo'yicha proyeksiya, frontend'da yashirish yetmaydi |
+| Haydovchi yuzi (DMS kamera) ma'lumotini chet eldagi bulutda saqlash | Yo'q | 27-1 (biometrik O'zbekistonda saqlanishi shart); yuz biometrik bo'lishi mumkin (kursning talqini) | Biometrik toifani O'zbekiston hududidagi saqlashga ajrating |
+| Biometrik bo'lmagan ma'lumotni chet elda saqlash | Uch shartdan biri bajarilsa | 27-1 | Qaysi shart bajarilganini hujjatlang; hech biri bajarilmasa chet elda saqlamang |
+| Muddati o'tgan yozuvda ism almashtirilib, ID qoldirildi | Egasizlantirish hisoblanmaydi | 16 | ID va boshqa bog'lovchi maydonlarni ham olib tashlang yoki qaytarilmas qiling |
+| Haydovchi o'z ma'lumotini ko'rishni so'radi | Ha, axborot berish kerak | 22 | Eksport funksiyasi; rad etilsa, 10 kunda yozma xabar |
+| Driver scoring natijasi yuridik oqibat keltiradigan qarorga aylanadi va u faqat avtomatlashtirilgan ishlov asosida qabul qilinmoqda | Yo'q, istisnolardan tashqari | 24 | E'tiroz va qo'lda ko'rib chiqish yo'li, e'tirozga 10 kunda yozma javob |
+| Debug logiga telefon raqami yozilmoqda | Yo'q | 12, 28 (maqsad, maxfiylik; kursning talqini) | Logga qiymat emas ID yozing, logning ham saqlash muddati bo'lsin |
+| Baza reyestrda yo'q, ma'lumot qonunga xilof saqlanmoqda | Yo'q | 20, 31; javobgarlik 46-2 | Bazani ro'yxatdan o'tkazing (ro'yxatdan o'tkazilmaydigan bazalar ro'yxatiga tushishini tekshiring) |
 
-33-modda qisqa: qonun hujjatlarini buzishda aybdor shaxslar belgilangan tartibda javobgar bo'ladi. Aniq jazo turi va miqdori bu moddada emas; ular boshqa qonun hujjatlarida (bu darsda o'qilmagan), shuning uchun javobgarlik darajasini yurist aniqlaydi.
+### Moddalar jadvali
 
-### Yo'q qilish, maxsus ma'lumotlar va subyekt huquqlari
+Quyida operator majburiyatlari va javobgarlik moddalari. Jazolar boshqa kodekslarda (bazaviy hisoblash miqdori, BHM); 33-modda aybdor shaxslar belgilangan tartibda javobgar ekanini aytadi.
 
-17-modda ma'lumotni yo'q qilishni qayta tiklab bo'lmaydigan harakatlar deb ta'riflaydi va yo'q qilish kerak bo'ladigan holatlarni sanaydi: ishlov berish maqsadiga erishilganda, rozilik chaqirib olinganda, rozilik muddati tugaganda va sud qarori qonuniy kuchga kirganda. Dasturchi uchun bu "o'chirish" funksiyasi bazadagi qatorni `deleted_at` bilan belgilashdan ko'proq ekanini bildiradi: zaxira nusxalar, kesh, qidiruv indeksi va log'dagi nusxalar ham ko'rib chiqilishi kerak (saqlash jadvali yurist bilan kelishiladi). Bu 16-moddadan farq qiladi: egasizlantirishda ma'lumot qoladi, lekin muayyan subyektga bog'lanmaydi, yo'q qilishda esa ma'lumot tiklanmaydi. 16-modda statistik, tarixiy, sotsiologik yoki ilmiy tadqiqot uchun ishlatiladigan ma'lumotni egasizlantirishni talab qiladi.
+| Modda | Nima haqida | Kimga tegishli | Sanksiya |
+|---|---|---|---|
+| 3, 4, 8 | 3: qonun jismoniy shaxsning shaxsiy va maishiy ishlovini, milliy arxiv fondini, davlat sirlari, mudofaa va milliy xavfsizlikka oid hamda tezkor-qidiruv va huquq-tartibot faoliyatidagi ma'lumotni qamramaydi. 4: shaxsga doir ma'lumot (elektron, qog'oz yoki boshqa moddiy jismda qayd etilgan); subyekt; ishlov berish (yig'ish, tizimlashtirish, saqlash, o'zgartirish, to'ldirish, ulardan foydalanish, berish, tarqatish, uzatish, egasizlantirish va yo'q qilishdan bir harakat yoki harakatlar majmui); operator (ishlov berishni amalga oshiruvchi davlat organi, jismoniy yoki yuridik shaxs); mulkdor (ma'lumotlar bazasiga egalik qilish, foydalanish va tasarruf etish huquqiga ega tomon); uchinchi shaxs. 8: vakolatli organ - Vazirlar Mahkamasi huzuridagi Davlat personallashtirish markazi, reyestrni yuritadi, nazorat qiladi, majburiy ko'rsatmalar beradi | Hamma | Alohida sanksiya yo'q |
+| 10, 12, 19, 11 | 10: baza zarur va yetarli ma'lumotni yig'ish bilan shakllanadi, saqlash maqsad talab etgan darajada, muddat maqsadga erishilgan sana bilan belgilanadi. 12: foydalanish faqat bildirilgan maqsad uchun, xodim faqat o'z majburiyati doirasida. 19: maqsad o'zgarsa yangi rozilik; ma'lumot aniq, kerak bo'lsa yangilangan; hajm va xususiyat maqsad va usullarga mos; ishlov berish muddati rozilik muddatidan oshmaydi. 11: subyekt murojaatidan uch kunda o'zgartirish, noto'g'ri ma'lumot aniqlansa darhol | Operator | Alohida sanksiya yo'q (33) |
+| 16, 17 | 16: egasizlantirish (muayyan subyektga tegishliligini aniqlash imkoni qolmaydigan harakatlar), tarixiy, statistik, sotsiologik, ilmiy tadqiqot uchun majburiy. 17: yo'q qilish (tiklash imkoni qolmaydigan harakatlar), majburiy: maqsadga erishilganda, rozilik chaqirib olinganda, rozilik muddati o'tganda, sud qarori kuchga kirganda | Operator | Alohida sanksiya yo'q (33) |
+| 18, 21 | 18 asoslari: subyekt roziligi; subyekt tarafi bo'lgan shartnomani bajarish; operatorning qonuniy majburiyatlari; subyekt yoki boshqa shaxsning qonuniy manfaatlarini himoya qilish; mulkdor, operator yoki uchinchi shaxsning qonuniy manfaatlari (subyekt huquqlari buzilmasa); majburiy egasizlantirish bilan statistik yoki tadqiqot maqsadi; ochiq manbadan olingan ma'lumot. 21: rozilik uning olinganligi faktini tasdiqlash imkonini beradigan har qanday shaklda beriladi; maxsus ma'lumot uchun yozma (elektron hujjat ham) rozilik; layoqatsiz yoki cheklangan subyekt uchun qonuniy vakil, voyaga yetmagan uchun ota-ona (vasiy, homiy); rozilik berilgan shaklda yoki yozma shaklda chaqirib olinadi | Operator | Alohida sanksiya yo'q (33) |
+| 25, 26 | 25 maxsus ma'lumotlar: irqiy yoki ijtimoiy kelib chiqish; siyosiy, diniy yoki dunyoqarash e'tiqodlari; partiya va kasaba uyushmasi a'zoligi; jismoniy yoki ruhiy salomatlik; shaxsiy hayot; sudlanganlik. Ishlov berish taqiqlanadi, istisnolar: yozma (elektron hujjat ham) rozilik; mehnat munosabatlari; tibbiy xizmat; subyekt o'zi ochiq e'lon qilgan ma'lumot; huquqlarni himoya qilish va boshqalar. 26: biometrik ma'lumot - anatomik va fiziologik xususiyatlar, genetik ma'lumot - nasldan-naslga o'tgan yoki orttirilgan xususiyatlar; shaxsni aniqlash uchun ishlatilsa, faqat subyekt roziligi bilan (xalqaro shartnomalar, odil sudlov, ijro ishi kabi istisnolardan tashqari) | Operator | Alohida sanksiya yo'q (33) |
+| 22, 23, 24, 30 | 22: axborot tarkibi - ishlov fakti, asos va maqsadlar, usullar, operator, ma'lumot oshkor qilinishi mumkin shaxslar, tarkib va manba, ishlov va saqlash muddatlari, huquqlarni amalga oshirish tartibi, transchegaraviy uzatish; rad etish haqidagi xabar 10 kunda yozma yuboriladi. 23: bazaga kiritilayotganda maqsad va huquqlar haqida yozma xabardor qilish; uchinchi shaxsga berilsa 3 kun ichida yozma xabar. 24: yuridik oqibat keltiruvchi qarorni faqat avtomatlashtirilgan ishlov asosida qabul qilmaslik huquqi (istisno: yozma rozilik, shartnomani ijro etish, qonunda nazarda tutilgan hol); operator tartibni tushuntiradi va e'tirozga 10 kunda yozma javob beradi. 30 subyekt huquqlari: ma'lumoti mavjudligini bilish; ishlov berish haqida axborot olish; vakolatli organ yoki sudga murojaat; rozilik berish va chaqirib olish; ochiq manbalarda tarqatishga rozilik; ma'lumot to'liq emas, eskirgan, noaniq, qonunga xilof olingan yoki kerak bo'lmasa ishlov berishni vaqtincha to'xtatishni talab qilish | Operator | Alohida sanksiya yo'q (33) |
+| 31, 27, 28 | 31: qonunga rioya; subyekt so'roviga axborot; zarur va yetarli tarkibni tasdiqlash; maqsadga erishilganda yo'q qilish; rozilik dalilini taqdim etish; ma'lumotni hujjat bilan tasdiqlangan yangisiga o'zgartirish yoki yo'q qilish; shartlar buzilgani haqida axborot bo'lsa ishlov berishni to'xtatish yoki yo'q qilish; to'xtatish va yo'q qilish uchun hujjatlarni elektron topshirish imkoni; ma'lumot o'zgartirilgan, yo'q qilingan, cheklangan yoki uchinchi shaxsga berilganda subyektni yozma xabardor qilish; bazalarni ro'yxatdan o'tkazish; huquqiy, tashkiliy va texnik himoya choralari. Ishlovni uchinchi shaxsga topshirish yozma rozilik, shartnomani ijro etish yoki qonunda nazarda tutilgan hollarda mumkin; mas'ul bo'linma yoki mansabdor belgilanadi. 27: himoya choralari shaxsiy hayotga aralashuvdan himoya, yaxlitlik va butlik, maxfiylik, qonunga xilof ishlovning oldini olishni ta'minlaydi. 28: maxfiylik - subyekt roziligisiz yoki boshqa qonuniy asossiz oshkor etmaslik va tarqatmaslik. Ma'lumot sizib chiqishi haqida xabar berishning alohida moddasi yo'q | Operator | Alohida sanksiya yo'q (33) |
+| 20 | Ro'yxatdan o'tkazish ariza berish prinsipi bo'yicha xabardor qilish yo'li bilan, ariza vakolatli organga beriladi (organ guvohnoma beradi, 8-modda). O'RQ-1125 tahririda birinchi qism ro'yxatdan o'tkazish majburiyatini 27-1 ning ikkinchi qismi bo'yicha O'zbekistonda saqlanishi shart bazalarga bog'laydi. Ro'yxatdan o'tkazilmaydigan bazalar qatorida: faqat F.I.Sh. bor; hududga bir martalik kirish uchun; subyekt ochiq qilgan; avtomatlashtirishsiz yuritiladigan; mehnat qonunchiligi bo'yicha bazalar. Reyestr uchun zarur ma'lumot o'zgarsa, 10 kalendar kun ichida vakolatli organ xabardor qilinadi | Operator | Alohida sanksiya yo'q (33) |
+| 15 | Uzatish subyektlar huquqlarini bir xilda himoya qiluvchi davlatlarga; boshqa davlatlarga subyekt roziligi, jamoat tartibi va fuqarolar huquqlarini himoya qilish zarurati yoki xalqaro shartnoma bo'lganda; xavfsizlik va mudofaa uchun uzatish taqiqlanishi yoki cheklanishi mumkin | Operator | Alohida sanksiya yo'q (33) |
+| 27-1 (O'RQ-1125 tahriri) | Fuqarolar ma'lumotlari qonun prinsiplari ta'minlangan holda saqlanishi lozim. O'zbekiston hududida saqlanishi SHART: jismoniy shaxslarning biometrik ma'lumotlari; genetik ma'lumotlari; O'zbekistonda faoliyat yurituvchi telekommunikatsiya operatorlaridagi ularning xizmatlaridan foydalanuvchi jismoniy shaxslarning ma'lumotlari. Qolgan ma'lumotlar chet elda saqlanishi va ishlov berilishi mumkin, agar shartlardan biri bajarilsa: chet davlat bir xil himoya qiluvchi davlat sifatida tan olingan (ro'yxatni Vazirlar Mahkamasi belgilaydi); operator vakolatli organ tasdiqlagan talablarga javob beruvchi standart shartnomaviy shartlar yoki majburiy korporativ qoidalarni qabul qilib, ularga rioya etadi; operator vakolatli organ tasdiqlagan ro'yxatdagi xalqaro standartlarga rioya etadi. Telekommunikatsiya bandi telekom operatorlariga va ularning foydalanuvchilari ma'lumotiga tegishli; telekom bo'lmagan avtopark platformasi uchun asosiy xavf biometrik ma'lumot (yuz, DMS kamera) bo'lishi mumkin (kursning talqini) | Operator | Alohida sanksiya yo'q; umumiy javobgarlik 33 va quyidagi kodeks moddalari |
+| Ma'muriy kodeks 46-2 | Ma'lumotni qonunga xilof yig'ish, tizimlashtirish, saqlash, o'zgartirish, ulardan foydalanish, berish, tarqatish, uzatish, egasizlantirish va yo'q qilish, shuningdek axborot texnologiyalaridan, shu jumladan Internetdan foydalanib fuqarolar ma'lumotiga ishlov berilganda jisman O'zbekiston hududidagi texnik vositalarda va davlat reyestrida ro'yxatdan o'tgan bazalarda yig'ish, tizimlashtirish va saqlash talablariga rioya etmaslik (matn 31.01.2022 dan, O'RQ-726) | Fuqaro, mansabdor shaxs | Fuqarolarga 7 BHM, mansabdor shaxslarga 50 BHM jarima |
+| Ma'muriy kodeks 46-2, 2-qism | Sun'iy intellekt texnologiyalari bilan qonunga xilof ishlov berish va ommaviy axborot vositalarida, telekommunikatsiya tarmoqlarida yoki Internetda tarqatish (O'RQ-1115, 21.01.2026) | Huquqbuzar | Huquqbuzarlik quroli musodarasi bilan 50-100 BHM jarima |
+| Ma'muriy kodeks 46-1 va 46 | 46-1: shaxsiy yoki oilaviy sirni tashkil etuvchi ma'lumotni roziliksiz yig'ish yoki tarqatish. 46: tibbiy, tijorat, bank sirlari va zarar yetkazishi mumkin boshqa ma'lumotni oshkor etish | Fuqaro, mansabdor shaxs | 46-1: 10-40 BHM. 46: fuqarolarga 0,5-2, mansabdorlarga 2-5 BHM |
+| Jinoyat kodeksi 141-2 | Xuddi shu huquqbuzarlik (46-2), ma'muriy jazo qo'llanilgandan keyin sodir etilsa | Huquqbuzar | 1-qism: 100-150 BHM jarima yoki 3 yilgacha muayyan huquqdan mahrum qilish yoxud 2 yilgacha axloq tuzatish ishlari; 2-qism (guruh, takroran, g'arazli niyat, xizmat mavqei, og'ir oqibat): 150-200 BHM jarima yoki 2-3 yil axloq tuzatish, 1-3 yil ozodlikni cheklash yoxud 3 yilgacha ozodlikdan mahrum qilish |
+| Jinoyat kodeksi 141-1 | Shaxsiy yoki oilaviy sirni roziliksiz yig'ish yoki tarqatish, ma'muriy jazodan keyin | Huquqbuzar | 50-100 BHM jarima, 300 soatgacha majburiy jamoat ishlari yoki 2 yilgacha axloq tuzatish; og'irlashtiruvchi holatda 100-200 BHM jarima yoki 1-3 yil ozodlikni cheklash, 3 yilgacha ozodlikdan mahrum qilish |
+| O'RQ-764, 3, 11, 16, 28 | 3: kiberxavfsizlik hodisasi - axborot tizimlari ishlashida uzilishlarga va (yoki) axborotning ochiqligi, yaxlitligi yoki undan erkin foydalanilishining buzilishiga olib kelgan hodisa. 16: subyektlar ma'lumotning qonunga xilof tarqalishi, o'g'irlanishi, yo'qolishi va ruxsatsiz kirishning oldini oladi; tizimlarni tezkor tiklaydi; hodisa va kiberjinoyatlar haqida vakolatli organni (Davlat xavfsizlik xizmati, 11-modda) xabardor qiladi, raqamli izlar yo'qolishiga yo'l qo'ymaydi va tahlil uchun ma'lumotni doimiy saqlaydi. Xabar berish muddati qonun matnida ko'rsatilmagan. 28: qo'shimcha majburiyatlarni faqat muhim axborot infratuzilmasi subyektlariga yuklaydi (9-dars) | Kiberxavfsizlik subyektlari | Alohida sanksiya yo'q; kompaniyangiz 3-moddadagi "kiberxavfsizlik subyekti" ta'rifiga kirishi alohida aniqlanadi |
 
-25-modda maxsus shaxsga doir ma'lumotlarni (irqiy yoki ijtimoiy kelib chiqish, siyosiy, diniy va dunyoqarash e'tiqodlari, partiya yoki kasaba uyushmasi a'zoligi, jismoniy yoki ruhiy salomatlik, shaxsiy hayot, sudlanganlik) alohida toifa qilib, ularga ishlov berishni umumiy qoida bo'yicha taqiqlaydi va istisnolarni (masalan yozma rozilik) sanaydi. 26-modda biometrik va genetik ma'lumotni shaxsni identifikatsiya qilish uchun faqat subyektning roziligi bilan qayta ishlashga ruxsat beradi, shartnoma, sud va huquqni muhofaza qilish kabi qonunda nazarda tutilgan istisnolar bundan mustasno. Haydovchining tibbiy ko'rik natijasi yoki yuz bilan identifikatsiya shu toifaga tushishi mumkin; bunday maydonni alohida toifa sifatida tasniflang (bu bizning talqinimiz).
-
-30-modda subyekt huquqlarini sanaydi: o'zi haqida ma'lumot mavjudligini va uning tarkibini bilish; ishlov berish haqida axborot so'rash; vakolatli organga yoki sudga shikoyat qilish; rozilik berish va uni chaqirib olish; ma'lumot ochiq manbalarda e'lon qilinishiga rozilik berish; ma'lumot to'liq emas, eskirgan, noaniq, qonunga xilof olingan yoki kerak bo'lmasa, ishlov berishni vaqtincha to'xtatishni so'rash. Aynan shu ro'yxat "subyekt so'rovi" funksiyalarining texnik talabi: qidirish, eksport, to'xtatish bayrog'i va o'chirish.
-
-### O'RQ-764: kiberxavfsizlik hodisalari
-
-"Kiberxavfsizlik to'g'risida"gi Qonun (15.04.2022, O'RQ-764) 3-moddasida kiberxavfsizlik hodisasini kibermakonda axborot tizimlari ishlashida uzilishlarga va (yoki) ulardagi axborotning ochiqligi, yaxlitligi va undan erkin foydalanilishining buzilishiga olib kelgan hodisa deb ta'riflaydi (ya'ni CIA bilan mos). 16-modda kiberxavfsizlik subyektlarining majburiyatlarini sanaydi: ma'lumotning qonunga xilof tarqalishi, o'g'irlanishi, yo'qolishi, yaxlitligi buzilishi, bloklanishi va soxtalashtirilishining oldini olish va aniqlanganda o'z vaqtida choralar ko'rish; salbiy oqibatlarni kamaytirish uchun tizimlarni tezkor tiklash choralari; sodir bo'lgan kiberxavfsizlik hodisalari va kiberjinoyatlar haqida vakolatli davlat organini xabardor qilish, hodisani fosh etish uchun tegishli raqamli izlar yo'qolishiga yo'l qo'ymaslik va tahlil uchun zarur ma'lumotlarning doimiy saqlanishini ta'minlash. 23-modda hodisalar bo'yicha choralar shakllarini (zaifliklarni bartaraf etish, zararli dasturlarni yo'q qilish, obyektlarni ajratib qo'yish, huquqni muhofaza qiluvchi organlarga ma'lumot berish) sanaydi; 24-modda zaifliklar va hujumlar haqidagi axborot himoya choralari ko'rilgandan keyin kiberxavfsizlik subyektining ruxsati bilan oshkor qilinishi mumkinligini va aniqlangan zaifliklar haqidagi axborot faqat ularni bartaraf etish va qonunga xilof harakatlarning oldini olish uchun ishlatilishini yozadi (9-dars bilan bog'liq).
-
-Qaysi kompaniya "kiberxavfsizlik subyekti" ta'rifiga kirishi (3-moddadagi ta'rif milliy axborot resurslariga egalik qilish yoki elektron axborot xizmatlarini ko'rsatish kabi belgilarga tayanadi) va qanday muddat hamda shaklda xabar berilishi bu darsda aniqlanmagan; ularni yurist bilan aniqlang. Dasturchi uchun amaliy xulosa: raqamli izlar (loglar) hodisadan keyin ham saqlanishi kerak, shuning uchun 93-darsdagi "o'chirmaymiz, belgilaymiz" tamoyili va qonun talabi mos tushadi.
+46-2 va 141-2 matni talabni umumiy (jisman O'zbekistonda joylashgan vositalar va ro'yxatdan o'tgan bazalar) yozadi, 27-1 esa chet elda saqlashga ruxsat beradigan shartlarni belgilaydi. Ularning moslashuvi (quyi hujjatlar, amaliyot) o'qilmagan; kodni 27-1 toifa qoidasiga quring va masalani hujjatda ochiq qoldiring.
 
 ## Chuqurroq: privacy by design kodda
 
-Privacy by design bu kod darajasidagi bir necha odat:
+Qoidalarning muhandislik oqibatlari:
 
-- Maydonlarni tasniflash. Har maydon uchun toifa (oddiy, shaxsga doir, maxsus/biometrik) va maqsad yoziladi. Tasniflanmagan maydon qo'shib bo'lmaydi (CI qoidasi).
-- Maqsad bo'yicha proyeksiya. Har maqsad uchun ruxsat etilgan maydonlar ro'yxati (default-deny). Bu 19-moddadagi hajm va maqsad mosligining kod ifodasi.
-- Saqlash muddati va anonimlashtirish. Maqsadga erishilganda ma'lumotni yo'q qilish yoki egasizlantirish (16-modda: ma'lumotning muayyan subyektga tegishliligini aniqlash imkoni qolmaydi). Ism almashtirib ID qoldirish egasizlantirish emas.
-- Subyekt so'rovi. Muayyan odam haqida saqlanayotgan hamma narsani topish va eksport qilish (31-modda: axborot berish), tuzatish va o'chirish funksiyalari baza dizaynida oldindan nazarda tutiladi.
-- Log va xato xabarlarida shaxsiy ma'lumot yo'q (79 va 93-darslar).
-- Ma'lumot turi bo'yicha saqlash joyi konfiguratsiyada va kodda tekshiriladi.
+- Data inventory. Har maydon uchun toifa, maqsad, huquqiy asos, saqlash muddati, joyi va qabul qiluvchilar yoziladi: 22-modda aynan shuni subyektga berishni talab qiladi. Tasniflanmagan maydon qo'shib bo'lmaydi (CI qoidasi).
+- Minimizatsiya. Maqsad bo'yicha default-deny proyeksiya 10 va 19-moddalardagi "zarur va yetarli" talabning kod ifodasi.
+- Retention job. Muddat maqsad bilan boshlanadi (10, 19); tugagach yo'q qilish yoki egasizlantirish (16, 17), zaxira nusxa, kesh, qidiruv indeksi va logdagi nusxalar ham. Ism almashtirib ID qoldirish egasizlantirish emas.
+- Access logging. Xodim faqat o'z majburiyati doirasida foydalanadi (12), maxfiylik saqlanadi (28): shaxsga doir yozuvga kim, qachon, qaysi maqsadda kirgani logga yoziladi; logda qiymat emas ID bo'ladi va logning ham saqlash muddati bor (79 va 93-darslar). 16-modda hodisa uchun raqamli izlarni saqlashni talab qiladi.
+- Subyekt so'rovi. Topish, eksport (22), tuzatish (11), to'xtatish bayrog'i (30, 31), o'chirish (17) va rozilikni qaytarib olish (21) oldindan quriladi; avtomatlashtirilgan qaror (driver scoring) uchun e'tiroz va qo'lda ko'rib chiqish yo'li bo'ladi (24).
+- Hosting joyi. Toifa bo'yicha ruxsat etilgan joylar konfiguratsiyada ifodalanadi va deploy vaqtida tekshiriladi; biometrik va genetik ma'lumot faqat O'zbekistonda (27-1). Bulut yoki SMS provayderga ishlov topshirish 31-modda shartlariga tayanadi.
+- User Privacy Protection Cheat Sheet qo'shadi: uzatishda va saqlashda kriptografiya, remote session invalidation, tashqi kontentdan IP sizishining oldini olish.
 
 ## Misol: haydovchi hisoboti
 
@@ -232,14 +260,14 @@ console.log("pasport ko'rinadi:", rep.every((r) => r.passport.length > 0));
 
 ### 2. Hujum
 
-Bu yerda "hujum" ichki foydalanuvchining oddiy harakati: dispetcher faqat oylik hisobotni ochadi. Hisobot uchun ism va safar soni yetarli edi, lekin API javobida hamma narsa bor: pasport raqami va manzil ham. Frontend ularni ko'rsatmasa ham, brauzer tarmoq oynasi yoki skript ularni o'qiydi. Natija:
+"Hujum" bu yerda ichki foydalanuvchining oddiy harakati: dispetcher oylik hisobotni ochadi. Ism va safar soni yetarli edi, lekin API javobida pasport raqami va manzil ham bor; frontend yashirsa ham, brauzer tarmoq oynasi ularni ko'rsatadi. Natija:
 
 ```text
 dispetcher hisoboti maydonlari: id,name,phone,passport,address,trips
 pasport ko'rinadi: true
 ```
 
-Ortiqcha ma'lumot oshkor bo'lish yuzasini kengaytiradi: dispetcher akkaunti buzilsa yoki ma'lumot log'ga tushsa, pasport raqamlari ham sizadi. Bu 19-modda talab qilgan hajm va maqsad moslik prinsipiga zid.
+Ortiqcha ma'lumot oshkor bo'lish yuzasini kengaytiradi va 19-moddadagi hajm va maqsad moslik talabiga zid.
 
 ### 3. Tuzatilgan kod
 
@@ -286,17 +314,17 @@ anonimlashtirish: [{"id":"d1","name":"Aziz K.","phone":"+998900000001","passport
 subyekt eksporti maydonlari: id,name,phone,passport,address,trips,lastSeen
 ```
 
-Tuzatish nima uchun yetarli: hisobot faqat zarur maydonlarni qaytaradi (default-deny, shu jumladan prototip kalitlariga qarshi); saqlash muddati o'tgan yozuvdan shaxsni bog'lovchi maydonlar (`id`, `name`, `phone`, `passport`, `address`, `lastSeen`) olib tashlanadi, faqat umumiy statistikaga yaroqli qiymatlar qoladi. Yopilmagan narsa: bu yerda `trips` + `region` birga kichik guruhda yana shaxsni aniqlashi mumkin (re-identification), real anonimlashtirish uchun guruhlash va statistik tekshiruv kerak; proyeksiya avtorizatsiyani almashtirmaydi (kim `report` ni so'ray oladi, 51-58-darslar); rozilik saqlash, huquqiy asos va saqlash joyi bu kodda yo'q; muddat (365 kun) modelning o'ylab topilgan qiymati, qonundan olinmagan.
+Tuzatish: hisobot faqat zarur maydonlarni qaytaradi (default-deny, prototip kalitlariga qarshi ham); muddati o'tgan yozuvdan shaxsni bog'lovchi maydonlar olib tashlanadi. Yopilmagan: `trips` + `region` kichik guruhda yana shaxsni aniqlashi mumkin (re-identification), real anonimlashtirish uchun guruhlash va statistik tekshiruv kerak; proyeksiya avtorizatsiyani almashtirmaydi (51-58-darslar); rozilik, huquqiy asos va saqlash joyi bu kodda yo'q; 365 kun qonundan olinmagan, o'quv qiymati.
 
 ### Saqlash joyi kodda
 
-27-1-moddadagi toifa bo'yicha qoidani konfiguratsiyada ifodalash va tekshirish mumkin. Quyidagi funksiya qonunning matnini emas, jamoa belgilagan siyosatni ifodalaydi: u yurist tasdiqlagan qoidalar bilan to'ldirilishi kerak.
+27-1-moddadagi toifa bo'yicha qoidani konfiguratsiyada ifodalash va tekshirish mumkin. Quyidagi funksiya qonun matnini emas, jamoa belgilagan siyosatni ifodalaydi va tasdiqlangan qoidalar bilan to'ldirilishi kerak.
 
 ```ts run
 type Category = "oddiy" | "biometrik" | "genetik" | "telekom";
 type Place = { country: string; basis?: "standart-shartnoma" | "tan-olingan-davlat" | "xalqaro-standart" };
 
-// Siyosat (jamoa/yurist belgilaydi): bu kod faqat siyosatni qo'llaydi
+// Siyosat (jamoa belgilaydi): bu kod faqat siyosatni qo'llaydi
 const MUST_STAY = new Set<Category>(["biometrik", "genetik", "telekom"]);
 function storageAllowed(cat: Category, place: Place): { ok: boolean; why: string } {
   if (place.country === "UZ") return { ok: true, why: "O'zbekiston hududida" };
@@ -320,23 +348,15 @@ console.log(storageAllowed("telekom", { country: "UZ" }));
 
 Bu funksiya hukm chiqarmaydi: asos (`basis`) ning haqiqatan mavjudligini, davlat ro'yxatini yoki shartnoma tasdiqlanganini tekshirmaydi. U faqat xato konfiguratsiyani erta (CI yoki deploy vaqtida) ushlaydi.
 
-## Foydalanuvchi himoyasi: cheat sheet nima qo'shadi
-
-Qonun "nima kerak" ni aytadi, User Privacy Protection Cheat Sheet esa foydalanuvchini himoya qiluvchi texnik choralarni beradi. Avtopark platformasi uchun ahamiyatlilari: shaxsiy ma'lumot uzatishda va saqlashda kriptografiya bilan himoyalanadi, parollar kuchli hash bilan saqlanadi (42-dars), HSTS yoqiladi (16-dars). Remote session invalidation haydovchi telefoni yo'qolsa yoki musodara qilinsa, foydalanuvchi o'z faol sessiyalarini ko'rishi va uzishi kerakligini aytadi; bu 93-darsdagi cheklash mexanizmining foydalanuvchiga ochiq shakli (46-dars). Uchinchi tomon kontentidan IP manzil sizishi: ilova tashqi domendan rasm yuklasa, o'sha domen egasi so'rovlardan foydalanuvchi IP manzilini ko'radi; foydalanuvchiga tashqi kontentni bloklash imkonini berish tavsiya qilinadi. Halollik va shaffoflik: ilova ma'lumotni yetarli himoyalay olmasa (masalan loglarning ortiqcha ochiqligi), buni foydalanuvchiga tushunarli tilda aytish kerak.
-
 ## Qachon qo'llamaslik kerak
 
-Hamma maydonni majburan shifrlash yoki hamma ma'lumotni chekka holatgacha cheklash ish jarayonini buzishi mumkin: support xodimi telefon raqamsiz mijozga yordam bera olmaydi. Maqsad yo'qlik emas, mutanosiblik: har maqsad uchun zarur va yetarli ma'lumot.
-
-Anonimlashtirish ba'zan ish uchun mumkin emas: moliyaviy yoki huquqiy talab ma'lum muddat identifikatsiya qilinadigan yozuvni saqlashni talab qilsa, o'chirish qonunga zid bo'lishi mumkin. Bunday ziddiyatlarni dasturchi o'zi hal qilmaydi: yurist va ma'lumotlar mas'uli bilan saqlash jadvali kelishiladi.
-
-Texnik nazorat qonuniy muvofiqlikni kafolatlamaydi. Rozilik matni, huquqiy asos, davlat reyestrida ro'yxatdan o'tish va xabar berish majburiyatlari yurist bilan hal etiladi. Bu darsda qonunning faqat yuqorida keltirilgan moddalari o'qildi; qolgan moddalar (masalan 6-8 va 22-24 moddalar, vakolatli organ va ma'lumot berish tartiblari), Vazirlar Mahkamasi qarorlari va ularga bog'liq qarorlar o'qilmagan.
-
-Qonunlar o'zgaradi. Bu darsdagi matn 2026-11-11 da lex.uz'dan o'qilgan va unda 2026-yil tahrirlari borligi ko'rindi (masalan, 20-moddaning birinchi qismi O'RQ-1125 (26.03.2026) tahririda). Loyihada qonun matnini hujjat sifatida emas, havola va o'qilgan sana bilan yozing va davriy qayta tekshiring.
+Hamma maydonni majburan cheklash ish jarayonini buzishi mumkin: support xodimi telefon raqamsiz mijozga yordam bera olmaydi; maqsad mutanosiblik. Anonimlashtirish ba'zan mumkin emas: boshqa qonun identifikatsiya qilinadigan yozuvni ma'lum muddat saqlashni talab qilsa, o'chirish qonunga zid bo'lishi mumkin. Texnik nazorat muvofiqlikni kafolatlamaydi: rozilik matni, asos va reyestr arizasi alohida ish. O'qilmagan: Vazirlar Mahkamasi va vakolatli organning quyi hujjatlari (himoya darajalari, bir xil himoya qiluvchi davlatlar ro'yxati, standart shartlar, reyestr tartibi) va sud amaliyoti.
 
 ## Stack'da: Prisma, PostgreSQL va NestJS
 
-Maydon tasnifi uchun schema'da izoh yoki alohida metadata jadvali (`column_classification`) ishlatiladi va CI testi yangi ustun tasniflanmaganini topadi. Proyeksiya Prisma'da `select` bilan so'rov darajasida bajariladi (ma'lumot xotiraga ham kelmaydi), NestJS'da esa har maqsad uchun alohida DTO/serializer: serializatsiyada `@Exclude()` faqat belgilangan maydonni olib tashlaydi (default-allow, yangi maydon sizib chiqishi mumkin). `@SerializeOptions({ type })` bilan javob `type` klassi bo'yicha shakllanadi; NestJS serialization hujjatidagi ogohlantirishga ko'ra `type` klassiga mansub bo'lmagan qiymat oddiy obyekt kabi o'zgartiriladi, o'z klassining `@Exclude()` si e'tiborsiz qoladi, `type` e'lon qilmagan maydonlar esa o'zgarishsiz ko'chadi. Faqat e'lon qilingan maydonlar chiqishi uchun `type` klassining har maydoni `@Expose()` bilan belgilanadi va shu dekoratorga `excludeExtraneousValues: true` qo'shiladi (default-deny). Saqlash muddati uchun jadval darajasida `retention` job (cron) va anonimlashtirish SQL'da `UPDATE` bilan (identifikatorlarni NULL qilish). PostgreSQL'da shaxsiy maydonlarni alohida jadvalga ajratib, rol huquqini cheklash va tenant izolyatsiyasi uchun RLS (56-dars) ishlatish mumkin. Quyidagi parcha Prisma `select` yondashuvini ko'rsatadi (ishga tushirilmaydi: Prisma mijozi bazaga ulanishni talab qiladi; sintaksis tekshirilgan):
+Maydon tasnifi uchun `column_classification` jadvali, CI testi tasniflanmagan ustunni topadi. Prisma'da proyeksiya `select` bilan so'rov darajasida (ma'lumot xotiraga ham kelmaydi). NestJS'da `@Exclude()` default-allow; default-deny uchun `type` klassining har maydoni `@Expose()` bilan belgilanadi va `excludeExtraneousValues: true` yoqiladi. Saqlash muddati uchun cron `retention` job va SQL'da `UPDATE` bilan egasizlantirish; shaxsiy maydonlar alohida jadvalda, rol huquqi cheklangan, RLS (56-dars). Parcha ishga tushirilmaydi (Prisma bazaga ulanishni talab qiladi):
+
+Eslatma: Prisma ORM 7 hujjatiga ko'ra `PrismaClient` driver adapter talab qiladi va adapter'siz `new PrismaClient()` xato beradi; quyidagi namunada qisqalik uchun adapter ko'rsatilmagan, haqiqiy loyihada `new PrismaClient({ adapter })` yozing (masalan, PostgreSQL uchun `@prisma/adapter-pg`).
 
 ```ts
 import { PrismaClient } from "@prisma/client";
@@ -354,9 +374,9 @@ export function driversForReport(tenantId: string) {
 
 ## Xulosa
 
-- Shaxsga doir ma'lumot ta'rifi keng (O'RQ-547, 4-modda): muayyan odamga taalluqli yoki uni identifikatsiya qilish imkonini beruvchi axborot; "ishlov berish" log, hisobot va o'chirishni ham qamraydi.
-- Maqsad yig'ish chog'ida belgilanadi va o'zgarsa yangi rozilik talab qilinadi (19-modda); rozilik faktini isbotlash mumkin bo'lishi kerak (21 va 31-moddalar).
-- 27-1-moddaning joriy matniga ko'ra biometrik, genetik va telekommunikatsiya operatorlaridagi foydalanuvchi ma'lumotlari O'zbekistonda saqlanishi shart; boshqalar uchun chet elda saqlash alohida shartlar bilan. Tatbiq etish yurist ishi.
-- O'RQ-764 16-moddasi kiberxavfsizlik subyektlaridan hodisa haqida vakolatli organni xabardor qilish va raqamli izlarni saqlashni talab qiladi; kompaniyangiz subyekt ekanini yurist aniqlaydi.
-- Privacy by design kodda: maydon tasnifi, maqsad bo'yicha default-deny proyeksiya, saqlash muddati va haqiqiy anonimlashtirish, subyekt so'rovi funksiyalari.
-- Bu dars yuridik maslahat emas; qonun matnini o'qilgan sana bilan yozing va davriy qayta tekshiring.
+- Qaror qoidasi: haydovchiga bog'langan hamma narsa shaxsga doir ma'lumot deb olinadi (4-modda); maxsus (25) va biometrik, genetik (26) ma'lumot alohida rejimda.
+- Ishlov asosi 18-moddada sanalgan; maqsad yig'ishda belgilanadi, o'zgarsa yangi rozilik (19); rozilik faktini isbotlash mumkin bo'lishi kerak (21, 31).
+- Muddat maqsad bilan belgilanadi (10, 19), tugagach yo'q qilish yoki egasizlantirish (16, 17); subyekt huquqlari (11, 22-24, 30) texnik funksiyalarga aylanadi.
+- 27-1: biometrik, genetik va telekom operatorlaridagi foydalanuvchi ma'lumotlari O'zbekistonda saqlanishi shart; qolganlari uchun uch shartdan biri; shu bazalar reyestrda ro'yxatdan o'tadi (20).
+- Javobgarlik: Ma'muriy kodeks 46-2 (7 va 50 BHM; AI bilan ishlov uchun 50-100 BHM), Jinoyat kodeksi 141-2 (ma'muriy jazodan keyin); hodisa bo'yicha O'RQ-764 16-modda.
+- Qonun matnini sana bilan yozing, davriy tekshiring.

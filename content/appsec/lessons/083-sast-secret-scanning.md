@@ -256,6 +256,8 @@ console.log("tarix:", found.length ? found[0] : "toza");
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu git tarixidagi sirni topish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 Repozitoriyni klon qilgan kishi (hamkasb, sobiq xodim, fork egasi) tarixni o'qiydi. Joriy holat toza, tarix esa kalitni saqlaydi:
 
 ```text

@@ -19,6 +19,9 @@ sources:
     note: "NestJS WebSocket exception filters: `useGlobalFilters()` va `APP_FILTER` global filterlari gateway'larga qo'llanmaydi, filter gateway yoki metod darajasida `@UseFilters()` bilan bog'lanadi"
   - id: prisma-error-reference
     note: "Prisma xato kodlari: Prisma Client ma'lum so'rov xatosida `PrismaClientKnownRequestError` tashlaydi; P2002 unique constraint buzilishi, P2003 foreign key buzilishi, P2025 kerakli yozuv topilmagani"
+  - id: rfc9457
+    note: "RFC 9457 (2023-yil iyul, Proposed Standard, RFC 7807 ni bekor qiladi): application/problem+json; type (URI, yo'q bo'lsa about:blank), status (maslahat xarakterida, HTTP javobdagi kod bilan bir xil bo'lishi shart), title (qisqa xulosa, hodisadan hodisaga o'zgarmasligi kerak), detail (shu hodisaga xos tushuntirish, debug ma'lumoti emas), instance (hodisani aniqlovchi URI); Security Considerations: tafsilotlar tekshirib chiqiladi, stack dump chiqarilmaydi"
+
 quiz:
   - q: "Policy xizmati javob bermay qoldi va kod `try { allowed = policy(r) } catch {}` bilan yozilgan, `allowed` boshida `true`. Nima bo'ladi?"
     options:
@@ -186,7 +189,7 @@ ASVS 5.0.0 bu talablarni bo'limga ajratgan (V16.5). 16.5.1 talabi: kutilmagan yo
 
 Hamma xatoni bir xil ko'rish kerak emas. "Mashina topilmadi" yoki "ruxsat yo'q" kutilgan xatolar: ularning mijozga ko'rsatiladigan matni dasturchi tomonidan oldindan yozilgan va xavfsiz. Ularni maxsus sinf (bizning misolda `AppError`) bilan ajratamiz. Boshqa hamma narsa, ya'ni ma'lumotlar bazasi uzilishi, noma'lum `TypeError`, tashqi xizmat timeout'i, kutilmagan xato: mijozga faqat "ichki xato" va identifikator qaytadi. Muhim nuqta: ajratish "dasturchi qasddan yozgan matn" bilan "tizim o'zi hosil qilgan matn" o'rtasida bo'ladi. Ikkinchisi hech qachon mijozga bormaydi.
 
-Holat kodlari ham xabar beradi. Cheat sheet 5xx'ni "so'rovni bajara olmadim" holatlari uchun ishlatishni, ichki sabablarni esa javobga qo'shmaslikni aytadi. Misollarida u ba'zan 4xx kodlari mosroq bo'lishini ham qayd etadi: mijoz noto'g'ri so'rov yuborganda. Xato tanasi uchun cheat sheet "Problem Details for HTTP APIs" formatiga havola qiladi (RFC 7807, havolalar ro'yxatida RFC 9457) va Spring misolida `application/problem+json` content-type tilga olinadi. Format JSON tanada `type`, `title`, `status`, `detail` kabi standart maydonlarni belgilaydi; ularga ichki ma'lumot yozmang.
+Holat kodlari ham xabar beradi. Cheat sheet 5xx'ni "so'rovni bajara olmadim" holatlari uchun ishlatishni, ichki sabablarni esa javobga qo'shmaslikni aytadi. Misollarida u ba'zan 4xx kodlari mosroq bo'lishini ham qayd etadi: mijoz noto'g'ri so'rov yuborganda. Xato tanasi uchun cheat sheet "Problem Details for HTTP APIs" formatiga havola qiladi va Spring misolida `application/problem+json` content-type tilga olinadi. Joriy spetsifikatsiya RFC 9457 (2023-yil iyul, Proposed Standard); u RFC 7807 ni bekor qilgan, asosiy model o'sha, yangi: umumiy problem type URI'lari reyestri, bir nechta muammoni qanday qaytarish va resolve qilib bo'lmaydigan `type` URI bo'yicha yo'riqnoma. RFC 9457 beshta standart a'zoni belgilaydi. `type`: muammo turini aniqlovchi URI reference (yo'q bo'lsa `about:blank` deb olinadi). `status`: serverning shu hodisa uchun bergan HTTP kodi; u faqat maslahat xarakterida, lekin generator haqiqiy HTTP javobda ham aynan shu kodni ishlatishi shart. `title`: muammo turining qisqa xulosasi, lokalizatsiyadan tashqari hodisadan hodisaga o'zgarmasligi kerak. `detail`: shu hodisaga xos tushuntirish, u mijozga muammoni tuzatishga yordam berishi kerak, debug ma'lumotini bermasligi kerak. `instance`: aniq hodisani aniqlovchi URI reference. Qo'shimcha a'zolar (extension members) ruxsat etiladi. RFC Security Considerations bo'limi ham shu fikrni takrorlaydi: javobga yoziladigan tafsilot tekshirib chiqilishi kerak va stack dump kabi implementatsiya tafsilotlarini HTTP interfeysi orqali ochmaslik tavsiya etiladi. Shuning uchun ichki ma'lumotni `detail` ga yoki qo'shimcha a'zolarga yozmang.
 
 ### Xabar orqali enumeration
 
@@ -254,6 +257,8 @@ console.log("3) alfa kvotasi:", quota.alfa);
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu xato paytida fail-open xatti-harakatdan foydalanish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Hujumchi hech narsani buzmaydi, faqat xatolar paydo bo'lishini kutadi (yoki ularni qo'zg'atadi). Policy xizmati ishlamagan paytda "beta" tenant foydalanuvchisi "alfa"ning mashinasiga buyruq yuboradi. Keyin broker uzilganda mijoz xato javobini o'qiydi va kvota yo'qola boshlaydi.
 

@@ -230,6 +230,8 @@ oddiy: [('01 A 111 AA', 'alfa')]
 
 ### 2. Hujum
 
+> **Ta'lim maqsadida.** Bu SQL injection usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 "alfa" foydalanuvchisi qidiruv maydoniga ikki xil kiritish yuboradi. Birinchisi (UNION) `api_keys` jadvalidagi sirni qidiruv natijasiga qo'shadi. Ikkinchisi (boolean blind) natijani ko'rmaydi, faqat "natija bor yoki yo'q" farqidan bitta belgini taxmin qiladi: shartning to'g'ri-noto'g'riligi javobni o'zgartiradi. Ikkalasi ham faqat shu o'quv bazasiga qarshi.
 
 ```python run

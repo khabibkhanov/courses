@@ -254,6 +254,8 @@ Funksiyalar to'g'ri ishlaydi: token chiqadi, server uni ochadi. Aynan shu "ishla
 
 ### Hujum
 
+> **Ta'lim maqsadida.** Bu kalit oqimini qayta ishlatish orqali ochish usuli faqat shu darsning o'quv kodiga qarshi ko'rsatilgan; uni faqat o'z tizimingizda yoki yozma ruxsat bilan, kelishilgan doirada qo'llang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
+
 "alfa" tenant'ining foydalanuvchisi o'z tokenini qonuniy yo'l bilan oladi va token formatini (`tenant|vehicle|read`) biladi, chunki o'z tokenini ochib ko'rishi mumkin yoki hujjatdan o'qigan. Shifrmatn XOR ochiq matn kalit oqimini beradi. Kalit qisqa va takrorlanadi, shuning uchun besh bayt yetadi. Quyidagi blok zaif funksiyalarning qisqartirilgan nusxasi (yuqoridagi bilan bir xil) va hujumni o'z ichiga oladi.
 
 ```ts run

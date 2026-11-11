@@ -5,6 +5,12 @@ title: "HTTPS amaliyotda: TLS sozlamalari, sertifikat va mixed content"
 summary: "TLS versiyasi va cipher tanlovi, sertifikatni tekshirishning uch sharti (zanjir, muddat, host nomi), wildcard sertifikat xavfi, Node.js'da tekshiruvni o'chirish xatosi, mixed content va HTTPS joriy qilish ro'yxati."
 duration: 40
 sources:
+  - id: mozilla-tls
+    note: "Mozilla Server Side TLS repozitoriysi: README (yo'riqnoma va generator TLSRef loyihasiga ko'chgan) va configuration JSON 5.0: modern (TLS 1.3), intermediate (TLS 1.2+1.3, DH 2048), old (TLS 1.0 dan, DH 1024)"
+  - id: rfc9525
+    note: "RFC 9525 6.3 va 7.1: wildcard faqat eng chap yorliqning to'liq mazmuni, bitta yorliqqa mos keladi; apex va ko'p yorliqli nomlar mos emas"
+  - id: rfc8996
+    note: "RFC 8996 (2021-yil mart, BCP 195): TLS 1.0 va TLS 1.1 ishlatilmasligi shart (MUST NOT)"
   - id: rfc8446
     note: "TLS 1.3 spetsifikatsiyasi: protokol versiyasi, forward secrecy va handshake'ning umumiy maqsadi (batafsil 65-darsda)"
   - id: rfc6797
@@ -45,7 +51,7 @@ quiz:
       - "Hamma subdomen, har qanday chuqurlikda"
       - "app.fleet.example (bitta yorliq), lekin fleet.example yoki a.b.fleet.example emas"
     answer: 3
-    explain: "Wildcard odatda faqat eng chap yorliqni almashtiradi: bitta yorliq. Apex domen (fleet.example) va ko'p yorliqli nomlar mos emas. Bu mijozlarning umumiy qoidasi (TLS server identity bo'yicha RFC 6125, uni RFC 9525 almashtirgan); soddalashtirilgan 'endsWith' tekshiruvi uni buzadi."
+    explain: "Wildcard odatda faqat eng chap yorliqni almashtiradi: bitta yorliq. Apex domen (fleet.example) va ko'p yorliqli nomlar mos emas. Bu RFC 9525 (Service Identity in TLS, 2023-yil noyabr, RFC 6125 ni almashtirgan) 6.3-bo'limi qoidasi: wildcard faqat eng chap yorliqning to'liq mazmuni bo'lishi va bitta yorliqqa mos kelishi mumkin; soddalashtirilgan 'endsWith' tekshiruvi uni buzadi."
   - q: "HTTPS sahifa `<script src=\"http://cdn.fleet.example/lib.js\">` yuklamoqchi. Brauzer nima qiladi (MDN bo'yicha)?"
     options:
       - "Sahifani HTTP'ga o'tkazadi"
@@ -151,9 +157,9 @@ HTTPS uchta narsani kafolatlaydi: maxfiylik (tinglovchi mazmunni ko'rmaydi), yax
 
 ### Versiya va cipher
 
-OWASP Transport Layer Security Cheat Sheet qoidasi aniq: ilova standart holda TLS 1.3 ni ishlatishi, moslik uchun TLS 1.2 ni qoldirishi mumkin; TLS 1.0 va 1.1 rasman eskirgan (RFC 8996, 2021-yil mart) va o'chirilishi kerak; SSLv2 va SSLv3 doim o'chiq. Eski mijoz biznes talabi bo'lsa, ularni sezgir ma'lumotsiz alohida endpoint'ga ajratish, asosiy endpoint'ni zaiflashtirmaslik tavsiya etiladi.
+OWASP Transport Layer Security Cheat Sheet qoidasi aniq: ilova standart holda TLS 1.3 ni ishlatishi, moslik uchun TLS 1.2 ni qoldirishi mumkin; TLS 1.0 va 1.1 rasman eskirgan (RFC 8996, 2021-yil mart: 4-bo'limda "TLS 1.0 MUST NOT be used", 5-bo'limda "TLS 1.1 MUST NOT be used") va o'chirilishi kerak; SSLv2 va SSLv3 doim o'chiq. Eski mijoz biznes talabi bo'lsa, ularni sezgir ma'lumotsiz alohida endpoint'ga ajratish, asosiy endpoint'ni zaiflashtirmaslik tavsiya etiladi.
 
-Cipher bo'yicha: TLS 1.3 da standart AEAD suite'lar (AES-GCM, ChaCha20-Poly1305). TLS 1.2 da ham AEAD asosidagilarni tanlang, CBC rejimidan qoching, RSA kalit transporti (`TLS_RSA_*`) va statik Diffie-Hellman'ni o'chiring: ular forward secrecy bermaydi. Node.js hujjatida: TLS 1.2 gacha mukammal forward secrecy ixtiyoriy edi, TLS 1.3 dan boshlab (EC)DHE majburiy. TLS siqish (compression) CRIME hujumi sababli o'chiriladi; TLS 1.3 da u yo'q. Node.js'da `tls.DEFAULT_MIN_VERSION` standart `TLSv1.2` (`--tls-min-v1.3` bayrog'i bilan 1.3 ga ko'tarish mumkin). Cheat sheet yana ikkita amaliy narsani eslatadi: RSA ishlatilsa kalit kamida 2048 bit bo'lishi kerak va TLS 1.2 gacha bo'lgan versiyalarda Diffie-Hellman parametrlarini qo'lda yaratish amaliy muammolarga (DoS, mijoz parametrni tanlay olmasligi) olib kelgan, shu sabab nomlangan standart guruhlardan (ffdhe2048 va undan kattalari) foydalanish tavsiya etiladi. Konfiguratsiyani qo'lda yig'ishdan ko'ra, OWASP cheat sheet tavsiya qilgan Mozilla generatoridan yoki platformaning (yuklama balanser, CDN) tayyor siyosatidan foydalaning.
+Cipher bo'yicha: TLS 1.3 da standart AEAD suite'lar (AES-GCM, ChaCha20-Poly1305). TLS 1.2 da ham AEAD asosidagilarni tanlang, CBC rejimidan qoching, RSA kalit transporti (`TLS_RSA_*`) va statik Diffie-Hellman'ni o'chiring: ular forward secrecy bermaydi. Node.js hujjatida: TLS 1.2 gacha mukammal forward secrecy ixtiyoriy edi, TLS 1.3 dan boshlab (EC)DHE majburiy. TLS siqish (compression) CRIME hujumi sababli o'chiriladi; TLS 1.3 da u yo'q. Node.js'da `tls.DEFAULT_MIN_VERSION` standart `TLSv1.2` (`--tls-min-v1.3` bayrog'i bilan 1.3 ga ko'tarish mumkin). Cheat sheet yana ikkita amaliy narsani eslatadi: RSA ishlatilsa kalit kamida 2048 bit bo'lishi kerak va TLS 1.2 gacha bo'lgan versiyalarda Diffie-Hellman parametrlarini qo'lda yaratish amaliy muammolarga (DoS, mijoz parametrni tanlay olmasligi) olib kelgan, shu sabab nomlangan standart guruhlardan (ffdhe2048 va undan kattalari) foydalanish tavsiya etiladi. Konfiguratsiyani qo'lda yig'ishdan ko'ra, tayyor profildan foydalaning. OWASP cheat sheet Mozilla'ning konfiguratsiya generatorini tavsiya qiladi; Mozilla repozitoriysining README'siga ko'ra Server Side TLS yo'riqnomalari va generator endi jamoa boshqaradigan TLSRef loyihasiga ko'chgan (docs.tlsref.org, configurator.tlsref.org). Mozilla konfiguratsiya JSON'ining 5.0 versiyasida uch profil bor: `modern` (faqat TLS 1.3), `intermediate` (TLS 1.2 va 1.3, DHE uchun 2048 bitli parametr, RSA kaliti kamida 2048 bit) va `old` (TLS 1.0 dan boshlab, 1024 bitli DH): `old` profil RFC 8996 dan keyin ham ro'yxatda turadi, uni yangi tizim uchun tanlamang. Ko'p loyiha uchun boshlang'ich nuqta `intermediate`, yoki platformaning (yuklama balanser, CDN) tayyor siyosati.
 
 ### Sertifikat nimani tasdiqlaydi
 
@@ -163,7 +169,7 @@ Sertifikat (RFC 5280 X.509 profili) kalit va nom bog'lanishini ishonchli CA imzo
 2. **Muddat**: joriy vaqt `notBefore` va `notAfter` oralig'ida.
 3. **Nom**: so'ralgan host sertifikatdagi `subjectAltName` (SAN) nomlaridan biriga mos. OWASP cheat sheet: zamonaviy Chrome commonName'ni e'tiborsiz qoldiradi va to'liq nomni SAN'da talab qiladi (moslik uchun asosiy nom CN'da ham, to'liq ro'yxat SAN'da bo'lishi tavsiya etiladi).
 
-Birini tashlab ketish o'rtadagi hujumga eshik ochadi. Misol: nom tekshirilmasa, hujumchi o'z domeni uchun (to'g'ri olingan) sertifikatni sizning domeningiz o'rniga ko'rsatadi, zanjir ham, muddat ham to'g'ri, lekin sertifikat sizniki emas. Quyidagi `run` bloki wildcard moslashtirishini ko'rsatadi: wildcard faqat bitta yorliqni almashtiradi (bu mijozlarning umumiy qoidasi, TLS server identity bo'yicha RFC 6125 va uni almashtirgan RFC 9525 da bayon etilgan; bu darsning manbalar ro'yxatida emas).
+Birini tashlab ketish o'rtadagi hujumga eshik ochadi. Misol: nom tekshirilmasa, hujumchi o'z domeni uchun (to'g'ri olingan) sertifikatni sizning domeningiz o'rniga ko'rsatadi, zanjir ham, muddat ham to'g'ri, lekin sertifikat sizniki emas. Quyidagi `run` bloki wildcard moslashtirishini ko'rsatadi: wildcard faqat bitta yorliqni almashtiradi (RFC 9525, 6.3-bo'lim: wildcard belgisi faqat eng chap yorliqning to'liq mazmuni sifatida uchraydi va taqdim etilgan identifikatordagi wildcard reference identifier'ning faqat bitta yorlig'iga mos keladi; 7.1-bo'lim: wildcard sertifikat domen ichidagi bir yorliqli host nomlarini tasdiqlaydi, ko'p darajali nomlarni emas).
 
 ```ts run
 type Cert = { sans: string[]; notBefore: number; notAfter: number; chainTrusted: boolean };
@@ -296,6 +302,8 @@ haqiqiy server: qabul
 ```
 
 ### 2. Hujum
+
+> **Ta'lim maqsadida.** Bu soxta sertifikat bilan trafikni yo'naltirish usuli faqat shu darsning o'quv kodida ko'rsatiladi; uni o'z tizimingizda yoki yozma ruxsat va kelishilgan doira bilan sinang. Ruxsatsiz qo'llash Jinoyat kodeksining 278-2-moddasi (Kompyuter axborotidan ruxsatsiz foydalanish) doirasiga tushishi mumkin (kurs talqini). Batafsil: 9-dars.
 
 Ochiq tarmoqdagi hujumchi trafikni o'z serveriga yo'naltiradi. U `evil.example` uchun CA'dan to'g'ri sertifikat olgan (bu oddiy va arzon). Sertifikat zanjiri to'g'ri, muddati to'g'ri, lekin nomi boshqa:
 
