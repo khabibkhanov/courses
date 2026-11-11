@@ -1,0 +1,20 @@
+- term: CIA triadasi
+  aliases: ["CIA triad", "CIA"]
+  uz: "Xavfsizlikning uch asosiy xususiyati: maxfiylik (confidentiality), yaxlitlik (integrity) va mavjudlik (availability)."
+  course: appsec
+  lesson: 1
+- term: vulnerability
+  aliases: []
+  uz: "Tahdid foydalana oladigan nuqson: kod xatosi, noto'g'ri sozlama yoki dizayndagi bo'shliq."
+  course: appsec
+  lesson: 1
+- term: risk register
+  aliases: []
+  uz: "Xavflar ro'yxati: har qatorda xavf tavsifi, tegishli xususiyat, ehtimollik va ta'sir bahosi; ularni tartiblash va muhokama qilish uchun ishlatiladi."
+  course: appsec
+  lesson: 1
+- term: security control
+  aliases: []
+  uz: "Riskni kamaytiradigan chora: zaiflikni yopish, ta'sirni yoki ehtimolni kamaytiradigan nazorat."
+  course: appsec
+  lesson: 1

@@ -1,0 +1,625 @@
+# AppSec kursida ishlatiladigan manbalar ro'yxati.
+# Barcha URL'lar 2026-11-11 da Kernel cloud brauzeri orqali ochilib tekshirilgan: HTTP 200, sahifa sarlavhasi yoki matni nomga mos.
+# Redirect bo'lgan manbalarda yakuniy manzil yozilgan. "joriy versiya" hujjatlari doimiy yangilanadi: yil - tekshirilgan yil.
+# Darslar `sources` maydonida shu kalitlarga (id) murojaat qiladi. Bob/bo'lim aniqligi dars faylida `note` orqali beriladi.
+
+
+# --- OWASP Top 10 2025, ASVS, API, WSTG, boshqa OWASP loyihalari ---
+t10-risks:
+  title: "What are Application Security Risks? - OWASP Top 10:2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://top10.owasp.org/2025/0x02_2025-What_are_Application_Security_Risks/
+t10-a01:
+  title: "A01:2025 Broken Access Control - OWASP Top 10:2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://top10.owasp.org/2025/A01_2025-Broken_Access_Control/
+t10-a02:
+  title: "A02:2025 Security Misconfiguration - OWASP Top 10:2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://top10.owasp.org/2025/A02_2025-Security_Misconfiguration/
+t10-a03:
+  title: "A03:2025 Software Supply Chain Failures - OWASP Top 10:2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://top10.owasp.org/2025/A03_2025-Software_Supply_Chain_Failures/
+t10-a04:
+  title: "A04:2025 Cryptographic Failures - OWASP Top 10:2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://top10.owasp.org/2025/A04_2025-Cryptographic_Failures/
+t10-a05:
+  title: "A05:2025 Injection - OWASP Top 10:2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://top10.owasp.org/2025/A05_2025-Injection/
+t10-a06:
+  title: "A06:2025 Insecure Design - OWASP Top 10:2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://top10.owasp.org/2025/A06_2025-Insecure_Design/
+t10-a07:
+  title: "A07:2025 Authentication Failures - OWASP Top 10:2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://top10.owasp.org/2025/A07_2025-Authentication_Failures/
+t10-a08:
+  title: "A08:2025 Software or Data Integrity Failures - OWASP Top 10:2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://top10.owasp.org/2025/A08_2025-Software_or_Data_Integrity_Failures/
+t10-a09:
+  title: "A09:2025 Security Logging and Alerting Failures - OWASP Top 10:2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://top10.owasp.org/2025/A09_2025-Security_Logging_and_Alerting_Failures/
+t10-a10:
+  title: "A10:2025 Mishandling of Exceptional Conditions - OWASP Top 10:2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://top10.owasp.org/2025/A10_2025-Mishandling_of_Exceptional_Conditions/
+asvs:
+  title: "OWASP Application Security Verification Standard 5.0.0"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: spec
+  url: https://github.com/OWASP/ASVS/tree/v5.0.0
+api-top10:
+  title: "OWASP Top 10 API Security Risks - 2023"
+  author: "OWASP Foundation"
+  year: 2023
+  kind: web
+  url: https://api-security.owasp.org/editions/2023/en/0x11-t10/
+wstg:
+  title: "Web Security Testing Guide"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://owasp.org/www-project-web-security-testing-guide/
+samm:
+  title: "OWASP SAMM (Software Assurance Maturity Model)"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://owaspsamm.org/
+llm01:
+  title: "LLM01:2025 Prompt Injection - OWASP Top 10 for LLM Applications 2025"
+  author: "OWASP Foundation"
+  year: 2025
+  kind: web
+  url: https://genai.owasp.org/llmrisk/llm01-prompt-injection/
+juice-shop:
+  title: "OWASP Juice Shop"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://owasp.org/projects/juice-shop
+
+# --- OWASP Cheat Sheet Series ---
+cs-sqli:
+  title: "SQL Injection Prevention Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html
+cs-xss:
+  title: "Cross Site Scripting Prevention Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html
+cs-csrf:
+  title: "Cross-Site Request Forgery Prevention Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
+cs-password:
+  title: "Password Storage Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
+cs-session:
+  title: "Session Management Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
+cs-authn:
+  title: "Authentication Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
+cs-authz:
+  title: "Authorization Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
+cs-ssrf:
+  title: "Server Side Request Forgery Prevention Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html
+cs-upload:
+  title: "File Upload Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html
+cs-logging:
+  title: "Logging Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
+cs-secrets:
+  title: "Secrets Management Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html
+cs-input:
+  title: "Input Validation Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html
+cs-threat-model:
+  title: "Threat Modeling Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html
+cs-csp:
+  title: "Content Security Policy Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html
+cs-oauth2:
+  title: "OAuth2 Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/OAuth2_Cheat_Sheet.html
+cs-nodejs:
+  title: "Node.js Security Cheat Sheet"
+  author: "OWASP Foundation"
+  year: 2026
+  kind: web
+  url: https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html
+
+# --- CWE, CVSS, EPSS, KEV ---
+cwe-top25:
+  title: "2025 CWE Top 25 Most Dangerous Software Weaknesses"
+  author: "MITRE"
+  year: 2025
+  kind: web
+  url: https://cwe.mitre.org/top25/archive/2025/2025_cwe_top25.html
+cwe-about:
+  title: "About CWE (Common Weakness Enumeration)"
+  author: "MITRE"
+  year: 2026
+  kind: web
+  url: https://cwe.mitre.org/about/index.html
+cvss4:
+  title: "CVSS v4.0 Specification Document"
+  author: "FIRST"
+  year: 2023
+  kind: spec
+  url: https://www.first.org/cvss/v4.0/specification-document
+epss:
+  title: "Exploit Prediction Scoring System (EPSS)"
+  author: "FIRST"
+  year: 2026
+  kind: web
+  url: https://www.first.org/epss/
+kev:
+  title: "Known Exploited Vulnerabilities Catalog"
+  author: "CISA"
+  year: 2026
+  kind: web
+  url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog
+
+# --- NIST ---
+nist-63-4:
+  title: "NIST SP 800-63-4, Digital Identity Guidelines"
+  author: "NIST"
+  year: 2025
+  kind: spec
+  url: https://csrc.nist.gov/pubs/sp/800/63/4/final
+nist-ssdf:
+  title: "NIST SP 800-218, Secure Software Development Framework (SSDF) Version 1.1"
+  author: "NIST"
+  year: 2022
+  kind: spec
+  url: https://csrc.nist.gov/pubs/sp/800/218/final
+nist-61r3:
+  title: "NIST SP 800-61 Rev. 3, Incident Response Recommendations and Considerations for Cybersecurity Risk Management"
+  author: "NIST"
+  year: 2025
+  kind: spec
+  url: https://csrc.nist.gov/pubs/sp/800/61/r3/final
+nist-30:
+  title: "NIST SP 800-30 Rev. 1, Guide for Conducting Risk Assessments"
+  author: "NIST"
+  year: 2012
+  kind: spec
+  url: https://csrc.nist.gov/pubs/sp/800/30/r1/final
+fips199:
+  title: "FIPS 199, Standards for Security Categorization of Federal Information and Information Systems"
+  author: "NIST"
+  year: 2004
+  kind: spec
+  url: https://csrc.nist.gov/pubs/fips/199/final
+fips203:
+  title: "FIPS 203, Module-Lattice-Based Key-Encapsulation Mechanism Standard"
+  author: "NIST"
+  year: 2024
+  kind: spec
+  url: https://csrc.nist.gov/pubs/fips/203/final
+fips204:
+  title: "FIPS 204, Module-Lattice-Based Digital Signature Standard"
+  author: "NIST"
+  year: 2024
+  kind: spec
+  url: https://csrc.nist.gov/pubs/fips/204/final
+
+# --- IETF RFC ---
+rfc9110:
+  title: "RFC 9110: HTTP Semantics"
+  author: "IETF"
+  year: 2022
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc9110
+rfc9112:
+  title: "RFC 9112: HTTP/1.1"
+  author: "IETF"
+  year: 2022
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc9112
+rfc6265:
+  title: "RFC 6265: HTTP State Management Mechanism"
+  author: "IETF"
+  year: 2011
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc6265
+rfc6265bis:
+  title: "Cookies: HTTP State Management Mechanism (draft-ietf-httpbis-rfc6265bis-22)"
+  author: "IETF"
+  year: 2025
+  kind: spec
+  url: https://datatracker.ietf.org/doc/draft-ietf-httpbis-rfc6265bis/
+rfc6797:
+  title: "RFC 6797: HTTP Strict Transport Security (HSTS)"
+  author: "IETF"
+  year: 2012
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc6797
+rfc8446:
+  title: "RFC 8446: The Transport Layer Security (TLS) Protocol Version 1.3"
+  author: "IETF"
+  year: 2018
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc8446
+rfc6749:
+  title: "RFC 6749: The OAuth 2.0 Authorization Framework"
+  author: "IETF"
+  year: 2012
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc6749
+rfc7636:
+  title: "RFC 7636: Proof Key for Code Exchange by OAuth Public Clients"
+  author: "IETF"
+  year: 2015
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc7636
+rfc9700:
+  title: "RFC 9700: Best Current Practice for OAuth 2.0 Security"
+  author: "IETF"
+  year: 2025
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc9700
+rfc7519:
+  title: "RFC 7519: JSON Web Token (JWT)"
+  author: "IETF"
+  year: 2015
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc7519
+rfc8725:
+  title: "RFC 8725: JSON Web Token Best Current Practices"
+  author: "IETF"
+  year: 2020
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc8725
+rfc6238:
+  title: "RFC 6238: TOTP: Time-Based One-Time Password Algorithm"
+  author: "IETF"
+  year: 2011
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc6238
+rfc5280:
+  title: "RFC 5280: Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile"
+  author: "IETF"
+  year: 2008
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc5280
+rfc9106:
+  title: "RFC 9106: Argon2 Memory-Hard Function for Password Hashing and Proof-of-Work Applications"
+  author: "IETF"
+  year: 2021
+  kind: spec
+  url: https://datatracker.ietf.org/doc/html/rfc9106
+
+# --- W3C, WHATWG, OpenID ---
+webauthn:
+  title: "Web Authentication: An API for accessing Public Key Credentials Level 3"
+  author: "W3C"
+  year: 2026
+  kind: spec
+  url: https://www.w3.org/TR/webauthn-3/
+csp3:
+  title: "Content Security Policy Level 3"
+  author: "W3C"
+  year: 2026
+  kind: spec
+  url: https://www.w3.org/TR/CSP3/
+trusted-types:
+  title: "Trusted Types"
+  author: "W3C"
+  year: 2026
+  kind: spec
+  url: https://www.w3.org/TR/trusted-types/
+sri:
+  title: "Subresource Integrity"
+  author: "W3C"
+  year: 2026
+  kind: spec
+  url: https://www.w3.org/TR/sri-2/
+fetch-metadata:
+  title: "Fetch Metadata Request Headers"
+  author: "W3C"
+  year: 2026
+  kind: spec
+  url: https://www.w3.org/TR/fetch-metadata/
+whatwg-fetch:
+  title: "Fetch Standard"
+  author: "WHATWG"
+  year: 2026
+  kind: spec
+  url: https://fetch.spec.whatwg.org/
+whatwg-html:
+  title: "HTML Standard"
+  author: "WHATWG"
+  year: 2026
+  kind: spec
+  url: https://html.spec.whatwg.org/multipage/browsers.html#origin
+oidc-core:
+  title: "OpenID Connect Core 1.0 incorporating errata set 2"
+  author: "OpenID Foundation"
+  year: 2023
+  kind: spec
+  url: https://openid.net/specs/openid-connect-core-1_0.html
+
+# --- MDN ---
+mdn-sop:
+  title: "Same-origin policy - Security | MDN"
+  author: "Mozilla"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Same-origin_policy
+mdn-cors:
+  title: "Cross-Origin Resource Sharing (CORS) - HTTP | MDN"
+  author: "Mozilla"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS
+mdn-cookies:
+  title: "Using HTTP cookies - HTTP | MDN"
+  author: "Mozilla"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies
+mdn-csp:
+  title: "Content Security Policy (CSP) - HTTP | MDN"
+  author: "Mozilla"
+  year: 2026
+  kind: docs
+  url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP
+
+# --- Platforma va framework hujjatlari ---
+node-security:
+  title: "Security Best Practices | Node.js Learn"
+  author: "OpenJS Foundation"
+  year: 2026
+  kind: docs
+  url: https://nodejs.org/learn/getting-started/security-best-practices
+nextjs-csp:
+  title: "How to set a Content Security Policy (CSP) for your Next.js application"
+  author: "Vercel"
+  year: 2026
+  kind: docs
+  url: https://nextjs.org/docs/app/guides/content-security-policy
+nextjs-data-security:
+  title: "How to think about data security in Next.js"
+  author: "Vercel"
+  year: 2026
+  kind: docs
+  url: https://nextjs.org/docs/app/guides/data-security
+nestjs-guards:
+  title: "Guards | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/guards
+nestjs-helmet:
+  title: "Security headers (Helmet) | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/security/helmet
+nestjs-rate-limit:
+  title: "Rate Limiting | NestJS"
+  author: "NestJS"
+  year: 2026
+  kind: docs
+  url: https://docs.nestjs.com/security/rate-limiting
+prisma-raw:
+  title: "Raw queries | Prisma ORM Documentation"
+  author: "Prisma"
+  year: 2026
+  kind: docs
+  url: https://www.prisma.io/docs/orm/v7/prisma-client/using-raw-sql/raw-queries
+kysely-raw:
+  title: "Raw SQL | Kysely"
+  author: "Kysely"
+  year: 2026
+  kind: docs
+  url: https://kysely.dev/docs/recipes/raw-sql
+pg-rls:
+  title: "PostgreSQL Documentation: 5.9. Row Security Policies"
+  author: "PostgreSQL Global Development Group"
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/ddl-rowsecurity.html
+pg-auth:
+  title: "PostgreSQL Documentation: Chapter 20. Client Authentication"
+  author: "PostgreSQL Global Development Group"
+  year: 2026
+  kind: docs
+  url: https://www.postgresql.org/docs/current/client-authentication.html
+redis-security:
+  title: "Redis security"
+  author: "Redis"
+  year: 2026
+  kind: docs
+  url: https://redis.io/docs/latest/operate/oss_and_stack/management/security/
+npm-provenance:
+  title: "Generating provenance statements | npm Docs"
+  author: "npm"
+  year: 2026
+  kind: docs
+  url: https://docs.npmjs.com/generating-provenance-statements/
+slsa:
+  title: "SLSA specification v1.1"
+  author: "OpenSSF"
+  year: 2026
+  kind: spec
+  url: https://slsa.dev/spec/v1.1/
+gh-actions-security:
+  title: "Secure use reference - GitHub Actions"
+  author: "GitHub"
+  year: 2026
+  kind: docs
+  url: https://docs.github.com/en/actions/reference/security/secure-use
+docker-security:
+  title: "Docker Engine security"
+  author: "Docker"
+  year: 2026
+  kind: docs
+  url: https://docs.docker.com/engine/security/
+k8s-pss:
+  title: "Pod Security Standards"
+  author: "Kubernetes"
+  year: 2026
+  kind: docs
+  url: https://kubernetes.io/docs/concepts/security/pod-security-standards/
+ms-stride:
+  title: "Threats - Microsoft Threat Modeling Tool"
+  author: "Microsoft"
+  year: 2026
+  kind: docs
+  url: https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats
+saltzer:
+  title: "Saltzer and Schroeder, The Protection of Information in Computer Systems"
+  author: "University of Virginia, CS551"
+  year: 1975
+  kind: paper
+  url: https://www.cs.virginia.edu/~evans/cs551/saltzer/
+
+# --- Qonunchilik va compliance ---
+lex-cyber:
+  title: "O'RQ-764-son 15.04.2022. Kiberxavfsizlik to'g'risida (O'zbekiston Respublikasining Qonuni)"
+  author: "O'zbekiston Respublikasi"
+  year: 2022
+  kind: spec
+  url: https://lex.uz/docs/-5960604
+lex-pdp:
+  title: "O'RQ-547-son 02.07.2019. Shaxsga doir ma'lumotlar to'g'risida (O'zbekiston Respublikasining Qonuni)"
+  author: "O'zbekiston Respublikasi"
+  year: 2019
+  kind: spec
+  url: https://lex.uz/uz/docs/-4396419
+pci-dss:
+  title: "PCI DSS (PCI Security Standards Council)"
+  author: "PCI Security Standards Council"
+  year: 2026
+  kind: web
+  url: https://www.pcisecuritystandards.org/standards/pci-dss/
+iso-27001:
+  title: "ISO/IEC 27001:2022 - Information security management systems"
+  author: "ISO/IEC"
+  year: 2022
+  kind: spec
+  url: https://www.iso.org/standard/82875.html
+aicpa-soc:
+  title: "System and Organization Controls: SOC Suite of Services"
+  author: "AICPA"
+  year: 2026
+  kind: web
+  url: https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services
+
+# --- Case study'lar uchun birlamchi manbalar ---
+log4j-apache:
+  title: "Security :: Apache Logging Services (CVE-2021-44228)"
+  author: "Apache Software Foundation"
+  year: 2026
+  kind: web
+  url: https://logging.apache.org/security.html
+cisa-log4shell:
+  title: "Mitigating Log4Shell and Other Log4j-Related Vulnerabilities (AA21-356A)"
+  author: "CISA"
+  year: 2021
+  kind: web
+  url: https://www.cisa.gov/news-events/cybersecurity-advisories/aa21-356a
+occ-capital-one:
+  title: "OCC Assesses $80 Million Civil Money Penalty Against Capital One"
+  author: "OCC"
+  year: 2020
+  kind: web
+  url: https://www.occ.gov/news-issuances/news-releases/2020/nr-occ-2020-101.html
+occ-capital-one-order:
+  title: "Consent Order for the Assessment of a Civil Money Penalty - Capital One (OCC, 2020)"
+  author: "OCC"
+  year: 2020
+  kind: web
+  url: https://www.occ.gov/static/enforcement-actions/ea2020-036.pdf
+xz-openwall:
+  title: "backdoor in upstream xz/liblzma leading to ssh server compromise (oss-security)"
+  author: "Andres Freund"
+  year: 2024
+  kind: article
+  url: https://www.openwall.com/lists/oss-security/2024/03/29/4
+cisa-npm-2025:
+  title: "Widespread Supply Chain Compromise Impacting npm Ecosystem"
+  author: "CISA"
+  year: 2025
+  kind: web
+  url: https://www.cisa.gov/news-events/alerts/2025/09/23/widespread-supply-chain-compromise-impacting-npm-ecosystem

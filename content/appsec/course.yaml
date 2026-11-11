@@ -1,0 +1,161 @@
+slug: appsec
+title: Application Security
+subtitle: Ilova xavfsizligi - 100 darslik to'liq kurs
+description: >-
+  Backend va fullstack dasturchi uchun Application Security kursi: threat modeling, web platforma xavfsizlik modeli,
+  injection, client-side hujumlar, authentication va authorization, amaliy kriptografiya, API va backend xavfsizligi,
+  supply chain va DevSecOps, shuningdek case study'lar va capstone. Har mavzu mexanizm darajasida beriladi: zaif kod,
+  hujum va tuzatilgan kod. Asosiy manbalar: OWASP Top 10 2025, ASVS 5.0.0, OWASP API Security Top 10 (2023), WSTG,
+  Cheat Sheet Series, CWE Top 25 (2025), NIST va IETF/W3C spetsifikatsiyalari.
+audience: "Backend yoki fullstack tajribasi bor dasturchilar uchun (Node.js/TypeScript, PostgreSQL, Redis). Dasturlash asoslari tushuntirilmaydi. Misollar Node.js, NestJS, Fastify, Next.js, Prisma va Kysely stack'ida, neytral avtopark monitoring platformasi atrofida; hujum namunalari faqat darsning o'z o'quv kodiga qarshi."
+order: 5
+color: "#7c3aed"
+format: clean-code
+passScore: 1
+library:
+  - { title: "OWASP Top 10:2025", by: "OWASP Foundation", href: "https://top10.owasp.org/2025/" }
+  - { title: "OWASP Application Security Verification Standard 5.0.0", by: "OWASP Foundation", href: "https://github.com/OWASP/ASVS/tree/v5.0.0" }
+  - { title: "OWASP Web Security Testing Guide", by: "OWASP Foundation", href: "https://owasp.org/www-project-web-security-testing-guide/" }
+  - { title: "OWASP Cheat Sheet Series", by: "OWASP Foundation", href: "https://cheatsheetseries.owasp.org/" }
+  - { title: "2025 CWE Top 25 Most Dangerous Software Weaknesses", by: "MITRE", href: "https://cwe.mitre.org/top25/archive/2025/2025_cwe_top25.html" }
+modules:
+  - n: 1
+    title: "Asoslar va threat modeling"
+    goal: "Xavfsizlik tushunchalari (CIA, tahdid, zaiflik, risk), hujumchi modeli, secure design tamoyillari, threat modeling, standartlar xaritasi (OWASP Top 10 2025, CWE/CVSS, ASVS), huquqiy chegaralar va kurs laboratoriyasi"
+    lessons:
+      - { n: 1, slug: xavfsizlik-asoslari, title: "Xavfsizlik nima: CIA, tahdid, zaiflik va risk", sources: [fips199, nist-30, t10-risks, cwe-about] }
+      - { n: 2, slug: hujumchi-modeli, title: "Hujumchi modeli va attack surface", sources: [t10-risks, cs-threat-model, wstg] }
+      - { n: 3, slug: secure-design-tamoyillari, title: "Secure design tamoyillari: least privilege, defense in depth, fail-safe defaults", sources: [saltzer, t10-a06, nist-ssdf] }
+      - { n: 4, slug: threat-modeling-stride, title: "Threat modeling: data flow diagram, trust boundary va STRIDE", sources: [ms-stride, cs-threat-model, t10-a06] }
+      - { n: 5, slug: threat-modeling-amaliyot, title: "Threat modeling amaliyotda: avtopark platformasi modeli", sources: [cs-threat-model, ms-stride, asvs] }
+      - { n: 6, slug: owasp-top10-2025, title: "OWASP Top 10 2025: xarita va undan qanday foydalanish", sources: [t10-risks, t10-a01, t10-a05, t10-a10] }
+      - { n: 7, slug: cwe-cve-cvss-epss-kev, title: "CWE, CVE, CVSS, EPSS va KEV", sources: [cwe-top25, cwe-about, cvss4, epss] }
+      - { n: 8, slug: asvs-5, title: "ASVS 5.0: xavfsizlik talablarini yozish va tekshirish", sources: [asvs, wstg, samm] }
+      - { n: 9, slug: huquqiy-va-etik-chegaralar, title: "Huquqiy va etik chegaralar: O'zbekiston qonunchiligi va responsible disclosure", sources: [lex-cyber, lex-pdp, wstg] }
+      - { n: 10, slug: xavfsiz-laboratoriya, title: "Xavfsiz laboratoriya muhiti va kurs bo'ylab ishlatiladigan zaif ilova", sources: [juice-shop, wstg, node-security] }
+  - n: 2
+    title: "Web platforma xavfsizlik modeli"
+    goal: "Brauzer va HTTP xavfsizlik modeli: origin, cookie, CORS, CSP, security header'lar, izolyatsiya, TLS, storage va proxy zanjiri hujumlari"
+    lessons:
+      - { n: 11, slug: http-xavfsizlik, title: "HTTP xavfsizlik nuqtai nazaridan: request, header va parser farqlari", sources: [rfc9110, rfc9112, t10-a02] }
+      - { n: 12, slug: origin-site-sop, title: "Origin, site va same-origin policy", sources: [mdn-sop, whatwg-html, whatwg-fetch] }
+      - { n: 13, slug: cookie-xavfsizligi, title: "Cookie: Secure, HttpOnly, SameSite va prefikslar", sources: [rfc6265, rfc6265bis, mdn-cookies, cs-session] }
+      - { n: 14, slug: cors, title: "CORS: preflight, credentials va xato sozlamalar", sources: [mdn-cors, whatwg-fetch, t10-a02] }
+      - { n: 15, slug: csp-direktivalar, title: "Content Security Policy: direktivalar, nonce va strict-dynamic", sources: [csp3, mdn-csp, cs-csp] }
+      - { n: 16, slug: security-headerlar, title: "Security header'lar: HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy", sources: [rfc6797, nestjs-helmet, t10-a02] }
+      - { n: 17, slug: fetch-metadata-izolyatsiya, title: "Fetch Metadata va cross-origin izolyatsiya (COOP, COEP, CORP)", sources: [fetch-metadata, whatwg-html, whatwg-fetch] }
+      - { n: 18, slug: https-amaliyotda, title: "HTTPS amaliyotda: TLS sozlamalari, sertifikat va mixed content", sources: [rfc8446, rfc6797, rfc5280, t10-a04] }
+      - { n: 19, slug: brauzer-storage, title: "Brauzer storage: token qayerda saqlanadi", sources: [cs-session, mdn-cookies, t10-a07] }
+      - { n: 20, slug: smuggling-cache-proxy, title: "Request smuggling, cache poisoning va proxy zanjiri", sources: [rfc9112, rfc9110, t10-a02] }
+  - n: 3
+    title: "Injection"
+    goal: "Ma'lumot va kod chegarasi: SQL, NoSQL, command, path, SSRF, template va deserialization injection hamda kirish validatsiyasi strategiyasi"
+    lessons:
+      - { n: 21, slug: injection-umumiy-model, title: "Injection'ning umumiy modeli: ma'lumot va kod chegarasi", sources: [t10-a05, cs-input, cs-sqli] }
+      - { n: 22, slug: sql-injection, title: "SQL injection: turlari va parametrlangan so'rovlar", sources: [cs-sqli, t10-a05, pg-auth] }
+      - { n: 23, slug: orm-raw-tuzoqlari, title: "ORM va query builder tuzoqlari: Prisma va Kysely raw so'rovlari", sources: [prisma-raw, kysely-raw, cs-sqli] }
+      - { n: 24, slug: nosql-redis-injection, title: "NoSQL va Redis injection", sources: [t10-a05, redis-security, cs-input] }
+      - { n: 25, slug: command-injection, title: "Command injection va child_process", sources: [t10-a05, node-security, cs-input] }
+      - { n: 26, slug: path-traversal, title: "Path traversal va fayl yo'llari", sources: [t10-a01, node-security, cs-input] }
+      - { n: 27, slug: ssrf, title: "SSRF: ichki tarmoq va cloud metadata", sources: [cs-ssrf, cwe-top25, t10-a01] }
+      - { n: 28, slug: template-injection, title: "Server-side template injection", sources: [t10-a05, cs-input, wstg] }
+      - { n: 29, slug: deserialization-prototype-pollution, title: "Deserialization va prototype pollution", sources: [t10-a08, node-security, cs-input] }
+      - { n: 30, slug: redos-validatsiya, title: "ReDoS va kirish validatsiyasi strategiyasi", sources: [cs-input, node-security, asvs] }
+  - n: 4
+    title: "Client-side hujumlar"
+    goal: "XSS, output encoding, React/Next.js tuzoqlari, Trusted Types, CSP joriy qilish, CSRF, clickjacking, open redirect, postMessage va uchinchi tomon skriptlari"
+    lessons:
+      - { n: 31, slug: xss-turlari, title: "XSS turlari: reflected, stored va DOM-based", sources: [cs-xss, t10-a05, cwe-top25] }
+      - { n: 32, slug: output-encoding, title: "Output encoding: HTML, atribut, JavaScript va URL kontekstlari", sources: [cs-xss, whatwg-html, asvs] }
+      - { n: 33, slug: react-nextjs-xss, title: "React va Next.js'da XSS tuzoqlari", sources: [cs-xss, nextjs-data-security, nextjs-csp] }
+      - { n: 34, slug: sanitization-trusted-types, title: "Sanitization va Trusted Types", sources: [trusted-types, cs-xss, csp3] }
+      - { n: 35, slug: nextjs-csp-joriy-qilish, title: "CSP'ni Next.js ilovasida joriy qilish", sources: [nextjs-csp, csp3, cs-csp] }
+      - { n: 36, slug: csrf, title: "CSRF: mexanizm va himoya usullari", sources: [cs-csrf, rfc6265bis, fetch-metadata] }
+      - { n: 37, slug: clickjacking-frame, title: "Clickjacking va frame siyosati", sources: [csp3, mdn-csp, t10-a06] }
+      - { n: 38, slug: open-redirect, title: "Open redirect va URL validatsiyasi", sources: [cs-input, whatwg-html, t10-a01] }
+      - { n: 39, slug: postmessage-iframe, title: "postMessage va iframe orasidagi aloqa", sources: [whatwg-html, mdn-sop, cs-xss] }
+      - { n: 40, slug: third-party-sri, title: "Uchinchi tomon skriptlari va Subresource Integrity", sources: [sri, t10-a08, t10-a03] }
+  - n: 5
+    title: "Authentication"
+    goal: "Autentifikatsiya: parol saqlash, MFA, passkey, session, JWT, OAuth 2.0, OpenID Connect va account recovery"
+    lessons:
+      - { n: 41, slug: authentication-modeli, title: "Authentication modeli: faktorlar va ishonch darajalari", sources: [nist-63-4, t10-a07, cs-authn] }
+      - { n: 42, slug: parol-saqlash, title: "Parol saqlash: Argon2id, scrypt, bcrypt", sources: [cs-password, rfc9106, nist-63-4] }
+      - { n: 43, slug: credential-stuffing-brute-force, title: "Parol siyosati, credential stuffing va brute force himoyasi", sources: [nist-63-4, cs-authn, t10-a07] }
+      - { n: 44, slug: mfa-totp, title: "Multi-factor authentication: TOTP, push va SMS xavflari", sources: [rfc6238, nist-63-4, cs-authn] }
+      - { n: 45, slug: passkey-webauthn, title: "Passkey va WebAuthn", sources: [webauthn, nist-63-4, t10-a07] }
+      - { n: 46, slug: session-boshqaruvi, title: "Session boshqaruvi: identifikator, muddat, bekor qilish", sources: [cs-session, rfc6265, nist-63-4] }
+      - { n: 47, slug: jwt, title: "JWT: tuzilishi, tuzoqlari va qachon kerak emas", sources: [rfc7519, rfc8725, cs-session] }
+      - { n: 48, slug: oauth2-pkce, title: "OAuth 2.0: oqimlar, PKCE va security best practice", sources: [rfc6749, rfc7636, rfc9700, cs-oauth2] }
+      - { n: 49, slug: openid-connect, title: "OpenID Connect va tashqi provayder orqali kirish", sources: [oidc-core, rfc9700, cs-oauth2] }
+      - { n: 50, slug: account-recovery, title: "Account recovery va email tasdiqlash", sources: [cs-authn, nist-63-4, t10-a07] }
+  - n: 6
+    title: "Authorization"
+    goal: "Avtorizatsiya: access control modellari, IDOR, function-level va property-level nazorat, multi-tenancy, row-level security, policy engine'lar, business logic va race condition"
+    lessons:
+      - { n: 51, slug: access-control-modellari, title: "Access control modellari: RBAC, ABAC, ReBAC", sources: [cs-authz, t10-a01, asvs] }
+      - { n: 52, slug: idor-bola, title: "IDOR va object-level authorization", sources: [t10-a01, api-top10, cs-authz] }
+      - { n: 53, slug: funksiya-darajasi-authz, title: "Funksiya darajasidagi authorization va admin funksiyalari", sources: [api-top10, cs-authz, t10-a01] }
+      - { n: 54, slug: mass-assignment, title: "Mass assignment va property-level authorization", sources: [api-top10, t10-a01, cs-input] }
+      - { n: 55, slug: multi-tenancy, title: "Multi-tenancy: tenant izolyatsiyasi", sources: [t10-a01, cs-authz, pg-rls] }
+      - { n: 56, slug: postgresql-rls, title: "PostgreSQL row-level security", sources: [pg-rls, pg-auth, t10-a01] }
+      - { n: 57, slug: policy-enginelar, title: "Policy engine'lar va markazlashgan authorization", sources: [cs-authz, asvs, t10-a06] }
+      - { n: 58, slug: nestjs-nextjs-authz, title: "NestJS va Next.js'da authorization: guard, middleware, server action", sources: [nestjs-guards, nextjs-data-security, cs-authz] }
+      - { n: 59, slug: business-logic-zaifliklari, title: "Business logic zaifliklari", sources: [t10-a06, wstg, asvs] }
+      - { n: 60, slug: race-condition-toctou, title: "Race condition va TOCTOU", sources: [wstg, t10-a06, pg-rls] }
+  - n: 7
+    title: "Amaliy kriptografiya"
+    goal: "Kriptografiya primitive'lari, AEAD, imzo, TLS 1.3, PKI, CSPRNG, kalit va secrets boshqaruvi, post-quantum o'tish"
+    lessons:
+      - { n: 61, slug: kriptografiya-xaritasi, title: "Kriptografiya xaritasi: primitive'lar va o'zingiz yozmaslik qoidasi", sources: [t10-a04, asvs, node-security] }
+      - { n: 62, slug: hash-hmac, title: "Hash funksiyalari va HMAC", sources: [t10-a04, cs-password, node-security] }
+      - { n: 63, slug: simmetrik-shifrlash-aead, title: "Simmetrik shifrlash va AEAD", sources: [t10-a04, asvs, node-security] }
+      - { n: 64, slug: asimmetrik-kriptografiya, title: "Asimmetrik kriptografiya: kalit almashish va raqamli imzo", sources: [t10-a04, rfc8446, fips204] }
+      - { n: 65, slug: tls13-handshake, title: "TLS 1.3 handshake", sources: [rfc8446, t10-a04, rfc5280] }
+      - { n: 66, slug: pki-mtls, title: "PKI, sertifikatlar va mTLS", sources: [rfc5280, rfc8446, t10-a04] }
+      - { n: 67, slug: csprng-token, title: "Tasodifiylik: CSPRNG va token generatsiyasi", sources: [t10-a04, cs-session, node-security] }
+      - { n: 68, slug: kalit-boshqaruvi, title: "Kalit boshqaruvi: KMS, envelope encryption, rotatsiya", sources: [t10-a04, cs-secrets, asvs] }
+      - { n: 69, slug: secrets-management, title: "Secrets management", sources: [cs-secrets, t10-a02, gh-actions-security] }
+      - { n: 70, slug: shifrlab-saqlash-pqc, title: "Ma'lumotni shifrlab saqlash va post-quantum kriptografiyaga o'tish", sources: [fips203, fips204, t10-a04] }
+  - n: 8
+    title: "API va backend xavfsizligi"
+    goal: "API xavf xaritasi, sxema validatsiyasi, rate limiting, fayl yuklash, webhook'lar, GraphQL, WebSocket, xatolar, logging va LLM ilovalari"
+    lessons:
+      - { n: 71, slug: api-top10-xarita, title: "OWASP API Security Top 10 (2023): xarita", sources: [api-top10, asvs, t10-a01] }
+      - { n: 72, slug: sxema-validatsiya, title: "Sxema asosida kirish validatsiyasi", sources: [cs-input, api-top10, asvs] }
+      - { n: 73, slug: rate-limiting, title: "Rate limiting va resurs iste'molini cheklash", sources: [api-top10, nestjs-rate-limit, redis-security] }
+      - { n: 74, slug: fayl-yuklash, title: "Fayl yuklash xavfsizligi", sources: [cs-upload, t10-a05, asvs] }
+      - { n: 75, slug: webhooklar, title: "Webhook'lar: imzo, replay va idempotency", sources: [api-top10, t10-a08, cs-input] }
+      - { n: 76, slug: graphql-xavfsizligi, title: "GraphQL xavfsizligi", sources: [api-top10, cs-authz, cs-input] }
+      - { n: 77, slug: websocket-realtime, title: "WebSocket va real-time kanallar", sources: [whatwg-html, cs-authn, api-top10] }
+      - { n: 78, slug: xatolarni-boshqarish, title: "Xatolarni boshqarish va fail-safe xatti-harakat", sources: [t10-a10, cs-logging, saltzer] }
+      - { n: 79, slug: security-logging, title: "Security logging, audit log va alerting", sources: [cs-logging, t10-a09, nist-61r3] }
+      - { n: 80, slug: llm-ilovalar-xavfsizligi, title: "LLM asosidagi ilovalar xavfsizligi", sources: [llm01, api-top10, t10-a05] }
+  - n: 9
+    title: "Supply chain va DevSecOps"
+    goal: "Bog'liqliklar, lockfile va provenance, SAST/DAST, CI/CD, konteyner, Kubernetes, cloud IAM, ma'lumotlar bazasini mustahkamlash va secure SDLC"
+    lessons:
+      - { n: 81, slug: npm-boglikliklar, title: "Bog'liqliklar xavfi: npm ekotizimi", sources: [t10-a03, cisa-npm-2025, node-security] }
+      - { n: 82, slug: lockfile-provenance-sbom, title: "Lockfile, provenance, SBOM va SLSA", sources: [slsa, npm-provenance, t10-a03] }
+      - { n: 83, slug: sast-secret-scanning, title: "SAST va secret scanning", sources: [nist-ssdf, cs-secrets, wstg] }
+      - { n: 84, slug: dast-fuzzing, title: "DAST va fuzzing", sources: [wstg, nist-ssdf, asvs] }
+      - { n: 85, slug: cicd-xavfsizligi, title: "CI/CD xavfsizligi", sources: [gh-actions-security, slsa, t10-a03] }
+      - { n: 86, slug: docker-xavfsizligi, title: "Konteyner xavfsizligi: Docker", sources: [docker-security, t10-a02, cs-nodejs] }
+      - { n: 87, slug: kubernetes-xavfsizligi, title: "Kubernetes xavfsizligi asoslari", sources: [k8s-pss, t10-a02, docker-security] }
+      - { n: 88, slug: cloud-iam, title: "Cloud IAM va noto'g'ri konfiguratsiya", sources: [t10-a02, t10-a01, occ-capital-one] }
+      - { n: 89, slug: postgresql-redis-mustahkamlash, title: "PostgreSQL va Redis'ni mustahkamlash", sources: [pg-auth, redis-security, t10-a02] }
+      - { n: 90, slug: secure-sdlc, title: "Secure SDLC va zaifliklarni boshqarish", sources: [nist-ssdf, samm, kev, epss] }
+  - n: 10
+    title: "Amaliyot"
+    goal: "Code review, o'z ilovani sinash, incident response, shaxsiy ma'lumotlar, compliance, case study'lar va capstone"
+    lessons:
+      - { n: 91, slug: security-code-review, title: "Security code review metodikasi", sources: [asvs, wstg, cwe-top25] }
+      - { n: 92, slug: wstg-asosida-sinash, title: "O'z ilovangizni xavfsizlik bo'yicha sinash (WSTG asosida)", sources: [wstg, asvs, juice-shop] }
+      - { n: 93, slug: incident-response, title: "Incident response asoslari", sources: [nist-61r3, cs-logging, t10-a09] }
+      - { n: 94, slug: shaxsiy-malumotlar, title: "Shaxsiy ma'lumotlar: O'zbekiston qonunchiligi va privacy by design", sources: [lex-pdp, lex-cyber, nist-ssdf] }
+      - { n: 95, slug: compliance-xaritasi, title: "Compliance xaritasi: PCI DSS, ISO/IEC 27001, SOC 2", sources: [pci-dss, iso-27001, aicpa-soc] }
+      - { n: 96, slug: case-log4shell, title: "Case study: Log4Shell", sources: [log4j-apache, cisa-log4shell, kev] }
+      - { n: 97, slug: case-ssrf-cloud-iam, title: "Case study: SSRF va cloud IAM orqali ma'lumot sizishi", sources: [occ-capital-one, occ-capital-one-order, cs-ssrf] }
+      - { n: 98, slug: case-supply-chain, title: "Case study: supply chain hujumlari", sources: [xz-openwall, cisa-npm-2025, slsa] }
+      - { n: 99, slug: case-avtopark-audit, title: "Case study: avtopark platformasining to'liq xavfsizlik auditi", sources: [asvs, wstg, t10-risks] }
+      - { n: 100, slug: capstone, title: "Capstone: zaif servisni mustahkamlash", sources: [asvs, nist-ssdf, samm] }
