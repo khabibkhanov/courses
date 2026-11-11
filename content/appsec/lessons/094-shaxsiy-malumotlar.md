@@ -340,10 +340,22 @@ console.log(storageAllowed("telekom", { country: "UZ" }));
 ```
 
 ```text
-{ ok: false, why: "bu toifa O'zbekistonda saqlanishi shart" }
-{ ok: false, why: "chet elda saqlash uchun asos ko'rsatilmagan" }
-{ ok: true, why: 'asos: standart-shartnoma' }
-{ ok: true, why: "O'zbekiston hududida" }
+{
+  "ok": false,
+  "why": "bu toifa O'zbekistonda saqlanishi shart"
+}
+{
+  "ok": false,
+  "why": "chet elda saqlash uchun asos ko'rsatilmagan"
+}
+{
+  "ok": true,
+  "why": "asos: standart-shartnoma"
+}
+{
+  "ok": true,
+  "why": "O'zbekiston hududida"
+}
 ```
 
 Bu funksiya hukm chiqarmaydi: asos (`basis`) ning haqiqatan mavjudligini, davlat ro'yxatini yoki shartnoma tasdiqlanganini tekshirmaydi. U faqat xato konfiguratsiyani erta (CI yoki deploy vaqtida) ushlaydi.

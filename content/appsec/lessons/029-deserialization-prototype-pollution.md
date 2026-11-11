@@ -256,7 +256,9 @@ console.log("yon ta'sir:", effects);
 ```text
 hujumdan oldin isAdmin: undefined
 hujumdan keyin isAdmin: true | yangi obyekt: true
-yon ta'sir: [ 'modelda tozalandi: /data/clips' ]
+yon ta'sir: [
+  "modelda tozalandi: /data/clips"
+]
 ```
 
 Birinchi hujumdan keyin bazadan o'qilgan `dbUser` (u `isAdmin` ni hech qachon o'rnatmagan) ham `isAdmin: true` ko'rsatadi, chunki qiymat `Object.prototype` ga yozilgan va hamma obyektda ko'rinadi. Ikkinchi hujumda kiritish ichki sinfni tanladi va konstruktor ishga tushdi. Real tizimda ikkala holat ilovaning boshqa joylarida tekshiruvlarni aylanib o'tish yoki kod bajarilishiga olib kelishi mumkin; bu yerda faqat mexanizm.

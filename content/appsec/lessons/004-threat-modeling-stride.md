@@ -263,8 +263,12 @@ console.log("header bilan:", listVehiclesWeak({ headers: { "x-tenant-id": "beta"
 Hujumchi "alfa" ning qonuniy foydalanuvchisi. U brauzer yoki `curl` orqali so'rovga `x-tenant-id: beta` header'ini qo'shadi. Server header'ni session'dan ustun qo'yadi:
 
 ```text
-oddiy so'rov: [ '01 A 111 AA' ]
-header bilan: [ '10 B 222 BB' ]
+oddiy so'rov: [
+  "01 A 111 AA"
+]
+header bilan: [
+  "10 B 222 BB"
+]
 ```
 
 STRIDE bo'yicha bu spoofing (boshqa tenant sifatida ko'rinish) va natijada information disclosure. Diagrammada brauzer va API orasidagi oqim trust boundary'dan o'tadi, ya'ni undagi hamma maydon ishonchsiz; header ham shu maydonlardan biri.
@@ -293,9 +297,18 @@ console.log("sessiyasiz:", listVehicles({ headers: { "x-tenant-id": "beta" } }))
 ```
 
 ```text
-oddiy so'rov: { status: 200, plates: [ '01 A 111 AA' ] }
-header bilan: { status: 403 }
-sessiyasiz: { status: 401 }
+oddiy so'rov: {
+  "status": 200,
+  "plates": [
+    "01 A 111 AA"
+  ]
+}
+header bilan: {
+  "status": 403
+}
+sessiyasiz: {
+  "status": 401
+}
 ```
 
 Endi invariant: tenant identifikatori faqat tasdiqlangan session'dan keladi, mijoz yuborgan qiymat esa faqat session bilan mos kelishi tekshiriladigan da'vo. Bu spoofing hujumini ko'rsatilgan shaklda yopadi. Qoldiq risk: session o'zi qanday tasdiqlanadi (41 va 46-darslar), va hali ham bitta komponentdagi xato izolyatsiyani buzishi mumkin, shuning uchun ma'lumot qatlamida ham himoya kerak (55 va 56-darslar).

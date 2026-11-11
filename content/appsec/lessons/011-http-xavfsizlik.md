@@ -185,8 +185,16 @@ console.log(parseHeaders("Host: fleet.example\r\nX-Role : admin"));
 ```
 
 ```text
-{ ok: true, headers: { host: 'fleet.example, evil.example' } }
-{ ok: false, reason: `nomda bo'shliq: "X-Role "` }
+{
+  "ok": true,
+  "headers": {
+    "host": "fleet.example, evil.example"
+  }
+}
+{
+  "ok": false,
+  "reason": "nomda bo'shliq: \"X-Role \""
+}
 ```
 
 Birinchi natijada ikki `Host` bitta ro'yxatga aylandi: shu qiymatni `ALLOWED.has(host)` bilan solishtirsangiz u mos kelmaydi (yaxshi), lekin `host.startsWith("fleet.example")` bilan tekshirsangiz o'tib ketadi (yomon). Ikkinchi natijada qat'iy parser xabarni butunlay rad etdi.

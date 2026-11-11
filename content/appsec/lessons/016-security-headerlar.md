@@ -308,8 +308,8 @@ console.log(audit({
   "HSTS yo'q",
   "nosniff yo'q",
   "Referrer-Policy yo'q",
-  'X-Powered-By oshkor',
-  'Server versiyani oshkor qiladi'
+  "X-Powered-By oshkor",
+  "Server versiyani oshkor qiladi"
 ]
 []
 ```

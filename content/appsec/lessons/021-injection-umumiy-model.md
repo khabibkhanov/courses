@@ -272,7 +272,9 @@ console.log("natija:  ", findWeak("01 A 111 AA"));
 
 ```text
 kalit so'zlar: WHERE AND
-natija:   [ '01 A 111 AA (alfa)' ]
+natija:   [
+  "01 A 111 AA (alfa)"
+]
 ```
 
 ### 2. Hujum
@@ -342,7 +344,9 @@ console.log("natija:  ", findWeak(payload));
 
 ```text
 kalit so'zlar: WHERE OR
-natija:   [ '10 B 222 BB (beta)' ]
+natija:   [
+  "10 B 222 BB (beta)"
+]
 ```
 
 Birinchi blokda oddiy kiritishda `WHERE` dan keyingi kalit so'z faqat `AND` edi. Hujumda u `OR` bo'ldi: kiritish kodga yangi kalit so'z qo'shdi, ya'ni struktura o'zgardi. Natijada "alfa" foydalanuvchisi "beta" kompaniyasi mashinasini ko'rdi, bu maxfiylik buzilishi (1-dars). Hujum faqat shu o'quv interpreter'iga qarshi; real SQL tafsilotlari va bazaga xos jihatlar 22-darsda.
@@ -411,8 +415,12 @@ console.log("apostrofli: ", find("alfa", "O'N 5"));
 
 ```text
 hujum:       []
-oddiy:       [ '01 A 111 AA (alfa)' ]
-apostrofli:  [ "O'N 5 (alfa)" ]
+oddiy:       [
+  "01 A 111 AA (alfa)"
+]
+apostrofli:  [
+  "O'N 5 (alfa)"
+]
 ```
 
 Nima uchun yetarli: invariant "kiritilgan qiymat hech qachon `kw`, `op` yoki `id` token bo'la olmaydi" endi tuzilma bilan ta'minlangan, chunki qiymat lekserga tayyor `str` token sifatida kiradi va matn qayta ko'rilmaydi. Shuning uchun `O'N 5` kabi zararsiz apostrof ham ishlaydi: biz hech narsani filtrlamadik. Yopilgan hujum: ko'rsatilgan `OR`+izoh payload'i va uning barcha o'xshash variantlari (bu interpreter uchun). Yopilmagan: identifikatorlar (ustun, jadval nomi) parametr bo'la olmaydi, ularni alohida allow-list bilan tekshirish kerak (22-23-darslar). Tenant qiymatining o'zi to'g'ri manbadan (sessiya) olinishi esa authorization masalasi (51-58-darslar).

@@ -266,7 +266,12 @@ console.log(listBroken("plate"));
 ```text
 SELECT id FROM vehicles WHERE plate = '01 A 111 AA'
 SELECT id FROM vehicles ORDER BY plate
-{ text: 'SELECT id FROM vehicles ORDER BY $1', values: [ 'plate' ] }
+{
+  "text": "SELECT id FROM vehicles ORDER BY $1",
+  "values": [
+    "plate"
+  ]
+}
 ```
 
 ### 2. Hujum
@@ -336,16 +341,23 @@ console.log(list("alfa", "id; DROP TABLE vehicles"));
 
 ```text
 {
-  text: 'SELECT id FROM vehicles WHERE tenant_id = $1 AND plate = $2',
-  values: [ 'alfa', "x' OR '1'='1" ]
+  "text": "SELECT id FROM vehicles WHERE tenant_id = $1 AND plate = $2",
+  "values": [
+    "alfa",
+    "x' OR '1'='1"
+  ]
 }
 {
-  text: 'SELECT id FROM vehicles WHERE tenant_id = $1 ORDER BY "last_seen_at"',
-  values: [ 'alfa' ]
+  "text": "SELECT id FROM vehicles WHERE tenant_id = $1 ORDER BY \"last_seen_at\"",
+  "values": [
+    "alfa"
+  ]
 }
 {
-  text: 'SELECT id FROM vehicles WHERE tenant_id = $1 ORDER BY "plate"',
-  values: [ 'alfa' ]
+  "text": "SELECT id FROM vehicles WHERE tenant_id = $1 ORDER BY \"plate\"",
+  "values": [
+    "alfa"
+  ]
 }
 ```
 

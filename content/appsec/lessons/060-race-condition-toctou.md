@@ -221,9 +221,7 @@ async function authorizeWeak(amount: number): Promise<string> {
   return "ok";
 }
 
-(async () => {
-  console.log("bitta so'rov:", await authorizeWeak(80), "balans:", db.balance);
-})();
+console.log("bitta so'rov:", await authorizeWeak(80), "balans:", db.balance);
 ```
 
 ```text
@@ -247,11 +245,9 @@ async function authorizeWeak(amount: number): Promise<string> {
   return "ok";
 }
 
-(async () => {
-  const res = await Promise.all([authorizeWeak(80), authorizeWeak(80)]);
-  console.log("natijalar:", res.join(","));
-  console.log("balans:", db.balance, "beriladi:", 80 * res.filter((r) => r === "ok").length);
-})();
+const res = await Promise.all([authorizeWeak(80), authorizeWeak(80)]);
+console.log("natijalar:", res.join(","));
+console.log("balans:", db.balance, "beriladi:", 80 * res.filter((r) => r === "ok").length);
 ```
 
 ```text
@@ -284,12 +280,10 @@ async function authorize(amount: number): Promise<string> {
   return affected === 1 ? "ok" : "rad";
 }
 
-(async () => {
-  const res = await Promise.all([authorize(80), authorize(80), authorize(80)]);
-  console.log("natijalar:", res.join(","));
-  console.log("balans:", db.balance);
-  console.log("keyingi 20:", await authorize(20), "balans:", db.balance);
-})();
+const res = await Promise.all([authorize(80), authorize(80), authorize(80)]);
+console.log("natijalar:", res.join(","));
+console.log("balans:", db.balance);
+console.log("keyingi 20:", await authorize(20), "balans:", db.balance);
 ```
 
 ```text

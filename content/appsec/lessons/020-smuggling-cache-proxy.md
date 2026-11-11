@@ -215,8 +215,13 @@ console.log("backend /admin ni oldimi:", b.requests.some(ADMIN_BLOCK));
 ```
 
 ```text
-frontend ko'radi: [ 'POST /api/note HTTP/1.1' ]
-backend ko'radi:  [ 'POST /api/note HTTP/1.1', 'GET /admin/export HTTP/1.1' ]
+frontend ko'radi: [
+  "POST /api/note HTTP/1.1"
+]
+backend ko'radi:  [
+  "POST /api/note HTTP/1.1",
+  "GET /admin/export HTTP/1.1"
+]
 frontend /admin ni ko'rdimi: false
 backend /admin ni oldimi: true
 ```
@@ -353,7 +358,9 @@ console.log("to'g'ridan-to'g'ri /admin:", frontendAllows(direct));
 ```
 
 ```text
-oddiy so'rov: true [ 'GET /api/vehicles HTTP/1.1' ]
+oddiy so'rov: true [
+  "GET /api/vehicles HTTP/1.1"
+]
 to'g'ridan-to'g'ri /admin: false
 ```
 
@@ -420,7 +427,10 @@ console.log("backend bajaradi:", backendHandles(stream));
 
 ```text
 frontend ruxsat berdi: true
-backend bajaradi: [ 'POST /api/note HTTP/1.1', 'GET /admin/export HTTP/1.1' ]
+backend bajaradi: [
+  "POST /api/note HTTP/1.1",
+  "GET /admin/export HTTP/1.1"
+]
 ```
 
 Frontend `/admin` ni ko'rmadi, shuning uchun ruxsat berdi. Backend esa `GET /admin/export` ni alohida so'rov sifatida oldi. ACL aylanib o'tildi.
@@ -488,7 +498,9 @@ console.log("hujum:", frontendAllows(stream), backendHandles(stream));
 ```
 
 ```text
-oddiy: true [ 'GET /api/vehicles HTTP/1.1' ]
+oddiy: true [
+  "GET /api/vehicles HTTP/1.1"
+]
 hujum: false 400: Content-Length va Transfer-Encoding birga: rad etildi
 ```
 

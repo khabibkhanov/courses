@@ -247,7 +247,11 @@ console.log("server ochdi:", open(mine));
 
 ```text
 o'z tokeni: BwADBAgQXRkXEQcI
-server ochdi: { tenant: 'alfa', vehicle: 'v1', scope: 'read' }
+server ochdi: {
+  "tenant": "alfa",
+  "vehicle": "v1",
+  "scope": "read"
+}
 ```
 
 Funksiyalar to'g'ri ishlaydi: token chiqadi, server uni ochadi. Aynan shu "ishlaydi" holati xavfli: test o'tdi, lekin xavfsizlik xususiyati yo'q.
@@ -285,7 +289,11 @@ console.log("server ochdi:", open(forged));
 ```text
 tiklangan kalit: fleet
 soxta token: BAkRBAgQXhkXEQcI
-server ochdi: { tenant: 'beta', vehicle: 'v2', scope: 'read' }
+server ochdi: {
+  "tenant": "beta",
+  "vehicle": "v2",
+  "scope": "read"
+}
 ```
 
 Hujumchi "beta" tenant'ining mashinasi uchun token yasadi va server uni haqiqiy deb qabul qildi. Maxfiylik (kalit tiklandi) va yaxlitlik (token soxtalashtirildi) birga buzildi. Shifrmatnning bitta baytini o'zgartirish ham tegishli ochiq matn baytini o'zgartirardi: bu sxemada yaxlitlik tekshiruvi yo'q.
@@ -330,7 +338,11 @@ console.log("eski usuldagi soxta token:", await unseal(toB64(xor(enc.encode("bet
 ```
 
 ```text
-o'z tokeni ochildi: { tenant: 'alfa', vehicle: 'v1', scope: 'read' }
+o'z tokeni ochildi: {
+  "tenant": "alfa",
+  "vehicle": "v1",
+  "scope": "read"
+}
 bit o'zgartirilgan token: null
 eski usuldagi soxta token: null
 ```

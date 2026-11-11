@@ -209,8 +209,14 @@ console.log("HttpOnly cookie:", xssScript(makeBrowser("fixed")));
 ```
 
 ```text
-localStorage: { exfiltrated: 'tok_9f3a1c', whileOpen: '{"vehicles":42}' }
-HttpOnly cookie: { exfiltrated: null, whileOpen: '{"vehicles":42}' }
+localStorage: {
+  "exfiltrated": "tok_9f3a1c",
+  "whileOpen": "{\"vehicles\":42}"
+}
+HttpOnly cookie: {
+  "exfiltrated": null,
+  "whileOpen": "{\"vehicles\":42}"
+}
 ```
 
 Birinchi rejimda skript tokenni o'qib oldi (`exfiltrated`) va hujumchi uni istalgan vaqt ishlatadi. Ikkinchi rejimda token o'qilmadi (`null`), lekin skript sahifa ochiq turganda API'ga murojaat qila oldi (`whileOpen`).

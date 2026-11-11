@@ -269,7 +269,11 @@ console.log(whoAmI({ headers: { "x-user-id": "u1" } }));
 ```
 
 ```text
-{ id: 'u1', tenant: 'alfa', role: 'dispatcher' }
+{
+  "id": "u1",
+  "tenant": "alfa",
+  "role": "dispatcher"
+}
 ```
 
 ### Hujum
@@ -291,7 +295,11 @@ console.log(whoAmI({ headers: { "x-user-id": "u9" } }));
 ```
 
 ```text
-{ id: 'u9', tenant: 'beta', role: 'admin' }
+{
+  "id": "u9",
+  "tenant": "beta",
+  "role": "admin"
+}
 ```
 
 Hujumchi boshqa tenant'ning administratori sifatida tanildi. Authentication umuman bo'lmadi: identifikatsiya da'vosi isbotsiz qabul qilindi. Bu OWASP ta'rifidagi holat: tizim noto'g'ri foydalanuvchini qonuniy deb tan oldi.

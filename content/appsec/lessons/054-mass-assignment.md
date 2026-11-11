@@ -313,9 +313,14 @@ console.log("javob maydonlari:", Object.keys(publicView(v)).join(", "));
 ```
 
 ```text
-hujum: { ok: false, error: 'ruxsatsiz maydon: tenant, plan' }
+hujum: {
+  "ok": false,
+  "error": "ruxsatsiz maydon: tenant, plan"
+}
 tenant: alfa | plan: basic
-oddiy: { ok: true } 15
+oddiy: {
+  "ok": true
+} 15
 chegaradan tashqari: false
 admin plan: true premium
 javob maydonlari: id, name, alertThreshold, plan

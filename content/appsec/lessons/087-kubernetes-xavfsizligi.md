@@ -316,7 +316,7 @@ console.log("qoldiq: baseline runAsNonRoot va capability drop ALL ni talab qilma
 ```text
 buzilishlar: 0
 enforce baseline: QABUL QILINDI
-qoldiq: baseline runAsNonRoot, capability va seccomp'ni talab qilmaydi (restricted talab qiladi)
+qoldiq: baseline runAsNonRoot va capability drop ALL ni talab qilmaydi, seccomp profilini ham talab qilmaydi (faqat Unconfined'ni taqiqlaydi); restricted talab qiladi
 ```
 
 Nima yopildi: privileged konteyner va host namespace'ga chiqish yo'li enforce darajasida rad etiladi. Nima yopilmadi: Baseline root jarayonni, tashlanmagan capability'larni va seccomp profilining yo'qligini taqiqlamaydi; buning uchun Restricted kerak (quyidagi topshiriq shu qoidalarni yozishni so'raydi). Admission pod spetsifikatsiyasini tekshiradi, ilovadagi zaiflikni emas, RBAC, Secret'lar va tarmoqni ham emas.
